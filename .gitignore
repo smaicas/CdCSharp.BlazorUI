@@ -365,8 +365,6 @@ FodyWeavers.xsd
 # BlazorUI generated files
 node_modules/
 CssBundle/
-package-lock.json
-.npmrc
 
 # Build outputs
 *.min.js
@@ -374,3 +372,9 @@ package-lock.json
 wwwroot/css/main.css
 wwwroot/js/**/*.js
 wwwroot/js/**/*.js.map
+/src/CdCSharp.BlazorUI/package.json
+/src/CdCSharp.BlazorUI/package-lock.json
+/src/CdCSharp.BlazorUI/.npmrc
+/src/CdCSharp.BlazorUI/tsconfig.json
+/src/CdCSharp.BlazorUI/vite.config.js
+/src/CdCSharp.BlazorUI/vite.config.css.js
