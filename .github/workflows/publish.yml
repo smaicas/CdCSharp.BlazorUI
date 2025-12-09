@@ -16,6 +16,14 @@ on:
         options:
           - preview
           - release
+      publish:
+        description: 'Publish to NuGet'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 env:
   DOTNET_VERSION: '10.0.x'
@@ -43,6 +51,12 @@ jobs:
       - name: Determine Version
         id: version
         run: |
+          # Debug inicial
+          echo "🔍 Debug: EVENT_NAME=$GITHUB_EVENT_NAME"
+          echo "🔍 Debug: GITHUB_REF=$GITHUB_REF"
+          echo "🔍 Debug: version_type=${{ github.event.inputs.version_type }}"
+          echo "🔍 Debug: publish=${{ github.event.inputs.publish }}"
+          
           # Función para extraer versión del tag
           get_tag_version() {
             echo "${GITHUB_REF#refs/tags/v}"
@@ -56,13 +70,23 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
             # Ejecución manual
             BASE_VERSION="${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ github.run_number }}"
+            echo "🔍 Debug: Manual dispatch with version_type=${{ github.event.inputs.version_type }}"
+            echo "🔍 Debug: Publish requested=${{ github.event.inputs.publish }}"
+            
             if [[ "${{ github.event.inputs.version_type }}" == "preview" ]]; then
               VERSION="$BASE_VERSION-preview.${{ github.run_number }}"
               VERSION_SUFFIX="preview.${{ github.run_number }}"
-              SHOULD_PUBLISH="true"
             else
               VERSION="$BASE_VERSION"
+            fi
+            
+            # Solo publicar si se solicitó explícitamente
+            if [[ "${{ github.event.inputs.publish }}" == "true" ]]; then
               SHOULD_PUBLISH="true"
+              echo "✅ Manual build: $VERSION (will publish)"
+            else
+              SHOULD_PUBLISH="false"
+              echo "🏗️ Manual build: $VERSION (no publish - test only)"
             fi
             
           elif [[ "$GITHUB_REF" == refs/tags/v* ]]; then
@@ -91,6 +115,9 @@ jobs:
             SHOULD_PUBLISH="false"
             echo "🔧 CI Build: $VERSION"
           fi
+          
+          # Debug final
+          echo "📋 Final: VERSION=$VERSION, SHOULD_PUBLISH=$SHOULD_PUBLISH"
           
           # Exportar variables
           echo "version=$VERSION" >> $GITHUB_OUTPUT
@@ -150,6 +177,7 @@ jobs:
         run: |
           dotnet test \
             -c ${{ env.CONFIGURATION }} \
+            --no-build \
             --verbosity normal
 
       # Pack solo si vamos a publicar
