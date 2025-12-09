@@ -150,7 +150,6 @@ jobs:
         run: |
           dotnet test \
             -c ${{ env.CONFIGURATION }} \
-            --no-build \
             --verbosity normal
 
       # Pack solo si vamos a publicar
