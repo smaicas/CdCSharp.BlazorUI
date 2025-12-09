@@ -1,0 +1,16 @@
+﻿@using CdCSharp.BlazorUI.Components.Generic.Button
+
+@code{
+    public RenderFragment GlassButtonTemplate(UIButton component) => __builder =>
+    {
+        <button class="btn btn-glass" @onclick="component.OnClick" disabled="@component.Disabled">
+            @component.ChildContent
+        </button>
+    };
+    public RenderFragment GlassButtonTemplateWAdditionalAttributes(UIButton component) => __builder =>
+    {
+        <button class="@($"btn btn-glass {component.AdditionalAttributes["custom-param-1"]}")" @onclick="component.OnClick" disabled="@component.Disabled">
+            @component.ChildContent
+        </button>
+    };
+}

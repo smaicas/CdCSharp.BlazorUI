@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "ES2022",
+    "target": "ES2022",
+    "outDir": "./wwwroot/js",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "./@types"
+    ],
+    "paths": {
+      "@types/*": ["./Types/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ],
+  "include": [
+    "./Types/**/*.ts"
+  ]
+}

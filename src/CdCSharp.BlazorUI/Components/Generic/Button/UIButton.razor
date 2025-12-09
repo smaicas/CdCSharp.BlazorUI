@@ -1,0 +1,50 @@
+﻿@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@using Microsoft.AspNetCore.Components.Web
+@inherits UIVariantComponentBase<UIButton, UIButtonVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+
+    protected override UIButtonVariant DefaultVariant => UIButtonVariant.Primary;
+
+    protected override Dictionary<UIButtonVariant, Func<UIButton, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [UIButtonVariant.Primary] = b => b.RenderPrimary(),
+        [UIButtonVariant.Secondary] = b => b.RenderSecondary(),
+        [UIButtonVariant.Success] = b => b.RenderSuccess(),
+        [UIButtonVariant.Danger] = b => b.RenderDanger()
+    };
+
+    private RenderFragment RenderPrimary() => __builder =>
+    {
+        <button class="btn btn-primary" @onclick="OnClick" disabled="@Disabled">
+            @ChildContent
+        </button>
+    };
+
+    public RenderFragment RenderSecondary() => __builder =>
+    {
+        <button class="btn btn-secondary" @onclick="OnClick" disabled="@Disabled">
+            @ChildContent
+        </button>
+    };
+
+    private RenderFragment RenderSuccess() => __builder =>
+    {
+        <button class="btn btn-success" @onclick="OnClick" disabled="@Disabled">
+            @ChildContent
+        </button>
+    };
+
+    private RenderFragment RenderDanger() => __builder =>
+    {
+        <button class="btn btn-danger" @onclick="OnClick" disabled="@Disabled">
+            @ChildContent
+        </button>
+    };
+}

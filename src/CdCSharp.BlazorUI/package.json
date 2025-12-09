@@ -1,0 +1,25 @@
+{
+  "name": "cdcsharp-blazorui",
+  "version": "1.0.0",
+  "description": "BlazorUI Component Library",
+  "type": "module",
+  "main": "wwwroot/js/main.js",
+  "scripts": {
+    "build": "blazorui-build-tool all .",
+    "build:themes": "blazorui-build-tool themes ./CssBundle/themes.css",
+    "build:css": "blazorui-build-tool css .",
+    "build:js": "blazorui-build-tool js .",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "author": "Samuel Maícas (CdCSharp)",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-plugin-es6": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "terser": "latest",
+    "glob": "latest"
+  }
+}

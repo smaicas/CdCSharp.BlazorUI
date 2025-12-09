@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CdCSharp.BlazorUI.AppTest.Wasm</title>
+    <base href="/" />
+    <link rel="preload" id="webassembly" />
+    <link rel="stylesheet" href="css/app.css" />
+    <!-- If you add any scoped CSS files, uncomment the following to load them
+    <link href="CdCSharp.BlazorUI.AppTest.Wasm.styles.css" rel="stylesheet" /> -->
+    <link href="manifest.webmanifest" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+
+    <link href="/blazor-ui/styles.css" rel="stylesheet" />
+
+    <script type="importmap"></script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="." class="reload">Reload</a>
+        <span class="dismiss">🗙</span>
+    </div>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
+
+    <script>
+        window.injectDynamicCss = (cssContent, id) => {
+            let styleElement = document.getElementById(id);
+            if (!styleElement) {
+                styleElement = document.createElement('style');
+                styleElement.id = id;
+                document.head.appendChild(styleElement);
+            }
+            styleElement.textContent = cssContent;
+        };
+
+        window.injectCssVariables = (variables) => {
+            // Apuntamos al elemento raíz del documento (<html>)
+            const rootElement = document.documentElement;
+
+            // Iteramos sobre el objeto (diccionario) de variables
+            for (const key in variables) {
+                if (variables.hasOwnProperty(key)) {
+                    // Establecemos la propiedad CSS personalizada
+                    // key es '--color-primary', variables[key] es '#FF5733'
+                    rootElement.style.setProperty(key, variables[key]);
+                }
+            }
+        };
+    </script>
+
+</body>
+
+</html>
