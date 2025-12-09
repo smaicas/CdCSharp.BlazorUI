@@ -228,9 +228,7 @@ jobs:
             - CdCSharp.BlazorUI.BuildTools
             
             ### 🔧 Installation
-```bash
             dotnet add package CdCSharp.BlazorUI --version ${{ steps.version.outputs.version }}
-```
           draft: false
           prerelease: false
 
