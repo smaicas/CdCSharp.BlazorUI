@@ -8,7 +8,7 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
     where TVariant : Variant
 {
     [Parameter] public TVariant Variant { get; set; } = default!;
-    [Inject] private IVariantRegistry<TComponent, TVariant>? Registry { get; set; }
+    [Inject] private IEnumerable<IVariantRegistry<TComponent, TVariant>>? Registry { get; set; }
 
     protected abstract TVariant DefaultVariant { get; }
     protected abstract Dictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
@@ -35,8 +35,15 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
         {
             return builtIn((TComponent)this);
         }
+        if (Registry is null) { return null; }
 
-        // Then search in registry
-        return Registry?.GetTemplate(Variant, (TComponent)this);
+        foreach (IVariantRegistry<TComponent, TVariant> registry in Registry)
+        {
+            if (registry.HasTemplate(Variant))
+            {
+                return registry.GetTemplate(Variant, (TComponent)this);
+            }
+        }
+        return null;
     }
 }

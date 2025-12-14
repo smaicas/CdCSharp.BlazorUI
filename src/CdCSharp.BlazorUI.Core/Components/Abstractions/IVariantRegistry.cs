@@ -7,5 +7,6 @@ public interface IVariantRegistry<TComponent, TVariant>
     where TVariant : Variant
 {
     void Register(TVariant variant, Func<TComponent, RenderFragment> template);
+    bool HasTemplate(TVariant variant);
     RenderFragment? GetTemplate(TVariant variant, TComponent component);
 }

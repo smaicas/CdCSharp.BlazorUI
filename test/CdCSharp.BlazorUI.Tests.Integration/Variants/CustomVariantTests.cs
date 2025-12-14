@@ -1,6 +1,7 @@
 ﻿using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Core.Components.Abstractions;
+using CdCSharp.BlazorUI.Core.Components.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Templates;
 using FluentAssertions;
@@ -212,5 +213,87 @@ public class CustomVariantTests : TestContextBase
         button.ShouldHaveClass("ui-button");
         button.ShouldHaveClass("ui-button--mycustom1");
         button.ShouldHaveClass("btn-glass");
+    }
+
+    [Fact]
+    public void BuilderRegistration_PreservesComponentClasses()
+    {
+        // Arrange
+        Services.AddBlazorUI(options =>
+        {
+            options.ConfigureButton()
+                .AddVariant("BuilderGlass", _templates.AddsOneClassTemplate);
+        });
+
+        Services.AddSingleton<IVariantRegistry<UIButton, UIButtonVariant>>(sp =>
+        {
+            VariantRegistry<UIButton, UIButtonVariant> vr = new();
+            vr.Register(UIButtonVariant.Custom("BuilderGlass"), _templates.AddsOneClassTemplate);
+            return vr;
+        });
+
+        UIButtonVariant variant = UIButtonVariant.Custom("BuilderGlass");
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Variant, variant)
+            .Add(p => p.Text, "Builder Glass"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.ShouldHaveClass("ui-button");
+        button.ShouldHaveClass("ui-button--builderglass");
+        button.ShouldHaveClass("btn-glass");
+    }
+
+    [Fact]
+    public void StringVariantRegistration_WorksCorrectly()
+    {
+        // Arrange
+        Services.AddBlazorUI(options =>
+        {
+            options.ConfigureButton()
+                .AddVariant("StringVariant", component => builder =>
+                {
+                    builder.OpenElement(0, "button");
+                    builder.AddMultipleAttributes(1, component.AdditionalAttributes);
+                    builder.AddContent(2, $"String: {component.Text}");
+                    builder.CloseElement();
+                });
+        });
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Variant, UIButtonVariant.Custom("StringVariant"))
+            .Add(p => p.Text, "Test"));
+
+        // Assert
+        cut.Find("button").TextContent.Should().Be("String: Test");
+    }
+
+    [Fact]
+    public void ChainedVariantRegistration_RegistersAllVariants()
+    {
+        // Arrange
+        Services.AddBlazorUI(options =>
+        {
+            options.ConfigureButton()
+                .AddVariant("Variant1", component => builder => builder.AddContent(0, "V1"))
+                .AddVariant("Variant2", component => builder => builder.AddContent(0, "V2"))
+                .AddVariant("Variant3", component => builder => builder.AddContent(0, "V3"));
+        });
+
+        // Act & Assert
+        IRenderedComponent<UIButton> cut1 = Render<UIButton>(p =>
+            p.Add(x => x.Variant, UIButtonVariant.Custom("Variant1")));
+        cut1.Markup.Should().Contain("V1");
+
+        IRenderedComponent<UIButton> cut2 = Render<UIButton>(p =>
+            p.Add(x => x.Variant, UIButtonVariant.Custom("Variant2")));
+        cut2.Markup.Should().Contain("V2");
+
+        IRenderedComponent<UIButton> cut3 = Render<UIButton>(p =>
+            p.Add(x => x.Variant, UIButtonVariant.Custom("Variant3")));
+        cut3.Markup.Should().Contain("V3");
     }
 }
