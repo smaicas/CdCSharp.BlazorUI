@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CdCSharp.BlazorUI.Core.Components.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace CdCSharp.BlazorUI.Core.Components.Abstractions;
@@ -7,36 +8,44 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
     where TComponent : UIVariantComponentBase<TComponent, TVariant>
     where TVariant : Variant
 {
-    [Parameter] public TVariant Variant { get; set; } = default!;
-    [Inject] private IVariantRegistry<TComponent, TVariant>? Registry { get; set; }
+    [Parameter] public TVariant? Variant { get; set; }
+
+    [Inject] private IVariantRegistry<TComponent, TVariant>? VariantRegistry { get; set; }
+
+    private RenderFragment? _resolvedTemplate;
 
     protected abstract TVariant DefaultVariant { get; }
-    protected abstract Dictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
 
-    protected override void OnInitialized()
+    /// <summary>
+    /// Built-in templates provided by the component itself.
+    /// These have the lowest precedence.
+    /// </summary>
+    protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
+
+    protected override void OnParametersSet()
     {
         Variant ??= DefaultVariant;
-        base.OnInitialized();
+        _resolvedTemplate = ResolveTemplate();
+        base.OnParametersSet();
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (GetTemplate() is { } template)
+        if (_resolvedTemplate is not null)
         {
-            builder.AddContent(0, template);
+            builder.AddContent(0, _resolvedTemplate);
         }
-        base.BuildRenderTree(builder);
     }
 
-    private RenderFragment? GetTemplate()
+    private RenderFragment? ResolveTemplate()
     {
-        // First search in built-in templates
-        if (BuiltInTemplates.TryGetValue(Variant, out Func<TComponent, RenderFragment>? builtIn))
+        // 1. Built-in templates (lowest precedence)
+        if (BuiltInTemplates.TryGetValue(Variant!, out Func<TComponent, RenderFragment>? builtIn))
         {
             return builtIn((TComponent)this);
         }
 
-        // Then search in registry
-        return Registry?.GetTemplate(Variant, (TComponent)this);
+        // 2. Registered variants (library / app overrides)
+        return VariantRegistry?.GetTemplate(Variant!, (TComponent)this);
     }
 }

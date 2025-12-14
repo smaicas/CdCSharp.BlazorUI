@@ -1,6 +1,6 @@
 ﻿using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Button;
-using CdCSharp.BlazorUI.Core.Components.Abstractions;
+using CdCSharp.BlazorUI.Core.Components.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Templates;
 using FluentAssertions;
@@ -17,8 +17,9 @@ public class CustomVariantTests : TestContextBase
     {
         // Arrange
         UIButtonVariant customVariant = UIButtonVariant.Custom("Custom");
-        IVariantRegistry<UIButton, UIButtonVariant> registry = Services.GetRequiredService<IVariantRegistry<UIButton, UIButtonVariant>>();
-        registry.Register(customVariant, _templates.BasicCustomTemplate);
+
+        Services.AddBlazorUIVariants(builder => builder.For<UIButton, UIButtonVariant>()
+            .Register(customVariant, _templates.BasicCustomTemplate));
 
         // Act
         IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
