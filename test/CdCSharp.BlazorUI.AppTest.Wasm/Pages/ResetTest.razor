@@ -1,0 +1,277 @@
+﻿@page "/reset-test"
+
+<h1>HTML Elements – Real World Usage</h1>
+
+<hr>
+<br>
+
+<p>Text content</p>
+<p>
+    Lorem <strong>strong</strong> <em>em</em> <u>underline</u>
+    <mark>mark</mark> <small>small</small>
+</p>
+
+<hr>
+<br>
+
+<p>Headings</p>
+<h1>h1</h1>
+<h2>h2</h2>
+<h3>h3</h3>
+<h4>h4</h4>
+<h5>h5</h5>
+<h6>h6</h6>
+
+<hr>
+<br>
+
+<p>Lists</p>
+<ul>
+    <li>Unordered item 1</li>
+    <li>Unordered item 2</li>
+</ul>
+
+<ol>
+    <li>Ordered item 1</li>
+    <li>Ordered item 2</li>
+</ol>
+
+<dl>
+    <dt>Term</dt>
+    <dd>Description</dd>
+</dl>
+
+<hr>
+<br>
+
+<p>Links</p>
+<a href="#" id="link-primary">Primary link</a>
+<br>
+<a href="#" id="link-secondary">Secondary link</a>
+
+<hr>
+<br>
+
+<p>Block elements</p>
+<blockquote>
+    This is a blockquote
+    <cite>— Author</cite>
+</blockquote>
+
+<pre>
+Preformatted
+text block
+</pre>
+
+<code>let value = true;</code>
+
+<hr>
+<br>
+
+<p>Table (realistic)</p>
+<table>
+    <caption>User list</caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Alice</td>
+            <td>alice@mail.com</td>
+            <td>Active</td>
+        </tr>
+        <tr>
+            <td>Bob</td>
+            <td>bob@mail.com</td>
+            <td>Inactive</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+<br>
+
+<p>Form – real usage</p>
+
+<form id="user-form" name="user-form">
+
+    <fieldset>
+        <legend>Personal information</legend>
+
+        <label for="name">Name</label>
+        <br>
+        <input id="name" name="name" type="text" placeholder="John Doe">
+        <br>
+        <br>
+
+        <label for="email">Email</label>
+        <br>
+        <input id="email" name="email" type="email">
+        <br>
+        <br>
+
+        <label for="password">Password</label>
+        <br>
+        <input id="password" name="password" type="password">
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Preferences</legend>
+
+        <p>Subscription type (radio)</p>
+        <label>
+            <input id="sub-basic" name="subscription" type="radio" value="basic">
+            Basic
+        </label>
+        <br>
+
+        <label>
+            <input id="sub-pro" name="subscription" type="radio" value="pro">
+            Pro
+        </label>
+        <br>
+
+        <label>
+            <input id="sub-enterprise" name="subscription" type="radio" value="enterprise">
+            Enterprise
+        </label>
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Notifications (checkbox)</legend>
+
+        <label>
+            <input id="notify-email" name="notifications" type="checkbox" value="email">
+            Email notifications
+        </label>
+        <br>
+
+        <label>
+            <input id="notify-sms" name="notifications" type="checkbox" value="sms">
+            SMS notifications
+        </label>
+        <br>
+
+        <label>
+            <input id="notify-push" name="notifications" type="checkbox" value="push">
+            Push notifications
+        </label>
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Other inputs</legend>
+
+        <label for="birthdate">Birth date</label>
+        <br>
+        <input id="birthdate" name="birthdate" type="date">
+        <br>
+        <br>
+
+        <label for="volume">Volume</label>
+        <br>
+        <input id="volume" name="volume" type="range">
+        <br>
+        <br>
+
+        <label for="color">Favorite color</label>
+        <br>
+        <input id="color" name="color" type="color">
+        <br>
+        <br>
+
+        <label for="file">Profile picture</label>
+        <br>
+        <input id="file" name="file" type="file">
+        <br>
+        <br>
+
+        <label for="bio">Bio</label>
+        <br>
+        <textarea id="bio" name="bio">Short bio...</textarea>
+        <br>
+        <br>
+
+        <label for="country">Country</label>
+        <br>
+        <select id="country" name="country">
+            <option value="">Select one</option>
+            <option value="es">Spain</option>
+            <option value="fr">France</option>
+            <option value="de">Germany</option>
+        </select>
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Actions</legend>
+        <button id="btn-submit" name="submit" type="submit">Submit</button>
+        <button id="btn-reset" name="reset" type="reset">Reset</button>
+        <button id="btn-cancel" name="cancel" type="button">Cancel</button>
+    </fieldset>
+
+</form>
+
+<hr>
+<br>
+
+<p>Media</p>
+<img src="https://via.placeholder.com/150" alt="Image placeholder">
+<br>
+<br>
+<audio controls></audio>
+<br>
+<br>
+<video controls width="250"></video>
+
+<hr>
+<br>
+
+<p>Interactive</p>
+<details>
+    <summary>Details summary</summary>
+    Detailed content
+</details>
+
+<dialog open>
+    Dialog content
+</dialog>
+
+<hr>
+<br>
+
+<p>Graphics</p>
+<canvas width="150" height="80"></canvas>
+<br>
+<br>
+
+<svg width="150" height="80">
+    <rect width="150" height="80"></rect>
+</svg>
+
+<hr>
+<br>
+
+<p>Progress / Meter</p>
+<progress value="70" max="100"></progress>
+<br>
+<br>
+<meter value="0.7"></meter>
+
+<hr>
+<br>
+
+<p>Misc</p>
+<iframe title="iframe test"></iframe>
+<br>
+<address>address@example.com</address>

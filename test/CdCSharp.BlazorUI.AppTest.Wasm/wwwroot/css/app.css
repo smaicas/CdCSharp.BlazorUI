@@ -75,10 +75,6 @@
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
-code {
-    color: #c02d76;
-}
-
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;
@@ -86,4 +82,36 @@ code {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}
+
+/* Definir las fuentes personalizadas */
+@font-face {
+    font-family: 'Roboto Custom';
+    src: url('/font/Roboto-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ArchivoBlack Custom';
+    src: url('/font/ArchivoBlack-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'MPLUSRounded Custom';
+    src: url('/font/MPLUSRounded1c-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Sobrescribir las variables CSS de BlazorUI */
+:root {
+    --blazorui-font-base: 'Roboto Custom', system-ui, sans-serif;
+    --blazorui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
+    --blazorui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
 }

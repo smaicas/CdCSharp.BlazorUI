@@ -95,6 +95,7 @@ export default defineConfig({
         emptyOutDir: false,
         rollupOptions: {
             input: inputFiles,
+            preserveEntrySignatures: 'strict', // Preserve files also if not used by imports (JSInterop required)
             output: {
                 entryFileNames: (chunkInfo) => {
                     // Preserve folder structure in output
@@ -123,31 +124,51 @@ export default defineConfig({
 """;
 
     public static string GetViteConfigCss() => """
-import { defineConfig } from 'vite';
-import path from 'path';
+import { defineConfig } from "vite";
+import path from "path";
 
 export default defineConfig({
     build: {
-        minify: true,
-        outDir: 'wwwroot/css',
+        outDir: "wwwroot/css",
         emptyOutDir: false,
+        cssCodeSplit: false,
         rollupOptions: {
-            input: './CssBundle/main.css',
+            input: "./CssBundle/entry.js",
             output: {
-                dir: path.resolve(__dirname, 'wwwroot/css'),
-                entryFileNames: 'main.css',  // Sin hash
-                assetFileNames: '[name][extname]'
-            }
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name.endsWith(".css")) {
+                        return "blazorui.css";  // CSS final
+                    }
+                    return "[name][extname]";
+                },
+                entryFileNames: "bundle.js",   // Archivo temporal
+                chunkFileNames: "bundle.js"
+            },
+            plugins: [
+                {
+                    name: "remove-js-output",
+                    generateBundle(_, bundle) {
+                        // Eliminar todos los JS
+                        Object.keys(bundle).forEach((file) => {
+                            if (file.endsWith(".js")) {
+                                delete bundle[file];
+                            }
+                        });
+                    }
+                }
+            ]
         }
     }
 });
 """;
 
     public static string GetMainCss() => """
-/* Import generated theme CSS */
+@import './reset.css';
 @import './themes.css';
+@import './initialize-themes.css';
+""";
 
-/* Additional styles can be added here */
-
+    public static string GetMainCssEntryJs() => """
+import "./main.css";
 """;
 }

@@ -23,21 +23,12 @@
 
 	<!-- Target: Compile BuildTools if needed -->
 	<Target Name="EnsureBuildToolsCompiled"
-            BeforeTargets="InitializeBlazorUIConfig"
-            DependsOnTargets="CheckNodeJsInstalled">
+            BeforeTargets="InitializeBlazorUIConfig">
 
-		<PropertyGroup>
-			<_BuildToolsSearchPath>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\CdCSharp.BlazorUI.BuildTools.csproj</_BuildToolsSearchPath>
-			<BuildToolsProject Condition="Exists('$(_BuildToolsSearchPath)')">$(_BuildToolsSearchPath)</BuildToolsProject>
-			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
-			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
-		</PropertyGroup>
-
-		<Message Text="Checking if BuildTools needs compilation..." Importance="high" />
+		<Message Text="Compile BuildTools..." Importance="high" />
 		<MSBuild Projects="$(BuildToolsProject)"
                  Targets="Build"
-                 Properties="Configuration=$(Configuration)"
-                 Condition="Exists('$(BuildToolsProject)') AND (!Exists('$(BuildToolsExe)') AND !Exists('$(BuildToolsDll)'))" />
+                 Properties="Configuration=$(Configuration)" />
 
 	</Target>
 
@@ -158,8 +149,8 @@
 		<!-- Clean node_modules -->
 		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
 
-		<!-- Clean main.css from wwwroot/css -->
-		<Delete Files="$(BlazorUIProjectPath)\wwwroot\css\main.css" TreatErrorsAsWarnings="true" />
+		<!-- Clean blazorui.css from wwwroot/css -->
+		<Delete Files="$(BlazorUIProjectPath)\wwwroot\css\blazorui.css" TreatErrorsAsWarnings="true" />
 
 		<!-- Limpiar la carpeta de JavaScript compilado manteniendo la estructura -->
 		<RemoveDir Directories="$(BlazorUIProjectPath)\wwwroot\js\Types" />

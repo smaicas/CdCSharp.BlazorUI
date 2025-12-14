@@ -2,7 +2,7 @@
 
 namespace CdCSharp.BlazorUI.Core.Theming.Themes;
 
-public class LightTheme : UITheme
+public class LightTheme : UIThemePaletteBase
 {
     public LightTheme()
     {

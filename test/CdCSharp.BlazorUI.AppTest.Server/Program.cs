@@ -1,5 +1,4 @@
 using CdCSharp.BlazorUI.AppTest.Server.Components;
-using CdCSharp.BlazorUI.AppTest.Wasm;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +21,6 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 
 app.UseAntiforgery();
-
-app.UseMiddleware<CssMiddleware>();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

@@ -1,0 +1,17 @@
+﻿@using CdCSharp.BlazorUI.Core.Theming.Interop
+@inherits LayoutComponentBase
+
+@inject IThemeJsInterop ThemeInterop
+
+@Body
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ThemeInterop.InitializeAsync("dark");
+        }
+    }
+}

@@ -1,5 +1,11 @@
-﻿@using CdCSharp.BlazorUI.Core.Components.Abstractions
+﻿@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Core.Theming.Css
+@using CdCSharp.BlazorUI.Core.Theming.Themes
+@using CdCSharp.BlazorUI.Media.Icons
 @using Microsoft.AspNetCore.Components.Web
+
 @inherits UIVariantComponentBase<UIButton, UIButtonVariant>
 
 @{
@@ -7,44 +13,78 @@
 }
 
 @code {
-    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
-    [Parameter] public bool Disabled { get; set; }
 
-    protected override UIButtonVariant DefaultVariant => UIButtonVariant.Primary;
+    /* ========= Public API ========= */
+
+    [Parameter] public string? Text { get; set; }
+    [Parameter] public string? LeadingIcon { get; set; }
+    [Parameter] public string? TrailingIcon { get; set; }
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    /* ========= Variant ========= */
+
+    protected override UIButtonVariant DefaultVariant => UIButtonVariant.Default;
 
     protected override Dictionary<UIButtonVariant, Func<UIButton, RenderFragment>> BuiltInTemplates { get; } = new()
     {
-        [UIButtonVariant.Primary] = b => b.RenderPrimary(),
-        [UIButtonVariant.Secondary] = b => b.RenderSecondary(),
-        [UIButtonVariant.Success] = b => b.RenderSuccess(),
-        [UIButtonVariant.Danger] = b => b.RenderDanger()
+        [UIButtonVariant.Default] = b => b.RenderDefault(),
     };
 
-    private RenderFragment RenderPrimary() => __builder =>
+    /* ========= Render ========= */
+
+    private RenderFragment RenderDefault() => __builder =>
     {
-        <button class="btn btn-primary" @onclick="OnClick" disabled="@Disabled">
-            @ChildContent
+        <button @attributes="AdditionalAttributes"
+                type="button"
+                disabled="@Disabled"
+                @onclick="OnClick">
+
+            @if (LeadingIcon != null)
+            {
+                <UISvgIcon Icon="@LeadingIcon" />
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Text))
+            {
+                <span class="ui-button__text">@Text</span>
+            }
+
+            @if (TrailingIcon != null)
+            {
+                <UISvgIcon Icon="@TrailingIcon" />
+            }
+
         </button>
     };
 
-    public RenderFragment RenderSecondary() => __builder =>
-    {
-        <button class="btn btn-secondary" @onclick="OnClick" disabled="@Disabled">
-            @ChildContent
-        </button>
-    };
+    /* ========= Styling ========= */
 
-    private RenderFragment RenderSuccess() => __builder =>
+    public override IEnumerable<string> GetAdditionalCssClasses()
     {
-        <button class="btn btn-success" @onclick="OnClick" disabled="@Disabled">
-            @ChildContent
-        </button>
-    };
+        yield return CssClassesReference.UIButton;
+        yield return CssClassesReference.Variant(CssClassesReference.UIButton, Variant);
+        if (Text == null)
+        {
+            yield return CssClassesReference.Specific(CssClassesReference.UIButton, "icon-only");
+        }
+    }
 
-    private RenderFragment RenderDanger() => __builder =>
+    override public Dictionary<string, string> GetAdditionalInlineStyles()
     {
-        <button class="btn btn-danger" @onclick="OnClick" disabled="@Disabled">
-            @ChildContent
-        </button>
-    };
+        Dictionary<string, string> styles = new();
+
+        if (BackgroundColor != null)
+        {
+            styles.TryAdd("background-color", BackgroundColor.ToString(ColorOutputFormats.Rgba));
+        }
+        if (Color != null)
+        {
+            styles.TryAdd("color", Color.ToString(ColorOutputFormats.Rgba));
+        }
+
+        return styles;
+    }
 }

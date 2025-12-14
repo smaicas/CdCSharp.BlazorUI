@@ -9,17 +9,19 @@
 		<PackageTags>blazor;components;ui</PackageTags>
 		<Version>1.0.0</Version>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
-	</ItemGroup> <!--
+	</ItemGroup>
+	<!--
 	Incluir el archivo de targets en el paquete NuGet -->
 	<ItemGroup>
 		<None Include="_build\CdCSharp.BlazorUI.targets" Pack="true" PackagePath="build\" />
-	</ItemGroup> <!--
+	</ItemGroup>
+	<!--
 	Importar los targets localmente para desarrollo -->
-	<Import Project="_build\CdCSharp.BlazorUI.targets"
-		Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
+	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
 </Project>

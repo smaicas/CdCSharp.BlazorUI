@@ -1,7 +1,28 @@
 ﻿@page "/"
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Media.Icons
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h2>UITextButton</h2>
+<UIButton Text="Test Button 1"/>
+<UIButton Text="Test Button Disabled" Disabled="true"/>
 
-Welcome to your new app.
+<h2>UISvgIcon Sizes</h2>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Small"/>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Medium"/>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Large"/>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XLarge"/>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XXLarge"/>
+
+<h2>UISvgIcon Colors</h2>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken3" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken2" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken1" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Default" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten1" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten2" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten3" />
+

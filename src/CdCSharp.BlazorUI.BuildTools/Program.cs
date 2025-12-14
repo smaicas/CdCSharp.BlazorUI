@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.BuildTools;
+using CdCSharp.BlazorUI.Core.Theming.Themes;
 
 if (args.Length == 0)
 {
@@ -93,7 +94,7 @@ void PrintUsage()
 
 void GenerateThemes(string outputPath)
 {
-    string cssContent = CssGenerator.GenerateThemesCss();
+    string cssContent = CssGenerator.Generate("dark", [new DarkTheme(), new LightTheme()]);
 
     string? directory = Path.GetDirectoryName(outputPath);
     if (!string.IsNullOrEmpty(directory))
@@ -105,11 +106,46 @@ void GenerateThemes(string outputPath)
     Console.WriteLine($"CSS themes generated successfully at: {outputPath}");
 }
 
+void GenerateResetCss(string outputPath)
+{
+    string cssContent = CssReset.GetResetCss();
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS reset generated successfully at: {outputPath}");
+}
+
+void GenerateInitializeThemesCss(string outputPath)
+{
+    string cssContent = CssInitializeTheme.GetCss();
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS reset generated successfully at: {outputPath}");
+}
+
 async Task BuildAll(string projectPath)
 {
+    // 0. Generate CSS Reset
+    string cssResetPath = Path.Combine(projectPath, "CssBundle", "reset.css");
+    GenerateResetCss(cssResetPath);
+
     // 1. Generate themes
     string themesPath = Path.Combine(projectPath, "CssBundle", "themes.css");
     GenerateThemes(themesPath);
+
+    string initializeThemesPath = Path.Combine(projectPath, "CssBundle", "initialize-themes.css");
+    GenerateInitializeThemesCss(initializeThemesPath);
 
     // 2. Ensure npm packages are installed
     await NpmManager.EnsureNpmInstalled(projectPath);

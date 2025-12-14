@@ -1,0 +1,79 @@
+﻿@page "/UIButton"
+
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Core.Theming.Themes
+@using CdCSharp.BlazorUI.Media.Icons
+
+<h1>Theme Switch</h1>
+
+<UIThemeSwitch></UIThemeSwitch>
+
+<br>
+<hr />
+<br>
+
+<h1>Basic no parameters</h1>
+<UIButton></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>Basic with text</h1>
+<UIButton Text="Test text"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>With Leading Icon</h1>
+<UIButton Text="With Leading Icon" LeadingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>With Trailing Icon</h1>
+<UIButton Text="With Trailing Icon" TrailingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+<br>
+<hr />
+<br>
+
+<h1>With Both Icons</h1>
+<UIButton Text="With Both Icons" LeadingIcon="@UIIcons.Materials.i_alarm" TrailingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>Disabled Button</h1>
+<UIButton Text="Disabled Button" Disabled="true" LeadingIcon="@UIIcons.Materials.i_alarm" TrailingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>Button with OnClick</h1>
+<UIButton Text="Click Me" OnClick="OnButtonClick" LeadingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+<span>Clicks count: @clickCount</span>
+
+<br>
+<hr />
+<br>
+
+<h1>Custom Styled Button</h1>
+<UIButton Text="Custom Styled"
+          LeadingIcon="@UIIcons.Materials.i_alarm" 
+          BackgroundColor="@UIColor.Orange.Darken1" 
+          Color="@UIColor.White.Darken1"></UIButton>
+
+@code {
+
+    private int clickCount = 0;
+    private void OnButtonClick()
+    {
+        clickCount++;
+    }
+}

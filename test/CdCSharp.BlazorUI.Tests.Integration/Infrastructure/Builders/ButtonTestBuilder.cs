@@ -8,7 +8,7 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Builders;
 public class ButtonTestBuilder
 {
     private readonly TestContextBase _context;
-    private UIButtonVariant _variant = UIButtonVariant.Primary;
+    private UIButtonVariant _variant = UIButtonVariant.Default;
     private string _content = "Test Button";
     private bool _disabled = false;
     private EventCallback<MouseEventArgs>? _onClick;
@@ -48,7 +48,7 @@ public class ButtonTestBuilder
         {
             parameters
                 .Add(p => p.Variant, _variant)
-                .Add(p => p.ChildContent, _content)
+                .Add(p => p.Text, _content)
                 .Add(p => p.Disabled, _disabled);
 
             if (_onClick.HasValue)

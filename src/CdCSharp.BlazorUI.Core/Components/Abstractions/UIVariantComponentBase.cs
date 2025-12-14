@@ -8,7 +8,6 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
     where TVariant : Variant
 {
     [Parameter] public TVariant Variant { get; set; } = default!;
-    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Inject] private IVariantRegistry<TComponent, TVariant>? Registry { get; set; }
 
     protected abstract TVariant DefaultVariant { get; }

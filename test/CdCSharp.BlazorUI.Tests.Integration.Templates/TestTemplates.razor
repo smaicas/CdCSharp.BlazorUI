@@ -1,16 +1,67 @@
 ﻿@using CdCSharp.BlazorUI.Components.Generic.Button
+@using Microsoft.AspNetCore.Components
 
-@code{
-    public RenderFragment GlassButtonTemplate(UIButton component) => __builder =>
+@code {
+
+    // Basic template that does not add any classes (inherits all from @attributes)
+    public RenderFragment BasicCustomTemplate(UIButton component) => __builder =>
     {
-        <button class="btn btn-glass" @onclick="component.OnClick" disabled="@component.Disabled">
-            @component.ChildContent
+        <button @attributes="component.AdditionalAttributes"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
         </button>
     };
-    public RenderFragment GlassButtonTemplateWAdditionalAttributes(UIButton component) => __builder =>
+
+    // Simple template that adds a single class
+    // Adding class after @attributes will override de calculated class from AdditionalAttributes
+    // We are free to add them using component.ComputedCssClasses to keep existing classes
+    public RenderFragment AddsOneClassTemplate(UIButton component) => __builder =>
     {
-        <button class="@($"btn btn-glass {component.AdditionalAttributes["custom-param-1"]}")" @onclick="component.OnClick" disabled="@component.Disabled">
-            @component.ChildContent
+        <button @attributes="component.AdditionalAttributes"
+                class="@($"{component.ComputedCssClasses} btn-glass")"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
         </button>
     };
+
+    // Template that removes class from AdditionalAttributes and adds its own
+    // Adding class after @attributes will override de calculated class from AdditionalAttributes
+    // We are free to add them using component.ComputedCssClasses to keep existing classes
+    public RenderFragment OverrideClassTemplate(UIButton component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                class="btn-override-only"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            Override: @component.Text
+        </button>
+    };
+
+    // Template for data attributes.
+    // User of te component can override them (placing @attributes at the end)
+    public RenderFragment DataAttributeTemplate(UIButton component) => __builder =>
+    {
+        <button data-variant="custom"
+                data-test="template-value"
+                @attributes="component.AdditionalAttributes"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+    // Template for data attributes.
+    // User can't override data-variant and data-test because they are placed before @attributes
+    public RenderFragment DataAttributeTemplatePriority(UIButton component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                data-variant="custom"
+                data-test="template-value-priority"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
 }

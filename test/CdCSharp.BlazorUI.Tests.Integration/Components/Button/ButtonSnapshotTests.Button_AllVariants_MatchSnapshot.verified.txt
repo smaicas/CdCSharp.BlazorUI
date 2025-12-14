@@ -1,18 +1,6 @@
 ﻿[
   {
-    Variant: Primary,
-    Html: <button class="btn btn-primary">Primary Button</button>
-  },
-  {
-    Variant: Secondary,
-    Html: <button class="btn btn-secondary">Secondary Button</button>
-  },
-  {
-    Variant: Success,
-    Html: <button class="btn btn-success">Success Button</button>
-  },
-  {
-    Variant: Danger,
-    Html: <button class="btn btn-danger">Danger Button</button>
+    Variant: Default,
+    Html: <button class="ui-button ui-button--default" type="button" b-1bj5h85gdq><span class="ui-button__text" b-1bj5h85gdq>Default Button</span></button>
   }
 ]

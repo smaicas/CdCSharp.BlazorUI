@@ -60,6 +60,13 @@ public static class ConfigInitializer
             await File.WriteAllTextAsync(mainCssPath, ConfigTemplates.GetMainCss());
         }
 
+        string mainCssEntryJsPath = Path.Combine(cssBundlePath, "entry.js");
+        if (!File.Exists(mainCssEntryJsPath))
+        {
+            Console.WriteLine("Creating CssBundle/entry.js...");
+            await File.WriteAllTextAsync(mainCssEntryJsPath, ConfigTemplates.GetMainCssEntryJs());
+        }
+
         // Create Types directory if it doesn't exist
         string typesPath = Path.Combine(projectPath, "Types");
         if (!Directory.Exists(typesPath))

@@ -1,0 +1,36 @@
+﻿@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@using CdCSharp.BlazorUI.Core.Theming.Interop
+@using CdCSharp.BlazorUI.Core.Theming.Themes
+
+@inherits UIVariantComponentBase<UIThemeSwitch, UIThemeSwitchVariant>
+
+@inject IThemeJsInterop ThemeInterop
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+
+    protected override UIThemeSwitchVariant DefaultVariant
+        => UIThemeSwitchVariant.Default;
+
+    protected override Dictionary<UIThemeSwitchVariant, Func<UIThemeSwitch, RenderFragment>> BuiltInTemplates
+        => new()
+        {
+            [UIThemeSwitchVariant.Default] = _ => RenderDefault()
+        };
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <UIButton OnClick="SwitchTheme">
+            Switch theme
+        </UIButton>
+    };
+
+    private async Task SwitchTheme()
+    {
+        await ThemeInterop.ToggleThemeAsync(new[] { "light", "dark" });
+    }
+}

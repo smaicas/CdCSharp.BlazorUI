@@ -14,7 +14,12 @@
     <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
     <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
 
-    <link href="/blazor-ui/styles.css" rel="stylesheet" />
+    <!-- Main library css -->
+    <link href="_content/CdCSharp.BlazorUI/css/blazorui.css" rel="stylesheet" />
+    <!-- Scoped files from library -->
+    <link href="_content/CdCSharp.BlazorUI/CdCSharp.BlazorUI.bundle.scp.css" rel="stylesheet" />
+
+    <link href="css/app.css" rel="stylesheet" />
 
     <script type="importmap"></script>
 </head>
@@ -35,32 +40,6 @@
     </div>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
     <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
-
-    <script>
-        window.injectDynamicCss = (cssContent, id) => {
-            let styleElement = document.getElementById(id);
-            if (!styleElement) {
-                styleElement = document.createElement('style');
-                styleElement.id = id;
-                document.head.appendChild(styleElement);
-            }
-            styleElement.textContent = cssContent;
-        };
-
-        window.injectCssVariables = (variables) => {
-            // Apuntamos al elemento raíz del documento (<html>)
-            const rootElement = document.documentElement;
-
-            // Iteramos sobre el objeto (diccionario) de variables
-            for (const key in variables) {
-                if (variables.hasOwnProperty(key)) {
-                    // Establecemos la propiedad CSS personalizada
-                    // key es '--color-primary', variables[key] es '#FF5733'
-                    rootElement.style.setProperty(key, variables[key]);
-                }
-            }
-        };
-    </script>
 
 </body>
 

@@ -17,11 +17,11 @@ public static class TestExtensions
             : ctx.Render<T>(parameterBuilder);
     }
 
-    public static void ShouldHaveClass(this IElement element, string cssClass) => element.ClassList.Should().Contain(cssClass);
+    public static void ShouldHaveClass(this IElement element, string cssClass) =>
+        element.ClassList.Should().Contain(cssClass);
 
-    public static void ShouldHaveVariant(this IRenderedComponent<IComponent> component, string variantName)
-    {
-        string variantClass = $"variant-{variantName.ToLower()}";
-        component.Find(".btn, .input").ClassList.Should().Contain(variantClass);
-    }
+    public static void ShouldNotHaveClass(this IElement element, string cssClass) =>
+        element.ClassList.Should().NotContain(cssClass);
+
+    public static void ShouldHaveTagName(this IElement element, string expectedTagName) => element.TagName.Should().BeEquivalentTo(expectedTagName, options => options.IgnoringCase());
 }

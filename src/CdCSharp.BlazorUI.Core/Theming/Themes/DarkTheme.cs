@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Core.Theming.Css;
 
 namespace CdCSharp.BlazorUI.Core.Theming.Themes;
 
-public class DarkTheme : UITheme
+public class DarkTheme : UIThemePaletteBase
 {
     public DarkTheme()
     {
@@ -19,7 +19,5 @@ public class DarkTheme : UITheme
         Background = new CssColor("#0F172A");
         Surface = new CssColor("#1E293B");
         Foreground = new CssColor("#F1F5F9");
-
-        BorderColor = new CssColor("#334155");
     }
 }

@@ -1,0 +1,84 @@
+﻿@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@using CdCSharp.BlazorUI.Core.Theming.Css
+@using CdCSharp.BlazorUI.Media.Icons
+@using Microsoft.AspNetCore.Components.Web
+
+@inherits UIVariantComponentBase<UISvgIcon, UISvgIconVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+
+    [Parameter][EditorRequired] public required string Icon { get; set; }
+
+    [Parameter] public string? Title { get; set; }
+
+    [Parameter] public UISvgIconSize Size { get; set; } = UISvgIconSize.Medium;
+
+    [Parameter] public CssColor? Color { get; set; }
+
+    [Parameter] public string ViewBox { get; set; } = "0 0 24 24";
+
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    protected override UISvgIconVariant DefaultVariant => UISvgIconVariant.Default;
+
+    protected override Dictionary<UISvgIconVariant, Func<UISvgIcon, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [UISvgIconVariant.Default] = b => b.RenderDefault(),
+    };
+
+    private RenderFragment RenderDefault() => __builder =>
+{
+    <svg @attributes="@AdditionalAttributes"
+         @onclick="@OnClick"
+         focusable="false"
+         viewBox="@ViewBox"
+         aria-hidden="true">
+        @if (Title != null)
+        {
+            <title>@Title</title>
+        }
+        @((MarkupString)Icon)
+    </svg>
+};
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        return [CssClassesReference.UISvgIcon, IconSizeClass];
+    }
+
+    public override Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        if (Color == null)
+        {
+            return base.GetAdditionalInlineStyles();
+        }
+        return new()
+        {
+           {"color", Color.ToString(ColorOutputFormats.Rgba) }
+        };
+    }
+
+    private string IconSizeClass =>
+            Size switch
+            {
+                UISvgIconSize.Small => CssClassesReference.UISvgIcon_SizeSmall,
+                UISvgIconSize.Medium => CssClassesReference.UISvgIcon_SizeMedium,
+                UISvgIconSize.Large => CssClassesReference.UISvgIcon_SizeLarge,
+                UISvgIconSize.XLarge => CssClassesReference.UISvgIcon_SizeXLarge,
+                UISvgIconSize.XXLarge => CssClassesReference.UISvgIcon_SizeXXLarge,
+                _ => CssClassesReference.UISvgIcon_SizeMedium,
+            };
+
+    public enum UISvgIconSize
+    {
+        Small,
+        Medium,
+        Large,
+        XLarge,
+        XXLarge,
+    }
+}

@@ -1,0 +1,35 @@
+﻿.ui-svg-icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    fill: currentColor;
+    color: currentColor;
+}
+
+.ui-svg-icon-s {
+    font-size: 100%;
+}
+
+.ui-svg-icon-m {
+    font-size: 150%;
+}
+
+.ui-svg-icon-l {
+    font-size: 200%;
+}
+
+.ui-svg-icon-xl {
+    font-size: 250%;
+}
+
+.ui-svg-icon-xxl {
+    font-size: 300%;
+}

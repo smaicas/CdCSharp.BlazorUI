@@ -1,0 +1,112 @@
+﻿@page "/label-pattern"
+
+<style>
+    .option-card {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+        /* Input oculto pero funcional */
+        .option-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    /* Card visual */
+    .option-ui {
+        display: block;
+        padding: 1rem;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        /* Hover */
+        .option-ui:hover {
+            border-color: #888;
+        }
+
+    /* Focus visible (TAB) */
+    .option-card input:focus + .option-ui {
+        outline: 3px solid #5b9dd9;
+        outline-offset: 2px;
+    }
+
+    /* Checked state */
+    .option-card input:checked + .option-ui {
+        border-color: #0066ff;
+        background: #eef4ff;
+    }
+
+    /* Disabled */
+    .option-card input:disabled + .option-ui {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .option-ui strong {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+</style>
+
+<h1>Checkbox card – navegación y foco</h1>
+
+<p>
+    Usa <strong>Tab</strong> para navegar y <strong>Space</strong> para marcar/desmarcar.
+    Haz click en cualquier parte de la card.
+</p>
+
+<hr>
+<br>
+
+<div class="option-card">
+    <input id="opt-1"
+           type="checkbox"
+           @bind="Value1" />
+
+    <label for="opt-1" class="option-ui">
+        <strong>Receive newsletter</strong>
+        <p>Get monthly updates via email.</p>
+    </label>
+</div>
+
+<div class="option-card">
+    <input id="opt-2"
+           type="checkbox"
+           @bind="Value2" />
+
+    <label for="opt-2" class="option-ui">
+        <strong>Enable notifications</strong>
+        <p>Receive push notifications on your device.</p>
+    </label>
+</div>
+
+<div class="option-card">
+    <input id="opt-3"
+           type="checkbox"
+           @bind="Value3"
+           disabled />
+
+    <label for="opt-3" class="option-ui">
+        <strong>Premium features</strong>
+        <p>Upgrade required to enable this option.</p>
+    </label>
+</div>
+
+<hr>
+<br>
+
+<p><strong>Estado actual:</strong></p>
+<ul>
+    <li>Newsletter: @Value1</li>
+    <li>Notifications: @Value2</li>
+    <li>Premium: @Value3</li>
+</ul>
+
+@code {
+    bool Value1;
+    bool Value2;
+    bool Value3;
+}

@@ -1,30 +1,89 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Components.Button;
 
-public class ButtonRenderTests : ComponentVariantTestBase<UIButton, UIButtonVariant>
+public class ButtonRenderTests : TestContextBase
 {
-    protected override UIButtonVariant[] GetAllVariants() =>
-        [UIButtonVariant.Primary, UIButtonVariant.Secondary, UIButtonVariant.Success, UIButtonVariant.Danger];
+    [Fact]
+    public void Button_DefaultVariant_RendersWithCorrectCssClasses()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Test Button"));
 
-    protected override string GetExpectedCssClass(UIButtonVariant variant) =>
-        $"btn-{variant.Name.ToLower()}";
+        // Assert
+        IElement button = cut.Find("button");
+        button.ClassList
+            .Should().Contain("ui-button")
+            .And.Contain("ui-button--default");
+    }
 
     [Fact]
-    public void Button_WithContent_RendersContent()
+    public void Button_WithText_RendersTextContent()
     {
         // Arrange
-        const string content = "Click me";
+        const string expectedText = "Click me";
 
         // Act
         IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
-            .Add(p => p.ChildContent, content));
-        string markup = cut.Markup;
+            .Add(p => p.Text, expectedText));
+
         // Assert
-        cut.Find("button").TextContent.Should().Be(content);
+        cut.Find("button .ui-button__text").TextContent.Should().Be(expectedText);
+    }
+
+    [Fact]
+    public void Button_WithLeadingIcon_RendersIconBeforeText()
+    {
+        // Arrange
+        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Home")
+            .Add(p => p.LeadingIcon, iconPath));
+
+        // Assert
+        IElement button = cut.Find("button");
+        IElement firstChild = button.Children[0];
+        firstChild.ShouldHaveTagName("svg");
+
+        IElement? textSpan = button.QuerySelector(".ui-button__text");
+        textSpan.Should().NotBeNull();
+        textSpan.TextContent.Should().Be("Home");
+    }
+
+    [Fact]
+    public void Button_WithTrailingIcon_RendersIconAfterText()
+    {
+        // Arrange
+        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Next")
+            .Add(p => p.TrailingIcon, iconPath));
+
+        // Assert
+        IElement button = cut.Find("button");
+        IElement lastChild = button.Children[button.Children.Length - 1];
+        lastChild.ShouldHaveTagName("svg");
+    }
+
+    [Fact]
+    public void Button_IconOnly_HasSpecificCssClass()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.LeadingIcon, "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>"));
+
+        // Assert
+        cut.Find("button").ClassList
+            .Should().Contain("ui-button--icon-only");
     }
 
     [Theory]
@@ -34,17 +93,32 @@ public class ButtonRenderTests : ComponentVariantTestBase<UIButton, UIButtonVari
     {
         // Act
         IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Test")
             .Add(p => p.Disabled, disabled));
 
         // Assert
         IElement button = cut.Find("button");
-        if (disabled)
-        {
-            button.HasAttribute("disabled").Should().BeTrue();
-        }
-        else
-        {
-            button.HasAttribute("disabled").Should().BeFalse();
-        }
+        button.HasAttribute("disabled").Should().Be(disabled);
+    }
+
+    [Fact]
+    public void Button_WithAdditionalAttributes_MergesCorrectly()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "data-test-id", "my-button" },
+                { "class", "custom-class" }
+            }));
+
+        // Assert
+        IElement button = cut.Find("button");
+        button.GetAttribute("data-test-id").Should().Be("my-button");
+        button.ClassList
+            .Should().Contain("ui-button")
+            .And.Contain("ui-button--default")
+            .And.Contain("custom-class");
     }
 }

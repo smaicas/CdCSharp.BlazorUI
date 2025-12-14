@@ -3,126 +3,280 @@
 public static class CssReset
 {
     public static string GetResetCss() => """
-        /* CSS Reset */
-        *, *::before, *::after {
+        /* =========================================================
+           CSS BASE / RESET
+           Purpose: Normalize browser defaults while preserving
+           semantic HTML behavior, accessibility and theming
+           ========================================================= */
+
+        /* ---------------------------------------------------------
+           Design Tokens
+           --------------------------------------------------------- */
+        :root {
+            /* Typography */
+            --blazorui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+            --blazorui-font-heading: var(--blazorui-font-base);
+            --blazorui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --blazorui-base-font-size: 16px;
+            --blazorui-base-line-height: 1.5;
+            --blazorui-heading-line-height: 1.2;
+            /* Spacing */
+            --blazorui-body-margin: 8px;
+            --blazorui-space-1: 0.5em;
+            --blazorui-space-2: 1em;
+            /* Heading scale */
+            --blazorui-h1-size: 2em;
+            --blazorui-h2-size: 1.5em;
+            --blazorui-h3-size: 1.17em;
+            --blazorui-h4-size: 1em;
+            --blazorui-h5-size: 0.83em;
+            --blazorui-h6-size: 0.67em;
+            /* UI states */
+            --blazorui-focus-color: Highlight;
+            --blazorui-focus-width: 2px;
+            --blazorui-focus-offset: 2px;
+            --blazorui-disabled-opacity: 0.5;
+            --blazorui-placeholder-opacity: 0.6;
+            /* Separators */
+            --blazorui-hr-color: gray;
+            --blazorui-hr-width: 1px;
+            --blazorui-hr-style: inset;
+            /* Tables */
+            --blazorui-table-border-spacing: 2px;
+            /* Media */
+            --blazorui-media-max-width: 100%;
+            /* Interaction */
+            --blazorui-tap-highlight: transparent;
+        }
+
+        /* ---------------------------------------------------------
+           Global Box Model & Neutral Reset
+           --------------------------------------------------------- */
+        :where(*, *::before, *::after) {
             box-sizing: border-box;
-        }
-        
-        * {
             margin: 0;
-        }
-        
-        html {
-            block-size: 100%;
-            font-size: var(--font-size, 16px);
-        }
-        
-        body {
-            min-height: 100vh;
-            line-height: 1.5;
-            font-family: var(--font-family);
-            font-size: 1rem;
             padding: 0;
-            margin: 0;
-            background-color: var(--background);
-            color: var(--foreground);
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-            font-family: var(--heading-font-family);
-            font-weight: 600;
-            line-height: 1.2;
-        }
-        
-        h1 { font-size: 2.5rem; }
-        h2 { font-size: 2rem; }
-        h3 { font-size: 1.75rem; }
-        h4 { font-size: 1.5rem; }
-        h5 { font-size: 1.25rem; }
-        h6 { font-size: 1rem; }
-        
-        p {
-            font-size: 1rem;
-            margin-block-end: 1em;
-        }
-        
-        img, picture, video, canvas, svg {
-            display: block;
-            max-width: 100%;
-        }
-        
-        input, button, textarea, select {
+            border: 0;
+            background: transparent;
+            color: inherit;
             font: inherit;
-            color: inherit;
-        }
-        
-        button {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-        }
-        
-        a {
-            color: inherit;
             text-decoration: none;
         }
-        
-        /* Utility classes for theming */
-        :root {
-            /* Map current theme variables to generic names */
-            --primary: var(--light-primary);
-            --primary-contrast: var(--light-primary-contrast);
-            --secondary: var(--light-secondary);
-            --secondary-contrast: var(--light-secondary-contrast);
-            --background: var(--light-background);
-            --surface: var(--light-surface);
-            --foreground: var(--light-foreground);
-            --error: var(--light-error);
-            --success: var(--light-success);
-            --warning: var(--light-warning);
-            --info: var(--light-info);
-            --border-color: var(--light-border-color);
-            
-            --font-size: var(--light-font-size);
-            --font-family: var(--light-font-family);
-            --heading-font-family: var(--light-heading-font-family);
-            
-            --spacing-xs: var(--light-spacing-xs);
-            --spacing-sm: var(--light-spacing-sm);
-            --spacing-md: var(--light-spacing-md);
-            --spacing-lg: var(--light-spacing-lg);
-            --spacing-xl: var(--light-spacing-xl);
-            
-            --border-radius: var(--light-border-radius);
+
+        /* ---------------------------------------------------------
+           Root & Body
+           --------------------------------------------------------- */
+        html {
+            block-size: 100%;
+            font-size: var(--blazorui-base-font-size);
+        }
+
+        body {
+            margin: var(--blazorui-body-margin);
+            font-family: var(--blazorui-font-base);
+            font-size: 1rem;
+            line-height: var(--blazorui-base-line-height);
+        }
+
+        /* ---------------------------------------------------------
+           Structural Elements
+           --------------------------------------------------------- */
+        :where( header, main, footer, section, article, nav, aside, figure, figcaption, details, summary, dialog, form ) {
+            display: block;
+        }
+
+        /* ---------------------------------------------------------
+           Headings & Text Content
+           --------------------------------------------------------- */
+        :where(h1, h2, h3, h4, h5, h6) {
+            font-family: var(--blazorui-font-heading);
+            font-weight: bold;
+            line-height: var(--blazorui-heading-line-height);
+        }
+
+        h1 {
+            font-size: var(--blazorui-h1-size);
+            margin-block: 0.67em;
+        }
+
+        h2 {
+            font-size: var(--blazorui-h2-size);
+            margin-block: 0.83em;
+        }
+
+        h3 {
+            font-size: var(--blazorui-h3-size);
+            margin-block: var(--blazorui-space-2);
+        }
+
+        h4 {
+            font-size: var(--blazorui-h4-size);
+            margin-block: 1.33em;
+        }
+
+        h5 {
+            font-size: var(--blazorui-h5-size);
+            margin-block: 1.67em;
+        }
+
+        h6 {
+            font-size: var(--blazorui-h6-size);
+            margin-block: 2.33em;
+        }
+
+        p,
+        blockquote {
+            margin-block: var(--blazorui-space-2);
+        }
+
+        blockquote {
+            margin-inline: 40px;
+        }
+
+        code,
+        pre,
+        kbd,
+        samp {
+            font-family: var(--blazorui-font-monospace);
+            font-size: 0.875em;
+        }
+
+        pre {
+            white-space: pre;
+        }
+
+        /* ---------------------------------------------------------
+           Lists
+           --------------------------------------------------------- */
+        ul,
+        ol {
+            margin-block: var(--blazorui-space-2);
+            padding-inline-start: 40px;
+        }
+
+        ul {
+            list-style: disc;
+        }
+
+        ol {
+            list-style: decimal;
+        }
+
+        /* ---------------------------------------------------------
+           Tables
+           --------------------------------------------------------- */
+        table {
+            border-collapse: separate;
+            border-spacing: var(--blazorui-table-border-spacing);
+        }
+
+        caption {
+            text-align: center;
+        }
+
+        th {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* ---------------------------------------------------------
+           Media / Replaced Elements
+           --------------------------------------------------------- */
+        :where(img, svg, video, canvas, picture) {
+            display: inline-block;
+            max-width: var(--blazorui-media-max-width);
+            height: auto;
+        }
+
+        /* ---------------------------------------------------------
+           Horizontal Rule
+           --------------------------------------------------------- */
+        hr {
+            margin-block: var(--blazorui-space-1);
+            border: var(--blazorui-hr-width) var(--blazorui-hr-style) var(--blazorui-hr-color);
+            overflow: hidden;
+        }
+
+        /* ---------------------------------------------------------
+           Links
+           --------------------------------------------------------- */
+        a {
+            cursor: pointer;
+        }
+
+        /* ---------------------------------------------------------
+           Form Controls Reset
+           --------------------------------------------------------- */
+        :where( input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="tel"], input[type="url"], input:not([type]), textarea, select, button, input[type="button"], input[type="submit"], input[type="reset"] ) {
+            appearance: none;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: inherit;
+            line-height: normal;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        :where(button, input[type="button"], input[type="submit"], input[type="reset"]) {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* Disabled state */
+        :where(button, input, select, textarea):disabled {
+            cursor: default;
+            opacity: var(--blazorui-disabled-opacity);
+        }
+
+        /* Autofill (WebKit) */
+        :where(input, textarea, select):-webkit-autofill {
+            box-shadow: 0 0 0 1000px transparent inset !important;
+            -webkit-text-fill-color: inherit !important;
+        }
+
+        /* Placeholder */
+        ::placeholder {
+            color: inherit;
+            opacity: var(--blazorui-placeholder-opacity);
+        }
+
+        /* ---------------------------------------------------------
+           Focus & Accessibility
+           --------------------------------------------------------- */
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: var(--blazorui-focus-width) solid var(--blazorui-focus-color);
+            outline-offset: var(--blazorui-focus-offset);
+        }
+
+        /* Touch interaction */
+        :where(button, input, textarea, select, a) {
+            -webkit-tap-highlight-color: var(--blazorui-tap-highlight);
+        }
+
+        /* ---------------------------------------------------------
+           Utility Attributes
+           --------------------------------------------------------- */
+        [hidden] {
+            display: none;
         }
         
-        [data-theme="dark"] {
-            --primary: var(--dark-primary);
-            --primary-contrast: var(--dark-primary-contrast);
-            --secondary: var(--dark-secondary);
-            --secondary-contrast: var(--dark-secondary-contrast);
-            --background: var(--dark-background);
-            --surface: var(--dark-surface);
-            --foreground: var(--dark-foreground);
-            --error: var(--dark-error);
-            --success: var(--dark-success);
-            --warning: var(--dark-warning);
-            --info: var(--dark-info);
-            --border-color: var(--dark-border-color);
-            
-            --font-size: var(--dark-font-size);
-            --font-family: var(--dark-font-family);
-            --heading-font-family: var(--dark-heading-font-family);
-            
-            --spacing-xs: var(--dark-spacing-xs);
-            --spacing-sm: var(--dark-spacing-sm);
-            --spacing-md: var(--dark-spacing-md);
-            --spacing-lg: var(--dark-spacing-lg);
-            --spacing-xl: var(--dark-spacing-xl);
-            
-            --border-radius: var(--dark-border-radius);
-        }
         """;
 }

@@ -12,10 +12,7 @@ public class ButtonSnapshotTests : TestContextBase
         // Arrange
         UIButtonVariant[] variants =
         [
-            UIButtonVariant.Primary,
-            UIButtonVariant.Secondary,
-            UIButtonVariant.Success,
-            UIButtonVariant.Danger
+            UIButtonVariant.Default,
         ];
 
         // Act
@@ -23,7 +20,7 @@ public class ButtonSnapshotTests : TestContextBase
         {
             IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
                 .Add(p => p.Variant, variant)
-                .Add(p => p.ChildContent, $"{variant.Name} Button"));
+                .Add(p => p.Text, $"{variant.Name} Button"));
 
             return new { Variant = variant.Name, Html = cut.Markup };
         });
