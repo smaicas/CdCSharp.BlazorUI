@@ -1,6 +1,6 @@
 ﻿using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Button;
-using CdCSharp.BlazorUI.Core.Components.Services;
+using CdCSharp.BlazorUI.Core.Variants.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Templates;
 using FluentAssertions;

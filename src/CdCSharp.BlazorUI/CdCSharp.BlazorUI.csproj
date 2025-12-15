@@ -24,4 +24,32 @@
 	<!--
 	Importar los targets localmente para desarrollo -->
 	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
+
+	<!--Code Generators-->
+
+	<ItemGroup>
+		<!-- Source Generator -->
+		<None Include="..\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery\bin\$(Configuration)\netstandard2.0\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery.dll"
+			  Pack="true"
+			  PackagePath="analyzers/dotnet/cs/"
+			  Visible="false" />
+
+		<!-- PDB para debugging -->
+		<None Include="..\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery\bin\$(Configuration)\netstandard2.0\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery.pdb"
+			  Pack="true"
+			  PackagePath="analyzers/dotnet/cs/"
+			  Visible="false"
+			  Condition="Exists('..\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery\bin\$(Configuration)\netstandard2.0\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery.pdb')" />
+	</ItemGroup>
+
+	<Target Name="EnsureGeneratorsExistBeforePack"
+			BeforeTargets="GenerateNuspec;Pack">
+
+		<Error Text="❌ Source generator not found: CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery.dll. Build it first."
+			   Condition="!Exists('..\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery\bin\$(Configuration)\netstandard2.0\CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery.dll')" />
+
+		<Message Text="✅ Source generator found: CdCSharp.BlazorUI.CodeGeneration.VariantDiscovery.dll"
+				 Importance="high" />
+	</Target>
+
 </Project>

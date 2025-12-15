@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Components.Abstractions;
+﻿namespace CdCSharp.BlazorUI.Core.Variants;
 
 public interface IVariant
 {

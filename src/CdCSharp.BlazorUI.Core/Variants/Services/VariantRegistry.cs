@@ -1,7 +1,7 @@
 ﻿using CdCSharp.BlazorUI.Core.Components.Abstractions;
 using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Core.Components.Services;
+namespace CdCSharp.BlazorUI.Core.Variants.Services;
 
 public interface IVariantRegistry<TComponent, TVariant>
     where TComponent : UIVariantComponentBase<TComponent, TVariant>

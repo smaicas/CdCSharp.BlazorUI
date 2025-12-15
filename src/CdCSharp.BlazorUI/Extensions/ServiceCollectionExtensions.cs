@@ -2,10 +2,12 @@
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
 using CdCSharp.BlazorUI.Core.Components.Abstractions;
-using CdCSharp.BlazorUI.Core.Components.Services;
 using CdCSharp.BlazorUI.Core.Theming.Interop;
+using CdCSharp.BlazorUI.Core.Variants;
+using CdCSharp.BlazorUI.Core.Variants.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Reflection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -19,6 +21,9 @@ public static class ServiceCollectionExtensions
         RegisterVariantRegistry<UIButton, UIButtonVariant>(services);
         RegisterVariantRegistry<UISvgIcon, UISvgIconVariant>(services);
         RegisterVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>(services);
+
+        // 🔍 Descubrir templates generados en el ensamblado consumidor
+        TryRegisterGeneratedTemplates(services);
 
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
@@ -42,6 +47,26 @@ public static class ServiceCollectionExtensions
         services.TryAddSingleton<VariantRegistry<TComponent, TVariant>>();
         services.TryAddSingleton<IVariantRegistry<TComponent, TVariant>>(sp =>
             sp.GetRequiredService<VariantRegistry<TComponent, TVariant>>());
+    }
+
+    private static void TryRegisterGeneratedTemplates(IServiceCollection services)
+    {
+        Assembly callingAssembly = Assembly.GetCallingAssembly();
+
+        Type? autoRegisterType = callingAssembly.GetType(
+            "CdCSharp.BlazorUI.Generated.AutoRegisterTemplates");
+
+        if (autoRegisterType is null)
+            return;
+
+        MethodInfo? method = autoRegisterType.GetMethod(
+            "AddGeneratedTemplates",
+            BindingFlags.Public | BindingFlags.Static);
+
+        if (method is null)
+            return;
+
+        method.Invoke(null, new object[] { services });
     }
 }
 

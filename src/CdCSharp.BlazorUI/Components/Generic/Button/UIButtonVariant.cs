@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Components.Abstractions;
+﻿using CdCSharp.BlazorUI.Core.Variants;
 
 namespace CdCSharp.BlazorUI.Components.Generic.Button;
 

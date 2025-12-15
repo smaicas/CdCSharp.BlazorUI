@@ -1,0 +1,35 @@
+﻿@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Variants
+@using Microsoft.AspNetCore.Components
+
+@code {
+
+    [VariantTemplate(typeof(UIButton), typeof(UIButtonVariant), "Custom")]
+    public RenderFragment BasicCustomTemplate(UIButton component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
+    [VariantTemplate(typeof(UIButton), typeof(UIButtonVariant), "Glass")]
+    public RenderFragment AddsOneClassTemplate(UIButton component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                class="@($"{component.ComputedCssClasses} btn-glass")"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
+    [VariantTemplate(typeof(UIButton), typeof(UIButtonVariant), "Override")]
+    public RenderFragment OverrideClassTemplate(UIButton component) => __builder =>
+    {
+        <button class="btn-override-only">
+            Override: @component.Text
+        </button>
+    };
+}
