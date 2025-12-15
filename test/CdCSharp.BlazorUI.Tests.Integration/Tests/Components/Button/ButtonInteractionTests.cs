@@ -5,11 +5,12 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
+[Trait("Components", "UIButton")]
 public class ButtonInteractionTests : TestContextBase
 {
-    [Fact]
+    [Fact(DisplayName = "Click_InvokesCallback")]
     public async Task Button_Click_InvokesCallback()
     {
         // Arrange

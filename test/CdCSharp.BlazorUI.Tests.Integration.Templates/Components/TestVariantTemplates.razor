@@ -1,10 +1,8 @@
-﻿@using CdCSharp.BlazorUI.Components.Generic.Button
-@using Microsoft.AspNetCore.Components
+﻿@using Microsoft.AspNetCore.Components
 
 @code {
-
     // Basic template that does not add any classes (inherits all from @attributes)
-    public RenderFragment BasicCustomTemplate(UIButton component) => __builder =>
+    public RenderFragment BasicCustomTemplate(TestVariantComponent component) => __builder =>
     {
         <button @attributes="component.AdditionalAttributes"
                 @onclick="component.OnClick"
@@ -14,9 +12,7 @@
     };
 
     // Simple template that adds a single class
-    // Adding class after @attributes will override de calculated class from AdditionalAttributes
-    // We are free to add them using component.ComputedCssClasses to keep existing classes
-    public RenderFragment AddsOneClassTemplate(UIButton component) => __builder =>
+    public RenderFragment AddsOneClassTemplate(TestVariantComponent component) => __builder =>
     {
         <button @attributes="component.AdditionalAttributes"
                 class="@($"{component.ComputedCssClasses} btn-glass")"
@@ -27,9 +23,7 @@
     };
 
     // Template that removes class from AdditionalAttributes and adds its own
-    // Adding class after @attributes will override de calculated class from AdditionalAttributes
-    // We are free to add them using component.ComputedCssClasses to keep existing classes
-    public RenderFragment OverrideClassTemplate(UIButton component) => __builder =>
+    public RenderFragment OverrideClassTemplate(TestVariantComponent component) => __builder =>
     {
         <button @attributes="component.AdditionalAttributes"
                 class="btn-override-only"
@@ -39,9 +33,8 @@
         </button>
     };
 
-    // Template for data attributes.
-    // User of te component can override them (placing @attributes at the end)
-    public RenderFragment DataAttributeTemplate(UIButton component) => __builder =>
+    // Template for data attributes - user can override
+    public RenderFragment DataAttributeTemplate(TestVariantComponent component) => __builder =>
     {
         <button data-variant="custom"
                 data-test="template-value"
@@ -51,9 +44,9 @@
             @component.Text
         </button>
     };
-    // Template for data attributes.
-    // User can't override data-variant and data-test because they are placed before @attributes
-    public RenderFragment DataAttributeTemplatePriority(UIButton component) => __builder =>
+
+    // Template for data attributes - template has priority
+    public RenderFragment DataAttributeTemplatePriority(TestVariantComponent component) => __builder =>
     {
         <button @attributes="component.AdditionalAttributes"
                 data-variant="custom"
@@ -64,4 +57,12 @@
         </button>
     };
 
+    // Registered variant template
+    public RenderFragment RegisteredTemplate(TestVariantComponent component) => __builder =>
+    {
+        <div @attributes="component.AdditionalAttributes"
+             class="@($"{component.ComputedCssClasses} registered-variant")">
+            <span>Registered: @component.Text</span>
+        </div>
+    };
 }

@@ -65,7 +65,7 @@
     public override IEnumerable<string> GetAdditionalCssClasses()
     {
         yield return CssClassesReference.UIButton;
-        yield return CssClassesReference.Variant(CssClassesReference.UIButton, Variant);
+        yield return CssClassesReference.Variant(CssClassesReference.UIButton, Variant ?? DefaultVariant);
         if (Text == null)
         {
             yield return CssClassesReference.Specific(CssClassesReference.UIButton, "icon-only");

@@ -4,11 +4,12 @@ using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
+[Trait("Components", "UIButton")]
 public class ButtonRenderTests : TestContextBase
 {
-    [Fact]
+    [Fact(DisplayName = "DefaultVariant_RendersWithCorrectCssClasses")]
     public void Button_DefaultVariant_RendersWithCorrectCssClasses()
     {
         // Act
@@ -22,7 +23,7 @@ public class ButtonRenderTests : TestContextBase
             .And.Contain("ui-button--default");
     }
 
-    [Fact]
+    [Fact(DisplayName = "WithText_RendersTextContent")]
     public void Button_WithText_RendersTextContent()
     {
         // Arrange
@@ -36,7 +37,7 @@ public class ButtonRenderTests : TestContextBase
         cut.Find("button .ui-button__text").TextContent.Should().Be(expectedText);
     }
 
-    [Fact]
+    [Fact(DisplayName = "WithLeadingIcon_RendersIconBeforeText")]
     public void Button_WithLeadingIcon_RendersIconBeforeText()
     {
         // Arrange
@@ -57,7 +58,7 @@ public class ButtonRenderTests : TestContextBase
         textSpan.TextContent.Should().Be("Home");
     }
 
-    [Fact]
+    [Fact(DisplayName = "WithTrailingIcon_RendersIconAfterText")]
     public void Button_WithTrailingIcon_RendersIconAfterText()
     {
         // Arrange
@@ -74,7 +75,7 @@ public class ButtonRenderTests : TestContextBase
         lastChild.ShouldHaveTagName("svg");
     }
 
-    [Fact]
+    [Fact(DisplayName = "IconOnly_HasSpecificCssClass")]
     public void Button_IconOnly_HasSpecificCssClass()
     {
         // Act
@@ -86,7 +87,7 @@ public class ButtonRenderTests : TestContextBase
             .Should().Contain("ui-button--icon-only");
     }
 
-    [Theory]
+    [Theory(DisplayName = "DisabledState_RendersCorrectly")]
     [InlineData(true)]
     [InlineData(false)]
     public void Button_DisabledState_RendersCorrectly(bool disabled)
@@ -101,7 +102,7 @@ public class ButtonRenderTests : TestContextBase
         button.HasAttribute("disabled").Should().Be(disabled);
     }
 
-    [Fact]
+    [Fact(DisplayName = "WithAdditionalAttributes_MergesCorrectly")]
     public void Button_WithAdditionalAttributes_MergesCorrectly()
     {
         // Act

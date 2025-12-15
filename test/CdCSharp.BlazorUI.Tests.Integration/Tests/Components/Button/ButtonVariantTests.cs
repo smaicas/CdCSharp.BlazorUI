@@ -3,11 +3,12 @@ using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
+[Trait("Components", "UIButton")]
 public class ButtonVariantTests : TestContextBase
 {
-    [Fact]
+    [Fact(DisplayName = "DefaultVariant_RendersCorrectly")]
     public void Button_DefaultVariant_RendersCorrectly()
     {
         // Act
@@ -20,7 +21,7 @@ public class ButtonVariantTests : TestContextBase
         button.ShouldHaveClass("ui-button--default");
     }
 
-    [Fact]
+    [Fact(DisplayName = "DefaultVariantWithIcons_RendersCorrectStructure")]
     public void Button_DefaultVariantWithIcons_RendersCorrectStructure()
     {
         // Act
@@ -36,11 +37,4 @@ public class ButtonVariantTests : TestContextBase
         button.Children[1].ShouldHaveTagName("span"); // Text
         button.Children[2].ShouldHaveTagName("svg"); // Trailing icon
     }
-
-    // Future tests for when more built-in variants are added
-    // [Fact]
-    // public void Button_PrimaryVariant_RendersCorrectly() { }
-    // 
-    // [Fact]
-    // public void Button_SecondaryVariant_RendersCorrectly() { }
 }

@@ -2,11 +2,12 @@
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
+[Trait("Components", "UIButton")]
 public class ButtonSnapshotTests : TestContextBase
 {
-    [Fact]
+    [Fact(DisplayName = "AllVariants_MatchSnapshot")]
     public Task Button_AllVariants_MatchSnapshot()
     {
         // Arrange

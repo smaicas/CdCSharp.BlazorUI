@@ -1,0 +1,45 @@
+﻿@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@using CdCSharp.BlazorUI.Core.Theming.Css
+@inherits UIVariantComponentBase<TestVariantComponent, TestVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public string Text { get; set; } = "Test Variant Component";
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    protected override TestVariant DefaultVariant => TestVariant.Default;
+
+    protected override Dictionary<TestVariant, Func<TestVariantComponent, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [TestVariant.Default] = component => component.RenderDefault(),
+        [TestVariant.Alternative] = component => component.RenderAlternative(),
+    };
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <button @attributes="AdditionalAttributes"
+                @onclick="OnClick"
+                disabled="@Disabled">
+            @Text
+        </button>
+    };
+
+    private RenderFragment RenderAlternative() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes"
+             @onclick="OnClick"
+             class="@($"{ComputedCssClasses} alternative-style")">
+            <span>Alt: @Text</span>
+        </div>
+    };
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return "test-variant-component";
+        yield return CssClassesReference.Variant("test-variant-component", Variant ?? DefaultVariant);
+    }
+}
