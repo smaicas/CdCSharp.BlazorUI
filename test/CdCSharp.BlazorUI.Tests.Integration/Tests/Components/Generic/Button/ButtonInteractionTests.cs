@@ -5,7 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
 
 [Trait("Components", "UIButton")]
 public class ButtonInteractionTests : TestContextBase

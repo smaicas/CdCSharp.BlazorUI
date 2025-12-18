@@ -1,10 +1,11 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Core.Theming.Css;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
 
 [Trait("Components", "UIButton")]
 public class ButtonRenderTests : TestContextBase
@@ -122,4 +123,36 @@ public class ButtonRenderTests : TestContextBase
             .And.Contain("ui-button--default")
             .And.Contain("custom-class");
     }
+
+    [Fact(DisplayName = "WithCustomColors_AppliesInlineStyles")]
+    public void Button_WithCustomColors_AppliesInlineStyles()
+    {
+        // Arrange
+        CssColor backgroundColor = new("#FF0000");
+        CssColor textColor = new("#FFFFFF");
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Colored Button")
+            .Add(p => p.BackgroundColor, backgroundColor)
+            .Add(p => p.Color, textColor));
+
+        // Assert
+        IElement button = cut.Find("button");
+        string? style = button.GetAttribute("style");
+        style.Should().Contain("background-color: rgba(255,0,0,1)");
+        style.Should().Contain("color: rgba(255,255,255,1)");
+    }
+
+    [Fact(DisplayName = "WithNullText_DoesNotRenderTextSpan")]
+    public void Button_WithNullText_DoesNotRenderTextSpan()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, null));
+
+        // Assert
+        cut.FindAll(".ui-button__text").Should().BeEmpty();
+    }
+
 }

@@ -134,7 +134,8 @@ public class ColorClassGenerator : IIncrementalGenerator
             CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
                 .AddUsings(
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Core.Theming.Css")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Drawing"))
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Drawing")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Diagnostics.CodeAnalysis"))
                 ).AddMembers(namespaceDeclaration
                     .AddMembers(classSyntax)
                 );
@@ -146,11 +147,18 @@ public class ColorClassGenerator : IIncrementalGenerator
     }
 
     private ClassDeclarationSyntax GenerateClassDeclaration(string className) =>
-        SyntaxFactory.ClassDeclaration(className)
-            .AddModifiers(
-                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+     SyntaxFactory.ClassDeclaration(className)
+         .AddAttributeLists(
+             SyntaxFactory.AttributeList(
+                 SyntaxFactory.SingletonSeparatedList(
+                     SyntaxFactory.Attribute(SyntaxFactory.ParseName("ExcludeFromCodeCoverage"))
+                 )
+             )
+         )
+         .AddModifiers(
+             SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+             SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+             SyntaxFactory.Token(SyntaxKind.PartialKeyword));
 
     private PropertyDeclarationSyntax GenerateColorProperty(string name)
     {

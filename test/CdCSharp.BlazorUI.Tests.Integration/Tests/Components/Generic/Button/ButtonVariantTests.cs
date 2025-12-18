@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
 
 [Trait("Components", "UIButton")]
 public class ButtonVariantTests : TestContextBase

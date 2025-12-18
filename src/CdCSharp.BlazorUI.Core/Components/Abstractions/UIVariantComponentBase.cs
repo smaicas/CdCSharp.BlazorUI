@@ -39,13 +39,13 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
 
     private RenderFragment? ResolveTemplate()
     {
-        // 1. Built-in templates (lowest precedence)
+        // Built-in templates
         if (BuiltInTemplates.TryGetValue(Variant!, out Func<TComponent, RenderFragment>? builtIn))
         {
             return builtIn((TComponent)this);
         }
 
-        // 2. Registered variants (library / app overrides)
+        // Registered variants
         return VariantRegistry?.GetTemplate(Variant!, (TComponent)this);
     }
 }

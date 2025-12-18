@@ -1,0 +1,22 @@
+﻿[
+  {
+    Size: Small,
+    Html: <svg class="ui-svg-icon ui-svg-icon-s" focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-14dtts4bka><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  },
+  {
+    Size: Medium,
+    Html: <svg class="ui-svg-icon ui-svg-icon-m" focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-14dtts4bka><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  },
+  {
+    Size: Large,
+    Html: <svg class="ui-svg-icon ui-svg-icon-l" focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-14dtts4bka><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  },
+  {
+    Size: XLarge,
+    Html: <svg class="ui-svg-icon ui-svg-icon-xl" focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-14dtts4bka><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  },
+  {
+    Size: XXLarge,
+    Html: <svg class="ui-svg-icon ui-svg-icon-xxl" focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-14dtts4bka><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+  }
+]
