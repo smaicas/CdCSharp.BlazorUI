@@ -1,0 +1,144 @@
+﻿/* Base styles */
+.ui-theme-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--palette-surface);
+    color: var(--palette-foreground);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    min-width: 120px;
+    height: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .ui-theme-switch:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .ui-theme-switch:active {
+        transform: translateY(0);
+    }
+
+    .ui-theme-switch:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+/* Default variant */
+.ui-theme-switch--default .ui-theme-switch__content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ui-theme-switch--default .ui-theme-switch__content--transitioning {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.ui-theme-switch--default .ui-theme-switch__icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.ui-theme-switch--default .ui-theme-switch__label {
+    font-weight: 500;
+}
+
+/* SunMoon variant */
+.ui-theme-switch--sunmoon {
+    width: 60px;
+    height: 32px;
+    padding: 0.25rem;
+    border-radius: 2rem;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-width: unset;
+    position: relative;
+}
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--light {
+        background: linear-gradient(135deg, #87CEEB, #98D8E8);
+    }
+
+    .ui-theme-switch--sunmoon .ui-theme-switch__sun-moon-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .ui-theme-switch--sunmoon .ui-theme-switch__icon-wrapper {
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--light .ui-theme-switch__icon-wrapper {
+        transform: translateX(0);
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--dark .ui-theme-switch__icon-wrapper {
+        transform: translateX(28px);
+    }
+
+    .ui-theme-switch--sunmoon .ui-theme-switch__sun,
+    .ui-theme-switch--sunmoon .ui-theme-switch__moon {
+        font-size: 0.875rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Animation for icon rotation */
+    .ui-theme-switch--sunmoon .ui-theme-switch__icon-wrapper {
+        animation: none;
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--light .ui-theme-switch__sun {
+        animation: rotate-in 0.3s ease-out;
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--dark .ui-theme-switch__moon {
+        animation: rotate-in 0.3s ease-out;
+    }
+
+@keyframes rotate-in {
+    from {
+        transform: rotate(-180deg) scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: rotate(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Hover effect for SunMoon */
+.ui-theme-switch--sunmoon:hover .ui-theme-switch__icon-wrapper {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus styles */
+.ui-theme-switch:focus-visible {
+    outline: 2px solid var(--palette-primary);
+    outline-offset: 2px;
+}

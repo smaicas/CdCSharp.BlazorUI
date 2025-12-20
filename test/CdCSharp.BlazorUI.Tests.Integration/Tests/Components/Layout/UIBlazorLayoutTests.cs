@@ -1,6 +1,6 @@
 ﻿using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 using CdCSharp.BlazorUI.Components.Layout;
-using CdCSharp.BlazorUI.Core.Theming.Interop;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;

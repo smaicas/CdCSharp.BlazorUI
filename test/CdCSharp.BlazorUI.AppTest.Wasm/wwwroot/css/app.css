@@ -75,6 +75,10 @@
         content: var(--blazor-load-percentage-text, "Loading");
     }
 
+code {
+    color: #c02d76;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
     color: var(--bs-secondary-color);
     text-align: end;
@@ -84,7 +88,7 @@
     text-align: start;
 }
 
-/* Definir las fuentes personalizadas */
+/* Customize fonts */
 @font-face {
     font-family: 'Roboto Custom';
     src: url('/font/Roboto-Regular.ttf') format('truetype');
@@ -109,7 +113,7 @@
     font-display: swap;
 }
 
-/* Sobrescribir las variables CSS de BlazorUI */
+/*Override CSS Variables form BlazorUI fonts*/
 :root {
     --blazorui-font-base: 'Roboto Custom', system-ui, sans-serif;
     --blazorui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;

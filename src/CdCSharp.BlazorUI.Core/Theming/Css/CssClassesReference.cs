@@ -17,6 +17,9 @@ public class CssClassesReference
     public const string UISvgIcon_SizeXLarge = "ui-svg-icon-xl";
     public const string UISvgIcon_SizeXXLarge = "ui-svg-icon-xxl";
 
+    // UIThemeSwitch
+    public const string UIThemeSwitch = "ui-theme-switch";
+
     public static string Variant(string componentBaseClass, Variant variant)
         => $"{componentBaseClass.ToLowerInvariant()}--{variant.ToString().ToLowerInvariant()}";
 

@@ -1,6 +1,7 @@
 ﻿using CdCSharp.BlazorUI.Core.Extensions;
 using System.Drawing;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CdCSharp.BlazorUI.Core.Theming.Css;
 
@@ -132,98 +133,54 @@ public class CssColor : IEquatable<CssColor>
     #region Constructor
 
     /// <summary>
-    /// Constructs a CssColor from hsl and alpha values
+    /// Constructs a CssColor from HSL and alpha values (double alpha)
     /// </summary>
-    /// <param name="h">
-    /// The hue value
-    /// </param>
-    /// <param name="s">
-    /// The saturation value
-    /// </param>
-    /// <param name="l">
-    /// The luminosity value
-    /// </param>
-    /// <param name="a">
-    /// The alpha value
-    /// </param>
     public CssColor(double h, double s, double l, double a)
         : this(h, s, l, (int)(a * 255.0).EnsureRange(255))
     {
     }
 
     /// <summary>
-    /// Constructs a CssColor from hsl and alpha values
+    /// Constructs a CssColor from HSL and alpha values (int alpha)
     /// </summary>
-    /// <param name="h">
-    /// The hue value
-    /// </param>
-    /// <param name="s">
-    /// The saturation value
-    /// </param>
-    /// <param name="l">
-    /// The luminosity value
-    /// </param>
-    /// <param name="a">
-    /// The alpha value
-    /// </param>
     public CssColor(double h, double s, double l, int a)
     {
-        _valuesAsByte = new byte[4];
-
         h = Math.Round(h.EnsureRange(360), 0);
         s = Math.Round(s.EnsureRange(1), 2);
         l = Math.Round(l.EnsureRange(1), 2);
         a = a.EnsureRange(255);
 
-        // achromatic argb (gray scale)
+        _valuesAsByte = new byte[4];
+
+        // Achromatic (gray scale)
         if (Math.Abs(s) < Epsilon)
         {
-            _valuesAsByte[0] = (byte)((int)Math.Ceiling(l * 255D)).EnsureRange(0, 255);
-            _valuesAsByte[1] = (byte)((int)Math.Ceiling(l * 255D)).EnsureRange(0, 255);
-            _valuesAsByte[2] = (byte)((int)Math.Ceiling(l * 255D)).EnsureRange(0, 255);
+            byte gray = ((int)Math.Ceiling(l * 255D)).EnsureRangeToByte();
+            _valuesAsByte[0] = gray;
+            _valuesAsByte[1] = gray;
+            _valuesAsByte[2] = gray;
             _valuesAsByte[3] = (byte)a;
         }
         else
         {
-            double q = l < .5D
-                ? l * (1D + s)
-                : l + s - l * s;
+            double q = l < .5D ? l * (1D + s) : l + s - l * s;
             double p = 2D * l - q;
 
             double hk = h / 360D;
             double[] T = new double[3];
-            T[0] = hk + 1D / 3D; // Tr
-            T[1] = hk; // Tb
-            T[2] = hk - 1D / 3D; // Tg
+            T[0] = hk + 1D / 3D;
+            T[1] = hk;
+            T[2] = hk - 1D / 3D;
 
             for (int i = 0; i < 3; i++)
             {
-                if (T[i] < 0D)
-                {
-                    T[i] += 1D;
-                }
+                if (T[i] < 0D) T[i] += 1D;
+                if (T[i] > 1D) T[i] -= 1D;
 
-                if (T[i] > 1D)
-                {
-                    T[i] -= 1D;
-                }
-
-                if (T[i] * 6D < 1D)
-                {
-                    T[i] = p + (q - p) * 6D * T[i];
-                }
-                else if (T[i] * 2D < 1)
-                {
-                    T[i] = q;
-                }
-                else if (T[i] * 3D < 2)
-                {
-                    T[i] = p + (q - p) * (2D / 3D - T[i]) * 6D;
-                }
-                else
-                {
-                    T[i] = p;
-                }
+                if (T[i] * 6D < 1D) T[i] = p + (q - p) * 6D * T[i];
+                else if (T[i] * 2D < 1D) T[i] = q;
+                else if (T[i] * 3D < 2D) T[i] = p + (q - p) * (2D / 3D - T[i]) * 6D;
+                else T[i] = p;
             }
 
             _valuesAsByte[0] = ((int)Math.Round(T[0] * 255D)).EnsureRangeToByte();
@@ -238,196 +195,143 @@ public class CssColor : IEquatable<CssColor>
     }
 
     /// <summary>
-    /// Constructs a CssColor from rgba values
+    /// Constructs a CssColor from RGBA bytes
     /// </summary>
-    /// <param name="r">
-    /// The red value
-    /// </param>
-    /// <param name="g">
-    /// The green value
-    /// </param>
-    /// <param name="b">
-    /// The blue value
-    /// </param>
-    /// <param name="a">
-    /// The alpha value
-    /// </param>
     public CssColor(byte r, byte g, byte b, byte a)
     {
-        _valuesAsByte = new byte[4];
-
-        _valuesAsByte[0] = r;
-        _valuesAsByte[1] = g;
-        _valuesAsByte[2] = b;
-        _valuesAsByte[3] = a;
-
+        _valuesAsByte = new[] { r, g, b, a };
         CalculateHsl();
     }
 
     /// <summary>
-    /// Constructs a CssColor from rgba values
+    /// Constructs a CssColor from RGBA integers and double alpha
     /// </summary>
-    /// <param name="r">
-    /// The red value
-    /// </param>
-    /// <param name="g">
-    /// The green value
-    /// </param>
-    /// <param name="b">
-    /// The blue value
-    /// </param>
-    /// <param name="a">
-    /// The alpha value
-    /// </param>
-    public CssColor(int r, int g, int b, double alpha) :
-        this(r, g, b, (byte)(alpha * 255.0).EnsureRange(255))
+    public CssColor(int r, int g, int b, double alpha)
+        : this(r, g, b, (byte)(alpha * 255.0).EnsureRange(255))
     {
     }
 
     /// <summary>
-    /// Constructs a CssColor from rgba values
+    /// Constructs a CssColor from RGBA integers and int alpha
     /// </summary>
-    /// <param name="r">
-    /// The red value
-    /// </param>
-    /// <param name="g">
-    /// The green value
-    /// </param>
-    /// <param name="b">
-    /// The blue value
-    /// </param>
-    /// <param name="a">
-    /// The alpha value
-    /// </param>
-    public CssColor(int r, int g, int b, int alpha) :
-        this((byte)r.EnsureRange(255), (byte)g.EnsureRange(255), (byte)b.EnsureRange(255), (byte)alpha.EnsureRange(255))
+    public CssColor(int r, int g, int b, int alpha)
+        : this((byte)r.EnsureRange(255), (byte)g.EnsureRange(255), (byte)b.EnsureRange(255), (byte)alpha.EnsureRange(255))
     {
     }
 
     /// <summary>
-    /// Constructs a CssColor from a System.Drawing.Color value and a <see cref="ColorVariant" />
+    /// Constructs a CssColor from System.Drawing.Color and optional variant
     /// </summary>
-    /// <param name="color">
-    /// The Color value
-    /// </param>
-    /// <param name="colorVariant">
-    /// The Color variant
-    /// </param>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// </exception>
     public CssColor(Color color, CssColorVariant? colorVariant)
     {
-        _valuesAsByte = new byte[4];
-
         CssColor currentColor = new(color.R, color.G, color.B, color.A);
-        switch (colorVariant?.Mode)
+
+        if (colorVariant != null)
         {
-            case CssColorVariant.Modifier.Darken:
-                currentColor = currentColor.ColorDarken(colorVariant.Alteration);
-                break;
-
-            case CssColorVariant.Modifier.Lighten:
-                currentColor = currentColor.ColorLighten(colorVariant.Alteration);
-                break;
-
-            case null:
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(colorVariant), colorVariant, null);
+            currentColor = colorVariant.Mode switch
+            {
+                CssColorVariant.Modifier.Darken => currentColor.ColorDarken(colorVariant.Alteration),
+                CssColorVariant.Modifier.Lighten => currentColor.ColorLighten(colorVariant.Alteration),
+                _ => throw new ArgumentOutOfRangeException(nameof(colorVariant), colorVariant, null),
+            };
         }
 
-        _valuesAsByte[0] = currentColor.R;
-        _valuesAsByte[1] = currentColor.G;
-        _valuesAsByte[2] = currentColor.B;
-        _valuesAsByte[3] = currentColor.A;
-
+        _valuesAsByte = new[] { currentColor.R, currentColor.G, currentColor.B, currentColor.A };
         CalculateHsl();
     }
 
     /// <summary>
-    /// Constructs a CssColor from string representation.
+    /// Constructs a CssColor from string representation (RGB/RGBA/HEX)
     /// </summary>
-    /// <param name="value">
-    /// </param>
-    /// <exception cref="ArgumentException">
-    /// </exception>
     public CssColor(string value)
     {
-        value = value.Trim().ToLower();
+        if (string.IsNullOrWhiteSpace(value))
+            throw new ArgumentException("Color value cannot be null or empty.", nameof(value));
 
-        if (value.StartsWith("rgba"))
+        value = value.Trim().ToLowerInvariant();
+
+        byte[] bytes = value switch
         {
-            string[] parts = SplitInputIntoParts(value);
-            if (parts.Length != 4)
-            {
-                throw new ArgumentException("invalid color format");
-            }
+            _ when IsRgb(value) => ParseRgb(value),
+            _ when IsHex(value) => ParseHex(value),
+            _ => throw new ArgumentException("Invalid CSS color format.", nameof(value))
+        };
 
-            _valuesAsByte = new[]
-            {
-                byte.Parse(parts[0], CultureInfo.InvariantCulture),
-                byte.Parse(parts[1], CultureInfo.InvariantCulture),
-                byte.Parse(parts[2], CultureInfo.InvariantCulture),
-                (byte)(255 * double.Parse(parts[3], CultureInfo.InvariantCulture)).EnsureRange(0,255)
-            };
-        }
-        else if (value.StartsWith("rgb"))
+        _valuesAsByte = bytes;
+        CalculateHsl();
+    }
+
+    private static bool IsRgb(string value) =>
+        Regex.IsMatch(
+            value,
+            @"^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(\s*,\s*(0(\.\d+)?|1(\.0+)?))?\s*\)$",
+            RegexOptions.CultureInvariant
+        );
+
+    private static byte[] ParseRgb(string value)
+    {
+        string[] parts = SplitInputIntoParts(value);
+
+        if (value.StartsWith("rgba") && parts.Length != 4 ||
+            value.StartsWith("rgb") && !value.StartsWith("rgba") && parts.Length != 3)
         {
-            string[] parts = SplitInputIntoParts(value);
-            if (parts.Length != 3)
-            {
-                throw new ArgumentException("invalid color format");
-            }
-
-            _valuesAsByte = new byte[]
-            {
-                byte.Parse(parts[0], CultureInfo.InvariantCulture),
-                byte.Parse(parts[1], CultureInfo.InvariantCulture),
-                byte.Parse(parts[2], CultureInfo.InvariantCulture),
-                255
-            };
+            throw new ArgumentException("Invalid rgb/rgba format.", nameof(value));
         }
-        else
+
+        byte r = ParseByte(parts[0], "R");
+        byte g = ParseByte(parts[1], "G");
+        byte b = ParseByte(parts[2], "B");
+        byte a = parts.Length == 4 ? ParseAlpha(parts[3]) : (byte)255;
+
+        return new[] { r, g, b, a };
+    }
+
+    private static bool IsHex(string value) =>
+        Regex.IsMatch(
+            value.StartsWith('#') ? value[1..] : value,
+            @"^[0-9a-f]{3}$|^[0-9a-f]{4}$|^[0-9a-f]{6}$|^[0-9a-f]{8}$",
+            RegexOptions.CultureInvariant
+        );
+
+    private static byte[] ParseHex(string value)
+    {
+        if (value.StartsWith('#'))
+            value = value[1..];
+
+        value = value.Length switch
         {
-            if (value.StartsWith('#'))
-            {
-                value = value[1..];
-            }
+            3 => $"{value[0]}{value[0]}{value[1]}{value[1]}{value[2]}{value[2]}ff",
+            4 => $"{value[0]}{value[0]}{value[1]}{value[1]}{value[2]}{value[2]}{value[3]}{value[3]}",
+            6 => value + "ff",
+            8 => value,
+            _ => throw new ArgumentException("Invalid hex color format.", nameof(value))
+        };
 
-            switch (value.Length)
-            {
-                case 3:
-                    value = new string(new[]
-                        { value[0], value[0], value[1], value[1], value[2], value[2], 'F', 'F' });
-                    break;
+        return new[]
+        {
+        GetByteFromValuePart(value, 0),
+        GetByteFromValuePart(value, 2),
+        GetByteFromValuePart(value, 4),
+        GetByteFromValuePart(value, 6)
+    };
+    }
 
-                case 4:
-                    value = new string(new[]
-                        { value[0], value[0], value[1], value[1], value[2], value[2], value[3], value[3] });
-                    break;
+    private static byte ParseByte(string value, string channel)
+    {
+        if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result)
+            || result < 0 || result > 255)
+            throw new ArgumentOutOfRangeException(channel, "RGB values must be between 0 and 255.");
 
-                case 6:
-                    value += "FF";
-                    break;
+        return (byte)result;
+    }
 
-                case 8:
-                    break;
+    private static byte ParseAlpha(string value)
+    {
+        if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double alpha)
+            || alpha < 0 || alpha > 1)
+            throw new ArgumentOutOfRangeException(nameof(value), "Alpha must be between 0 and 1.");
 
-                default:
-                    throw new ArgumentException("not a valid color", nameof(value));
-            }
-
-            _valuesAsByte = new[]
-            {
-                GetByteFromValuePart(value, 0),
-                GetByteFromValuePart(value, 2),
-                GetByteFromValuePart(value, 4),
-                GetByteFromValuePart(value, 6)
-            };
-
-            CalculateHsl();
-        }
+        return (byte)Math.Round(alpha * 255);
     }
 
     #endregion Constructor
@@ -566,7 +470,7 @@ public class CssColor : IEquatable<CssColor>
 
     public static explicit operator string(CssColor? color)
     {
-        return color == null ? string.Empty : color.Value;
+        return color?.ToString() ?? string.Empty;
     }
 
     public static implicit operator CssColor(string input)
@@ -612,7 +516,13 @@ public class CssColor : IEquatable<CssColor>
             _valuesAsByte[3] == other._valuesAsByte[3];
     }
 
-    public override int GetHashCode() => _valuesAsByte[0] + _valuesAsByte[1] + _valuesAsByte[2] + _valuesAsByte[3];
+    public override int GetHashCode() =>
+            HashCode.Combine(
+                _valuesAsByte[0],
+                _valuesAsByte[1],
+                _valuesAsByte[2],
+                _valuesAsByte[3]
+                );
 
     public override string ToString() => ToString(ColorOutputFormats.Rgba);
 

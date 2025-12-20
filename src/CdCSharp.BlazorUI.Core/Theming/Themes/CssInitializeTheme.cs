@@ -1,5 +1,8 @@
-﻿namespace CdCSharp.BlazorUI.Core.Theming.Themes;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace CdCSharp.BlazorUI.Core.Theming.Themes;
+
+[ExcludeFromCodeCoverage]
 public static class CssInitializeTheme
 {
     public static string GetCss() => """

@@ -3,6 +3,7 @@ using CdCSharp.BlazorUI.Components.Abstractions;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 using Microsoft.JSInterop;
+using NSubstitute;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
 
@@ -51,4 +52,20 @@ public class ModuleJsInteropBaseTests : TestContextBase
         Action act = () => new TestJsInterop(null!);
         act.Should().Throw<ArgumentNullException>().WithParameterName("jsRuntime");
     }
+
+    [Fact(DisplayName = "DisposeAsync_DoesNothingIfModuleNotCreated")]
+    public async Task ModuleJsInteropBase_DisposeAsync_DoesNothingIfModuleNotCreated()
+    {
+        // Arrange
+        IJSRuntime jsRuntime = Substitute.For<IJSRuntime>();
+        TestJsInterop interop = new(jsRuntime);
+
+        // ModuleTask aún no accedido
+        interop.IsModuleCreated.Should().BeFalse();
+
+        // Act & Assert - no lanza excepción
+        Func<Task> act = async () => await interop.DisposeAsync();
+        await act.Should().NotThrowAsync();
+    }
+
 }

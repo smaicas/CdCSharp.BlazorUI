@@ -3,7 +3,6 @@ using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
 using CdCSharp.BlazorUI.Core.Components.Services;
-using CdCSharp.BlazorUI.Core.Theming.Interop;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Caching.Memory;

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
 @using CdCSharp.BlazorUI.Components.Generic.Button
 @using CdCSharp.BlazorUI.Components.Generic.Svg
 @using CdCSharp.BlazorUI.Core.Theming
@@ -6,16 +7,34 @@
 
 <PageTitle>Home</PageTitle>
 
+<h2>UIThemeSwitch</h2>
+<UIThemeSwitch />
+<br />
+<UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon"/>
+
+<br />
+<hr />
+<br />
+
 <h2>UITextButton</h2>
-<UIButton Text="Test Button 1"/>
-<UIButton Text="Test Button Disabled" Disabled="true"/>
+<UIButton Text="Test Button 1" />
+<br />
+<UIButton Text="Test Button Disabled" Disabled="true" />
+
+<br />
+<hr />
+<br />
 
 <h2>UISvgIcon Sizes</h2>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Small"/>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Medium"/>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Large"/>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XLarge"/>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XXLarge"/>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Small" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Medium" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Large" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XLarge" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XXLarge" />
+
+<br />
+<hr />
+<br />
 
 <h2>UISvgIcon Colors</h2>
 <UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken3" />
@@ -25,4 +44,8 @@
 <UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten1" />
 <UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten2" />
 <UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten3" />
+
+<br />
+<hr />
+<br />
 

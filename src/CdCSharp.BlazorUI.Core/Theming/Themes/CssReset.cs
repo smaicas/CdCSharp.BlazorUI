@@ -1,8 +1,11 @@
-﻿namespace CdCSharp.BlazorUI.Core.Theming.Themes;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace CdCSharp.BlazorUI.Core.Theming.Themes;
+
+[ExcludeFromCodeCoverage]
 public static class CssReset
 {
-    public static string GetResetCss() => """
+    public static string GetCss() => """
         /* =========================================================
            CSS BASE / RESET
            Purpose: Normalize browser defaults while preserving

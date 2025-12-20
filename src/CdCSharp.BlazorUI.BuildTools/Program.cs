@@ -108,7 +108,7 @@ void GenerateThemes(string outputPath)
 
 void GenerateResetCss(string outputPath)
 {
-    string cssContent = CssReset.GetResetCss();
+    string cssContent = CssReset.GetCss();
 
     string? directory = Path.GetDirectoryName(outputPath);
     if (!string.IsNullOrEmpty(directory))
