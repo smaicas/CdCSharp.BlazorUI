@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using CdCSharp.BlazorUI.Core.Theming.Effects;
+using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Core.Components.Abstractions;
 
@@ -6,6 +7,7 @@ public abstract class UIComponentBase : ComponentBase
 {
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
+    [Parameter] public CssEffectCollection? Effects { get; set; }
 
     // Contiene TODAS las clases: componente + usuario
     public string ComputedCssClasses { get; private set; } = string.Empty;
@@ -37,6 +39,11 @@ public abstract class UIComponentBase : ComponentBase
         // Merge de estilos
         MergeAttribute("style", string.Join(";", GetAdditionalInlineStyles()
                                                   .Select(kv => $"{kv.Key}: {kv.Value}")), ";");
+
+        if (Effects?.Any() == true)
+        {
+            MergeAttribute("style", Effects.ToInlineCss(), ";");
+        }
 
         base.OnParametersSet();
     }

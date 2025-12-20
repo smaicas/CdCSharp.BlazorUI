@@ -1,0 +1,231 @@
+﻿@page "/effects"
+
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Core.Theming.Effects
+@using CdCSharp.BlazorUI.Media.Icons
+
+<h1>CSS Effects Test Page</h1>
+
+<style>
+    .effects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .effect-card {
+        padding: 2rem;
+        border: 1px solid var(--palette-surface);
+        border-radius: 0.5rem;
+        background: var(--palette-surface);
+    }
+    
+    .effect-title {
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+    
+    .test-box {
+        width: 100px;
+        height: 100px;
+        background: var(--palette-primary);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--palette-primarycontrast);
+        margin: 1rem 0;
+    }
+</style>
+
+<div class="effects-grid">
+    <!-- Transitions -->
+    <div class="effect-card">
+        <h3 class="effect-title">Hover Transition</h3>
+        <UIButton Text="Hover Me" 
+                  Effects="@HoverEffect"
+                  BackgroundColor="@UIColor.Blue.Default"
+                  Color="@UIColor.White.Default" />
+    </div>
+
+    <div class="effect-card">
+        <h3 class="effect-title">Scale on Hover</h3>
+        <UIButton Text="Scale Me"
+                  class="scale-hover-btn"
+                  Effects="@ScaleHoverEffect" />
+    </div>
+
+    <!-- Animations -->
+    <div class="effect-card">
+        <h3 class="effect-title">Pulse Animation</h3>
+        <div class="test-box" style="@PulseAnimation.ToInlineCss()">
+            Pulse
+        </div>
+    </div>
+
+    <div class="effect-card">
+        <h3 class="effect-title">Spin Animation</h3>
+        <div class="test-box" style="@SpinAnimation.ToInlineCss()">
+            <UISvgIcon Icon="@UIIcons.Materials.i_refresh" 
+                       Color="@UIColor.White.Default" />
+        </div>
+    </div>
+
+    <div class="effect-card">
+        <h3 class="effect-title">Bounce Animation</h3>
+        <UIButton Text="Bouncing"
+                  Effects="@BounceEffect"
+                  LeadingIcon="@UIIcons.Materials.i_arrow_upward" />
+    </div>
+
+    <div class="effect-card">
+        <h3 class="effect-title">Shake Animation</h3>
+        <UIButton Text="Click to Shake"
+                  OnClick="@(() => TriggerShake())"
+                  Effects="@(_isShaking ? ShakeEffect : null)" />
+    </div>
+
+    <!-- Complex Effects -->
+    <div class="effect-card">
+        <h3 class="effect-title">Fade In on Load</h3>
+        <div class="test-box" style="@FadeInAnimation.ToInlineCss()">
+            Fade In
+        </div>
+    </div>
+
+    <div class="effect-card">
+        <h3 class="effect-title">Slide In</h3>
+        <div class="test-box" style="@SlideInAnimation.ToInlineCss()">
+            Slide
+        </div>
+    </div>
+
+    <!-- Transform Examples -->
+    <div class="effect-card">
+        <h3 class="effect-title">Multiple Transforms</h3>
+        <UIButton Text="Transformed"
+                  class="transform-btn"
+                  Effects="@ComplexTransformEffect" />
+    </div>
+
+    <!-- Custom Effect -->
+    <div class="effect-card">
+        <h3 class="effect-title">Custom Builder</h3>
+        <UIButton Text="Custom Effect"
+                  Effects="@CustomBuilderEffect" />
+    </div>
+</div>
+
+<style>
+    .scale-hover-btn:hover {
+        transform: scale(1.1) !important;
+    }
+    
+    .transform-btn:hover {
+        transform: scale(1.05) rotate(5deg) translateY(-2px) !important;
+    }
+</style>
+
+@code {
+    private bool _isShaking = false;
+
+    // Transition Effects
+    private CssEffectCollection HoverEffect => new()
+    {
+        CssTransition.For("background-color")
+            .DurationMs(300)
+            .Easing(CssEasing.EaseOut),
+        CssTransition.For("transform")
+            .DurationMs(300)
+            .Easing(CssEasing.EaseOut)
+    };
+
+    private CssEffectCollection ScaleHoverEffect => new()
+    {
+        CssTransition.For("transform")
+            .DurationMs(200)
+            .Easing(CssEasing.EaseInOut)
+    };
+
+    // Animation Effects
+    private CssAnimation PulseAnimation => new()
+    {
+        KeyframeName = "pulse",
+        Duration = TimeSpan.FromSeconds(2),
+        IterationCount = -1,
+        Easing = CssEasing.EaseInOut
+    };
+
+    private CssAnimation SpinAnimation => new()
+    {
+        KeyframeName = "spin",
+        Duration = TimeSpan.FromSeconds(2),
+        IterationCount = -1,
+        Easing = CssEasing.Linear
+    };
+
+    private CssEffectCollection BounceEffect => new()
+    {
+        new CssAnimation
+        {
+            KeyframeName = "bounce",
+            Duration = TimeSpan.FromSeconds(1),
+            IterationCount = -1,
+            Easing = CssEasing.EaseInOut
+        }
+    };
+
+    private CssEffectCollection? ShakeEffect => _isShaking ? new()
+    {
+        new CssAnimation
+        {
+            KeyframeName = "shake",
+            Duration = TimeSpan.FromMilliseconds(500),
+            IterationCount = 1,
+            FillMode = AnimationFillMode.Forwards
+        }
+    } : null;
+
+    private CssAnimation FadeInAnimation => new()
+    {
+        KeyframeName = "fadeIn",
+        Duration = TimeSpan.FromSeconds(1),
+        Easing = CssEasing.EaseOut
+    };
+
+    private CssAnimation SlideInAnimation => new()
+    {
+        KeyframeName = "slideInUp",
+        Duration = TimeSpan.FromMilliseconds(800),
+        Easing = CssEasing.CubicBezier(0.4, 0, 0.2, 1)
+    };
+
+    // Transform Effects
+    private CssEffectCollection ComplexTransformEffect => new()
+    {
+        CssTransition.For("transform")
+            .DurationMs(300)
+            .Easing(CssEasing.CubicBezier(0.4, 0, 0.2, 1))
+    };
+
+    // Custom Builder Effect
+    private CssEffectCollection CustomBuilderEffect => new()
+    {
+        CssTransition.For("all")
+            .DurationMs(400)
+            .Easing(CssEasing.CubicBezier(0.25, 0.1, 0.25, 1))
+            .Delay(TimeSpan.FromMilliseconds(50))
+    };
+
+    private async Task TriggerShake()
+    {
+        _isShaking = true;
+        StateHasChanged();
+        await Task.Delay(600);
+        _isShaking = false;
+        StateHasChanged();
+    }
+}

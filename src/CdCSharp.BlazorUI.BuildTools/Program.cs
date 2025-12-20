@@ -134,6 +134,20 @@ void GenerateInitializeThemesCss(string outputPath)
     Console.WriteLine($"CSS reset generated successfully at: {outputPath}");
 }
 
+void GenerateKeyframes(string outputPath)
+{
+    string cssContent = CssKeyframes.GetCss();
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS keyframes generated successfully at: {outputPath}");
+}
+
 async Task BuildAll(string projectPath)
 {
     // 0. Generate CSS Reset
@@ -146,6 +160,9 @@ async Task BuildAll(string projectPath)
 
     string initializeThemesPath = Path.Combine(projectPath, "CssBundle", "initialize-themes.css");
     GenerateInitializeThemesCss(initializeThemesPath);
+
+    string keyframesPath = Path.Combine(projectPath, "CssBundle", "keyframes.css");
+    GenerateKeyframes(keyframesPath);
 
     // 2. Ensure npm packages are installed
     await NpmManager.EnsureNpmInstalled(projectPath);
