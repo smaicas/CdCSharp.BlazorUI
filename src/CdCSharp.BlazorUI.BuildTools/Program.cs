@@ -134,6 +134,20 @@ void GenerateInitializeThemesCss(string outputPath)
     Console.WriteLine($"CSS reset generated successfully at: {outputPath}");
 }
 
+void GenerateEffectsCss(string outputPath)
+{
+    string cssContent = EffectsCssGenerator.GetCss();
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS effects generated successfully at: {outputPath}");
+}
+
 async Task BuildAll(string projectPath)
 {
     // 0. Generate CSS Reset
@@ -146,6 +160,9 @@ async Task BuildAll(string projectPath)
 
     string initializeThemesPath = Path.Combine(projectPath, "CssBundle", "initialize-themes.css");
     GenerateInitializeThemesCss(initializeThemesPath);
+
+    string effectsPath = Path.Combine(projectPath, "CssBundle", "effects.css");
+    GenerateEffectsCss(effectsPath);
 
     // 2. Ensure npm packages are installed
     await NpmManager.EnsureNpmInstalled(projectPath);

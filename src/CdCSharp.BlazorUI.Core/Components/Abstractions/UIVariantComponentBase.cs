@@ -31,6 +31,7 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        base.BuildRenderTree(builder);
         if (_resolvedTemplate is not null)
         {
             builder.AddContent(0, _resolvedTemplate);

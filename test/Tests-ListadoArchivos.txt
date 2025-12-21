@@ -1,0 +1,3849 @@
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Layout\MainLayout.razor ===
+
+@inherits LayoutComponentBase
+
+@Body
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Layout\MainLayout.razor.css ===
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Layout\ReconnectModal.razor ===
+
+<script type="module" src="@Assets["Components/Layout/ReconnectModal.razor.js"]"></script>
+
+<dialog id="components-reconnect-modal" data-nosnippet>
+    <div class="components-reconnect-container">
+        <div class="components-rejoining-animation" aria-hidden="true">
+            <div></div>
+            <div></div>
+        </div>
+        <p class="components-reconnect-first-attempt-visible">
+            Rejoining the server...
+        </p>
+        <p class="components-reconnect-repeated-attempt-visible">
+            Rejoin failed... trying again in <span id="components-seconds-to-next-attempt"></span> seconds.
+        </p>
+        <p class="components-reconnect-failed-visible">
+            Failed to rejoin.<br />Please retry or reload the page.
+        </p>
+        <button id="components-reconnect-button" class="components-reconnect-failed-visible">
+            Retry
+        </button>
+        <p class="components-pause-visible">
+            The session has been paused by the server.
+        </p>
+        <button id="components-resume-button" class="components-pause-visible">
+            Resume
+        </button>
+        <p class="components-resume-failed-visible">
+            Failed to resume the session.<br />Please reload the page.
+        </p>
+    </div>
+</dialog>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Layout\ReconnectModal.razor.css ===
+
+.components-reconnect-first-attempt-visible,
+.components-reconnect-repeated-attempt-visible,
+.components-reconnect-failed-visible,
+.components-pause-visible,
+.components-resume-failed-visible,
+.components-rejoining-animation {
+    display: none;
+}
+
+#components-reconnect-modal.components-reconnect-show .components-reconnect-first-attempt-visible,
+#components-reconnect-modal.components-reconnect-show .components-rejoining-animation,
+#components-reconnect-modal.components-reconnect-paused .components-pause-visible,
+#components-reconnect-modal.components-reconnect-resume-failed .components-resume-failed-visible,
+#components-reconnect-modal.components-reconnect-retrying,
+#components-reconnect-modal.components-reconnect-retrying .components-reconnect-repeated-attempt-visible,
+#components-reconnect-modal.components-reconnect-retrying .components-rejoining-animation,
+#components-reconnect-modal.components-reconnect-failed,
+#components-reconnect-modal.components-reconnect-failed .components-reconnect-failed-visible {
+    display: block;
+}
+
+
+#components-reconnect-modal {
+    background-color: white;
+    width: 20rem;
+    margin: 20vh auto;
+    padding: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 6px 2px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: display 0.5s allow-discrete, overlay 0.5s allow-discrete;
+    animation: components-reconnect-modal-fadeOutOpacity 0.5s both;
+    &[open]
+
+{
+    animation: components-reconnect-modal-slideUp 1.5s cubic-bezier(.05, .89, .25, 1.02) 0.3s, components-reconnect-modal-fadeInOpacity 0.5s ease-in-out 0.3s;
+    animation-fill-mode: both;
+}
+
+}
+
+#components-reconnect-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: components-reconnect-modal-fadeInOpacity 0.5s ease-in-out;
+    opacity: 1;
+}
+
+@keyframes components-reconnect-modal-slideUp {
+    0% {
+        transform: translateY(30px) scale(0.95);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes components-reconnect-modal-fadeInOpacity {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes components-reconnect-modal-fadeOutOpacity {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.components-reconnect-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+#components-reconnect-modal p {
+    margin: 0;
+    text-align: center;
+}
+
+#components-reconnect-modal button {
+    border: 0;
+    background-color: #6b9ed2;
+    color: white;
+    padding: 4px 24px;
+    border-radius: 4px;
+}
+
+    #components-reconnect-modal button:hover {
+        background-color: #3b6ea2;
+    }
+
+    #components-reconnect-modal button:active {
+        background-color: #6b9ed2;
+    }
+
+.components-rejoining-animation {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+    .components-rejoining-animation div {
+        position: absolute;
+        border: 3px solid #0087ff;
+        opacity: 1;
+        border-radius: 50%;
+        animation: components-rejoining-animation 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+        .components-rejoining-animation div:nth-child(2) {
+            animation-delay: -0.5s;
+        }
+
+@keyframes components-rejoining-animation {
+    0% {
+        top: 40px;
+        left: 40px;
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+    4.9% {
+        top: 40px;
+        left: 40px;
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+    5% {
+        top: 40px;
+        left: 40px;
+        width: 0;
+        height: 0;
+        opacity: 1;
+    }
+
+    100% {
+        top: 0px;
+        left: 0px;
+        width: 80px;
+        height: 80px;
+        opacity: 0;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Layout\ReconnectModal.razor.js ===
+
+// Set up event handlers
+const reconnectModal = document.getElementById("components-reconnect-modal");
+reconnectModal.addEventListener("components-reconnect-state-changed", handleReconnectStateChanged);
+
+const retryButton = document.getElementById("components-reconnect-button");
+retryButton.addEventListener("click", retry);
+
+const resumeButton = document.getElementById("components-resume-button");
+resumeButton.addEventListener("click", resume);
+
+function handleReconnectStateChanged(event) {
+    if (event.detail.state === "show") {
+        reconnectModal.showModal();
+    } else if (event.detail.state === "hide") {
+        reconnectModal.close();
+    } else if (event.detail.state === "failed") {
+        document.addEventListener("visibilitychange", retryWhenDocumentBecomesVisible);
+    } else if (event.detail.state === "rejected") {
+        location.reload();
+    }
+}
+
+async function retry() {
+    document.removeEventListener("visibilitychange", retryWhenDocumentBecomesVisible);
+
+    try {
+        // Reconnect will asynchronously return:
+        // - true to mean success
+        // - false to mean we reached the server, but it rejected the connection (e.g., unknown circuit ID)
+        // - exception to mean we didn't reach the server (this can be sync or async)
+        const successful = await Blazor.reconnect();
+        if (!successful) {
+            // We have been able to reach the server, but the circuit is no longer available.
+            // We'll reload the page so the user can continue using the app as quickly as possible.
+            const resumeSuccessful = await Blazor.resumeCircuit();
+            if (!resumeSuccessful) {
+                location.reload();
+            } else {
+                reconnectModal.close();
+            }
+        }
+    } catch (err) {
+        // We got an exception, server is currently unavailable
+        document.addEventListener("visibilitychange", retryWhenDocumentBecomesVisible);
+    }
+}
+
+async function resume() {
+    try {
+        const successful = await Blazor.resumeCircuit();
+        if (!successful) {
+            location.reload();
+        }
+    } catch {
+        location.reload();
+    }
+}
+
+async function retryWhenDocumentBecomesVisible() {
+    if (document.visibilityState === "visible") {
+        await retry();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Pages\Error.razor ===
+
+@page "/Error"
+@using System.Diagnostics
+
+<PageTitle>Error</PageTitle>
+
+<h1 class="text-danger">Error.</h1>
+<h2 class="text-danger">An error occurred while processing your request.</h2>
+
+@if (ShowRequestId)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@RequestId</code>
+    </p>
+}
+
+<h3>Development Mode</h3>
+<p>
+    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+</p>
+<p>
+    <strong>The Development environment shouldn't be enabled for deployed applications.</strong>
+    It can result in displaying sensitive information from exceptions to end users.
+    For local debugging, enable the <strong>Development</strong> environment by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>
+    and restarting the app.
+</p>
+
+@code{
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Pages\Home.razor ===
+
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Pages\NotFound.razor ===
+
+@page "/not-found"
+@layout MainLayout
+
+<h3>Not Found</h3>
+<p>Sorry, the content you are looking for does not exist.</p>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\_Imports.razor ===
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using CdCSharp.BlazorUI.AppTest.Server
+@using CdCSharp.BlazorUI.AppTest.Server.Components
+@using CdCSharp.BlazorUI.AppTest.Server.Components.Layout
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\App.razor ===
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["CdCSharp.BlazorUI.AppTest.Server.styles.css"]" />
+
+    <link href="/blazor-ui/styles.css" rel="stylesheet" />
+
+    <ImportMap />
+    <HeadOutlet />
+</head>
+
+<body>
+    <Routes />
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Components\Routes.razor ===
+
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\wwwroot\app.css ===
+
+h1:focus {
+    outline: none;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid #e50000;
+}
+
+.validation-message {
+    color: #e50000;
+}
+
+.blazor-error-boundary {
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
+    padding: 1rem 1rem 1rem 3.7rem;
+    color: white;
+}
+
+    .blazor-error-boundary::after {
+        content: "An error has occurred."
+    }
+
+.darker-border-checkbox.form-check-input {
+    border-color: #929292;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\appsettings.Development.json ===
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  }
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\appsettings.json ===
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*"
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\CdCSharp.BlazorUI.AppTest.Server.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+  </ItemGroup>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Server\Program.cs ===
+
+using CdCSharp.BlazorUI.AppTest.Server.Components;
+
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services.AddBlazorUI();
+
+WebApplication app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseHttpsRedirection();
+
+app.UseAntiforgery();
+
+app.MapStaticAssets();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Layout\MainLayout.razor ===
+
+@using CdCSharp.BlazorUI.Components.Layout
+
+@inherits UIBlazorLayout
+
+@Body
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Pages\Home.razor ===
+
+@page "/"
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Media.Icons
+
+<PageTitle>Home</PageTitle>
+
+<h2>UIThemeSwitch</h2>
+<UIThemeSwitch />
+<br />
+<UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon"/>
+
+<br />
+<hr />
+<br />
+
+<h2>UITextButton</h2>
+<UIButton Text="Test Button 1" />
+<br />
+<UIButton Text="Test Button Disabled" Disabled="true" />
+
+<br />
+<hr />
+<br />
+
+<h2>UISvgIcon Sizes</h2>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Small" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Medium" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Large" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XLarge" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XXLarge" />
+
+<br />
+<hr />
+<br />
+
+<h2>UISvgIcon Colors</h2>
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken3" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken2" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken1" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Default" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten1" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten2" />
+<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten3" />
+
+<br />
+<hr />
+<br />
+
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Pages\LabelPattern.razor ===
+
+@page "/label-pattern"
+
+<style>
+    .option-card {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+        /* Input oculto pero funcional */
+        .option-card input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+    /* Card visual */
+    .option-ui {
+        display: block;
+        padding: 1rem;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+        /* Hover */
+        .option-ui:hover {
+            border-color: #888;
+        }
+
+    /* Focus visible (TAB) */
+    .option-card input:focus + .option-ui {
+        outline: 3px solid #5b9dd9;
+        outline-offset: 2px;
+    }
+
+    /* Checked state */
+    .option-card input:checked + .option-ui {
+        border-color: #0066ff;
+        background: #eef4ff;
+    }
+
+    /* Disabled */
+    .option-card input:disabled + .option-ui {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .option-ui strong {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+</style>
+
+<h1>Checkbox card – navegación y foco</h1>
+
+<p>
+    Usa <strong>Tab</strong> para navegar y <strong>Space</strong> para marcar/desmarcar.
+    Haz click en cualquier parte de la card.
+</p>
+
+<hr>
+<br>
+
+<div class="option-card">
+    <input id="opt-1"
+           type="checkbox"
+           @bind="Value1" />
+
+    <label for="opt-1" class="option-ui">
+        <strong>Receive newsletter</strong>
+        <p>Get monthly updates via email.</p>
+    </label>
+</div>
+
+<div class="option-card">
+    <input id="opt-2"
+           type="checkbox"
+           @bind="Value2" />
+
+    <label for="opt-2" class="option-ui">
+        <strong>Enable notifications</strong>
+        <p>Receive push notifications on your device.</p>
+    </label>
+</div>
+
+<div class="option-card">
+    <input id="opt-3"
+           type="checkbox"
+           @bind="Value3"
+           disabled />
+
+    <label for="opt-3" class="option-ui">
+        <strong>Premium features</strong>
+        <p>Upgrade required to enable this option.</p>
+    </label>
+</div>
+
+<hr>
+<br>
+
+<p><strong>Estado actual:</strong></p>
+<ul>
+    <li>Newsletter: @Value1</li>
+    <li>Notifications: @Value2</li>
+    <li>Premium: @Value3</li>
+</ul>
+
+@code {
+    bool Value1;
+    bool Value2;
+    bool Value3;
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Pages\NotFound.razor ===
+
+@page "/not-found"
+@layout MainLayout
+
+<h3>Not Found</h3>
+<p>Sorry, the content you are looking for does not exist.</p>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Pages\Page_UIButton.razor ===
+
+@page "/UIButton"
+
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Core.Theming.Themes
+@using CdCSharp.BlazorUI.Media.Icons
+
+<h1>Theme Switch</h1>
+
+<UIThemeSwitch></UIThemeSwitch>
+
+<br>
+<hr />
+<br>
+
+<h1>Basic no parameters</h1>
+<UIButton></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>Basic with text</h1>
+<UIButton Text="Test text"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>With Leading Icon</h1>
+<UIButton Text="With Leading Icon" LeadingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>With Trailing Icon</h1>
+<UIButton Text="With Trailing Icon" TrailingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+<br>
+<hr />
+<br>
+
+<h1>With Both Icons</h1>
+<UIButton Text="With Both Icons" LeadingIcon="@UIIcons.Materials.i_alarm" TrailingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>Disabled Button</h1>
+<UIButton Text="Disabled Button" Disabled="true" LeadingIcon="@UIIcons.Materials.i_alarm" TrailingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+
+<br>
+<hr />
+<br>
+
+<h1>Button with OnClick</h1>
+<UIButton Text="Click Me" OnClick="OnButtonClick" LeadingIcon="@UIIcons.Materials.i_alarm"></UIButton>
+<span>Clicks count: @clickCount</span>
+
+<br>
+<hr />
+<br>
+
+<h1>Custom Styled Button</h1>
+<UIButton Text="Custom Styled"
+          LeadingIcon="@UIIcons.Materials.i_alarm" 
+          BackgroundColor="@UIColor.Orange.Darken1" 
+          Color="@UIColor.White.Darken1"></UIButton>
+
+@code {
+
+    private int clickCount = 0;
+    private void OnButtonClick()
+    {
+        clickCount++;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Pages\ResetTest.razor ===
+
+@page "/reset-test"
+
+<h1>HTML Elements – Real World Usage</h1>
+
+<hr>
+<br>
+
+<p>Text content</p>
+<p>
+    Lorem <strong>strong</strong> <em>em</em> <u>underline</u>
+    <mark>mark</mark> <small>small</small>
+</p>
+
+<hr>
+<br>
+
+<p>Headings</p>
+<h1>h1</h1>
+<h2>h2</h2>
+<h3>h3</h3>
+<h4>h4</h4>
+<h5>h5</h5>
+<h6>h6</h6>
+
+<hr>
+<br>
+
+<p>Lists</p>
+<ul>
+    <li>Unordered item 1</li>
+    <li>Unordered item 2</li>
+</ul>
+
+<ol>
+    <li>Ordered item 1</li>
+    <li>Ordered item 2</li>
+</ol>
+
+<dl>
+    <dt>Term</dt>
+    <dd>Description</dd>
+</dl>
+
+<hr>
+<br>
+
+<p>Links</p>
+<a href="#" id="link-primary">Primary link</a>
+<br>
+<a href="#" id="link-secondary">Secondary link</a>
+
+<hr>
+<br>
+
+<p>Block elements</p>
+<blockquote>
+    This is a blockquote
+    <cite>— Author</cite>
+</blockquote>
+
+<pre>
+Preformatted
+text block
+</pre>
+
+<code>let value = true;</code>
+
+<hr>
+<br>
+
+<p>Table (realistic)</p>
+<table>
+    <caption>User list</caption>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Alice</td>
+            <td>alice@mail.com</td>
+            <td>Active</td>
+        </tr>
+        <tr>
+            <td>Bob</td>
+            <td>bob@mail.com</td>
+            <td>Inactive</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+<br>
+
+<p>Form – real usage</p>
+
+<form id="user-form" name="user-form">
+
+    <fieldset>
+        <legend>Personal information</legend>
+
+        <label for="name">Name</label>
+        <br>
+        <input id="name" name="name" type="text" placeholder="John Doe">
+        <br>
+        <br>
+
+        <label for="email">Email</label>
+        <br>
+        <input id="email" name="email" type="email">
+        <br>
+        <br>
+
+        <label for="password">Password</label>
+        <br>
+        <input id="password" name="password" type="password">
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Preferences</legend>
+
+        <p>Subscription type (radio)</p>
+        <label>
+            <input id="sub-basic" name="subscription" type="radio" value="basic">
+            Basic
+        </label>
+        <br>
+
+        <label>
+            <input id="sub-pro" name="subscription" type="radio" value="pro">
+            Pro
+        </label>
+        <br>
+
+        <label>
+            <input id="sub-enterprise" name="subscription" type="radio" value="enterprise">
+            Enterprise
+        </label>
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Notifications (checkbox)</legend>
+
+        <label>
+            <input id="notify-email" name="notifications" type="checkbox" value="email">
+            Email notifications
+        </label>
+        <br>
+
+        <label>
+            <input id="notify-sms" name="notifications" type="checkbox" value="sms">
+            SMS notifications
+        </label>
+        <br>
+
+        <label>
+            <input id="notify-push" name="notifications" type="checkbox" value="push">
+            Push notifications
+        </label>
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Other inputs</legend>
+
+        <label for="birthdate">Birth date</label>
+        <br>
+        <input id="birthdate" name="birthdate" type="date">
+        <br>
+        <br>
+
+        <label for="volume">Volume</label>
+        <br>
+        <input id="volume" name="volume" type="range">
+        <br>
+        <br>
+
+        <label for="color">Favorite color</label>
+        <br>
+        <input id="color" name="color" type="color">
+        <br>
+        <br>
+
+        <label for="file">Profile picture</label>
+        <br>
+        <input id="file" name="file" type="file">
+        <br>
+        <br>
+
+        <label for="bio">Bio</label>
+        <br>
+        <textarea id="bio" name="bio">Short bio...</textarea>
+        <br>
+        <br>
+
+        <label for="country">Country</label>
+        <br>
+        <select id="country" name="country">
+            <option value="">Select one</option>
+            <option value="es">Spain</option>
+            <option value="fr">France</option>
+            <option value="de">Germany</option>
+        </select>
+    </fieldset>
+
+    <hr><br>
+
+    <fieldset>
+        <legend>Actions</legend>
+        <button id="btn-submit" name="submit" type="submit">Submit</button>
+        <button id="btn-reset" name="reset" type="reset">Reset</button>
+        <button id="btn-cancel" name="cancel" type="button">Cancel</button>
+    </fieldset>
+
+</form>
+
+<hr>
+<br>
+
+<p>Media</p>
+<img src="https://via.placeholder.com/150" alt="Image placeholder">
+<br>
+<br>
+<audio controls></audio>
+<br>
+<br>
+<video controls width="250"></video>
+
+<hr>
+<br>
+
+<p>Interactive</p>
+<details>
+    <summary>Details summary</summary>
+    Detailed content
+</details>
+
+<dialog open>
+    Dialog content
+</dialog>
+
+<hr>
+<br>
+
+<p>Graphics</p>
+<canvas width="150" height="80"></canvas>
+<br>
+<br>
+
+<svg width="150" height="80">
+    <rect width="150" height="80"></rect>
+</svg>
+
+<hr>
+<br>
+
+<p>Progress / Meter</p>
+<progress value="70" max="100"></progress>
+<br>
+<br>
+<meter value="0.7"></meter>
+
+<hr>
+<br>
+
+<p>Misc</p>
+<iframe title="iframe test"></iframe>
+<br>
+<address>address@example.com</address>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\wwwroot\css\app.css ===
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.blazor-error-boundary {
+    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
+    padding: 1rem 1rem 1rem 3.7rem;
+    color: white;
+}
+
+    .blazor-error-boundary::after {
+        content: "An error has occurred."
+    }
+
+.loading-progress {
+    position: absolute;
+    display: block;
+    width: 8rem;
+    height: 8rem;
+    inset: 20vh 0 auto 0;
+    margin: 0 auto 0 auto;
+}
+
+    .loading-progress circle {
+        fill: none;
+        stroke: #e0e0e0;
+        stroke-width: 0.6rem;
+        transform-origin: 50% 50%;
+        transform: rotate(-90deg);
+    }
+
+        .loading-progress circle:last-child {
+            stroke: #1b6ec2;
+            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+            transition: stroke-dasharray 0.05s ease-in-out;
+        }
+
+.loading-progress-text {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+}
+
+    .loading-progress-text:after {
+        content: var(--blazor-load-percentage-text, "Loading");
+    }
+
+code {
+    color: #c02d76;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* Customize fonts */
+@font-face {
+    font-family: 'Roboto Custom';
+    src: url('/font/Roboto-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'ArchivoBlack Custom';
+    src: url('/font/ArchivoBlack-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'MPLUSRounded Custom';
+    src: url('/font/MPLUSRounded1c-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/*Override CSS Variables form BlazorUI fonts*/
+:root {
+    --blazorui-font-base: 'Roboto Custom', system-ui, sans-serif;
+    --blazorui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
+    --blazorui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\wwwroot\service-worker.js ===
+
+// In development, always fetch from the network and do not enable offline support.
+// This is because caching would make development more difficult (changes would not
+// be reflected on the first load after each change).
+self.addEventListener('fetch', () => { });
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\wwwroot\service-worker.published.js ===
+
+// Caution! Be sure you understand the caveats before publishing an application with
+// offline support. See https://aka.ms/blazor-offline-considerations
+
+self.importScripts('./service-worker-assets.js');
+self.addEventListener('install', event => event.waitUntil(onInstall(event)));
+self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
+self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
+
+const cacheNamePrefix = 'offline-cache-';
+const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
+const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.json$/, /\.css$/, /\.woff$/, /\.png$/, /\.jpe?g$/, /\.gif$/, /\.ico$/, /\.blat$/, /\.dat$/, /\.webmanifest$/ ];
+const offlineAssetsExclude = [ /^service-worker\.js$/ ];
+
+// Replace with your base path if you are hosting on a subfolder. Ensure there is a trailing '/'.
+const base = "/";
+const baseUrl = new URL(base, self.origin);
+const manifestUrlList = self.assetsManifest.assets.map(asset => new URL(asset.url, baseUrl).href);
+
+async function onInstall(event) {
+    console.info('Service worker: Install');
+
+    // Fetch and cache all matching items from the assets manifest
+    const assetsRequests = self.assetsManifest.assets
+        .filter(asset => offlineAssetsInclude.some(pattern => pattern.test(asset.url)))
+        .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)))
+        .map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
+    await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
+}
+
+async function onActivate(event) {
+    console.info('Service worker: Activate');
+
+    // Delete unused caches
+    const cacheKeys = await caches.keys();
+    await Promise.all(cacheKeys
+        .filter(key => key.startsWith(cacheNamePrefix) && key !== cacheName)
+        .map(key => caches.delete(key)));
+}
+
+async function onFetch(event) {
+    let cachedResponse = null;
+    if (event.request.method === 'GET') {
+        // For all navigation requests, try to serve index.html from cache,
+        // unless that request is for an offline resource.
+        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
+        const shouldServeIndexHtml = event.request.mode === 'navigate'
+            && !manifestUrlList.some(url => url === event.request.url);
+
+        const request = shouldServeIndexHtml ? 'index.html' : event.request;
+        const cache = await caches.open(cacheName);
+        cachedResponse = await cache.match(request);
+    }
+
+    return cachedResponse || fetch(event.request);
+}
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\_Imports.razor ===
+
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using CdCSharp.BlazorUI.AppTest.Wasm
+@using CdCSharp.BlazorUI.AppTest.Wasm.Layout
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\App.razor ===
+
+<Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+</Router>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\CdCSharp.BlazorUI.AppTest.Wasm.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI.AppTest.Wasm\Program.cs ===
+
+using CdCSharp.BlazorUI.AppTest.Wasm;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+
+WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
+
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+builder.Services.AddBlazorUI();
+
+await builder.Build().RunAsync();
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Infrastructure\Builders\ButtonTestBuilder.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Builders;
+
+public class ButtonTestBuilder
+{
+    private readonly TestContextBase _context;
+    private UIButtonVariant _variant = UIButtonVariant.Default;
+    private string _content = "Test Button";
+    private bool _disabled = false;
+    private EventCallback<MouseEventArgs>? _onClick;
+
+    public ButtonTestBuilder(TestContextBase context)
+    {
+        _context = context;
+    }
+
+    public ButtonTestBuilder WithVariant(UIButtonVariant variant)
+    {
+        _variant = variant;
+        return this;
+    }
+
+    public ButtonTestBuilder WithContent(string content)
+    {
+        _content = content;
+        return this;
+    }
+
+    public ButtonTestBuilder Disabled()
+    {
+        _disabled = true;
+        return this;
+    }
+
+    public ButtonTestBuilder WithClick(Action action)
+    {
+        _onClick = EventCallback.Factory.Create<MouseEventArgs>(_context, action);
+        return this;
+    }
+
+    public IRenderedComponent<UIButton> Build()
+    {
+        return _context.Render<UIButton>(parameters =>
+        {
+            parameters
+                .Add(p => p.Variant, _variant)
+                .Add(p => p.Text, _content)
+                .Add(p => p.Disabled, _disabled);
+
+            if (_onClick.HasValue)
+            {
+                parameters.Add(p => p.OnClick, _onClick.Value);
+            }
+        });
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Infrastructure\TestContextBase.cs ===
+
+using Bunit;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+
+public class TestContextBase : BunitContext, IDisposable
+{
+    protected TestContextBase()
+    {
+        Services.AddBlazorUI();
+        // Common configuration
+        //Services.AddSingleton<IVariantRegistry<UIButton, UIButtonVariant>>(new VariantRegistry<UIButton, UIButtonVariant>());
+
+        // JSInterop configuration
+        JSInterop.Mode = JSRuntimeMode.Loose;
+    }
+
+    public new void Dispose()
+    {
+        base.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Infrastructure\TestExtensions.cs ===
+
+using AngleSharp.Dom;
+using Bunit;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+
+public static class TestExtensions
+{
+    public static IRenderedComponent<T> RenderComponent<T>(
+        this TestContextBase ctx,
+        Action<ComponentParameterCollectionBuilder<T>>? parameterBuilder = null)
+        where T : IComponent
+    {
+        return parameterBuilder == null
+            ? ctx.Render<T>()
+            : ctx.Render<T>(parameterBuilder);
+    }
+
+    public static void ShouldHaveClass(this IElement element, string cssClass) =>
+        element.ClassList.Should().Contain(cssClass);
+
+    public static void ShouldNotHaveClass(this IElement element, string cssClass) =>
+        element.ClassList.Should().NotContain(cssClass);
+
+    public static void ShouldHaveTagName(this IElement element, string expectedTagName) => element.TagName.Should().BeEquivalentTo(expectedTagName, options => options.IgnoringCase());
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Services\VariantRegistryTests.cs ===
+
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Core.Components.Services;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Services;
+
+[Trait("Core", "VariantRegistry")]
+public class VariantRegistryTests : TestContextBase
+{
+    [Fact(DisplayName = "Register_StoresTemplate")]
+    public void VariantRegistry_Register_StoresTemplate()
+    {
+        // Arrange
+        VariantRegistry<UIButton, UIButtonVariant> registry = new();
+        UIButtonVariant variant = UIButtonVariant.Custom("Test");
+        Func<UIButton, RenderFragment> template = _ => __builder => { };
+
+        // Act
+        registry.Register(variant, template);
+        RenderFragment? retrieved = registry.GetTemplate(variant, null!);
+
+        // Assert
+        retrieved.Should().NotBeNull();
+    }
+
+    [Fact(DisplayName = "GetTemplate_ReturnsNullForUnregistered")]
+    public void VariantRegistry_GetTemplate_ReturnsNullForUnregistered()
+    {
+        // Arrange
+        VariantRegistry<UIButton, UIButtonVariant> registry = new();
+        UIButtonVariant variant = UIButtonVariant.Custom("Unregistered");
+
+        // Act
+        RenderFragment? template = registry.GetTemplate(variant, null!);
+
+        // Assert
+        template.Should().BeNull();
+    }
+
+    [Fact(DisplayName = "Register_OverwritesExisting")]
+    public void VariantRegistry_Register_OverwritesExisting()
+    {
+        // Arrange
+        VariantRegistry<UIButton, UIButtonVariant> registry = new();
+        UIButtonVariant variant = UIButtonVariant.Custom("Test");
+        bool firstCalled = false;
+        bool secondCalled = false;
+
+        // Act
+        registry.Register(variant, _ => __builder => { firstCalled = true; });
+        registry.Register(variant, _ => __builder => { secondCalled = true; });
+
+        RenderFragment? template = registry.GetTemplate(variant, null!);
+        template?.Invoke(null!);
+
+        // Assert
+        firstCalled.Should().BeFalse();
+        secondCalled.Should().BeTrue();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Abstractions\ModuleJsInteropBaseTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+using Microsoft.JSInterop;
+using NSubstitute;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
+
+[Trait("Abstractions", "ModuleJsInteropBase")]
+public class ModuleJsInteropBaseTests : TestContextBase
+{
+    private class TestJsInterop : ModuleJsInteropBase
+    {
+        public TestJsInterop(IJSRuntime jsRuntime) : base(jsRuntime, "test-module.js")
+        {
+        }
+
+        public Task<IJSObjectReference> GetModuleForTesting() => ModuleTask.Value;
+        public bool IsModuleCreated => ModuleTask.IsValueCreated;
+    }
+
+    [Fact(DisplayName = "LazyLoadsModule")]
+    public void ModuleJsInteropBase_LazyLoadsModule()
+    {
+        // Arrange
+        TestJsInterop testInterop = new(JSInterop.JSRuntime);
+
+        // Assert - Module not loaded yet
+        testInterop.IsModuleCreated.Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "LoadsModuleOnFirstAccess")]
+    public async Task ModuleJsInteropBase_LoadsModuleOnFirstAccess()
+    {
+        // Arrange
+        JSInterop.SetupModule("test-module.js");
+        TestJsInterop testInterop = new(JSInterop.JSRuntime);
+
+        // Act
+        IJSObjectReference module = await testInterop.GetModuleForTesting();
+
+        // Assert
+        module.Should().NotBeNull();
+        testInterop.IsModuleCreated.Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "ThrowsWhenJSRuntimeIsNull")]
+    public void ModuleJsInteropBase_ThrowsWhenJSRuntimeIsNull()
+    {
+        // Act & Assert
+        Action act = () => new TestJsInterop(null!);
+        act.Should().Throw<ArgumentNullException>().WithParameterName("jsRuntime");
+    }
+
+    [Fact(DisplayName = "DisposeAsync_DoesNothingIfModuleNotCreated")]
+    public async Task ModuleJsInteropBase_DisposeAsync_DoesNothingIfModuleNotCreated()
+    {
+        // Arrange
+        IJSRuntime jsRuntime = Substitute.For<IJSRuntime>();
+        TestJsInterop interop = new(jsRuntime);
+
+        // ModuleTask aún no accedido
+        interop.IsModuleCreated.Should().BeFalse();
+
+        // Act & Assert - no lanza excepción
+        Func<Task> act = async () => await interop.DisposeAsync();
+        await act.Should().NotThrowAsync();
+    }
+
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Abstractions\UIComponentBaseTests.cs ===
+
+using AngleSharp.Dom;
+using Bunit;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
+
+[Trait("Abstractions", "UIComponentBase")]
+public class UIComponentBaseTests : TestContextBase
+{
+    [Fact(DisplayName = "WithoutUserClasses_RendersOnlyComponentClasses")]
+    public void UIComponentBase_WithoutUserClasses_RendersOnlyComponentClasses()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>();
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.GetAttribute("class").Should().Be("test-component");
+    }
+
+    [Fact(DisplayName = "WithUserClasses_MergesClasses")]
+    public void UIComponentBase_WithUserClasses_MergesClasses()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-class-1 user-class-2" }
+            }));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.GetAttribute("class").Should().Be("test-component user-class-1 user-class-2");
+    }
+
+    [Fact(DisplayName = "ConditionalClasses_AppliedCorrectly")]
+    public void UIComponentBase_ConditionalClasses_AppliedCorrectly()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.IsPrimary, true));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.GetAttribute("class").Should().Be("test-component test-component--primary");
+    }
+
+    [Fact(DisplayName = "InlineStyles_AppliedCorrectly")]
+    public void UIComponentBase_InlineStyles_AppliedCorrectly()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.Color, "red")
+            .Add(p => p.BackgroundColor, "blue"));
+
+        // Assert
+        IElement div = cut.Find("div");
+        string? style = div.GetAttribute("style");
+        style.Should().Contain("color: red");
+        style.Should().Contain("background-color: blue");
+    }
+
+    [Fact(DisplayName = "UserStyles_MergedWithComponentStyles")]
+
+    public void UIComponentBase_UserStyles_MergedWithComponentStyles()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.Color, "red")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "style", "margin: 10px" }
+            }));
+
+        // Assert
+        IElement div = cut.Find("div");
+        string? style = div.GetAttribute("style");
+        style.Should().Contain("color: red");
+        style.Should().Contain("margin: 10px");
+    }
+
+    [Fact(DisplayName = "ComputedCssClasses_ContainsAllClasses")]
+    public void UIComponentBase_ComputedCssClasses_ContainsAllClasses()
+    {
+        // Arrange & Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.IsPrimary, true)
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-class" }
+            }));
+
+        // Assert
+        TestComponent instance = cut.Instance;
+        instance.ComputedCssClasses.Should().Be("test-component test-component--primary user-class");
+    }
+
+    [Fact(DisplayName = "EmptyUserClass_HandledCorrectly")]
+    public void UIComponentBase_EmptyUserClass_HandledCorrectly()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "" }
+            }));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.GetAttribute("class").Should().Be("test-component");
+    }
+
+    [Fact(DisplayName = "OtherAttributes_PassedThrough")]
+    public void UIComponentBase_OtherAttributes_PassedThrough()
+    {
+        // Act
+        IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "id", "test-id" },
+                { "data-test", "value" },
+                { "aria-label", "Test component" }
+            }));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.GetAttribute("id").Should().Be("test-id");
+        div.GetAttribute("data-test").Should().Be("value");
+        div.GetAttribute("aria-label").Should().Be("Test component");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Abstractions\UIVariantComponentBaseTests.cs ===
+
+using AngleSharp.Dom;
+using Bunit;
+using CdCSharp.BlazorUI.Core.Components.Services;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
+
+[Trait("Abstractions", "UIVariantComponentBase")]
+public class UIVariantComponentBaseTests : TestContextBase
+{
+    private readonly TestVariantTemplates _templates = new();
+
+    public UIVariantComponentBaseTests()
+    {
+        // Register the test component's variant registry
+        Services.AddSingleton<IVariantRegistry<TestVariantComponent, TestVariant>>(
+            new VariantRegistry<TestVariantComponent, TestVariant>());
+    }
+
+    [Fact(DisplayName = "DefaultVariant_UsedWhenNotSpecified")]
+    public void UIVariantComponentBase_DefaultVariant_UsedWhenNotSpecified()
+    {
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>();
+
+        // Assert
+        cut.Find("button").Should().NotBeNull();
+        cut.Find("button").ShouldHaveClass("test-variant-component");
+        cut.Find("button").ShouldHaveClass("test-variant-component--default");
+    }
+
+    [Fact(DisplayName = "BuiltInVariant_RendersCorrectly")]
+    public void UIVariantComponentBase_BuiltInVariant_RendersCorrectly()
+    {
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, TestVariant.Alternative));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.Should().NotBeNull();
+        cut.Find("span").TextContent.Should().Be("Alt: Test Variant Component");
+        // Should have both base classes and template-added class
+        div.ShouldHaveClass("test-variant-component");
+        div.ShouldHaveClass("test-variant-component--alternative");
+        div.ShouldHaveClass("alternative-style");
+    }
+
+    [Fact(DisplayName = "RegisteredVariant_RendersCorrectly")]
+    public void UIVariantComponentBase_RegisteredVariant_RendersCorrectly()
+    {
+        // Arrange
+        TestVariant customVariant = TestVariant.Custom("Registered");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+
+        registry.Register(customVariant, _templates.RegisteredTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, customVariant));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.TextContent.Should().Be("Registered: Test Variant Component");
+        div.ShouldHaveClass("test-variant-component");
+        div.ShouldHaveClass("test-variant-component--registered");
+        div.ShouldHaveClass("registered-variant");
+    }
+
+    [Fact(DisplayName = "RegisteredVariant_NotOverrideBuiltInVariant")]
+    public void UIVariantComponentBase_RegisteredVariant_NotOverrideBuiltInVariant()
+    {
+        // Arrange
+        TestVariant customVariant = TestVariant.Custom("Alternative");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+
+        registry.Register(customVariant, _templates.RegisteredTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, customVariant));
+
+        // Assert
+        IElement div = cut.Find("div");
+        div.Should().NotBeNull();
+        cut.Find("span").TextContent.Should().Be("Alt: Test Variant Component");
+        // Should have both base classes and template-added class
+        div.ShouldHaveClass("test-variant-component");
+        div.ShouldHaveClass("test-variant-component--alternative");
+        div.ShouldHaveClass("alternative-style");
+    }
+
+    [Fact(DisplayName = "UnknownVariant_RendersNothing")]
+    public void UIVariantComponentBase_UnknownVariant_RendersNothing()
+    {
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, TestVariant.Custom("Unknown")));
+
+        // Assert
+        cut.Markup.Should().BeEmpty();
+    }
+
+    [Fact(DisplayName = "ClassesInheritance_WorksAcrossVariants")]
+    public void UIVariantComponentBase_ClassesInheritance_WorksAcrossVariants()
+    {
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, TestVariant.Default)
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-class" }
+            }));
+
+        // Assert
+        IElement button = cut.Find("button");
+        string? classes = button.GetAttribute("class");
+        classes.Should().Contain("test-variant-component");
+        classes.Should().Contain("test-variant-component--default");
+        classes.Should().Contain("user-class");
+    }
+
+    [Fact(DisplayName = "ParametersPassedToTemplate_PassedThrough")]
+    public void UIVariantComponentBase_ParametersPassedToTemplate_PassedThrough()
+    {
+        // Arrange
+        bool wasClicked = false;
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Text, "Click me")
+            .Add(p => p.Disabled, true)
+            .Add(p => p.OnClick, () => wasClicked = true));
+
+        // Assert
+        IElement button = cut.Find("button");
+        button.TextContent.Should().Be("Click me");
+        button.HasAttribute("disabled").Should().BeTrue();
+
+        // Click should not work on disabled button, but let's verify the event is wired
+        button.GetAttribute("disabled").Should().NotBeNull();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Features\Theme\ThemeJsInteropTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using CdCSharp.BlazorUI.Types;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Features.Theme;
+
+[Trait("JSInterop", "ThemeJsInterop")]
+public class ThemeJsInteropTests : TestContextBase
+{
+    private (ThemeJsInterop themeInterop, BunitJSModuleInterop moduleSetup) CreateThemeInterop()
+    {
+        BunitJSModuleInterop moduleSetup = JSInterop.SetupModule(JSModulesReference.ThemeJs);
+        ThemeJsInterop themeInterop = new(JSInterop.JSRuntime);
+        return (themeInterop, moduleSetup);
+    }
+
+    [Fact(DisplayName = "InitializeAsync_CallsJSWithDefaultTheme")]
+    public async Task ThemeJsInterop_InitializeAsync_CallsJSWithDefaultTheme()
+    {
+        // Arrange
+        (ThemeJsInterop? themeInterop, BunitJSModuleInterop? moduleSetup) = CreateThemeInterop();
+
+        // Act
+        await themeInterop.InitializeAsync("light");
+
+        // Assert
+        IReadOnlyList<JSRuntimeInvocation> invocations = moduleSetup.Invocations["initialize"];
+        invocations.Should().HaveCount(1);
+        invocations.First().Arguments[0].Should().Be("light");
+    }
+
+    [Fact(DisplayName = "InitializeAsync_CallsJSWithNullTheme")]
+    public async Task ThemeJsInterop_InitializeAsync_CallsJSWithNullTheme()
+    {
+        // Arrange
+        (ThemeJsInterop? themeInterop, BunitJSModuleInterop? moduleSetup) = CreateThemeInterop();
+
+        // Act
+        await themeInterop.InitializeAsync(null);
+
+        // Assert
+        IReadOnlyList<JSRuntimeInvocation> invocations = moduleSetup.Invocations["initialize"];
+        invocations.Should().HaveCount(1);
+        invocations.First().Arguments[0].Should().BeNull();
+    }
+
+    [Fact(DisplayName = "GetThemeAsync_ReturnsTheme")]
+    public async Task ThemeJsInterop_GetThemeAsync_ReturnsTheme()
+    {
+        // Arrange
+        (ThemeJsInterop? themeInterop, BunitJSModuleInterop? moduleSetup) = CreateThemeInterop();
+        moduleSetup.Setup<string>("getTheme").SetResult("dark");
+
+        // Act
+        string theme = await themeInterop.GetThemeAsync();
+
+        // Assert
+        theme.Should().Be("dark");
+        IReadOnlyList<JSRuntimeInvocation> invocations = moduleSetup.Invocations["getTheme"];
+        invocations.Should().HaveCount(1);
+    }
+
+    [Fact(DisplayName = "SetThemeAsync_CallsJSWithTheme")]
+    public async Task ThemeJsInterop_SetThemeAsync_CallsJSWithTheme()
+    {
+        // Arrange
+        (ThemeJsInterop? themeInterop, BunitJSModuleInterop? moduleSetup) = CreateThemeInterop();
+
+        // Act
+        await themeInterop.SetThemeAsync("light");
+
+        // Assert
+        IReadOnlyList<JSRuntimeInvocation> invocations = moduleSetup.Invocations["setTheme"];
+        invocations.Should().HaveCount(1);
+        invocations.First().Arguments[0].Should().Be("light");
+    }
+
+    [Fact(DisplayName = "ToggleThemeAsync_CallsJSAndReturnsNewTheme")]
+    public async Task ThemeJsInterop_ToggleThemeAsync_CallsJSAndReturnsNewTheme()
+    {
+        // Arrange
+        (ThemeJsInterop? themeInterop, BunitJSModuleInterop? moduleSetup) = CreateThemeInterop();
+
+        // Setup robusto con predicado
+        moduleSetup.Setup<string>("toggleTheme", args => true).SetResult("dark");
+
+        string[] themes = { "light", "dark" };
+
+        // Act
+        string newTheme = await themeInterop.ToggleThemeAsync(themes);
+
+        // Assert
+        newTheme.Should().Be("dark");
+
+        IReadOnlyList<JSRuntimeInvocation> invocations = moduleSetup.Invocations["toggleTheme"];
+        invocations.Should().HaveCount(1);
+
+        // Argumentos pasados al módulo
+        object[]? args = invocations.First().Arguments[0] as object[];
+        args.Should().BeEquivalentTo(themes);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Button\ButtonInteractionTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
+
+[Trait("Components", "UIButton")]
+public class ButtonInteractionTests : TestContextBase
+{
+    [Fact(DisplayName = "Click_InvokesCallback")]
+    public async Task Button_Click_InvokesCallback()
+    {
+        // Arrange
+        bool wasClicked = false;
+        Bunit.IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, () => wasClicked = true)));
+
+        // Act
+        await cut.Find("button").ClickAsync();
+
+        // Assert
+        wasClicked.Should().BeTrue();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Button\ButtonRenderTests.cs ===
+
+using AngleSharp.Dom;
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Core.Theming.Css;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
+
+[Trait("Components", "UIButton")]
+public class ButtonRenderTests : TestContextBase
+{
+    [Fact(DisplayName = "DefaultVariant_RendersWithCorrectCssClasses")]
+    public void Button_DefaultVariant_RendersWithCorrectCssClasses()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Test Button"));
+
+        // Assert
+        IElement button = cut.Find("button");
+        button.ClassList
+            .Should().Contain("ui-button")
+            .And.Contain("ui-button--default");
+    }
+
+    [Fact(DisplayName = "WithText_RendersTextContent")]
+    public void Button_WithText_RendersTextContent()
+    {
+        // Arrange
+        const string expectedText = "Click me";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, expectedText));
+
+        // Assert
+        cut.Find("button .ui-button__text").TextContent.Should().Be(expectedText);
+    }
+
+    [Fact(DisplayName = "WithLeadingIcon_RendersIconBeforeText")]
+    public void Button_WithLeadingIcon_RendersIconBeforeText()
+    {
+        // Arrange
+        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Home")
+            .Add(p => p.LeadingIcon, iconPath));
+
+        // Assert
+        IElement button = cut.Find("button");
+        IElement firstChild = button.Children[0];
+        firstChild.ShouldHaveTagName("svg");
+
+        IElement? textSpan = button.QuerySelector(".ui-button__text");
+        textSpan.Should().NotBeNull();
+        textSpan.TextContent.Should().Be("Home");
+    }
+
+    [Fact(DisplayName = "WithTrailingIcon_RendersIconAfterText")]
+    public void Button_WithTrailingIcon_RendersIconAfterText()
+    {
+        // Arrange
+        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Next")
+            .Add(p => p.TrailingIcon, iconPath));
+
+        // Assert
+        IElement button = cut.Find("button");
+        IElement lastChild = button.Children[button.Children.Length - 1];
+        lastChild.ShouldHaveTagName("svg");
+    }
+
+    [Fact(DisplayName = "IconOnly_HasSpecificCssClass")]
+    public void Button_IconOnly_HasSpecificCssClass()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.LeadingIcon, "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>"));
+
+        // Assert
+        cut.Find("button").ClassList
+            .Should().Contain("ui-button--icon-only");
+    }
+
+    [Theory(DisplayName = "DisabledState_RendersCorrectly")]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Button_DisabledState_RendersCorrectly(bool disabled)
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Test")
+            .Add(p => p.Disabled, disabled));
+
+        // Assert
+        IElement button = cut.Find("button");
+        button.HasAttribute("disabled").Should().Be(disabled);
+    }
+
+    [Fact(DisplayName = "WithAdditionalAttributes_MergesCorrectly")]
+    public void Button_WithAdditionalAttributes_MergesCorrectly()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "data-test-id", "my-button" },
+                { "class", "custom-class" }
+            }));
+
+        // Assert
+        IElement button = cut.Find("button");
+        button.GetAttribute("data-test-id").Should().Be("my-button");
+        button.ClassList
+            .Should().Contain("ui-button")
+            .And.Contain("ui-button--default")
+            .And.Contain("custom-class");
+    }
+
+    [Fact(DisplayName = "WithCustomColors_AppliesInlineStyles")]
+    public void Button_WithCustomColors_AppliesInlineStyles()
+    {
+        // Arrange
+        CssColor backgroundColor = new("#FF0000");
+        CssColor textColor = new("#FFFFFF");
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Colored Button")
+            .Add(p => p.BackgroundColor, backgroundColor)
+            .Add(p => p.Color, textColor));
+
+        // Assert
+        IElement button = cut.Find("button");
+        string? style = button.GetAttribute("style");
+        style.Should().Contain("background-color: rgba(255,0,0,1)");
+        style.Should().Contain("color: rgba(255,255,255,1)");
+    }
+
+    [Fact(DisplayName = "WithNullText_DoesNotRenderTextSpan")]
+    public void Button_WithNullText_DoesNotRenderTextSpan()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, null));
+
+        // Assert
+        cut.FindAll(".ui-button__text").Should().BeEmpty();
+    }
+
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Button\ButtonSnapshotTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
+
+[Trait("Components", "UIButton")]
+public class ButtonSnapshotTests : TestContextBase
+{
+    [Fact(DisplayName = "AllVariants_MatchSnapshot")]
+    public Task Button_AllVariants_MatchSnapshot()
+    {
+        // Arrange
+        UIButtonVariant[] variants =
+        [
+            UIButtonVariant.Default,
+        ];
+
+        // Act
+        var results = variants.Select(variant =>
+        {
+            IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+                .Add(p => p.Variant, variant)
+                .Add(p => p.Text, $"{variant.Name} Button"));
+
+            return new { Variant = variant.Name, Html = cut.Markup };
+        });
+
+        // Assert
+        return Verify(results);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Button\ButtonVariantTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
+
+[Trait("Components", "UIButton")]
+public class ButtonVariantTests : TestContextBase
+{
+    [Fact(DisplayName = "DefaultVariant_RendersCorrectly")]
+    public void Button_DefaultVariant_RendersCorrectly()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Default Button"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.ShouldHaveClass("ui-button");
+        button.ShouldHaveClass("ui-button--default");
+    }
+
+    [Fact(DisplayName = "DefaultVariantWithIcons_RendersCorrectStructure")]
+    public void Button_DefaultVariantWithIcons_RendersCorrectStructure()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Button")
+            .Add(p => p.LeadingIcon, "<path />")
+            .Add(p => p.TrailingIcon, "<path />"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.Children.Should().HaveCount(3);
+        button.Children[0].ShouldHaveTagName("svg"); // Leading icon
+        button.Children[1].ShouldHaveTagName("span"); // Text
+        button.Children[2].ShouldHaveTagName("svg"); // Trailing icon
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Svg\UISvgIconInteractionTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Svg;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Svg;
+
+[Trait("Components", "UISvgIcon")]
+public class UISvgIconInteractionTests : TestContextBase
+{
+    // Use <path></path> instead of <path/> because AngleSharp normalizes <path/> to <path></path>
+    private const string TestIcon = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"></path>";
+
+    [Fact(DisplayName = "Click_InvokesCallback")]
+    public async Task SvgIcon_Click_InvokesCallback()
+    {
+        // Arrange
+        bool wasClicked = false;
+
+        // Act
+        IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+            .Add(p => p.Icon, TestIcon)
+            .Add(p => p.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, () => wasClicked = true)));
+
+        await cut.Find("svg").ClickAsync();
+
+        // Assert
+        wasClicked.Should().BeTrue();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Svg\UISvgIconRenderTests.cs ===
+
+using AngleSharp.Dom;
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Svg;
+using CdCSharp.BlazorUI.Core.Theming.Css;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Svg;
+
+[Trait("Components", "UISvgIcon")]
+public class UISvgIconRenderTests : TestContextBase
+{
+    // Use <path></path> instead of <path/> because AngleSharp normalizes <path/> to <path></path>
+    private const string TestIcon = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"></path>";
+
+    [Fact(DisplayName = "RequiredIcon_RendersCorrectly")]
+    public void SvgIcon_RequiredIcon_RendersCorrectly()
+    {
+        // Act
+        IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+            .Add(p => p.Icon, TestIcon));
+
+        // Assert
+        IElement svg = cut.Find("svg");
+        svg.Should().NotBeNull();
+        svg.InnerHtml.Should().Be(TestIcon);
+        svg.GetAttribute("viewBox").Should().Be("0 0 24 24");
+        svg.GetAttribute("aria-hidden").Should().Be("true");
+        svg.GetAttribute("focusable").Should().Be("false");
+    }
+
+    [Fact(DisplayName = "WithTitle_RendersTitleElement")]
+    public void SvgIcon_WithTitle_RendersTitleElement()
+    {
+        // Arrange
+        const string title = "Home Icon";
+
+        // Act
+        IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+            .Add(p => p.Icon, TestIcon)
+            .Add(p => p.Title, title));
+
+        // Assert
+        IElement titleElement = cut.Find("svg title");
+        titleElement.TextContent.Should().Be(title);
+    }
+
+    [Theory(DisplayName = "Sizes_ApplyCorrectClasses")]
+    [InlineData(UISvgIcon.UISvgIconSize.Small, "ui-svg-icon-s")]
+    [InlineData(UISvgIcon.UISvgIconSize.Medium, "ui-svg-icon-m")]
+    [InlineData(UISvgIcon.UISvgIconSize.Large, "ui-svg-icon-l")]
+    [InlineData(UISvgIcon.UISvgIconSize.XLarge, "ui-svg-icon-xl")]
+    [InlineData(UISvgIcon.UISvgIconSize.XXLarge, "ui-svg-icon-xxl")]
+    public void SvgIcon_Sizes_ApplyCorrectClasses(UISvgIcon.UISvgIconSize size, string expectedClass)
+    {
+        // Act
+        IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+            .Add(p => p.Icon, TestIcon)
+            .Add(p => p.Size, size));
+
+        // Assert
+        IElement svg = cut.Find("svg");
+        svg.ShouldHaveClass("ui-svg-icon");
+        svg.ShouldHaveClass(expectedClass);
+    }
+
+    [Fact(DisplayName = "WithColor_AppliesInlineStyle")]
+    public void SvgIcon_WithColor_AppliesInlineStyle()
+    {
+        // Arrange
+        CssColor color = new("#FF5733");
+
+        // Act
+        IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+            .Add(p => p.Icon, TestIcon)
+            .Add(p => p.Color, color));
+
+        // Assert
+        IElement svg = cut.Find("svg");
+        string? style = svg.GetAttribute("style");
+        style.Should().Contain("color: rgba(255,87,51,1)");
+    }
+
+    [Fact(DisplayName = "CustomViewBox_AppliesCorrectly")]
+    public void SvgIcon_CustomViewBox_AppliesCorrectly()
+    {
+        // Arrange
+        const string customViewBox = "0 0 48 48";
+
+        // Act
+        IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+            .Add(p => p.Icon, TestIcon)
+            .Add(p => p.ViewBox, customViewBox));
+
+        // Assert
+        cut.Find("svg").GetAttribute("viewBox").Should().Be(customViewBox);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Generic\Svg\UISvgIconSnapshotTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Generic.Svg;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Svg;
+
+[Trait("Components", "UISvgIcon")]
+public class UISvgIconSnapshotTests : TestContextBase
+{
+    private const string TestIcon = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+    [Fact(DisplayName = "AllSizes_MatchSnapshot")]
+    public Task SvgIcon_AllSizes_MatchSnapshot()
+    {
+        // Arrange
+        UISvgIcon.UISvgIconSize[] sizes =
+        [
+            UISvgIcon.UISvgIconSize.Small,
+            UISvgIcon.UISvgIconSize.Medium,
+            UISvgIcon.UISvgIconSize.Large,
+            UISvgIcon.UISvgIconSize.XLarge,
+            UISvgIcon.UISvgIconSize.XXLarge
+        ];
+
+        // Act
+        var results = sizes.Select(size =>
+        {
+            IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters
+                .Add(p => p.Icon, TestIcon)
+                .Add(p => p.Size, size));
+
+            return new { Size = size.ToString(), Html = cut.Markup };
+        });
+
+        // Assert
+        return Verify(results);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Layout\UIBlazorLayoutTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+using CdCSharp.BlazorUI.Components.Layout;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Layout;
+
+[Trait("Components", "UIBlazorLayout")]
+public class UIBlazorLayoutTests : TestContextBase
+{
+    private readonly IThemeJsInterop _mockThemeInterop;
+
+    public UIBlazorLayoutTests()
+    {
+        _mockThemeInterop = Substitute.For<IThemeJsInterop>();
+        Services.AddSingleton(_mockThemeInterop);
+    }
+
+    [Fact(DisplayName = "InitializesThemeOnFirstRender")]
+    public async Task UIBlazorLayout_InitializesThemeOnFirstRender()
+    {
+        // Act
+        IRenderedComponent<UIBlazorLayout> cut = Render<UIBlazorLayout>(parameters => parameters
+            .Add(p => p.Body, "<p>Test Content</p>"));
+
+        // Assert
+        await _mockThemeInterop.Received(1).InitializeAsync("dark");
+    }
+
+    [Fact(DisplayName = "RendersBodyContent")]
+    public void UIBlazorLayout_RendersBodyContent()
+    {
+        // Arrange
+        const string bodyContent = "<div class='test-content'>Hello World</div>";
+
+        // Act
+        IRenderedComponent<UIBlazorLayout> cut = Render<UIBlazorLayout>(parameters => parameters
+            .Add(p => p.Body, bodyContent));
+
+        // Assert
+        cut.Markup.Should().Contain("test-content");
+        cut.Find(".test-content").TextContent.Should().Be("Hello World");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Components\Variants\CustomVariantTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Core.Components.Services;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Variants;
+
+internal class MyCustomTestVariants : TestVariant
+{
+    public MyCustomTestVariants(string name) : base(name)
+    {
+    }
+
+    public static readonly TestVariant MyCustom1 = Custom("MyCustom1");
+    public static readonly TestVariant MyCustom2 = Custom("MyCustom2");
+}
+
+[Trait("Behavior", "Variants")]
+public class CustomVariantTests : TestContextBase
+{
+    private readonly TestVariantTemplates _templates = new();
+
+    public CustomVariantTests()
+    {
+        // Register the test component's variant registry
+        Services.AddSingleton<IVariantRegistry<TestVariantComponent, TestVariant>>(
+            new VariantRegistry<TestVariantComponent, TestVariant>());
+    }
+
+    [Fact(DisplayName = "BasicTemplate_InheritsComponentClasses")]
+    public void CustomVariant_BasicTemplate_InheritsComponentClasses()
+    {
+        // Arrange
+        TestVariant customVariant = TestVariant.Custom("Custom");
+
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(customVariant, _templates.BasicCustomTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, customVariant)
+            .Add(p => p.Text, "Custom Component"));
+
+        // Assert
+        cut.Find("button").TextContent.Should().Be("Custom Component");
+        // Basic template inherits component classes through @attributes
+        cut.Find("button").ShouldHaveClass("test-variant-component");
+        cut.Find("button").ShouldHaveClass("test-variant-component--custom");
+    }
+
+    [Fact(DisplayName = "BasicTemplateVariantBuilder_InheritsComponentClasses")]
+    public void CustomVariant_BasicTemplateVariantBuilder_InheritsComponentClasses()
+    {
+        // Arrange
+        TestVariant customVariant = TestVariant.Custom("Custom");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(customVariant, _templates.BasicCustomTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, customVariant)
+            .Add(p => p.Text, "Custom Component"));
+
+        // Assert
+        cut.Find("button").TextContent.Should().Be("Custom Component");
+        // Basic template inherits component classes through @attributes
+        cut.Find("button").ShouldHaveClass("test-variant-component");
+        cut.Find("button").ShouldHaveClass("test-variant-component--custom");
+    }
+
+    [Fact(DisplayName = "OverrideTemplate_ReplacesAllClasses")]
+    public void CustomVariant_OverrideTemplate_ReplacesAllClasses()
+    {
+        // Arrange - This demonstrates a template that completely overrides classes
+        TestVariant overrideVariant = TestVariant.Custom("Override");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(overrideVariant, _templates.OverrideClassTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, overrideVariant)
+            .Add(p => p.Text, "Override Component"));
+
+        // Assert - Only template classes are present
+        AngleSharp.Dom.IElement element = cut.Find("button");
+        string? classAttribute = element.GetAttribute("class");
+
+        classAttribute.Should().NotBeNull();
+        classAttribute.Should().Be("btn-override-only");
+        // Component classes are NOT preserved
+        element.ShouldNotHaveClass("test-variant-component");
+    }
+
+    [Fact(DisplayName = "OverrideTemplateVariantBuilder_ReplacesAllClasses")]
+    public void CustomVariant_OverrideTemplateVariantBuilder_ReplacesAllClasses()
+    {
+        // Arrange - This demonstrates a template that completely overrides classes
+        TestVariant overrideVariant = TestVariant.Custom("Override");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(overrideVariant, _templates.OverrideClassTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, overrideVariant)
+            .Add(p => p.Text, "Override Component"));
+
+        // Assert - Only template classes are present
+        AngleSharp.Dom.IElement element = cut.Find("button");
+        string? classAttribute = element.GetAttribute("class");
+
+        classAttribute.Should().NotBeNull();
+        classAttribute.Should().Be("btn-override-only");
+        // Component classes are NOT preserved
+        element.ShouldNotHaveClass("test-variant-component");
+    }
+
+    [Fact(DisplayName = "MergeTemplate_PreservesAllClasses")]
+    public void CustomVariant_MergeTemplate_PreservesAllClasses()
+    {
+        // Arrange - This demonstrates the RECOMMENDED approach
+        TestVariant glassVariant = TestVariant.Custom("Glass");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(glassVariant, _templates.AddsOneClassTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, glassVariant)
+            .Add(p => p.Text, "Glass Component"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        // Component classes are preserved
+        button.ShouldHaveClass("test-variant-component");
+        button.ShouldHaveClass("test-variant-component--glass");
+        // Template class is added
+        button.ShouldHaveClass("btn-glass");
+    }
+
+    [Fact(DisplayName = "MergeTemplateVariantBuilder_PreservesAllClasses")]
+    public void CustomVariant_MergeTemplateVariantBuilder_PreservesAllClasses()
+    {
+        // Arrange - This demonstrates the RECOMMENDED approach
+        TestVariant glassVariant = TestVariant.Custom("Glass");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(glassVariant, _templates.AddsOneClassTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, glassVariant)
+            .Add(p => p.Text, "Glass Component"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        // Component classes are preserved
+        button.ShouldHaveClass("test-variant-component");
+        button.ShouldHaveClass("test-variant-component--glass");
+        // Template class is added
+        button.ShouldHaveClass("btn-glass");
+    }
+
+    [Fact(DisplayName = "UserClasses_PreservedInCorrectOrder")]
+    public void CustomVariant_UserClasses_PreservedInCorrectOrder()
+    {
+        // Arrange
+        TestVariant glassVariant = TestVariant.Custom("Glass");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(glassVariant, _templates.AddsOneClassTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, glassVariant)
+            .Add(p => p.Text, "Glass Component")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-class-1 user-class-2" }
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        string? classAttribute = button.GetAttribute("class");
+
+        classAttribute.Should().NotBeNull();
+        // Order: component classes, user classes, template classes
+        classAttribute.Should().Be("test-variant-component test-variant-component--glass user-class-1 user-class-2 btn-glass");
+    }
+
+    [Fact(DisplayName = "UserClassesVariantBuilder_PreservedInCorrectOrder")]
+    public void CustomVariant_UserClassesVariantBuilder_PreservedInCorrectOrder()
+    {
+        // Arrange
+        TestVariant glassVariant = TestVariant.Custom("Glass");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(glassVariant, _templates.AddsOneClassTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, glassVariant)
+            .Add(p => p.Text, "Glass Component")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-class-1 user-class-2" }
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        string? classAttribute = button.GetAttribute("class");
+
+        classAttribute.Should().NotBeNull();
+        // Order: component classes, user classes, template classes
+        classAttribute.Should().Be("test-variant-component test-variant-component--glass user-class-1 user-class-2 btn-glass");
+    }
+
+    [Fact(DisplayName = "ComplexTemplate_MergesMultipleClasses")]
+    public void CustomVariant_ComplexTemplate_MergesMultipleClasses()
+    {
+        // Arrange
+        TestVariant complexVariant = TestVariant.Custom("Complex");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(complexVariant, _templates.AddsOneClassTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, complexVariant)
+            .Add(p => p.Text, "Complex Component")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-extra" },
+                { "id", "complex-btn" }
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        string? classAttribute = button.GetAttribute("class");
+
+        // All classes should be present in correct order
+        classAttribute.Should().NotBeNull();
+        classAttribute.Should().Be("test-variant-component test-variant-component--complex user-extra btn-glass");
+        button.GetAttribute("id").Should().Be("complex-btn");
+    }
+
+    [Fact(DisplayName = "ComplexTemplateVariantBuilder_MergesMultipleClasses")]
+    public void CustomVariant_ComplexTemplateVariantBuilder_MergesMultipleClasses()
+    {
+        // Arrange
+        TestVariant complexVariant = TestVariant.Custom("Complex");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(complexVariant, _templates.AddsOneClassTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, complexVariant)
+            .Add(p => p.Text, "Complex Component")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "class", "user-extra" },
+                { "id", "complex-btn" }
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        string? classAttribute = button.GetAttribute("class");
+
+        // All classes should be present in correct order
+        classAttribute.Should().NotBeNull();
+        classAttribute.Should().Be("test-variant-component test-variant-component--complex user-extra btn-glass");
+        button.GetAttribute("id").Should().Be("complex-btn");
+    }
+
+    [Fact(DisplayName = "DataAttributes_UserOverridesTemplate")]
+    public void CustomVariant_DataAttributes_UserOverridesTemplate()
+    {
+        // Arrange - Template where user attributes have priority
+        TestVariant dataVariant = TestVariant.Custom("DataVariant");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(dataVariant, _templates.DataAttributeTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, dataVariant)
+            .Add(p => p.Text, "Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "data-id", "user-id" },
+                { "data-test", "user-value" }, // Should override template value
+                { "class", "user-class" }
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.GetAttribute("data-variant").Should().Be("custom"); // Template value preserved
+        button.GetAttribute("data-id").Should().Be("user-id"); // User value added
+        button.GetAttribute("data-test").Should().Be("user-value"); // User overrides template
+    }
+
+    [Fact(DisplayName = "DataAttributesVariantBuilder_UserOverridesTemplate")]
+    public void CustomVariant_DataAttributesVariantBuilder_UserOverridesTemplate()
+    {
+        // Arrange - Template where user attributes have priority
+        TestVariant dataVariant = TestVariant.Custom("DataVariant");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(dataVariant, _templates.DataAttributeTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, dataVariant)
+            .Add(p => p.Text, "Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "data-id", "user-id" },
+                { "data-test", "user-value" }, // Should override template value
+                { "class", "user-class" }
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.GetAttribute("data-variant").Should().Be("custom"); // Template value preserved
+        button.GetAttribute("data-id").Should().Be("user-id"); // User value added
+        button.GetAttribute("data-test").Should().Be("user-value"); // User overrides template
+    }
+
+    [Fact(DisplayName = "DataAttributes_TemplateCanHavePriority")]
+    public void CustomVariant_DataAttributes_TemplateCanHavePriority()
+    {
+        // Arrange - Template where template attributes have priority
+        TestVariant dataVariant = TestVariant.Custom("DataPriority");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(dataVariant, _templates.DataAttributeTemplatePriority);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, dataVariant)
+            .Add(p => p.Text, "Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "data-test", "user-value" } // Will be overridden by template
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.GetAttribute("data-test").Should().Be("template-value-priority"); // Template wins
+    }
+
+    [Fact(DisplayName = "DataAttributesVariantBuilder_TemplateCanHavePriority")]
+    public void CustomVariant_DataAttributesVariantBuilder_TemplateCanHavePriority()
+    {
+        // Arrange - Template where template attributes have priority
+        TestVariant dataVariant = TestVariant.Custom("DataPriority");
+
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(dataVariant, _templates.DataAttributeTemplatePriority));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, dataVariant)
+            .Add(p => p.Text, "Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+                { "data-test", "user-value" } // Will be overridden by template
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.GetAttribute("data-test").Should().Be("template-value-priority"); // Template wins
+    }
+
+    [Fact(DisplayName = "UnregisteredVariant_RendersNothing")]
+    public void CustomVariant_UnregisteredVariant_RendersNothing()
+    {
+        // Arrange
+        TestVariant unregistered = TestVariant.Custom("Unregistered");
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, unregistered)
+            .Add(p => p.Text, "Should not appear"));
+
+        // Assert
+        cut.Markup.Should().BeEmpty();
+    }
+
+    [Fact(DisplayName = "TypedVariant_WorksCorrectly")]
+    public void CustomVariant_TypedVariant_WorksCorrectly()
+    {
+        // Arrange
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(MyCustomTestVariants.MyCustom1, _templates.AddsOneClassTemplate);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, MyCustomTestVariants.MyCustom1)
+            .Add(p => p.Text, "Typed Variant Component"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.ShouldHaveClass("test-variant-component");
+        button.ShouldHaveClass("test-variant-component--mycustom1");
+        button.ShouldHaveClass("btn-glass");
+    }
+
+    [Fact(DisplayName = "TypedVariantVariantBuilder_WorksCorrectly")]
+    public void CustomVariant_TypedVariantVariantBuilder_WorksCorrectly()
+    {
+        // Arrange
+        Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
+            .Register(MyCustomTestVariants.MyCustom1, _templates.AddsOneClassTemplate));
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, MyCustomTestVariants.MyCustom1)
+            .Add(p => p.Text, "Typed Variant Component"));
+
+        // Assert
+        AngleSharp.Dom.IElement button = cut.Find("button");
+        button.ShouldHaveClass("test-variant-component");
+        button.ShouldHaveClass("test-variant-component--mycustom1");
+        button.ShouldHaveClass("btn-glass");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Core\Extensions\NumberExtensionsTests.cs ===
+
+using CdCSharp.BlazorUI.Core.Extensions;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Extensions;
+
+[Trait("Extensions", "NumberExtensions")]
+public class NumberExtensionsTests
+{
+    [Theory(DisplayName = "EnsureRange_Byte_Max_ClampsToRange")]
+    [InlineData((byte)10, (byte)5, (byte)5)]
+    [InlineData((byte)3, (byte)5, (byte)3)]
+    [InlineData((byte)0, (byte)5, (byte)0)]
+    public void EnsureRange_Byte_Max_ClampsToRange(byte input, byte max, byte expected)
+    {
+        // Act
+        byte result = input.EnsureRange(max);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory(DisplayName = "EnsureRange_Byte_MinMax_ClampsToRange")]
+    [InlineData((byte)10, (byte)2, (byte)8, (byte)8)]
+    [InlineData((byte)5, (byte)2, (byte)8, (byte)5)]
+    [InlineData((byte)1, (byte)2, (byte)8, (byte)2)]
+    public void EnsureRange_Byte_MinMax_ClampsToRange(byte input, byte min, byte max, byte expected)
+    {
+        // Act
+        byte result = input.EnsureRange(min, max);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory(DisplayName = "EnsureRange_Int_Max_ClampsToRange")]
+    [InlineData(10, 5, 5)]
+    [InlineData(3, 5, 3)]
+    [InlineData(-5, 10, 0)]
+    [InlineData(0, 5, 0)]
+    public void EnsureRange_Int_Max_ClampsToRange(int input, int max, int expected)
+    {
+        // Act
+        int result = input.EnsureRange(max);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory(DisplayName = "EnsureRange_Int_MinMax_ClampsToRange")]
+    [InlineData(10, 2, 8, 8)]
+    [InlineData(5, 2, 8, 5)]
+    [InlineData(1, 2, 8, 2)]
+    [InlineData(-5, -10, 0, -5)]
+    public void EnsureRange_Int_MinMax_ClampsToRange(int input, int min, int max, int expected)
+    {
+        // Act
+        int result = input.EnsureRange(min, max);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory(DisplayName = "EnsureRangeToByte_ConvertsAndClampsToByteRange")]
+    [InlineData(100, 100)]
+    [InlineData(255, 255)]
+    [InlineData(256, 255)]
+    [InlineData(0, 0)]
+    [InlineData(-10, 0)]
+    [InlineData(500, 255)]
+    public void EnsureRangeToByte_ConvertsAndClampsToByteRange(int input, byte expected)
+    {
+        // Act
+        byte result = input.EnsureRangeToByte();
+
+        // Assert
+        result.Should().Be(expected);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Core\Theming\Abstractions\UIThemePaletteBaseTests.cs ===
+
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+using CdCSharp.BlazorUI.Core.Theming.Css;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Theming.Abstractions;
+
+[Trait("Theming", "UIThemePaletteBase")]
+public class UIThemePaletteBaseTests
+{
+    // Concrete implementation for testing
+    private class TestThemePalette : UIThemePaletteBase
+    {
+    }
+
+    [Fact(DisplayName = "Constructor_SetsDefaultValues")]
+    public void UIThemePaletteBase_Constructor_SetsDefaultValues()
+    {
+        // Act
+        TestThemePalette palette = new();
+
+        // Assert
+        palette.Id.Should().Be("default");
+        palette.Name.Should().Be("Default");
+
+        // Main colors
+        palette.Primary.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#3B82F6");
+        palette.PrimaryContrast.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#FFFFFF");
+        palette.Secondary.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#8B5CF6");
+        palette.SecondaryContrast.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#FFFFFF");
+
+        // Surface colors
+        palette.Background.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#FFFFFF");
+        palette.Surface.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#F8FAFC");
+        palette.Foreground.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#1E293B");
+
+        // Status colors
+        palette.Error.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#EF4444");
+        palette.Success.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#10B981");
+        palette.Warning.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#F59E0B");
+        palette.Info.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#3B82F6");
+    }
+
+    [Fact(DisplayName = "Properties_CanBeSetAndRetrieved")]
+    public void UIThemePaletteBase_Properties_CanBeSetAndRetrieved()
+    {
+        // Arrange
+        TestThemePalette palette = new();
+        CssColor testColor = new("#123456");
+
+        // Act & Assert - Test all properties
+        palette.Id = "custom-id";
+        palette.Id.Should().Be("custom-id");
+
+        palette.Name = "Custom Name";
+        palette.Name.Should().Be("Custom Name");
+
+        palette.Primary = testColor;
+        palette.Primary.Should().Be(testColor);
+
+        palette.PrimaryContrast = testColor;
+        palette.PrimaryContrast.Should().Be(testColor);
+
+        palette.Secondary = testColor;
+        palette.Secondary.Should().Be(testColor);
+
+        palette.SecondaryContrast = testColor;
+        palette.SecondaryContrast.Should().Be(testColor);
+
+        palette.Background = testColor;
+        palette.Background.Should().Be(testColor);
+
+        palette.Surface = testColor;
+        palette.Surface.Should().Be(testColor);
+
+        palette.Foreground = testColor;
+        palette.Foreground.Should().Be(testColor);
+
+        palette.Error = testColor;
+        palette.Error.Should().Be(testColor);
+
+        palette.Success = testColor;
+        palette.Success.Should().Be(testColor);
+
+        palette.Warning = testColor;
+        palette.Warning.Should().Be(testColor);
+
+        palette.Info = testColor;
+        palette.Info.Should().Be(testColor);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Core\Theming\Css\CssColorTests.cs ===
+
+using CdCSharp.BlazorUI.Core.Theming.Css;
+using FluentAssertions;
+using System.Drawing;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Theming.Css;
+
+[Trait("Theming", "CssColor")]
+public class CssColorTests
+{
+    [Fact(DisplayName = "Constructor_FromSystemColor_WithVariant")]
+    public void CssColor_Constructor_FromSystemColor_WithVariant()
+    {
+        // Arrange
+        Color systemColor = Color.FromArgb(255, 100, 150, 200);
+
+        // Act - Test different variants using static methods
+        CssColor defaultColor = new(systemColor, null);
+        CssColor lightenColor = new(systemColor, CssColorVariant.Lighten(1));
+        CssColor darkenColor = new(systemColor, CssColorVariant.Darken(1));
+
+        // Assert
+        defaultColor.R.Should().Be(100);
+        defaultColor.G.Should().Be(150);
+        defaultColor.B.Should().Be(200);
+        defaultColor.A.Should().Be(255);
+
+        // Verify variants were applied (exact values depend on implementation)
+        lightenColor.Should().NotBeNull();
+        darkenColor.Should().NotBeNull();
+    }
+
+    [Fact(DisplayName = "HSL_Properties_Get")]
+    public void CssColor_HSL_Properties_Get()
+    {
+        // Arrange
+        CssColor color = new("#FF0000");
+
+        // Act & Assert - Only test getters
+        color.H.Should().BeInRange(0, 360);
+        color.S.Should().BeInRange(0, 100);
+        color.L.Should().BeInRange(0, 100);
+    }
+
+    [Fact(DisplayName = "Equals_WithCssColorParameter")]
+    public void CssColor_Equals_WithCssColorParameter()
+    {
+        // Arrange
+        CssColor color1 = new("#FF0000");
+        CssColor color2 = new("#FF0000");
+        CssColor color3 = new("#00FF00");
+        CssColor? nullColor = null;
+
+        // Act & Assert
+        color1.Equals(color2).Should().BeTrue();
+        color1.Equals(color3).Should().BeFalse();
+        color1.Equals(nullColor).Should().BeFalse();
+
+        // Same reference
+        color1.Equals(color1).Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "Equals_WithObjectParameter")]
+    public void CssColor_Equals_WithObjectParameter()
+    {
+        // Arrange
+        CssColor color1 = new("#FF0000");
+        CssColor color2 = new("#FF0000");
+        object? nullObject = null;
+        object notAColor = "Not a color";
+
+        // Act & Assert
+        color1.Equals((object)color2).Should().BeTrue();
+        color1.Equals(nullObject).Should().BeFalse();
+        color1.Equals(notAColor).Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "GetHashCode_SameColorsHaveSameHashCode")]
+    public void CssColor_GetHashCode_SameColorsHaveSameHashCode()
+    {
+        // Arrange
+        CssColor color1 = new("#FF0000");
+        CssColor color2 = new("#FF0000");
+        CssColor color3 = new("#00FF00");
+
+        // Act
+        int hash1 = color1.GetHashCode();
+        int hash2 = color2.GetHashCode();
+        int hash3 = color3.GetHashCode();
+
+        // Assert
+        hash1.Should().Be(hash2);
+        hash1.Should().NotBe(hash3);
+    }
+
+    [Fact(DisplayName = "ToString_WithoutParameter_ReturnsDefaultFormat")]
+    public void CssColor_ToString_WithoutParameter_ReturnsDefaultFormat()
+    {
+        // Arrange
+        CssColor color = new("#FF0000");
+
+        // Act
+        string result = color.ToString();
+
+        // Assert
+        result.Should().NotBeNullOrEmpty();
+        // Should return Rgba format by default
+        result.Should().Be("rgba(255,0,0,1)");
+    }
+
+    [Theory(DisplayName = "ToString_WithFormat_ReturnsCorrectFormat")]
+    [InlineData(ColorOutputFormats.Hex, "#")]
+    [InlineData(ColorOutputFormats.Rgba, "rgba")] // Using Rgba instead of RGB/RGBA
+    public void CssColor_ToString_WithFormat_ReturnsCorrectFormat(ColorOutputFormats format, string expectedStart)
+    {
+        // Arrange
+        CssColor color = new("#FF0000");
+
+        // Act
+        string result = color.ToString(format);
+
+        // Assert
+        result.Should().StartWith(expectedStart, "Format {0} should produce output starting with {1}", format, expectedStart);
+    }
+
+    [Theory(DisplayName = "CssColor_Constructor_Throws_ForInvalidStrings")]
+    [InlineData(null)]                   // null
+    [InlineData("")]                     // empty
+    [InlineData("   ")]                  // whitespace
+    [InlineData("invalid")]              // random string
+    [InlineData("rgb()")]                // missing numbers
+    [InlineData("rgba()")]               // missing numbers
+    [InlineData("rgb(300,400,500)")]     // values out of range
+    [InlineData("rgba(0,0,0,2)")]        // alpha > 1
+    [InlineData("#GGHHII")]              // invalid hex characters
+    [InlineData("#12345")]               // invalid hex length
+    [InlineData("#123456789")]           // invalid hex length
+    public void CssColor_Constructor_Throws_ForInvalidStrings(string invalidValue)
+    {
+        // Arrange
+        Action act = () => new CssColor(invalidValue);
+
+        // Act & Assert
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Theory(DisplayName = "CssColor_Constructor_ParsesValidFormats")]
+    [InlineData("#FF0000")]
+    [InlineData("#ff0000")]           // lowercase
+    [InlineData("#F00")]
+    [InlineData("#F00F")]             // 4-digit HEX with alpha
+    [InlineData("#FF0000FF")]         // 8-digit HEX with alpha
+    [InlineData("rgb(255,0,0)")]
+    [InlineData("rgb( 255 , 0 , 0 )")] // spaces
+    [InlineData("rgba(255,0,0,1)")]
+    [InlineData("rgba(255,0,0,0.5)")]  // alpha decimal
+    [InlineData("RGBA(255,0,0,0.5)")]  // uppercase rgba
+    public void CssColor_Parse_ValidFormats(string colorString)
+    {
+        // Act
+        CssColor color = new(colorString);
+
+        // Assert
+        color.Should().NotBeNull();
+        color.R.Should().BeInRange(0, 255);
+        color.G.Should().BeInRange(0, 255);
+        color.B.Should().BeInRange(0, 255);
+        color.A.Should().BeInRange(0, 255);
+    }
+
+    [Fact(DisplayName = "Constructor_ByteValues")]
+    public void CssColor_Constructor_ByteValues()
+    {
+        // Act
+        CssColor color = new(100, 150, 200, 255);
+
+        // Assert
+        color.R.Should().Be(100);
+        color.G.Should().Be(150);
+        color.B.Should().Be(200);
+        color.A.Should().Be(255);
+    }
+
+    [Fact(DisplayName = "Constructor_IntValuesWithAlpha")]
+    public void CssColor_Constructor_IntValuesWithAlpha()
+    {
+        // Act
+        CssColor color = new(100, 150, 200, 255);
+
+        // Assert
+        color.R.Should().Be(100);
+        color.G.Should().Be(150);
+        color.B.Should().Be(200);
+        color.A.Should().Be(255);
+    }
+
+    [Fact(DisplayName = "Constructor_IntValuesWithAlphaDouble")]
+    public void CssColor_Constructor_IntValuesWithAlphaDouble()
+    {
+        // Act
+        CssColor color = new(100, 150, 200, 0.5);
+
+        // Assert
+        color.R.Should().Be(100);
+        color.G.Should().Be(150);
+        color.B.Should().Be(200);
+        color.A.Should().BeCloseTo(127, 1); // 0.5 * 255
+    }
+
+    [Fact(DisplayName = "ImplicitOperator_FromCssColorToString")]
+    public void CssColor_ImplicitOperator_FromCssColorToString()
+    {
+        // Arrange
+        CssColor color = new("#FF0000");
+
+        // Act
+        string colorString = (string)color; // Explicit cast since implicit might not be available
+
+        // Assert
+        colorString.Should().Be("rgba(255,0,0,1)");
+    }
+
+    [Fact(DisplayName = "ImplicitOperator_FromStringToCssColor")]
+    public void CssColor_ImplicitOperator_FromStringToCssColor()
+    {
+        // Act
+        CssColor color = new("#FF0000"); // Direct constructor instead of implicit
+
+        // Assert
+        color.Should().NotBeNull();
+        color.R.Should().Be(255);
+        color.G.Should().Be(0);
+        color.B.Should().Be(0);
+    }
+
+    [Fact(DisplayName = "APercentage_Property")]
+    public void CssColor_APercentage_Property()
+    {
+        // Arrange
+        CssColor color = new(255, 0, 0, 128);
+
+        // Act
+        double percentage = color.APercentage;
+
+        // Assert
+        percentage.Should().BeApproximately(0.5, 0.01);
+    }
+
+    [Fact(DisplayName = "EqualityOperator_ComparesTwoColors")]
+    public void CssColor_EqualityOperator_ComparesTwoColors()
+    {
+        // Arrange
+        CssColor color1 = new("#FF0000");
+        CssColor color2 = new("#FF0000");
+        CssColor color3 = new("#00FF00");
+
+        // Act & Assert
+        (color1 == color2).Should().BeTrue();
+        (color1 == color3).Should().BeFalse();
+        (color1 != color3).Should().BeTrue();
+        (color1 != color2).Should().BeFalse();
+    }
+
+    [Fact(DisplayName = "CssColorVariant_Constructor")]
+    public void CssColorVariant_Constructor()
+    {
+        // This tests the CssColorVariant constructor that takes Modifier and double
+        // We can't create it directly, but we can test through the static methods
+        CssColorVariant lighten1 = CssColorVariant.Lighten(1);
+        CssColorVariant darken2 = CssColorVariant.Darken(2);
+
+        // Assert
+        lighten1.Should().NotBeNull();
+        darken2.Should().NotBeNull();
+
+        // Test the properties if they are accessible
+        lighten1.Alteration.Should().BeGreaterThan(0);
+        darken2.Alteration.Should().BeGreaterThan(0);
+    }
+
+    [Theory(DisplayName = "ToString_AllFormats")]
+    [InlineData(ColorOutputFormats.Hex)]
+    [InlineData(ColorOutputFormats.Rgba)]
+    [InlineData(ColorOutputFormats.Rgb)]
+    [InlineData(ColorOutputFormats.HexA)]
+    public void CssColor_ToString_AllFormats(ColorOutputFormats format)
+    {
+        // Arrange
+        CssColor color = new("#FF0000");
+
+        // Act
+        string result = color.ToString(format);
+
+        // Assert
+        result.Should().NotBeNullOrEmpty();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\Tests\Extensions\ServiceCollectionExtensionsTests.cs ===
+
+using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Components.Generic.Svg;
+using CdCSharp.BlazorUI.Core.Components.Services;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using System.Diagnostics.CodeAnalysis;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Extensions;
+
+public class FakeJsRuntime : IJSRuntime
+{
+    ValueTask<TValue> IJSRuntime.InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(string identifier, object?[]? args) => throw new NotImplementedException();
+    ValueTask<TValue> IJSRuntime.InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(string identifier, CancellationToken cancellationToken, object?[]? args) => throw new NotImplementedException();
+}
+
+[Trait("Extensions", "ServiceCollectionExtensions")]
+public class ServiceCollectionExtensionsTests : BunitContext
+{
+
+    private static readonly Type[] ExpectedServiceTypes =
+{
+    typeof(IVariantRegistry<UIButton, UIButtonVariant>),
+    typeof(IVariantRegistry<UISvgIcon, UISvgIconVariant>),
+    typeof(IVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>),
+    typeof(IThemeJsInterop),
+    typeof(IMemoryCache),
+};
+
+    [Fact(DisplayName = "AddBlazorUI_RegistersAllServices")]
+    public void AddBlazorUI_RegistersAllServices()
+    {
+        ServiceCollection services = new();
+
+        services.AddBlazorUI();
+
+        AssertServicesAreRegistered(services);
+    }
+
+    private static void AssertServicesAreRegistered(
+    IServiceCollection services)
+    {
+        foreach (Type serviceType in ExpectedServiceTypes)
+        {
+            services.Should().Contain(d => d.ServiceType == serviceType,
+                $"Service {serviceType.Name} should be registered");
+        }
+    }
+
+    [Fact(DisplayName = "AddBlazorUI_RegistersAndResolvesAllServices")]
+    public async Task AddBlazorUI_RegistersAndResolvesAllServices()
+    {
+        ServiceCollection services = new();
+        services.AddScoped<IJSRuntime, FakeJsRuntime>();
+
+        services.AddBlazorUI();
+        await using ServiceProvider provider = services.BuildServiceProvider();
+
+        AssertServicesAreRegistered(services);
+        AssertServicesCanBeResolved(provider);
+    }
+
+    private static void AssertServicesCanBeResolved(
+    IServiceProvider provider)
+    {
+        foreach (Type serviceType in ExpectedServiceTypes)
+        {
+            provider.GetService(serviceType)
+                .Should().NotBeNull($"{serviceType.Name} should be resolvable");
+        }
+    }
+
+    [Fact(DisplayName = "AddBlazorUIVariants_RegistersCustomVariants")]
+    public void ServiceCollectionExtensions_AddBlazorUIVariants_RegistersCustomVariants()
+    {
+        // Arrange
+        ServiceCollection services = new();
+        services.AddBlazorUI();
+        UIButtonVariant customVariant = UIButtonVariant.Custom("Glass");
+        bool templateCalled = false;
+
+        // Act
+        services.AddBlazorUIVariants(builder =>
+        {
+            builder.For<UIButton, UIButtonVariant>()
+                .Register(customVariant, _ =>
+                {
+                    templateCalled = true;
+                    return __builder => { };
+                });
+        });
+
+        ServiceProvider provider = services.BuildServiceProvider();
+        IVariantRegistry<UIButton, UIButtonVariant> registry = provider.GetRequiredService<IVariantRegistry<UIButton, UIButtonVariant>>();
+        RenderFragment? template = registry.GetTemplate(customVariant, null!);
+        template?.Invoke(null!);
+
+        // Assert
+        templateCalled.Should().BeTrue();
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration\CdCSharp.BlazorUI.Tests.Integration.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<ExcludeFromCodeCoverage>true</ExcludeFromCodeCoverage>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="bunit" Version="2.3.4" />
+		<PackageReference Include="coverlet.collector" Version="6.0.4" />
+		<PackageReference Include="FluentAssertions" Version="8.8.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+		<PackageReference Include="NSubstitute" Version="5.3.0" />
+		<PackageReference Include="Verify" Version="31.9.0" />
+		<PackageReference Include="Verify.Blazor" Version="11.0.0" />
+		<PackageReference Include="Verify.Xunit" Version="31.9.0" />
+		<PackageReference Include="xunit" Version="2.9.3" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+		<ProjectReference Include="..\CdCSharp.BlazorUI.Tests.Integration.Templates\CdCSharp.BlazorUI.Tests.Integration.Templates.csproj" />
+	</ItemGroup>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration.Templates\Components\TestComponent.razor ===
+
+@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@inherits UIComponentBase
+
+<div @attributes="AdditionalAttributes">
+    <span class="test-content">@Text</span>
+</div>
+
+@code {
+    [Parameter] public string Text { get; set; } = "Test Component";
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return "test-component";
+        if (IsPrimary)
+        {
+            yield return "test-component--primary";
+        }
+    }
+
+    public override Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        Dictionary<string, string> styles = new();
+        if (!string.IsNullOrEmpty(Color))
+        {
+            styles["color"] = Color;
+        }
+        if (!string.IsNullOrEmpty(BackgroundColor))
+        {
+            styles["background-color"] = BackgroundColor;
+        }
+        return styles;
+    }
+
+    [Parameter] public bool IsPrimary { get; set; }
+    [Parameter] public string? Color { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration.Templates\Components\TestVariant.cs ===
+
+using CdCSharp.BlazorUI.Core.Components.Abstractions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
+
+public class TestVariant : Variant
+{
+    public TestVariant(string name) : base(name)
+    {
+    }
+
+    public static readonly TestVariant Default = new("Default");
+    public static readonly TestVariant Alternative = new("Alternative");
+    public static TestVariant Custom(string name) => new(name);
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration.Templates\Components\TestVariantComponent.razor ===
+
+@using CdCSharp.BlazorUI.Core.Components.Abstractions
+@using CdCSharp.BlazorUI.Core.Theming.Css
+@inherits UIVariantComponentBase<TestVariantComponent, TestVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public string Text { get; set; } = "Test Variant Component";
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    protected override TestVariant DefaultVariant => TestVariant.Default;
+
+    protected override Dictionary<TestVariant, Func<TestVariantComponent, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [TestVariant.Default] = component => component.RenderDefault(),
+        [TestVariant.Alternative] = component => component.RenderAlternative(),
+    };
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <button @attributes="AdditionalAttributes"
+                @onclick="OnClick"
+                disabled="@Disabled">
+            @Text
+        </button>
+    };
+
+    private RenderFragment RenderAlternative() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes"
+             @onclick="OnClick"
+             class="@($"{ComputedCssClasses} alternative-style")">
+            <span>Alt: @Text</span>
+        </div>
+    };
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return "test-variant-component";
+        yield return CssClassesReference.Variant("test-variant-component", Variant ?? DefaultVariant);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration.Templates\Components\TestVariantTemplates.razor ===
+
+@using Microsoft.AspNetCore.Components
+
+@code {
+    // Basic template that does not add any classes (inherits all from @attributes)
+    public RenderFragment BasicCustomTemplate(TestVariantComponent component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
+    // Simple template that adds a single class
+    public RenderFragment AddsOneClassTemplate(TestVariantComponent component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                class="@($"{component.ComputedCssClasses} btn-glass")"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
+    // Template that removes class from AdditionalAttributes and adds its own
+    public RenderFragment OverrideClassTemplate(TestVariantComponent component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                class="btn-override-only"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            Override: @component.Text
+        </button>
+    };
+
+    // Template for data attributes - user can override
+    public RenderFragment DataAttributeTemplate(TestVariantComponent component) => __builder =>
+    {
+        <button data-variant="custom"
+                data-test="template-value"
+                @attributes="component.AdditionalAttributes"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
+    // Template for data attributes - template has priority
+    public RenderFragment DataAttributeTemplatePriority(TestVariantComponent component) => __builder =>
+    {
+        <button @attributes="component.AdditionalAttributes"
+                data-variant="custom"
+                data-test="template-value-priority"
+                @onclick="component.OnClick"
+                disabled="@component.Disabled">
+            @component.Text
+        </button>
+    };
+
+    // Registered variant template
+    public RenderFragment RegisteredTemplate(TestVariantComponent component) => __builder =>
+    {
+        <div @attributes="component.AdditionalAttributes"
+             class="@($"{component.ComputedCssClasses} registered-variant")">
+            <span>Registered: @component.Text</span>
+        </div>
+    };
+}
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration.Templates\_Imports.razor ===
+
+@using Microsoft.AspNetCore.Components.Web
+
+
+
+=== CdCSharp.BlazorUI.Tests.Integration.Templates\CdCSharp.BlazorUI.Tests.Integration.Templates.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<ExcludeFromCodeCoverage>true</ExcludeFromCodeCoverage>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+	</ItemGroup>
+
+</Project>
+
+
+

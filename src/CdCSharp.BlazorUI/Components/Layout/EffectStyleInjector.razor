@@ -1,0 +1,19 @@
+﻿@using Microsoft.JSInterop
+@inject IJSRuntime JS
+
+@if (!string.IsNullOrEmpty(StyleContent))
+{
+    <style>@((MarkupString)StyleContent)</style>
+}
+
+@code {
+    [Parameter] public string? StyleContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(StyleContent))
+        {
+            StateHasChanged();
+        }
+    }
+}

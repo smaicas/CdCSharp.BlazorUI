@@ -1,0 +1,389 @@
+﻿@page "/effects"
+
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Effects
+@using CdCSharp.BlazorUI.Core.Effects.Builders
+@using CdCSharp.BlazorUI.Core.Theming
+
+<h1>UI Effects System</h1>
+
+<p>Test page for all available effects in the BlazorUI library.</p>
+
+<hr />
+
+<h2>Predefined Effects</h2>
+
+<h3>Hover Effects</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.HoverScale" Text="Hover Scale" />
+        <span class="effect-label">HoverScale</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.HoverFade" Text="Hover Fade" />
+        <span class="effect-label">HoverFade</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.HoverShadow" Text="Hover Shadow" />
+        <span class="effect-label">HoverShadow</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.HoverLift" Text="Hover Lift" />
+        <span class="effect-label">HoverLift</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.HoverGlow" Text="Hover Glow" />
+        <span class="effect-label">HoverGlow</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Click Effects</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.ClickPulse" Text="Click Pulse" OnClick="LogClick" />
+        <span class="effect-label">ClickPulse</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.ClickShake" Text="Click Shake" OnClick="LogClick" />
+        <span class="effect-label">ClickShake</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Focus Effects</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.FocusGlow" Text="Focus Glow (Tab to focus)" />
+        <span class="effect-label">FocusGlow</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Combined Effects</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="UIEffectPresets.Interactive" Text="Interactive (All)" OnClick="LogClick" />
+        <span class="effect-label">Interactive (Hover + Click + Focus)</span>
+    </div>
+</div>
+
+<hr />
+
+<h2>Custom Effects Builder</h2>
+
+<h3>Single Trigger Effects</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@customScale" Text="Custom Scale" />
+        <span class="effect-label">Scale 1.2 on hover</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@customRotate" Text="Custom Rotate" />
+        <span class="effect-label">Rotate 15deg on hover</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@customBlur" Text="Custom Blur" />
+        <span class="effect-label">Blur on hover</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Multiple Effects on Same Trigger</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@multipleHover" Text="Scale + Fade + Shadow" />
+        <span class="effect-label">Multiple hover effects</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@crazyHover" Text="Crazy Hover" />
+        <span class="effect-label">Scale + Rotate + Shadow</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Multiple Triggers</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@multipleTriggers" Text="Multi Trigger" OnClick="LogClick" />
+        <span class="effect-label">Hover + Click + Focus</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Keyframe Effects</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@bounceOnClick" Text="Bounce Click" OnClick="LogClick" />
+        <span class="effect-label">Bounce animation on click</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@spinOnHover" Text="Spin Hover" />
+        <span class="effect-label">Spin animation on hover</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@pulseConstant" Text="Constant Pulse" />
+        <span class="effect-label">Continuous pulse</span>
+    </div>
+</div>
+
+<hr />
+
+<h2>Effect Configuration</h2>
+
+<h3>Duration Variations</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@fastEffect" Text="Fast (100ms)" />
+        <span class="effect-label">Fast transition</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@normalEffect" Text="Normal (300ms)" />
+        <span class="effect-label">Normal transition</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@slowEffect" Text="Slow (1000ms)" />
+        <span class="effect-label">Slow transition</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Easing Variations</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@easeInEffect" Text="Ease In" />
+        <span class="effect-label">ease-in</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@easeOutEffect" Text="Ease Out" />
+        <span class="effect-label">ease-out</span>
+    </div>
+
+    <div class="effect-demo">
+        <UIButton Effects="@elasticEffect" Text="Elastic" />
+        <span class="effect-label">cubic-bezier elastic</span>
+    </div>
+</div>
+
+<hr />
+
+<h3>Delay Variations</h3>
+<div class="effects-grid">
+    <div class="effect-demo">
+        <UIButton Effects="@delayedEffect" Text="Delayed (500ms)" />
+        <span class="effect-label">500ms delay on hover</span>
+    </div>
+</div>
+
+<hr />
+
+<h2>Click Count: @clickCount</h2>
+
+<style>
+    .effects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .effect-demo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        background-color: var(--palette-surface);
+    }
+
+    .effect-label {
+        font-size: 0.875rem;
+        color: var(--palette-foreground);
+        opacity: 0.7;
+        text-align: center;
+    }
+
+    h2 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--palette-primary);
+    }
+</style>
+
+@code {
+    private int clickCount = 0;
+
+    private void LogClick()
+    {
+        clickCount++;
+    }
+
+    // Custom single effects
+    private SimpleUIEffects customScale = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.2)";
+        })
+        .Build();
+
+    private SimpleUIEffects customRotate = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "rotate(15deg)";
+        })
+        .Build();
+
+    private SimpleUIEffects customBlur = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["filter"] = "blur(3px)";
+        })
+        .Build();
+
+    // Multiple effects on same trigger
+    private SimpleUIEffects multipleHover = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.1)";
+            e.Properties["opacity"] = "0.8";
+            e.Properties["box-shadow"] = "0 8px 20px rgba(0, 0, 0, 0.3)";
+        })
+        .Build();
+
+    private SimpleUIEffects crazyHover = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.15) rotate(-5deg)";
+            e.Properties["box-shadow"] = "5px 5px 15px rgba(255, 0, 0, 0.5)";
+        })
+        .Build();
+
+    // Multiple triggers
+    private SimpleUIEffects multipleTriggers = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.05) translateY(-2px)";
+        })
+        .OnActive(e =>
+        {
+            e.Properties["transform"] = "scale(0.98)";
+            e.AnimationName = "ui-effect-pulse";
+            e.Duration = TimeSpan.FromMilliseconds(600);
+        })
+        .OnFocus(e =>
+        {
+            e.Properties["box-shadow"] = "0 0 0 4px rgba(139, 92, 246, 0.3)";
+        })
+        .Build();
+
+    // Keyframe effects
+    private SimpleUIEffects bounceOnClick = SimpleEffectBuilder.Create()
+        .OnActive(e =>
+        {
+            e.AnimationName = "ui-effect-bounce";
+            e.Duration = TimeSpan.FromMilliseconds(800);
+        })
+        .Build();
+
+    private SimpleUIEffects spinOnHover = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "rotate(360deg)";
+            e.Duration = TimeSpan.FromMilliseconds(1000);
+        })
+        .Build();
+
+    private SimpleUIEffects pulseConstant = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.AnimationName = "ui-effect-pulse";
+            e.Duration = TimeSpan.FromMilliseconds(1000);
+            e.IterationCount = -1; // Infinite
+        })
+        .Build();
+
+    // Duration variations
+    private SimpleUIEffects fastEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.2)";
+            e.Duration = TimeSpan.FromMilliseconds(100);
+        })
+        .Build();
+
+    private SimpleUIEffects normalEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.2)";
+            e.Duration = TimeSpan.FromMilliseconds(300);
+        })
+        .Build();
+
+    private SimpleUIEffects slowEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.2)";
+            e.Duration = TimeSpan.FromMilliseconds(1000);
+        })
+        .Build();
+
+    // Easing variations
+    private SimpleUIEffects easeInEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "translateX(20px)";
+            e.Easing = "ease-in";
+        })
+        .Build();
+
+    private SimpleUIEffects easeOutEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "translateX(20px)";
+            e.Easing = "ease-out";
+        })
+        .Build();
+
+    private SimpleUIEffects elasticEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.1)";
+            e.Easing = "cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+        })
+        .Build();
+
+    // Delayed effect
+    private SimpleUIEffects delayedEffect = SimpleEffectBuilder.Create()
+        .OnHover(e =>
+        {
+            e.Properties["transform"] = "scale(1.3)";
+            e.Delay = TimeSpan.FromMilliseconds(500);
+        })
+        .Build();
+}
