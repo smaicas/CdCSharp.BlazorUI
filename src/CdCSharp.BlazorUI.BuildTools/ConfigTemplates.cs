@@ -165,6 +165,7 @@ export default defineConfig({
     public static string GetMainCss() => """
 @import './reset.css';
 @import './themes.css';
+@import './effects.css';
 @import './initialize-themes.css';
 """;
 
