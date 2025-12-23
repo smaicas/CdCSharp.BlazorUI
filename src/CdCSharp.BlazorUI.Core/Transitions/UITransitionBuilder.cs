@@ -113,7 +113,14 @@ public class TriggerTransitionBuilder
 
         config.Duration = transitionOptions.Duration;
         config.Delay = transitionOptions.Delay;
-        config.Easing = transitionOptions.Easing;
+
+        // Build easing if provided
+        if (transitionOptions.Easing != null)
+        {
+            EasingBuilder easingBuilder = new();
+            transitionOptions.Easing(easingBuilder);
+            config.Easing = easingBuilder.Build();
+        }
 
         return config;
     }
@@ -123,5 +130,5 @@ public class TransitionOptions
 {
     public TimeSpan? Duration { get; set; }
     public TimeSpan? Delay { get; set; }
-    public string? Easing { get; set; }
+    public Action<EasingBuilder>? Easing { get; set; }
 }

@@ -4,7 +4,7 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Services;
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Services;
 
 [Trait("Core", "VariantRegistry")]
 public class VariantRegistryTests : TestContextBase
