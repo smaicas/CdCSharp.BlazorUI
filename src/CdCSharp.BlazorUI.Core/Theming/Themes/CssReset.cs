@@ -280,6 +280,6 @@ public static class CssReset
         [hidden] {
             display: none;
         }
-        
+
         """;
 }

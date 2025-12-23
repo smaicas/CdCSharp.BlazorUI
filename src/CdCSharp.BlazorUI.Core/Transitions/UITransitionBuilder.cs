@@ -2,18 +2,6 @@
 
 namespace CdCSharp.BlazorUI.Core.Transitions;
 
-public class UITransitionsBuilder
-{
-    internal UITransitions _transitions = new();
-
-    public TriggerTransitionBuilder OnHover() => new(_transitions, TransitionTrigger.Hover);
-    public TriggerTransitionBuilder OnFocus() => new(_transitions, TransitionTrigger.Focus);
-    public TriggerTransitionBuilder OnActive() => new(_transitions, TransitionTrigger.Active);
-    public TriggerTransitionBuilder OnDisabled() => new(_transitions, TransitionTrigger.Disabled);
-
-    public UITransitions Build() => _transitions;
-}
-
 public class TriggerTransitionBuilder
 {
     private readonly UITransitions _transitions;
@@ -25,44 +13,13 @@ public class TriggerTransitionBuilder
         _trigger = trigger;
     }
 
-    // Basic transitions
-    public TriggerTransitionBuilder Scale(float scale = 1.05f, Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.Scale, options);
-        config.CustomProperties["scale"] = scale.ToString(CultureInfo.InvariantCulture);
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
+    // Builder chaining
+    public UITransitionsBuilder And() => new() { _transitions = _transitions };
 
-    public TriggerTransitionBuilder Rotate(string angle = "5deg", Action<TransitionOptions>? options = null)
+    public TriggerTransitionBuilder BackdropBlur(string amount = "8px", Action<TransitionOptions>? options = null)
     {
-        TransitionConfig config = CreateConfig(TransitionType.Rotate, options);
-        config.CustomProperties["angle"] = angle;
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
-
-    public TriggerTransitionBuilder Translate(string x = "0", string y = "-4px", Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.Translate, options);
-        config.CustomProperties["x"] = x;
-        config.CustomProperties["y"] = y;
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
-
-    public TriggerTransitionBuilder Fade(float opacity = 0.7f, Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.Fade, options);
-        config.CustomProperties["opacity"] = opacity.ToString(CultureInfo.InvariantCulture);
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
-
-    public TriggerTransitionBuilder Shadow(string shadow = "0 4px 8px rgba(0, 0, 0, 0.2)", Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.Shadow, options);
-        config.CustomProperties["shadow"] = shadow;
+        TransitionConfig config = CreateConfig(TransitionType.BackdropBlur, options);
+        config.CustomProperties["amount"] = amount;
         _transitions.AddTransition(_trigger, config);
         return this;
     }
@@ -75,18 +32,13 @@ public class TriggerTransitionBuilder
         return this;
     }
 
-    public TriggerTransitionBuilder BackdropBlur(string amount = "8px", Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.BackdropBlur, options);
-        config.CustomProperties["amount"] = amount;
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
+    // Add Build method to TriggerTransitionBuilder
+    public UITransitions Build() => _transitions;
 
-    // Combined effects
-    public TriggerTransitionBuilder Lift(Action<TransitionOptions>? options = null)
+    public TriggerTransitionBuilder Fade(float opacity = 0.7f, Action<TransitionOptions>? options = null)
     {
-        TransitionConfig config = CreateConfig(TransitionType.Lift, options);
+        TransitionConfig config = CreateConfig(TransitionType.Fade, options);
+        config.CustomProperties["opacity"] = opacity.ToString(CultureInfo.InvariantCulture);
         _transitions.AddTransition(_trigger, config);
         return this;
     }
@@ -99,11 +51,47 @@ public class TriggerTransitionBuilder
         return this;
     }
 
-    // Builder chaining
-    public UITransitionsBuilder And() => new() { _transitions = _transitions };
+    // Combined effects
+    public TriggerTransitionBuilder Lift(Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Lift, options);
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
 
-    // Add Build method to TriggerTransitionBuilder
-    public UITransitions Build() => _transitions;
+    public TriggerTransitionBuilder Rotate(string angle = "5deg", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Rotate, options);
+        config.CustomProperties["angle"] = angle;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    // Basic transitions
+    public TriggerTransitionBuilder Scale(float scale = 1.05f, Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Scale, options);
+        config.CustomProperties["scale"] = scale.ToString(CultureInfo.InvariantCulture);
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Shadow(string shadow = "0 4px 8px rgba(0, 0, 0, 0.2)", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Shadow, options);
+        config.CustomProperties["shadow"] = shadow;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Translate(string x = "0", string y = "-4px", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Translate, options);
+        config.CustomProperties["x"] = x;
+        config.CustomProperties["y"] = y;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
 
     private TransitionConfig CreateConfig(TransitionType type, Action<TransitionOptions>? options)
     {
@@ -126,9 +114,24 @@ public class TriggerTransitionBuilder
     }
 }
 
+public class UITransitionsBuilder
+{
+    internal UITransitions _transitions = new();
+
+    public UITransitions Build() => _transitions;
+
+    public TriggerTransitionBuilder OnActive() => new(_transitions, TransitionTrigger.Active);
+
+    public TriggerTransitionBuilder OnDisabled() => new(_transitions, TransitionTrigger.Disabled);
+
+    public TriggerTransitionBuilder OnFocus() => new(_transitions, TransitionTrigger.Focus);
+
+    public TriggerTransitionBuilder OnHover() => new(_transitions, TransitionTrigger.Hover);
+}
+
 public class TransitionOptions
 {
-    public TimeSpan? Duration { get; set; }
     public TimeSpan? Delay { get; set; }
+    public TimeSpan? Duration { get; set; }
     public Action<EasingBuilder>? Easing { get; set; }
 }

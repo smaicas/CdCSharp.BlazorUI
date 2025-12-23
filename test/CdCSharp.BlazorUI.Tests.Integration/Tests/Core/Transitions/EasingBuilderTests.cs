@@ -6,6 +6,31 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Transitions;
 [Trait("Transitions", "EasingBuilder")]
 public class EasingBuilderTests
 {
+    [Fact(DisplayName = "StaticConstants_HaveCorrectValues")]
+    public void Easing_StaticConstants_HaveCorrectValues()
+    {
+        // Assert
+        Easing.Linear.Should().Be("linear");
+        Easing.Ease.Should().Be("ease");
+        Easing.EaseIn.Should().Be("ease-in");
+        Easing.EaseOut.Should().Be("ease-out");
+        Easing.EaseInOut.Should().Be("ease-in-out");
+    }
+
+    [Fact(DisplayName = "ChainedOperations_OverwritePrevious")]
+    public void EasingBuilder_ChainedOperations_OverwritePrevious()
+    {
+        // Act
+        string result = Easing.Create()
+            .Linear()
+            .EaseIn()
+            .CubicBezier().MaterialStandard()
+            .Build();
+
+        // Assert
+        result.Should().Be("cubic-bezier(0.400, 0.000, 0.200, 1.000)");
+    }
+
     [Fact(DisplayName = "Create_ReturnsNewBuilder")]
     public void EasingBuilder_Create_ReturnsNewBuilder()
     {
@@ -15,45 +40,6 @@ public class EasingBuilderTests
         // Assert
         builder.Should().NotBeNull();
         builder.Build().Should().Be("ease");
-    }
-
-    [Theory(DisplayName = "PredefinedEasings_ReturnCorrectValues")]
-    [InlineData("Linear", "linear")]
-    [InlineData("Ease", "ease")]
-    [InlineData("EaseIn", "ease-in")]
-    [InlineData("EaseOut", "ease-out")]
-    [InlineData("EaseInOut", "ease-in-out")]
-    public void EasingBuilder_PredefinedEasings_ReturnCorrectValues(string methodName, string expected)
-    {
-        // Arrange
-        EasingBuilder builder = Easing.Create();
-
-        // Act
-        string result = methodName switch
-        {
-            "Linear" => builder.Linear().Build(),
-            "Ease" => builder.Ease().Build(),
-            "EaseIn" => builder.EaseIn().Build(),
-            "EaseOut" => builder.EaseOut().Build(),
-            "EaseInOut" => builder.EaseInOut().Build(),
-            _ => throw new ArgumentException($"Unknown method: {methodName}")
-        };
-
-        // Assert
-        result.Should().Be(expected);
-    }
-
-    [Fact(DisplayName = "CubicBezier_WithControlPoints_ReturnsCorrectValue")]
-    public void EasingBuilder_CubicBezier_WithControlPoints_ReturnsCorrectValue()
-    {
-        // Act
-        string result = Easing.Create()
-            .CubicBezier()
-            .WithControlPoints(0.4, 0.0, 0.2, 1)
-            .Build();
-
-        // Assert
-        result.Should().Be("cubic-bezier(0.400, 0.000, 0.200, 1.000)");
     }
 
     [Theory(DisplayName = "CubicBezier_Presets_ReturnCorrectValues")]
@@ -86,44 +72,17 @@ public class EasingBuilderTests
         result.Should().Be(expected);
     }
 
-    [Fact(DisplayName = "Steps_WithCount_ReturnsCorrectValue")]
-    public void EasingBuilder_Steps_WithCount_ReturnsCorrectValue()
+    [Fact(DisplayName = "CubicBezier_WithControlPoints_ReturnsCorrectValue")]
+    public void EasingBuilder_CubicBezier_WithControlPoints_ReturnsCorrectValue()
     {
         // Act
         string result = Easing.Create()
-            .Steps(5)
+            .CubicBezier()
+            .WithControlPoints(0.4, 0.0, 0.2, 1)
             .Build();
 
         // Assert
-        result.Should().Be("steps(5, end)");
-    }
-
-    [Theory(DisplayName = "Steps_Positions_ReturnCorrectValues")]
-    [InlineData("Start", "steps(3, start)")]
-    [InlineData("End", "steps(3, end)")]
-    [InlineData("JumpStart", "steps(3, jump-start)")]
-    [InlineData("JumpEnd", "steps(3, jump-end)")]
-    [InlineData("JumpNone", "steps(3, jump-none)")]
-    [InlineData("JumpBoth", "steps(3, jump-both)")]
-    public void EasingBuilder_Steps_Positions_ReturnCorrectValues(string position, string expected)
-    {
-        // Arrange
-        StepsBuilder stepsBuilder = Easing.Create().Steps(3);
-
-        // Act
-        string result = position switch
-        {
-            "Start" => stepsBuilder.Start().Build(),
-            "End" => stepsBuilder.End().Build(),
-            "JumpStart" => stepsBuilder.JumpStart().Build(),
-            "JumpEnd" => stepsBuilder.JumpEnd().Build(),
-            "JumpNone" => stepsBuilder.JumpNone().Build(),
-            "JumpBoth" => stepsBuilder.JumpBoth().Build(),
-            _ => throw new ArgumentException($"Unknown position: {position}")
-        };
-
-        // Assert
-        result.Should().Be(expected);
+        result.Should().Be("cubic-bezier(0.400, 0.000, 0.200, 1.000)");
     }
 
     [Fact(DisplayName = "Custom_ReturnsProvidedValue")]
@@ -154,28 +113,69 @@ public class EasingBuilderTests
         result.Should().Be("linear");
     }
 
-    [Fact(DisplayName = "StaticConstants_HaveCorrectValues")]
-    public void Easing_StaticConstants_HaveCorrectValues()
+    [Theory(DisplayName = "PredefinedEasings_ReturnCorrectValues")]
+    [InlineData("Linear", "linear")]
+    [InlineData("Ease", "ease")]
+    [InlineData("EaseIn", "ease-in")]
+    [InlineData("EaseOut", "ease-out")]
+    [InlineData("EaseInOut", "ease-in-out")]
+    public void EasingBuilder_PredefinedEasings_ReturnCorrectValues(string methodName, string expected)
     {
+        // Arrange
+        EasingBuilder builder = Easing.Create();
+
+        // Act
+        string result = methodName switch
+        {
+            "Linear" => builder.Linear().Build(),
+            "Ease" => builder.Ease().Build(),
+            "EaseIn" => builder.EaseIn().Build(),
+            "EaseOut" => builder.EaseOut().Build(),
+            "EaseInOut" => builder.EaseInOut().Build(),
+            _ => throw new ArgumentException($"Unknown method: {methodName}")
+        };
+
         // Assert
-        Easing.Linear.Should().Be("linear");
-        Easing.Ease.Should().Be("ease");
-        Easing.EaseIn.Should().Be("ease-in");
-        Easing.EaseOut.Should().Be("ease-out");
-        Easing.EaseInOut.Should().Be("ease-in-out");
+        result.Should().Be(expected);
     }
 
-    [Fact(DisplayName = "ChainedOperations_OverwritePrevious")]
-    public void EasingBuilder_ChainedOperations_OverwritePrevious()
+    [Theory(DisplayName = "Steps_Positions_ReturnCorrectValues")]
+    [InlineData("Start", "steps(3, start)")]
+    [InlineData("End", "steps(3, end)")]
+    [InlineData("JumpStart", "steps(3, jump-start)")]
+    [InlineData("JumpEnd", "steps(3, jump-end)")]
+    [InlineData("JumpNone", "steps(3, jump-none)")]
+    [InlineData("JumpBoth", "steps(3, jump-both)")]
+    public void EasingBuilder_Steps_Positions_ReturnCorrectValues(string position, string expected)
+    {
+        // Arrange
+        StepsBuilder stepsBuilder = Easing.Create().Steps(3);
+
+        // Act
+        string result = position switch
+        {
+            "Start" => stepsBuilder.Start().Build(),
+            "End" => stepsBuilder.End().Build(),
+            "JumpStart" => stepsBuilder.JumpStart().Build(),
+            "JumpEnd" => stepsBuilder.JumpEnd().Build(),
+            "JumpNone" => stepsBuilder.JumpNone().Build(),
+            "JumpBoth" => stepsBuilder.JumpBoth().Build(),
+            _ => throw new ArgumentException($"Unknown position: {position}")
+        };
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Fact(DisplayName = "Steps_WithCount_ReturnsCorrectValue")]
+    public void EasingBuilder_Steps_WithCount_ReturnsCorrectValue()
     {
         // Act
         string result = Easing.Create()
-            .Linear()
-            .EaseIn()
-            .CubicBezier().MaterialStandard()
+            .Steps(5)
             .Build();
 
         // Assert
-        result.Should().Be("cubic-bezier(0.400, 0.000, 0.200, 1.000)");
+        result.Should().Be("steps(5, end)");
     }
 }

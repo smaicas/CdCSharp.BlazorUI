@@ -5,29 +5,6 @@ using System.Text.RegularExpressions;
 
 namespace CdCSharp.BlazorUI.Core.Theming.Css;
 
-public class CssColorVariant
-{
-    public enum Modifier
-    {
-        Darken,
-        Lighten
-    }
-
-    public Modifier Mode { get; set; }
-    public double Alteration { get; set; }
-
-    public CssColorVariant(Modifier modifier, double alteration)
-    {
-        Mode = modifier;
-        Alteration = alteration;
-    }
-
-    private const double VariantModifier = 0.050;
-
-    public static CssColorVariant Darken(int alteration) => new(Modifier.Darken, VariantModifier * alteration);
-    public static CssColorVariant Lighten(int alteration) => new(Modifier.Lighten, VariantModifier * alteration);
-}
-
 /// <summary>
 /// The <see cref="CssColor" /> output formats.
 /// </summary>
@@ -57,6 +34,30 @@ public enum ColorOutputFormats
     /// Will output the color elements without any decorator and without alpha. Example 12,15,26
     /// </summary>
     ColorElements
+}
+
+public class CssColorVariant
+{
+    private const double VariantModifier = 0.050;
+
+    public CssColorVariant(Modifier modifier, double alteration)
+    {
+        Mode = modifier;
+        Alteration = alteration;
+    }
+
+    public enum Modifier
+    {
+        Darken,
+        Lighten
+    }
+
+    public double Alteration { get; set; }
+    public Modifier Mode { get; set; }
+
+    public static CssColorVariant Darken(int alteration) => new(Modifier.Darken, VariantModifier * alteration);
+
+    public static CssColorVariant Lighten(int alteration) => new(Modifier.Lighten, VariantModifier * alteration);
 }
 
 /// <summary>
@@ -261,37 +262,37 @@ public class CssColor : IEquatable<CssColor>
         CalculateHsl();
     }
 
-    private static bool IsRgb(string value) =>
-        Regex.IsMatch(
-            value,
-            @"^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(\s*,\s*(0(\.\d+)?|1(\.0+)?))?\s*\)$",
-            RegexOptions.CultureInvariant
-        );
-
-    private static byte[] ParseRgb(string value)
-    {
-        string[] parts = SplitInputIntoParts(value);
-
-        if (value.StartsWith("rgba") && parts.Length != 4 ||
-            value.StartsWith("rgb") && !value.StartsWith("rgba") && parts.Length != 3)
-        {
-            throw new ArgumentException("Invalid rgb/rgba format.", nameof(value));
-        }
-
-        byte r = ParseByte(parts[0], "R");
-        byte g = ParseByte(parts[1], "G");
-        byte b = ParseByte(parts[2], "B");
-        byte a = parts.Length == 4 ? ParseAlpha(parts[3]) : (byte)255;
-
-        return new[] { r, g, b, a };
-    }
-
     private static bool IsHex(string value) =>
         Regex.IsMatch(
             value.StartsWith('#') ? value[1..] : value,
             @"^[0-9a-f]{3}$|^[0-9a-f]{4}$|^[0-9a-f]{6}$|^[0-9a-f]{8}$",
             RegexOptions.CultureInvariant
         );
+
+    private static bool IsRgb(string value) =>
+            Regex.IsMatch(
+            value,
+            @"^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(\s*,\s*(0(\.\d+)?|1(\.0+)?))?\s*\)$",
+            RegexOptions.CultureInvariant
+        );
+
+    private static byte ParseAlpha(string value)
+    {
+        if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double alpha)
+            || alpha < 0 || alpha > 1)
+            throw new ArgumentOutOfRangeException(nameof(value), "Alpha must be between 0 and 1.");
+
+        return (byte)Math.Round(alpha * 255);
+    }
+
+    private static byte ParseByte(string value, string channel)
+    {
+        if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result)
+            || result < 0 || result > 255)
+            throw new ArgumentOutOfRangeException(channel, "RGB values must be between 0 and 255.");
+
+        return (byte)result;
+    }
 
     private static byte[] ParseHex(string value)
     {
@@ -316,22 +317,22 @@ public class CssColor : IEquatable<CssColor>
     };
     }
 
-    private static byte ParseByte(string value, string channel)
+    private static byte[] ParseRgb(string value)
     {
-        if (!int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result)
-            || result < 0 || result > 255)
-            throw new ArgumentOutOfRangeException(channel, "RGB values must be between 0 and 255.");
+        string[] parts = SplitInputIntoParts(value);
 
-        return (byte)result;
-    }
+        if (value.StartsWith("rgba") && parts.Length != 4 ||
+            value.StartsWith("rgb") && !value.StartsWith("rgba") && parts.Length != 3)
+        {
+            throw new ArgumentException("Invalid rgb/rgba format.", nameof(value));
+        }
 
-    private static byte ParseAlpha(string value)
-    {
-        if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double alpha)
-            || alpha < 0 || alpha > 1)
-            throw new ArgumentOutOfRangeException(nameof(value), "Alpha must be between 0 and 1.");
+        byte r = ParseByte(parts[0], "R");
+        byte g = ParseByte(parts[1], "G");
+        byte b = ParseByte(parts[2], "B");
+        byte a = parts.Length == 4 ? ParseAlpha(parts[3]) : (byte)255;
 
-        return (byte)Math.Round(alpha * 255);
+        return new[] { r, g, b, a };
     }
 
     #endregion Constructor

@@ -2,28 +2,34 @@
 
 namespace CdCSharp.BlazorUI.Core.Transitions;
 
+public enum TransitionTrigger
+{
+    Hover,
+    Focus,
+    Active,
+    Disabled
+}
+
+public class TransitionConfig
+{
+    public Dictionary<string, string> CustomProperties { get; set; } = [];
+    public TimeSpan? Delay { get; set; }
+    public TimeSpan? Duration { get; set; }
+    public string? Easing { get; set; }
+    public TransitionType Type { get; set; }
+}
+
 public class UITransitions
 {
     private readonly Dictionary<TransitionTrigger, List<TransitionConfig>> _transitions = [];
 
+    public bool HasTransitions => _transitions.Any();
+
     public IReadOnlyDictionary<TransitionTrigger, IReadOnlyList<TransitionConfig>> Transitions =>
-        _transitions.ToDictionary(
+            _transitions.ToDictionary(
             kvp => kvp.Key,
             kvp => (IReadOnlyList<TransitionConfig>)kvp.Value
         );
-
-    public bool HasTransitions => _transitions.Any();
-
-    internal void AddTransition(TransitionTrigger trigger, TransitionConfig config)
-    {
-        if (!_transitions.TryGetValue(trigger, out List<TransitionConfig>? list))
-        {
-            list = [];
-            _transitions[trigger] = list;
-        }
-
-        list.Add(config);
-    }
 
     public string GetCssClasses()
     {
@@ -62,34 +68,31 @@ public class UITransitions
 
         return styles;
     }
+
+    internal void AddTransition(TransitionTrigger trigger, TransitionConfig config)
+    {
+        if (!_transitions.TryGetValue(trigger, out List<TransitionConfig>? list))
+        {
+            list = [];
+            _transitions[trigger] = list;
+        }
+
+        list.Add(config);
+    }
 }
 
-public class TransitionConfig
-{
-    public TransitionType Type { get; set; }
-    public TimeSpan? Duration { get; set; }
-    public TimeSpan? Delay { get; set; }
-    public string? Easing { get; set; }
-    public Dictionary<string, string> CustomProperties { get; set; } = [];
-}
-
-public enum TransitionTrigger
-{
-    Hover,
-    Focus,
-    Active,
-    Disabled
-}
 public enum TransitionType
 {
     // Transform
     Scale,
+
     Rotate,
     Translate,
     Skew,
 
     // Appearance
     Fade,
+
     Blur,
     Brightness,
     Contrast,
@@ -97,6 +100,7 @@ public enum TransitionType
 
     // Layout
     Shadow,
+
     Border,
 
     // Modern CSS
@@ -104,6 +108,7 @@ public enum TransitionType
 
     // Combinations
     Lift,
+
     Glow,
     Pulse,
     Shake

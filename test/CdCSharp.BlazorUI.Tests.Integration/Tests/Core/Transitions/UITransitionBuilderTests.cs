@@ -6,46 +6,6 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Transitions;
 [Trait("Transitions", "UITransitionBuilder")]
 public class UITransitionBuilderTests
 {
-    [Fact(DisplayName = "OnHover_CreatesHoverTransition")]
-    public void UITransitionBuilder_OnHover_CreatesHoverTransition()
-    {
-        // Act
-        UITransitions transitions = new UITransitionsBuilder()
-            .OnHover().Scale()
-            .Build();
-
-        // Assert
-        transitions.HasTransitions.Should().BeTrue();
-        transitions.Transitions.Should().ContainKey(TransitionTrigger.Hover);
-        transitions.Transitions[TransitionTrigger.Hover]
-            .Should().ContainSingle(t => t.Type == TransitionType.Scale);
-    }
-
-    [Theory(DisplayName = "AllTriggers_CreateCorrectTransitions")]
-    [InlineData("Hover")]
-    [InlineData("Focus")]
-    [InlineData("Active")]
-    [InlineData("Disabled")]
-    public void UITransitionBuilder_AllTriggers_CreateCorrectTransitions(string triggerName)
-    {
-        // Arrange
-        UITransitionsBuilder builder = new();
-        TransitionTrigger expectedTrigger = Enum.Parse<TransitionTrigger>(triggerName);
-
-        // Act
-        UITransitions transitions = triggerName switch
-        {
-            "Hover" => builder.OnHover().Scale().Build(),
-            "Focus" => builder.OnFocus().Scale().Build(),
-            "Active" => builder.OnActive().Scale().Build(),
-            "Disabled" => builder.OnDisabled().Scale().Build(),
-            _ => throw new ArgumentException($"Unknown trigger: {triggerName}")
-        };
-
-        // Assert
-        transitions.Transitions.Should().ContainKey(expectedTrigger);
-    }
-
     [Theory(DisplayName = "AllTransitionTypes_CreateCorrectly")]
     [InlineData("Scale", TransitionType.Scale)]
     [InlineData("Rotate", TransitionType.Rotate)]
@@ -81,40 +41,29 @@ public class UITransitionBuilderTests
             .Should().ContainSingle(t => t.Type == expectedType);
     }
 
-    [Fact(DisplayName = "TransitionOptions_AppliedCorrectly")]
-    public void UITransitionBuilder_TransitionOptions_AppliedCorrectly()
+    [Theory(DisplayName = "AllTriggers_CreateCorrectTransitions")]
+    [InlineData("Hover")]
+    [InlineData("Focus")]
+    [InlineData("Active")]
+    [InlineData("Disabled")]
+    public void UITransitionBuilder_AllTriggers_CreateCorrectTransitions(string triggerName)
     {
+        // Arrange
+        UITransitionsBuilder builder = new();
+        TransitionTrigger expectedTrigger = Enum.Parse<TransitionTrigger>(triggerName);
+
         // Act
-        UITransitions transitions = new UITransitionsBuilder()
-            .OnHover().Scale(1.2f, options =>
-            {
-                options.Duration = TimeSpan.FromMilliseconds(500);
-                options.Delay = TimeSpan.FromMilliseconds(100);
-                options.Easing = easing => easing.Custom("custom-easing");
-            })
-            .Build();
+        UITransitions transitions = triggerName switch
+        {
+            "Hover" => builder.OnHover().Scale().Build(),
+            "Focus" => builder.OnFocus().Scale().Build(),
+            "Active" => builder.OnActive().Scale().Build(),
+            "Disabled" => builder.OnDisabled().Scale().Build(),
+            _ => throw new ArgumentException($"Unknown trigger: {triggerName}")
+        };
 
         // Assert
-        TransitionConfig config = transitions.Transitions[TransitionTrigger.Hover].Single();
-        config.Duration.Should().Be(TimeSpan.FromMilliseconds(500));
-        config.Delay.Should().Be(TimeSpan.FromMilliseconds(100));
-        config.Easing.Should().Be("custom-easing");
-    }
-
-    [Fact(DisplayName = "EasingBuilder_ConvertedToString")]
-    public void UITransitionBuilder_EasingBuilder_ConvertedToString()
-    {
-        // Act
-        UITransitions transitions = new UITransitionsBuilder()
-            .OnHover().Scale(1.2f, options =>
-            {
-                options.Easing = easing => easing.CubicBezier().MaterialStandard();
-            })
-            .Build();
-
-        // Assert
-        TransitionConfig config = transitions.Transitions[TransitionTrigger.Hover].Single();
-        config.Easing.Should().Be("cubic-bezier(0.400, 0.000, 0.200, 1.000)");
+        transitions.Transitions.Should().ContainKey(expectedTrigger);
     }
 
     [Fact(DisplayName = "And_AllowsMultipleTriggers")]
@@ -134,35 +83,6 @@ public class UITransitionBuilderTests
         transitions.Transitions.Should().ContainKey(TransitionTrigger.Hover);
         transitions.Transitions.Should().ContainKey(TransitionTrigger.Focus);
         transitions.Transitions.Should().ContainKey(TransitionTrigger.Active);
-    }
-
-    [Fact(DisplayName = "CustomProperties_StoredCorrectly")]
-    public void UITransitionBuilder_CustomProperties_StoredCorrectly()
-    {
-        // Act
-        UITransitions transitions = new UITransitionsBuilder()
-            .OnHover().Scale(1.5f)
-            .And()
-            .OnHover().Rotate("45deg")
-            .And()
-            .OnHover().Shadow("0 10px 20px rgba(0,0,0,0.3)")
-            .Build();
-
-        // Assert
-        transitions.Transitions[TransitionTrigger.Hover]
-            .Should().HaveCount(3);
-
-        transitions.Transitions[TransitionTrigger.Hover]
-            .Select(t => t.Type)
-            .Should().ContainInOrder(
-                TransitionType.Scale,
-                TransitionType.Rotate,
-                TransitionType.Shadow
-            );
-
-        TransitionConfig shadowConfig = transitions.Transitions[TransitionTrigger.Hover].Last();
-        shadowConfig.CustomProperties["shadow"]
-            .Should().Be("0 10px 20px rgba(0,0,0,0.3)");
     }
 
     [Fact(DisplayName = "Build_FromTriggerTransitionBuilder_Works")]
@@ -219,5 +139,85 @@ public class UITransitionBuilderTests
 
         transitions.Transitions[TransitionTrigger.Disabled]
             .Should().ContainSingle(t => t.Type == TransitionType.Fade);
+    }
+
+    [Fact(DisplayName = "CustomProperties_StoredCorrectly")]
+    public void UITransitionBuilder_CustomProperties_StoredCorrectly()
+    {
+        // Act
+        UITransitions transitions = new UITransitionsBuilder()
+            .OnHover().Scale(1.5f)
+            .And()
+            .OnHover().Rotate("45deg")
+            .And()
+            .OnHover().Shadow("0 10px 20px rgba(0,0,0,0.3)")
+            .Build();
+
+        // Assert
+        transitions.Transitions[TransitionTrigger.Hover]
+            .Should().HaveCount(3);
+
+        transitions.Transitions[TransitionTrigger.Hover]
+            .Select(t => t.Type)
+            .Should().ContainInOrder(
+                TransitionType.Scale,
+                TransitionType.Rotate,
+                TransitionType.Shadow
+            );
+
+        TransitionConfig shadowConfig = transitions.Transitions[TransitionTrigger.Hover].Last();
+        shadowConfig.CustomProperties["shadow"]
+            .Should().Be("0 10px 20px rgba(0,0,0,0.3)");
+    }
+
+    [Fact(DisplayName = "EasingBuilder_ConvertedToString")]
+    public void UITransitionBuilder_EasingBuilder_ConvertedToString()
+    {
+        // Act
+        UITransitions transitions = new UITransitionsBuilder()
+            .OnHover().Scale(1.2f, options =>
+            {
+                options.Easing = easing => easing.CubicBezier().MaterialStandard();
+            })
+            .Build();
+
+        // Assert
+        TransitionConfig config = transitions.Transitions[TransitionTrigger.Hover].Single();
+        config.Easing.Should().Be("cubic-bezier(0.400, 0.000, 0.200, 1.000)");
+    }
+
+    [Fact(DisplayName = "OnHover_CreatesHoverTransition")]
+    public void UITransitionBuilder_OnHover_CreatesHoverTransition()
+    {
+        // Act
+        UITransitions transitions = new UITransitionsBuilder()
+            .OnHover().Scale()
+            .Build();
+
+        // Assert
+        transitions.HasTransitions.Should().BeTrue();
+        transitions.Transitions.Should().ContainKey(TransitionTrigger.Hover);
+        transitions.Transitions[TransitionTrigger.Hover]
+            .Should().ContainSingle(t => t.Type == TransitionType.Scale);
+    }
+
+    [Fact(DisplayName = "TransitionOptions_AppliedCorrectly")]
+    public void UITransitionBuilder_TransitionOptions_AppliedCorrectly()
+    {
+        // Act
+        UITransitions transitions = new UITransitionsBuilder()
+            .OnHover().Scale(1.2f, options =>
+            {
+                options.Duration = TimeSpan.FromMilliseconds(500);
+                options.Delay = TimeSpan.FromMilliseconds(100);
+                options.Easing = easing => easing.Custom("custom-easing");
+            })
+            .Build();
+
+        // Assert
+        TransitionConfig config = transitions.Transitions[TransitionTrigger.Hover].Single();
+        config.Duration.Should().Be(TimeSpan.FromMilliseconds(500));
+        config.Delay.Should().Be(TimeSpan.FromMilliseconds(100));
+        config.Easing.Should().Be("custom-easing");
     }
 }

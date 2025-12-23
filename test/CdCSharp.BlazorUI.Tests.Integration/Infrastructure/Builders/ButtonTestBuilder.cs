@@ -8,38 +8,14 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Builders;
 public class ButtonTestBuilder
 {
     private readonly TestContextBase _context;
-    private UIButtonVariant _variant = UIButtonVariant.Default;
     private string _content = "Test Button";
     private bool _disabled = false;
     private EventCallback<MouseEventArgs>? _onClick;
+    private UIButtonVariant _variant = UIButtonVariant.Default;
 
     public ButtonTestBuilder(TestContextBase context)
     {
         _context = context;
-    }
-
-    public ButtonTestBuilder WithVariant(UIButtonVariant variant)
-    {
-        _variant = variant;
-        return this;
-    }
-
-    public ButtonTestBuilder WithContent(string content)
-    {
-        _content = content;
-        return this;
-    }
-
-    public ButtonTestBuilder Disabled()
-    {
-        _disabled = true;
-        return this;
-    }
-
-    public ButtonTestBuilder WithClick(Action action)
-    {
-        _onClick = EventCallback.Factory.Create<MouseEventArgs>(_context, action);
-        return this;
     }
 
     public IRenderedComponent<UIButton> Build()
@@ -56,5 +32,29 @@ public class ButtonTestBuilder
                 parameters.Add(p => p.OnClick, _onClick.Value);
             }
         });
+    }
+
+    public ButtonTestBuilder Disabled()
+    {
+        _disabled = true;
+        return this;
+    }
+
+    public ButtonTestBuilder WithClick(Action action)
+    {
+        _onClick = EventCallback.Factory.Create<MouseEventArgs>(_context, action);
+        return this;
+    }
+
+    public ButtonTestBuilder WithContent(string content)
+    {
+        _content = content;
+        return this;
+    }
+
+    public ButtonTestBuilder WithVariant(UIButtonVariant variant)
+    {
+        _variant = variant;
+        return this;
     }
 }

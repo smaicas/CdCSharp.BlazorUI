@@ -8,26 +8,16 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
     where TComponent : UIVariantComponentBase<TComponent, TVariant>
     where TVariant : Variant
 {
+    private RenderFragment? _resolvedTemplate;
     [Parameter] public TVariant? Variant { get; set; }
 
-    [Inject] private IVariantRegistry<TComponent, TVariant>? VariantRegistry { get; set; }
-
-    private RenderFragment? _resolvedTemplate;
-
-    protected abstract TVariant DefaultVariant { get; }
-
     /// <summary>
-    /// Built-in templates provided by the component itself.
-    /// These have the lowest precedence.
+    /// Built-in templates provided by the component itself. These have the lowest precedence.
     /// </summary>
     protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
 
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        Variant ??= DefaultVariant;
-        _resolvedTemplate = ResolveTemplate();
-    }
+    protected abstract TVariant DefaultVariant { get; }
+    [Inject] private IVariantRegistry<TComponent, TVariant>? VariantRegistry { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -36,6 +26,13 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
         {
             builder.AddContent(0, _resolvedTemplate);
         }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Variant ??= DefaultVariant;
+        _resolvedTemplate = ResolveTemplate();
     }
 
     private RenderFragment? ResolveTemplate()

@@ -10,14 +10,19 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
 [Trait("Abstractions", "ModuleJsInteropBase")]
 public class ModuleJsInteropBaseTests : TestContextBase
 {
-    private class TestJsInterop : ModuleJsInteropBase
+    [Fact(DisplayName = "DisposeAsync_DoesNothingIfModuleNotCreated")]
+    public async Task ModuleJsInteropBase_DisposeAsync_DoesNothingIfModuleNotCreated()
     {
-        public TestJsInterop(IJSRuntime jsRuntime) : base(jsRuntime, "test-module.js")
-        {
-        }
+        // Arrange
+        IJSRuntime jsRuntime = Substitute.For<IJSRuntime>();
+        TestJsInterop interop = new(jsRuntime);
 
-        public Task<IJSObjectReference> GetModuleForTesting() => ModuleTask.Value;
-        public bool IsModuleCreated => ModuleTask.IsValueCreated;
+        // ModuleTask aún no accedido
+        interop.IsModuleCreated.Should().BeFalse();
+
+        // Act & Assert - no lanza excepción
+        Func<Task> act = async () => await interop.DisposeAsync();
+        await act.Should().NotThrowAsync();
     }
 
     [Fact(DisplayName = "LazyLoadsModule")]
@@ -53,19 +58,14 @@ public class ModuleJsInteropBaseTests : TestContextBase
         act.Should().Throw<ArgumentNullException>().WithParameterName("jsRuntime");
     }
 
-    [Fact(DisplayName = "DisposeAsync_DoesNothingIfModuleNotCreated")]
-    public async Task ModuleJsInteropBase_DisposeAsync_DoesNothingIfModuleNotCreated()
+    private class TestJsInterop : ModuleJsInteropBase
     {
-        // Arrange
-        IJSRuntime jsRuntime = Substitute.For<IJSRuntime>();
-        TestJsInterop interop = new(jsRuntime);
+        public TestJsInterop(IJSRuntime jsRuntime) : base(jsRuntime, "test-module.js")
+        {
+        }
 
-        // ModuleTask aún no accedido
-        interop.IsModuleCreated.Should().BeFalse();
+        public bool IsModuleCreated => ModuleTask.IsValueCreated;
 
-        // Act & Assert - no lanza excepción
-        Func<Task> act = async () => await interop.DisposeAsync();
-        await act.Should().NotThrowAsync();
+        public Task<IJSObjectReference> GetModuleForTesting() => ModuleTask.Value;
     }
-
 }

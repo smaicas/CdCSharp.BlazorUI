@@ -15,13 +15,13 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Extensions;
 public class FakeJsRuntime : IJSRuntime
 {
     ValueTask<TValue> IJSRuntime.InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(string identifier, object?[]? args) => throw new NotImplementedException();
+
     ValueTask<TValue> IJSRuntime.InvokeAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(string identifier, CancellationToken cancellationToken, object?[]? args) => throw new NotImplementedException();
 }
 
 [Trait("Extensions", "ServiceCollectionExtensions")]
 public class ServiceCollectionExtensionsTests : BunitContext
 {
-
     private static readonly Type[] ExpectedServiceTypes =
 {
     typeof(IVariantRegistry<UIButton, UIButtonVariant>),
@@ -41,16 +41,6 @@ public class ServiceCollectionExtensionsTests : BunitContext
         AssertServicesAreRegistered(services);
     }
 
-    private static void AssertServicesAreRegistered(
-    IServiceCollection services)
-    {
-        foreach (Type serviceType in ExpectedServiceTypes)
-        {
-            services.Should().Contain(d => d.ServiceType == serviceType,
-                $"Service {serviceType.Name} should be registered");
-        }
-    }
-
     [Fact(DisplayName = "AddBlazorUI_RegistersAndResolvesAllServices")]
     public async Task AddBlazorUI_RegistersAndResolvesAllServices()
     {
@@ -62,16 +52,6 @@ public class ServiceCollectionExtensionsTests : BunitContext
 
         AssertServicesAreRegistered(services);
         AssertServicesCanBeResolved(provider);
-    }
-
-    private static void AssertServicesCanBeResolved(
-    IServiceProvider provider)
-    {
-        foreach (Type serviceType in ExpectedServiceTypes)
-        {
-            provider.GetService(serviceType)
-                .Should().NotBeNull($"{serviceType.Name} should be resolvable");
-        }
     }
 
     [Fact(DisplayName = "AddBlazorUIVariants_RegistersCustomVariants")]
@@ -101,5 +81,25 @@ public class ServiceCollectionExtensionsTests : BunitContext
 
         // Assert
         templateCalled.Should().BeTrue();
+    }
+
+    private static void AssertServicesAreRegistered(
+            IServiceCollection services)
+    {
+        foreach (Type serviceType in ExpectedServiceTypes)
+        {
+            services.Should().Contain(d => d.ServiceType == serviceType,
+                $"Service {serviceType.Name} should be registered");
+        }
+    }
+
+    private static void AssertServicesCanBeResolved(
+    IServiceProvider provider)
+    {
+        foreach (Type serviceType in ExpectedServiceTypes)
+        {
+            provider.GetService(serviceType)
+                .Should().NotBeNull($"{serviceType.Name} should be resolvable");
+        }
     }
 }

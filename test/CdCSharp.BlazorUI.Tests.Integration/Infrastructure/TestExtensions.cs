@@ -20,8 +20,8 @@ public static class TestExtensions
     public static void ShouldHaveClass(this IElement element, string cssClass) =>
         element.ClassList.Should().Contain(cssClass);
 
-    public static void ShouldNotHaveClass(this IElement element, string cssClass) =>
-        element.ClassList.Should().NotContain(cssClass);
-
     public static void ShouldHaveTagName(this IElement element, string expectedTagName) => element.TagName.Should().BeEquivalentTo(expectedTagName, options => options.IgnoringCase());
+
+    public static void ShouldNotHaveClass(this IElement element, string cssClass) =>
+            element.ClassList.Should().NotContain(cssClass);
 }

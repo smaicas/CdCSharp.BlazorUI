@@ -7,11 +7,6 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Theming.Abstractions;
 [Trait("Theming", "UIThemePaletteBase")]
 public class UIThemePaletteBaseTests
 {
-    // Concrete implementation for testing
-    private class TestThemePalette : UIThemePaletteBase
-    {
-    }
-
     [Fact(DisplayName = "Constructor_SetsDefaultValues")]
     public void UIThemePaletteBase_Constructor_SetsDefaultValues()
     {
@@ -86,5 +81,10 @@ public class UIThemePaletteBaseTests
 
         palette.Info = testColor;
         palette.Info.Should().Be(testColor);
+    }
+
+    // Concrete implementation for testing
+    private class TestThemePalette : UIThemePaletteBase
+    {
     }
 }

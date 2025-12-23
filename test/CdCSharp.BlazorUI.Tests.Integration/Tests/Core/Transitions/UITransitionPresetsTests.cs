@@ -44,6 +44,30 @@ public class UITransitionPresetsTests
         transitions.Transitions.Should().NotBeEmpty();
     }
 
+    [Fact(DisplayName = "Create_ReturnsNewBuilder")]
+    public void UITransitionPresets_Create_ReturnsNewBuilder()
+    {
+        // Act
+        UITransitionsBuilder builder = UITransitionPresets.Create();
+
+        // Assert
+        builder.Should().NotBeNull();
+        builder.Should().BeOfType<UITransitionsBuilder>();
+    }
+
+    [Fact(DisplayName = "DisabledState_HasDisabledTrigger")]
+    public void UITransitionPresets_DisabledState_HasDisabledTrigger()
+    {
+        UITransitions transitions = UITransitionPresets.DisabledState;
+
+        transitions.Transitions.Should().ContainKey(TransitionTrigger.Disabled);
+
+        transitions.Transitions[TransitionTrigger.Disabled]
+            .Select(t => t.Type)
+            .Should()
+            .Contain(new[] { TransitionType.Fade, TransitionType.Blur });
+    }
+
     [Fact(DisplayName = "GlassMorphism_HoverHasMultipleTransitions")]
     public void UITransitionPresets_GlassMorphism_HoverHasMultipleTransitions()
     {
@@ -72,60 +96,6 @@ public class UITransitionPresetsTests
         transitions.Transitions.Should().ContainKey(TransitionTrigger.Active);
     }
 
-    [Fact(DisplayName = "MaterialButton_HasCustomEasing")]
-    public void UITransitionPresets_MaterialButton_HasCustomEasing()
-    {
-        UITransitions transitions = UITransitionPresets.MaterialButton;
-
-        transitions.Transitions[TransitionTrigger.Hover]
-            .Should().ContainSingle()
-            .Which.Easing.Should().StartWith("cubic-bezier");
-
-        transitions.Transitions[TransitionTrigger.Active]
-            .Should().ContainSingle()
-            .Which.Easing.Should().StartWith("cubic-bezier");
-    }
-
-    [Fact(DisplayName = "Create_ReturnsNewBuilder")]
-    public void UITransitionPresets_Create_ReturnsNewBuilder()
-    {
-        // Act
-        UITransitionsBuilder builder = UITransitionPresets.Create();
-
-        // Assert
-        builder.Should().NotBeNull();
-        builder.Should().BeOfType<UITransitionsBuilder>();
-    }
-
-    [Fact(DisplayName = "DisabledState_HasDisabledTrigger")]
-    public void UITransitionPresets_DisabledState_HasDisabledTrigger()
-    {
-        UITransitions transitions = UITransitionPresets.DisabledState;
-
-        transitions.Transitions.Should().ContainKey(TransitionTrigger.Disabled);
-
-        transitions.Transitions[TransitionTrigger.Disabled]
-            .Select(t => t.Type)
-            .Should()
-            .Contain(new[] { TransitionType.Fade, TransitionType.Blur });
-    }
-
-    [Fact(DisplayName = "PremiumButton_HasAllInteractiveTriggers")]
-    public void UITransitionPresets_PremiumButton_HasAllInteractiveTriggers()
-    {
-        // Act
-        UITransitions transitions = UITransitionPresets.PremiumButton;
-
-        // Assert
-        transitions.Transitions.Should().ContainKey(TransitionTrigger.Hover);
-        transitions.Transitions.Should().ContainKey(TransitionTrigger.Active);
-
-        transitions.Transitions
-            .SelectMany(t => t.Value)
-            .Count(t => t.Type == TransitionType.Scale)
-            .Should().BeGreaterThanOrEqualTo(1);
-    }
-
     [Theory(DisplayName = "LoadingPresets_HaveAppropriateProperties")]
     [InlineData("Pulse")]
     [InlineData("Skeleton")]
@@ -144,5 +114,35 @@ public class UITransitionPresetsTests
             .Should().ContainSingle().Which;
 
         config.Duration?.TotalMilliseconds.Should().BeGreaterThanOrEqualTo(1000);
+    }
+
+    [Fact(DisplayName = "MaterialButton_HasCustomEasing")]
+    public void UITransitionPresets_MaterialButton_HasCustomEasing()
+    {
+        UITransitions transitions = UITransitionPresets.MaterialButton;
+
+        transitions.Transitions[TransitionTrigger.Hover]
+            .Should().ContainSingle()
+            .Which.Easing.Should().StartWith("cubic-bezier");
+
+        transitions.Transitions[TransitionTrigger.Active]
+            .Should().ContainSingle()
+            .Which.Easing.Should().StartWith("cubic-bezier");
+    }
+
+    [Fact(DisplayName = "PremiumButton_HasAllInteractiveTriggers")]
+    public void UITransitionPresets_PremiumButton_HasAllInteractiveTriggers()
+    {
+        // Act
+        UITransitions transitions = UITransitionPresets.PremiumButton;
+
+        // Assert
+        transitions.Transitions.Should().ContainKey(TransitionTrigger.Hover);
+        transitions.Transitions.Should().ContainKey(TransitionTrigger.Active);
+
+        transitions.Transitions
+            .SelectMany(t => t.Value)
+            .Count(t => t.Type == TransitionType.Scale)
+            .Should().BeGreaterThanOrEqualTo(1);
     }
 }

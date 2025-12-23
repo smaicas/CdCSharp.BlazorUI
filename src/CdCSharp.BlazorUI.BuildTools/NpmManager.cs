@@ -6,6 +6,33 @@ namespace CdCSharp.BlazorUI.BuildTools;
 
 public static class NpmManager
 {
+    public static async Task EnsureNpmInstalled(string workingDirectory)
+    {
+        string nodeModulesPath = Path.Combine(workingDirectory, "node_modules");
+
+        if (!Directory.Exists(nodeModulesPath))
+        {
+            Console.WriteLine("node_modules not found. Running npm install...");
+            await RunNpmInstall(workingDirectory);
+        }
+    }
+
+    public static async Task RunNpmInstall(string workingDirectory)
+    {
+        await RunCommand(GetNpmPath(), "install", workingDirectory);
+    }
+
+    public static async Task RunViteBuild(string workingDirectory, string configFile = null)
+    {
+        string args = "vite build";
+        if (!string.IsNullOrWhiteSpace(configFile))
+        {
+            args += $" --config {configFile}";
+        }
+
+        await RunCommand(GetNpxPath(), args, workingDirectory);
+    }
+
     private static string GetNpmPath()
     {
         return TryGetSystemCommand("npm", out string systemNpm)
@@ -20,6 +47,54 @@ public static class NpmManager
             ? systemNpx
             : throw new InvalidOperationException(
             "npx not found. Please install Node.js from https://nodejs.org/");
+    }
+
+    private static async Task RunCommand(string fileName, string arguments, string workingDirectory)
+    {
+        ProcessStartInfo startInfo = new()
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using Process process = new() { StartInfo = startInfo };
+
+        StringBuilder output = new();
+        StringBuilder error = new();
+
+        process.OutputDataReceived += (s, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Console.WriteLine(e.Data);
+                output.AppendLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (s, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Console.Error.WriteLine(e.Data);
+                error.AppendLine(e.Data);
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        await process.WaitForExitAsync();
+
+        if (process.ExitCode != 0)
+        {
+            throw new Exception($"Command '{fileName} {arguments}' failed with exit code {process.ExitCode}. Error: {error}");
+        }
     }
 
     private static bool TryGetSystemCommand(string command, out string commandPath)
@@ -106,80 +181,5 @@ public static class NpmManager
 
         commandPath = null;
         return false;
-    }
-
-    public static async Task EnsureNpmInstalled(string workingDirectory)
-    {
-        string nodeModulesPath = Path.Combine(workingDirectory, "node_modules");
-
-        if (!Directory.Exists(nodeModulesPath))
-        {
-            Console.WriteLine("node_modules not found. Running npm install...");
-            await RunNpmInstall(workingDirectory);
-        }
-    }
-
-    public static async Task RunNpmInstall(string workingDirectory)
-    {
-        await RunCommand(GetNpmPath(), "install", workingDirectory);
-    }
-
-    public static async Task RunViteBuild(string workingDirectory, string configFile = null)
-    {
-        string args = "vite build";
-        if (!string.IsNullOrWhiteSpace(configFile))
-        {
-            args += $" --config {configFile}";
-        }
-
-        await RunCommand(GetNpxPath(), args, workingDirectory);
-    }
-
-    private static async Task RunCommand(string fileName, string arguments, string workingDirectory)
-    {
-        ProcessStartInfo startInfo = new()
-        {
-            FileName = fileName,
-            Arguments = arguments,
-            WorkingDirectory = workingDirectory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        using Process process = new() { StartInfo = startInfo };
-
-        StringBuilder output = new();
-        StringBuilder error = new();
-
-        process.OutputDataReceived += (s, e) =>
-        {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                Console.WriteLine(e.Data);
-                output.AppendLine(e.Data);
-            }
-        };
-
-        process.ErrorDataReceived += (s, e) =>
-        {
-            if (!string.IsNullOrEmpty(e.Data))
-            {
-                Console.Error.WriteLine(e.Data);
-                error.AppendLine(e.Data);
-            }
-        };
-
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-
-        await process.WaitForExitAsync();
-
-        if (process.ExitCode != 0)
-        {
-            throw new Exception($"Command '{fileName} {arguments}' failed with exit code {process.ExitCode}. Error: {error}");
-        }
     }
 }

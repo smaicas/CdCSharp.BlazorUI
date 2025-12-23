@@ -67,9 +67,9 @@ public static class CssGenerator
         return sb.ToString();
     }
 }
+
 internal static class CssNameHelper
 {
     public static string ToCssVariable(string name)
         => name.ToLowerInvariant();
 }
-

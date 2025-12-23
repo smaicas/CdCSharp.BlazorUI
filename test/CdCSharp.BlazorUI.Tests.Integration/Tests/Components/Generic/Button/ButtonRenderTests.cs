@@ -24,70 +24,6 @@ public class ButtonRenderTests : TestContextBase
             .And.Contain("ui-button--default");
     }
 
-    [Fact(DisplayName = "WithText_RendersTextContent")]
-    public void Button_WithText_RendersTextContent()
-    {
-        // Arrange
-        const string expectedText = "Click me";
-
-        // Act
-        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
-            .Add(p => p.Text, expectedText));
-
-        // Assert
-        cut.Find("button .ui-button__text").TextContent.Should().Be(expectedText);
-    }
-
-    [Fact(DisplayName = "WithLeadingIcon_RendersIconBeforeText")]
-    public void Button_WithLeadingIcon_RendersIconBeforeText()
-    {
-        // Arrange
-        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
-
-        // Act
-        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
-            .Add(p => p.Text, "Home")
-            .Add(p => p.LeadingIcon, iconPath));
-
-        // Assert
-        IElement button = cut.Find("button");
-        IElement firstChild = button.Children[0];
-        firstChild.ShouldHaveTagName("svg");
-
-        IElement? textSpan = button.QuerySelector(".ui-button__text");
-        textSpan.Should().NotBeNull();
-        textSpan.TextContent.Should().Be("Home");
-    }
-
-    [Fact(DisplayName = "WithTrailingIcon_RendersIconAfterText")]
-    public void Button_WithTrailingIcon_RendersIconAfterText()
-    {
-        // Arrange
-        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
-
-        // Act
-        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
-            .Add(p => p.Text, "Next")
-            .Add(p => p.TrailingIcon, iconPath));
-
-        // Assert
-        IElement button = cut.Find("button");
-        IElement lastChild = button.Children[button.Children.Length - 1];
-        lastChild.ShouldHaveTagName("svg");
-    }
-
-    [Fact(DisplayName = "IconOnly_HasSpecificCssClass")]
-    public void Button_IconOnly_HasSpecificCssClass()
-    {
-        // Act
-        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
-            .Add(p => p.LeadingIcon, "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>"));
-
-        // Assert
-        cut.Find("button").ClassList
-            .Should().Contain("ui-button--icon-only");
-    }
-
     [Theory(DisplayName = "DisabledState_RendersCorrectly")]
     [InlineData(true)]
     [InlineData(false)]
@@ -101,6 +37,18 @@ public class ButtonRenderTests : TestContextBase
         // Assert
         IElement button = cut.Find("button");
         button.HasAttribute("disabled").Should().Be(disabled);
+    }
+
+    [Fact(DisplayName = "IconOnly_HasSpecificCssClass")]
+    public void Button_IconOnly_HasSpecificCssClass()
+    {
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.LeadingIcon, "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>"));
+
+        // Assert
+        cut.Find("button").ClassList
+            .Should().Contain("ui-button--icon-only");
     }
 
     [Fact(DisplayName = "WithAdditionalAttributes_MergesCorrectly")]
@@ -144,6 +92,27 @@ public class ButtonRenderTests : TestContextBase
         style.Should().Contain("color: rgba(255,255,255,1)");
     }
 
+    [Fact(DisplayName = "WithLeadingIcon_RendersIconBeforeText")]
+    public void Button_WithLeadingIcon_RendersIconBeforeText()
+    {
+        // Arrange
+        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Home")
+            .Add(p => p.LeadingIcon, iconPath));
+
+        // Assert
+        IElement button = cut.Find("button");
+        IElement firstChild = button.Children[0];
+        firstChild.ShouldHaveTagName("svg");
+
+        IElement? textSpan = button.QuerySelector(".ui-button__text");
+        textSpan.Should().NotBeNull();
+        textSpan.TextContent.Should().Be("Home");
+    }
+
     [Fact(DisplayName = "WithNullText_DoesNotRenderTextSpan")]
     public void Button_WithNullText_DoesNotRenderTextSpan()
     {
@@ -155,4 +124,34 @@ public class ButtonRenderTests : TestContextBase
         cut.FindAll(".ui-button__text").Should().BeEmpty();
     }
 
+    [Fact(DisplayName = "WithText_RendersTextContent")]
+    public void Button_WithText_RendersTextContent()
+    {
+        // Arrange
+        const string expectedText = "Click me";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, expectedText));
+
+        // Assert
+        cut.Find("button .ui-button__text").TextContent.Should().Be(expectedText);
+    }
+
+    [Fact(DisplayName = "WithTrailingIcon_RendersIconAfterText")]
+    public void Button_WithTrailingIcon_RendersIconAfterText()
+    {
+        // Arrange
+        const string iconPath = "<path d=\"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z\"/>";
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Next")
+            .Add(p => p.TrailingIcon, iconPath));
+
+        // Assert
+        IElement button = cut.Find("button");
+        IElement lastChild = button.Children[button.Children.Length - 1];
+        lastChild.ShouldHaveTagName("svg");
+    }
 }

@@ -3,8 +3,6 @@
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public class AutogenerateCssColorsAttribute : Attribute
 {
-    public int VariantLevels { get; }
-
     public AutogenerateCssColorsAttribute(int variantLevels = 5)
     {
         if (variantLevels <= 0)
@@ -14,4 +12,6 @@ public class AutogenerateCssColorsAttribute : Attribute
 
         VariantLevels = variantLevels;
     }
+
+    public int VariantLevels { get; }
 }

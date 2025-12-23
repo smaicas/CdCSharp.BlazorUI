@@ -13,6 +13,7 @@ public abstract class UIComponentBase : ComponentBase
     public string ComputedCssClasses { get; private set; } = string.Empty;
 
     public virtual IEnumerable<string> GetAdditionalCssClasses() => [];
+
     public virtual Dictionary<string, string> GetAdditionalInlineStyles() => [];
 
     protected override void OnParametersSet()

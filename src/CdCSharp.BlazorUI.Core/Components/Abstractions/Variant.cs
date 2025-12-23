@@ -7,9 +7,9 @@ public interface IVariant
 
 public abstract class Variant : IVariant
 {
-    public string Name { get; }
-
     protected Variant(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));
+
+    public string Name { get; }
 
     public override bool Equals(object? obj) =>
         obj is Variant other &&

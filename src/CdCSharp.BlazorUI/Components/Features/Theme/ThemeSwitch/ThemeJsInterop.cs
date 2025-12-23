@@ -6,9 +6,12 @@ namespace CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 
 public interface IThemeJsInterop
 {
-    ValueTask InitializeAsync(string? defaultTheme = null);
     ValueTask<string> GetThemeAsync();
+
+    ValueTask InitializeAsync(string? defaultTheme = null);
+
     ValueTask SetThemeAsync(string theme);
+
     ValueTask<string> ToggleThemeAsync(string[] themes);
 }
 
@@ -16,16 +19,16 @@ public sealed class ThemeJsInterop(IJSRuntime jsRuntime)
     : ModuleJsInteropBase(jsRuntime, JSModulesReference.ThemeJs),
       IThemeJsInterop
 {
-    public async ValueTask InitializeAsync(string? defaultTheme = null)
-    {
-        IJSObjectReference module = await ModuleTask.Value;
-        await module.InvokeVoidAsync("initialize", defaultTheme);
-    }
-
     public async ValueTask<string> GetThemeAsync()
     {
         IJSObjectReference module = await ModuleTask.Value;
         return await module.InvokeAsync<string>("getTheme");
+    }
+
+    public async ValueTask InitializeAsync(string? defaultTheme = null)
+    {
+        IJSObjectReference module = await ModuleTask.Value;
+        await module.InvokeVoidAsync("initialize", defaultTheme);
     }
 
     public async ValueTask SetThemeAsync(string theme)

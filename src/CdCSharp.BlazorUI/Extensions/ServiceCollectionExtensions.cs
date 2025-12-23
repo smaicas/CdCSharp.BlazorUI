@@ -88,9 +88,8 @@ public sealed class VariantRegistryBuilder<TComponent, TVariant>
     where TComponent : UIVariantComponentBase<TComponent, TVariant>
     where TVariant : Variant
 {
-    private readonly IServiceCollection _services;
     private readonly VariantRegistry<TComponent, TVariant> _registry;
-
+    private readonly IServiceCollection _services;
     public VariantRegistryBuilder(
         IServiceCollection services,
         VariantRegistry<TComponent, TVariant> registry)

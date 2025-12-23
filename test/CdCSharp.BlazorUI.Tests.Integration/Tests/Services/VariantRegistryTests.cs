@@ -9,22 +9,6 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Services;
 [Trait("Core", "VariantRegistry")]
 public class VariantRegistryTests : TestContextBase
 {
-    [Fact(DisplayName = "Register_StoresTemplate")]
-    public void VariantRegistry_Register_StoresTemplate()
-    {
-        // Arrange
-        VariantRegistry<UIButton, UIButtonVariant> registry = new();
-        UIButtonVariant variant = UIButtonVariant.Custom("Test");
-        Func<UIButton, RenderFragment> template = _ => __builder => { };
-
-        // Act
-        registry.Register(variant, template);
-        RenderFragment? retrieved = registry.GetTemplate(variant, null!);
-
-        // Assert
-        retrieved.Should().NotBeNull();
-    }
-
     [Fact(DisplayName = "GetTemplate_ReturnsNullForUnregistered")]
     public void VariantRegistry_GetTemplate_ReturnsNullForUnregistered()
     {
@@ -58,5 +42,21 @@ public class VariantRegistryTests : TestContextBase
         // Assert
         firstCalled.Should().BeFalse();
         secondCalled.Should().BeTrue();
+    }
+
+    [Fact(DisplayName = "Register_StoresTemplate")]
+    public void VariantRegistry_Register_StoresTemplate()
+    {
+        // Arrange
+        VariantRegistry<UIButton, UIButtonVariant> registry = new();
+        UIButtonVariant variant = UIButtonVariant.Custom("Test");
+        Func<UIButton, RenderFragment> template = _ => __builder => { };
+
+        // Act
+        registry.Register(variant, template);
+        RenderFragment? retrieved = registry.GetTemplate(variant, null!);
+
+        // Assert
+        retrieved.Should().NotBeNull();
     }
 }

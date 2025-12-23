@@ -120,13 +120,6 @@ code {
     --blazorui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
 }
 
-
-
-
-
-
-
-
 .ui-has-transitions {
     transition-property: transform, opacity, filter, box-shadow, border, backdrop-filter;
     transition-duration: var(--ui-transition-duration, 300ms);
