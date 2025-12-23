@@ -1,0 +1,92 @@
+﻿@page "/UITransitions"
+
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Transitions
+
+<h1>UI Transitions System</h1>
+
+<hr />
+
+<h2>Predefined Transitions</h2>
+
+<div class="transitions-grid">
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.HoverScale" Text="Hover Scale" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.HoverFade" Text="Hover Fade" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.HoverShadow" Text="Hover Shadow" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.HoverLift" Text="Hover Lift" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.HoverGlow" Text="Hover Glow" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.FocusRing" Text="Focus Ring (Tab)" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="UITransitionPresets.Interactive" Text="Interactive" />
+    </div>
+</div>
+
+<hr />
+
+<h2>Custom Transitions</h2>
+
+<div class="transitions-grid">
+    <div class="transition-demo">
+        <UIButton Transitions="@customScale" Text="Custom Scale" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="@customRotate" Text="Custom Rotate" />
+    </div>
+
+    <div class="transition-demo">
+        <UIButton Transitions="@customDuration" Text="Slow Transition" />
+    </div>
+</div>
+
+@code {
+    private UITransitions customScale = UITransitionPresets.Create()
+        .OnHover().Scale(1.2f)
+        .Build();
+
+    private UITransitions customRotate = UITransitionPresets.Create()
+        .OnHover().Rotate("15deg")
+        .Build();
+
+    private UITransitions customDuration = UITransitionPresets.Create()
+        .OnHover().Scale(1.1f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(1000);
+            options.Easing = "cubic-bezier(0.4, 0.0, 0.2, 1)";
+        })
+        .Build();
+}
+
+<style>
+    .transitions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .transition-demo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+    }
+</style>

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿// Core/Components/Abstractions/UIComponentBase.cs
+using CdCSharp.BlazorUI.Core.Theming.Css;
+using CdCSharp.BlazorUI.Core.Transitions;
+using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Core.Components.Abstractions;
 
@@ -7,7 +10,6 @@ public abstract class UIComponentBase : ComponentBase
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
 
-    // Contiene TODAS las clases: componente + usuario
     public string ComputedCssClasses { get; private set; } = string.Empty;
 
     public virtual IEnumerable<string> GetAdditionalCssClasses() => [];
@@ -15,28 +17,49 @@ public abstract class UIComponentBase : ComponentBase
 
     protected override void OnParametersSet()
     {
-        // Obtener clases del componente
-        string componentClasses = string.Join(" ", GetAdditionalCssClasses());
+        // Get component classes
+        List<string> componentClasses = [.. GetAdditionalCssClasses()];
 
-        // Obtener clases del usuario (si existen)
+        // Check if component implements IHasTransitions
+        if (this is IHasTransitions hasTransitions && hasTransitions.Transitions?.HasTransitions == true)
+        {
+            componentClasses.Add(CssClassesReference.HasTransitions);
+            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' '))
+            {
+                componentClasses.Add(cssClass);
+            }
+        }
+
+        // Get user classes
         string userClasses = AdditionalAttributes.TryGetValue("class", out object? existingClass)
             ? existingClass.ToString() ?? string.Empty
             : string.Empty;
 
-        // Combinar todas las clases
+        // Combine all classes
         ComputedCssClasses = string.IsNullOrWhiteSpace(userClasses)
-            ? componentClasses
-            : $"{componentClasses} {userClasses}".Trim();
+            ? string.Join(" ", componentClasses)
+            : $"{string.Join(" ", componentClasses)} {userClasses}".Trim();
 
-        // Actualizar AdditionalAttributes con las clases combinadas
+        // Update AdditionalAttributes with classes
         if (!string.IsNullOrWhiteSpace(ComputedCssClasses))
         {
             AdditionalAttributes["class"] = ComputedCssClasses;
         }
 
-        // Merge de estilos
-        MergeAttribute("style", string.Join(";", GetAdditionalInlineStyles()
-                                                  .Select(kv => $"{kv.Key}: {kv.Value}")), ";");
+        // Build styles
+        Dictionary<string, string> styles = GetAdditionalInlineStyles();
+
+        // Add transition styles if applicable
+        if (this is IHasTransitions hasTransitionsForStyles && hasTransitionsForStyles.Transitions?.HasTransitions == true)
+        {
+            foreach ((string? key, string? value) in hasTransitionsForStyles.Transitions.GetInlineStyles())
+            {
+                styles[key] = value;
+            }
+        }
+
+        // Merge styles
+        MergeAttribute("style", string.Join(";", styles.Select(kv => $"{kv.Key}: {kv.Value}")), ";");
 
         base.OnParametersSet();
     }

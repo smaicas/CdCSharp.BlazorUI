@@ -24,13 +24,14 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
         Variant ??= DefaultVariant;
         _resolvedTemplate = ResolveTemplate();
-        base.OnParametersSet();
     }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        base.BuildRenderTree(builder);
         if (_resolvedTemplate is not null)
         {
             builder.AddContent(0, _resolvedTemplate);

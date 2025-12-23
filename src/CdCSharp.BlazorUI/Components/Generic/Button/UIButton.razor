@@ -3,10 +3,12 @@
 @using CdCSharp.BlazorUI.Core.Theming
 @using CdCSharp.BlazorUI.Core.Theming.Css
 @using CdCSharp.BlazorUI.Core.Theming.Themes
+@using CdCSharp.BlazorUI.Core.Transitions
 @using CdCSharp.BlazorUI.Media.Icons
 @using Microsoft.AspNetCore.Components.Web
 
 @inherits UIVariantComponentBase<UIButton, UIButtonVariant>
+@implements IHasTransitions
 
 @{
     base.BuildRenderTree(__builder);
@@ -23,6 +25,7 @@
     [Parameter] public CssColor? Color { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    [Parameter] public UITransitions? Transitions { get; set; }
 
     /* ========= Variant ========= */
 

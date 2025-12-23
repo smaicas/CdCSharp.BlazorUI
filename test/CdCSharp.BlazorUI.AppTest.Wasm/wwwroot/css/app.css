@@ -119,3 +119,97 @@ code {
     --blazorui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
     --blazorui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
 }
+
+
+
+
+
+
+
+
+.ui-has-transitions {
+    transition-property: transform, opacity, filter, box-shadow, border, backdrop-filter;
+    transition-duration: var(--ui-transition-duration, 300ms);
+    transition-timing-function: var(--ui-transition-easing, ease-in-out);
+    transition-delay: var(--ui-transition-delay, 0ms);
+    will-change: transform;
+}
+
+/* Hover transitions */
+.ui-transition-hover-scale:hover {
+    transform: scale(var(--ui-transition-hover-scale, 1.05));
+    transition-duration: var(--ui-transition-hover-duration, 300ms);
+    transition-timing-function: var(--ui-transition-hover-easing, ease-in-out);
+    transition-delay: var(--ui-transition-hover-delay, 0ms);
+}
+
+.ui-transition-hover-rotate:hover {
+    transform: rotate(var(--ui-transition-hover-angle, 5deg));
+}
+
+.ui-transition-hover-translate:hover {
+    transform: translate( var(--ui-transition-hover-x, 0), var(--ui-transition-hover-y, -4px) );
+}
+
+.ui-transition-hover-fade:hover {
+    opacity: var(--ui-transition-hover-opacity, 0.7);
+}
+
+.ui-transition-hover-shadow:hover {
+    box-shadow: var(--ui-transition-hover-shadow, 0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.ui-transition-hover-blur:hover {
+    filter: blur(var(--ui-transition-hover-amount, 2px));
+}
+
+.ui-transition-hover-backdropblur:hover {
+    backdrop-filter: blur(var(--ui-transition-hover-amount, 8px));
+    -webkit-backdrop-filter: blur(var(--ui-transition-hover-amount, 8px));
+}
+
+/* Combined hover effects */
+.ui-transition-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ui-transition-hover-glow:hover {
+    box-shadow: 0 0 20px var(--ui-transition-hover-color, rgba(59, 130, 246, 0.5));
+    transform: scale(1.02);
+}
+
+/* Focus transitions */
+.ui-transition-focus-scale:focus {
+    transform: scale(var(--ui-transition-focus-scale, 1.05));
+}
+
+.ui-transition-focus-shadow:focus {
+    box-shadow: var(--ui-transition-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.3));
+    outline: none;
+}
+
+/* Active transitions */
+.ui-transition-active-scale:active {
+    transform: scale(var(--ui-transition-active-scale, 0.98));
+}
+
+/* Disabled transitions */
+.ui-transition-disabled-fade:disabled {
+    opacity: var(--ui-transition-disabled-opacity, 0.5);
+    cursor: not-allowed;
+}
+
+/* Modern CSS features */
+@supports (backdrop-filter: blur(1px)) {
+    .ui-transition-hover-backdropblur {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .ui-has-transitions {
+        transition: none !important;
+    }
+}

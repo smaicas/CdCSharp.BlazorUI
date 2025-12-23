@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Core.Components.Abstractions;
+using CdCSharp.BlazorUI.Core.Transitions;
 
 namespace CdCSharp.BlazorUI.Core.Theming.Css;
 
@@ -25,4 +26,9 @@ public class CssClassesReference
 
     public static string Specific(string componentBaseClass, string specific)
         => $"{componentBaseClass.ToLowerInvariant()}--{specific}";
+
+    public static string HasTransitions => "ui-has-transitions";
+
+    public static string Transition(TransitionTrigger trigger, TransitionType type)
+        => $"ui-transition-{trigger.ToString().ToLower()}-{type.ToString().ToLower()}";
 }
