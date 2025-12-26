@@ -3,21 +3,30 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 
-public class TestContextBase : BunitContext, IDisposable
+public class TestContextBase : BunitContext, IAsyncLifetime
 {
     protected TestContextBase()
     {
         Services.AddBlazorUI();
-        // Common configuration
-        //Services.AddSingleton<IVariantRegistry<UIButton, UIButtonVariant>>(new VariantRegistry<UIButton, UIButtonVariant>());
-
-        // JSInterop configuration
         JSInterop.Mode = JSRuntimeMode.Loose;
     }
 
-    public new void Dispose()
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync()
     {
-        base.Dispose();
-        GC.SuppressFinalize(this);
+        await base.DisposeAsync();
     }
+
+    //public new void Dispose()
+    //{
+    //    base.Dispose();
+    //    GC.SuppressFinalize(this);
+    //}
+
+    //public new async ValueTask DisposeAsync()
+    //{
+    //    await base.DisposeAsync();
+    //    GC.SuppressFinalize(this);
+    //}
 }

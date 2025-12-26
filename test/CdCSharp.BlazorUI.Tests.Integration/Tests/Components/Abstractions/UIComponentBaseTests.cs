@@ -10,7 +10,7 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
 public class UIComponentBaseTests : TestContextBase
 {
     [Fact(DisplayName = "ComputedCssClasses_ContainsAllClasses")]
-    public void UIComponentBase_ComputedCssClasses_ContainsAllClasses()
+    public async Task UIComponentBase_ComputedCssClasses_ContainsAllClasses()
     {
         // Arrange & Act
         IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
@@ -23,6 +23,8 @@ public class UIComponentBaseTests : TestContextBase
         // Assert
         TestComponent instance = cut.Instance;
         instance.ComputedCssClasses.Should().Be("test-component test-component--primary user-class");
+
+        //await DisposeAsync();
     }
 
     [Fact(DisplayName = "ConditionalClasses_AppliedCorrectly")]

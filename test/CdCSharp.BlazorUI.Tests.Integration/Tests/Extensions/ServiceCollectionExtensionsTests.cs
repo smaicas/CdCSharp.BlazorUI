@@ -1,4 +1,6 @@
 ﻿using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Behaviors;
+using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
@@ -27,7 +29,9 @@ public class ServiceCollectionExtensionsTests : BunitContext
     typeof(IVariantRegistry<UIButton, UIButtonVariant>),
     typeof(IVariantRegistry<UISvgIcon, UISvgIconVariant>),
     typeof(IVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>),
+    typeof(IVariantRegistry<UILoadingIndicator, UILoadingIndicatorVariant>),
     typeof(IThemeJsInterop),
+    typeof(IBehaviorJsInterop),
     typeof(IMemoryCache),
 };
 

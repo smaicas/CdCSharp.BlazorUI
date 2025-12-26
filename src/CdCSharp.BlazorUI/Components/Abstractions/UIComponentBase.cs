@@ -1,15 +1,22 @@
-﻿using CdCSharp.BlazorUI.Components.Features.Common;
+﻿// Components/Abstractions/UIComponentBase.cs
+using CdCSharp.BlazorUI.Components.Features.Behaviors;
+using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Css;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components.Abstractions;
 
-public abstract class UIComponentBase : ComponentBase
+public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
 {
+    private IJSObjectReference? _behaviorInstance;
+
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
+
+    [Inject] private IBehaviorJsInterop? BehaviorJsInterop { get; set; }
 
     public string ComputedCssClasses { get; private set; } = string.Empty;
 
@@ -33,7 +40,7 @@ public abstract class UIComponentBase : ComponentBase
         }
 
         // Check if component implements IHasSize
-        if (this is IHasSize<Enum> hasSize)
+        if (this is IHasSize hasSize)
         {
             componentClasses.Add(CssClassesReference.Size(hasSize.Size));
         }
@@ -63,7 +70,7 @@ public abstract class UIComponentBase : ComponentBase
         }
 
         // Check if component implements IHasDensity
-        if (this is IHasDensity<Enum> hasDensity)
+        if (this is IHasDensity hasDensity)
         {
             componentClasses.Add(CssClassesReference.Density(hasDensity.Density));
         }
@@ -113,6 +120,46 @@ public abstract class UIComponentBase : ComponentBase
         MergeAttribute("style", string.Join(";", styles.Select(kv => $"{kv.Key}: {kv.Value}")), ";");
 
         base.OnParametersSet();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && BehaviorJsInterop != null && this is IJsBehavior jsBehavior)
+        {
+            ElementReference rootElement = jsBehavior.GetRootElement();
+            BehaviorConfiguration config = new();
+
+            // Configure ripple if applicable
+            if (this is IHasRipple hasRipple && !hasRipple.DisableRipple)
+            {
+                config.Ripple = new RippleConfiguration
+                {
+                    Color = hasRipple.RippleColor?.ToString(ColorOutputFormats.Rgba),
+                    Duration = hasRipple.RippleDuration
+                };
+            }
+
+            // Add more behaviors here as needed
+            // if (this is IHasTooltip hasTooltip) { ... }
+
+            // Attach behaviors if any configured
+            if (config.HasAnyBehavior)
+            {
+                _behaviorInstance = await BehaviorJsInterop.AttachBehaviorsAsync(
+                    rootElement, config);
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public virtual async ValueTask DisposeAsync()
+    {
+        if (_behaviorInstance != null)
+        {
+            await _behaviorInstance.InvokeVoidAsync("dispose");
+            await _behaviorInstance.DisposeAsync();
+        }
     }
 
     private void MergeAttribute(string key, string newValue, string separator)

@@ -1,4 +1,6 @@
 ﻿using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Behaviors;
+using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
@@ -14,13 +16,15 @@ public static class ServiceCollectionExtensions
     {
         services.AddMemoryCache();
 
-        // Variant registries (one per component)
+        // Variant registries
         RegisterVariantRegistry<UIButton, UIButtonVariant>(services);
         RegisterVariantRegistry<UISvgIcon, UISvgIconVariant>(services);
         RegisterVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>(services);
+        RegisterVariantRegistry<UILoadingIndicator, UILoadingIndicatorVariant>(services);
 
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
+        services.AddScoped<IBehaviorJsInterop, BehaviorJsInterop>();
 
         return services;
     }

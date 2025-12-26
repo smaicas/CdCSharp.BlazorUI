@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Features.Transitions;
 
 namespace CdCSharp.BlazorUI.Css;
@@ -48,25 +49,25 @@ public class CssClassesReference
     public static string Elevation(int level) => $"ui-elevation-{level}";
 
     // Size helper
-    public static string Size<TSize>(TSize size) where TSize : Enum
+    public static string Size(SizeEnum size)
     {
-        return size.ToString().ToLower() switch
+        return size switch
         {
-            "small" => SizeSmall,
-            "medium" => SizeMedium,
-            "large" => SizeLarge,
+            SizeEnum.Small => SizeSmall,
+            SizeEnum.Medium => SizeMedium,
+            SizeEnum.Large => SizeLarge,
             _ => SizeMedium
         };
     }
 
     // Density helper
-    public static string Density<TDensity>(TDensity density) where TDensity : Enum
+    public static string Density(DensityEnum density)
     {
-        return density.ToString().ToLower() switch
+        return density switch
         {
-            "comfortable" => DensityComfortable,
-            "standard" => DensityStandard,
-            "compact" => DensityCompact,
+            DensityEnum.Comfortable => DensityComfortable,
+            DensityEnum.Standard => DensityStandard,
+            DensityEnum.Compact => DensityCompact,
             _ => DensityStandard
         };
     }

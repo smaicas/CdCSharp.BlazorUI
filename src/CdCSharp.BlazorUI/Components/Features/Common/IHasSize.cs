@@ -1,6 +1,12 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Features.Common;
 
-public interface IHasSize<TSize> where TSize : Enum
+public interface IHasSize
 {
-    TSize Size { get; set; }
+    SizeEnum Size { get; }
+}
+public enum SizeEnum
+{
+    Small,
+    Medium,
+    Large
 }

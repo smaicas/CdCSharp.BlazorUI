@@ -1,6 +1,13 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Features.Common;
 
-public interface IHasDensity<TDensity> where TDensity : Enum
+public interface IHasDensity
 {
-    TDensity Density { get; set; }
+    DensityEnum Density { get; set; }
+}
+
+public enum DensityEnum
+{
+    Comfortable,
+    Standard,
+    Compact
 }
