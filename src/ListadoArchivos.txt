@@ -1,0 +1,5046 @@
+=== CdCSharp.BlazorUI\_build\CdCSharp.BlazorUI.targets ===
+
+<Project>
+
+	<!-- Properties for CSS and JS generation -->
+	<PropertyGroup>
+		<BlazorUIBuildEnabled Condition="'$(BlazorUIBuildEnabled)' == ''">true</BlazorUIBuildEnabled>
+		<BlazorUIProjectPath Condition="'$(BlazorUIProjectPath)' == ''">$(MSBuildProjectDirectory)</BlazorUIProjectPath>
+		<BuildToolsTimeout Condition="'$(BuildToolsTimeout)' == ''">120000</BuildToolsTimeout>
+	</PropertyGroup>
+
+	<!-- Target: Verify Node.js is installed -->
+	<Target Name="CheckNodeJsInstalled"
+            BeforeTargets="EnsureBuildToolsCompiled">
+
+		<Exec Command="node --version"
+              IgnoreExitCode="true"
+              ConsoleToMSBuild="true">
+			<Output TaskParameter="ExitCode" PropertyName="NodeExitCode" />
+		</Exec>
+
+		<Error Text="Node.js is required to build BlazorUI. Please install Node.js from https://nodejs.org/"
+               Condition="'$(NodeExitCode)' != '0'" />
+	</Target>
+
+	<!-- Target: Compile BuildTools if needed -->
+	<Target Name="EnsureBuildToolsCompiled"
+            BeforeTargets="InitializeBlazorUIConfig">
+
+		<Message Text="Compile BuildTools..." Importance="high" />
+		<MSBuild Projects="$(BuildToolsProject)"
+                 Targets="Build"
+                 Properties="Configuration=$(Configuration)" />
+
+	</Target>
+
+	<!-- Target: Initialize configuration files -->
+	<Target Name="InitializeBlazorUIConfig"
+            BeforeTargets="GenerateBlazorUIAssets"
+            Condition="'$(BlazorUIBuildEnabled)' == 'true' AND !Exists('$(BlazorUIProjectPath)\package.json')">
+
+		<Message Text="Initializing BlazorUI configuration files..." Importance="high" />
+
+		<PropertyGroup>
+			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
+			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
+		</PropertyGroup>
+
+		<!-- Use exe if exists (Windows) or DLL if it does not exists -->
+		<Exec Command="&quot;$(BuildToolsExe)&quot; init &quot;$(BlazorUIProjectPath)&quot;"
+              Condition="Exists('$(BuildToolsExe)')"
+              ConsoleToMSBuild="true"
+              Timeout="$(BuildToolsTimeout)"
+              ContinueOnError="false" />
+
+		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; init &quot;$(BlazorUIProjectPath)&quot;"
+              Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
+              ConsoleToMSBuild="true"
+              Timeout="$(BuildToolsTimeout)"
+              ContinueOnError="false" />
+
+	</Target>
+
+	<!-- Target(MAIN): Executes all compilation tasks -->
+	<Target Name="GenerateBlazorUIAssets"
+            BeforeTargets="BeforeBuild"
+            DependsOnTargets="EnsureBuildToolsCompiled"
+            Condition="'$(BlazorUIBuildEnabled)' == 'true'">
+
+		<Message Text="Building BlazorUI assets..." Importance="high" />
+
+		<PropertyGroup>
+			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
+			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
+		</PropertyGroup>
+
+		<!-- Error: Can't find compiled executable -->
+		<Error Text="BuildTools executable not found. Expected at: $(BuildToolsExe) or $(BuildToolsDll)"
+               Condition="!Exists('$(BuildToolsExe)') AND !Exists('$(BuildToolsDll)')" />
+
+		<Message Text="Using BuildTools executable: $(BuildToolsExe)"
+                 Condition="Exists('$(BuildToolsExe)')"
+                 Importance="high" />
+		<Message Text="Using BuildTools DLL: $(BuildToolsDll)"
+                 Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
+                 Importance="high" />
+
+		<!-- Use exe if exists (Windows) or DLL if it does not exists -->
+		<Exec Command="&quot;$(BuildToolsExe)&quot; all &quot;$(BlazorUIProjectPath)&quot;"
+              Condition="Exists('$(BuildToolsExe)')"
+              ConsoleToMSBuild="true"
+              IgnoreExitCode="false"
+              Timeout="$(BuildToolsTimeout)"
+              ContinueOnError="false"
+              LogStandardErrorAsError="true" />
+
+		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; all &quot;$(BlazorUIProjectPath)&quot;"
+              Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
+              ConsoleToMSBuild="true"
+              IgnoreExitCode="false"
+              Timeout="$(BuildToolsTimeout)"
+              ContinueOnError="false"
+              LogStandardErrorAsError="true" />
+
+		<!-- Include generated files -->
+		<ItemGroup>
+			<Content Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
+			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\*.js" />
+			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\*.js.map" />
+		</ItemGroup>
+
+		<Message Text="BlazorUI assets built successfully!" Importance="high" />
+
+	</Target>
+
+	<!-- Target: Generate themes only (usefull for development) -->
+	<Target Name="GenerateBlazorUIThemes"
+            DependsOnTargets="EnsureBuildToolsCompiled"
+            Condition="'$(BlazorUIBuildEnabled)' == 'true'">
+
+		<PropertyGroup>
+			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
+			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
+		</PropertyGroup>
+
+		<Exec Command="&quot;$(BuildToolsExe)&quot; themes &quot;$(BlazorUIProjectPath)\CssBundle\themes.css&quot;"
+              Condition="Exists('$(BuildToolsExe)')"
+              ConsoleToMSBuild="true"
+              Timeout="$(BuildToolsTimeout)" />
+
+		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; themes &quot;$(BlazorUIProjectPath)\CssBundle\themes.css&quot;"
+              Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
+              ConsoleToMSBuild="true"
+              Timeout="$(BuildToolsTimeout)" />
+
+	</Target>
+
+	<!-- Target: Clean all generated files -->
+	<Target Name="CleanBlazorUIAssets" BeforeTargets="Clean">
+		<!-- Clean CssBundle folder -->
+		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" />
+
+		<!-- Clean configuration files -->
+		<Delete Files="$(BlazorUIProjectPath)\package.json" TreatErrorsAsWarnings="true" />
+		<Delete Files="$(BlazorUIProjectPath)\package-lock.json" TreatErrorsAsWarnings="true" />
+		<Delete Files="$(BlazorUIProjectPath)\tsconfig.json" TreatErrorsAsWarnings="true" />
+		<Delete Files="$(BlazorUIProjectPath)\vite.config.js" TreatErrorsAsWarnings="true" />
+		<Delete Files="$(BlazorUIProjectPath)\vite.config.css.js" TreatErrorsAsWarnings="true" />
+		<Delete Files="$(BlazorUIProjectPath)\.npmrc" TreatErrorsAsWarnings="true" />
+
+		<!-- Clean node_modules -->
+		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
+
+		<!-- Clean blazorui.css from wwwroot/css -->
+		<Delete Files="$(BlazorUIProjectPath)\wwwroot\css\blazorui.css" TreatErrorsAsWarnings="true" />
+
+		<!-- Limpiar la carpeta de JavaScript compilado manteniendo la estructura -->
+		<RemoveDir Directories="$(BlazorUIProjectPath)\wwwroot\js\Types" />
+
+		<Message Text="BlazorUI generated assets cleaned successfully!" Importance="high" />
+	</Target>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI\Components\Abstractions\ModuleJsInteropBase.cs ===
+
+using Microsoft.JSInterop;
+
+namespace CdCSharp.BlazorUI.Components.Abstractions;
+
+/// <summary>
+/// Represents a base class for JavaScript interop modules that implement the IAsyncDisposable interface.
+/// </summary>
+public abstract class ModuleJsInteropBase : IAsyncDisposable
+{
+    /// <summary>
+    /// A task completion source used to track the loading status of a module.
+    /// </summary>
+    protected readonly TaskCompletionSource<bool> IsModuleTaskLoaded = new(false);
+
+    /// <summary>
+    /// Represents an interface for invoking JavaScript code from .NET code.
+    /// </summary>
+    protected readonly IJSRuntime JsRuntime;
+
+    /// <summary>
+    /// A lazy asynchronous task that represents a JavaScript object reference.
+    /// </summary>
+    protected readonly Lazy<Task<IJSObjectReference>> ModuleTask;
+
+    /// <summary>
+    /// Initializes a new instance of the ModuleJsInterop class.
+    /// </summary>
+    /// <param name="jsRuntime">
+    /// The JavaScript runtime.
+    /// </param>
+    /// <param name="jsModuleContentPath">
+    /// The path to the JavaScript module content.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when jsRuntime is null.
+    /// </exception>
+    public ModuleJsInteropBase(IJSRuntime jsRuntime, string jsModuleContentPath)
+    {
+        JsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
+        ModuleTask = new Lazy<Task<IJSObjectReference>>(() => jsRuntime.InvokeAsync<IJSObjectReference>(
+            "import", jsModuleContentPath).AsTask());
+        IsModuleTaskLoaded.SetResult(true);
+    }
+
+    /// <summary>
+    /// Asynchronously disposes of the resources used by the module.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="ValueTask" /> representing the asynchronous operation.
+    /// </returns>
+    public virtual async ValueTask DisposeAsync()
+    {
+        if (ModuleTask.IsValueCreated)
+        {
+            IJSObjectReference module = await ModuleTask.Value;
+            await module.DisposeAsync();
+        }
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Abstractions\UIComponentBase.cs ===
+
+using CdCSharp.BlazorUI.Components.Features.Common;
+using CdCSharp.BlazorUI.Components.Features.Loading;
+using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Css;
+using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Components.Abstractions;
+
+public abstract class UIComponentBase : ComponentBase
+{
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
+
+    public string ComputedCssClasses { get; private set; } = string.Empty;
+
+    public virtual IEnumerable<string> GetAdditionalCssClasses() => [];
+
+    public virtual Dictionary<string, string> GetAdditionalInlineStyles() => [];
+
+    protected override void OnParametersSet()
+    {
+        // Get component classes
+        List<string> componentClasses = [.. GetAdditionalCssClasses()];
+
+        // Check if component implements IHasTransitions
+        if (this is IHasTransitions hasTransitions && hasTransitions.Transitions?.HasTransitions == true)
+        {
+            componentClasses.Add(CssClassesReference.HasTransitions);
+            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' '))
+            {
+                componentClasses.Add(cssClass);
+            }
+        }
+
+        // Check if component implements IHasSize
+        if (this is IHasSize<Enum> hasSize)
+        {
+            componentClasses.Add(CssClassesReference.Size(hasSize.Size));
+        }
+
+        // Check if component implements IHasFullWidth
+        if (this is IHasFullWidth hasFullWidth && hasFullWidth.FullWidth)
+        {
+            componentClasses.Add(CssClassesReference.FullWidth);
+        }
+
+        // Check if component implements IHasLoading
+        if (this is IHasLoading hasLoading && hasLoading.IsLoading)
+        {
+            componentClasses.Add(CssClassesReference.Loading);
+        }
+
+        // Check if component implements IHasElevation
+        if (this is IHasElevation hasElevation && hasElevation.Elevation > 0)
+        {
+            componentClasses.Add(CssClassesReference.Elevation(Math.Clamp(hasElevation.Elevation, 0, 24)));
+        }
+
+        // Check if component implements IHasRipple
+        if (this is IHasRipple hasRipple && !hasRipple.DisableRipple)
+        {
+            componentClasses.Add(CssClassesReference.HasRipple);
+        }
+
+        // Check if component implements IHasDensity
+        if (this is IHasDensity<Enum> hasDensity)
+        {
+            componentClasses.Add(CssClassesReference.Density(hasDensity.Density));
+        }
+
+        // Get user classes
+        string userClasses = AdditionalAttributes.TryGetValue("class", out object? existingClass)
+            ? existingClass.ToString() ?? string.Empty
+            : string.Empty;
+
+        // Combine all classes
+        ComputedCssClasses = string.IsNullOrWhiteSpace(userClasses)
+            ? string.Join(" ", componentClasses)
+            : $"{string.Join(" ", componentClasses)} {userClasses}".Trim();
+
+        // Update AdditionalAttributes with classes
+        if (!string.IsNullOrWhiteSpace(ComputedCssClasses))
+        {
+            AdditionalAttributes["class"] = ComputedCssClasses;
+        }
+
+        // Build styles
+        Dictionary<string, string> styles = GetAdditionalInlineStyles();
+
+        // Add transition styles if applicable
+        if (this is IHasTransitions hasTransitionsForStyles && hasTransitionsForStyles.Transitions?.HasTransitions == true)
+        {
+            foreach ((string? key, string? value) in hasTransitionsForStyles.Transitions.GetInlineStyles())
+            {
+                styles[key] = value;
+            }
+        }
+
+        // Add ripple styles if applicable
+        if (this is IHasRipple hasRippleForStyles && !hasRippleForStyles.DisableRipple)
+        {
+            if (hasRippleForStyles.RippleColor != null)
+            {
+                styles["--ui-ripple-color"] = hasRippleForStyles.RippleColor.ToString(ColorOutputFormats.Rgba);
+            }
+            if (hasRippleForStyles.RippleDuration > 0)
+            {
+                styles["--ui-ripple-duration"] = $"{hasRippleForStyles.RippleDuration}ms";
+            }
+        }
+
+        // Merge styles
+        MergeAttribute("style", string.Join(";", styles.Select(kv => $"{kv.Key}: {kv.Value}")), ";");
+
+        base.OnParametersSet();
+    }
+
+    private void MergeAttribute(string key, string newValue, string separator)
+    {
+        if (string.IsNullOrWhiteSpace(newValue)) { return; }
+
+        if (AdditionalAttributes.TryGetValue(key, out object? existing))
+        {
+            AdditionalAttributes[key] = $"{newValue}{separator}{existing}";
+        }
+        else
+        {
+            AdditionalAttributes[key] = newValue;
+        }
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Abstractions\UIVariantComponentBase.cs ===
+
+using CdCSharp.BlazorUI.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
+
+namespace CdCSharp.BlazorUI.Components.Abstractions;
+
+public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponentBase
+    where TComponent : UIVariantComponentBase<TComponent, TVariant>
+    where TVariant : Variant
+{
+    private RenderFragment? _resolvedTemplate;
+    [Parameter] public TVariant? Variant { get; set; }
+
+    /// <summary>
+    /// Built-in templates provided by the component itself. These have the lowest precedence.
+    /// </summary>
+    protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
+
+    protected abstract TVariant DefaultVariant { get; }
+    [Inject] private IVariantRegistry<TComponent, TVariant>? VariantRegistry { get; set; }
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        base.BuildRenderTree(builder);
+        if (_resolvedTemplate is not null)
+        {
+            builder.AddContent(0, _resolvedTemplate);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Variant ??= DefaultVariant;
+        _resolvedTemplate = ResolveTemplate();
+    }
+
+    private RenderFragment? ResolveTemplate()
+    {
+        // Built-in templates
+        if (BuiltInTemplates.TryGetValue(Variant!, out Func<TComponent, RenderFragment>? builtIn))
+        {
+            return builtIn((TComponent)this);
+        }
+
+        // Registered variants
+        return VariantRegistry?.GetTemplate(Variant!, (TComponent)this);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Abstractions\Variant.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Abstractions;
+
+public interface IVariant
+{
+    string Name { get; }
+}
+
+public abstract class Variant : IVariant
+{
+    protected Variant(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));
+
+    public string Name { get; }
+
+    public override bool Equals(object? obj) =>
+        obj is Variant other &&
+        GetType() == other.GetType() &&
+        Name == other.Name;
+
+    public override int GetHashCode() =>
+        HashCode.Combine(GetType(), Name);
+
+    public override string ToString() => Name;
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Common\IHasDensity.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Common;
+
+public interface IHasDensity<TDensity> where TDensity : Enum
+{
+    TDensity Density { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Common\IHasElevation.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Common;
+
+public interface IHasElevation
+{
+    int Elevation { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Common\IHasFullWidth.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Common;
+
+public interface IHasFullWidth
+{
+    bool FullWidth { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Common\IHasRipple.cs ===
+
+using CdCSharp.BlazorUI.Core.Css;
+
+namespace CdCSharp.BlazorUI.Components.Features.Common;
+
+public interface IHasRipple
+{
+    bool DisableRipple { get; set; }
+    CssColor? RippleColor { get; set; }
+    int RippleDuration { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Common\IHasSize.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Common;
+
+public interface IHasSize<TSize> where TSize : Enum
+{
+    TSize Size { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Common\IHasTransition.cs ===
+
+using CdCSharp.BlazorUI.Components.Features.Transitions;
+
+namespace CdCSharp.BlazorUI.Components.Features.Common;
+
+public interface IHasTransitions
+{
+    UITransitions? Transitions { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Loading\IHasLoading.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Loading;
+
+public interface IHasLoading
+{
+    bool IsLoading { get; set; }
+    UILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+}
+
+public enum UILoadingIndicatorType
+{
+    Spinner,
+    LinearIndeterminate,
+    CircularProgress,
+    Dots,
+    Pulse
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Loading\UILoadingIndicator.razor ===
+
+@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Css
+
+@inherits UIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
+@implements IHasSize<UILoadingIndicatorSize>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasSize
+    [Parameter] public UILoadingIndicatorSize Size { get; set; } = UILoadingIndicatorSize.Medium;
+
+    /* ========= Variant ========= */
+
+    protected override UILoadingIndicatorVariant DefaultVariant => UILoadingIndicatorVariant.Spinner;
+
+    protected override Dictionary<UILoadingIndicatorVariant, Func<UILoadingIndicator, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [UILoadingIndicatorVariant.Spinner] = i => i.RenderSpinner(),
+        [UILoadingIndicatorVariant.LinearIndeterminate] = i => i.RenderLinear(),
+        [UILoadingIndicatorVariant.CircularProgress] = i => i.RenderCircularProgress(),
+        [UILoadingIndicatorVariant.Dots] = i => i.RenderDots(),
+        [UILoadingIndicatorVariant.Pulse] = i => i.RenderPulse(),
+    };
+
+    /* ========= Render Methods ========= */
+
+    private RenderFragment RenderSpinner() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <svg class="ui-loading-spinner" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+            </svg>
+        </div>
+    };
+
+    private RenderFragment RenderLinear() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <div class="ui-loading-linear">
+                <div class="ui-loading-linear__bar"></div>
+            </div>
+        </div>
+    };
+
+    private RenderFragment RenderCircularProgress() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <svg class="ui-loading-circular" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+            </svg>
+        </div>
+    };
+
+    private RenderFragment RenderDots() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <span class="ui-loading-dot"></span>
+            <span class="ui-loading-dot"></span>
+            <span class="ui-loading-dot"></span>
+        </div>
+    };
+
+    private RenderFragment RenderPulse() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <span class="ui-loading-pulse"></span>
+        </div>
+    };
+
+    /* ========= Styling ========= */
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return CssClassesReference.UILoadingIndicator;
+        yield return CssClassesReference.Variant(CssClassesReference.UILoadingIndicator, Variant ?? DefaultVariant);
+    }
+
+    public override Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        Dictionary<string, string> styles = new();
+
+        if (Color != null)
+        {
+            styles["color"] = Color.ToString(ColorOutputFormats.Rgba);
+        }
+
+        return styles;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Loading\UILoadingIndicator.razor.css ===
+
+.ui-loading-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Spinner Variant */
+.ui-loading-indicator--spinner .ui-loading-spinner {
+    width: 100%;
+    height: 100%;
+    animation: ui-loading-spinner-rotate 2s linear infinite;
+}
+
+.ui-loading-indicator--spinner circle {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: ui-loading-spinner-dash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+}
+
+@keyframes ui-loading-spinner-rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ui-loading-spinner-dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+    }
+
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+    }
+}
+
+/* Linear Variant */
+.ui-loading-indicator--linearindeterminate .ui-loading-linear {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.ui-loading-indicator--linearindeterminate .ui-loading-linear__bar {
+    height: 100%;
+    background-color: currentColor;
+    animation: ui-loading-linear 2s ease-in-out infinite;
+}
+
+@keyframes ui-loading-linear {
+    0% {
+        transform: translateX(-100%);
+        width: 100%;
+    }
+
+    50% {
+        transform: translateX(100%);
+        width: 100%;
+    }
+
+    100% {
+        transform: translateX(-100%);
+        width: 100%;
+    }
+}
+
+/* Circular Progress Variant */
+.ui-loading-indicator--circularprogress .ui-loading-circular {
+    width: 100%;
+    height: 100%;
+    animation: ui-loading-circular-rotate 1s linear infinite;
+}
+
+.ui-loading-indicator--circularprogress circle {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+}
+
+@keyframes ui-loading-circular-rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dots Variant */
+.ui-loading-indicator--dots {
+    gap: 0.25em;
+}
+
+    .ui-loading-indicator--dots .ui-loading-dot {
+        width: 0.25em;
+        height: 0.25em;
+        background-color: currentColor;
+        border-radius: 50%;
+        animation: ui-loading-dots 1.4s ease-in-out infinite;
+    }
+
+        .ui-loading-indicator--dots .ui-loading-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .ui-loading-indicator--dots .ui-loading-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+@keyframes ui-loading-dots {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Pulse Variant */
+.ui-loading-indicator--pulse .ui-loading-pulse {
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    border-radius: 50%;
+    animation: ui-loading-pulse 1.5s ease-out infinite;
+}
+
+@keyframes ui-loading-pulse {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+/* Size modifiers applied by IHasSize interface */
+.ui-size-small.ui-loading-indicator {
+    width: 1rem;
+    height: 1rem;
+}
+
+.ui-size-medium.ui-loading-indicator {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.ui-size-large.ui-loading-indicator {
+    width: 2rem;
+    height: 2rem;
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Loading\UILoadingIndicatorEnums.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Loading;
+
+public enum UILoadingIndicatorSize
+{
+    Small,
+    Medium,
+    Large
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Loading\UILoadingIndicatorVariant.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+
+namespace CdCSharp.BlazorUI.Components.Features.Loading;
+
+public class UILoadingIndicatorVariant : Variant
+{
+    public static readonly UILoadingIndicatorVariant Spinner = new("Spinner");
+    public static readonly UILoadingIndicatorVariant LinearIndeterminate = new("LinearIndeterminate");
+    public static readonly UILoadingIndicatorVariant CircularProgress = new("CircularProgress");
+    public static readonly UILoadingIndicatorVariant Dots = new("Dots");
+    public static readonly UILoadingIndicatorVariant Pulse = new("Pulse");
+
+    public UILoadingIndicatorVariant(string name) : base(name)
+    {
+    }
+
+    public static UILoadingIndicatorVariant Custom(string name) => new(name);
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Theme\ThemeSwitch\ThemeJsInterop.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Types;
+using Microsoft.JSInterop;
+
+namespace CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+
+public interface IThemeJsInterop
+{
+    ValueTask<string> GetThemeAsync();
+
+    ValueTask InitializeAsync(string? defaultTheme = null);
+
+    ValueTask SetThemeAsync(string theme);
+
+    ValueTask<string> ToggleThemeAsync(string[] themes);
+}
+
+public sealed class ThemeJsInterop(IJSRuntime jsRuntime)
+    : ModuleJsInteropBase(jsRuntime, JSModulesReference.ThemeJs),
+      IThemeJsInterop
+{
+    public async ValueTask<string> GetThemeAsync()
+    {
+        IJSObjectReference module = await ModuleTask.Value;
+        return await module.InvokeAsync<string>("getTheme");
+    }
+
+    public async ValueTask InitializeAsync(string? defaultTheme = null)
+    {
+        IJSObjectReference module = await ModuleTask.Value;
+        await module.InvokeVoidAsync("initialize", defaultTheme);
+    }
+
+    public async ValueTask SetThemeAsync(string theme)
+    {
+        IJSObjectReference module = await ModuleTask.Value;
+        await module.InvokeVoidAsync("setTheme", theme);
+    }
+
+    public async ValueTask<string> ToggleThemeAsync(params string[] themes)
+    {
+        IJSObjectReference module = await ModuleTask.Value;
+        return await module.InvokeAsync<string>("toggleTheme", new object[] { themes });
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Theme\ThemeSwitch\UIThemeSwitch.razor ===
+
+@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Css
+
+@inherits UIVariantComponentBase<UIThemeSwitch, UIThemeSwitchVariant>
+
+@inject IThemeJsInterop ThemeInterop
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public string[] AvailableThemes { get; set; } = new[] { "light", "dark" };
+    [Parameter] public EventCallback<string> OnThemeChanged { get; set; }
+    [Parameter] public bool ShowIcon { get; set; } = true;
+    [Parameter] public Dictionary<string, string>? ThemeIcons { get; set; }
+
+    private string _currentTheme = "light";
+    private bool _isTransitioning = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentTheme = await ThemeInterop.GetThemeAsync();
+    }
+
+    protected override UIThemeSwitchVariant DefaultVariant
+        => UIThemeSwitchVariant.Default;
+
+    protected override Dictionary<UIThemeSwitchVariant, Func<UIThemeSwitch, RenderFragment>> BuiltInTemplates
+        => new()
+        {
+            [UIThemeSwitchVariant.Default] = b => b.RenderDefault(),
+            [UIThemeSwitchVariant.SunMoon] = b => b.RenderSunMoon()
+        };
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <button @attributes="AdditionalAttributes"
+                @onclick="SwitchTheme"
+                disabled="@_isTransitioning">
+            <span class="ui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">
+                @if (ShowIcon)
+                {
+                    <span class="ui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
+                }
+                <span class="ui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
+            </span>
+        </button>
+    };
+
+    private RenderFragment RenderSunMoon() => __builder =>
+    {
+        <button @attributes="AdditionalAttributes"
+                @onclick="ToggleLightDark"
+                class="@GetSunMoonClasses()"
+                aria-label="@($"Switch to {GetOppositeTheme()} mode")">
+            <span class="ui-theme-switch__sun-moon-container">
+                <span class="ui-theme-switch__icon-wrapper">
+                    @if (_currentTheme == "light")
+                    {
+                        <span class="ui-theme-switch__sun">☀️</span>
+                    }
+                    else
+                    {
+                        <span class="ui-theme-switch__moon">🌙</span>
+                    }
+                </span>
+            </span>
+        </button>
+    };
+
+    private async Task SwitchTheme()
+    {
+        _isTransitioning = true;
+        StateHasChanged();
+
+        // Small delay for animation start
+        await Task.Delay(50);
+
+        string newTheme = await ThemeInterop.ToggleThemeAsync(AvailableThemes);
+        _currentTheme = newTheme;
+
+        if (OnThemeChanged.HasDelegate)
+        {
+            await OnThemeChanged.InvokeAsync(newTheme);
+        }
+
+        // Keep transition state for animation duration
+        await Task.Delay(300);
+        _isTransitioning = false;
+        StateHasChanged();
+    }
+
+    private async Task ToggleLightDark()
+    {
+        // For SunMoon variant, always toggle between light and dark
+        string[] themes = { "light", "dark" };
+        string newTheme = await ThemeInterop.ToggleThemeAsync(themes);
+        _currentTheme = newTheme;
+
+        if (OnThemeChanged.HasDelegate)
+        {
+            await OnThemeChanged.InvokeAsync(newTheme);
+        }
+    }
+
+    private string GetThemeIcon(string theme)
+    {
+        if (ThemeIcons?.TryGetValue(theme, out string? icon) == true)
+        {
+            return icon;
+        }
+
+        return theme switch
+        {
+            "light" => "☀️",
+            "dark" => "🌙",
+            _ => "🎨"
+        };
+    }
+
+    private string GetThemeLabel(string theme)
+    {
+        // Capitalize first letter
+        return string.IsNullOrEmpty(theme) ? theme : char.ToUpper(theme[0]) + theme.Substring(1);
+    }
+
+    private string GetOppositeTheme()
+    {
+        return _currentTheme == "light" ? "dark" : "light";
+    }
+
+    private string GetSunMoonClasses()
+    {
+        return ComputedCssClasses + " " +
+               (_currentTheme == "light" ? "ui-theme-switch--light" : "ui-theme-switch--dark");
+    }
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return CssClassesReference.UIThemeSwitch;
+        yield return CssClassesReference.Variant(CssClassesReference.UIThemeSwitch, Variant ?? DefaultVariant);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Theme\ThemeSwitch\UIThemeSwitch.razor.css ===
+
+/* Base styles */
+.ui-theme-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--palette-surface);
+    color: var(--palette-foreground);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    min-width: 120px;
+    height: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+    .ui-theme-switch:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .ui-theme-switch:active {
+        transform: translateY(0);
+    }
+
+    .ui-theme-switch:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+/* Default variant */
+.ui-theme-switch--default .ui-theme-switch__content {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.ui-theme-switch--default .ui-theme-switch__content--transitioning {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.ui-theme-switch--default .ui-theme-switch__icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.ui-theme-switch--default .ui-theme-switch__label {
+    font-weight: 500;
+}
+
+/* SunMoon variant */
+.ui-theme-switch--sunmoon {
+    width: 60px;
+    height: 32px;
+    padding: 0.25rem;
+    border-radius: 2rem;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-width: unset;
+    position: relative;
+}
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--light {
+        background: linear-gradient(135deg, #87CEEB, #98D8E8);
+    }
+
+    .ui-theme-switch--sunmoon .ui-theme-switch__sun-moon-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .ui-theme-switch--sunmoon .ui-theme-switch__icon-wrapper {
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--light .ui-theme-switch__icon-wrapper {
+        transform: translateX(0);
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--dark .ui-theme-switch__icon-wrapper {
+        transform: translateX(28px);
+    }
+
+    .ui-theme-switch--sunmoon .ui-theme-switch__sun,
+    .ui-theme-switch--sunmoon .ui-theme-switch__moon {
+        font-size: 0.875rem;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Animation for icon rotation */
+    .ui-theme-switch--sunmoon .ui-theme-switch__icon-wrapper {
+        animation: none;
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--light .ui-theme-switch__sun {
+        animation: rotate-in 0.3s ease-out;
+    }
+
+    .ui-theme-switch--sunmoon.ui-theme-switch--dark .ui-theme-switch__moon {
+        animation: rotate-in 0.3s ease-out;
+    }
+
+@keyframes rotate-in {
+    from {
+        transform: rotate(-180deg) scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: rotate(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Hover effect for SunMoon */
+.ui-theme-switch--sunmoon:hover .ui-theme-switch__icon-wrapper {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus styles */
+.ui-theme-switch:focus-visible {
+    outline: 2px solid var(--palette-primary);
+    outline-offset: 2px;
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Theme\ThemeSwitch\UIThemeSwitchVariant.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+
+namespace CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+
+public class UIThemeSwitchVariant : Variant
+{
+    public static readonly UIThemeSwitchVariant Default = new("Default");
+
+    public static readonly UIThemeSwitchVariant SunMoon = new("SunMoon");
+
+    public UIThemeSwitchVariant(string name) : base(name)
+    {
+    }
+
+    public static UIThemeSwitchVariant Custom(string name) => new(name);
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Transitions\EasingBuilder.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Transitions;
+
+public class CubicBezierBuilder
+{
+    private readonly EasingBuilder _parent;
+    private double _x1, _y1, _x2, _y2;
+
+    internal CubicBezierBuilder(EasingBuilder parent) => _parent = parent;
+
+    public EasingBuilder BackOut() => WithControlPoints(0.175, 0.885, 0.32, 1.275).Build();
+
+    public EasingBuilder Bounce() => WithControlPoints(0.68, -0.55, 0.265, 1.55).Build();
+
+    public EasingBuilder Build()
+    {
+        _parent.SetValue(FormattableString.Invariant($"cubic-bezier({_x1:F3}, {_y1:F3}, {_x2:F3}, {_y2:F3})"));
+        return _parent;
+    }
+
+    public EasingBuilder Elastic() => WithControlPoints(0.68, -0.6, 0.32, 1.6).Build();
+
+    public EasingBuilder MaterialAccelerate() => WithControlPoints(0.4, 0.0, 1, 1).Build();
+
+    public EasingBuilder MaterialDecelerate() => WithControlPoints(0.0, 0.0, 0.2, 1).Build();
+
+    public EasingBuilder MaterialSharp() => WithControlPoints(0.4, 0.0, 0.6, 1).Build();
+
+    // Predefined curves
+    public EasingBuilder MaterialStandard() => WithControlPoints(0.4, 0.0, 0.2, 1).Build();
+
+    public CubicBezierBuilder WithControlPoints(double x1, double y1, double x2, double y2)
+    {
+        _x1 = x1; _y1 = y1; _x2 = x2; _y2 = y2;
+        return this;
+    }
+}
+
+public class EasingBuilder
+{
+    private string _value = "ease";
+
+    internal EasingBuilder()
+    { }
+
+    // Implicit conversion
+    public static implicit operator string(EasingBuilder builder) => builder.Build();
+
+    public string Build() => _value;
+
+    // Cubic bezier
+    public CubicBezierBuilder CubicBezier() => new(this);
+
+    // Custom
+    public EasingBuilder Custom(string value)
+    { _value = value; return this; }
+
+    public EasingBuilder Ease()
+    { _value = "ease"; return this; }
+
+    public EasingBuilder EaseIn()
+    { _value = "ease-in"; return this; }
+
+    public EasingBuilder EaseInOut()
+    { _value = "ease-in-out"; return this; }
+
+    public EasingBuilder EaseOut()
+    { _value = "ease-out"; return this; }
+
+    // Predefined easings
+    public EasingBuilder Linear()
+    { _value = "linear"; return this; }
+
+    // Steps
+    public StepsBuilder Steps(int count) => new(this, count);
+
+    internal void SetValue(string value) => _value = value;
+}
+
+public class StepsBuilder
+{
+    private readonly int _count;
+    private readonly EasingBuilder _parent;
+    private string _position = "end";
+
+    internal StepsBuilder(EasingBuilder parent, int count)
+    {
+        _parent = parent;
+        _count = count;
+    }
+
+    public EasingBuilder Build()
+    {
+        _parent.SetValue($"steps({_count}, {_position})");
+        return _parent;
+    }
+
+    public StepsBuilder End()
+    { _position = "end"; return this; }
+
+    public StepsBuilder JumpBoth()
+    { _position = "jump-both"; return this; }
+
+    public StepsBuilder JumpEnd()
+    { _position = "jump-end"; return this; }
+
+    public StepsBuilder JumpNone()
+    { _position = "jump-none"; return this; }
+
+    public StepsBuilder JumpStart()
+    { _position = "jump-start"; return this; }
+
+    public StepsBuilder Start()
+    { _position = "start"; return this; }
+}
+
+public static class Easing
+{
+    public static readonly string Ease = "ease";
+
+    public static readonly string EaseIn = "ease-in";
+
+    public static readonly string EaseInOut = "ease-in-out";
+
+    public static readonly string EaseOut = "ease-out";
+
+    // Quick access to common easings
+    public static readonly string Linear = "linear";
+
+    public static EasingBuilder Create() => new();
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Transitions\UITransitionBuilder.cs ===
+
+using System.Globalization;
+
+namespace CdCSharp.BlazorUI.Components.Features.Transitions;
+
+public class TriggerTransitionBuilder
+{
+    private readonly UITransitions _transitions;
+    private readonly TransitionTrigger _trigger;
+
+    internal TriggerTransitionBuilder(UITransitions transitions, TransitionTrigger trigger)
+    {
+        _transitions = transitions;
+        _trigger = trigger;
+    }
+
+    // Builder chaining
+    public UITransitionsBuilder And() => new() { _transitions = _transitions };
+
+    public TriggerTransitionBuilder BackdropBlur(string amount = "8px", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.BackdropBlur, options);
+        config.CustomProperties["amount"] = amount;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Blur(string amount = "2px", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Blur, options);
+        config.CustomProperties["amount"] = amount;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    // Add Build method to TriggerTransitionBuilder
+    public UITransitions Build() => _transitions;
+
+    public TriggerTransitionBuilder Fade(float opacity = 0.7f, Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Fade, options);
+        config.CustomProperties["opacity"] = opacity.ToString(CultureInfo.InvariantCulture);
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Glow(string color = "rgba(59, 130, 246, 0.5)", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Glow, options);
+        config.CustomProperties["color"] = color;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    // Combined effects
+    public TriggerTransitionBuilder Lift(Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Lift, options);
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Rotate(string angle = "5deg", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Rotate, options);
+        config.CustomProperties["angle"] = angle;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    // Basic transitions
+    public TriggerTransitionBuilder Scale(float scale = 1.05f, Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Scale, options);
+        config.CustomProperties["scale"] = scale.ToString(CultureInfo.InvariantCulture);
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Shadow(string shadow = "0 4px 8px rgba(0, 0, 0, 0.2)", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Shadow, options);
+        config.CustomProperties["shadow"] = shadow;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Translate(string x = "0", string y = "-4px", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Translate, options);
+        config.CustomProperties["x"] = x;
+        config.CustomProperties["y"] = y;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    private TransitionConfig CreateConfig(TransitionType type, Action<TransitionOptions>? options)
+    {
+        TransitionConfig config = new() { Type = type };
+        TransitionOptions transitionOptions = new();
+        options?.Invoke(transitionOptions);
+
+        config.Duration = transitionOptions.Duration;
+        config.Delay = transitionOptions.Delay;
+
+        // Build easing if provided
+        if (transitionOptions.Easing != null)
+        {
+            EasingBuilder easingBuilder = new();
+            transitionOptions.Easing(easingBuilder);
+            config.Easing = easingBuilder.Build();
+        }
+
+        return config;
+    }
+}
+
+public class UITransitionsBuilder
+{
+    internal UITransitions _transitions = new();
+
+    public UITransitions Build() => _transitions;
+
+    public TriggerTransitionBuilder OnActive() => new(_transitions, TransitionTrigger.Active);
+
+    public TriggerTransitionBuilder OnDisabled() => new(_transitions, TransitionTrigger.Disabled);
+
+    public TriggerTransitionBuilder OnFocus() => new(_transitions, TransitionTrigger.Focus);
+
+    public TriggerTransitionBuilder OnHover() => new(_transitions, TransitionTrigger.Hover);
+}
+
+public class TransitionOptions
+{
+    public TimeSpan? Delay { get; set; }
+    public TimeSpan? Duration { get; set; }
+    public Action<EasingBuilder>? Easing { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Transitions\UITransitionPresets.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Features.Transitions;
+
+public static class UITransitionPresets
+{
+    // Focus states
+    public static UITransitions AccessibleFocus => new UITransitionsBuilder()
+        .OnFocus().Shadow("0 0 0 3px rgba(59, 130, 246, 0.5)", options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(150);
+        })
+        .And()
+        .OnFocus().Scale(1.02f)
+        .Build();
+
+    // Bounce effects
+    public static UITransitions BounceIn => new UITransitionsBuilder()
+        .OnHover().Scale(1.1f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(600);
+            options.Easing = easing => easing.CubicBezier().Bounce();
+        })
+        .Build();
+
+    // Card effects
+    public static UITransitions CardHover => new UITransitionsBuilder()
+        .OnHover().Lift(options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(300);
+            options.Easing = easing => easing.CubicBezier().MaterialStandard();
+        })
+        .And()
+        .OnHover().Shadow("0 10px 30px rgba(0,0,0,0.2)")
+        .Build();
+
+    // Gradient shift
+    public static UITransitions ColorShift => new UITransitionsBuilder()
+        .OnHover().Shadow("0 0 20px rgba(139, 92, 246, 0.5)", options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(400);
+        })
+        .Build();
+
+    // Disabled states
+    public static UITransitions DisabledState => new UITransitionsBuilder()
+        .OnDisabled().Fade(0.5f)
+        .And()
+        .OnDisabled().Blur("1px")
+        .Build();
+
+    public static UITransitions ElasticScale => new UITransitionsBuilder()
+            .OnHover().Scale(1.05f, options =>
+            {
+                options.Duration = TimeSpan.FromMilliseconds(800);
+                options.Easing = easing => easing.CubicBezier().Elastic();
+            })
+            .Build();
+
+    public static UITransitions FocusRing => new UITransitionsBuilder()
+            .OnFocus().Shadow("0 0 0 3px rgba(59, 130, 246, 0.3)")
+            .Build();
+
+    public static UITransitions GlassMorphism => new UITransitionsBuilder()
+            .OnHover()
+                .BackdropBlur("16px")
+                .And()
+            .OnHover()
+                .Shadow("0 8px 32px rgba(0, 0, 0, 0.1)")
+                .And()
+            .OnHover()
+                .Scale(1.02f)
+            .Build();
+
+    public static UITransitions HoverFade => new UITransitionsBuilder()
+            .OnHover().Fade()
+            .Build();
+
+    public static UITransitions HoverGlow => new UITransitionsBuilder()
+            .OnHover().Glow()
+            .Build();
+
+    public static UITransitions HoverLift => new UITransitionsBuilder()
+            .OnHover().Lift()
+            .Build();
+
+    // Basic single transitions
+    public static UITransitions HoverScale => new UITransitionsBuilder()
+        .OnHover().Scale()
+        .Build();
+
+    public static UITransitions HoverShadow => new UITransitionsBuilder()
+        .OnHover().Shadow()
+        .Build();
+
+    // Combined transitions
+    public static UITransitions Interactive => new UITransitionsBuilder()
+        .OnHover().Lift()
+        .And()
+        .OnFocus().Shadow("0 0 0 3px rgba(59, 130, 246, 0.3)")
+        .And()
+        .OnActive().Scale(0.98f)
+        .Build();
+
+    // Material Design
+    public static UITransitions MaterialButton => new UITransitionsBuilder()
+        .OnHover().Shadow("0 2px 4px rgba(0,0,0,0.2)", options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(200);
+            options.Easing = easing => easing.CubicBezier().MaterialStandard();
+        })
+        .And()
+        .OnActive().Scale(0.96f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(100);
+            options.Easing = easing => easing.CubicBezier().MaterialAccelerate();
+        })
+        .Build();
+
+    public static UITransitions ModernGlass => new UITransitionsBuilder()
+            .OnHover()
+            .BackdropBlur("12px")
+            .And()
+        .OnHover()
+            .Shadow("0 8px 32px rgba(0, 0, 0, 0.1)")
+        .Build();
+
+    // Modern effects
+    public static UITransitions Neumorphism => new UITransitionsBuilder()
+        .OnHover().Shadow("8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.7)")
+        .Build();
+
+    // 3D effects
+    public static UITransitions Perspective => new UITransitionsBuilder()
+        .OnHover().Rotate("5deg", options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(300);
+            options.Easing = easing => easing.CubicBezier().BackOut();
+        })
+        .And()
+        .OnHover().Scale(1.05f)
+        .Build();
+
+    // Complex combinations
+    public static UITransitions PremiumButton => new UITransitionsBuilder()
+        .OnHover().Scale(1.05f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(200);
+            options.Easing = easing => easing.CubicBezier().MaterialStandard();
+        })
+        .And()
+        .OnHover().Shadow("0 5px 20px rgba(0,0,0,0.3)")
+        .And()
+        .OnHover().Glow("rgba(255, 215, 0, 0.5)")
+        .And()
+        .OnActive().Scale(0.98f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(50);
+        })
+        .Build();
+
+    // Loading states
+    public static UITransitions Pulse => new UITransitionsBuilder()
+        .OnHover().Scale(1.0f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(1500);
+            options.Easing = easing => easing.EaseInOut();
+        })
+        .Build();
+
+    public static UITransitions Shake => new UITransitionsBuilder()
+        .OnHover().Translate("-2px", "0", options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(100);
+            options.Easing = easing => easing.Linear();
+        })
+        .Build();
+
+    public static UITransitions Skeleton => new UITransitionsBuilder()
+            .OnHover().Fade(0.6f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(1000);
+            options.Easing = easing => easing.EaseInOut();
+        })
+        .Build();
+
+    // Micro interactions
+    public static UITransitions Wiggle => new UITransitionsBuilder()
+        .OnHover().Rotate("3deg", options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(150);
+            options.Easing = easing => easing.EaseInOut();
+        })
+        .Build();
+
+    // Builder for custom transitions
+    public static UITransitionsBuilder Create() => new();
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Transitions\UITransitions.cs ===
+
+using CdCSharp.BlazorUI.Css;
+
+namespace CdCSharp.BlazorUI.Components.Features.Transitions;
+
+public enum TransitionTrigger
+{
+    Hover,
+    Focus,
+    Active,
+    Disabled
+}
+
+public class TransitionConfig
+{
+    public Dictionary<string, string> CustomProperties { get; set; } = [];
+    public TimeSpan? Delay { get; set; }
+    public TimeSpan? Duration { get; set; }
+    public string? Easing { get; set; }
+    public TransitionType Type { get; set; }
+}
+
+public class UITransitions
+{
+    private readonly Dictionary<TransitionTrigger, List<TransitionConfig>> _transitions = [];
+
+    public bool HasTransitions => _transitions.Any();
+
+    public IReadOnlyDictionary<TransitionTrigger, IReadOnlyList<TransitionConfig>> Transitions =>
+            _transitions.ToDictionary(
+            kvp => kvp.Key,
+            kvp => (IReadOnlyList<TransitionConfig>)kvp.Value
+        );
+
+    public string GetCssClasses()
+    {
+        return string.Join(" ",
+            _transitions.SelectMany(t =>
+                t.Value.Select(cfg =>
+                    CssClassesReference.Transition(t.Key, cfg.Type)
+                )));
+    }
+
+    public Dictionary<string, string> GetInlineStyles()
+    {
+        Dictionary<string, string> styles = [];
+
+        foreach ((TransitionTrigger trigger, List<TransitionConfig> configs) in _transitions)
+        {
+            foreach (TransitionConfig config in configs)
+            {
+                string prefix = $"--ui-transition-{trigger.ToString().ToLower()}";
+
+                if (config.Duration.HasValue)
+                    styles[$"{prefix}-duration"] =
+                        $"{config.Duration.Value.TotalMilliseconds}ms";
+
+                if (config.Delay.HasValue)
+                    styles[$"{prefix}-delay"] =
+                        $"{config.Delay.Value.TotalMilliseconds}ms";
+
+                if (!string.IsNullOrEmpty(config.Easing))
+                    styles[$"{prefix}-easing"] = config.Easing;
+
+                foreach (KeyValuePair<string, string> prop in config.CustomProperties)
+                    styles[$"{prefix}-{prop.Key}"] = prop.Value;
+            }
+        }
+
+        return styles;
+    }
+
+    internal void AddTransition(TransitionTrigger trigger, TransitionConfig config)
+    {
+        if (!_transitions.TryGetValue(trigger, out List<TransitionConfig>? list))
+        {
+            list = [];
+            _transitions[trigger] = list;
+        }
+
+        list.Add(config);
+    }
+}
+
+public enum TransitionType
+{
+    // Transform
+    Scale,
+
+    Rotate,
+    Translate,
+    Skew,
+
+    // Appearance
+    Fade,
+
+    Blur,
+    Brightness,
+    Contrast,
+    Saturate,
+
+    // Layout
+    Shadow,
+
+    Border,
+
+    // Modern CSS
+    BackdropBlur,
+
+    // Combinations
+    Lift,
+
+    Glow,
+    Pulse,
+    Shake
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Button\UIButton.razor ===
+
+@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Features.Transitions
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Css
+@using CdCSharp.BlazorUI.Media.Icons
+
+
+@inherits UIVariantComponentBase<UIButton, UIButtonVariant>
+@implements IHasTransitions
+@implements IHasSize<UIButtonSize>
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasElevation
+@implements IHasRipple
+@implements IHasDensity<UIButtonDensity>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+
+    /* ========= Public API ========= */
+
+    [Parameter] public string? Text { get; set; }
+    [Parameter] public string? LeadingIcon { get; set; }
+    [Parameter] public string? TrailingIcon { get; set; }
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    // IHasTransitions
+    [Parameter] public UITransitions? Transitions { get; set; }
+
+    // IHasSize
+    [Parameter] public UIButtonSize Size { get; set; } = UIButtonSize.Medium;
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public UILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasElevation
+    private int _elevation;
+    [Parameter]
+    public int Elevation
+    {
+        get => _elevation;
+        set => _elevation = Math.Clamp(value, 0, 24);
+    }
+
+    // IHasRipple
+    [Parameter] public bool DisableRipple { get; set; }
+    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public int RippleDuration { get; set; } = 600;
+
+    // IHasDensity
+    [Parameter] public UIButtonDensity Density { get; set; } = UIButtonDensity.Standard;
+
+    /* ========= Variant ========= */
+
+    protected override UIButtonVariant DefaultVariant => UIButtonVariant.Default;
+
+    protected override Dictionary<UIButtonVariant, Func<UIButton, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [UIButtonVariant.Default] = b => b.RenderDefault(),
+    };
+
+    /* ========= Private state ========= */
+
+    private bool IsDisabled => Disabled || IsLoading;
+    private int _rippleKey = 0;
+
+    /* ========= Render ========= */
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <button @attributes="AdditionalAttributes"
+                type="button"
+                disabled="@IsDisabled"
+                @onclick="HandleClick">
+
+            @if (!DisableRipple)
+            {
+                <span class="@CssClassesReference.Ripple" @key="@_rippleKey"></span>
+            }
+
+            @if (IsLoading && LoadingIndicatorVariant != null)
+            {
+                <UILoadingIndicator Variant="@LoadingIndicatorVariant"
+                                    Size="GetLoadingSize()"
+                                    Color="@Color" />
+            }
+            else if (LeadingIcon != null)
+            {
+                <UISvgIcon Icon="@LeadingIcon" Size="@GetIconSize()" />
+            }
+
+            @if (!string.IsNullOrWhiteSpace(Text))
+            {
+                <span class="@CssClassesReference.UIButton__Text">@Text</span>
+            }
+
+            @if (TrailingIcon != null && !IsLoading)
+            {
+                <UISvgIcon Icon="@TrailingIcon" Size="@GetIconSize()" />
+            }
+
+        </button>
+    };
+
+    /* ========= Event Handlers ========= */
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        if (!DisableRipple && !IsDisabled)
+        {
+            _rippleKey++;
+        }
+
+        if (!IsDisabled)
+        {
+            await OnClick.InvokeAsync(args);
+        }
+    }
+
+    /* ========= Helpers ========= */
+
+    private UISvgIcon.UISvgIconSize GetIconSize()
+    {
+        return Size switch
+        {
+            UIButtonSize.Small => UISvgIcon.UISvgIconSize.Small,
+            UIButtonSize.Large => UISvgIcon.UISvgIconSize.Large,
+            _ => UISvgIcon.UISvgIconSize.Medium
+        };
+    }
+
+    private UILoadingIndicatorSize GetLoadingSize()
+    {
+        return Size switch
+        {
+            UIButtonSize.Small => UILoadingIndicatorSize.Small,
+            UIButtonSize.Large => UILoadingIndicatorSize.Large,
+            _ => UILoadingIndicatorSize.Medium
+        };
+    }
+
+    /* ========= Styling ========= */
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return CssClassesReference.UIButton;
+        yield return CssClassesReference.Variant(CssClassesReference.UIButton, Variant ?? DefaultVariant);
+        if (Text == null)
+        {
+            yield return CssClassesReference.Specific(CssClassesReference.UIButton, "icon-only");
+        }
+    }
+
+    override public Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        Dictionary<string, string> styles = new();
+
+        if (BackgroundColor != null)
+        {
+            styles.TryAdd("background-color", BackgroundColor.ToString(ColorOutputFormats.Rgba));
+        }
+        if (Color != null)
+        {
+            styles.TryAdd("color", Color.ToString(ColorOutputFormats.Rgba));
+        }
+
+        return styles;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Button\UIButton.razor.css ===
+
+.ui-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ui-button__text {
+    white-space: nowrap;
+}
+
+.ui-button svg {
+    pointer-events: none;
+}
+
+/* Specific: Only Icon */
+.ui-button--icon-only {
+    padding: 0.5rem;
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Button\UIButtonEnums.cs ===
+
+namespace CdCSharp.BlazorUI.Components.Generic.Button;
+
+public enum UIButtonSize
+{
+    Small,
+    Medium,
+    Large
+}
+
+public enum UIButtonDensity
+{
+    Comfortable,
+    Standard,
+    Compact
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Button\UIButtonVariant.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+
+namespace CdCSharp.BlazorUI.Components.Generic.Button;
+
+public class UIButtonVariant : Variant
+{
+    public static readonly UIButtonVariant Default = new("Default");
+
+    public UIButtonVariant(string name) : base(name)
+    {
+    }
+
+    public static UIButtonVariant Custom(string name) => new(name);
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Img\UIImg.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+
+namespace CdCSharp.BlazorUI.Components.Generic.Img;
+
+public abstract class UIImg : UIComponentBase
+{
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Svg\UISvgIcon.razor ===
+
+@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Css
+@using CdCSharp.BlazorUI.Media.Icons
+@using Microsoft.AspNetCore.Components.Web
+
+@inherits UIVariantComponentBase<UISvgIcon, UISvgIconVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+
+    [Parameter][EditorRequired] public required string Icon { get; set; }
+
+    [Parameter] public string? Title { get; set; }
+
+    [Parameter] public UISvgIconSize Size { get; set; } = UISvgIconSize.Medium;
+
+    [Parameter] public CssColor? Color { get; set; }
+
+    [Parameter] public string ViewBox { get; set; } = "0 0 24 24";
+
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    protected override UISvgIconVariant DefaultVariant => UISvgIconVariant.Default;
+
+    protected override Dictionary<UISvgIconVariant, Func<UISvgIcon, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [UISvgIconVariant.Default] = b => b.RenderDefault(),
+    };
+
+    private RenderFragment RenderDefault() => __builder =>
+{
+    <svg @attributes="@AdditionalAttributes"
+         @onclick="@OnClick"
+         focusable="false"
+         viewBox="@ViewBox"
+         aria-hidden="true">
+        @if (Title != null)
+        {
+            <title>@Title</title>
+        }
+        @((MarkupString)Icon)
+    </svg>
+};
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        return [CssClassesReference.UISvgIcon, IconSizeClass];
+    }
+
+    public override Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        if (Color == null)
+        {
+            return base.GetAdditionalInlineStyles();
+        }
+        return new()
+        {
+           {"color", Color.ToString(ColorOutputFormats.Rgba) }
+        };
+    }
+
+    private string IconSizeClass =>
+            Size switch
+            {
+                UISvgIconSize.Small => CssClassesReference.UISvgIcon_SizeSmall,
+                UISvgIconSize.Medium => CssClassesReference.UISvgIcon_SizeMedium,
+                UISvgIconSize.Large => CssClassesReference.UISvgIcon_SizeLarge,
+                UISvgIconSize.XLarge => CssClassesReference.UISvgIcon_SizeXLarge,
+                UISvgIconSize.XXLarge => CssClassesReference.UISvgIcon_SizeXXLarge,
+                _ => CssClassesReference.UISvgIcon_SizeMedium,
+            };
+
+    public enum UISvgIconSize
+    {
+        Small,
+        Medium,
+        Large,
+        XLarge,
+        XXLarge,
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Svg\UISvgIcon.razor.css ===
+
+.ui-svg-icon {
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    flex-shrink: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    fill: currentColor;
+    color: currentColor;
+}
+
+.ui-svg-icon-s {
+    font-size: 100%;
+}
+
+.ui-svg-icon-m {
+    font-size: 150%;
+}
+
+.ui-svg-icon-l {
+    font-size: 200%;
+}
+
+.ui-svg-icon-xl {
+    font-size: 250%;
+}
+
+.ui-svg-icon-xxl {
+    font-size: 300%;
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Generic\Svg\UISvgIconVariant.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+
+namespace CdCSharp.BlazorUI.Components.Generic.Svg;
+
+public class UISvgIconVariant : Variant
+{
+    public static readonly UISvgIconVariant Default = new("Default");
+
+    public UISvgIconVariant(string name) : base(name)
+    {
+    }
+
+    public static UISvgIconVariant Custom(string name) => new(name);
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Layout\UIBlazorLayout.razor ===
+
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+
+@inherits LayoutComponentBase
+
+@inject IThemeJsInterop ThemeInterop
+
+@Body
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ThemeInterop.InitializeAsync("dark");
+        }
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\_Imports.razor ===
+
+@* Mandatory reference for templates that are using event callbacks *@
+@using Microsoft.AspNetCore.Components.Web
+
+
+
+=== CdCSharp.BlazorUI\Css\AutogenerateCssColorsAttribute.cs ===
+
+namespace CdCSharp.BlazorUI.Css;
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public class AutogenerateCssColorsAttribute : Attribute
+{
+    public AutogenerateCssColorsAttribute(int variantLevels = 5)
+    {
+        if (variantLevels <= 0)
+        {
+            throw new ArgumentException("Variant levels must be greater than 0", nameof(variantLevels));
+        }
+
+        VariantLevels = variantLevels;
+    }
+
+    public int VariantLevels { get; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Css\CssClassesReference.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Transitions;
+
+namespace CdCSharp.BlazorUI.Css;
+
+public class CssClassesReference
+{
+    public const string InputRoot = "ui-input-root";
+
+    //UITextButton
+    public const string UIButton = "ui-button";
+    public const string UIButton__Text = "ui-button__text";
+    //UISvgIcon
+    public const string UISvgIcon = "ui-svg-icon";
+
+    public const string UISvgIcon_SizeLarge = "ui-svg-icon-l";
+    public const string UISvgIcon_SizeMedium = "ui-svg-icon-m";
+    public const string UISvgIcon_SizeSmall = "ui-svg-icon-s";
+    public const string UISvgIcon_SizeXLarge = "ui-svg-icon-xl";
+    public const string UISvgIcon_SizeXXLarge = "ui-svg-icon-xxl";
+
+    // UIThemeSwitch
+    public const string UIThemeSwitch = "ui-theme-switch";
+
+    // UILoadingIndicator
+    public const string UILoadingIndicator = "ui-loading-indicator";
+
+    // Transitions
+    public static string HasTransitions => "ui-has-transitions";
+
+    // General size classes
+    public const string SizeSmall = "ui-size-small";
+    public const string SizeMedium = "ui-size-medium";
+    public const string SizeLarge = "ui-size-large";
+
+    // Density classes
+    public const string DensityComfortable = "ui-density-comfortable";
+    public const string DensityStandard = "ui-density-standard";
+    public const string DensityCompact = "ui-density-compact";
+
+    // State classes
+    public const string FullWidth = "ui-full-width";
+    public const string Loading = "ui-loading";
+    public const string HasRipple = "ui-has-ripple";
+    public const string Ripple = "ui-ripple";
+
+    // Elevation helper
+    public static string Elevation(int level) => $"ui-elevation-{level}";
+
+    // Size helper
+    public static string Size<TSize>(TSize size) where TSize : Enum
+    {
+        return size.ToString().ToLower() switch
+        {
+            "small" => SizeSmall,
+            "medium" => SizeMedium,
+            "large" => SizeLarge,
+            _ => SizeMedium
+        };
+    }
+
+    // Density helper
+    public static string Density<TDensity>(TDensity density) where TDensity : Enum
+    {
+        return density.ToString().ToLower() switch
+        {
+            "comfortable" => DensityComfortable,
+            "standard" => DensityStandard,
+            "compact" => DensityCompact,
+            _ => DensityStandard
+        };
+    }
+
+    public static string Specific(string componentBaseClass, string specific)
+        => $"{componentBaseClass.ToLowerInvariant()}--{specific}";
+
+    public static string Transition(TransitionTrigger trigger, TransitionType type)
+        => $"ui-transition-{trigger.ToString().ToLower()}-{type.ToString().ToLower()}";
+
+    public static string Variant(string componentBaseClass, Variant variant)
+                    => $"{componentBaseClass.ToLowerInvariant()}--{variant.ToString().ToLowerInvariant()}";
+}
+
+
+
+=== CdCSharp.BlazorUI\Css\UIColor.cs ===
+
+namespace CdCSharp.BlazorUI.Css;
+
+[AutogenerateCssColors(3)]
+public static partial class UIColor
+{
+}
+
+
+
+=== CdCSharp.BlazorUI\CssBundle\common-classes.css ===
+
+/* ========================================
+   Common Component Classes
+   Auto-generated - Do not edit manually
+   ======================================== */
+
+/* Size Classes */
+.ui-size-small {
+    font-size: 0.875rem;
+}
+
+.ui-size-medium {
+    font-size: 1rem;
+}
+
+.ui-size-large {
+    font-size: 1.125rem;
+}
+
+/* Density Classes */
+.ui-density-comfortable {
+    --ui-density-spacing-multiplier: 1.5;
+}
+
+.ui-density-standard {
+    --ui-density-spacing-multiplier: 1;
+}
+
+.ui-density-compact {
+    --ui-density-spacing-multiplier: 0.75;
+}
+
+/* Full Width */
+.ui-full-width {
+    width: 100%;
+}
+
+/* Loading State */
+.ui-loading {
+    pointer-events: none;
+    position: relative;
+}
+
+.ui-loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .ui-loading::after {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* Elevation */
+.ui-elevation-0 {
+    box-shadow: none;
+}
+
+.ui-elevation-1 {
+    box-shadow: 0px 0,5px 1px rgba(0,0,0,0,2), 0px 1px 2px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-2 {
+    box-shadow: 0px 1px 2px rgba(0,0,0,0,2), 0px 2px 4px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-3 {
+    box-shadow: 0px 1,5px 3px rgba(0,0,0,0,2), 0px 3px 6px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-4 {
+    box-shadow: 0px 2px 4px rgba(0,0,0,0,2), 0px 4px 8px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-5 {
+    box-shadow: 0px 2,5px 5px rgba(0,0,0,0,2), 0px 5px 10px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-6 {
+    box-shadow: 0px 3px 6px rgba(0,0,0,0,2), 0px 6px 12px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-7 {
+    box-shadow: 0px 3,5px 7px rgba(0,0,0,0,2), 0px 7px 14px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-8 {
+    box-shadow: 0px 4px 8px rgba(0,0,0,0,2), 0px 8px 16px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-9 {
+    box-shadow: 0px 4,5px 9px rgba(0,0,0,0,2), 0px 9px 18px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-10 {
+    box-shadow: 0px 5px 10px rgba(0,0,0,0,2), 0px 10px 20px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-11 {
+    box-shadow: 0px 5,5px 11px rgba(0,0,0,0,2), 0px 11px 22px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-12 {
+    box-shadow: 0px 6px 12px rgba(0,0,0,0,2), 0px 12px 24px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-13 {
+    box-shadow: 0px 6,5px 13px rgba(0,0,0,0,2), 0px 13px 26px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-14 {
+    box-shadow: 0px 7px 14px rgba(0,0,0,0,2), 0px 14px 28px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-15 {
+    box-shadow: 0px 7,5px 15px rgba(0,0,0,0,2), 0px 15px 30px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-16 {
+    box-shadow: 0px 8px 16px rgba(0,0,0,0,2), 0px 16px 32px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-17 {
+    box-shadow: 0px 8,5px 17px rgba(0,0,0,0,2), 0px 17px 34px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-18 {
+    box-shadow: 0px 9px 18px rgba(0,0,0,0,2), 0px 18px 36px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-19 {
+    box-shadow: 0px 9,5px 19px rgba(0,0,0,0,2), 0px 19px 38px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-20 {
+    box-shadow: 0px 10px 20px rgba(0,0,0,0,2), 0px 20px 40px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-21 {
+    box-shadow: 0px 10,5px 21px rgba(0,0,0,0,2), 0px 21px 42px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-22 {
+    box-shadow: 0px 11px 22px rgba(0,0,0,0,2), 0px 22px 44px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-23 {
+    box-shadow: 0px 11,5px 23px rgba(0,0,0,0,2), 0px 23px 46px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+.ui-elevation-24 {
+    box-shadow: 0px 12px 24px rgba(0,0,0,0,2), 0px 24px 48px rgba(0,0,0,0,14), 0px 1px 3px rgba(0,0,0,0,12);
+}
+
+/* Ripple Effect */
+.ui-has-ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ui-ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ui-ripple-animation var(--ui-ripple-duration, 600ms) ease-out;
+    background-color: var(--ui-ripple-color, rgba(0, 0, 0, 0.1));
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .ui-ripple {
+        background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.1));
+    }
+}
+
+@keyframes ui-ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\CssBundle\entry.js ===
+
+import "./main.css";
+
+
+
+=== CdCSharp.BlazorUI\CssBundle\initialize-themes.css ===
+
+body {
+  background-color: var(--palette-background);
+  color: var(--palette-foreground);
+}
+
+
+
+=== CdCSharp.BlazorUI\CssBundle\main.css ===
+
+@import './reset.css';
+@import './themes.css';
+@import './initialize-themes.css';
+@import './common-classes.css';
+
+
+
+=== CdCSharp.BlazorUI\CssBundle\reset.css ===
+
+/* =========================================================
+   CSS BASE / RESET
+   Purpose: Normalize browser defaults while preserving
+   semantic HTML behavior, accessibility and theming
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Design Tokens
+   --------------------------------------------------------- */
+:root {
+    /* Typography */
+    --blazorui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+    --blazorui-font-heading: var(--blazorui-font-base);
+    --blazorui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --blazorui-base-font-size: 16px;
+    --blazorui-base-line-height: 1.5;
+    --blazorui-heading-line-height: 1.2;
+    /* Spacing */
+    --blazorui-body-margin: 8px;
+    --blazorui-space-1: 0.5em;
+    --blazorui-space-2: 1em;
+    /* Heading scale */
+    --blazorui-h1-size: 2em;
+    --blazorui-h2-size: 1.5em;
+    --blazorui-h3-size: 1.17em;
+    --blazorui-h4-size: 1em;
+    --blazorui-h5-size: 0.83em;
+    --blazorui-h6-size: 0.67em;
+    /* UI states */
+    --blazorui-focus-color: Highlight;
+    --blazorui-focus-width: 2px;
+    --blazorui-focus-offset: 2px;
+    --blazorui-disabled-opacity: 0.5;
+    --blazorui-placeholder-opacity: 0.6;
+    /* Separators */
+    --blazorui-hr-color: gray;
+    --blazorui-hr-width: 1px;
+    --blazorui-hr-style: inset;
+    /* Tables */
+    --blazorui-table-border-spacing: 2px;
+    /* Media */
+    --blazorui-media-max-width: 100%;
+    /* Interaction */
+    --blazorui-tap-highlight: transparent;
+}
+
+/* ---------------------------------------------------------
+   Global Box Model & Neutral Reset
+   --------------------------------------------------------- */
+:where(*, *::before, *::after) {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-decoration: none;
+}
+
+/* ---------------------------------------------------------
+   Root & Body
+   --------------------------------------------------------- */
+html {
+    block-size: 100%;
+    font-size: var(--blazorui-base-font-size);
+}
+
+body {
+    margin: var(--blazorui-body-margin);
+    font-family: var(--blazorui-font-base);
+    font-size: 1rem;
+    line-height: var(--blazorui-base-line-height);
+}
+
+/* ---------------------------------------------------------
+   Structural Elements
+   --------------------------------------------------------- */
+:where( header, main, footer, section, article, nav, aside, figure, figcaption, details, summary, dialog, form ) {
+    display: block;
+}
+
+/* ---------------------------------------------------------
+   Headings & Text Content
+   --------------------------------------------------------- */
+:where(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--blazorui-font-heading);
+    font-weight: bold;
+    line-height: var(--blazorui-heading-line-height);
+}
+
+h1 {
+    font-size: var(--blazorui-h1-size);
+    margin-block: 0.67em;
+}
+
+h2 {
+    font-size: var(--blazorui-h2-size);
+    margin-block: 0.83em;
+}
+
+h3 {
+    font-size: var(--blazorui-h3-size);
+    margin-block: var(--blazorui-space-2);
+}
+
+h4 {
+    font-size: var(--blazorui-h4-size);
+    margin-block: 1.33em;
+}
+
+h5 {
+    font-size: var(--blazorui-h5-size);
+    margin-block: 1.67em;
+}
+
+h6 {
+    font-size: var(--blazorui-h6-size);
+    margin-block: 2.33em;
+}
+
+p,
+blockquote {
+    margin-block: var(--blazorui-space-2);
+}
+
+blockquote {
+    margin-inline: 40px;
+}
+
+code,
+pre,
+kbd,
+samp {
+    font-family: var(--blazorui-font-monospace);
+    font-size: 0.875em;
+}
+
+pre {
+    white-space: pre;
+}
+
+/* ---------------------------------------------------------
+   Lists
+   --------------------------------------------------------- */
+ul,
+ol {
+    margin-block: var(--blazorui-space-2);
+    padding-inline-start: 40px;
+}
+
+ul {
+    list-style: disc;
+}
+
+ol {
+    list-style: decimal;
+}
+
+/* ---------------------------------------------------------
+   Tables
+   --------------------------------------------------------- */
+table {
+    border-collapse: separate;
+    border-spacing: var(--blazorui-table-border-spacing);
+}
+
+caption {
+    text-align: center;
+}
+
+th {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------
+   Media / Replaced Elements
+   --------------------------------------------------------- */
+:where(img, svg, video, canvas, picture) {
+    display: inline-block;
+    max-width: var(--blazorui-media-max-width);
+    height: auto;
+}
+
+/* ---------------------------------------------------------
+   Horizontal Rule
+   --------------------------------------------------------- */
+hr {
+    margin-block: var(--blazorui-space-1);
+    border: var(--blazorui-hr-width) var(--blazorui-hr-style) var(--blazorui-hr-color);
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------------
+   Links
+   --------------------------------------------------------- */
+a {
+    cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   Form Controls Reset
+   --------------------------------------------------------- */
+:where( input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="tel"], input[type="url"], input:not([type]), textarea, select, button, input[type="button"], input[type="submit"], input[type="reset"] ) {
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    line-height: normal;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+:where(button, input[type="button"], input[type="submit"], input[type="reset"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    appearance: none;
+    cursor: pointer;
+}
+
+/* Disabled state */
+:where(button, input, select, textarea):disabled {
+    cursor: default;
+    opacity: var(--blazorui-disabled-opacity);
+}
+
+/* Autofill (WebKit) */
+:where(input, textarea, select):-webkit-autofill {
+    box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: inherit !important;
+}
+
+/* Placeholder */
+::placeholder {
+    color: inherit;
+    opacity: var(--blazorui-placeholder-opacity);
+}
+
+/* ---------------------------------------------------------
+   Focus & Accessibility
+   --------------------------------------------------------- */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+:focus-visible {
+    outline: var(--blazorui-focus-width) solid var(--blazorui-focus-color);
+    outline-offset: var(--blazorui-focus-offset);
+}
+
+/* Touch interaction */
+:where(button, input, textarea, select, a) {
+    -webkit-tap-highlight-color: var(--blazorui-tap-highlight);
+}
+
+/* ---------------------------------------------------------
+   Utility Attributes
+   --------------------------------------------------------- */
+[hidden] {
+    display: none;
+}
+
+
+
+=== CdCSharp.BlazorUI\CssBundle\themes.css ===
+
+:root {
+  /* === Theme palettes === */
+  --dark-background: rgba(15,23,42,1);
+  --dark-error: rgba(239,68,68,1);
+  --dark-foreground: rgba(241,245,249,1);
+  --dark-info: rgba(59,130,246,1);
+  --dark-primary: rgba(96,165,250,1);
+  --dark-primarycontrast: rgba(15,23,42,1);
+  --dark-secondary: rgba(167,139,250,1);
+  --dark-secondarycontrast: rgba(15,23,42,1);
+  --dark-success: rgba(16,185,129,1);
+  --dark-surface: rgba(30,41,59,1);
+  --dark-warning: rgba(245,158,11,1);
+  --light-background: rgba(255,255,255,1);
+  --light-error: rgba(239,68,68,1);
+  --light-foreground: rgba(30,41,59,1);
+  --light-info: rgba(59,130,246,1);
+  --light-primary: rgba(59,130,246,1);
+  --light-primarycontrast: rgba(255,255,255,1);
+  --light-secondary: rgba(139,92,246,1);
+  --light-secondarycontrast: rgba(255,255,255,1);
+  --light-success: rgba(16,185,129,1);
+  --light-surface: rgba(248,250,252,1);
+  --light-warning: rgba(245,158,11,1);
+
+  /* === Default palette mapping === */
+  --palette-background: var(--dark-background);
+  --palette-error: var(--dark-error);
+  --palette-foreground: var(--dark-foreground);
+  --palette-info: var(--dark-info);
+  --palette-primary: var(--dark-primary);
+  --palette-primarycontrast: var(--dark-primarycontrast);
+  --palette-secondary: var(--dark-secondary);
+  --palette-secondarycontrast: var(--dark-secondarycontrast);
+  --palette-success: var(--dark-success);
+  --palette-surface: var(--dark-surface);
+  --palette-warning: var(--dark-warning);
+}
+
+html[data-theme="dark"] {
+  --palette-background: var(--dark-background);
+  --palette-error: var(--dark-error);
+  --palette-foreground: var(--dark-foreground);
+  --palette-info: var(--dark-info);
+  --palette-primary: var(--dark-primary);
+  --palette-primarycontrast: var(--dark-primarycontrast);
+  --palette-secondary: var(--dark-secondary);
+  --palette-secondarycontrast: var(--dark-secondarycontrast);
+  --palette-success: var(--dark-success);
+  --palette-surface: var(--dark-surface);
+  --palette-warning: var(--dark-warning);
+}
+
+html[data-theme="light"] {
+  --palette-background: var(--light-background);
+  --palette-error: var(--light-error);
+  --palette-foreground: var(--light-foreground);
+  --palette-info: var(--light-info);
+  --palette-primary: var(--light-primary);
+  --palette-primarycontrast: var(--light-primarycontrast);
+  --palette-secondary: var(--light-secondary);
+  --palette-secondarycontrast: var(--light-secondarycontrast);
+  --palette-success: var(--light-success);
+  --palette-surface: var(--light-surface);
+  --palette-warning: var(--light-warning);
+}
+
+
+
+
+=== CdCSharp.BlazorUI\Extensions\ServiceCollectionExtensions.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+using CdCSharp.BlazorUI.Components.Generic.Button;
+using CdCSharp.BlazorUI.Components.Generic.Svg;
+using CdCSharp.BlazorUI.Services;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
+namespace Microsoft.Extensions.DependencyInjection;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddBlazorUI(this IServiceCollection services)
+    {
+        services.AddMemoryCache();
+
+        // Variant registries (one per component)
+        RegisterVariantRegistry<UIButton, UIButtonVariant>(services);
+        RegisterVariantRegistry<UISvgIcon, UISvgIconVariant>(services);
+        RegisterVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>(services);
+
+        // JS interop
+        services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddBlazorUIVariants(
+        this IServiceCollection services,
+        Action<VariantRegistryBuilder> configure)
+    {
+        VariantRegistryBuilder builder = new(services);
+        configure(builder);
+        return services;
+    }
+
+    private static void RegisterVariantRegistry<TComponent, TVariant>(IServiceCollection services)
+        where TComponent : UIVariantComponentBase<TComponent, TVariant>
+        where TVariant : Variant
+    {
+        services.TryAddSingleton<VariantRegistry<TComponent, TVariant>>();
+        services.TryAddSingleton<IVariantRegistry<TComponent, TVariant>>(sp =>
+            sp.GetRequiredService<VariantRegistry<TComponent, TVariant>>());
+    }
+}
+
+#region Variant Registry Builders
+
+public sealed class VariantRegistryBuilder
+{
+    private readonly IServiceCollection _services;
+
+    public VariantRegistryBuilder(IServiceCollection services)
+    {
+        _services = services;
+    }
+
+    public VariantRegistryBuilder<TComponent, TVariant> For<TComponent, TVariant>()
+        where TComponent : UIVariantComponentBase<TComponent, TVariant>
+        where TVariant : Variant
+    {
+        VariantRegistry<TComponent, TVariant> registry = GetOrCreateRegistry<TComponent, TVariant>();
+        return new VariantRegistryBuilder<TComponent, TVariant>(_services, registry);
+    }
+
+    private VariantRegistry<TComponent, TVariant> GetOrCreateRegistry<TComponent, TVariant>()
+        where TComponent : UIVariantComponentBase<TComponent, TVariant>
+        where TVariant : Variant
+    {
+        ServiceDescriptor? descriptor = _services.FirstOrDefault(d =>
+            d.ServiceType == typeof(VariantRegistry<TComponent, TVariant>));
+
+        if (descriptor?.ImplementationInstance is VariantRegistry<TComponent, TVariant> existing)
+        {
+            return existing;
+        }
+
+        VariantRegistry<TComponent, TVariant> registry = new();
+
+        _services.AddSingleton(registry);
+        _services.AddSingleton<IVariantRegistry<TComponent, TVariant>>(registry);
+
+        return registry;
+    }
+}
+
+public sealed class VariantRegistryBuilder<TComponent, TVariant>
+    where TComponent : UIVariantComponentBase<TComponent, TVariant>
+    where TVariant : Variant
+{
+    private readonly VariantRegistry<TComponent, TVariant> _registry;
+    private readonly IServiceCollection _services;
+    public VariantRegistryBuilder(
+        IServiceCollection services,
+        VariantRegistry<TComponent, TVariant> registry)
+    {
+        _services = services;
+        _registry = registry;
+    }
+
+    public VariantRegistryBuilder<TComponent, TVariant> Register(
+        TVariant variant,
+        Func<TComponent, RenderFragment> template)
+    {
+        _registry.Register(variant, template);
+        return this;
+    }
+}
+
+#endregion
+
+
+
+=== CdCSharp.BlazorUI\Media\Icons\Brands.cs ===
+
+namespace CdCSharp.BlazorUI.Media.Icons;
+
+public partial class UIIcons
+{
+    public class Brands
+    {
+        public const string Apple = "<path d=\"M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z\"/>";
+        public const string Awesome = "<path d=\"M22.14,10.91l-5.2-4.77-.73.8,4.33,4H3.46l4.34-4-.74-.8L1.87,10.91h0v3.15a2.84,2.84,0,0,0,3.05,2.57H8.12a2.84,2.84,0,0,0,3.05-2.57V12h1.66v2.07a2.84,2.84,0,0,0,3.05,2.57h3.21a2.84,2.84,0,0,0,3.05-2.57Z\"/>";
+        public const string Calculator = "<path d=\"M9,2H4A2,2 0 0,0 2,4V9A2,2 0 0,0 4,11H9A2,2 0 0,0 11,9V4A2,2 0 0,0 9,2M9,7H4V6H9V7M20,13H15A2,2 0 0,0 13,15V20A2,2 0 0,0 15,22H20A2,2 0 0,0 22,20V15A2,2 0 0,0 20,13M20,19H15V18H20V19M20,17H15V16H20V17M20,2H15A2,2 0 0,0 13,4V9A2,2 0 0,0 15,11H20A2,2 0 0,0 22,9V4A2,2 0 0,0 20,2M20,7H18V9H17V7H15V6H17V4H18V6H20V7M9,13H4A2,2 0 0,0 2,15V20A2,2 0 0,0 4,22H9A2,2 0 0,0 11,20V15A2,2 0 0,0 9,13M8.62,18.91L7.91,19.62L6.5,18.21L5.09,19.62L4.38,18.91L5.79,17.5L4.38,16.09L5.09,15.38L6.5,16.79L7.91,15.38L8.62,16.09L7.21,17.5L8.62,18.91Z\"/>";
+        public const string Chrome = "<path d=\"M12,20L15.46,14H15.45C15.79,13.4 16,12.73 16,12C16,10.8 15.46,9.73 14.62,9H19.41C19.79,9.93 20,10.94 20,12A8,8 0 0,1 12,20M4,12C4,10.54 4.39,9.18 5.07,8L8.54,14H8.55C9.24,15.19 10.5,16 12,16C12.45,16 12.88,15.91 13.29,15.77L10.89,19.91C7,19.37 4,16.04 4,12M15,12A3,3 0 0,1 12,15A3,3 0 0,1 9,12A3,3 0 0,1 12,9A3,3 0 0,1 15,12M12,4C14.96,4 17.54,5.61 18.92,8H12C10.06,8 8.45,9.38 8.08,11.21L5.7,7.08C7.16,5.21 9.44,4 12,4M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z\"/>";
+        public const string Discord = "<path d=\"M19,6.75A9.2017,9.2017,0,0,0,14.625,5l-.2135.4274a8.4519,8.4519,0,0,1,4.151,2.1976A12.87,12.87,0,0,0,12,5.875a12.87,12.87,0,0,0-6.5625,1.75,8.6339,8.6339,0,0,1,4.151-2.1976L9.375,5A9.1429,9.1429,0,0,0,5,6.75S2.76,9.9989,2.375,16.375A8.2659,8.2659,0,0,0,8.0625,19l.7175-.9555A8.7654,8.7654,0,0,1,5,15.5a11.032,11.032,0,0,0,7,2.1875A11.032,11.032,0,0,0,19,15.5a8.7609,8.7609,0,0,1-3.78,2.5445L15.9375,19a8.2659,8.2659,0,0,0,5.6875-2.625C21.24,9.9989,19,6.75,19,6.75ZM9.1562,14.625a1.6511,1.6511,0,0,1-1.5312-1.75,1.6511,1.6511,0,0,1,1.5312-1.75,1.6511,1.6511,0,0,1,1.5313,1.75A1.6511,1.6511,0,0,1,9.1562,14.625Zm5.6876,0a1.6511,1.6511,0,0,1-1.5313-1.75,1.6511,1.6511,0,0,1,1.5313-1.75,1.6511,1.6511,0,0,1,1.5312,1.75A1.6511,1.6511,0,0,1,14.8438,14.625Z\"/>";
+        public const string Facebook = "<path d=\"M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2m13 2h-2.5A3.5 3.5 0 0 0 12 8.5V11h-2v3h2v7h3v-7h3v-3h-3V9a1 1 0 0 1 1-1h2V5z\"/>";
+        public const string GitHub = "<path d=\"M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8 0 3.2.9.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1 .9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3\"/>";
+        public const string Gmail = "<path d=\"M20,18H18V9.25L12,13L6,9.25V18H4V6H5.2L12,10.25L18.8,6H20M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C22,4.89 21.1,4 20,4Z\"/>";
+        public const string Google = "<path d=\"M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z\"/>";
+        public const string Instagram = "<path d=\"M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z\"/>";
+        public const string LinkedIn = "<path d=\"M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z\"/>";
+        public const string Linux = "<path d=\"M20.812 18.664c-1.164-.328-.834-1.798-1.333-2.557.354-1.35.093-2.796-.664-3.963-.775-1.415-1.801-2.672-2.65-4.037-.616-1.506-.105-3.221-.738-4.734-.413-1.499-1.943-2.55-3.491-2.361-1.292.083-2.72.825-2.96 2.21-.413 1.763.289 3.581-.102 5.344-.816 1.243-1.926 2.332-2.337 3.804-.243 1.07-.977 1.995-1.042 3.094.05.88-.9 1.776-1.844 1.841-1.283.149-.72 1.468-.735 2.276-.677.992-.085 2.123 1.11 2.125 1.22.097 2.357.536 3.498.94 1.055.6 2.007-.093 2.759-.627 1.445-.267 2.943-.307 4.38.028.501 1.198 2.254 1.23 3.011.277 1.018-.918 2.38-1.33 3.44-2.173.474-.444.315-1.271-.302-1.487zm-10.854-.098c-.393-.986-1.51-1.383-2.196-2.14-.855-.918-.477-2.394.054-3.387.607-1.028.685-2.314 1.483-3.238.462-.392.237-1.973.932-1.078 1.068.913 2.176-.328 3.159-.742.801-.13.914 1.422 1.36 2.047.706 1.76 1.685 3.582 1.337 5.542.05.733-1.35.312-1.057 1.38.01 1.019.073 2.114-1.027 2.606-1.09.809-2.534.813-3.829.719l-.686-.785a.843.843 0 0 0 .47-.924zm.87-12.94c.001-.437-.883-1.369-1.25-.473.17-1.385 1.558-.578 1.25.473zm2.719.333c.545-1.303-1.626-1.676-1.403-.225-.746-1.004 1.122-2.34 1.524-.885.12.364.083.783-.121 1.11zm-.35 1.177c-.745.288-1.55 1.38-2.373.893-.59-.291-1.07-.842-.21-1.173.72-.954 1.81-.088 2.582.28zm2.592 13.443c.274-1.106.401-2.246.256-3.38.015-.093.259 1.416 1.043 1.2.732.043 1.529-.286 1.877-.961-.19 1.021.726 1.637 1.336 2.107-.986.63-2.16.993-2.96 1.891-.793.98-1.891.271-1.552-.857zM3.88 18.706c-.183-1.083 1.851-.386 1.93-1.598.56-1.142 1.408.777 1.752 1.284.406.943 1.34 1.594 1.587 2.59-.1 1.258-1.513.847-2.269.462-.945-.492-2.012-.57-3.036-.79-.471-.403.43-1.353.036-1.948z\"/>";
+        public const string Microsoft = "<path d=\"M2.7 2.7h8.81v8.81h-8.81v-8.81zM11.51 21.3h-8.81v-8.81h8.81v8.81zM21.3 2.7v8.81h-8.81v-8.81h8.81zM21.3 21.3h-8.81v-8.81h8.81v8.81z\"/>";
+        public const string MicrosoftAzure = "<path d=\"M13.057 4.188l-6.533 13.902-4.591-0.050 5.124-8.819 6-5.033zM13.762 5.285l8.305 14.526h-15.362l9.362-1.671-4.903-5.829 2.597-7.027z\"/>";
+        public const string MicrosoftAzureDevOps = "<path d=\"M21.3 17.58l-4.65 3.72-7.44-2.79v2.79l-3.897-5.347 12.006 0.976v-10.193l3.98-0.642v11.485zM5.313 15.952v-6.78l12.006-2.437-6.622-4.036v2.641l-6.166 1.786-1.832 2.437v5.292l2.613 1.097z\"/>";
+        public const string MicrosoftVisualStudio = "<path d=\"M16.65 8.745l-4.418 3.553 4.418 3.422v-6.975zM5.211 17.952l-2.511-1.581v-8.37l2.79-0.93 3.999 3.097 8.091-7.468 3.72 2.325v14.415l-4.65 1.86-7.124-6.826-4.315 3.478zM5.49 13.86l1.73-1.6-1.73-1.655v3.255z\"/>";
+        public const string MicrosoftWindows = "<path d=\"M3.008 11.471v-5.554l6.347-1.396v6.855l-6.347 0.095zM20.992 1.95v9.257l-10.579 0.159v-7.077l10.579-2.338zM3.008 12.529l6.347 0.095v7.204l-6.347-1.217v-6.083zM20.992 12.793v9.257l-10.579-2.021v-7.395l10.579 0.159z\"/>";
+        public const string Pinterest = "<path d=\"M9.04 21.54c.96.29 1.93.46 2.96.46a10 10 0 0 0 10-10A10 10 0 0 0 12 2 10 10 0 0 0 2 12c0 4.25 2.67 7.9 6.44 9.34-.09-.78-.18-2.07 0-2.96l1.15-4.94s-.29-.58-.29-1.5c0-1.38.86-2.41 1.84-2.41.86 0 1.26.63 1.26 1.44 0 .86-.57 2.09-.86 3.27-.17.98.52 1.84 1.52 1.84 1.78 0 3.16-1.9 3.16-4.58 0-2.4-1.72-4.04-4.19-4.04-2.82 0-4.48 2.1-4.48 4.31 0 .86.28 1.73.74 2.3.09.06.09.14.06.29l-.29 1.09c0 .17-.11.23-.28.11-1.28-.56-2.02-2.38-2.02-3.85 0-3.16 2.24-6.03 6.56-6.03 3.44 0 6.12 2.47 6.12 5.75 0 3.44-2.13 6.2-5.18 6.2-.97 0-1.92-.52-2.26-1.13l-.67 2.37c-.23.86-.86 2.01-1.29 2.7v-.03z\"/>";
+        public const string Reddit = "<path d=\"M22 12.14a2.19 2.19 0 0 0-3.71-1.57 10.93 10.93 0 0 0-5.86-1.87l1-4.7 3.27.71a1.56 1.56 0 1 0 .16-.76l-3.64-.77c-.11-.02-.22 0-.29.06-.09.05-.14.14-.16.26l-1.11 5.22c-2.33.07-4.43.78-5.95 1.86A2.2 2.2 0 0 0 4.19 10a2.16 2.16 0 0 0-.9 4.15 3.6 3.6 0 0 0-.05.66c0 3.37 3.92 6.12 8.76 6.12s8.76-2.73 8.76-6.12c0-.21-.01-.44-.05-.66A2.21 2.21 0 0 0 22 12.14M7 13.7c0-.86.68-1.56 1.54-1.56s1.56.7 1.56 1.56a1.56 1.56 0 0 1-1.56 1.56c-.86.02-1.54-.7-1.54-1.56m8.71 4.14C14.63 18.92 12.59 19 12 19c-.61 0-2.65-.1-3.71-1.16a.4.4 0 0 1 0-.57.4.4 0 0 1 .57 0c.68.68 2.14.91 3.14.91s2.47-.23 3.14-.91a.4.4 0 0 1 .57 0c.14.16.14.41 0 .57m-.29-2.56c-.86 0-1.56-.7-1.56-1.56a1.56 1.56 0 0 1 1.56-1.56c.86 0 1.58.7 1.58 1.56a1.6 1.6 0 0 1-1.58 1.56z\"/>";
+        public const string Slack = "<path d=\"M6,15A2,2 0 0,1 4,17A2,2 0 0,1 2,15A2,2 0 0,1 4,13H6V15M7,15A2,2 0 0,1 9,13A2,2 0 0,1 11,15V20A2,2 0 0,1 9,22A2,2 0 0,1 7,20V15M9,7A2,2 0 0,1 7,5A2,2 0 0,1 9,3A2,2 0 0,1 11,5V7H9M9,8A2,2 0 0,1 11,10A2,2 0 0,1 9,12H4A2,2 0 0,1 2,10A2,2 0 0,1 4,8H9M17,10A2,2 0 0,1 19,8A2,2 0 0,1 21,10A2,2 0 0,1 19,12H17V10M16,10A2,2 0 0,1 14,12A2,2 0 0,1 12,10V5A2,2 0 0,1 14,3A2,2 0 0,1 16,5V10M14,18A2,2 0 0,1 16,20A2,2 0 0,1 14,22A2,2 0 0,1 12,20V18H14M14,17A2,2 0 0,1 12,15A2,2 0 0,1 14,13H19A2,2 0 0,1 21,15A2,2 0 0,1 19,17H14Z\"/>";
+        public const string StackOverflow = "<path d=\"M17.05,21.77v-6.4h2.13v8.52H0V15.37H2.12v6.4Z\"/><path d=\"M4.47,14.76,14.9,16.94l.44-2.1L4.91,12.66Zm1.38-5,9.66,4.5.88-1.93L6.73,7.84ZM8.53,5.05l8.19,6.81,1.35-1.62L9.88,3.42Zm5.29-5L12.11,1.27l6.35,8.55,1.71-1.27ZM4.25,19.62H14.9V17.49H4.25Z\"/>";
+        public const string Steam = "<path d=\"M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C7.4,22 3.55,18.92 2.36,14.73L6.19,16.31C6.45,17.6 7.6,18.58 8.97,18.58C10.53,18.58 11.8,17.31 11.8,15.75V15.62L15.2,13.19H15.28C17.36,13.19 19.05,11.5 19.05,9.42C19.05,7.34 17.36,5.65 15.28,5.65C13.2,5.65 11.5,7.34 11.5,9.42V9.47L9.13,12.93L8.97,12.92C8.38,12.92 7.83,13.1 7.38,13.41L2,11.2C2.43,6.05 6.73,2 12,2M8.28,17.17C9.08,17.5 10,17.13 10.33,16.33C10.66,15.53 10.28,14.62 9.5,14.29L8.22,13.76C8.71,13.58 9.26,13.57 9.78,13.79C10.31,14 10.72,14.41 10.93,14.94C11.15,15.46 11.15,16.04 10.93,16.56C10.5,17.64 9.23,18.16 8.15,17.71C7.65,17.5 7.27,17.12 7.06,16.67L8.28,17.17M17.8,9.42C17.8,10.81 16.67,11.94 15.28,11.94C13.9,11.94 12.77,10.81 12.77,9.42A2.5,2.5 0 0,1 15.28,6.91C16.67,6.91 17.8,8.04 17.8,9.42M13.4,9.42C13.4,10.46 14.24,11.31 15.29,11.31C16.33,11.31 17.17,10.46 17.17,9.42C17.17,8.38 16.33,7.53 15.29,7.53C14.24,7.53 13.4,8.38 13.4,9.42Z\"/>";
+        public const string Telegram = "<path d=\"M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z\"/>";
+        public const string TikTok = "<path d=\"m 14.42,0.2793 -2.16,0.01 V 8.5508 16.73 17 c -0.25,1.89 -2.16,3.339 -4.0901,2.869 -0.23,0 -0.7103,-0.148 -0.8203,-0.238 L 7.1992,19.5 c -0.61,-0.24 -1.2194,-0.97 -1.4394,-1.57 -1.2,-2.65 1.3298,-5.521 4.0898,-4.561 v -2.18 -2.1597 c -4.82,-0.48 -8.99905,3.3807 -8.5391,8.3107 0.38,3.83 3.3693,6.71 7.1993,6.82 4.0902,0.13 7.5892,-2.77 7.9292,-6.82 V 12.41 8.3301 h 0.131 c 1.55,1.09 3.491,1.6889 5.391,1.7889 h 0.238 V 8.0996 6.0391 H 22.07 c -0.46,0 -1.169,-0.1188 -1.759,-0.4688 -0.39,-0.16 -1.11,-0.4911 -1.35,-0.6211 -0.13,0 -0.461,-0.4701 -0.701,-0.5801 -1.07,-0.96 -1.821,-2.5182 -1.821,-3.98824 V 0.2793 Z\"/>";
+        public const string Twitter = "<path d=\"M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z\"/>";
+        public const string Vimeo = "<path d=\"m 20.232,2.5938 c -2.558,0.05 -5.335,2.0235 -6.464,4.7675 -0.1,0.249 -0.18,0.4472 -0.18,0.4942 0,0 0.289,0.049 0.654,0.049 2.794,0 3.063,2.1447 0.764,6.0687 -1.886,3.212 -3.683,1.748 -4.289,-3.489 C 10.117,5.2664 9.2893,3.352 7.5859,3.248 6.1884,3.158 4.8767,3.9343 1.7871,6.6523 1.2195,7.1533 0.59295,7.6897 0.40039,7.8457 l -0.35156,0.291 0.09375,0.2168 c 0.41374,0.93 0.84586,1.0599 2.19722,0.6699 1.5019,-0.44 1.8032,-0.1622 2.6211,2.4256 0.6252,1.973 0.6651,2.12 1.2168,4.256 0.7841,3.046 1.0162,3.799 1.4688,4.766 0.6054,1.297 1.5081,2.169 2.3825,2.299 3.208,0.459 8.261,-4.517 11.512,-11.375 2.717,-5.7165 2.653,-8.0737 -0.23,-8.6997 -0.352,-0.08 -0.713,-0.1076 -1.079,-0.1015 z\"/>";
+        public const string WhatsApp = "<path d=\"M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z\"/>";
+        public const string X = "<path d=\"M 18.625 1.985 L 22.157 1.985 L 14.403 10.813 L 23.461 22.788 L 16.355 22.788 L 10.79 15.51 L 4.417 22.788 L 0.885 22.788 L 9.099 13.346 L 0.427 1.985 L 7.71 1.985 L 12.738 8.636 L 18.625 1.985 Z M 17.39 20.714 L 19.346 20.714 L 6.683 3.981 L 4.58 3.981 L 17.39 20.714 Z\"></path>";
+        public const string YouTube = "<path d=\"M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z\"/>";
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Media\Icons\FileFormats.cs ===
+
+namespace CdCSharp.BlazorUI.Media.Icons;
+
+public partial class UIIcons
+{
+    public class FileFormats
+    {
+        public const string FileCode = "<path d=\"M12.96 9.12h5.28l-5.28-5.28v5.28zM6.24 2.4h7.68l5.76 5.76v11.52c0 1.060-0.86 1.92-1.92 1.92v0h-11.52c-1.066 0-1.92-0.864-1.92-1.92v-15.36c0-1.066 0.854-1.92 1.92-1.92zM6.355 15.36l3.59 3.59 1.363-1.354-2.237-2.237 2.237-2.237-1.363-1.354-3.59 3.59zM17.069 15.36l-3.59-3.59-1.363 1.354 2.237 2.237-2.237 2.237 1.363 1.354 3.59-3.59z\"/>";
+        public const string FileDocument = "<path d=\"M12.96 9.12h5.28l-5.28-5.28v5.28zM6.24 2.4h7.68l5.76 5.76v11.52c0 1.060-0.86 1.92-1.92 1.92v0h-11.52c-1.066 0-1.92-0.864-1.92-1.92v-15.36c0-1.066 0.854-1.92 1.92-1.92zM14.88 17.76v-1.92h-8.64v1.92h8.64zM17.76 13.92v-1.92h-11.52v1.92h11.52z\"/>";
+        public const string FileExcel = "<path d=\"M13.92 2.4h-7.68c-1.060 0-1.92 0.86-1.92 1.92v0 15.36c0 1.060 0.86 1.92 1.92 1.92v0h11.52c1.060 0 1.92-0.86 1.92-1.92v0-11.52l-5.76-5.76zM15.648 19.68h-1.728l-1.92-3.264-1.92 3.264h-1.728l2.784-4.32-2.784-4.32h1.728l1.92 3.264 1.92-3.264h1.728l-2.784 4.32 2.784 4.32zM12.96 9.12v-5.28l5.28 5.28h-5.28z\"/>";
+        public const string FileImage = "<path d=\"M12.96 9.12h5.28l-5.28-5.28v5.28zM6.24 2.4h7.68l5.76 5.76v11.52c0 1.060-0.86 1.92-1.92 1.92v0h-11.52c-1.066 0-1.92-0.864-1.92-1.92v-15.36c0-1.066 0.854-1.92 1.92-1.92zM6.24 19.68h11.52v-7.68l-3.84 3.84-1.92-1.92-5.76 5.76zM8.16 9.12c-1.060 0-1.92 0.86-1.92 1.92v0c0 1.060 0.86 1.92 1.92 1.92v0c1.060 0 1.92-0.86 1.92-1.92v0c0-1.060-0.86-1.92-1.92-1.92v0z\"/>";
+        public const string FileMusic = "<path d=\"M13.92 2.4h-7.68c-1.060 0-1.92 0.86-1.92 1.92v0 15.36c0 1.060 0.86 1.92 1.92 1.92v0h11.52c1.060 0 1.92-0.86 1.92-1.92v0-11.52l-5.76-5.76zM12.96 12.96h-1.92v4.8c0 1.060-0.86 1.92-1.92 1.92v0c-1.060 0-1.92-0.86-1.92-1.92v0c0-1.060 0.86-1.92 1.92-1.92v0c0.384 0 0.672 0.096 0.96 0.288v-5.088h2.88v1.92zM12.96 9.12v-5.28l5.28 5.28h-5.28z\"/>";
+        public const string FilePdf = "<path d=\"M12.96 9.12h5.28l-5.28-5.28v5.28zM6.24 2.4h7.68l5.76 5.76v11.52c0 1.060-0.86 1.92-1.92 1.92v0h-11.52c-1.060 0-1.92-0.86-1.92-1.92v0-15.36c0-1.060 0.86-1.92 1.92-1.92v0zM10.176 11.424c-0.019 0.038-0.278 1.69-2.016 4.502 0 0-3.36 1.747-2.563 3.053 0.643 1.037 2.227-0.038 3.59-2.573 0 0 1.747-0.614 4.070-0.787 0 0 3.706 1.661 4.214-0.106 0.499-1.786-2.938-1.382-3.552-1.2 0 0-1.92-1.296-2.4-3.082 0 0 1.094-3.792-0.586-3.744s-1.046 3.005-0.758 3.936zM10.954 12.423c0.029 0.010 0.451 1.162 1.814 2.362 0 0-2.237 0.442-3.254 0.864 0 0 0.96-1.661 1.44-3.226zM14.726 15.034c0.557-0.154 2.237 0.144 2.17 0.461-0.058 0.317-2.17-0.461-2.17-0.461zM7.939 16.8c-0.509 1.19-1.382 1.92-1.603 1.92s0.672-1.536 1.603-1.92zM10.954 10.147c0-0.067-0.346-2.112 0-2.064 0.518 0.077 0 1.997 0 2.064z\"/>";
+        public const string FileVideo = "<path d=\"M12.96 9.12h5.28l-5.28-5.28v5.28zM6.24 2.4h7.68l5.76 5.76v11.52c0 1.060-0.86 1.92-1.92 1.92v0h-11.52c-1.066 0-1.92-0.864-1.92-1.92v-15.36c0-1.066 0.854-1.92 1.92-1.92zM16.8 18.72v-5.76l-2.88 2.112v-2.112h-6.72v5.76h6.72v-2.112l2.88 2.112z\"/>";
+        public const string FileWord = "<path d=\"M13.92 2.4h-7.68c-1.060 0-1.92 0.86-1.92 1.92v0 15.36c0 1.060 0.86 1.92 1.92 1.92v0h11.52c1.060 0 1.92-0.86 1.92-1.92v0-11.52l-5.76-5.76zM15.072 19.68h-1.344l-1.728-6.528-1.728 6.528h-1.344l-2.112-8.64h1.44l1.344 6.528 1.728-6.528h1.248l1.728 6.528 1.344-6.528h1.44l-2.016 8.64zM12.96 9.12v-5.28l5.28 5.28h-5.28z\"/>";
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Services\VariantRegistry.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Services;
+
+public interface IVariantRegistry<TComponent, TVariant>
+    where TComponent : UIVariantComponentBase<TComponent, TVariant>
+    where TVariant : Variant
+{
+    RenderFragment? GetTemplate(TVariant variant, TComponent component);
+
+    void Register(TVariant variant, Func<TComponent, RenderFragment> template);
+}
+
+public sealed class VariantRegistry<TComponent, TVariant> : IVariantRegistry<TComponent, TVariant>
+    where TComponent : UIVariantComponentBase<TComponent, TVariant>
+    where TVariant : Variant
+{
+    private readonly Dictionary<TVariant, Func<TComponent, RenderFragment>> _templates = [];
+
+    public RenderFragment? GetTemplate(TVariant variant, TComponent component)
+    {
+        return _templates.TryGetValue(variant, out Func<TComponent, RenderFragment>? template)
+            ? template(component)
+            : null;
+    }
+
+    public void Register(TVariant variant, Func<TComponent, RenderFragment> template)
+    {
+        _templates[variant] = template;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI\Types\Theme\ThemeInterop.ts ===
+
+const THEME_KEY = 'blazorui-theme';
+const DEFAULT_THEME = 'dark';
+
+export function initialize(defaultTheme?: string): void {
+    const theme =
+        localStorage.getItem(THEME_KEY) ??
+        defaultTheme ??
+        DEFAULT_THEME;
+
+    document.documentElement.setAttribute('data-theme', theme);
+}
+
+export function getTheme(): string {
+    return document.documentElement.getAttribute('data-theme')
+        ?? DEFAULT_THEME;
+}
+
+export function setTheme(theme: string): void {
+    localStorage.setItem(THEME_KEY, theme);
+    document.documentElement.setAttribute('data-theme', theme);
+}
+
+export function toggleTheme(themes: string[]): string {
+    const current = getTheme();
+    const index = themes.indexOf(current);
+    const next = themes[(index + 1) % themes.length];
+
+    setTheme(next);
+    return next;
+}
+
+
+
+=== CdCSharp.BlazorUI\Types\JSModulesReference.cs ===
+
+namespace CdCSharp.BlazorUI.Types;
+
+public static class JSModulesReference
+{
+    public const string ThemeJs = "./_content/CdCSharp.BlazorUI/js/Types/Theme/ThemeInterop.min.js";
+}
+
+
+
+=== CdCSharp.BlazorUI\wwwroot\css\blazorui.css ===
+
+:root{--blazorui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;--blazorui-font-heading: var(--blazorui-font-base);--blazorui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--blazorui-base-font-size: 16px;--blazorui-base-line-height: 1.5;--blazorui-heading-line-height: 1.2;--blazorui-body-margin: 8px;--blazorui-space-1: .5em;--blazorui-space-2: 1em;--blazorui-h1-size: 2em;--blazorui-h2-size: 1.5em;--blazorui-h3-size: 1.17em;--blazorui-h4-size: 1em;--blazorui-h5-size: .83em;--blazorui-h6-size: .67em;--blazorui-focus-color: Highlight;--blazorui-focus-width: 2px;--blazorui-focus-offset: 2px;--blazorui-disabled-opacity: .5;--blazorui-placeholder-opacity: .6;--blazorui-hr-color: gray;--blazorui-hr-width: 1px;--blazorui-hr-style: inset;--blazorui-table-border-spacing: 2px;--blazorui-media-max-width: 100%;--blazorui-tap-highlight: transparent}:where(*,*:before,*:after){box-sizing:border-box;margin:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-decoration:none}html{block-size:100%;font-size:var(--blazorui-base-font-size)}body{margin:var(--blazorui-body-margin);font-family:var(--blazorui-font-base);font-size:1rem;line-height:var(--blazorui-base-line-height)}:where(header,main,footer,section,article,nav,aside,figure,figcaption,details,summary,dialog,form){display:block}:where(h1,h2,h3,h4,h5,h6){font-family:var(--blazorui-font-heading);font-weight:700;line-height:var(--blazorui-heading-line-height)}h1{font-size:var(--blazorui-h1-size);margin-block:.67em}h2{font-size:var(--blazorui-h2-size);margin-block:.83em}h3{font-size:var(--blazorui-h3-size);margin-block:var(--blazorui-space-2)}h4{font-size:var(--blazorui-h4-size);margin-block:1.33em}h5{font-size:var(--blazorui-h5-size);margin-block:1.67em}h6{font-size:var(--blazorui-h6-size);margin-block:2.33em}p,blockquote{margin-block:var(--blazorui-space-2)}blockquote{margin-inline:40px}code,pre,kbd,samp{font-family:var(--blazorui-font-monospace);font-size:.875em}pre{white-space:pre}ul,ol{margin-block:var(--blazorui-space-2);padding-inline-start:40px}ul{list-style:disc}ol{list-style:decimal}table{border-collapse:separate;border-spacing:var(--blazorui-table-border-spacing)}caption{text-align:center}th{font-weight:700;text-align:center}:where(img,svg,video,canvas,picture){display:inline-block;max-width:var(--blazorui-media-max-width);height:auto}hr{margin-block:var(--blazorui-space-1);border:var(--blazorui-hr-width) var(--blazorui-hr-style) var(--blazorui-hr-color);overflow:hidden}a{cursor:pointer}:where(input[type=text],input[type=search],input[type=email],input[type=password],input[type=tel],input[type=url],input:not([type]),textarea,select,button,input[type=button],input[type=submit],input[type=reset]){appearance:none;background:transparent;border:none;padding:0;margin:0;font:inherit;color:inherit;line-height:normal;box-sizing:border-box}textarea{resize:vertical}:where(button,input[type=button],input[type=submit],input[type=reset]){display:inline-flex;align-items:center;justify-content:center;cursor:pointer}input[type=checkbox],input[type=radio]{appearance:none;cursor:pointer}:where(button,input,select,textarea):disabled{cursor:default;opacity:var(--blazorui-disabled-opacity)}:where(input,textarea,select):-webkit-autofill{box-shadow:0 0 0 1000px transparent inset!important;-webkit-text-fill-color:inherit!important}::placeholder{color:inherit;opacity:var(--blazorui-placeholder-opacity)}:focus:not(:focus-visible){outline:none}:focus-visible{outline:var(--blazorui-focus-width) solid var(--blazorui-focus-color);outline-offset:var(--blazorui-focus-offset)}:where(button,input,textarea,select,a){-webkit-tap-highlight-color:var(--blazorui-tap-highlight)}[hidden]{display:none}:root{--dark-background: rgba(15,23,42,1);--dark-error: rgba(239,68,68,1);--dark-foreground: rgba(241,245,249,1);--dark-info: rgba(59,130,246,1);--dark-primary: rgba(96,165,250,1);--dark-primarycontrast: rgba(15,23,42,1);--dark-secondary: rgba(167,139,250,1);--dark-secondarycontrast: rgba(15,23,42,1);--dark-success: rgba(16,185,129,1);--dark-surface: rgba(30,41,59,1);--dark-warning: rgba(245,158,11,1);--light-background: rgba(255,255,255,1);--light-error: rgba(239,68,68,1);--light-foreground: rgba(30,41,59,1);--light-info: rgba(59,130,246,1);--light-primary: rgba(59,130,246,1);--light-primarycontrast: rgba(255,255,255,1);--light-secondary: rgba(139,92,246,1);--light-secondarycontrast: rgba(255,255,255,1);--light-success: rgba(16,185,129,1);--light-surface: rgba(248,250,252,1);--light-warning: rgba(245,158,11,1);--palette-background: var(--dark-background);--palette-error: var(--dark-error);--palette-foreground: var(--dark-foreground);--palette-info: var(--dark-info);--palette-primary: var(--dark-primary);--palette-primarycontrast: var(--dark-primarycontrast);--palette-secondary: var(--dark-secondary);--palette-secondarycontrast: var(--dark-secondarycontrast);--palette-success: var(--dark-success);--palette-surface: var(--dark-surface);--palette-warning: var(--dark-warning)}html[data-theme=dark]{--palette-background: var(--dark-background);--palette-error: var(--dark-error);--palette-foreground: var(--dark-foreground);--palette-info: var(--dark-info);--palette-primary: var(--dark-primary);--palette-primarycontrast: var(--dark-primarycontrast);--palette-secondary: var(--dark-secondary);--palette-secondarycontrast: var(--dark-secondarycontrast);--palette-success: var(--dark-success);--palette-surface: var(--dark-surface);--palette-warning: var(--dark-warning)}html[data-theme=light]{--palette-background: var(--light-background);--palette-error: var(--light-error);--palette-foreground: var(--light-foreground);--palette-info: var(--light-info);--palette-primary: var(--light-primary);--palette-primarycontrast: var(--light-primarycontrast);--palette-secondary: var(--light-secondary);--palette-secondarycontrast: var(--light-secondarycontrast);--palette-success: var(--light-success);--palette-surface: var(--light-surface);--palette-warning: var(--light-warning)}body{background-color:var(--palette-background);color:var(--palette-foreground)}.ui-size-small{font-size:.875rem}.ui-size-medium{font-size:1rem}.ui-size-large{font-size:1.125rem}.ui-density-comfortable{--ui-density-spacing-multiplier: 1.5}.ui-density-standard{--ui-density-spacing-multiplier: 1}.ui-density-compact{--ui-density-spacing-multiplier: .75}.ui-full-width{width:100%}.ui-loading{pointer-events:none;position:relative}.ui-loading:after{content:"";position:absolute;inset:0;background-color:#fff9;pointer-events:none}@media(prefers-color-scheme:dark){.ui-loading:after{background-color:#0009}}.ui-elevation-0{box-shadow:none}.ui-elevation-1{box-shadow:0 0,5px 1px rgba(0,0,0,0,2),0 1px 2px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-2{box-shadow:0 1px 2px rgba(0,0,0,0,2),0 2px 4px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-3{box-shadow:0 1,5px 3px rgba(0,0,0,0,2),0 3px 6px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-4{box-shadow:0 2px 4px rgba(0,0,0,0,2),0 4px 8px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-5{box-shadow:0 2,5px 5px rgba(0,0,0,0,2),0 5px 10px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-6{box-shadow:0 3px 6px rgba(0,0,0,0,2),0 6px 12px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-7{box-shadow:0 3,5px 7px rgba(0,0,0,0,2),0 7px 14px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-8{box-shadow:0 4px 8px rgba(0,0,0,0,2),0 8px 16px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-9{box-shadow:0 4,5px 9px rgba(0,0,0,0,2),0 9px 18px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-10{box-shadow:0 5px 10px rgba(0,0,0,0,2),0 10px 20px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-11{box-shadow:0 5,5px 11px rgba(0,0,0,0,2),0 11px 22px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-12{box-shadow:0 6px 12px rgba(0,0,0,0,2),0 12px 24px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-13{box-shadow:0 6,5px 13px rgba(0,0,0,0,2),0 13px 26px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-14{box-shadow:0 7px 14px rgba(0,0,0,0,2),0 14px 28px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-15{box-shadow:0 7,5px 15px rgba(0,0,0,0,2),0 15px 30px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-16{box-shadow:0 8px 16px rgba(0,0,0,0,2),0 16px 32px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-17{box-shadow:0 8,5px 17px rgba(0,0,0,0,2),0 17px 34px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-18{box-shadow:0 9px 18px rgba(0,0,0,0,2),0 18px 36px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-19{box-shadow:0 9,5px 19px rgba(0,0,0,0,2),0 19px 38px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-20{box-shadow:0 10px 20px rgba(0,0,0,0,2),0 20px 40px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-21{box-shadow:0 10,5px 21px rgba(0,0,0,0,2),0 21px 42px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-22{box-shadow:0 11px 22px rgba(0,0,0,0,2),0 22px 44px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-23{box-shadow:0 11,5px 23px rgba(0,0,0,0,2),0 23px 46px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-24{box-shadow:0 12px 24px rgba(0,0,0,0,2),0 24px 48px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-has-ripple{position:relative;overflow:hidden}.ui-ripple{position:absolute;border-radius:50%;transform:scale(0);animation:ui-ripple-animation var(--ui-ripple-duration, .6s) ease-out;background-color:var(--ui-ripple-color, rgba(0, 0, 0, .1));pointer-events:none}@media(prefers-color-scheme:dark){.ui-ripple{background-color:var(--ui-ripple-color, rgba(255, 255, 255, .1))}}@keyframes ui-ripple-animation{to{transform:scale(4);opacity:0}}
+
+
+
+=== CdCSharp.BlazorUI\wwwroot\js\Types\Theme\ThemeInterop.min.js ===
+
+const t="blazorui-theme",e="dark";function n(n){const o=localStorage.getItem(t)??n??e;document.documentElement.setAttribute("data-theme",o)}function o(){return document.documentElement.getAttribute("data-theme")??e}function u(e){localStorage.setItem(t,e),document.documentElement.setAttribute("data-theme",e)}function c(t){const e=o(),n=t.indexOf(e),c=t[(n+1)%t.length];return u(c),c}export{o as getTheme,n as initialize,u as setTheme,c as toggleTheme};
+//# sourceMappingURL=ThemeInterop.min.js.map
+
+
+
+=== CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackageId>CdCSharp.BlazorUI</PackageId>
+		<Authors>Samuel Maícas (CdCSharp)</Authors>
+		<Description>Librería de componentes Blazor</Description>
+		<PackageTags>blazor;components;ui</PackageTags>
+		<Version>1.0.0</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="CdCSharp.BlazorUI.Tests.Integration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
+	</ItemGroup>
+	<!--
+	Incluir el archivo de targets en el paquete NuGet -->
+	<ItemGroup>
+		<None Include="_build\CdCSharp.BlazorUI.targets" Pack="true" PackagePath="build\" />
+	</ItemGroup>
+	<!--
+	Importar los targets localmente para desarrollo -->
+	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\CdCSharp.BlazorUI.Core.CodeGeneration\CdCSharp.BlazorUI.Core.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI\package.json ===
+
+{
+  "name": "cdcsharp-blazorui",
+  "version": "1.0.0",
+  "description": "BlazorUI Component Library",
+  "type": "module",
+  "main": "wwwroot/js/main.js",
+  "scripts": {
+    "build": "blazorui-build-tool all .",
+    "build:themes": "blazorui-build-tool themes ./CssBundle/themes.css",
+    "build:css": "blazorui-build-tool css .",
+    "build:js": "blazorui-build-tool js .",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "author": "Samuel Maícas (CdCSharp)",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-plugin-es6": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "terser": "latest",
+    "glob": "latest"
+  }
+}
+
+
+
+=== CdCSharp.BlazorUI\tsconfig.json ===
+
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "ES2022",
+    "target": "ES2022",
+    "outDir": "./wwwroot/js",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "./@types"
+    ],
+    "paths": {
+      "@types/*": ["./Types/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ],
+  "include": [
+    "./Types/**/*.ts"
+  ]
+}
+
+
+
+=== CdCSharp.BlazorUI\vite.config.css.js ===
+
+import { defineConfig } from "vite";
+import path from "path";
+
+export default defineConfig({
+    build: {
+        outDir: "wwwroot/css",
+        emptyOutDir: false,
+        cssCodeSplit: false,
+        rollupOptions: {
+            input: "./CssBundle/entry.js",
+            output: {
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name.endsWith(".css")) {
+                        return "blazorui.css";  // CSS final
+                    }
+                    return "[name][extname]";
+                },
+                entryFileNames: "bundle.js",   // Archivo temporal
+                chunkFileNames: "bundle.js"
+            },
+            plugins: [
+                {
+                    name: "remove-js-output",
+                    generateBundle(_, bundle) {
+                        // Eliminar todos los JS
+                        Object.keys(bundle).forEach((file) => {
+                            if (file.endsWith(".js")) {
+                                delete bundle[file];
+                            }
+                        });
+                    }
+                }
+            ]
+        }
+    }
+});
+
+
+
+=== CdCSharp.BlazorUI\vite.config.js ===
+
+import { defineConfig } from 'vite';
+import path from 'path';
+import { glob } from 'glob';
+
+// Get all TypeScript entry files (capital letter = entry point)
+const inputFiles = glob.sync('./Types/**/[A-Z]*.ts').reduce((entries, filePath) => {
+    // Extract the module name from the path
+    const parts = filePath.split('/');
+    const fileName = parts[parts.length - 1].replace('.ts', '');
+    const folderName = parts[parts.length - 2];
+
+    // Use folder/file as entry name if in a subfolder, otherwise just file
+    const entryName = parts.length > 3 ? `${folderName}/${fileName}` : fileName;
+    entries[entryName] = filePath;
+    return entries;
+}, {});
+
+console.log('Entry files found:', inputFiles);
+
+export default defineConfig({
+    resolve: {
+        alias: {
+            '@types': path.resolve(__dirname, 'Types')
+        }
+    },
+    build: {
+        outDir: path.resolve(__dirname, 'wwwroot/js'),
+        emptyOutDir: false,
+        rollupOptions: {
+            input: inputFiles,
+            preserveEntrySignatures: 'strict', // Preserve files also if not used by imports (JSInterop required)
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    // Preserve folder structure in output
+                    return chunkInfo.name.includes('/')
+                        ? '[name].min.js'
+                        : '[name].min.js';
+                },
+                format: 'es',
+                manualChunks: undefined
+            }
+        },
+        target: 'esnext',
+        sourcemap: true,
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true
+            },
+            format: {
+                comments: false
+            }
+        }
+    }
+});
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\Gens\CssCommonClasses.cs ===
+
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
+
+namespace CdCSharp.BlazorUI.BuildTools.Gens;
+
+[ExcludeFromCodeCoverage]
+public static class CssCommonClasses
+{
+    public static string GetCss()
+    {
+        StringBuilder sb = new();
+
+        sb.AppendLine("/* ========================================");
+        sb.AppendLine("   Common Component Classes");
+        sb.AppendLine("   Auto-generated - Do not edit manually");
+        sb.AppendLine("   ======================================== */");
+        sb.AppendLine();
+
+        // Size Classes
+        sb.AppendLine("/* Size Classes */");
+        sb.AppendLine(".ui-size-small {");
+        sb.AppendLine("    font-size: 0.875rem;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine(".ui-size-medium {");
+        sb.AppendLine("    font-size: 1rem;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine(".ui-size-large {");
+        sb.AppendLine("    font-size: 1.125rem;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Density Classes
+        sb.AppendLine("/* Density Classes */");
+        sb.AppendLine(".ui-density-comfortable {");
+        sb.AppendLine("    --ui-density-spacing-multiplier: 1.5;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine(".ui-density-standard {");
+        sb.AppendLine("    --ui-density-spacing-multiplier: 1;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine(".ui-density-compact {");
+        sb.AppendLine("    --ui-density-spacing-multiplier: 0.75;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Full Width
+        sb.AppendLine("/* Full Width */");
+        sb.AppendLine(".ui-full-width {");
+        sb.AppendLine("    width: 100%;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Loading State
+        sb.AppendLine("/* Loading State */");
+        sb.AppendLine(".ui-loading {");
+        sb.AppendLine("    pointer-events: none;");
+        sb.AppendLine("    position: relative;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine(".ui-loading::after {");
+        sb.AppendLine("    content: '';");
+        sb.AppendLine("    position: absolute;");
+        sb.AppendLine("    inset: 0;");
+        sb.AppendLine("    background-color: rgba(255, 255, 255, 0.6);");
+        sb.AppendLine("    pointer-events: none;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("@media (prefers-color-scheme: dark) {");
+        sb.AppendLine("    .ui-loading::after {");
+        sb.AppendLine("        background-color: rgba(0, 0, 0, 0.6);");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Elevation
+        sb.AppendLine("/* Elevation */");
+        sb.Append(GenerateElevationClasses());
+        sb.AppendLine();
+
+        // Ripple Effect
+        sb.AppendLine("/* Ripple Effect */");
+        sb.AppendLine(".ui-has-ripple {");
+        sb.AppendLine("    position: relative;");
+        sb.AppendLine("    overflow: hidden;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine(".ui-ripple {");
+        sb.AppendLine("    position: absolute;");
+        sb.AppendLine("    border-radius: 50%;");
+        sb.AppendLine("    transform: scale(0);");
+        sb.AppendLine("    animation: ui-ripple-animation var(--ui-ripple-duration, 600ms) ease-out;");
+        sb.AppendLine("    background-color: var(--ui-ripple-color, rgba(0, 0, 0, 0.1));");
+        sb.AppendLine("    pointer-events: none;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("@media (prefers-color-scheme: dark) {");
+        sb.AppendLine("    .ui-ripple {");
+        sb.AppendLine("        background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.1));");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("@keyframes ui-ripple-animation {");
+        sb.AppendLine("    to {");
+        sb.AppendLine("        transform: scale(4);");
+        sb.AppendLine("        opacity: 0;");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+
+        return sb.ToString();
+    }
+
+    private static string GenerateElevationClasses()
+    {
+        StringBuilder sb = new();
+
+        for (int i = 0; i <= 24; i++)
+        {
+            (string? umbra, string? penumbra, string? ambient) = GetElevationValues(i);
+
+            if (i == 0)
+            {
+                sb.AppendLine(".ui-elevation-0 {");
+                sb.AppendLine("    box-shadow: none;");
+                sb.AppendLine("}");
+            }
+            else
+            {
+                sb.AppendLine($".ui-elevation-{i} {{");
+                sb.AppendLine($"    box-shadow: {umbra}, {penumbra}, {ambient};");
+                sb.AppendLine("}");
+            }
+
+            if (i < 24)
+            {
+                sb.AppendLine();
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    private static (string umbra, string penumbra, string ambient) GetElevationValues(int elevation)
+    {
+        if (elevation == 0) return ("none", "", "");
+
+        const double umbraOpacity = 0.2;
+        const double penumbraOpacity = 0.14;
+        const double ambientOpacity = 0.12;
+
+        double umbraOffset = Math.Round(elevation * 0.5, 1);
+        double umbraBlur = elevation;
+        double penumbraOffset = elevation;
+        double penumbraBlur = elevation * 2;
+
+        string umbra = $"0px {umbraOffset}px {umbraBlur}px rgba(0,0,0,{umbraOpacity})";
+        string penumbra = $"0px {penumbraOffset}px {penumbraBlur}px rgba(0,0,0,{penumbraOpacity})";
+        string ambient = $"0px 1px 3px rgba(0,0,0,{ambientOpacity})";
+
+        return (umbra, penumbra, ambient);
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\Gens\CssInitializeTheme.cs ===
+
+using System.Diagnostics.CodeAnalysis;
+
+namespace CdCSharp.BlazorUI.BuildTools.Gens;
+
+[ExcludeFromCodeCoverage]
+public static class CssInitializeTheme
+{
+    public static string GetCss() => """
+        body {
+          background-color: var(--palette-background);
+          color: var(--palette-foreground);
+        }
+        """;
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\Gens\CssReset.cs ===
+
+using System.Diagnostics.CodeAnalysis;
+
+namespace CdCSharp.BlazorUI.BuildTools.Gens;
+
+[ExcludeFromCodeCoverage]
+public static class CssReset
+{
+    public static string GetCss() => """
+        /* =========================================================
+           CSS BASE / RESET
+           Purpose: Normalize browser defaults while preserving
+           semantic HTML behavior, accessibility and theming
+           ========================================================= */
+
+        /* ---------------------------------------------------------
+           Design Tokens
+           --------------------------------------------------------- */
+        :root {
+            /* Typography */
+            --blazorui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+            --blazorui-font-heading: var(--blazorui-font-base);
+            --blazorui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --blazorui-base-font-size: 16px;
+            --blazorui-base-line-height: 1.5;
+            --blazorui-heading-line-height: 1.2;
+            /* Spacing */
+            --blazorui-body-margin: 8px;
+            --blazorui-space-1: 0.5em;
+            --blazorui-space-2: 1em;
+            /* Heading scale */
+            --blazorui-h1-size: 2em;
+            --blazorui-h2-size: 1.5em;
+            --blazorui-h3-size: 1.17em;
+            --blazorui-h4-size: 1em;
+            --blazorui-h5-size: 0.83em;
+            --blazorui-h6-size: 0.67em;
+            /* UI states */
+            --blazorui-focus-color: Highlight;
+            --blazorui-focus-width: 2px;
+            --blazorui-focus-offset: 2px;
+            --blazorui-disabled-opacity: 0.5;
+            --blazorui-placeholder-opacity: 0.6;
+            /* Separators */
+            --blazorui-hr-color: gray;
+            --blazorui-hr-width: 1px;
+            --blazorui-hr-style: inset;
+            /* Tables */
+            --blazorui-table-border-spacing: 2px;
+            /* Media */
+            --blazorui-media-max-width: 100%;
+            /* Interaction */
+            --blazorui-tap-highlight: transparent;
+        }
+
+        /* ---------------------------------------------------------
+           Global Box Model & Neutral Reset
+           --------------------------------------------------------- */
+        :where(*, *::before, *::after) {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-decoration: none;
+        }
+
+        /* ---------------------------------------------------------
+           Root & Body
+           --------------------------------------------------------- */
+        html {
+            block-size: 100%;
+            font-size: var(--blazorui-base-font-size);
+        }
+
+        body {
+            margin: var(--blazorui-body-margin);
+            font-family: var(--blazorui-font-base);
+            font-size: 1rem;
+            line-height: var(--blazorui-base-line-height);
+        }
+
+        /* ---------------------------------------------------------
+           Structural Elements
+           --------------------------------------------------------- */
+        :where( header, main, footer, section, article, nav, aside, figure, figcaption, details, summary, dialog, form ) {
+            display: block;
+        }
+
+        /* ---------------------------------------------------------
+           Headings & Text Content
+           --------------------------------------------------------- */
+        :where(h1, h2, h3, h4, h5, h6) {
+            font-family: var(--blazorui-font-heading);
+            font-weight: bold;
+            line-height: var(--blazorui-heading-line-height);
+        }
+
+        h1 {
+            font-size: var(--blazorui-h1-size);
+            margin-block: 0.67em;
+        }
+
+        h2 {
+            font-size: var(--blazorui-h2-size);
+            margin-block: 0.83em;
+        }
+
+        h3 {
+            font-size: var(--blazorui-h3-size);
+            margin-block: var(--blazorui-space-2);
+        }
+
+        h4 {
+            font-size: var(--blazorui-h4-size);
+            margin-block: 1.33em;
+        }
+
+        h5 {
+            font-size: var(--blazorui-h5-size);
+            margin-block: 1.67em;
+        }
+
+        h6 {
+            font-size: var(--blazorui-h6-size);
+            margin-block: 2.33em;
+        }
+
+        p,
+        blockquote {
+            margin-block: var(--blazorui-space-2);
+        }
+
+        blockquote {
+            margin-inline: 40px;
+        }
+
+        code,
+        pre,
+        kbd,
+        samp {
+            font-family: var(--blazorui-font-monospace);
+            font-size: 0.875em;
+        }
+
+        pre {
+            white-space: pre;
+        }
+
+        /* ---------------------------------------------------------
+           Lists
+           --------------------------------------------------------- */
+        ul,
+        ol {
+            margin-block: var(--blazorui-space-2);
+            padding-inline-start: 40px;
+        }
+
+        ul {
+            list-style: disc;
+        }
+
+        ol {
+            list-style: decimal;
+        }
+
+        /* ---------------------------------------------------------
+           Tables
+           --------------------------------------------------------- */
+        table {
+            border-collapse: separate;
+            border-spacing: var(--blazorui-table-border-spacing);
+        }
+
+        caption {
+            text-align: center;
+        }
+
+        th {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* ---------------------------------------------------------
+           Media / Replaced Elements
+           --------------------------------------------------------- */
+        :where(img, svg, video, canvas, picture) {
+            display: inline-block;
+            max-width: var(--blazorui-media-max-width);
+            height: auto;
+        }
+
+        /* ---------------------------------------------------------
+           Horizontal Rule
+           --------------------------------------------------------- */
+        hr {
+            margin-block: var(--blazorui-space-1);
+            border: var(--blazorui-hr-width) var(--blazorui-hr-style) var(--blazorui-hr-color);
+            overflow: hidden;
+        }
+
+        /* ---------------------------------------------------------
+           Links
+           --------------------------------------------------------- */
+        a {
+            cursor: pointer;
+        }
+
+        /* ---------------------------------------------------------
+           Form Controls Reset
+           --------------------------------------------------------- */
+        :where( input[type="text"], input[type="search"], input[type="email"], input[type="password"], input[type="tel"], input[type="url"], input:not([type]), textarea, select, button, input[type="button"], input[type="submit"], input[type="reset"] ) {
+            appearance: none;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: inherit;
+            line-height: normal;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        :where(button, input[type="button"], input[type="submit"], input[type="reset"]) {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* Disabled state */
+        :where(button, input, select, textarea):disabled {
+            cursor: default;
+            opacity: var(--blazorui-disabled-opacity);
+        }
+
+        /* Autofill (WebKit) */
+        :where(input, textarea, select):-webkit-autofill {
+            box-shadow: 0 0 0 1000px transparent inset !important;
+            -webkit-text-fill-color: inherit !important;
+        }
+
+        /* Placeholder */
+        ::placeholder {
+            color: inherit;
+            opacity: var(--blazorui-placeholder-opacity);
+        }
+
+        /* ---------------------------------------------------------
+           Focus & Accessibility
+           --------------------------------------------------------- */
+        :focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        :focus-visible {
+            outline: var(--blazorui-focus-width) solid var(--blazorui-focus-color);
+            outline-offset: var(--blazorui-focus-offset);
+        }
+
+        /* Touch interaction */
+        :where(button, input, textarea, select, a) {
+            -webkit-tap-highlight-color: var(--blazorui-tap-highlight);
+        }
+
+        /* ---------------------------------------------------------
+           Utility Attributes
+           --------------------------------------------------------- */
+        [hidden] {
+            display: none;
+        }
+
+        """;
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\CdCSharp.BlazorUI.BuildTools.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>blazorui-buildtools</ToolCommandName>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
+	</ItemGroup>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\ConfigInitializer.cs ===
+
+namespace CdCSharp.BlazorUI.BuildTools;
+
+public static class ConfigInitializer
+{
+    public static async Task InitializeProjectConfigs(string projectPath)
+    {
+        Console.WriteLine("Initializing project configuration files...");
+
+        // Create package.json if it doesn't exist
+        string packageJsonPath = Path.Combine(projectPath, "package.json");
+        if (!File.Exists(packageJsonPath))
+        {
+            Console.WriteLine("Creating package.json...");
+            await File.WriteAllTextAsync(packageJsonPath, ConfigTemplates.GetPackageJson());
+        }
+
+        // Create .npmrc to reduce npm noise
+        string npmrcPath = Path.Combine(projectPath, ".npmrc");
+        if (!File.Exists(npmrcPath))
+        {
+            Console.WriteLine("Creating .npmrc...");
+            await File.WriteAllTextAsync(npmrcPath, "fund=false\naudit=false\n");
+        }
+
+        // Create tsconfig.json if it doesn't exist
+        string tsConfigPath = Path.Combine(projectPath, "tsconfig.json");
+        if (!File.Exists(tsConfigPath))
+        {
+            Console.WriteLine("Creating tsconfig.json...");
+            await File.WriteAllTextAsync(tsConfigPath, ConfigTemplates.GetTsConfig());
+        }
+
+        // Create vite.config.js if it doesn't exist
+        string viteConfigPath = Path.Combine(projectPath, "vite.config.js");
+        if (!File.Exists(viteConfigPath))
+        {
+            Console.WriteLine("Creating vite.config.js...");
+            await File.WriteAllTextAsync(viteConfigPath, ConfigTemplates.GetViteConfigJs());
+        }
+
+        // Create vite.config.css.js if it doesn't exist
+        string viteCssConfigPath = Path.Combine(projectPath, "vite.config.css.js");
+        if (!File.Exists(viteCssConfigPath))
+        {
+            Console.WriteLine("Creating vite.config.css.js...");
+            await File.WriteAllTextAsync(viteCssConfigPath, ConfigTemplates.GetViteConfigCss());
+        }
+
+        // Create CssBundle directory and main.css if they don't exist
+        string cssBundlePath = Path.Combine(projectPath, "CssBundle");
+        if (!Directory.Exists(cssBundlePath))
+        {
+            Directory.CreateDirectory(cssBundlePath);
+        }
+
+        string mainCssPath = Path.Combine(cssBundlePath, "main.css");
+        if (!File.Exists(mainCssPath))
+        {
+            Console.WriteLine("Creating CssBundle/main.css...");
+            await File.WriteAllTextAsync(mainCssPath, ConfigTemplates.GetMainCss());
+        }
+
+        string mainCssEntryJsPath = Path.Combine(cssBundlePath, "entry.js");
+        if (!File.Exists(mainCssEntryJsPath))
+        {
+            Console.WriteLine("Creating CssBundle/entry.js...");
+            await File.WriteAllTextAsync(mainCssEntryJsPath, ConfigTemplates.GetMainCssEntryJs());
+        }
+
+        // Create Types directory if it doesn't exist
+        string typesPath = Path.Combine(projectPath, "Types");
+        if (!Directory.Exists(typesPath))
+        {
+            Directory.CreateDirectory(typesPath);
+            Console.WriteLine("Created Types directory for TypeScript files");
+        }
+
+        // Create wwwroot directories if they don't exist
+        string wwwrootPath = Path.Combine(projectPath, "wwwroot");
+        string wwwrootCssPath = Path.Combine(wwwrootPath, "css");
+        string wwwrootJsPath = Path.Combine(wwwrootPath, "js");
+
+        if (!Directory.Exists(wwwrootPath))
+        {
+            Directory.CreateDirectory(wwwrootPath);
+        }
+
+        if (!Directory.Exists(wwwrootCssPath))
+        {
+            Directory.CreateDirectory(wwwrootCssPath);
+        }
+
+        if (!Directory.Exists(wwwrootJsPath))
+        {
+            Directory.CreateDirectory(wwwrootJsPath);
+        }
+
+        Console.WriteLine("Configuration files initialized successfully!");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\ConfigTemplates.cs ===
+
+namespace CdCSharp.BlazorUI.BuildTools;
+
+public static class ConfigTemplates
+{
+    public static string GetMainCss() => """
+@import './reset.css';
+@import './themes.css';
+@import './initialize-themes.css';
+@import './common-classes.css';
+""";
+
+    public static string GetMainCssEntryJs() => """
+import "./main.css";
+""";
+
+    public static string GetPackageJson(string projectName = "cdcsharp-blazorui")
+    {
+        return $$"""
+{
+  "name": "{{projectName}}",
+  "version": "1.0.0",
+  "description": "BlazorUI Component Library",
+  "type": "module",
+  "main": "wwwroot/js/main.js",
+  "scripts": {
+    "build": "blazorui-build-tool all .",
+    "build:themes": "blazorui-build-tool themes ./CssBundle/themes.css",
+    "build:css": "blazorui-build-tool css .",
+    "build:js": "blazorui-build-tool js .",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "author": "Samuel Maícas (CdCSharp)",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-plugin-es6": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "terser": "latest",
+    "glob": "latest"
+  }
+}
+""";
+    }
+
+    public static string GetTsConfig() => """
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "ES2022",
+    "target": "ES2022",
+    "outDir": "./wwwroot/js",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "./@types"
+    ],
+    "paths": {
+      "@types/*": ["./Types/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "wwwroot"
+  ],
+  "include": [
+    "./Types/**/*.ts"
+  ]
+}
+""";
+
+    public static string GetViteConfigCss() => """
+import { defineConfig } from "vite";
+import path from "path";
+
+export default defineConfig({
+    build: {
+        outDir: "wwwroot/css",
+        emptyOutDir: false,
+        cssCodeSplit: false,
+        rollupOptions: {
+            input: "./CssBundle/entry.js",
+            output: {
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name.endsWith(".css")) {
+                        return "blazorui.css";  // CSS final
+                    }
+                    return "[name][extname]";
+                },
+                entryFileNames: "bundle.js",   // Archivo temporal
+                chunkFileNames: "bundle.js"
+            },
+            plugins: [
+                {
+                    name: "remove-js-output",
+                    generateBundle(_, bundle) {
+                        // Eliminar todos los JS
+                        Object.keys(bundle).forEach((file) => {
+                            if (file.endsWith(".js")) {
+                                delete bundle[file];
+                            }
+                        });
+                    }
+                }
+            ]
+        }
+    }
+});
+""";
+
+    public static string GetViteConfigJs() => """
+import { defineConfig } from 'vite';
+import path from 'path';
+import { glob } from 'glob';
+
+// Get all TypeScript entry files (capital letter = entry point)
+const inputFiles = glob.sync('./Types/**/[A-Z]*.ts').reduce((entries, filePath) => {
+    // Extract the module name from the path
+    const parts = filePath.split('/');
+    const fileName = parts[parts.length - 1].replace('.ts', '');
+    const folderName = parts[parts.length - 2];
+
+    // Use folder/file as entry name if in a subfolder, otherwise just file
+    const entryName = parts.length > 3 ? `${folderName}/${fileName}` : fileName;
+    entries[entryName] = filePath;
+    return entries;
+}, {});
+
+console.log('Entry files found:', inputFiles);
+
+export default defineConfig({
+    resolve: {
+        alias: {
+            '@types': path.resolve(__dirname, 'Types')
+        }
+    },
+    build: {
+        outDir: path.resolve(__dirname, 'wwwroot/js'),
+        emptyOutDir: false,
+        rollupOptions: {
+            input: inputFiles,
+            preserveEntrySignatures: 'strict', // Preserve files also if not used by imports (JSInterop required)
+            output: {
+                entryFileNames: (chunkInfo) => {
+                    // Preserve folder structure in output
+                    return chunkInfo.name.includes('/')
+                        ? '[name].min.js'
+                        : '[name].min.js';
+                },
+                format: 'es',
+                manualChunks: undefined
+            }
+        },
+        target: 'esnext',
+        sourcemap: true,
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true
+            },
+            format: {
+                comments: false
+            }
+        }
+    }
+});
+""";
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\CssBuilder.cs ===
+
+namespace CdCSharp.BlazorUI.BuildTools;
+
+public static class CssBuilder
+{
+    public static async Task Build(string projectPath)
+    {
+        await NpmManager.EnsureNpmInstalled(projectPath);
+        Console.WriteLine("Building CSS with Vite...");
+        await NpmManager.RunViteBuild(projectPath, "vite.config.css.js");
+
+        Console.WriteLine("CSS build completed successfully!");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\CssGenerator.cs ===
+
+using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+using System.Reflection;
+using System.Text;
+
+public static class CssGenerator
+{
+    private static readonly PropertyInfo[] PaletteProperties =
+        typeof(UIThemePaletteBase)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(p => p.PropertyType == typeof(CssColor))
+            .ToArray();
+
+    public static string Generate(
+        string defaultTheme,
+        IReadOnlyCollection<UIThemePaletteBase> palettes)
+    {
+        StringBuilder sb = new();
+
+        sb.AppendLine(":root {");
+        sb.AppendLine("  /* === Theme palettes === */");
+
+        // 1️⃣ Variables por paleta
+        foreach (UIThemePaletteBase palette in palettes)
+        {
+            string themeId = palette.Id;
+
+            foreach (PropertyInfo prop in PaletteProperties)
+            {
+                string cssName = CssNameHelper.ToCssVariable(prop.Name);
+                CssColor color = (CssColor)prop.GetValue(palette)!;
+
+                sb.AppendLine($"  --{themeId}-{cssName}: {color};");
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine("  /* === Default palette mapping === */");
+
+        // 2️⃣ Mapping por defecto
+        UIThemePaletteBase defaultPalette = palettes.First(p => p.Id == defaultTheme);
+
+        foreach (PropertyInfo prop in PaletteProperties)
+        {
+            string cssName = CssNameHelper.ToCssVariable(prop.Name);
+            sb.AppendLine($"  --palette-{cssName}: var(--{defaultTheme}-{cssName});");
+        }
+
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // 3️⃣ Mapping por selector
+        foreach (UIThemePaletteBase palette in palettes)
+        {
+            sb.AppendLine($"html[data-theme=\"{palette.Id}\"] {{");
+
+            foreach (PropertyInfo prop in PaletteProperties)
+            {
+                string cssName = CssNameHelper.ToCssVariable(prop.Name);
+                sb.AppendLine($"  --palette-{cssName}: var(--{palette.Id}-{cssName});");
+            }
+
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+}
+
+internal static class CssNameHelper
+{
+    public static string ToCssVariable(string name)
+        => name.ToLowerInvariant();
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\JavascriptBuilder.cs ===
+
+namespace CdCSharp.BlazorUI.BuildTools;
+
+public static class JavaScriptBuilder
+{
+    public static async Task Build(string projectPath)
+    {
+        await NpmManager.EnsureNpmInstalled(projectPath);
+        Console.WriteLine("Building JavaScript/TypeScript with Vite...");
+        await NpmManager.RunViteBuild(projectPath, "vite.config.js");
+        Console.WriteLine("JavaScript build completed successfully!");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\NpmManager.cs ===
+
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+
+namespace CdCSharp.BlazorUI.BuildTools;
+
+public static class NpmManager
+{
+    public static async Task EnsureNpmInstalled(string workingDirectory)
+    {
+        string nodeModulesPath = Path.Combine(workingDirectory, "node_modules");
+
+        if (!Directory.Exists(nodeModulesPath))
+        {
+            Console.WriteLine("node_modules not found. Running npm install...");
+            await RunNpmInstall(workingDirectory);
+        }
+    }
+
+    public static async Task RunNpmInstall(string workingDirectory)
+    {
+        await RunCommand(GetNpmPath(), "install", workingDirectory);
+    }
+
+    public static async Task RunViteBuild(string workingDirectory, string configFile = null)
+    {
+        string args = "vite build";
+        if (!string.IsNullOrWhiteSpace(configFile))
+        {
+            args += $" --config {configFile}";
+        }
+
+        await RunCommand(GetNpxPath(), args, workingDirectory);
+    }
+
+    private static string GetNpmPath()
+    {
+        return TryGetSystemCommand("npm", out string systemNpm)
+            ? systemNpm
+            : throw new InvalidOperationException(
+            "Node.js/npm not found. Please install Node.js from https://nodejs.org/");
+    }
+
+    private static string GetNpxPath()
+    {
+        return TryGetSystemCommand("npx", out string systemNpx)
+            ? systemNpx
+            : throw new InvalidOperationException(
+            "npx not found. Please install Node.js from https://nodejs.org/");
+    }
+
+    private static async Task RunCommand(string fileName, string arguments, string workingDirectory)
+    {
+        ProcessStartInfo startInfo = new()
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            WorkingDirectory = workingDirectory,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using Process process = new() { StartInfo = startInfo };
+
+        StringBuilder output = new();
+        StringBuilder error = new();
+
+        process.OutputDataReceived += (s, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Console.WriteLine(e.Data);
+                output.AppendLine(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (s, e) =>
+        {
+            if (!string.IsNullOrEmpty(e.Data))
+            {
+                Console.Error.WriteLine(e.Data);
+                error.AppendLine(e.Data);
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        await process.WaitForExitAsync();
+
+        if (process.ExitCode != 0)
+        {
+            throw new Exception($"Command '{fileName} {arguments}' failed with exit code {process.ExitCode}. Error: {error}");
+        }
+    }
+
+    private static bool TryGetSystemCommand(string command, out string commandPath)
+    {
+        commandPath = command;
+
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            // Buscar node.exe primero
+            try
+            {
+                ProcessStartInfo whereInfo = new()
+                {
+                    FileName = "where",
+                    Arguments = "node.exe",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = true
+                };
+
+                using Process whereProcess = Process.Start(whereInfo);
+                if (whereProcess != null)
+                {
+                    string output = whereProcess.StandardOutput.ReadToEnd().Trim();
+                    whereProcess.WaitForExit();
+
+                    if (whereProcess.ExitCode == 0 && !string.IsNullOrEmpty(output))
+                    {
+                        string nodePath = output.Split('\n')[0].Trim();
+                        Console.WriteLine($"Found node.exe at: {nodePath}");
+
+                        // npm.cmd y npx.cmd están en el mismo directorio que node.exe
+                        string nodeDir = Path.GetDirectoryName(nodePath);
+                        commandPath = Path.Combine(nodeDir, $"{command}.cmd");
+
+                        if (File.Exists(commandPath))
+                        {
+                            Console.WriteLine($"Found {command}.cmd at: {commandPath}");
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error finding node: {ex.Message}");
+            }
+
+            // Fallback: intentar directamente con .cmd
+            commandPath = $"{command}.cmd";
+        }
+
+        // Verificar que funciona
+        try
+        {
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = commandPath,
+                Arguments = "--version",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                CreateNoWindow = true
+            };
+
+            using Process process = Process.Start(startInfo);
+            if (process != null)
+            {
+                string output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                if (process.ExitCode == 0)
+                {
+                    Console.WriteLine($"Verified {command} version: {output.Trim()}");
+                    return true;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to run {commandPath}: {ex.Message}");
+        }
+
+        commandPath = null;
+        return false;
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.BuildTools\Program.cs ===
+
+using CdCSharp.BlazorUI.BuildTools;
+using CdCSharp.BlazorUI.BuildTools.Gens;
+using CdCSharp.BlazorUI.Core.Themes;
+
+if (args.Length == 0)
+{
+    PrintUsage();
+    Environment.Exit(1);
+}
+
+string command = args[0].ToLower();
+
+try
+{
+    switch (command)
+    {
+        case "init":
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Error: Project path required for init command");
+                Environment.Exit(1);
+            }
+            await ConfigInitializer.InitializeProjectConfigs(args[1]);
+            break;
+
+        case "themes":
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Error: Output path required for themes command");
+                Environment.Exit(1);
+            }
+            GenerateThemes(args[1]);
+            break;
+
+        case "npm":
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Error: Project path required for npm command");
+                Environment.Exit(1);
+            }
+            await NpmManager.EnsureNpmInstalled(args[1]);
+            break;
+
+        case "js":
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Error: Project path required for js command");
+                Environment.Exit(1);
+            }
+            await JavaScriptBuilder.Build(args[1]);
+            break;
+
+        case "css":
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Error: Project path required for css command");
+                Environment.Exit(1);
+            }
+            await CssBuilder.Build(args[1]);
+            break;
+
+        case "all":
+            if (args.Length < 2)
+            {
+                Console.WriteLine("Error: Project path required for all command");
+                Environment.Exit(1);
+            }
+            await BuildAll(args[1]);
+            break;
+
+        default:
+            Console.WriteLine($"Unknown command: {command}");
+            PrintUsage();
+            Environment.Exit(1);
+            break;
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error: {ex.Message}");
+    Environment.Exit(1);
+}
+
+void PrintUsage()
+{
+    Console.WriteLine("Usage: blazorui-build-tool <command> [options]");
+    Console.WriteLine("Commands:");
+    Console.WriteLine("  init <project-path>      - Initialize project configuration files");
+    Console.WriteLine("  themes <output-path>     - Generate theme CSS");
+    Console.WriteLine("  npm <project-path>       - Run npm install if needed");
+    Console.WriteLine("  js <project-path>        - Build JavaScript with Vite");
+    Console.WriteLine("  css <project-path>       - Build CSS with Vite");
+    Console.WriteLine("  all <project-path>       - Run all build tasks");
+}
+
+void GenerateThemes(string outputPath)
+{
+    string cssContent = CssGenerator.Generate("dark", [new DarkTheme(), new LightTheme()]);
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS themes generated successfully at: {outputPath}");
+}
+
+void GenerateResetCss(string outputPath)
+{
+    string cssContent = CssReset.GetCss();
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS reset generated successfully at: {outputPath}");
+}
+
+void GenerateInitializeThemesCss(string outputPath)
+{
+    string cssContent = CssInitializeTheme.GetCss();
+
+    string? directory = Path.GetDirectoryName(outputPath);
+    if (!string.IsNullOrEmpty(directory))
+    {
+        Directory.CreateDirectory(directory);
+    }
+
+    File.WriteAllText(outputPath, cssContent);
+    Console.WriteLine($"CSS reset generated successfully at: {outputPath}");
+}
+
+async Task BuildAll(string projectPath)
+{
+    // 0. Generate CSS Reset
+    string cssResetPath = Path.Combine(projectPath, "CssBundle", "reset.css");
+    GenerateResetCss(cssResetPath);
+
+    // 1. Generate themes
+    string themesPath = Path.Combine(projectPath, "CssBundle", "themes.css");
+    GenerateThemes(themesPath);
+
+    string initializeThemesPath = Path.Combine(projectPath, "CssBundle", "initialize-themes.css");
+    GenerateInitializeThemesCss(initializeThemesPath);
+
+    string commonClassesPath = Path.Combine(projectPath, "CssBundle", "common-classes.css");
+    string commonClassesCss = CssCommonClasses.GetCss();
+    File.WriteAllText(commonClassesPath, commonClassesCss);
+    Console.WriteLine($"Common classes CSS generated successfully at: {commonClassesPath}");
+
+    // 2. Ensure npm packages are installed
+    await NpmManager.EnsureNpmInstalled(projectPath);
+
+    // 3. Build CSS
+    await CssBuilder.Build(projectPath);
+
+    // 4. Build JavaScript
+    await JavaScriptBuilder.Build(projectPath);
+
+    Console.WriteLine("All build tasks completed successfully!");
+}
+
+
+
+=== CdCSharp.BlazorUI.Core\Themes\Abstractions\UIThemePaletteBase.cs ===
+
+using CdCSharp.BlazorUI.Core.Css;
+
+namespace CdCSharp.BlazorUI.Core.Theming.Abstractions;
+
+public abstract class UIThemePaletteBase
+{
+    // Surface colors
+    public CssColor Background { get; set; } = new("#FFFFFF");
+
+    // Status colors
+    public CssColor Error { get; set; } = new("#EF4444");
+
+    public CssColor Foreground { get; set; } = new("#1E293B");
+    public string Id { get; set; } = "default";
+    public CssColor Info { get; set; } = new("#3B82F6");
+    public string Name { get; set; } = "Default";
+
+    // Main colors
+    public CssColor Primary { get; set; } = new("#3B82F6");
+
+    public CssColor PrimaryContrast { get; set; } = new("#FFFFFF");
+
+    public CssColor Secondary { get; set; } = new("#8B5CF6");
+    public CssColor SecondaryContrast { get; set; } = new("#FFFFFF");
+    public CssColor Success { get; set; } = new("#10B981");
+    public CssColor Surface { get; set; } = new("#F8FAFC");
+    public CssColor Warning { get; set; } = new("#F59E0B");
+}
+
+
+
+=== CdCSharp.BlazorUI.Core\Themes\DarkTheme.cs ===
+
+using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+
+namespace CdCSharp.BlazorUI.Core.Themes;
+
+public class DarkTheme : UIThemePaletteBase
+{
+    public DarkTheme()
+    {
+        Id = "dark";
+        Name = "Dark";
+
+        Primary = new CssColor("#60A5FA");
+        PrimaryContrast = new CssColor("#0F172A");
+
+        Secondary = new CssColor("#A78BFA");
+        SecondaryContrast = new CssColor("#0F172A");
+
+        Background = new CssColor("#0F172A");
+        Surface = new CssColor("#1E293B");
+        Foreground = new CssColor("#F1F5F9");
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Core\Themes\LightTheme.cs ===
+
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+
+namespace CdCSharp.BlazorUI.Core.Themes;
+
+public class LightTheme : UIThemePaletteBase
+{
+    public LightTheme()
+    {
+        Id = "light";
+        Name = "Light";
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="CdCSharp.BlazorUI.Tests.Integration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CdCSharp.BlazorUI.Core.CodeGeneration\CdCSharp.BlazorUI.Core.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+</Project>
+
+
+
+=== CdCSharp.BlazorUI.Core.CodeGeneration\CdCSharp.BlazorUI.Core.CodeGeneration.csproj ===
+
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+	</ItemGroup>
+
+</Project>
+
+
+
+=== CdCSharp.BlazorUI.Core.CodeGeneration\ColorClassGenerator.cs ===
+
+// CdCSharp.BlazorUI.Core\SourceGenerators\ColorClassGenerator.cs
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+
+namespace CdCSharp.BlazorUI.Core.CodeGeneration;
+
+[Generator]
+public class ColorClassGenerator : IIncrementalGenerator
+{
+    public const string AttributeNameContains = "AutogenerateCssColors";
+
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        IncrementalValuesProvider<ClassToGenerate> classDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => IsClassWithAutogenerateCssColorsAttribute(s),
+                transform: static (ctx, _) => GetSemanticTarget(ctx))
+            .Where(static m => m is not null)
+            .Select(static (m, _) => m!); // Convert ClassToGenerate? to ClassToGenerate
+
+        IncrementalValueProvider<(Compilation Left, ImmutableArray<ClassToGenerate> Right)> compilationAndClasses =
+            context.CompilationProvider.Combine(classDeclarations.Collect());
+
+        context.RegisterSourceOutput(compilationAndClasses, (spc, source) => Execute(source.Left, source.Right, spc));
+    }
+
+    private record ClassToGenerate(INamedTypeSymbol Symbol, int VariantLevels);
+
+    private static ClassToGenerate? GetSemanticTarget(GeneratorSyntaxContext context)
+    {
+        ClassDeclarationSyntax classDeclaration = (ClassDeclarationSyntax)context.Node;
+        SemanticModel model = context.SemanticModel;
+
+        if (model.GetDeclaredSymbol(classDeclaration) is not INamedTypeSymbol classSymbol)
+        {
+            return null;
+        }
+
+        foreach (AttributeData attribute in classSymbol.GetAttributes())
+        {
+            if (attribute.AttributeClass?.Name.Contains(AttributeNameContains) == true)
+            {
+                // Obtener el valor del parámetro variantLevels, default 5
+                int variantLevels = 5;
+
+                if (attribute.ConstructorArguments.Length > 0 &&
+                    attribute.ConstructorArguments[0].Value is int levels &&
+                    levels > 0)
+                {
+                    variantLevels = levels;
+                }
+
+                return new ClassToGenerate(classSymbol, variantLevels);
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsClassWithAutogenerateCssColorsAttribute(SyntaxNode syntaxNode)
+    {
+        return syntaxNode is ClassDeclarationSyntax classDecl &&
+               classDecl.AttributeLists
+                   .SelectMany(al => al.Attributes)
+                   .Any(a => a.Name.ToString().Contains(AttributeNameContains));
+    }
+
+    private void Execute(Compilation compilation, ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
+    {
+        if (classes.IsDefaultOrEmpty)
+        {
+            return;
+        }
+
+        foreach (ClassToGenerate classToGenerate in classes.Distinct())
+        {
+            INamedTypeSymbol classSymbol = classToGenerate.Symbol;
+            int variantLevels = classToGenerate.VariantLevels;
+
+            string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
+            string className = classSymbol.Name;
+
+            PropertyInfo[] colors = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Where(p => p.PropertyType == typeof(Color))
+                .ToArray();
+
+            ClassDeclarationSyntax classSyntax = GenerateClassDeclaration(className);
+
+            foreach (PropertyInfo color in colors)
+            {
+                string propertyName = color.Name;
+                ClassDeclarationSyntax innerClassDeclaration = GenerateInnerClassDeclaration(propertyName);
+
+                // Default property
+                PropertyDeclarationSyntax propertyDeclaration = GenerateColorProperty(propertyName);
+                innerClassDeclaration = innerClassDeclaration.AddMembers(propertyDeclaration);
+
+                // Darken variants
+                for (int i = 1; i <= variantLevels; i++)
+                {
+                    PropertyDeclarationSyntax variantDarkenPropertyDeclaration =
+                        GenerateVariantPropertyDarken(propertyName, i);
+                    innerClassDeclaration = innerClassDeclaration.AddMembers(variantDarkenPropertyDeclaration);
+                }
+
+                // Lighten variants
+                for (int i = 1; i <= variantLevels; i++)
+                {
+                    PropertyDeclarationSyntax variantLightenPropertyDeclaration =
+                        GenerateVariantPropertyLighten(propertyName, i);
+                    innerClassDeclaration = innerClassDeclaration.AddMembers(variantLightenPropertyDeclaration);
+                }
+
+                classSyntax = classSyntax.AddMembers(innerClassDeclaration);
+            }
+
+            NamespaceDeclarationSyntax namespaceDeclaration =
+                SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(namespaceName))
+                    .WithNamespaceKeyword(
+                        SyntaxFactory.Token(
+                            SyntaxFactory.TriviaList(),
+                            SyntaxKind.NamespaceKeyword,
+                            "namespace",
+                            "namespace",
+                            SyntaxFactory.TriviaList(SyntaxFactory.Space)));
+
+            CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
+                .AddUsings(
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Core.Css")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Drawing")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Diagnostics.CodeAnalysis"))
+                ).AddMembers(namespaceDeclaration
+                    .AddMembers(classSyntax)
+                );
+
+            string sourceCode = compilationUnit.NormalizeWhitespace().ToFullString();
+
+            context.AddSource($"{className}.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
+        }
+    }
+
+    private ClassDeclarationSyntax GenerateClassDeclaration(string className) =>
+     SyntaxFactory.ClassDeclaration(className)
+         .AddAttributeLists(
+             SyntaxFactory.AttributeList(
+                 SyntaxFactory.SingletonSeparatedList(
+                     SyntaxFactory.Attribute(SyntaxFactory.ParseName("ExcludeFromCodeCoverage"))
+                 )
+             )
+         )
+         .AddModifiers(
+             SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+             SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+             SyntaxFactory.Token(SyntaxKind.PartialKeyword));
+
+    private PropertyDeclarationSyntax GenerateColorProperty(string name)
+    {
+        string cssColor = $"new CssColor(Color.{name}, null)";
+
+        return SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName("CssColor"), "Default")
+            .AddModifiers(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                SyntaxFactory.Token(SyntaxKind.StaticKeyword))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(SyntaxFactory.EqualsValueClause(SyntaxFactory.ParseExpression(cssColor)))
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+    }
+
+    private ClassDeclarationSyntax GenerateInnerClassDeclaration(string name) =>
+        SyntaxFactory.ClassDeclaration(name)
+            .AddModifiers(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+    private PropertyDeclarationSyntax GenerateVariantPropertyDarken(string name, int index)
+    {
+        string cssColor = $"new CssColor(Color.{name}, CssColorVariant.Darken({index}))";
+
+        return SyntaxFactory.PropertyDeclaration(
+                SyntaxFactory.ParseTypeName("CssColor"), $"Darken{index}")
+            .AddModifiers(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                SyntaxFactory.Token(SyntaxKind.StaticKeyword))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(SyntaxFactory.EqualsValueClause(SyntaxFactory.ParseExpression(cssColor)))
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+    }
+
+    private PropertyDeclarationSyntax GenerateVariantPropertyLighten(string name, int index)
+    {
+        string cssColor = $"new CssColor(Color.{name}, CssColorVariant.Lighten({index}))";
+
+        return SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName("CssColor"), $"Lighten{index}")
+            .AddModifiers(
+                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                SyntaxFactory.Token(SyntaxKind.StaticKeyword))
+            .WithAccessorList(
+                SyntaxFactory.AccessorList(
+                    SyntaxFactory.SingletonList(
+                        SyntaxFactory.AccessorDeclaration(
+                                SyntaxKind.GetAccessorDeclaration)
+                            .WithSemicolonToken(
+                                SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
+            .WithInitializer(SyntaxFactory.EqualsValueClause(SyntaxFactory.ParseExpression(cssColor)))
+            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+    }
+}
+
+
+
+=== CdCSharp.BlazorUI.Core.CodeGeneration\ExternalInit.cs ===
+
+namespace System.Runtime.CompilerServices;
+
+internal static class IsExternalInit
+{ }
+
+
+

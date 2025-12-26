@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Extensions;
+﻿using CdCSharp.BlazorUI.Core.Css;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Extensions;

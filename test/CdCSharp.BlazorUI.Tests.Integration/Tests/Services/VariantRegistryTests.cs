@@ -1,5 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Components.Generic.Button;
-using CdCSharp.BlazorUI.Core.Components.Services;
+using CdCSharp.BlazorUI.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;

@@ -1,5 +1,5 @@
-﻿using CdCSharp.BlazorUI.Core.Theming.Css;
-using CdCSharp.BlazorUI.Core.Transitions;
+﻿using CdCSharp.BlazorUI.Components.Features.Transitions;
+using CdCSharp.BlazorUI.Css;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Transitions;

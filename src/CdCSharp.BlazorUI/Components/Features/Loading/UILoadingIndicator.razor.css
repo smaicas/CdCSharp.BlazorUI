@@ -1,0 +1,163 @@
+﻿.ui-loading-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Spinner Variant */
+.ui-loading-indicator--spinner .ui-loading-spinner {
+    width: 100%;
+    height: 100%;
+    animation: ui-loading-spinner-rotate 2s linear infinite;
+}
+
+.ui-loading-indicator--spinner circle {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    animation: ui-loading-spinner-dash 1.5s ease-in-out infinite;
+    stroke-linecap: round;
+}
+
+@keyframes ui-loading-spinner-rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ui-loading-spinner-dash {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+    }
+
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+    }
+}
+
+/* Linear Variant */
+.ui-loading-indicator--linearindeterminate .ui-loading-linear {
+    width: 100%;
+    height: 4px;
+    background-color: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.ui-loading-indicator--linearindeterminate .ui-loading-linear__bar {
+    height: 100%;
+    background-color: currentColor;
+    animation: ui-loading-linear 2s ease-in-out infinite;
+}
+
+@keyframes ui-loading-linear {
+    0% {
+        transform: translateX(-100%);
+        width: 100%;
+    }
+
+    50% {
+        transform: translateX(100%);
+        width: 100%;
+    }
+
+    100% {
+        transform: translateX(-100%);
+        width: 100%;
+    }
+}
+
+/* Circular Progress Variant */
+.ui-loading-indicator--circularprogress .ui-loading-circular {
+    width: 100%;
+    height: 100%;
+    animation: ui-loading-circular-rotate 1s linear infinite;
+}
+
+.ui-loading-indicator--circularprogress circle {
+    stroke-dasharray: 80, 200;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+}
+
+@keyframes ui-loading-circular-rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Dots Variant */
+.ui-loading-indicator--dots {
+    gap: 0.25em;
+}
+
+    .ui-loading-indicator--dots .ui-loading-dot {
+        width: 0.25em;
+        height: 0.25em;
+        background-color: currentColor;
+        border-radius: 50%;
+        animation: ui-loading-dots 1.4s ease-in-out infinite;
+    }
+
+        .ui-loading-indicator--dots .ui-loading-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .ui-loading-indicator--dots .ui-loading-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+@keyframes ui-loading-dots {
+    0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Pulse Variant */
+.ui-loading-indicator--pulse .ui-loading-pulse {
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    border-radius: 50%;
+    animation: ui-loading-pulse 1.5s ease-out infinite;
+}
+
+@keyframes ui-loading-pulse {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
+
+/* Size modifiers applied by IHasSize interface */
+.ui-size-small.ui-loading-indicator {
+    width: 1rem;
+    height: 1rem;
+}
+
+.ui-size-medium.ui-loading-indicator {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.ui-size-large.ui-loading-indicator {
+    width: 2rem;
+    height: 2rem;
+}

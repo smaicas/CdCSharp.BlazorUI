@@ -133,7 +133,7 @@ public class ColorClassGenerator : IIncrementalGenerator
 
             CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
                 .AddUsings(
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Core.Theming.Css")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Core.Css")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Drawing")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Diagnostics.CodeAnalysis"))
                 ).AddMembers(namespaceDeclaration

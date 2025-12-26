@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
-using CdCSharp.BlazorUI.Core.Theming.Css;
+using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 

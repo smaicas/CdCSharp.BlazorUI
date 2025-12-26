@@ -1,8 +1,8 @@
-﻿using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+﻿using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
-using CdCSharp.BlazorUI.Core.Components.Abstractions;
-using CdCSharp.BlazorUI.Core.Components.Services;
+using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

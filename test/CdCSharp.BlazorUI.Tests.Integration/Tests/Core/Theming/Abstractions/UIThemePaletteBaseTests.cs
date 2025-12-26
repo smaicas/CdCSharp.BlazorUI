@@ -1,5 +1,5 @@
-﻿using CdCSharp.BlazorUI.Core.Theming.Abstractions;
-using CdCSharp.BlazorUI.Core.Theming.Css;
+﻿using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Theming.Abstractions;

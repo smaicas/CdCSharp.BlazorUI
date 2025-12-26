@@ -1,5 +1,5 @@
-﻿using CdCSharp.BlazorUI.Core.Theming.Abstractions;
-using CdCSharp.BlazorUI.Core.Theming.Css;
+﻿using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 using System.Reflection;
 using System.Text;
 

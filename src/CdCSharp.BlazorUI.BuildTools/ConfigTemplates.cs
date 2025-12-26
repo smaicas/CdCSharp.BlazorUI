@@ -6,6 +6,7 @@ public static class ConfigTemplates
 @import './reset.css';
 @import './themes.css';
 @import './initialize-themes.css';
+@import './common-classes.css';
 """;
 
     public static string GetMainCssEntryJs() => """

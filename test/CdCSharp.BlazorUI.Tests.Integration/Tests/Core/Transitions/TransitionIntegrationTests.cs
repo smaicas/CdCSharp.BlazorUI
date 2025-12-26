@@ -1,7 +1,7 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Transitions;
 using CdCSharp.BlazorUI.Components.Generic.Button;
-using CdCSharp.BlazorUI.Core.Transitions;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 

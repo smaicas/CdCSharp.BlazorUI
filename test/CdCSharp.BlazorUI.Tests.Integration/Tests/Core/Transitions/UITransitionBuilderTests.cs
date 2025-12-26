@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Transitions;
+﻿using CdCSharp.BlazorUI.Components.Features.Transitions;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Transitions;

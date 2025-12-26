@@ -1,0 +1,96 @@
+﻿@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Css
+
+@inherits UIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
+@implements IHasSize<UILoadingIndicatorSize>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasSize
+    [Parameter] public UILoadingIndicatorSize Size { get; set; } = UILoadingIndicatorSize.Medium;
+
+    /* ========= Variant ========= */
+
+    protected override UILoadingIndicatorVariant DefaultVariant => UILoadingIndicatorVariant.Spinner;
+
+    protected override Dictionary<UILoadingIndicatorVariant, Func<UILoadingIndicator, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [UILoadingIndicatorVariant.Spinner] = i => i.RenderSpinner(),
+        [UILoadingIndicatorVariant.LinearIndeterminate] = i => i.RenderLinear(),
+        [UILoadingIndicatorVariant.CircularProgress] = i => i.RenderCircularProgress(),
+        [UILoadingIndicatorVariant.Dots] = i => i.RenderDots(),
+        [UILoadingIndicatorVariant.Pulse] = i => i.RenderPulse(),
+    };
+
+    /* ========= Render Methods ========= */
+
+    private RenderFragment RenderSpinner() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <svg class="ui-loading-spinner" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+            </svg>
+        </div>
+    };
+
+    private RenderFragment RenderLinear() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <div class="ui-loading-linear">
+                <div class="ui-loading-linear__bar"></div>
+            </div>
+        </div>
+    };
+
+    private RenderFragment RenderCircularProgress() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <svg class="ui-loading-circular" viewBox="0 0 50 50">
+                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+            </svg>
+        </div>
+    };
+
+    private RenderFragment RenderDots() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <span class="ui-loading-dot"></span>
+            <span class="ui-loading-dot"></span>
+            <span class="ui-loading-dot"></span>
+        </div>
+    };
+
+    private RenderFragment RenderPulse() => __builder =>
+    {
+        <div @attributes="AdditionalAttributes">
+            <span class="ui-loading-pulse"></span>
+        </div>
+    };
+
+    /* ========= Styling ========= */
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return CssClassesReference.UILoadingIndicator;
+        yield return CssClassesReference.Variant(CssClassesReference.UILoadingIndicator, Variant ?? DefaultVariant);
+    }
+
+    public override Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        Dictionary<string, string> styles = new();
+
+        if (Color != null)
+        {
+            styles["color"] = Color.ToString(ColorOutputFormats.Rgba);
+        }
+
+        return styles;
+    }
+}

@@ -1,14 +1,22 @@
-﻿@using CdCSharp.BlazorUI.Components.Generic.Svg
-@using CdCSharp.BlazorUI.Core.Components.Abstractions
+﻿@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Features.Transitions
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Core.Theming
-@using CdCSharp.BlazorUI.Core.Theming.Css
-@using CdCSharp.BlazorUI.Core.Theming.Themes
-@using CdCSharp.BlazorUI.Core.Transitions
+@using CdCSharp.BlazorUI.Css
 @using CdCSharp.BlazorUI.Media.Icons
-@using Microsoft.AspNetCore.Components.Web
+
 
 @inherits UIVariantComponentBase<UIButton, UIButtonVariant>
 @implements IHasTransitions
+@implements IHasSize<UIButtonSize>
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasElevation
+@implements IHasRipple
+@implements IHasDensity<UIButtonDensity>
 
 @{
     base.BuildRenderTree(__builder);
@@ -25,7 +33,36 @@
     [Parameter] public CssColor? Color { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    // IHasTransitions
     [Parameter] public UITransitions? Transitions { get; set; }
+
+    // IHasSize
+    [Parameter] public UIButtonSize Size { get; set; } = UIButtonSize.Medium;
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public UILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasElevation
+    private int _elevation;
+    [Parameter]
+    public int Elevation
+    {
+        get => _elevation;
+        set => _elevation = Math.Clamp(value, 0, 24);
+    }
+
+    // IHasRipple
+    [Parameter] public bool DisableRipple { get; set; }
+    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public int RippleDuration { get; set; } = 600;
+
+    // IHasDensity
+    [Parameter] public UIButtonDensity Density { get; set; } = UIButtonDensity.Standard;
 
     /* ========= Variant ========= */
 
@@ -36,32 +73,85 @@
         [UIButtonVariant.Default] = b => b.RenderDefault(),
     };
 
+    /* ========= Private state ========= */
+
+    private bool IsDisabled => Disabled || IsLoading;
+    private int _rippleKey = 0;
+
     /* ========= Render ========= */
 
     private RenderFragment RenderDefault() => __builder =>
     {
         <button @attributes="AdditionalAttributes"
                 type="button"
-                disabled="@Disabled"
-                @onclick="OnClick">
+                disabled="@IsDisabled"
+                @onclick="HandleClick">
 
-            @if (LeadingIcon != null)
+            @if (!DisableRipple)
             {
-                <UISvgIcon Icon="@LeadingIcon" />
+                <span class="@CssClassesReference.Ripple" @key="@_rippleKey"></span>
+            }
+
+            @if (IsLoading && LoadingIndicatorVariant != null)
+            {
+                <UILoadingIndicator Variant="@LoadingIndicatorVariant"
+                                    Size="GetLoadingSize()"
+                                    Color="@Color" />
+            }
+            else if (LeadingIcon != null)
+            {
+                <UISvgIcon Icon="@LeadingIcon" Size="@GetIconSize()" />
             }
 
             @if (!string.IsNullOrWhiteSpace(Text))
             {
-                <span class="ui-button__text">@Text</span>
+                <span class="@CssClassesReference.UIButton__Text">@Text</span>
             }
 
-            @if (TrailingIcon != null)
+            @if (TrailingIcon != null && !IsLoading)
             {
-                <UISvgIcon Icon="@TrailingIcon" />
+                <UISvgIcon Icon="@TrailingIcon" Size="@GetIconSize()" />
             }
 
         </button>
     };
+
+    /* ========= Event Handlers ========= */
+
+    private async Task HandleClick(MouseEventArgs args)
+    {
+        if (!DisableRipple && !IsDisabled)
+        {
+            _rippleKey++;
+        }
+
+        if (!IsDisabled)
+        {
+            await OnClick.InvokeAsync(args);
+        }
+    }
+
+    /* ========= Helpers ========= */
+
+    private UISvgIcon.UISvgIconSize GetIconSize()
+    {
+        return Size switch
+        {
+            UIButtonSize.Small => UISvgIcon.UISvgIconSize.Small,
+            UIButtonSize.Large => UISvgIcon.UISvgIconSize.Large,
+            _ => UISvgIcon.UISvgIconSize.Medium
+        };
+    }
+
+    private UILoadingIndicatorSize GetLoadingSize()
+    {
+        return Size switch
+        {
+            UIButtonSize.Small => UILoadingIndicatorSize.Small,
+            UIButtonSize.Large => UILoadingIndicatorSize.Large,
+            _ => UILoadingIndicatorSize.Medium
+        };
+    }
 
     /* ========= Styling ========= */
 

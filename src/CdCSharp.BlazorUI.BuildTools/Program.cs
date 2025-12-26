@@ -1,5 +1,6 @@
 ﻿using CdCSharp.BlazorUI.BuildTools;
-using CdCSharp.BlazorUI.Core.Theming.Themes;
+using CdCSharp.BlazorUI.BuildTools.Gens;
+using CdCSharp.BlazorUI.Core.Themes;
 
 if (args.Length == 0)
 {
@@ -146,6 +147,11 @@ async Task BuildAll(string projectPath)
 
     string initializeThemesPath = Path.Combine(projectPath, "CssBundle", "initialize-themes.css");
     GenerateInitializeThemesCss(initializeThemesPath);
+
+    string commonClassesPath = Path.Combine(projectPath, "CssBundle", "common-classes.css");
+    string commonClassesCss = CssCommonClasses.GetCss();
+    File.WriteAllText(commonClassesPath, commonClassesCss);
+    Console.WriteLine($"Common classes CSS generated successfully at: {commonClassesPath}");
 
     // 2. Ensure npm packages are installed
     await NpmManager.EnsureNpmInstalled(projectPath);

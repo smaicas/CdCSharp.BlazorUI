@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Theming.Css;
+﻿using CdCSharp.BlazorUI.Core.Css;
 using FluentAssertions;
 using System.Drawing;
 
