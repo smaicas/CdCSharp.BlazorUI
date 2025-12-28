@@ -1,0 +1,325 @@
+﻿@page "/features/density"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Transitions
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Media.Icons
+
+<PageTitle>Density - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Density System</h1>
+    <p class="doc-intro">
+        The density system allows you to adjust the spacing and size of components to match different 
+        use cases and user preferences. Choose from Comfortable, Standard, or Compact densities.
+    </p>
+
+    <div class="doc-section">
+        <h2>Density Levels</h2>
+        
+        <div class="density-comparison">
+            <div class="density-example">
+                <h4>Comfortable</h4>
+                <p>More spacing, touch-friendly, better for mobile or accessibility.</p>
+                <div class="density-demo">
+                    <UIButton Text="Comfortable Button" Density="DensityEnum.Comfortable" />
+                    <div class="density-card ui-density-comfortable">
+                        <h5>Card Content</h5>
+                        <p>This card has comfortable spacing.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="density-example">
+                <h4>Standard</h4>
+                <p>Default spacing, balanced for most use cases.</p>
+                <div class="density-demo">
+                    <UIButton Text="Standard Button" Density="DensityEnum.Standard" />
+                    <div class="density-card ui-density-standard">
+                        <h5>Card Content</h5>
+                        <p>This card has standard spacing.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="density-example">
+                <h4>Compact</h4>
+                <p>Less spacing, more content visible, good for data-dense interfaces.</p>
+                <div class="density-demo">
+                    <UIButton Text="Compact Button" Density="DensityEnum.Compact" />
+                    <div class="density-card ui-density-compact">
+                        <h5>Card Content</h5>
+                        <p>This card has compact spacing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Component Comparison</h2>
+        <ComponentDemo Code="@componentComparisonCode">
+            <Demo>
+                <div class="component-grid">
+                    <div>
+                        <h5>Comfortable</h5>
+                        <UIButton Text="Action" Density="DensityEnum.Comfortable" />
+                        <UIButton Text="Action" Density="DensityEnum.Comfortable" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
+                    </div>
+                    <div>
+                        <h5>Standard</h5>
+                        <UIButton Text="Action" Density="DensityEnum.Standard" />
+                        <UIButton Text="Action" Density="DensityEnum.Standard" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
+                    </div>
+                    <div>
+                        <h5>Compact</h5>
+                        <UIButton Text="Action" Density="DensityEnum.Compact" />
+                        <UIButton Text="Action" Density="DensityEnum.Compact" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
+                    </div>
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Use Case Guidelines</h2>
+        
+        <div class="use-cases">
+            <div class="use-case">
+                <h4>When to Use Comfortable</h4>
+                <ul>
+                    <li>Touch interfaces (tablets, mobile)</li>
+                    <li>Accessibility-focused applications</li>
+                    <li>Onboarding or learning interfaces</li>
+                    <li>Content with fewer interactive elements</li>
+                </ul>
+            </div>
+            
+            <div class="use-case">
+                <h4>When to Use Standard</h4>
+                <ul>
+                    <li>General desktop applications</li>
+                    <li>Mixed content types</li>
+                    <li>Default choice for most scenarios</li>
+                    <li>Responsive designs that adapt</li>
+                </ul>
+            </div>
+            
+            <div class="use-case">
+                <h4>When to Use Compact</h4>
+                <ul>
+                    <li>Data tables and grids</li>
+                    <li>Professional/enterprise applications</li>
+                    <li>Information-dense interfaces</li>
+                    <li>Power user interfaces</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Global Density Settings</h2>
+        <p>You can set a default density for your entire application:</p>
+        
+        <CodeBlock Code="@globalDensityCode" Language="csharp" Title="Global Configuration" />
+    </div>
+
+    <div class="doc-section">
+        <h2>CSS Classes</h2>
+        <p>Apply density directly to any element using CSS classes:</p>
+        
+        <CodeBlock Code="@cssClassesCode" Language="html" Title="Density Classes" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Responsive Density</h2>
+        <p>Adjust density based on screen size for optimal user experience:</p>
+        
+        <CodeBlock Code="@responsiveDensityCode" Language="css" Title="Responsive Density" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Combining with Other Features</h2>
+        <ComponentDemo Code="@combinedFeaturesCode">
+            <Demo>
+                <div class="feature-combination">
+                    <UIButton Text="Compact + Elevated" 
+                             Density="DensityEnum.Compact" 
+                             Elevation="4" />
+                    
+                    <UIButton Text="Comfortable + Transition" 
+                             Density="DensityEnum.Comfortable" 
+                             Transitions="@UITransitionPresets.HoverScale" />
+                    
+                    <UIButton Text="Compact + Full Width" 
+                             Density="DensityEnum.Compact" 
+                             FullWidth="true" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+</div>
+
+@code {
+    private string componentComparisonCode = @"<!-- Different density levels -->
+<UIButton Text=""Action"" Density=""DensityEnum.Comfortable"" />
+<UIButton Text=""Action"" Density=""DensityEnum.Standard"" />
+<UIButton Text=""Action"" Density=""DensityEnum.Compact"" />";
+
+    private string globalDensityCode = @"// In your App.razor or MainLayout
+<CascadingValue Value=""@DensityEnum.Compact"" Name=""DefaultDensity"">
+    @Body
+</CascadingValue>
+
+// Or configure in services
+builder.Services.AddBlazorUI(options =>
+{
+    options.DefaultDensity = DensityEnum.Compact;
+});";
+
+    private string cssClassesCode = @"<!-- Apply density with CSS classes -->
+<div class=""ui-density-comfortable"">
+    More spacious content
+</div>
+
+<div class=""ui-density-standard"">
+    Default spacing
+</div>
+
+<div class=""ui-density-compact"">
+    Condensed content
+</div>";
+
+    private string responsiveDensityCode = @"/* Mobile: Use comfortable density */
+@media (max-width: 768px) {
+    .responsive-component {
+        @apply ui-density-comfortable;
+    }
+}
+
+/* Tablet: Use standard density */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .responsive-component {
+        @apply ui-density-standard;
+    }
+}
+
+/* Desktop: Use compact density */
+@media (min-width: 1025px) {
+    .responsive-component {
+        @apply ui-density-compact;
+    }
+}";
+
+    private string combinedFeaturesCode = @"<UIButton Text=""Compact + Elevated"" 
+         Density=""DensityEnum.Compact"" 
+         Elevation=""4"" />
+
+<UIButton Text=""Comfortable + Transition"" 
+         Density=""DensityEnum.Comfortable"" 
+         Transitions=""@UITransitionPresets.HoverScale"" />
+
+<UIButton Text=""Compact + Full Width"" 
+         Density=""DensityEnum.Compact"" 
+         FullWidth=""true"" />";
+}
+
+<style>
+    .density-comparison {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .density-example {
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+    }
+
+    .density-example h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--palette-primary);
+    }
+
+    .density-example > p {
+        margin: 0 0 1rem 0;
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+
+    .density-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .density-card {
+        padding: 1rem;
+        background: var(--palette-surface);
+        border-radius: 0.375rem;
+    }
+
+    .density-card h5 {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .density-card p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    .component-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .component-grid h5 {
+        margin: 0 0 1rem 0;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        opacity: 0.7;
+    }
+
+    .component-grid > div {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .use-cases {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .use-case {
+        padding: 1.5rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+    }
+
+    .use-case h4 {
+        margin: 0 0 1rem 0;
+        color: var(--palette-primary);
+    }
+
+    .use-case ul {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .use-case li {
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-combination {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+</style>

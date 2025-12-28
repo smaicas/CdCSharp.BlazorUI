@@ -1,0 +1,14 @@
+﻿[
+  {
+    Size: Small,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-small" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Size: Medium,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-medium" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Size: Large,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-large" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  }
+]

@@ -230,18 +230,29 @@ public abstract class ModuleJsInteropBase : IAsyncDisposable
 
 === CdCSharp.BlazorUI\Components\Abstractions\UIComponentBase.cs ===
 
+// Components/Abstractions/UIComponentBase.cs
+using CdCSharp.BlazorUI.Components.Features.Behaviors;
 using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Css;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components.Abstractions;
 
-public abstract class UIComponentBase : ComponentBase
+public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
 {
+    private IJSObjectReference? _behaviorInstance;
+    private string? _lastComputedCssClasses;
+    private string? _originalUserClasses;
+    private string? _lastComputedStyles;
+    private string? _originalUserStyles;
+
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
+
+    [Inject] private IBehaviorJsInterop? BehaviorJsInterop { get; set; }
 
     public string ComputedCssClasses { get; private set; } = string.Empty;
 
@@ -251,6 +262,30 @@ public abstract class UIComponentBase : ComponentBase
 
     protected override void OnParametersSet()
     {
+        // Handle CSS Classes
+        string currentClasses = AdditionalAttributes.TryGetValue("class", out object? existingClass)
+            ? existingClass.ToString() ?? string.Empty
+            : string.Empty;
+
+        // Detect if these are original user classes or our computed classes
+        if (_lastComputedCssClasses == null || currentClasses != _lastComputedCssClasses)
+        {
+            // This is either first render or user changed the classes externally
+            _originalUserClasses = currentClasses;
+        }
+
+        // Handle Inline Styles
+        string currentStyles = AdditionalAttributes.TryGetValue("style", out object? existingStyle)
+            ? existingStyle.ToString() ?? string.Empty
+            : string.Empty;
+
+        // Detect if these are original user styles or our computed styles
+        if (_lastComputedStyles == null || currentStyles != _lastComputedStyles)
+        {
+            // This is either first render or user changed the styles externally
+            _originalUserStyles = currentStyles;
+        }
+
         // Get component classes
         List<string> componentClasses = [.. GetAdditionalCssClasses()];
 
@@ -258,14 +293,14 @@ public abstract class UIComponentBase : ComponentBase
         if (this is IHasTransitions hasTransitions && hasTransitions.Transitions?.HasTransitions == true)
         {
             componentClasses.Add(CssClassesReference.HasTransitions);
-            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' '))
+            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
                 componentClasses.Add(cssClass);
             }
         }
 
         // Check if component implements IHasSize
-        if (this is IHasSize<Enum> hasSize)
+        if (this is IHasSize hasSize)
         {
             componentClasses.Add(CssClassesReference.Size(hasSize.Size));
         }
@@ -295,28 +330,30 @@ public abstract class UIComponentBase : ComponentBase
         }
 
         // Check if component implements IHasDensity
-        if (this is IHasDensity<Enum> hasDensity)
+        if (this is IHasDensity hasDensity)
         {
             componentClasses.Add(CssClassesReference.Density(hasDensity.Density));
         }
 
-        // Get user classes
-        string userClasses = AdditionalAttributes.TryGetValue("class", out object? existingClass)
-            ? existingClass.ToString() ?? string.Empty
-            : string.Empty;
-
-        // Combine all classes
-        ComputedCssClasses = string.IsNullOrWhiteSpace(userClasses)
+        // Combine component classes with original user classes
+        ComputedCssClasses = string.IsNullOrWhiteSpace(_originalUserClasses)
             ? string.Join(" ", componentClasses)
-            : $"{string.Join(" ", componentClasses)} {userClasses}".Trim();
+            : $"{string.Join(" ", componentClasses)} {_originalUserClasses}".Trim();
+
+        // Store computed classes for next render
+        _lastComputedCssClasses = ComputedCssClasses;
 
         // Update AdditionalAttributes with classes
         if (!string.IsNullOrWhiteSpace(ComputedCssClasses))
         {
             AdditionalAttributes["class"] = ComputedCssClasses;
         }
+        else if (AdditionalAttributes.ContainsKey("class"))
+        {
+            AdditionalAttributes.Remove("class");
+        }
 
-        // Build styles
+        // Build component styles
         Dictionary<string, string> styles = GetAdditionalInlineStyles();
 
         // Add transition styles if applicable
@@ -335,21 +372,85 @@ public abstract class UIComponentBase : ComponentBase
             {
                 styles["--ui-ripple-color"] = hasRippleForStyles.RippleColor.ToString(ColorOutputFormats.Rgba);
             }
+
             if (hasRippleForStyles.RippleDuration > 0)
             {
                 styles["--ui-ripple-duration"] = $"{hasRippleForStyles.RippleDuration}ms";
             }
         }
 
-        // Merge styles
-        MergeAttribute("style", string.Join(";", styles.Select(kv => $"{kv.Key}: {kv.Value}")), ";");
+        // Build component styles string
+        string componentStylesString = string.Join("; ", styles.Select(kv => $"{kv.Key}: {kv.Value}"));
+
+        // Combine with original user styles
+        string computedStyles = string.IsNullOrWhiteSpace(_originalUserStyles)
+            ? componentStylesString
+            : string.IsNullOrWhiteSpace(componentStylesString)
+                ? _originalUserStyles
+                : $"{componentStylesString}; {_originalUserStyles}";
+
+        // Store computed styles for next render
+        _lastComputedStyles = computedStyles;
+
+        // Update AdditionalAttributes with styles
+        if (!string.IsNullOrWhiteSpace(computedStyles))
+        {
+            AdditionalAttributes["style"] = computedStyles;
+        }
+        else if (AdditionalAttributes.ContainsKey("style"))
+        {
+            AdditionalAttributes.Remove("style");
+        }
 
         base.OnParametersSet();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && BehaviorJsInterop != null && this is IJsBehavior jsBehavior)
+        {
+            ElementReference rootElement = jsBehavior.GetRootElement();
+            BehaviorConfiguration config = new();
+
+            // Configure ripple if applicable
+            if (this is IHasRipple hasRipple && !hasRipple.DisableRipple)
+            {
+                config.Ripple = new RippleConfiguration
+                {
+                    Color = hasRipple.RippleColor?.ToString(ColorOutputFormats.Rgba),
+                    Duration = hasRipple.RippleDuration
+                };
+            }
+
+            // Add more behaviors here as needed
+            // if (this is IHasTooltip hasTooltip) { ... }
+
+            // Attach behaviors if any configured
+            if (config.HasAnyBehavior)
+            {
+                _behaviorInstance = await BehaviorJsInterop.AttachBehaviorsAsync(
+                    rootElement, config);
+            }
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public virtual async ValueTask DisposeAsync()
+    {
+        if (_behaviorInstance != null)
+        {
+            await _behaviorInstance.InvokeVoidAsync("dispose");
+            await _behaviorInstance.DisposeAsync();
+        }
+    }
+
     private void MergeAttribute(string key, string newValue, string separator)
     {
-        if (string.IsNullOrWhiteSpace(newValue)) { return; }
+        if (string.IsNullOrWhiteSpace(newValue))
+        {
+            return;
+        }
 
         if (AdditionalAttributes.TryGetValue(key, out object? existing))
         {
@@ -446,13 +547,96 @@ public abstract class Variant : IVariant
 
 
 
+=== CdCSharp.BlazorUI\Components\Features\Behaviors\BehaviorJsInterop.cs ===
+
+using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Types;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+
+namespace CdCSharp.BlazorUI.Components.Features.Behaviors;
+
+public interface IBehaviorJsInterop
+{
+    ValueTask<IJSObjectReference> AttachBehaviorsAsync(
+        ElementReference element,
+        BehaviorConfiguration configuration);
+}
+
+public sealed class BehaviorJsInterop : ModuleJsInteropBase, IBehaviorJsInterop
+{
+    public BehaviorJsInterop(IJSRuntime jsRuntime)
+        : base(jsRuntime, JSModulesReference.BehaviorsJs)
+    {
+    }
+
+    public async ValueTask<IJSObjectReference> AttachBehaviorsAsync(
+        ElementReference element,
+        BehaviorConfiguration configuration)
+    {
+        IJSObjectReference module = await ModuleTask.Value;
+        return await module.InvokeAsync<IJSObjectReference>(
+            "attachBehaviors", element, configuration);
+    }
+}
+
+public class BehaviorConfiguration
+{
+    public RippleConfiguration? Ripple { get; set; }
+
+    public bool HasAnyBehavior => Ripple != null;
+}
+
+public class RippleConfiguration
+{
+    public string? Color { get; set; }
+    public int Duration { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Behaviors\IHasRipple.cs ===
+
+using CdCSharp.BlazorUI.Core.Css;
+
+namespace CdCSharp.BlazorUI.Components.Features.Behaviors;
+
+public interface IHasRipple : IJsBehavior
+{
+    bool DisableRipple { get; set; }
+    CssColor? RippleColor { get; set; }
+    int RippleDuration { get; set; }
+}
+
+
+
+=== CdCSharp.BlazorUI\Components\Features\Behaviors\IJsBehavior.cs ===
+
+using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Components.Features.Behaviors;
+
+public interface IJsBehavior
+{
+    ElementReference GetRootElement();
+}
+
+
+
 === CdCSharp.BlazorUI\Components\Features\Common\IHasDensity.cs ===
 
 namespace CdCSharp.BlazorUI.Components.Features.Common;
 
-public interface IHasDensity<TDensity> where TDensity : Enum
+public interface IHasDensity
 {
-    TDensity Density { get; set; }
+    DensityEnum Density { get; set; }
+}
+
+public enum DensityEnum
+{
+    Comfortable,
+    Standard,
+    Compact
 }
 
 
@@ -479,28 +663,19 @@ public interface IHasFullWidth
 
 
 
-=== CdCSharp.BlazorUI\Components\Features\Common\IHasRipple.cs ===
-
-using CdCSharp.BlazorUI.Core.Css;
-
-namespace CdCSharp.BlazorUI.Components.Features.Common;
-
-public interface IHasRipple
-{
-    bool DisableRipple { get; set; }
-    CssColor? RippleColor { get; set; }
-    int RippleDuration { get; set; }
-}
-
-
-
 === CdCSharp.BlazorUI\Components\Features\Common\IHasSize.cs ===
 
 namespace CdCSharp.BlazorUI.Components.Features.Common;
 
-public interface IHasSize<TSize> where TSize : Enum
+public interface IHasSize
 {
-    TSize Size { get; set; }
+    SizeEnum Size { get; }
+}
+public enum SizeEnum
+{
+    Small,
+    Medium,
+    Large
 }
 
 
@@ -547,7 +722,7 @@ public enum UILoadingIndicatorType
 @using CdCSharp.BlazorUI.Css
 
 @inherits UIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
-@implements IHasSize<UILoadingIndicatorSize>
+@implements IHasSize
 
 @{
     base.BuildRenderTree(__builder);
@@ -557,7 +732,7 @@ public enum UILoadingIndicatorType
     [Parameter] public CssColor? Color { get; set; }
 
     // IHasSize
-    [Parameter] public UILoadingIndicatorSize Size { get; set; } = UILoadingIndicatorSize.Medium;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     /* ========= Variant ========= */
 
@@ -804,19 +979,6 @@ public enum UILoadingIndicatorType
 .ui-size-large.ui-loading-indicator {
     width: 2rem;
     height: 2rem;
-}
-
-
-
-=== CdCSharp.BlazorUI\Components\Features\Loading\UILoadingIndicatorEnums.cs ===
-
-namespace CdCSharp.BlazorUI.Components.Features.Loading;
-
-public enum UILoadingIndicatorSize
-{
-    Small,
-    Medium,
-    Large
 }
 
 
@@ -1436,6 +1598,22 @@ public class TriggerTransitionBuilder
         return this;
     }
 
+    public TriggerTransitionBuilder Background(string background = "rgba(0,0,0,0)", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Background, options);
+        config.CustomProperties["background"] = background;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Border(string border = "1px solid #cccccc", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Border, options);
+        config.CustomProperties["border"] = border;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
     public TriggerTransitionBuilder Translate(string x = "0", string y = "-4px", Action<TransitionOptions>? options = null)
     {
         TransitionConfig config = CreateConfig(TransitionType.Translate, options);
@@ -1793,6 +1971,9 @@ public enum TransitionType
     Contrast,
     Saturate,
 
+    // Background
+    Background,
+
     // Layout
     Shadow,
 
@@ -1814,6 +1995,7 @@ public enum TransitionType
 === CdCSharp.BlazorUI\Components\Generic\Button\UIButton.razor ===
 
 @using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Behaviors
 @using CdCSharp.BlazorUI.Components.Features.Common
 @using CdCSharp.BlazorUI.Components.Features.Loading
 @using CdCSharp.BlazorUI.Components.Features.Transitions
@@ -1826,12 +2008,12 @@ public enum TransitionType
 
 @inherits UIVariantComponentBase<UIButton, UIButtonVariant>
 @implements IHasTransitions
-@implements IHasSize<UIButtonSize>
+@implements IHasSize
 @implements IHasFullWidth
 @implements IHasLoading
 @implements IHasElevation
 @implements IHasRipple
-@implements IHasDensity<UIButtonDensity>
+@implements IHasDensity
 
 @{
     base.BuildRenderTree(__builder);
@@ -1853,7 +2035,7 @@ public enum TransitionType
     [Parameter] public UITransitions? Transitions { get; set; }
 
     // IHasSize
-    [Parameter] public UIButtonSize Size { get; set; } = UIButtonSize.Medium;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     // IHasFullWidth
     [Parameter] public bool FullWidth { get; set; }
@@ -1877,7 +2059,7 @@ public enum TransitionType
     [Parameter] public int RippleDuration { get; set; } = 600;
 
     // IHasDensity
-    [Parameter] public UIButtonDensity Density { get; set; } = UIButtonDensity.Standard;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     /* ========= Variant ========= */
 
@@ -1891,31 +2073,30 @@ public enum TransitionType
     /* ========= Private state ========= */
 
     private bool IsDisabled => Disabled || IsLoading;
-    private int _rippleKey = 0;
+    private ElementReference _buttonElement;
+
+    // IHasRipple implementation (from IJsBehavior)
+    public ElementReference GetRootElement() => _buttonElement;
 
     /* ========= Render ========= */
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <button @attributes="AdditionalAttributes"
+        <button @ref="_buttonElement"
+                @attributes="AdditionalAttributes"
                 type="button"
                 disabled="@IsDisabled"
                 @onclick="HandleClick">
 
-            @if (!DisableRipple)
-            {
-                <span class="@CssClassesReference.Ripple" @key="@_rippleKey"></span>
-            }
-
             @if (IsLoading && LoadingIndicatorVariant != null)
             {
                 <UILoadingIndicator Variant="@LoadingIndicatorVariant"
-                                    Size="GetLoadingSize()"
+                                    Size="Size"
                                     Color="@Color" />
             }
             else if (LeadingIcon != null)
             {
-                <UISvgIcon Icon="@LeadingIcon" Size="@GetIconSize()" />
+                <UISvgIcon Icon="@LeadingIcon" Size="@Size" />
             }
 
             @if (!string.IsNullOrWhiteSpace(Text))
@@ -1925,7 +2106,7 @@ public enum TransitionType
 
             @if (TrailingIcon != null && !IsLoading)
             {
-                <UISvgIcon Icon="@TrailingIcon" Size="@GetIconSize()" />
+                <UISvgIcon Icon="@TrailingIcon" Size="@Size" />
             }
 
         </button>
@@ -1935,37 +2116,10 @@ public enum TransitionType
 
     private async Task HandleClick(MouseEventArgs args)
     {
-        if (!DisableRipple && !IsDisabled)
-        {
-            _rippleKey++;
-        }
-
         if (!IsDisabled)
         {
             await OnClick.InvokeAsync(args);
         }
-    }
-
-    /* ========= Helpers ========= */
-
-    private UISvgIcon.UISvgIconSize GetIconSize()
-    {
-        return Size switch
-        {
-            UIButtonSize.Small => UISvgIcon.UISvgIconSize.Small,
-            UIButtonSize.Large => UISvgIcon.UISvgIconSize.Large,
-            _ => UISvgIcon.UISvgIconSize.Medium
-        };
-    }
-
-    private UILoadingIndicatorSize GetLoadingSize()
-    {
-        return Size switch
-        {
-            UIButtonSize.Small => UILoadingIndicatorSize.Small,
-            UIButtonSize.Large => UILoadingIndicatorSize.Large,
-            _ => UILoadingIndicatorSize.Medium
-        };
     }
 
     /* ========= Styling ========= */
@@ -2022,26 +2176,6 @@ public enum TransitionType
 
 
 
-=== CdCSharp.BlazorUI\Components\Generic\Button\UIButtonEnums.cs ===
-
-namespace CdCSharp.BlazorUI.Components.Generic.Button;
-
-public enum UIButtonSize
-{
-    Small,
-    Medium,
-    Large
-}
-
-public enum UIButtonDensity
-{
-    Comfortable,
-    Standard,
-    Compact
-}
-
-
-
 === CdCSharp.BlazorUI\Components\Generic\Button\UIButtonVariant.cs ===
 
 using CdCSharp.BlazorUI.Components.Abstractions;
@@ -2076,12 +2210,15 @@ public abstract class UIImg : UIComponentBase
 === CdCSharp.BlazorUI\Components\Generic\Svg\UISvgIcon.razor ===
 
 @using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
 @using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Css
 @using CdCSharp.BlazorUI.Media.Icons
 @using Microsoft.AspNetCore.Components.Web
 
 @inherits UIVariantComponentBase<UISvgIcon, UISvgIconVariant>
+
+@implements IHasSize
 
 @{
     base.BuildRenderTree(__builder);
@@ -2093,7 +2230,7 @@ public abstract class UIImg : UIComponentBase
 
     [Parameter] public string? Title { get; set; }
 
-    [Parameter] public UISvgIconSize Size { get; set; } = UISvgIconSize.Medium;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     [Parameter] public CssColor? Color { get; set; }
 
@@ -2125,7 +2262,7 @@ public abstract class UIImg : UIComponentBase
 
     public override IEnumerable<string> GetAdditionalCssClasses()
     {
-        return [CssClassesReference.UISvgIcon, IconSizeClass];
+        return [CssClassesReference.UISvgIcon];
     }
 
     public override Dictionary<string, string> GetAdditionalInlineStyles()
@@ -2138,26 +2275,6 @@ public abstract class UIImg : UIComponentBase
         {
            {"color", Color.ToString(ColorOutputFormats.Rgba) }
         };
-    }
-
-    private string IconSizeClass =>
-            Size switch
-            {
-                UISvgIconSize.Small => CssClassesReference.UISvgIcon_SizeSmall,
-                UISvgIconSize.Medium => CssClassesReference.UISvgIcon_SizeMedium,
-                UISvgIconSize.Large => CssClassesReference.UISvgIcon_SizeLarge,
-                UISvgIconSize.XLarge => CssClassesReference.UISvgIcon_SizeXLarge,
-                UISvgIconSize.XXLarge => CssClassesReference.UISvgIcon_SizeXXLarge,
-                _ => CssClassesReference.UISvgIcon_SizeMedium,
-            };
-
-    public enum UISvgIconSize
-    {
-        Small,
-        Medium,
-        Large,
-        XLarge,
-        XXLarge,
     }
 }
 
@@ -2181,25 +2298,17 @@ public abstract class UIImg : UIComponentBase
     color: currentColor;
 }
 
-.ui-svg-icon-s {
-    font-size: 100%;
-}
+    .ui-svg-icon.ui-size-small {
+        font-size: 100%;
+    }
 
-.ui-svg-icon-m {
-    font-size: 150%;
-}
+    .ui-svg-icon.ui-size-medium {
+        font-size: 150%;
+    }
 
-.ui-svg-icon-l {
-    font-size: 200%;
-}
-
-.ui-svg-icon-xl {
-    font-size: 250%;
-}
-
-.ui-svg-icon-xxl {
-    font-size: 300%;
-}
+    .ui-svg-icon.ui-size-large {
+        font-size: 200%;
+    }
 
 
 
@@ -2277,6 +2386,7 @@ public class AutogenerateCssColorsAttribute : Attribute
 === CdCSharp.BlazorUI\Css\CssClassesReference.cs ===
 
 using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Features.Transitions;
 
 namespace CdCSharp.BlazorUI.Css;
@@ -2290,12 +2400,6 @@ public class CssClassesReference
     public const string UIButton__Text = "ui-button__text";
     //UISvgIcon
     public const string UISvgIcon = "ui-svg-icon";
-
-    public const string UISvgIcon_SizeLarge = "ui-svg-icon-l";
-    public const string UISvgIcon_SizeMedium = "ui-svg-icon-m";
-    public const string UISvgIcon_SizeSmall = "ui-svg-icon-s";
-    public const string UISvgIcon_SizeXLarge = "ui-svg-icon-xl";
-    public const string UISvgIcon_SizeXXLarge = "ui-svg-icon-xxl";
 
     // UIThemeSwitch
     public const string UIThemeSwitch = "ui-theme-switch";
@@ -2326,25 +2430,25 @@ public class CssClassesReference
     public static string Elevation(int level) => $"ui-elevation-{level}";
 
     // Size helper
-    public static string Size<TSize>(TSize size) where TSize : Enum
+    public static string Size(SizeEnum size)
     {
-        return size.ToString().ToLower() switch
+        return size switch
         {
-            "small" => SizeSmall,
-            "medium" => SizeMedium,
-            "large" => SizeLarge,
+            SizeEnum.Small => SizeSmall,
+            SizeEnum.Medium => SizeMedium,
+            SizeEnum.Large => SizeLarge,
             _ => SizeMedium
         };
     }
 
     // Density helper
-    public static string Density<TDensity>(TDensity density) where TDensity : Enum
+    public static string Density(DensityEnum density)
     {
-        return density.ToString().ToLower() switch
+        return density switch
         {
-            "comfortable" => DensityComfortable,
-            "standard" => DensityStandard,
-            "compact" => DensityCompact,
+            DensityEnum.Comfortable => DensityComfortable,
+            DensityEnum.Standard => DensityStandard,
+            DensityEnum.Compact => DensityCompact,
             _ => DensityStandard
         };
     }
@@ -2936,9 +3040,117 @@ html[data-theme="light"] {
 
 
 
+=== CdCSharp.BlazorUI\CssBundle\transition-classes.css ===
+
+/* ========================================
+   Transition Classes
+   Auto-generated - Do not edit manually
+   ======================================== */
+
+/* Base transition setup */
+.ui-has-transitions {
+    transition: all var(--ui-transition-duration, 200ms) var(--ui-transition-easing, ease-in-out) var(--ui-transition-delay, 0ms);
+}
+
+/* Hover transitions */
+.ui-transition-hover-scale:hover {
+    transform: scale(var(--ui-transition-hover-scale, 1.05));
+}
+
+.ui-transition-hover-rotate:hover {
+    transform: rotate(var(--ui-transition-hover-rotate, 5deg));
+}
+
+.ui-transition-hover-fade:hover {
+    opacity: var(--ui-transition-hover-opacity, 0.8);
+}
+
+.ui-transition-hover-shadow:hover {
+    box-shadow: var(--ui-transition-hover-shadow, 0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.ui-transition-hover-color:hover {
+    color: var(--ui-transition-hover-color, var(--palette-primary));
+}
+
+.ui-transition-hover-background:hover {
+    background: var(--ui-transition-hover-background, var(--palette-primary-light));
+}
+
+.ui-transition-hover-translate:hover {
+    transform: translate(var(--ui-transition-hover-x, 0), var(--ui-transition-hover-y, -2px));
+}
+
+.ui-transition-hover-blur:hover {
+    filter: blur(var(--ui-transition-hover-amount, 2px));
+}
+
+.ui-transition-hover-border:hover {
+    border: var(--ui-transition-hover-border);
+}
+
+.ui-transition-hover-backdropblur:hover {
+    backdrop-filter: blur(var(--ui-transition-hover-amount, 8px));
+    -webkit-backdrop-filter: blur(var(--ui-transition-hover-amount, 8px));
+}
+
+/* Combined hover effects */
+.ui-transition-hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.ui-transition-hover-glow:hover {
+    box-shadow: 0 0 20px var(--ui-transition-hover-color, rgba(59, 130, 246, 0.5));
+    transform: scale(1.02);
+}
+
+/* Focus transitions */
+.ui-transition-focus-scale:focus {
+    transform: scale(var(--ui-transition-focus-scale, 1.05));
+}
+
+.ui-transition-focus-shadow:focus {
+    box-shadow: var(--ui-transition-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.3));
+    outline: none;
+}
+
+.ui-transition-focus-border:focus {
+    border: var(--ui-transition-focus-border);
+}
+
+/* Active transitions */
+.ui-transition-active-scale:active {
+    transform: scale(var(--ui-transition-active-scale, 0.98));
+}
+
+/* Disabled transitions */
+.ui-transition-disabled-fade:disabled {
+    opacity: var(--ui-transition-disabled-opacity, 0.5);
+    cursor: not-allowed;
+}
+
+/* Modern CSS features */
+@supports (backdrop-filter: blur(1px)) {
+    .ui-transition-hover-backdropblur {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .ui-has-transitions {
+        transition: none !important;
+    }
+}
+
+
+
 === CdCSharp.BlazorUI\Extensions\ServiceCollectionExtensions.cs ===
 
 using CdCSharp.BlazorUI.Components.Abstractions;
+using CdCSharp.BlazorUI.Components.Features.Behaviors;
+using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
@@ -2954,13 +3166,15 @@ public static class ServiceCollectionExtensions
     {
         services.AddMemoryCache();
 
-        // Variant registries (one per component)
+        // Variant registries
         RegisterVariantRegistry<UIButton, UIButtonVariant>(services);
         RegisterVariantRegistry<UISvgIcon, UISvgIconVariant>(services);
         RegisterVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>(services);
+        RegisterVariantRegistry<UILoadingIndicator, UILoadingIndicatorVariant>(services);
 
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
+        services.AddScoped<IBehaviorJsInterop, BehaviorJsInterop>();
 
         return services;
     }
@@ -3151,6 +3365,84 @@ public sealed class VariantRegistry<TComponent, TVariant> : IVariantRegistry<TCo
 
 
 
+=== CdCSharp.BlazorUI\Types\Behaviors\BehaviorInterop.ts ===
+
+interface RippleConfiguration {
+    color?: string;
+    duration?: number;
+}
+
+interface BehaviorConfiguration {
+    ripple?: RippleConfiguration;
+}
+
+class RippleBehavior {
+    private element: HTMLElement;
+    private config: RippleConfiguration;
+    private clickHandler: (e: MouseEvent) => void;
+
+    constructor(element: HTMLElement, config: RippleConfiguration) {
+        this.element = element;
+        this.config = config;
+        this.clickHandler = this.handleClick.bind(this);
+        this.element.addEventListener('click', this.clickHandler);
+    }
+
+    private handleClick(e: MouseEvent) {
+        const rect = this.element.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        const ripple = document.createElement('span');
+        ripple.className = 'ui-ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+
+        if (this.config.color) {
+            ripple.style.backgroundColor = this.config.color;
+        }
+
+        const duration = this.config.duration || 600;
+        ripple.style.animationDuration = `${duration}ms`;
+
+        this.element.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.remove();
+        }, duration);
+    }
+
+    dispose() {
+        this.element.removeEventListener('click', this.clickHandler);
+    }
+}
+
+class BehaviorManager {
+    private behaviors: Array<{ dispose: () => void }> = [];
+
+    constructor(element: HTMLElement, config: BehaviorConfiguration) {
+        if (config.ripple) {
+            this.behaviors.push(new RippleBehavior(element, config.ripple));
+        }
+    }
+
+    dispose() {
+        this.behaviors.forEach(b => b.dispose());
+        this.behaviors = [];
+    }
+}
+
+export function attachBehaviors(
+    element: HTMLElement,
+    config: BehaviorConfiguration
+): BehaviorManager {
+    return new BehaviorManager(element, config);
+}
+
+
+
 === CdCSharp.BlazorUI\Types\Theme\ThemeInterop.ts ===
 
 const THEME_KEY = 'blazorui-theme';
@@ -3193,6 +3485,7 @@ namespace CdCSharp.BlazorUI.Types;
 public static class JSModulesReference
 {
     public const string ThemeJs = "./_content/CdCSharp.BlazorUI/js/Types/Theme/ThemeInterop.min.js";
+    public const string BehaviorsJs = "./_content/CdCSharp.BlazorUI/js/Types/Behaviors/BehaviorInterop.min.js";
 }
 
 
@@ -3200,6 +3493,13 @@ public static class JSModulesReference
 === CdCSharp.BlazorUI\wwwroot\css\blazorui.css ===
 
 :root{--blazorui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;--blazorui-font-heading: var(--blazorui-font-base);--blazorui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--blazorui-base-font-size: 16px;--blazorui-base-line-height: 1.5;--blazorui-heading-line-height: 1.2;--blazorui-body-margin: 8px;--blazorui-space-1: .5em;--blazorui-space-2: 1em;--blazorui-h1-size: 2em;--blazorui-h2-size: 1.5em;--blazorui-h3-size: 1.17em;--blazorui-h4-size: 1em;--blazorui-h5-size: .83em;--blazorui-h6-size: .67em;--blazorui-focus-color: Highlight;--blazorui-focus-width: 2px;--blazorui-focus-offset: 2px;--blazorui-disabled-opacity: .5;--blazorui-placeholder-opacity: .6;--blazorui-hr-color: gray;--blazorui-hr-width: 1px;--blazorui-hr-style: inset;--blazorui-table-border-spacing: 2px;--blazorui-media-max-width: 100%;--blazorui-tap-highlight: transparent}:where(*,*:before,*:after){box-sizing:border-box;margin:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-decoration:none}html{block-size:100%;font-size:var(--blazorui-base-font-size)}body{margin:var(--blazorui-body-margin);font-family:var(--blazorui-font-base);font-size:1rem;line-height:var(--blazorui-base-line-height)}:where(header,main,footer,section,article,nav,aside,figure,figcaption,details,summary,dialog,form){display:block}:where(h1,h2,h3,h4,h5,h6){font-family:var(--blazorui-font-heading);font-weight:700;line-height:var(--blazorui-heading-line-height)}h1{font-size:var(--blazorui-h1-size);margin-block:.67em}h2{font-size:var(--blazorui-h2-size);margin-block:.83em}h3{font-size:var(--blazorui-h3-size);margin-block:var(--blazorui-space-2)}h4{font-size:var(--blazorui-h4-size);margin-block:1.33em}h5{font-size:var(--blazorui-h5-size);margin-block:1.67em}h6{font-size:var(--blazorui-h6-size);margin-block:2.33em}p,blockquote{margin-block:var(--blazorui-space-2)}blockquote{margin-inline:40px}code,pre,kbd,samp{font-family:var(--blazorui-font-monospace);font-size:.875em}pre{white-space:pre}ul,ol{margin-block:var(--blazorui-space-2);padding-inline-start:40px}ul{list-style:disc}ol{list-style:decimal}table{border-collapse:separate;border-spacing:var(--blazorui-table-border-spacing)}caption{text-align:center}th{font-weight:700;text-align:center}:where(img,svg,video,canvas,picture){display:inline-block;max-width:var(--blazorui-media-max-width);height:auto}hr{margin-block:var(--blazorui-space-1);border:var(--blazorui-hr-width) var(--blazorui-hr-style) var(--blazorui-hr-color);overflow:hidden}a{cursor:pointer}:where(input[type=text],input[type=search],input[type=email],input[type=password],input[type=tel],input[type=url],input:not([type]),textarea,select,button,input[type=button],input[type=submit],input[type=reset]){appearance:none;background:transparent;border:none;padding:0;margin:0;font:inherit;color:inherit;line-height:normal;box-sizing:border-box}textarea{resize:vertical}:where(button,input[type=button],input[type=submit],input[type=reset]){display:inline-flex;align-items:center;justify-content:center;cursor:pointer}input[type=checkbox],input[type=radio]{appearance:none;cursor:pointer}:where(button,input,select,textarea):disabled{cursor:default;opacity:var(--blazorui-disabled-opacity)}:where(input,textarea,select):-webkit-autofill{box-shadow:0 0 0 1000px transparent inset!important;-webkit-text-fill-color:inherit!important}::placeholder{color:inherit;opacity:var(--blazorui-placeholder-opacity)}:focus:not(:focus-visible){outline:none}:focus-visible{outline:var(--blazorui-focus-width) solid var(--blazorui-focus-color);outline-offset:var(--blazorui-focus-offset)}:where(button,input,textarea,select,a){-webkit-tap-highlight-color:var(--blazorui-tap-highlight)}[hidden]{display:none}:root{--dark-background: rgba(15,23,42,1);--dark-error: rgba(239,68,68,1);--dark-foreground: rgba(241,245,249,1);--dark-info: rgba(59,130,246,1);--dark-primary: rgba(96,165,250,1);--dark-primarycontrast: rgba(15,23,42,1);--dark-secondary: rgba(167,139,250,1);--dark-secondarycontrast: rgba(15,23,42,1);--dark-success: rgba(16,185,129,1);--dark-surface: rgba(30,41,59,1);--dark-warning: rgba(245,158,11,1);--light-background: rgba(255,255,255,1);--light-error: rgba(239,68,68,1);--light-foreground: rgba(30,41,59,1);--light-info: rgba(59,130,246,1);--light-primary: rgba(59,130,246,1);--light-primarycontrast: rgba(255,255,255,1);--light-secondary: rgba(139,92,246,1);--light-secondarycontrast: rgba(255,255,255,1);--light-success: rgba(16,185,129,1);--light-surface: rgba(248,250,252,1);--light-warning: rgba(245,158,11,1);--palette-background: var(--dark-background);--palette-error: var(--dark-error);--palette-foreground: var(--dark-foreground);--palette-info: var(--dark-info);--palette-primary: var(--dark-primary);--palette-primarycontrast: var(--dark-primarycontrast);--palette-secondary: var(--dark-secondary);--palette-secondarycontrast: var(--dark-secondarycontrast);--palette-success: var(--dark-success);--palette-surface: var(--dark-surface);--palette-warning: var(--dark-warning)}html[data-theme=dark]{--palette-background: var(--dark-background);--palette-error: var(--dark-error);--palette-foreground: var(--dark-foreground);--palette-info: var(--dark-info);--palette-primary: var(--dark-primary);--palette-primarycontrast: var(--dark-primarycontrast);--palette-secondary: var(--dark-secondary);--palette-secondarycontrast: var(--dark-secondarycontrast);--palette-success: var(--dark-success);--palette-surface: var(--dark-surface);--palette-warning: var(--dark-warning)}html[data-theme=light]{--palette-background: var(--light-background);--palette-error: var(--light-error);--palette-foreground: var(--light-foreground);--palette-info: var(--light-info);--palette-primary: var(--light-primary);--palette-primarycontrast: var(--light-primarycontrast);--palette-secondary: var(--light-secondary);--palette-secondarycontrast: var(--light-secondarycontrast);--palette-success: var(--light-success);--palette-surface: var(--light-surface);--palette-warning: var(--light-warning)}body{background-color:var(--palette-background);color:var(--palette-foreground)}.ui-size-small{font-size:.875rem}.ui-size-medium{font-size:1rem}.ui-size-large{font-size:1.125rem}.ui-density-comfortable{--ui-density-spacing-multiplier: 1.5}.ui-density-standard{--ui-density-spacing-multiplier: 1}.ui-density-compact{--ui-density-spacing-multiplier: .75}.ui-full-width{width:100%}.ui-loading{pointer-events:none;position:relative}.ui-loading:after{content:"";position:absolute;inset:0;background-color:#fff9;pointer-events:none}@media(prefers-color-scheme:dark){.ui-loading:after{background-color:#0009}}.ui-elevation-0{box-shadow:none}.ui-elevation-1{box-shadow:0 0,5px 1px rgba(0,0,0,0,2),0 1px 2px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-2{box-shadow:0 1px 2px rgba(0,0,0,0,2),0 2px 4px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-3{box-shadow:0 1,5px 3px rgba(0,0,0,0,2),0 3px 6px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-4{box-shadow:0 2px 4px rgba(0,0,0,0,2),0 4px 8px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-5{box-shadow:0 2,5px 5px rgba(0,0,0,0,2),0 5px 10px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-6{box-shadow:0 3px 6px rgba(0,0,0,0,2),0 6px 12px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-7{box-shadow:0 3,5px 7px rgba(0,0,0,0,2),0 7px 14px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-8{box-shadow:0 4px 8px rgba(0,0,0,0,2),0 8px 16px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-9{box-shadow:0 4,5px 9px rgba(0,0,0,0,2),0 9px 18px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-10{box-shadow:0 5px 10px rgba(0,0,0,0,2),0 10px 20px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-11{box-shadow:0 5,5px 11px rgba(0,0,0,0,2),0 11px 22px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-12{box-shadow:0 6px 12px rgba(0,0,0,0,2),0 12px 24px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-13{box-shadow:0 6,5px 13px rgba(0,0,0,0,2),0 13px 26px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-14{box-shadow:0 7px 14px rgba(0,0,0,0,2),0 14px 28px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-15{box-shadow:0 7,5px 15px rgba(0,0,0,0,2),0 15px 30px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-16{box-shadow:0 8px 16px rgba(0,0,0,0,2),0 16px 32px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-17{box-shadow:0 8,5px 17px rgba(0,0,0,0,2),0 17px 34px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-18{box-shadow:0 9px 18px rgba(0,0,0,0,2),0 18px 36px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-19{box-shadow:0 9,5px 19px rgba(0,0,0,0,2),0 19px 38px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-20{box-shadow:0 10px 20px rgba(0,0,0,0,2),0 20px 40px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-21{box-shadow:0 10,5px 21px rgba(0,0,0,0,2),0 21px 42px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-22{box-shadow:0 11px 22px rgba(0,0,0,0,2),0 22px 44px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-23{box-shadow:0 11,5px 23px rgba(0,0,0,0,2),0 23px 46px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-elevation-24{box-shadow:0 12px 24px rgba(0,0,0,0,2),0 24px 48px rgba(0,0,0,0,14),0 1px 3px rgba(0,0,0,0,12)}.ui-has-ripple{position:relative;overflow:hidden}.ui-ripple{position:absolute;border-radius:50%;transform:scale(0);animation:ui-ripple-animation var(--ui-ripple-duration, .6s) ease-out;background-color:var(--ui-ripple-color, rgba(0, 0, 0, .1));pointer-events:none}@media(prefers-color-scheme:dark){.ui-ripple{background-color:var(--ui-ripple-color, rgba(255, 255, 255, .1))}}@keyframes ui-ripple-animation{to{transform:scale(4);opacity:0}}
+
+
+
+=== CdCSharp.BlazorUI\wwwroot\js\Types\Behaviors\BehaviorInterop.min.js ===
+
+class e{element;config;clickHandler;constructor(e,t){this.element=e,this.config=t,this.clickHandler=this.handleClick.bind(this),this.element.addEventListener("click",this.clickHandler)}handleClick(e){const t=this.element.getBoundingClientRect(),i=Math.max(t.width,t.height),s=e.clientX-t.left-i/2,n=e.clientY-t.top-i/2,l=document.createElement("span");l.className="ui-ripple",l.style.width=l.style.height=i+"px",l.style.left=s+"px",l.style.top=n+"px",this.config.color&&(l.style.backgroundColor=this.config.color);const c=this.config.duration||600;l.style.animationDuration=`${c}ms`,this.element.appendChild(l),setTimeout(()=>{l.remove()},c)}dispose(){this.element.removeEventListener("click",this.clickHandler)}}class t{behaviors=[];constructor(t,i){i.ripple&&this.behaviors.push(new e(t,i.ripple))}dispose(){this.behaviors.forEach(e=>e.dispose()),this.behaviors=[]}}function i(e,i){return new t(e,i)}export{i as attachBehaviors};
+//# sourceMappingURL=BehaviorInterop.min.js.map
 
 
 
@@ -3245,6 +3545,10 @@ const t="blazorui-theme",e="dark";function n(n){const o=localStorage.getItem(t)?
 
 	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core.CodeGeneration\CdCSharp.BlazorUI.Core.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Types\Behaviors\" />
 	</ItemGroup>
 
 </Project>
@@ -3894,6 +4198,200 @@ public static class CssReset
 
 
 
+=== CdCSharp.BlazorUI.BuildTools\Gens\CssTransitionClasses.cs ===
+
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
+
+namespace CdCSharp.BlazorUI.BuildTools.Gens;
+
+[ExcludeFromCodeCoverage]
+public static class CssTransitionClasses
+{
+    public static string GetCss()
+    {
+        StringBuilder sb = new();
+
+        sb.AppendLine("/* ========================================");
+        sb.AppendLine("   Transition Classes");
+        sb.AppendLine("   Auto-generated - Do not edit manually");
+        sb.AppendLine("   ======================================== */");
+        sb.AppendLine();
+
+        // Base transition class
+        sb.AppendLine("/* Base transition setup */");
+        sb.AppendLine(".ui-has-transitions {");
+        sb.AppendLine("    transition: all var(--ui-transition-duration, 200ms) var(--ui-transition-easing, ease-in-out) var(--ui-transition-delay, 0ms);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Generate hover transitions
+        GenerateHoverTransitions(sb);
+
+        // Generate focus transitions
+        GenerateFocusTransitions(sb);
+
+        // Generate active transitions
+        GenerateActiveTransitions(sb);
+
+        // Generate disabled transitions
+        GenerateDisabledTransitions(sb);
+
+        // Modern CSS features support
+        GenerateModernFeatures(sb);
+
+        // Accessibility
+        GenerateAccessibilityFeatures(sb);
+
+        return sb.ToString();
+    }
+
+    private static void GenerateHoverTransitions(StringBuilder sb)
+    {
+        sb.AppendLine("/* Hover transitions */");
+
+        // Scale
+        sb.AppendLine(".ui-transition-hover-scale:hover {");
+        sb.AppendLine("    transform: scale(var(--ui-transition-hover-scale, 1.05));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Rotate
+        sb.AppendLine(".ui-transition-hover-rotate:hover {");
+        sb.AppendLine("    transform: rotate(var(--ui-transition-hover-rotate, 5deg));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Fade
+        sb.AppendLine(".ui-transition-hover-fade:hover {");
+        sb.AppendLine("    opacity: var(--ui-transition-hover-opacity, 0.8);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Shadow
+        sb.AppendLine(".ui-transition-hover-shadow:hover {");
+        sb.AppendLine("    box-shadow: var(--ui-transition-hover-shadow, 0 4px 8px rgba(0, 0, 0, 0.15));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Color
+        sb.AppendLine(".ui-transition-hover-color:hover {");
+        sb.AppendLine("    color: var(--ui-transition-hover-color, var(--palette-primary));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Background
+        sb.AppendLine(".ui-transition-hover-background:hover {");
+        sb.AppendLine("    background: var(--ui-transition-hover-background, var(--palette-primary-light));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Translate
+        sb.AppendLine(".ui-transition-hover-translate:hover {");
+        sb.AppendLine("    transform: translate(var(--ui-transition-hover-x, 0), var(--ui-transition-hover-y, -2px));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Blur
+        sb.AppendLine(".ui-transition-hover-blur:hover {");
+        sb.AppendLine("    filter: blur(var(--ui-transition-hover-amount, 2px));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Border
+        sb.AppendLine(".ui-transition-hover-border:hover {");
+        sb.AppendLine("    border: var(--ui-transition-hover-border);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Backdrop Blur
+        sb.AppendLine(".ui-transition-hover-backdropblur:hover {");
+        sb.AppendLine("    backdrop-filter: blur(var(--ui-transition-hover-amount, 8px));");
+        sb.AppendLine("    -webkit-backdrop-filter: blur(var(--ui-transition-hover-amount, 8px));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Combined effects
+        sb.AppendLine("/* Combined hover effects */");
+        sb.AppendLine(".ui-transition-hover-lift:hover {");
+        sb.AppendLine("    transform: translateY(-4px);");
+        sb.AppendLine("    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        sb.AppendLine(".ui-transition-hover-glow:hover {");
+        sb.AppendLine("    box-shadow: 0 0 20px var(--ui-transition-hover-color, rgba(59, 130, 246, 0.5));");
+        sb.AppendLine("    transform: scale(1.02);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+    }
+
+    private static void GenerateFocusTransitions(StringBuilder sb)
+    {
+        sb.AppendLine("/* Focus transitions */");
+
+        sb.AppendLine(".ui-transition-focus-scale:focus {");
+        sb.AppendLine("    transform: scale(var(--ui-transition-focus-scale, 1.05));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        sb.AppendLine(".ui-transition-focus-shadow:focus {");
+        sb.AppendLine("    box-shadow: var(--ui-transition-focus-shadow, 0 0 0 3px rgba(59, 130, 246, 0.3));");
+        sb.AppendLine("    outline: none;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        sb.AppendLine(".ui-transition-focus-border:focus {");
+        sb.AppendLine("    border: var(--ui-transition-focus-border);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+    }
+
+    private static void GenerateActiveTransitions(StringBuilder sb)
+    {
+        sb.AppendLine("/* Active transitions */");
+
+        sb.AppendLine(".ui-transition-active-scale:active {");
+        sb.AppendLine("    transform: scale(var(--ui-transition-active-scale, 0.98));");
+        sb.AppendLine("}");
+        sb.AppendLine();
+    }
+
+    private static void GenerateDisabledTransitions(StringBuilder sb)
+    {
+        sb.AppendLine("/* Disabled transitions */");
+
+        sb.AppendLine(".ui-transition-disabled-fade:disabled {");
+        sb.AppendLine("    opacity: var(--ui-transition-disabled-opacity, 0.5);");
+        sb.AppendLine("    cursor: not-allowed;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+    }
+
+    private static void GenerateModernFeatures(StringBuilder sb)
+    {
+        sb.AppendLine("/* Modern CSS features */");
+        sb.AppendLine("@supports (backdrop-filter: blur(1px)) {");
+        sb.AppendLine("    .ui-transition-hover-backdropblur {");
+        sb.AppendLine("        background: rgba(255, 255, 255, 0.1);");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        sb.AppendLine();
+    }
+
+    private static void GenerateAccessibilityFeatures(StringBuilder sb)
+    {
+        sb.AppendLine("/* Prefers reduced motion */");
+        sb.AppendLine("@media (prefers-reduced-motion: reduce) {");
+        sb.AppendLine("    .ui-has-transitions {");
+        sb.AppendLine("        transition: none !important;");
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+    }
+}
+
+
+
 === CdCSharp.BlazorUI.BuildTools\CdCSharp.BlazorUI.BuildTools.csproj ===
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -4033,6 +4531,7 @@ public static class ConfigTemplates
 @import './themes.css';
 @import './initialize-themes.css';
 @import './common-classes.css';
+@import './transition-classes.css';
 """;
 
     public static string GetMainCssEntryJs() => """
@@ -4663,6 +5162,11 @@ async Task BuildAll(string projectPath)
     string commonClassesCss = CssCommonClasses.GetCss();
     File.WriteAllText(commonClassesPath, commonClassesCss);
     Console.WriteLine($"Common classes CSS generated successfully at: {commonClassesPath}");
+
+    string transitionClassesPath = Path.Combine(projectPath, "CssBundle", "transition-classes.css");
+    string transitionClassesCss = CssTransitionClasses.GetCss();
+    File.WriteAllText(transitionClassesPath, transitionClassesCss);
+    Console.WriteLine($"Transition classes CSS generated successfully at: {transitionClassesPath}");
 
     // 2. Ensure npm packages are installed
     await NpmManager.EnsureNpmInstalled(projectPath);

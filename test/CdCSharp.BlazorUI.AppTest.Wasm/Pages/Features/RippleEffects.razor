@@ -1,0 +1,283 @@
+﻿@page "/features/ripple-effects"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Css
+
+<PageTitle>Ripple Effects - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Ripple Effects</h1>
+    <p class="doc-intro">
+        Ripple effects provide visual feedback when users interact with components, 
+        creating a natural and responsive feel inspired by material design.
+    </p>
+
+    <div class="doc-section">
+        <h2>Basic Ripple</h2>
+        <ComponentDemo Code="@basicRippleCode">
+            <Demo>
+                <div class="ripple-demo">
+                    <UIButton Text="Click for Ripple" DisableRipple="false" />
+                    <UIButton Text="No Ripple" DisableRipple="true" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Ripple Colors</h2>
+        <ComponentDemo Code="@rippleColorsCode">
+            <Demo>
+                <div class="ripple-demo">
+                    <UIButton Text="Default Ripple" DisableRipple="false" />
+                    <UIButton Text="Blue Ripple" DisableRipple="false" RippleColor="@UIColor.Blue.Default" />
+                    <UIButton Text="Green Ripple" DisableRipple="false" RippleColor="@UIColor.Green.Default" />
+                    <UIButton Text="Red Ripple" DisableRipple="false" RippleColor="@UIColor.Red.Default" />
+                    <UIButton Text="Custom Color" DisableRipple="false" RippleColor="@(new CssColor("#FF6B6B"))" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Ripple Duration</h2>
+        <ComponentDemo Code="@rippleDurationCode">
+            <Demo>
+                <div class="ripple-demo">
+                    <UIButton Text="Fast (300ms)" DisableRipple="false" RippleDuration="300" />
+                    <UIButton Text="Normal (600ms)" DisableRipple="false" RippleDuration="600" />
+                    <UIButton Text="Slow (1000ms)" DisableRipple="false" RippleDuration="1000" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>How Ripple Works</h2>
+        <div class="ripple-explanation">
+            <div class="explanation-card">
+                <h4>1. Click Detection</h4>
+                <p>When a user clicks, the component captures the click position relative to the element.</p>
+            </div>
+            
+            <div class="explanation-card">
+                <h4>2. Ripple Creation</h4>
+                <p>A circular ripple element is created at the click position and begins expanding.</p>
+            </div>
+            
+            <div class="explanation-card">
+                <h4>3. Animation</h4>
+                <p>The ripple expands from the click point to cover the entire component with a fade effect.</p>
+            </div>
+            
+            <div class="explanation-card">
+                <h4>4. Cleanup</h4>
+                <p>After the animation completes, the ripple element is removed from the DOM.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Custom Ripple Implementation</h2>
+        <p>To add ripple effects to custom components:</p>
+        
+        <CodeBlock Code="@customImplementationCode" Language="csharp" Title="Custom Component with Ripple" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Ripple on Different Surfaces</h2>
+        <ComponentDemo Code="@surfacesCode">
+            <Demo>
+                <div class="surfaces-demo">
+                    <div class="ripple-surface ripple-surface--light ui-has-ripple">
+                        <h5>Light Surface</h5>
+                        <p>Click anywhere in this box</p>
+                    </div>
+                    
+                    <div class="ripple-surface ripple-surface--dark ui-has-ripple">
+                        <h5>Dark Surface</h5>
+                        <p>Click anywhere in this box</p>
+                    </div>
+                    
+                    <div class="ripple-surface ripple-surface--primary ui-has-ripple">
+                        <h5>Primary Surface</h5>
+                        <p>Click anywhere in this box</p>
+                    </div>
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Performance Considerations</h2>
+        <ul>
+            <li>Ripple effects use CSS animations for optimal performance</li>
+            <li>Elements are dynamically created and destroyed to minimize DOM impact</li>
+            <li>Hardware acceleration is utilized where available</li>
+            <li>Multiple simultaneous ripples are supported without performance degradation</li>
+        </ul>
+    </div>
+
+    <div class="doc-section">
+        <h2>Accessibility</h2>
+        <div class="doc-note doc-note--info">
+            <strong>Note:</strong> Ripple effects are purely visual and don't affect keyboard navigation 
+            or screen reader functionality. They enhance the experience for sighted users while maintaining 
+            full accessibility for all users.
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable TItem="RippleProperty" Items="@RippleProperties">
+            <PropertyTemplate Context="prop">
+                <td><code>@prop.Name</code></td>
+                <td><code>@prop.Type</code></td>
+                <td><code>@prop.Default</code></td>
+                <td>@prop.Description</td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+</div>
+
+@code {
+    private string basicRippleCode = @"<UIButton Text=""Click for Ripple"" DisableRipple=""false"" />
+<UIButton Text=""No Ripple"" DisableRipple=""true"" />";
+
+    private string rippleColorsCode = @"<UIButton Text=""Default Ripple"" DisableRipple=""false"" />
+<UIButton Text=""Blue Ripple"" DisableRipple=""false"" RippleColor=""@UIColor.Blue"" />
+<UIButton Text=""Green Ripple"" DisableRipple=""false"" RippleColor=""@UIColor.Green"" />
+<UIButton Text=""Custom Color"" DisableRipple=""false"" RippleColor=""@(new CssColor(""#FF6B6B""))"" />";
+
+    private string rippleDurationCode = @"<UIButton Text=""Fast (300ms)"" DisableRipple=""false"" RippleDuration=""300"" />
+<UIButton Text=""Normal (600ms)"" DisableRipple=""false"" RippleDuration=""600"" />
+<UIButton Text=""Slow (1000ms)"" DisableRipple=""false"" RippleDuration=""1000"" />";
+
+    private string customImplementationCode = @"@implements IHasRipple
+@implements IJsBehavior
+
+<div @ref=""_element"" class=""my-component"">
+    <!-- Component content -->
+</div>
+
+@code {
+    // IHasRipple implementation
+    [Parameter] public bool DisableRipple { get; set; }
+    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public int RippleDuration { get; set; } = 600;
+
+    // IJsBehavior implementation
+    private ElementReference _element;
+    public ElementReference GetRootElement() => _element;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !DisableRipple)
+        {
+            // Ripple behavior is automatically attached by the framework
+            // when implementing IHasRipple
+        }
+    }
+}";
+
+    private string surfacesCode = @"<!-- Add ui-has-ripple class to any element -->
+<div class=""surface ui-has-ripple"">
+    Click anywhere for ripple effect
+</div>
+
+<!-- With custom ripple color -->
+<div class=""surface ui-has-ripple"" 
+     style=""--ui-ripple-color: rgba(255, 107, 107, 0.3);"">
+    Custom ripple color
+</div>";
+
+    private record RippleProperty(string Name, string Type, string Default, string Description);
+
+    private List<RippleProperty> RippleProperties = new()
+    {
+        new("DisableRipple", "bool", "false", "Whether to disable the ripple effect"),
+        new("RippleColor", "CssColor?", "null", "Custom color for the ripple effect"),
+        new("RippleDuration", "int", "600", "Duration of the ripple animation in milliseconds"),
+    };
+}
+
+<style>
+    .ripple-demo {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .ripple-explanation {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+
+    .explanation-card {
+        padding: 1.5rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        text-align: center;
+    }
+
+    .explanation-card h4 {
+        margin: 0 0 0.75rem 0;
+        color: var(--palette-primary);
+    }
+
+    .explanation-card p {
+        margin: 0;
+        font-size: 0.875rem;
+    }
+
+    .surfaces-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .ripple-surface {
+        padding: 2rem;
+        border-radius: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s ease;
+    }
+
+    .ripple-surface:active {
+        transform: scale(0.98);
+    }
+
+    .ripple-surface--light {
+        background: var(--palette-surface);
+        border: 1px solid var(--palette-foreground);
+    }
+
+    .ripple-surface--dark {
+        background: var(--palette-foreground);
+        color: var(--palette-background);
+    }
+
+    .ripple-surface--primary {
+        background: var(--palette-primary);
+        color: var(--palette-primary-contrast);
+    }
+
+    .ripple-surface h5 {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .ripple-surface p {
+        margin: 0;
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+</style>

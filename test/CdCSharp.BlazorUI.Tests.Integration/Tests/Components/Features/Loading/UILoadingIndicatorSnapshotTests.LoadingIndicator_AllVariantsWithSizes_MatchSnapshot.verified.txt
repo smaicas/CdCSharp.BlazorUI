@@ -1,0 +1,86 @@
+﻿[
+  {
+    Variant: Spinner,
+    Size: Small,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-small" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Variant: Spinner,
+    Size: Medium,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-medium" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Variant: Spinner,
+    Size: Large,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-large" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Variant: LinearIndeterminate,
+    Size: Small,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--linearindeterminate ui-size-small" b-2rktlkqi2e><div class="ui-loading-linear" b-2rktlkqi2e><div class="ui-loading-linear__bar" b-2rktlkqi2e></div></div></div>
+  },
+  {
+    Variant: LinearIndeterminate,
+    Size: Medium,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--linearindeterminate ui-size-medium" b-2rktlkqi2e><div class="ui-loading-linear" b-2rktlkqi2e><div class="ui-loading-linear__bar" b-2rktlkqi2e></div></div></div>
+  },
+  {
+    Variant: LinearIndeterminate,
+    Size: Large,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--linearindeterminate ui-size-large" b-2rktlkqi2e><div class="ui-loading-linear" b-2rktlkqi2e><div class="ui-loading-linear__bar" b-2rktlkqi2e></div></div></div>
+  },
+  {
+    Variant: CircularProgress,
+    Size: Small,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--circularprogress ui-size-small" b-2rktlkqi2e><svg class="ui-loading-circular" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Variant: CircularProgress,
+    Size: Medium,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--circularprogress ui-size-medium" b-2rktlkqi2e><svg class="ui-loading-circular" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Variant: CircularProgress,
+    Size: Large,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--circularprogress ui-size-large" b-2rktlkqi2e><svg class="ui-loading-circular" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Variant: Dots,
+    Size: Small,
+    Html:
+<div class="ui-loading-indicator ui-loading-indicator--dots ui-size-small" b-2rktlkqi2e><span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span></div>
+  },
+  {
+    Variant: Dots,
+    Size: Medium,
+    Html:
+<div class="ui-loading-indicator ui-loading-indicator--dots ui-size-medium" b-2rktlkqi2e><span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span></div>
+  },
+  {
+    Variant: Dots,
+    Size: Large,
+    Html:
+<div class="ui-loading-indicator ui-loading-indicator--dots ui-size-large" b-2rktlkqi2e><span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span></div>
+  },
+  {
+    Variant: Pulse,
+    Size: Small,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--pulse ui-size-small" b-2rktlkqi2e><span class="ui-loading-pulse" b-2rktlkqi2e></span></div>
+  },
+  {
+    Variant: Pulse,
+    Size: Medium,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--pulse ui-size-medium" b-2rktlkqi2e><span class="ui-loading-pulse" b-2rktlkqi2e></span></div>
+  },
+  {
+    Variant: Pulse,
+    Size: Large,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--pulse ui-size-large" b-2rktlkqi2e><span class="ui-loading-pulse" b-2rktlkqi2e></span></div>
+  }
+]

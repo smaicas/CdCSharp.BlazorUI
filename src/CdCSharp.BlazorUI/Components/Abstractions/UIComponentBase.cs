@@ -12,6 +12,10 @@ namespace CdCSharp.BlazorUI.Components.Abstractions;
 public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
 {
     private IJSObjectReference? _behaviorInstance;
+    private string? _lastComputedCssClasses;
+    private string? _originalUserClasses;
+    private string? _lastComputedStyles;
+    private string? _originalUserStyles;
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
@@ -26,6 +30,30 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
 
     protected override void OnParametersSet()
     {
+        // Handle CSS Classes
+        string currentClasses = AdditionalAttributes.TryGetValue("class", out object? existingClass)
+            ? existingClass.ToString() ?? string.Empty
+            : string.Empty;
+
+        // Detect if these are original user classes or our computed classes
+        if (_lastComputedCssClasses == null || currentClasses != _lastComputedCssClasses)
+        {
+            // This is either first render or user changed the classes externally
+            _originalUserClasses = currentClasses;
+        }
+
+        // Handle Inline Styles
+        string currentStyles = AdditionalAttributes.TryGetValue("style", out object? existingStyle)
+            ? existingStyle.ToString() ?? string.Empty
+            : string.Empty;
+
+        // Detect if these are original user styles or our computed styles
+        if (_lastComputedStyles == null || currentStyles != _lastComputedStyles)
+        {
+            // This is either first render or user changed the styles externally
+            _originalUserStyles = currentStyles;
+        }
+
         // Get component classes
         List<string> componentClasses = [.. GetAdditionalCssClasses()];
 
@@ -33,7 +61,7 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
         if (this is IHasTransitions hasTransitions && hasTransitions.Transitions?.HasTransitions == true)
         {
             componentClasses.Add(CssClassesReference.HasTransitions);
-            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' '))
+            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' ', StringSplitOptions.RemoveEmptyEntries))
             {
                 componentClasses.Add(cssClass);
             }
@@ -58,9 +86,9 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
         }
 
         // Check if component implements IHasElevation
-        if (this is IHasElevation hasElevation && hasElevation.Elevation > 0)
+        if (this is IHasElevation hasElevation && hasElevation.Elevation != null)
         {
-            componentClasses.Add(CssClassesReference.Elevation(Math.Clamp(hasElevation.Elevation, 0, 24)));
+            componentClasses.Add(CssClassesReference.Elevation(Math.Clamp((int)hasElevation.Elevation, 0, 24)));
         }
 
         // Check if component implements IHasRipple
@@ -75,23 +103,25 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
             componentClasses.Add(CssClassesReference.Density(hasDensity.Density));
         }
 
-        // Get user classes
-        string userClasses = AdditionalAttributes.TryGetValue("class", out object? existingClass)
-            ? existingClass.ToString() ?? string.Empty
-            : string.Empty;
-
-        // Combine all classes
-        ComputedCssClasses = string.IsNullOrWhiteSpace(userClasses)
+        // Combine component classes with original user classes
+        ComputedCssClasses = string.IsNullOrWhiteSpace(_originalUserClasses)
             ? string.Join(" ", componentClasses)
-            : $"{string.Join(" ", componentClasses)} {userClasses}".Trim();
+            : $"{string.Join(" ", componentClasses)} {_originalUserClasses}".Trim();
+
+        // Store computed classes for next render
+        _lastComputedCssClasses = ComputedCssClasses;
 
         // Update AdditionalAttributes with classes
         if (!string.IsNullOrWhiteSpace(ComputedCssClasses))
         {
             AdditionalAttributes["class"] = ComputedCssClasses;
         }
+        else if (AdditionalAttributes.ContainsKey("class"))
+        {
+            AdditionalAttributes.Remove("class");
+        }
 
-        // Build styles
+        // Build component styles
         Dictionary<string, string> styles = GetAdditionalInlineStyles();
 
         // Add transition styles if applicable
@@ -110,14 +140,35 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
             {
                 styles["--ui-ripple-color"] = hasRippleForStyles.RippleColor.ToString(ColorOutputFormats.Rgba);
             }
+
             if (hasRippleForStyles.RippleDuration > 0)
             {
                 styles["--ui-ripple-duration"] = $"{hasRippleForStyles.RippleDuration}ms";
             }
         }
 
-        // Merge styles
-        MergeAttribute("style", string.Join(";", styles.Select(kv => $"{kv.Key}: {kv.Value}")), ";");
+        // Build component styles string
+        string componentStylesString = string.Join("; ", styles.Select(kv => $"{kv.Key}: {kv.Value}"));
+
+        // Combine with original user styles
+        string computedStyles = string.IsNullOrWhiteSpace(_originalUserStyles)
+            ? componentStylesString
+            : string.IsNullOrWhiteSpace(componentStylesString)
+                ? _originalUserStyles
+                : $"{componentStylesString}; {_originalUserStyles}";
+
+        // Store computed styles for next render
+        _lastComputedStyles = computedStyles;
+
+        // Update AdditionalAttributes with styles
+        if (!string.IsNullOrWhiteSpace(computedStyles))
+        {
+            AdditionalAttributes["style"] = computedStyles;
+        }
+        else if (AdditionalAttributes.ContainsKey("style"))
+        {
+            AdditionalAttributes.Remove("style");
+        }
 
         base.OnParametersSet();
     }
@@ -126,6 +177,12 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
     {
         if (firstRender && BehaviorJsInterop != null && this is IJsBehavior jsBehavior)
         {
+            // Check if component is loading - don't attach behaviors during loading state
+            if (this is IHasLoading hasLoading && hasLoading.IsLoading)
+            {
+                return; // Skip behavior attachment when loading
+            }
+
             ElementReference rootElement = jsBehavior.GetRootElement();
             BehaviorConfiguration config = new();
 
@@ -159,20 +216,6 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
         {
             await _behaviorInstance.InvokeVoidAsync("dispose");
             await _behaviorInstance.DisposeAsync();
-        }
-    }
-
-    private void MergeAttribute(string key, string newValue, string separator)
-    {
-        if (string.IsNullOrWhiteSpace(newValue)) { return; }
-
-        if (AdditionalAttributes.TryGetValue(key, out object? existing))
-        {
-            AdditionalAttributes[key] = $"{newValue}{separator}{existing}";
-        }
-        else
-        {
-            AdditionalAttributes[key] = newValue;
         }
     }
 }

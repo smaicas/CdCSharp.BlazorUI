@@ -1,0 +1,431 @@
+﻿@page "/getting-started/first-steps"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Features.Transitions
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+@using CdCSharp.BlazorUI.Css
+@using CdCSharp.BlazorUI.Media.Icons
+@using CdCSharp.BlazorUI.Core.Theming
+
+<PageTitle>First Steps - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>First Steps</h1>
+    <p class="doc-intro">
+        Now that you've installed CdCSharp.BlazorUI, let's build your first components and explore 
+        the library's features through practical examples.
+    </p>
+
+    <div class="doc-section">
+        <h2>1. Your First Component</h2>
+        <p>Let's start with a simple button component:</p>
+        
+        <ComponentDemo Code="@firstButtonCode">
+            <Demo>
+                <UIButton Text="Hello BlazorUI!" 
+                         OnClick="@(() => _clickCount++)" />
+                <p style="margin-top: 1rem;">Button clicked: @_clickCount times</p>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>2. Adding Icons and States</h2>
+        <p>Enhance your button with icons and loading states:</p>
+        
+        <ComponentDemo Code="@enhancedButtonCode">
+            <Demo>
+                <div class="demo-buttons">
+                    <UIButton Text="Save" 
+                             LeadingIcon="@UIIcons.MaterialIconsRound.i_save"
+                             OnClick="SaveData"
+                             IsLoading="@_isSaving"
+                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
+                    
+                    <UIButton Text="Delete" 
+                              TrailingIcon="@UIIcons.MaterialIconsRound.i_restore_from_trash"
+                             Color="@UIColor.Red.Default" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>3. Building a Simple Form</h2>
+        <p>Combine components to create interactive forms:</p>
+        
+        <ComponentDemo Code="@formExampleCode">
+            <Demo>
+                <div class="simple-form">
+                    <h4>User Settings</h4>
+                    
+                    <div class="form-group">
+                        <label>Theme Preference</label>
+                        <UIThemeSwitch />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Display Density</label>
+                        <div class="button-group">
+                            <UIButton Text="Comfortable" 
+                                     Density="DensityEnum.Comfortable"
+                                     OnClick="@(() => _selectedDensity = DensityEnum.Comfortable)" />
+                            <UIButton Text="Standard" 
+                                     Density="DensityEnum.Standard"
+                                     OnClick="@(() => _selectedDensity = DensityEnum.Standard)" />
+                            <UIButton Text="Compact" 
+                                     Density="DensityEnum.Compact"
+                                     OnClick="@(() => _selectedDensity = DensityEnum.Compact)" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <UIButton Text="Save Settings" 
+                                 LeadingIcon="@UIIcons.MaterialIconsRound.i_save"
+                                 Transitions="@UITransitionPresets.HoverLift"
+                                 OnClick="SaveSettings" />
+                    </div>
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>4. Creating a Card Component</h2>
+        <p>Use elevation and transitions to create engaging cards:</p>
+        
+        <ComponentDemo Code="@cardComponentCode">
+            <Demo>
+                <div class="card-grid">
+                    @foreach (var card in _sampleCards)
+                    {
+                        <div class="custom-card ui-elevation-2 ui-has-transitions ui-transition-hover-lift">
+                            <div class="card-icon">
+                                <UISvgIcon Icon="@card.Icon" Size="SizeEnum.Large" class="color-primary" />
+                            </div>
+                            <h4>@card.Title</h4>
+                            <p>@card.Description</p>
+                            <UIButton Text="Learn More" 
+                                     Size="SizeEnum.Small"
+                                     Transitions="@UITransitionPresets.HoverScale" />
+                        </div>
+                    }
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>5. Working with Transitions</h2>
+        <p>Add smooth animations to enhance user experience:</p>
+        
+        <ComponentDemo Code="@transitionsExampleCode">
+            <Demo>
+                <div class="transition-examples">
+                    <UIButton Text="Hover to Scale" 
+                             Transitions="@UITransitionPresets.HoverScale" />
+                    
+                    <UIButton Text="Hover to Lift" 
+                             Transitions="@UITransitionPresets.HoverLift"
+                             Elevation="2" />
+                    
+                    <UIButton Text="Custom Animation" 
+                             Transitions="@_customTransition" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>6. Building a Complete Page</h2>
+        <p>Here's an example of a complete page using multiple components:</p>
+        
+        <CodeBlock Code="@completePageCode" Language="razor" Title="CompletePage.razor" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Next Steps</h2>
+        
+        <div class="next-steps-grid">
+            <a href="/components/buttons" class="next-step-card">
+                <h4>Explore Components</h4>
+                <p>Dive deep into each component's features and properties.</p>
+            </a>
+            
+            <a href="/theming/overview" class="next-step-card">
+                <h4>Customize Themes</h4>
+                <p>Learn how to create custom themes for your brand.</p>
+            </a>
+            
+            <a href="/features/transitions" class="next-step-card">
+                <h4>Master Animations</h4>
+                <p>Create engaging interactions with the transition system.</p>
+            </a>
+            
+            <a href="/utilities/css-classes" class="next-step-card">
+                <h4>Utility Classes</h4>
+                <p>Speed up development with ready-to-use CSS classes.</p>
+            </a>
+        </div>
+    </div>
+
+    <div class="doc-note doc-note--success">
+        <strong>Congratulations!</strong> You're now ready to build amazing applications with CdCSharp.BlazorUI. 
+        Remember to check the component documentation for detailed API references and advanced features.
+    </div>
+</div>
+
+@code {
+    private int _clickCount = 0;
+    private bool _isSaving = false;
+    private DensityEnum _selectedDensity = DensityEnum.Standard;
+
+    private async Task SaveData()
+    {
+        _isSaving = true;
+        await Task.Delay(2000); // Simulate save operation
+        _isSaving = false;
+    }
+
+    private async Task SaveSettings()
+    {
+        // Simulate saving settings
+        await Task.Delay(1000);
+    }
+
+    private UITransitions _customTransition = UITransitionPresets.Create()
+        .OnHover()
+            .Scale(1.05f, options => {
+                options.Duration = TimeSpan.FromMilliseconds(400);
+                options.Easing = easing => easing.CubicBezier().MaterialDecelerate();
+            })
+            .Shadow("0 10px 20px rgba(139, 92, 246, 0.3)")
+        .Build();
+
+    private record CardData(string Icon, string Title, string Description);
+
+    private List<CardData> _sampleCards = new()
+    {
+        new(UIIcons.MaterialIconsRound.i_flashlight_on, "Fast", "Optimized for performance with minimal overhead."),
+        new(UIIcons.MaterialIconsRound.i_palette, "Beautiful", "Professional design with customizable themes."),
+        new(UIIcons.MaterialIconsRound.i_code, "Simple", "Clean API that's easy to learn and use."),
+    };
+
+    private string firstButtonCode = @"<UIButton Text=""Hello BlazorUI!"" 
+         OnClick=""@(() => Console.WriteLine(\""Clicked!\""))"" />";
+
+    private string enhancedButtonCode = @"<UIButton Text=""Save"" 
+         LeadingIcon=""@UIIcons.Common.Save""
+         OnClick=""SaveData""
+         IsLoading=""@_isSaving""
+         LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />
+
+<UIButton Text=""Delete"" 
+         TrailingIcon=""@UIIcons.Common.Trash""
+         Color=""@UIColor.Red"" />";
+
+    private string formExampleCode = @"<div class=""form-group"">
+    <label>Theme Preference</label>
+    <UIThemeSwitch />
+</div>
+
+<div class=""form-group"">
+    <label>Display Density</label>
+    <div class=""button-group"">
+        <UIButton Text=""Comfortable"" 
+                 Density=""DensityEnum.Comfortable""
+                 OnClick=""@(() => _selectedDensity = DensityEnum.Comfortable)""
+                 Color=""@(_selectedDensity == DensityEnum.Comfortable ? \""var(--palette-primary)\"" : null)"" />
+        <!-- Additional buttons... -->
+    </div>
+</div>";
+
+    private string cardComponentCode = @"<div class=""custom-card ui-elevation-2 ui-has-transitions ui-transition-hover-lift"">
+    <div class=""card-icon"">
+        <UISvgIcon Icon=""@UIIcons.Common.Lightning"" Size=""SizeEnum.Large"" Color=""var(--palette-primary)"" />
+    </div>
+    <h4>Fast Performance</h4>
+    <p>Optimized for speed and efficiency.</p>
+    <UIButton Text=""Learn More"" Size=""SizeEnum.Small"" />
+</div>";
+
+    private string transitionsExampleCode = @"// Using preset transitions
+<UIButton Text=""Hover to Scale"" 
+         Transitions=""@UITransitionPresets.HoverScale"" />
+
+// Creating custom transitions
+private UITransitions _customTransition = UITransitionPresets.Create()
+    .OnHover()
+        .Scale(1.05f, options => {
+            options.Duration = TimeSpan.FromMilliseconds(400);
+            options.Easing = easing => easing.CubicBezier().MaterialDecelerate();
+        })
+        .And()
+        .Shadow(\""0 10px 20px rgba(139, 92, 246, 0.3)\"")
+    .Build();";
+
+    private string completePageCode = @"@page ""/dashboard""
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+@using CdCSharp.BlazorUI.Media.Icons
+
+<div class=""dashboard"">
+    <header class=""dashboard-header"">
+        <h1>Dashboard</h1>
+        <div class=""header-actions"">
+            <UIButton Text=""New Item"" 
+                     LeadingIcon=""@UIIcons.Common.Plus""
+                     Transitions=""@UITransitionPresets.HoverLift"" />
+            <UIThemeSwitch Variant=""UIThemeSwitchVariant.SunMoon"" />
+        </div>
+    </header>
+
+    <div class=""dashboard-content"">
+        <div class=""stats-grid"">
+            @foreach (var stat in Statistics)
+            {
+                <div class=""stat-card ui-elevation-2"">
+                    <UISvgIcon Icon=""@stat.Icon"" Size=""SizeEnum.Large"" />
+                    <h3>@stat.Value</h3>
+                    <p>@stat.Label</p>
+                </div>
+            }
+        </div>
+
+        <div class=""actions-section"">
+            <h2>Quick Actions</h2>
+            <div class=""action-buttons"">
+                <UIButton Text=""Generate Report"" 
+                         Icon=""@UIIcons.Common.Document""
+                         IsLoading=""@_isGenerating""
+                         LoadingIndicatorVariant=""UILoadingIndicatorVariant.Dots"" />
+                
+                <UIButton Text=""Export Data"" 
+                         Icon=""@UIIcons.Common.Download""
+                         Elevation=""2"" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool _isGenerating = false;
+    
+    private List<StatData> Statistics = new()
+    {
+        new(\""1,234\"", \""Active Users\"", UIIcons.Common.Users),
+        new(\""567\"", \""Transactions\"", UIIcons.Common.TrendingUp),
+        new(\""89%\"", \""Success Rate\"", UIIcons.Common.CheckCircle),
+    };
+    
+    private record StatData(string Value, string Label, string Icon);
+}";
+}
+
+<style>
+    .demo-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .simple-form {
+        max-width: 400px;
+        padding: 2rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+    }
+
+    .simple-form h4 {
+        margin: 0 0 1.5rem 0;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .form-actions {
+        margin-top: 2rem;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .custom-card {
+        padding: 2rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .card-icon {
+        margin-bottom: 1rem;
+    }
+
+    .custom-card h4 {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .custom-card p {
+        margin: 0 0 1.5rem 0;
+        opacity: 0.8;
+        font-size: 0.875rem;
+    }
+
+    .transition-examples {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .next-steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .next-step-card {
+        padding: 1.5rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s ease;
+        display: block;
+    }
+
+    .next-step-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .next-step-card h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--palette-primary);
+    }
+
+    .next-step-card p {
+        margin: 0;
+        opacity: 0.8;
+        font-size: 0.875rem;
+    }
+</style>

@@ -51,16 +51,12 @@
     // IHasElevation
     private int _elevation;
     [Parameter]
-    public int Elevation
-    {
-        get => _elevation;
-        set => _elevation = Math.Clamp(value, 0, 24);
-    }
+    public int? Elevation { get; set; }
 
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public CssColor? RippleColor { get; set; }
-    [Parameter] public int RippleDuration { get; set; } = 600;
+    [Parameter] public int? RippleDuration { get; set; }
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
@@ -95,12 +91,12 @@
             @if (IsLoading && LoadingIndicatorVariant != null)
             {
                 <UILoadingIndicator Variant="@LoadingIndicatorVariant"
-                                    Size="GetLoadingSize()"
+                                    Size="Size"
                                     Color="@Color" />
             }
             else if (LeadingIcon != null)
             {
-                <UISvgIcon Icon="@LeadingIcon" Size="@GetIconSize()" />
+                <UISvgIcon Icon="@LeadingIcon" Size="@Size" />
             }
 
             @if (!string.IsNullOrWhiteSpace(Text))
@@ -110,7 +106,7 @@
 
             @if (TrailingIcon != null && !IsLoading)
             {
-                <UISvgIcon Icon="@TrailingIcon" Size="@GetIconSize()" />
+                <UISvgIcon Icon="@TrailingIcon" Size="@Size" />
             }
 
         </button>
@@ -124,28 +120,6 @@
         {
             await OnClick.InvokeAsync(args);
         }
-    }
-
-    /* ========= Helpers ========= */
-
-    private UISvgIcon.UISvgIconSize GetIconSize()
-    {
-        return Size switch
-        {
-            UIButtonSize.Small => UISvgIcon.UISvgIconSize.Small,
-            UIButtonSize.Large => UISvgIcon.UISvgIconSize.Large,
-            _ => UISvgIcon.UISvgIconSize.Medium
-        };
-    }
-
-    private UILoadingIndicatorSize GetLoadingSize()
-    {
-        return Size switch
-        {
-            UIButtonSize.Small => UILoadingIndicatorSize.Small,
-            UIButtonSize.Large => UILoadingIndicatorSize.Large,
-            _ => UILoadingIndicatorSize.Medium
-        };
     }
 
     /* ========= Styling ========= */

@@ -1,0 +1,48 @@
+﻿<div class="component-demo">
+    <div class="component-demo__preview">
+        @Demo
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Code))
+    {
+        <div class="component-demo__code">
+            <CodeBlock Code="@Code" Language="@Language" />
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public RenderFragment Demo { get; set; } = default!;
+    [Parameter] public string? Code { get; set; }
+    [Parameter] public string Language { get; set; } = "razor";
+}
+
+    private bool _copied = false;
+
+    private async Task CopyCode()
+    {
+        // In a real implementation, this would use JS interop to copy to clipboard
+        _copied = true;
+        StateHasChanged();
+        await Task.Delay(2000);
+        _copied = false;
+        StateHasChanged();
+    }
+}
+
+<style>
+    .component-demo {
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.5rem;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .component-demo__preview {
+        padding: 2rem;
+        background: var(--palette-background);
+    }
+
+    .component-demo__code {
+        border-top: 1px solid var(--palette-foreground);
+    }
+</style>

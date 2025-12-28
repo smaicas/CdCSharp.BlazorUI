@@ -1,0 +1,86 @@
+﻿@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Features.Behaviors
+@using CdCSharp.BlazorUI.Components.Features.Transitions
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Css
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Rendering
+
+@inherits UIComponentBase
+@implements IHasDensity
+@implements IHasElevation
+@implements IHasFullWidth
+@implements IHasSize
+@implements IHasTransitions
+@implements IHasLoading
+@implements IHasRipple
+
+<div @ref="_rootElement" @attributes="AdditionalAttributes">
+    @if (IsLoading && LoadingIndicatorVariant != null)
+    {
+        <span class="test-loading-indicator">Loading...</span>
+    }
+    <span class="test-content">Test Component Content</span>
+</div>
+
+@code {
+    private ElementReference _rootElement;
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasTransitions
+    [Parameter] public UITransitions? Transitions { get; set; }
+
+    // IHasElevation
+    [Parameter] public int? Elevation { get; set; }
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public UILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasRipple
+    [Parameter] public bool DisableRipple { get; set; }
+    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public int? RippleDuration { get; set; }
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasDisabled
+    [Parameter] public bool Disabled { get; set; }
+
+    // public override ElementReference GetRootElement() => _rootElement;
+
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        yield return "test-feature-component";
+
+        if (!string.IsNullOrWhiteSpace(Color?.ToString()))
+        {
+            yield return "has-custom-color";
+        }
+    }
+
+    public ElementReference GetRootElement() => _rootElement;
+
+    public override Dictionary<string, string> GetAdditionalInlineStyles()
+    {
+        var styles = new Dictionary<string, string>();
+
+        if (Color != null)
+        {
+            styles["color"] = Color.ToString();
+        }
+
+        return styles;
+    }
+}

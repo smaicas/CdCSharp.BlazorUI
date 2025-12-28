@@ -4,7 +4,7 @@
 @using CdCSharp.BlazorUI.Css
 
 @inherits UIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
-@implements IHasSize<UILoadingIndicatorSize>
+@implements IHasSize
 
 @{
     base.BuildRenderTree(__builder);
@@ -14,7 +14,7 @@
     [Parameter] public CssColor? Color { get; set; }
 
     // IHasSize
-    [Parameter] public UILoadingIndicatorSize Size { get; set; } = UILoadingIndicatorSize.Medium;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     /* ========= Variant ========= */
 

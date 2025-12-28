@@ -1,0 +1,238 @@
+﻿@page "/components/loading"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Core.Theming
+@using CdCSharp.BlazorUI.Css
+
+<PageTitle>Loading Indicators - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Loading Indicators</h1>
+    <p class="doc-intro">
+        Loading indicators provide visual feedback during asynchronous operations. 
+        The library includes several variants suitable for different scenarios.
+    </p>
+
+    <div class="doc-section">
+        <h2>Variants</h2>
+        <ComponentDemo Code="@variantsCode">
+            <Demo>
+                <div class="loading-grid">
+                    <div class="loading-item">
+                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" />
+                        <span>Spinner</span>
+                    </div>
+                    <div class="loading-item">
+                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.Dots" />
+                        <span>Dots</span>
+                    </div>
+                    <div class="loading-item">
+                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.Pulse" />
+                        <span>Pulse</span>
+                    </div>
+                    <div class="loading-item">
+                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.LinearIndeterminate" />
+                        <span>LinearIndeterminate</span>
+                    </div>
+                    <div class="loading-item">
+                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.CircularProgress" />
+                        <span>CircularProgress</span>
+                    </div>
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Sizes</h2>
+        <ComponentDemo Code="@sizesCode">
+            <Demo>
+                <div class="demo-row">
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Size="SizeEnum.Small" />
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Size="SizeEnum.Medium" />
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Size="SizeEnum.Large" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Colors</h2>
+        <ComponentDemo Code="@colorsCode">
+            <Demo>
+                <div class="demo-row">
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Color="@UIColor.Blue.Default" />
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Color="@UIColor.Green.Default" />
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Color="@UIColor.Red.Default" />
+                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" class="color-primary" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Integration with Buttons</h2>
+        <ComponentDemo Code="@buttonIntegrationCode">
+            <Demo>
+                <div class="demo-row">
+                    <UIButton Text="Loading..." 
+                             IsLoading="true" 
+                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
+                    <UIButton Text="Saving..." 
+                             IsLoading="true" 
+                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Dots" 
+                             Color="@UIColor.Green.Default" />
+                    <UIButton Text="Processing..." 
+                             IsLoading="true" 
+                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Pulse" 
+                             Size="SizeEnum.Large" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Loading States in Components</h2>
+        <ComponentDemo Code="@loadingStateCode">
+            <Demo>
+                <div class="loading-state-demo">
+                    @if (_isLoading)
+                    {
+                        <div class="loading-overlay">
+                            <UILoadingIndicator Variant="UILoadingIndicatorVariant.CircularProgress" Size="SizeEnum.Large" />
+                            <p>Loading data...</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="content">
+                            <h4>Content Loaded</h4>
+                            <p>This content appears after loading.</p>
+                        </div>
+                    }
+                    <UIButton Text="@(_isLoading ? "Loading..." : "Simulate Load")" 
+                             OnClick="SimulateLoading" 
+                             IsLoading="_isLoading"
+                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Dots" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable TItem="LoadingProperty" Items="@LoadingProperties">
+            <PropertyTemplate Context="prop">
+                <td><code>@prop.Name</code></td>
+                <td><code>@prop.Type</code></td>
+                <td><code>@prop.Default</code></td>
+                <td>@prop.Description</td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+</div>
+
+@code {
+    private bool _isLoading = false;
+
+    private async Task SimulateLoading()
+    {
+        _isLoading = true;
+        await Task.Delay(2000);
+        _isLoading = false;
+    }
+
+    private string variantsCode = @"<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Dots"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Pulse"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Bar"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Ring"" />";
+
+    private string sizesCode = @"<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Small"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Medium"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Large"" />";
+
+    private string colorsCode = @"<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Color=""@UIColor.Blue"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Color=""@UIColor.Green"" />
+<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Color=""var(--palette-primary)"" />";
+
+    private string buttonIntegrationCode = @"<UIButton Text=""Loading..."" 
+         IsLoading=""true"" 
+         LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />";
+
+    private string loadingStateCode = @"@if (_isLoading)
+{
+    <div class=""loading-overlay"">
+        <UILoadingIndicator Variant=""UILoadingIndicatorVariant.Ring"" Size=""SizeEnum.Large"" />
+        <p>Loading data...</p>
+    </div>
+}
+else
+{
+    <div class=""content"">
+        <h4>Content Loaded</h4>
+        <p>This content appears after loading.</p>
+    </div>
+}";
+
+    private record LoadingProperty(string Name, string Type, string Default, string Description);
+
+    private List<LoadingProperty> LoadingProperties = new()
+    {
+        new("Variant", "UILoadingIndicatorVariant", "Spinner", "The visual style of the loading indicator"),
+        new("Size", "SizeEnum", "Medium", "Size of the loading indicator"),
+        new("Color", "string?", "null", "Color of the loading indicator (CSS color or UIColor)"),
+    };
+}
+
+<style>
+    .loading-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .loading-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+    }
+
+    .loading-item span {
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .loading-state-demo {
+        position: relative;
+        min-height: 200px;
+        padding: 2rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .loading-overlay {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .demo-row {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+</style>

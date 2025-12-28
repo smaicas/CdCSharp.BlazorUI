@@ -1,4 +1,5 @@
 ﻿using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 
@@ -13,13 +14,11 @@ public class UISvgIconSnapshotTests : TestContextBase
     public Task SvgIcon_AllSizes_MatchSnapshot()
     {
         // Arrange
-        UISvgIcon.UISvgIconSize[] sizes =
+        SizeEnum[] sizes =
         [
-            UISvgIcon.UISvgIconSize.Small,
-            UISvgIcon.UISvgIconSize.Medium,
-            UISvgIcon.UISvgIconSize.Large,
-            UISvgIcon.UISvgIconSize.XLarge,
-            UISvgIcon.UISvgIconSize.XXLarge
+            SizeEnum.Small,
+            SizeEnum.Medium,
+            SizeEnum.Large,
         ];
 
         // Act

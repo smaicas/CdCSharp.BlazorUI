@@ -1,79 +1,197 @@
 ﻿@page "/"
+@using CdCSharp.BlazorUI.Components.Features.Common
 @using CdCSharp.BlazorUI.Components.Features.Loading
-@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+@using CdCSharp.BlazorUI.Components.Features.Transitions
 @using CdCSharp.BlazorUI.Components.Generic.Button
 @using CdCSharp.BlazorUI.Components.Generic.Svg
-@using CdCSharp.BlazorUI.Core.Theming
 @using CdCSharp.BlazorUI.Css
 @using CdCSharp.BlazorUI.Media.Icons
 
-<PageTitle>Home</PageTitle>
+<PageTitle>CdCSharp.BlazorUI - Component Library</PageTitle>
 
-<h2>UIThemeSwitch</h2>
-<UIThemeSwitch />
-<br />
-<UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon"/>
+<div class="home-hero">
+    <h1 class="home-hero__title">CdCSharp.BlazorUI</h1>
+    <p class="home-hero__subtitle">
+        A modern, feature-rich Blazor component library with built-in theming,
+        transitions, and accessibility features.
+    </p>
+    <div class="home-hero__actions">
+        <UIButton Text="Get Started"
+                  OnClick="@(() => NavigationManager.NavigateTo("/getting-started/installation"))"
+                  Transitions="@UITransitionPresets.HoverLift" />
+        <UIButton Text="View Components"
+                  OnClick="@(() => NavigationManager.NavigateTo("/components/buttons"))"
+                  Variant="UIButtonVariant.Default" />
+    </div>
+</div>
 
-<br />
-<hr />
-<br />
+<div class="home-features">
+    <h2>Key Features</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-card__icon">
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_palette" Size="SizeEnum.Large" />
+            </div>
+            <h3>Theming System</h3>
+            <p>Built-in light and dark themes with full customization support through CSS variables.</p>
+        </div>
 
-<h2>UITextButton</h2>
-<UIButton Text="Test Button 1" />
-<br />
-<UIButton Text="Test Button Disabled" Disabled="true" />
+        <div class="feature-card">
+            <div class="feature-card__icon">
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_animation" Size="SizeEnum.Large" />
+            </div>
+            <h3>Rich Transitions</h3>
+            <p>Smooth animations and transitions with presets for common interactions.</p>
+        </div>
 
-<br />
-<hr />
-<br />
+        <div class="feature-card">
+            <div class="feature-card__icon">
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_settings_input_component" Size="SizeEnum.Large" />
+            </div>
+            <h3>Feature-Rich Components</h3>
+            <p>Components with built-in loading states, ripple effects, elevation, and density options.</p>
+        </div>
 
-<h2>UISvgIcon Sizes</h2>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Small" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Medium" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.Large" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XLarge" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Size="UISvgIcon.UISvgIconSize.XXLarge" />
+        <div class="feature-card">
+            <div class="feature-card__icon">
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_code" Size="SizeEnum.Large" />
+            </div>
+            <h3>Type-Safe</h3>
+            <p>Fully typed C# API with IntelliSense support and compile-time safety.</p>
+        </div>
 
-<br />
-<hr />
-<br />
+        <div class="feature-card">
+            <div class="feature-card__icon">
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_tire_repair" Size="SizeEnum.Large" />
+            </div>
+            <h3>Responsive Design</h3>
+            <p>Components that adapt to different screen sizes and density preferences.</p>
+        </div>
 
-<h2>UISvgIcon Colors</h2>
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken3" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken2" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Darken1" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Default" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten1" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten2" />
-<UISvgIcon Icon="@UIIcons.Brands.Gmail" Color="@UIColor.OrangeRed.Lighten3" />
+        <div class="feature-card">
+            <div class="feature-card__icon">
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_percent" Size="SizeEnum.Large" />
+            </div>
+            <h3>Performance Optimized</h3>
+            <p>Efficient JavaScript interop with minimal overhead and lazy loading.</p>
+        </div>
+    </div>
+</div>
 
-<br />
-<hr />
-<br />
+<div class="home-quick-examples">
+    <h2>Quick Examples</h2>
 
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Small" Variant="UILoadingIndicatorVariant.Spinner"/>
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Medium" Variant="UILoadingIndicatorVariant.Spinner" />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Large" Variant="UILoadingIndicatorVariant.Spinner" />
-<br />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Small" Variant="UILoadingIndicatorVariant.CircularProgress"/>
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Medium" Variant="UILoadingIndicatorVariant.CircularProgress" />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Large" Variant="UILoadingIndicatorVariant.CircularProgress" />
-<br />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Small" Variant="UILoadingIndicatorVariant.Dots"/>
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Medium" Variant="UILoadingIndicatorVariant.Dots" />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Large" Variant="UILoadingIndicatorVariant.Dots" />
-<br />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Small" Variant="UILoadingIndicatorVariant.LinearIndeterminate"/>
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Medium" Variant="UILoadingIndicatorVariant.LinearIndeterminate" />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Large" Variant="UILoadingIndicatorVariant.LinearIndeterminate" />
-<br />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Small" Variant="UILoadingIndicatorVariant.Pulse"/>
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Medium" Variant="UILoadingIndicatorVariant.Pulse" />
-<UILoadingIndicator Color="UIColor.Orange.Lighten1" Size="UILoadingIndicatorSize.Large" Variant="UILoadingIndicatorVariant.Pulse" />
-<br />
-<hr />
-<br />
+    <div class="example-section">
+        <h3>Buttons with Various States</h3>
+        <div class="example-grid">
+            <UIButton Text="Default Button" />
+            <UIButton Text="With Ripple" DisableRipple="false" />
+            <UIButton Text="Elevated" Elevation="3" />
+            <UIButton Text="Loading" IsLoading="true" LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
+        </div>
+    </div>
 
-<h2>UIButton with Loading Indicator</h2>
-<UIButton Text="Submit" IsLoading="true" LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" Color="UIColor.Blue.Default" />
-<UIButton Text="Submit" IsLoading="true" LoadingIndicatorVariant="UILoadingIndicatorVariant.LinearIndeterminate" Color="UIColor.Blue.Default" />
+    <div class="example-section">
+        <h3>Icons with Colors</h3>
+        <div class="example-grid">
+            <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_heart_broken" Color="@UIColor.Red.Default" />
+            <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_star" Color="@UIColor.Yellow.Default" />
+            <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_check" Color="@UIColor.Green.Default" />
+            <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_info" Color="@UIColor.Blue.Default" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+}
+
+<style>
+    .home-hero {
+        text-align: center;
+        padding: 4rem 0;
+        border-bottom: 1px solid var(--palette-foreground);
+        margin-bottom: 4rem;
+    }
+
+    .home-hero__title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0 0 1rem 0;
+        background: linear-gradient(135deg, var(--palette-primary), var(--palette-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .home-hero__subtitle {
+        font-size: 1.25rem;
+        opacity: 0.8;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+    }
+
+    .home-hero__actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .home-features {
+        margin-bottom: 4rem;
+    }
+
+        .home-features h2,
+        .home-quick-examples h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-card {
+        background: var(--palette-surface);
+        padding: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+    .feature-card__icon {
+        margin-bottom: 1rem;
+        color: var(--palette-primary);
+    }
+
+    .feature-card h3 {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .feature-card p {
+        margin: 0;
+        opacity: 0.8;
+    }
+
+    .example-section {
+        margin-bottom: 2rem;
+    }
+
+        .example-section h3 {
+            margin-bottom: 1rem;
+        }
+
+    .example-grid {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+</style>

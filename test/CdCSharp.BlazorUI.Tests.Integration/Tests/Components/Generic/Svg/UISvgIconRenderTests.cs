@@ -1,5 +1,6 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Generic.Svg;
 using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -46,12 +47,10 @@ public class UISvgIconRenderTests : TestContextBase
     }
 
     [Theory(DisplayName = "Sizes_ApplyCorrectClasses")]
-    [InlineData(UISvgIcon.UISvgIconSize.Small, "ui-svg-icon-s")]
-    [InlineData(UISvgIcon.UISvgIconSize.Medium, "ui-svg-icon-m")]
-    [InlineData(UISvgIcon.UISvgIconSize.Large, "ui-svg-icon-l")]
-    [InlineData(UISvgIcon.UISvgIconSize.XLarge, "ui-svg-icon-xl")]
-    [InlineData(UISvgIcon.UISvgIconSize.XXLarge, "ui-svg-icon-xxl")]
-    public void SvgIcon_Sizes_ApplyCorrectClasses(UISvgIcon.UISvgIconSize size, string expectedClass)
+    [InlineData(SizeEnum.Small, "ui-size-small")]
+    [InlineData(SizeEnum.Medium, "ui-size-medium")]
+    [InlineData(SizeEnum.Large, "ui-size-large")]
+    public void SvgIcon_Sizes_ApplyCorrectClasses(SizeEnum size, string expectedClass)
     {
         // Act
         IRenderedComponent<UISvgIcon> cut = Render<UISvgIcon>(parameters => parameters

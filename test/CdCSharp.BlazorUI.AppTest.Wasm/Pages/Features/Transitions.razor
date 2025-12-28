@@ -1,0 +1,276 @@
+﻿@* @page "/features/transitions"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Features.Transitions
+
+<PageTitle>Transitions - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Transitions</h1>
+    <p class="doc-intro">
+        The transitions system provides smooth animations for component interactions. 
+        It includes presets for common effects and allows custom animations with fine-grained control.
+    </p>
+
+    <div class="doc-section">
+        <h2>Hover Transitions</h2>
+        <ComponentDemo>
+            <Demo>
+                <div class="transition-grid">
+                    <div class="transition-box" style="@GetTransitionStyles(_hoverScale)">
+                        <h4>Scale</h4>
+                        <p>Hover to scale</p>
+                    </div>
+                    <div class="transition-box" style="@GetTransitionStyles(_hoverLift)">
+                        <h4>Lift</h4>
+                        <p>Hover to lift</p>
+                    </div>
+                    <div class="transition-box" style="@GetTransitionStyles(_hoverGlow)">
+                        <h4>Glow</h4>
+                        <p>Hover to glow</p>
+                    </div>
+                    <div class="transition-box" style="@GetTransitionStyles(_hoverFade)">
+                        <h4>Fade</h4>
+                        <p>Hover to fade</p>
+                    </div>
+                </div>
+            </Demo>
+            <Code>
+                @("UITransitions transitions = UITransitionPresets.HoverScale;")
+            </Code>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Transition Presets</h2>
+        <div class="preset-list">
+            <div class="preset-item">
+                <h4>UITransitionPresets.HoverScale</h4>
+                <p>Scales the element on hover</p>
+                <UIButton Text="Try Me" Transitions="@UITransitionPresets.HoverScale" />
+            </div>
+            <div class="preset-item">
+                <h4>UITransitionPresets.HoverLift</h4>
+                <p>Lifts the element with shadow on hover</p>
+                <UIButton Text="Try Me" Transitions="@UITransitionPresets.HoverLift" />
+            </div>
+            <div class="preset-item">
+                <h4>UITransitionPresets.HoverGlow</h4>
+                <p>Adds a glowing effect on hover</p>
+                <UIButton Text="Try Me" Transitions="@UITransitionPresets.HoverGlow" />
+            </div>
+            <div class="preset-item">
+                <h4>UITransitionPresets.FocusShadow</h4>
+                <p>Adds shadow on focus (tab to see)</p>
+                <UIButton Text="Tab to Focus" Transitions="@UITransitionPresets.FocusShadow" />
+            </div>
+            <div class="preset-item">
+                <h4>UITransitionPresets.ActiveScale</h4>
+                <p>Scales down on click</p>
+                <UIButton Text="Click Me" Transitions="@UITransitionPresets.ActiveScale" />
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Creating Custom Transitions</h2>
+        <ComponentDemo>
+            <Demo>
+                <UIButton Text="Custom Animation" Transitions="@_customTransition" />
+            </Demo>
+            <Code>
+@"UITransitions customTransition = UITransitionPresets.Create()
+    .OnHover()
+        .Scale(1.1f, options => {
+            options.Duration = TimeSpan.FromMilliseconds(300);
+            options.Easing = easing => easing.CubicBezier().MaterialStandard();
+        })
+        .And()
+        .Rotate(\"5deg\")
+        .And()
+        .Shadow(\"0 8px 16px rgba(0,0,0,0.2)\")
+    .Build();"
+            </Code>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Easing Functions</h2>
+        <div class="easing-grid">
+            @foreach (var easing in _easingExamples)
+            {
+                <div class="easing-demo">
+                    <h4>@easing.Name</h4>
+                    <div class="easing-box" style="@GetTransitionStyles(easing.Transition)">
+                        Hover Me
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Transition Types</h2>
+        <PropertyTable TItem="TransitionType" Items="@_transitionTypes">
+            <PropertyTemplate Context="type">
+                <td><code>@type.Name</code></td>
+                <td><code>@type.CssClass</code></td>
+                <td><code>@type.CssVariable</code></td>
+                <td>@type.Description</td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+</div>
+
+@code {
+    private UITransitions _hoverScale = UITransitionPresets.HoverScale;
+    private UITransitions _hoverLift = UITransitionPresets.HoverLift;
+    private UITransitions _hoverGlow = UITransitionPresets.HoverGlow;
+    private UITransitions _hoverFade = UITransitionPresets.Create()
+        .OnHover().Fade(0.7f)
+        .Build();
+
+    private UITransitions _customTransition = UITransitionPresets.Create()
+        .OnHover()
+            .Scale(1.1f, options => {
+                options.Duration = TimeSpan.FromMilliseconds(300);
+                options.Easing = easing => easing.CubicBezier().MaterialStandard();
+            })
+            .And()
+            .Rotate("5deg")
+            .And()
+            .Shadow("0 8px 16px rgba(0,0,0,0.2)")
+        .Build();
+
+    private record EasingExample(string Name, UITransitions Transition);
+    
+    private List<EasingExample> _easingExamples = new()
+    {
+        new("Linear", UITransitionPresets.Create()
+            .OnHover().Scale(1.2f, opt => opt.Easing = e => e.Linear())
+            .Build()),
+        new("Ease In Out", UITransitionPresets.Create()
+            .OnHover().Scale(1.2f, opt => opt.Easing = e => e.EaseInOut())
+            .Build()),
+        new("Material Standard", UITransitionPresets.Create()
+            .OnHover().Scale(1.2f, opt => opt.Easing = e => e.CubicBezier().MaterialStandard())
+            .Build()),
+        new("Material Decelerate", UITransitionPresets.Create()
+            .OnHover().Scale(1.2f, opt => opt.Easing = e => e.CubicBezier().MaterialDecelerate())
+            .Build()),
+        new("Material Accelerate", UITransitionPresets.Create()
+            .OnHover().Scale(1.2f, opt => opt.Easing = e => e.CubicBezier().MaterialAccelerate())
+            .Build()),
+        new("Steps", UITransitionPresets.Create()
+            .OnHover().Scale(1.2f, opt => opt.Easing = e => e.Steps(4))
+            .Build()),
+    };
+
+    private record TransitionType(string Name, string CssClass, string CssVariable, string Description);
+    
+    private List<TransitionType> _transitionTypes = new()
+    {
+        new("Scale", "ui-transition-{trigger}-scale", "--ui-transition-{trigger}-scale", "Scales the element"),
+        new("Rotate", "ui-transition-{trigger}-rotate", "--ui-transition-{trigger}-rotate", "Rotates the element"),
+        new("Fade", "ui-transition-{trigger}-fade", "--ui-transition-{trigger}-opacity", "Changes opacity"),
+        new("Shadow", "ui-transition-{trigger}-shadow", "--ui-transition-{trigger}-shadow", "Adds box shadow"),
+        new("Color", "ui-transition-{trigger}-color", "--ui-transition-{trigger}-color", "Changes text color"),
+        new("Background", "ui-transition-{trigger}-background", "--ui-transition-{trigger}-background", "Changes background"),
+        new("Translate", "ui-transition-{trigger}-translate", "--ui-transition-{trigger}-x/y", "Moves the element"),
+        new("Blur", "ui-transition-{trigger}-blur", "--ui-transition-{trigger}-amount", "Applies blur filter"),
+        new("Border", "ui-transition-{trigger}-border", "--ui-transition-{trigger}-border", "Changes border"),
+    };
+
+    private string GetTransitionStyles(UITransitions transitions)
+    {
+        var styles = transitions.GetInlineStyles();
+        var classes = transitions.GetCssClasses();
+        
+        var styleString = string.Join("; ", styles.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+        return styleString;
+    }
+}
+
+<style>
+    .transition-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .transition-box {
+        padding: 2rem 1rem;
+        background: var(--palette-surface);
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .transition-box h4 {
+        margin: 0 0 0.5rem 0;
+    }
+
+    .transition-box p {
+        margin: 0;
+        font-size: 0.875rem;
+        opacity: 0.7;
+    }
+
+    .preset-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .preset-item {
+        padding: 1rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .preset-item h4 {
+        margin: 0;
+        font-family: monospace;
+        font-size: 0.875rem;
+    }
+
+    .preset-item p {
+        margin: 0;
+        opacity: 0.7;
+        flex: 1;
+    }
+
+    .easing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+
+    .easing-demo {
+        text-align: center;
+    }
+
+    .easing-demo h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.875rem;
+    }
+
+    .easing-box {
+        padding: 1rem;
+        background: var(--palette-primary);
+        color: var(--palette-primary-contrast);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    /* Apply the transition classes dynamically */
+    .ui-has-transitions {
+        transition: all var(--ui-transition-duration, 200ms) var(--ui-transition-easing, ease-in-out);
+    }
+</style> *@

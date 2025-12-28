@@ -39,5 +39,5 @@ public class BehaviorConfiguration
 public class RippleConfiguration
 {
     public string? Color { get; set; }
-    public int Duration { get; set; }
+    public int? Duration { get; set; }
 }

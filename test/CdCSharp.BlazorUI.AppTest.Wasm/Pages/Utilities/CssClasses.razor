@@ -1,0 +1,387 @@
+﻿@page "/utilities/css-classes"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Common
+
+<PageTitle>CSS Classes - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>CSS Classes Reference</h1>
+    <p class="doc-intro">
+        A comprehensive list of all CSS utility classes available in CdCSharp.BlazorUI. 
+        These classes can be applied directly to elements for quick styling.
+    </p>
+
+    <div class="doc-section">
+        <h2>Size Classes</h2>
+        <div class="class-grid">
+            <div class="class-item">
+                <code>.ui-size-small</code>
+                <p>Small size variant</p>
+                <div class="example ui-size-small">Small Text</div>
+            </div>
+            
+            <div class="class-item">
+                <code>.ui-size-medium</code>
+                <p>Medium size variant (default)</p>
+                <div class="example ui-size-medium">Medium Text</div>
+            </div>
+            
+            <div class="class-item">
+                <code>.ui-size-large</code>
+                <p>Large size variant</p>
+                <div class="example ui-size-large">Large Text</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Density Classes</h2>
+        <div class="class-grid">
+            <div class="class-item">
+                <code>.ui-density-comfortable</code>
+                <p>Extra spacing for touch interfaces</p>
+                <div class="example-box ui-density-comfortable">Comfortable</div>
+            </div>
+            
+            <div class="class-item">
+                <code>.ui-density-standard</code>
+                <p>Standard spacing (default)</p>
+                <div class="example-box ui-density-standard">Standard</div>
+            </div>
+            
+            <div class="class-item">
+                <code>.ui-density-compact</code>
+                <p>Reduced spacing for dense layouts</p>
+                <div class="example-box ui-density-compact">Compact</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Elevation Classes</h2>
+        <p>Classes from <code>.ui-elevation-0</code> to <code>.ui-elevation-24</code></p>
+        
+        <div class="elevation-examples">
+            @for (int i = 0; i <= 24; i += 4)
+            {
+                <div class="elevation-example ui-elevation-@i">
+                    <code>.ui-elevation-@i</code>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Transition Classes</h2>
+        
+        <h3>Base Classes</h3>
+        <div class="class-list">
+            <div class="class-entry">
+                <code>.ui-has-transitions</code>
+                <p>Enables transitions on an element</p>
+            </div>
+        </div>
+
+        <h3>Hover Transitions</h3>
+        <div class="transition-grid">
+            <div class="transition-item ui-has-transitions ui-transition-hover-scale">
+                <code>.ui-transition-hover-scale</code>
+                <p>Scale on hover</p>
+            </div>
+            
+            <div class="transition-item ui-has-transitions ui-transition-hover-rotate">
+                <code>.ui-transition-hover-rotate</code>
+                <p>Rotate on hover</p>
+            </div>
+            
+            <div class="transition-item ui-has-transitions ui-transition-hover-fade">
+                <code>.ui-transition-hover-fade</code>
+                <p>Fade on hover</p>
+            </div>
+            
+            <div class="transition-item ui-has-transitions ui-transition-hover-shadow">
+                <code>.ui-transition-hover-shadow</code>
+                <p>Shadow on hover</p>
+            </div>
+        </div>
+
+        <h3>Combined Effects</h3>
+        <div class="transition-grid">
+            <div class="transition-item ui-has-transitions ui-transition-hover-lift">
+                <code>.ui-transition-hover-lift</code>
+                <p>Lift effect (translate + shadow)</p>
+            </div>
+            
+            <div class="transition-item ui-has-transitions ui-transition-hover-glow">
+                <code>.ui-transition-hover-glow</code>
+                <p>Glow effect (scale + shadow)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>State Classes</h2>
+        <div class="class-list">
+            <div class="class-entry">
+                <code>.ui-full-width</code>
+                <p>Makes element take full width of container</p>
+            </div>
+            
+            <div class="class-entry">
+                <code>.ui-loading</code>
+                <p>Indicates loading state</p>
+            </div>
+            
+            <div class="class-entry">
+                <code>.ui-has-ripple</code>
+                <p>Enables ripple effect on click</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Component-Specific Classes</h2>
+        
+        <h3>Button Classes</h3>
+        <div class="class-list">
+            <div class="class-entry">
+                <code>.ui-button</code>
+                <p>Base button class</p>
+            </div>
+            
+            <div class="class-entry">
+                <code>.ui-button__text</code>
+                <p>Button text element</p>
+            </div>
+            
+            <div class="class-entry">
+                <code>.ui-button--default</code>
+                <p>Default button variant</p>
+            </div>
+        </div>
+
+        <h3>Icon Classes</h3>
+        <div class="class-list">
+            <div class="class-entry">
+                <code>.ui-svg-icon</code>
+                <p>SVG icon wrapper</p>
+            </div>
+        </div>
+
+        <h3>Theme Switch Classes</h3>
+        <div class="class-list">
+            <div class="class-entry">
+                <code>.ui-theme-switch</code>
+                <p>Theme switch component</p>
+            </div>
+            
+            <div class="class-entry">
+                <code>.ui-theme-switch--default</code>
+                <p>Default variant</p>
+            </div>
+            
+            <div class="class-entry">
+                <code>.ui-theme-switch--sunmoon</code>
+                <p>Sun/Moon icon variant</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>CSS Variables</h2>
+        <p>These CSS variables can be used in custom styles:</p>
+        
+        <h3>Transition Variables</h3>
+        <CodeBlock Code="@transitionVariablesCode" Language="css" Title="Transition Variables" />
+        
+        <h3>Component Variables</h3>
+        <CodeBlock Code="@componentVariablesCode" Language="css" Title="Component Variables" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Usage Examples</h2>
+        <CodeBlock Code="@usageExamplesCode" Language="html" Title="Combining Classes" />
+    </div>
+</div>
+
+@code {
+    private string transitionVariablesCode = @"/* Duration and timing */
+--ui-transition-duration: 200ms;
+--ui-transition-easing: ease-in-out;
+--ui-transition-delay: 0ms;
+
+/* Hover state variables */
+--ui-transition-hover-scale: 1.05;
+--ui-transition-hover-rotate: 5deg;
+--ui-transition-hover-opacity: 0.8;
+--ui-transition-hover-shadow: 0 4px 8px rgba(0,0,0,0.15);
+
+/* Focus state variables */
+--ui-transition-focus-scale: 1.05;
+--ui-transition-focus-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+
+/* Active state variables */
+--ui-transition-active-scale: 0.98;";
+
+    private string componentVariablesCode = @"/* Ripple effect */
+--ui-ripple-color: rgba(0,0,0,0.2);
+--ui-ripple-duration: 600ms;
+
+/* Button specific */
+--ui-button-hover-background: var(--palette-primary-light);
+--ui-button-active-background: var(--palette-primary-dark);
+
+/* Loading indicator */
+--ui-loading-color: var(--palette-primary);
+--ui-loading-size: 1em;";
+
+    private string usageExamplesCode = @"<!-- Button with multiple utilities -->
+<button class=""ui-button ui-size-large ui-elevation-4 ui-has-transitions ui-transition-hover-lift"">
+    Elevated Large Button
+</button>
+
+<!-- Card with density and elevation -->
+<div class=""ui-density-comfortable ui-elevation-2"">
+    <h3>Card Title</h3>
+    <p>Card content with comfortable spacing and slight elevation.</p>
+</div>
+
+<!-- Full width element with ripple -->
+<div class=""ui-full-width ui-has-ripple"">
+    Click for ripple effect across full width
+</div>
+
+<!-- Combining transitions -->
+<div class=""ui-has-transitions ui-transition-hover-scale ui-transition-hover-shadow"">
+    Hover for combined scale and shadow effect
+</div>";
+}
+
+<style>
+    .class-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .class-item {
+        padding: 1rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+    }
+
+    .class-item code {
+        display: block;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        color: var(--palette-primary);
+    }
+
+    .class-item p {
+        margin: 0 0 1rem 0;
+        font-size: 0.875rem;
+        opacity: 0.8;
+    }
+
+    .example {
+        padding: 0.5rem;
+        background: var(--palette-background);
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.25rem;
+        text-align: center;
+    }
+
+    .example-box {
+        padding: 1.5rem;
+        background: var(--palette-background);
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.25rem;
+        text-align: center;
+    }
+
+    .elevation-examples {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .elevation-example {
+        padding: 1.5rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        text-align: center;
+    }
+
+    .elevation-example code {
+        font-size: 0.875rem;
+    }
+
+    .transition-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin: 1rem 0 2rem 0;
+    }
+
+    .transition-item {
+        padding: 1.5rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .transition-item code {
+        display: block;
+        font-size: 0.813rem;
+        margin-bottom: 0.5rem;
+        color: var(--palette-primary);
+    }
+
+    .transition-item p {
+        margin: 0;
+        font-size: 0.813rem;
+        opacity: 0.8;
+    }
+
+    .class-list {
+        display: grid;
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .class-entry {
+        padding: 1rem;
+        background: var(--palette-surface);
+        border-radius: 0.25rem;
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .class-entry code {
+        font-size: 1rem;
+        color: var(--palette-primary);
+        min-width: 200px;
+    }
+
+    .class-entry p {
+        margin: 0;
+        opacity: 0.8;
+    }
+
+    /* Style overrides for demonstration */
+    .ui-transition-hover-rotate:hover {
+        transform: rotate(5deg);
+    }
+
+    .ui-transition-hover-scale {
+        --ui-transition-hover-scale: 1.1;
+    }
+
+    .ui-transition-hover-fade {
+        --ui-transition-hover-opacity: 0.6;
+    }
+</style>

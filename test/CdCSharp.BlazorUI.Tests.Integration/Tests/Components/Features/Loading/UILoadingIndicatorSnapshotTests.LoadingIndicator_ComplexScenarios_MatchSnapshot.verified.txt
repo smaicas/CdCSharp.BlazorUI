@@ -1,0 +1,17 @@
+﻿[
+  {
+    Scenario: Large_Dots_WithColor,
+    Html:
+<div class="ui-loading-indicator ui-loading-indicator--dots ui-size-large" style="color: rgba(128,0,128,1)" b-2rktlkqi2e><span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span></div>
+  },
+  {
+    Scenario: Small_Spinner_WithCustomClass,
+    Html: <div class="ui-loading-indicator ui-loading-indicator--spinner ui-size-small custom-spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></div>
+  },
+  {
+    Scenario: Linear_WithInlineStyles,
+    Html: <div style="width: 200px; margin: 20px;" class="ui-loading-indicator ui-loading-indicator--linearindeterminate ui-size-medium" b-2rktlkqi2e><div class="ui-loading-linear" b-2rktlkqi2e><div class="ui-loading-linear__bar" b-2rktlkqi2e></div></div></div>
+  }
+]

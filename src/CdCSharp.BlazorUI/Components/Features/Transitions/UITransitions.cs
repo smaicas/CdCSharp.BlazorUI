@@ -98,6 +98,9 @@ public enum TransitionType
     Contrast,
     Saturate,
 
+    // Background
+    Background,
+
     // Layout
     Shadow,
 

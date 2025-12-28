@@ -95,7 +95,7 @@ void PrintUsage()
 
 void GenerateThemes(string outputPath)
 {
-    string cssContent = CssGenerator.Generate("dark", [new DarkTheme(), new LightTheme()]);
+    string cssContent = CssThemeGenerator.Generate("dark", [new DarkTheme(), new LightTheme()]);
 
     string? directory = Path.GetDirectoryName(outputPath);
     if (!string.IsNullOrEmpty(directory))
@@ -152,6 +152,11 @@ async Task BuildAll(string projectPath)
     string commonClassesCss = CssCommonClasses.GetCss();
     File.WriteAllText(commonClassesPath, commonClassesCss);
     Console.WriteLine($"Common classes CSS generated successfully at: {commonClassesPath}");
+
+    string transitionClassesPath = Path.Combine(projectPath, "CssBundle", "transition-classes.css");
+    string transitionClassesCss = CssTransitionClasses.GetCss();
+    File.WriteAllText(transitionClassesPath, transitionClassesCss);
+    Console.WriteLine($"Transition classes CSS generated successfully at: {transitionClassesPath}");
 
     // 2. Ensure npm packages are installed
     await NpmManager.EnsureNpmInstalled(projectPath);

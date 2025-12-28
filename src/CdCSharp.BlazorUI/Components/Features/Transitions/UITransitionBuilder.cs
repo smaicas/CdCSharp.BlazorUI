@@ -84,6 +84,22 @@ public class TriggerTransitionBuilder
         return this;
     }
 
+    public TriggerTransitionBuilder Background(string background = "rgba(0,0,0,0)", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Background, options);
+        config.CustomProperties["background"] = background;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Border(string border = "1px solid #cccccc", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Border, options);
+        config.CustomProperties["border"] = border;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
     public TriggerTransitionBuilder Translate(string x = "0", string y = "-4px", Action<TransitionOptions>? options = null)
     {
         TransitionConfig config = CreateConfig(TransitionType.Translate, options);

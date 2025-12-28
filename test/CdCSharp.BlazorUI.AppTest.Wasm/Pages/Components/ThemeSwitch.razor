@@ -1,0 +1,248 @@
+﻿@page "/components/theme-switch"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+
+<PageTitle>Theme Switch - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Theme Switch</h1>
+    <p class="doc-intro">
+        The UIThemeSwitch component provides an intuitive way for users to toggle between light and dark themes.
+        It includes multiple variants and smooth transitions.
+    </p>
+
+    <div class="doc-section">
+        <h2>Variants</h2>
+        <ComponentDemo Code="@variantsCode">
+            <Demo>
+                <div class="theme-switch-grid">
+                    <div class="theme-switch-item">
+                        <UIThemeSwitch Variant="UIThemeSwitchVariant.Default" />
+                        <span>Default</span>
+                    </div>
+                    <div class="theme-switch-item">
+                        <UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon" />
+                        <span>Sun/Moon</span>
+                    </div>
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>How It Works</h2>
+        <p>
+            The theme switch component automatically:
+        </p>
+        <ul>
+            <li>Detects the current theme on initialization</li>
+            <li>Persists the selected theme to localStorage</li>
+            <li>Updates CSS variables across the entire application</li>
+            <li>Provides smooth transitions between themes</li>
+            <li>Syncs theme changes across multiple tabs/windows</li>
+        </ul>
+    </div>
+
+    <div class="doc-section">
+        <h2>Integration Example</h2>
+        <ComponentDemo Code="@integrationCode">
+            <Demo>
+                <div class="layout-example">
+                    <header class="example-header">
+                        <h3>My Application</h3>
+                        <UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon" />
+                    </header>
+                    <div class="example-content">
+                        <p>The theme switch is typically placed in the header for easy access.</p>
+                    </div>
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Programmatic Theme Control</h2>
+        <p>You can also control the theme programmatically using the IThemeJsInterop service:</p>
+        <CodeBlock Code="@programmaticCode" Language="csharp" Title="Theme Control" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Customization</h2>
+        <p>The theme switch appearance adapts to the current theme automatically. You can further customize it with CSS variables:</p>
+        <CodeBlock Code="@customizationCode" Language="css" Title="CSS Customization" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable TItem="ThemeSwitchProperty" Items="@ThemeSwitchProperties">
+            <PropertyTemplate Context="prop">
+                <td><code>@prop.Name</code></td>
+                <td><code>@prop.Type</code></td>
+                <td><code>@prop.Default</code></td>
+                <td>@prop.Description</td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+
+    <div class="doc-section">
+        <h2>Theme Variables</h2>
+        <p>When the theme changes, these CSS variables are updated:</p>
+        <div class="theme-variables">
+            <div class="variable-group">
+                <h4>Primary Colors</h4>
+                <code>--palette-primary</code>
+                <code>--palette-primary-contrast</code>
+                <code>--palette-secondary</code>
+                <code>--palette-secondary-contrast</code>
+            </div>
+            <div class="variable-group">
+                <h4>Surface Colors</h4>
+                <code>--palette-background</code>
+                <code>--palette-surface</code>
+                <code>--palette-foreground</code>
+            </div>
+            <div class="variable-group">
+                <h4>Status Colors</h4>
+                <code>--palette-error</code>
+                <code>--palette-warning</code>
+                <code>--palette-info</code>
+                <code>--palette-success</code>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string variantsCode = @"<!-- Default variant with text -->
+<UIThemeSwitch Variant=""UIThemeSwitchVariant.Default"" />
+
+<!-- Sun/Moon icon variant -->
+<UIThemeSwitch Variant=""UIThemeSwitchVariant.SunMoon"" />";
+
+    private string integrationCode = @"@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+
+<header>
+    <h1>My App</h1>
+    <UIThemeSwitch Variant=""UIThemeSwitchVariant.SunMoon"" />
+</header>";
+
+    private string programmaticCode = @"@inject IThemeJsInterop ThemeInterop
+
+// Initialize theme on first render
+protected override async Task OnAfterRenderAsync(bool firstRender)
+{
+    if (firstRender)
+    {
+        // Set initial theme
+        await ThemeInterop.InitializeAsync(""dark"");
+        
+        // Or detect system preference
+        await ThemeInterop.InitializeAsync(""auto"");
+    }
+}
+
+// Change theme programmatically
+private async Task SetLightTheme()
+{
+    await ThemeInterop.SetThemeAsync(""light"");
+}
+
+// Get current theme
+private async Task<string> GetCurrentTheme()
+{
+    return await ThemeInterop.GetThemeAsync();
+}";
+
+    private string customizationCode = @"/* Custom theme switch styles */
+.ui-theme-switch {
+    /* Custom size */
+    min-width: 140px;
+    height: 48px;
+    
+    /* Custom colors */
+    background: var(--my-custom-bg);
+    color: var(--my-custom-text);
+    
+    /* Custom border radius */
+    border-radius: 24px;
+}
+
+/* Sun/Moon variant customization */
+.ui-theme-switch--sunmoon {
+    width: 72px;
+    height: 36px;
+}";
+
+    private record ThemeSwitchProperty(string Name, string Type, string Default, string Description);
+
+    private List<ThemeSwitchProperty> ThemeSwitchProperties = new()
+    {
+        new("Variant", "UIThemeSwitchVariant?", "Default", "Visual variant of the theme switch"),
+        new("Disabled", "bool", "false", "Whether the switch is disabled"),
+    };
+}
+
+<style>
+    .theme-switch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .theme-switch-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 2rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+    }
+
+    .theme-switch-item span {
+        font-weight: 500;
+    }
+
+    .layout-example {
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .example-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        background: var(--palette-surface);
+        border-bottom: 1px solid var(--palette-foreground);
+    }
+
+    .example-header h3 {
+        margin: 0;
+    }
+
+    .example-content {
+        padding: 1.5rem;
+    }
+
+    .theme-variables {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    .variable-group h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        opacity: 0.7;
+    }
+
+    .variable-group code {
+        display: block;
+        margin: 0.25rem 0;
+    }
+</style>

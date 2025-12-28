@@ -1,0 +1,119 @@
+﻿@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Media.Icons
+
+<div class="nav-menu">
+    <NavLink href="" Match="NavLinkMatch.All" class="nav-item">
+        <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_home" Size="SizeEnum.Small" />
+        <span>Home</span>
+    </NavLink>
+
+    <div class="nav-section">
+        <h3 class="nav-section__title">Getting Started</h3>
+        <NavLink href="getting-started/installation" class="nav-item">
+            <span>Installation</span>
+        </NavLink>
+        <NavLink href="getting-started/first-steps" class="nav-item">
+            <span>First Steps</span>
+        </NavLink>
+    </div>
+
+    <div class="nav-section">
+        <h3 class="nav-section__title">Components</h3>
+        <NavLink href="components/buttons" class="nav-item">
+            <span>Buttons</span>
+        </NavLink>
+        <NavLink href="components/icons" class="nav-item">
+            <span>Icons</span>
+        </NavLink>
+        <NavLink href="components/loading" class="nav-item">
+            <span>Loading Indicators</span>
+        </NavLink>
+        <NavLink href="components/theme-switch" class="nav-item">
+            <span>Theme Switch</span>
+        </NavLink>
+    </div>
+
+    <div class="nav-section">
+        <h3 class="nav-section__title">Theming</h3>
+        <NavLink href="theming/overview" class="nav-item">
+            <span>Overview</span>
+        </NavLink>
+        <NavLink href="theming/colors" class="nav-item">
+            <span>Colors & Palettes</span>
+        </NavLink>
+        <NavLink href="theming/custom-themes" class="nav-item">
+            <span>Custom Themes</span>
+        </NavLink>
+    </div>
+
+    <div class="nav-section">
+        <h3 class="nav-section__title">Features</h3>
+        <NavLink href="features/transitions" class="nav-item">
+            <span>Transitions</span>
+        </NavLink>
+        <NavLink href="features/elevation" class="nav-item">
+            <span>Elevation</span>
+        </NavLink>
+        <NavLink href="features/density" class="nav-item">
+            <span>Density</span>
+        </NavLink>
+        <NavLink href="features/ripple-effects" class="nav-item">
+            <span>Ripple Effects</span>
+        </NavLink>
+    </div>
+
+    <div class="nav-section">
+        <h3 class="nav-section__title">Utilities</h3>
+        <NavLink href="utilities/css-classes" class="nav-item">
+            <span>CSS Classes</span>
+        </NavLink>
+        <NavLink href="utilities/javascript-interop" class="nav-item">
+            <span>JavaScript Interop</span>
+        </NavLink>
+    </div>
+</div>
+
+<style>
+    .nav-menu {
+        padding: 0 1rem;
+    }
+
+    .nav-section {
+        margin-bottom: 2rem;
+    }
+
+    .nav-section__title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.6;
+        margin: 0 0 0.5rem 0.75rem;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        margin: 0.125rem 0;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        color: var(--palette-foreground);
+        transition: all 0.2s ease;
+    }
+
+    .nav-item:hover {
+        background: var(--palette-background);
+    }
+
+    .nav-item.active {
+        background: var(--palette-primary);
+        color: var(--palette-primary-contrast);
+    }
+
+    .nav-item span {
+        font-size: 0.875rem;
+    }
+</style>

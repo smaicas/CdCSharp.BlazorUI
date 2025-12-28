@@ -14,22 +14,14 @@
     color: currentColor;
 }
 
-.ui-svg-icon-s {
-    font-size: 100%;
-}
+    .ui-svg-icon.ui-size-small {
+        font-size: 100%;
+    }
 
-.ui-svg-icon-m {
-    font-size: 150%;
-}
+    .ui-svg-icon.ui-size-medium {
+        font-size: 150%;
+    }
 
-.ui-svg-icon-l {
-    font-size: 200%;
-}
-
-.ui-svg-icon-xl {
-    font-size: 250%;
-}
-
-.ui-svg-icon-xxl {
-    font-size: 300%;
-}
+    .ui-svg-icon.ui-size-large {
+        font-size: 200%;
+    }

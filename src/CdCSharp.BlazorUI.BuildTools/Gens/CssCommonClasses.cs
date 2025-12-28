@@ -8,108 +8,98 @@ public static class CssCommonClasses
 {
     public static string GetCss()
     {
-        StringBuilder sb = new();
+        string css = $@"
+/* ========================================
+   Common Component Classes
+   Auto-generated - Do not edit manually
+   ======================================== */
 
-        sb.AppendLine("/* ========================================");
-        sb.AppendLine("   Common Component Classes");
-        sb.AppendLine("   Auto-generated - Do not edit manually");
-        sb.AppendLine("   ======================================== */");
-        sb.AppendLine();
+/* Size Classes */
+.ui-size-small {{
+    font-size: 0.875rem;
+}}
 
-        // Size Classes
-        sb.AppendLine("/* Size Classes */");
-        sb.AppendLine(".ui-size-small {");
-        sb.AppendLine("    font-size: 0.875rem;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine(".ui-size-medium {");
-        sb.AppendLine("    font-size: 1rem;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine(".ui-size-large {");
-        sb.AppendLine("    font-size: 1.125rem;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+.ui-size-medium {{
+    font-size: 1rem;
+}}
 
-        // Density Classes
-        sb.AppendLine("/* Density Classes */");
-        sb.AppendLine(".ui-density-comfortable {");
-        sb.AppendLine("    --ui-density-spacing-multiplier: 1.5;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine(".ui-density-standard {");
-        sb.AppendLine("    --ui-density-spacing-multiplier: 1;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine(".ui-density-compact {");
-        sb.AppendLine("    --ui-density-spacing-multiplier: 0.75;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+.ui-size-large {{
+    font-size: 1.125rem;
+}}
 
-        // Full Width
-        sb.AppendLine("/* Full Width */");
-        sb.AppendLine(".ui-full-width {");
-        sb.AppendLine("    width: 100%;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+/* Density Classes */
+.ui-density-comfortable {{
+    --ui-density-spacing-multiplier: 1.5;
+}}
 
-        // Loading State
-        sb.AppendLine("/* Loading State */");
-        sb.AppendLine(".ui-loading {");
-        sb.AppendLine("    pointer-events: none;");
-        sb.AppendLine("    position: relative;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine(".ui-loading::after {");
-        sb.AppendLine("    content: '';");
-        sb.AppendLine("    position: absolute;");
-        sb.AppendLine("    inset: 0;");
-        sb.AppendLine("    background-color: rgba(255, 255, 255, 0.6);");
-        sb.AppendLine("    pointer-events: none;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine("@media (prefers-color-scheme: dark) {");
-        sb.AppendLine("    .ui-loading::after {");
-        sb.AppendLine("        background-color: rgba(0, 0, 0, 0.6);");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
-        sb.AppendLine();
+.ui-density-standard {{
+    --ui-density-spacing-multiplier: 1;
+}}
 
-        // Elevation
-        sb.AppendLine("/* Elevation */");
-        sb.Append(GenerateElevationClasses());
-        sb.AppendLine();
+.ui-density-compact {{
+    --ui-density-spacing-multiplier: 0.75;
+}}
 
-        // Ripple Effect
-        sb.AppendLine("/* Ripple Effect */");
-        sb.AppendLine(".ui-has-ripple {");
-        sb.AppendLine("    position: relative;");
-        sb.AppendLine("    overflow: hidden;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine(".ui-ripple {");
-        sb.AppendLine("    position: absolute;");
-        sb.AppendLine("    border-radius: 50%;");
-        sb.AppendLine("    transform: scale(0);");
-        sb.AppendLine("    animation: ui-ripple-animation var(--ui-ripple-duration, 600ms) ease-out;");
-        sb.AppendLine("    background-color: var(--ui-ripple-color, rgba(0, 0, 0, 0.1));");
-        sb.AppendLine("    pointer-events: none;");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine("@media (prefers-color-scheme: dark) {");
-        sb.AppendLine("    .ui-ripple {");
-        sb.AppendLine("        background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.1));");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
-        sb.AppendLine();
-        sb.AppendLine("@keyframes ui-ripple-animation {");
-        sb.AppendLine("    to {");
-        sb.AppendLine("        transform: scale(4);");
-        sb.AppendLine("        opacity: 0;");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
+/* Full Width */
+.ui-full-width {{
+    width: 100%;
+}}
 
-        return sb.ToString();
+/* Loading State */
+.ui-loading {{
+    pointer-events: none;
+    position: relative;
+}}
+
+.ui-loading::after {{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+}}
+
+@media (prefers-color-scheme: dark) {{
+    .ui-loading::after {{
+        background-color: rgba(0, 0, 0, 0.6);
+    }}
+}}
+
+/* Elevation */
+{GenerateElevationClasses()}
+
+/* Ripple Effect */
+.ui-has-ripple {{
+    position: relative;
+    overflow: hidden;
+}}
+
+.ui-ripple {{
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ui-ripple-animation var(--ui-ripple-duration, 600ms) ease-out;
+    background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.5));
+    pointer-events: none;
+}}
+
+[data-theme=""dark""] .ui-ripple {{
+    background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.5));
+}}
+
+[data-theme=""light""] .ui-ripple {{
+    background-color: var(--ui-ripple-color, rgba(0, 0, 0, 0.5));
+}}
+
+@keyframes ui-ripple-animation {{
+    to {{
+        transform: scale(4);
+        opacity: 0;
+    }}
+}}
+";
+
+        return css;
     }
 
     private static string GenerateElevationClasses()
@@ -155,9 +145,14 @@ public static class CssCommonClasses
         double penumbraOffset = elevation;
         double penumbraBlur = elevation * 2;
 
-        string umbra = $"0px {umbraOffset}px {umbraBlur}px rgba(0,0,0,{umbraOpacity})";
-        string penumbra = $"0px {penumbraOffset}px {penumbraBlur}px rgba(0,0,0,{penumbraOpacity})";
-        string ambient = $"0px 1px 3px rgba(0,0,0,{ambientOpacity})";
+        string umbra = FormattableString.Invariant(
+            $"0px {umbraOffset}px {umbraBlur}px rgba(0,0,0,{umbraOpacity})");
+
+        string penumbra = FormattableString.Invariant(
+            $"0px {penumbraOffset}px {penumbraBlur}px rgba(0,0,0,{penumbraOpacity})");
+
+        string ambient = FormattableString.Invariant(
+            $"0px 1px 3px rgba(0,0,0,{ambientOpacity})");
 
         return (umbra, penumbra, ambient);
     }

@@ -1,10 +1,13 @@
 ﻿@using CdCSharp.BlazorUI.Components.Abstractions
+@using CdCSharp.BlazorUI.Components.Features.Common
 @using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Css
 @using CdCSharp.BlazorUI.Media.Icons
 @using Microsoft.AspNetCore.Components.Web
 
 @inherits UIVariantComponentBase<UISvgIcon, UISvgIconVariant>
+
+@implements IHasSize
 
 @{
     base.BuildRenderTree(__builder);
@@ -16,7 +19,7 @@
 
     [Parameter] public string? Title { get; set; }
 
-    [Parameter] public UISvgIconSize Size { get; set; } = UISvgIconSize.Medium;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     [Parameter] public CssColor? Color { get; set; }
 
@@ -48,7 +51,7 @@
 
     public override IEnumerable<string> GetAdditionalCssClasses()
     {
-        return [CssClassesReference.UISvgIcon, IconSizeClass];
+        return [CssClassesReference.UISvgIcon];
     }
 
     public override Dictionary<string, string> GetAdditionalInlineStyles()
@@ -61,25 +64,5 @@
         {
            {"color", Color.ToString(ColorOutputFormats.Rgba) }
         };
-    }
-
-    private string IconSizeClass =>
-            Size switch
-            {
-                UISvgIconSize.Small => CssClassesReference.UISvgIcon_SizeSmall,
-                UISvgIconSize.Medium => CssClassesReference.UISvgIcon_SizeMedium,
-                UISvgIconSize.Large => CssClassesReference.UISvgIcon_SizeLarge,
-                UISvgIconSize.XLarge => CssClassesReference.UISvgIcon_SizeXLarge,
-                UISvgIconSize.XXLarge => CssClassesReference.UISvgIcon_SizeXXLarge,
-                _ => CssClassesReference.UISvgIcon_SizeMedium,
-            };
-
-    public enum UISvgIconSize
-    {
-        Small,
-        Medium,
-        Large,
-        XLarge,
-        XXLarge,
     }
 }

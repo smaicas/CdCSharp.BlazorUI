@@ -1,0 +1,232 @@
+﻿@* @page "/theming/colors"
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Components.Generic.Svg
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Core.Theming
+
+<PageTitle>Colors & Palettes - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Colors & Palettes</h1>
+    <p class="doc-intro">
+        The color system provides a comprehensive set of colors with automatic variants for lighter and darker shades.
+        All colors support CSS variables and adapt to the current theme.
+    </p>
+
+    <div class="doc-section">
+        <h2>Theme Palette Colors</h2>
+        <p>These colors are defined by the current theme and change automatically when switching themes.</p>
+        
+        <div class="palette-grid">
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-primary)"></div>
+                <h4>Primary</h4>
+                <code>--palette-primary</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-secondary)"></div>
+                <h4>Secondary</h4>
+                <code>--palette-secondary</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-background)"></div>
+                <h4>Background</h4>
+                <code>--palette-background</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-surface)"></div>
+                <h4>Surface</h4>
+                <code>--palette-surface</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-error)"></div>
+                <h4>Error</h4>
+                <code>--palette-error</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-warning)"></div>
+                <h4>Warning</h4>
+                <code>--palette-warning</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-info)"></div>
+                <h4>Info</h4>
+                <code>--palette-info</code>
+            </div>
+            <div class="palette-color">
+                <div class="color-box" style="background: var(--palette-success)"></div>
+                <h4>Success</h4>
+                <code>--palette-success</code>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>UIColor Static Colors</h2>
+        <p>Pre-defined color constants with automatic variants. Each color has Lighten and Darken variants.</p>
+        
+        @foreach (var colorGroup in GetColorGroups())
+        {
+            <h3>@colorGroup.Name</h3>
+            <div class="color-variants-grid">
+                @foreach (var variant in colorGroup.Variants)
+                {
+                    <div class="color-variant">
+                        <div class="color-box" style="background: @variant.Color"></div>
+                        <span class="color-name">@variant.Name</span>
+                        <code class="color-code">@variant.Code</code>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="doc-section">
+        <h2>Using Colors in Code</h2>
+        <ComponentDemo>
+            <Code>
+@"// Using theme palette colors
+<UIButton Color=\"var(--palette-primary)\" />
+
+// Using UIColor constants
+<UISvgIcon Color=\"@UIColor.Blue\" />
+
+// Using color variants
+<UISvgIcon Color=\"@UIColor.Blue.Lighten2\" />
+<UISvgIcon Color=\"@UIColor.Blue.Darken3\" />
+
+// Creating custom colors
+CssColor customColor = new CssColor(\"#FF5722\");
+CssColor withAlpha = new CssColor(255, 87, 34, 0.5);"
+            </Code>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Color Variants</h2>
+        <p>Each UIColor provides these variants:</p>
+        <ul>
+            <li><code>Lighten3</code> - Lightest variant (30% lighter)</li>
+            <li><code>Lighten2</code> - Light variant (20% lighter)</li>
+            <li><code>Lighten1</code> - Slightly light (10% lighter)</li>
+            <li><code>Default</code> - Base color</li>
+            <li><code>Darken1</code> - Slightly dark (10% darker)</li>
+            <li><code>Darken2</code> - Dark variant (20% darker)</li>
+            <li><code>Darken3</code> - Darkest variant (30% darker)</li>
+        </ul>
+    </div>
+</div>
+
+@code {
+    private record ColorGroup(string Name, List<ColorVariant> Variants);
+    private record ColorVariant(string Name, string Color, string Code);
+
+    private List<ColorGroup> GetColorGroups()
+    {
+        return new List<ColorGroup>
+        {
+            new ColorGroup("Basic Colors", new List<ColorVariant>
+            {
+                new("Red", UIColor.Red.ToString(), "UIColor.Red"),
+                new("Green", UIColor.Green.ToString(), "UIColor.Green"),
+                new("Blue", UIColor.Blue.ToString(), "UIColor.Blue"),
+                new("Yellow", UIColor.Yellow.ToString(), "UIColor.Yellow"),
+                new("Orange", UIColor.Orange.ToString(), "UIColor.Orange"),
+                new("Purple", UIColor.Purple.ToString(), "UIColor.Purple"),
+                new("Pink", UIColor.Pink.ToString(), "UIColor.Pink"),
+                new("Gray", UIColor.Gray.ToString(), "UIColor.Gray"),
+            }),
+            new ColorGroup("Material Colors", new List<ColorVariant>
+            {
+                new("Indigo", UIColor.Indigo.ToString(), "UIColor.Indigo"),
+                new("Teal", UIColor.Teal.ToString(), "UIColor.Teal"),
+                new("Cyan", UIColor.Cyan.ToString(), "UIColor.Cyan"),
+                new("Amber", UIColor.Amber.ToString(), "UIColor.Amber"),
+                new("Lime", UIColor.Lime.ToString(), "UIColor.Lime"),
+            }),
+            new ColorGroup("Blue Variants Example", new List<ColorVariant>
+            {
+                new("Lighten3", UIColor.Blue.Lighten3.ToString(), "UIColor.Blue.Lighten3"),
+                new("Lighten2", UIColor.Blue.Lighten2.ToString(), "UIColor.Blue.Lighten2"),
+                new("Lighten1", UIColor.Blue.Lighten1.ToString(), "UIColor.Blue.Lighten1"),
+                new("Default", UIColor.Blue.Default.ToString(), "UIColor.Blue.Default"),
+                new("Darken1", UIColor.Blue.Darken1.ToString(), "UIColor.Blue.Darken1"),
+                new("Darken2", UIColor.Blue.Darken2.ToString(), "UIColor.Blue.Darken2"),
+                new("Darken3", UIColor.Blue.Darken3.ToString(), "UIColor.Blue.Darken3"),
+            })
+        };
+    }
+}
+
+<style>
+    .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .palette-color {
+        text-align: center;
+    }
+
+    .color-box {
+        width: 100%;
+        height: 80px;
+        border-radius: 0.5rem;
+        border: 1px solid var(--palette-foreground);
+        margin-bottom: 0.5rem;
+    }
+
+    .palette-color h4 {
+        margin: 0 0 0.25rem 0;
+        font-size: 0.875rem;
+    }
+
+    .palette-color code {
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    .color-variants-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .color-variant {
+        text-align: center;
+    }
+
+    .color-variant .color-box {
+        height: 60px;
+    }
+
+    .color-name {
+        display: block;
+        font-size: 0.813rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .color-code {
+        display: block;
+        font-size: 0.688rem;
+        opacity: 0.6;
+    }
+
+    .doc-section ul {
+        margin-left: 1.5rem;
+    }
+
+    .doc-section ul li {
+        margin-bottom: 0.5rem;
+    }
+
+    .doc-section ul li code {
+        background: var(--palette-surface);
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+    }
+</style> *@

@@ -1,0 +1,351 @@
+﻿@page "/theming/overview"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
+
+<PageTitle>Theming Overview - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Theming Overview</h1>
+    <p class="doc-intro">
+        CdCSharp.BlazorUI includes a comprehensive theming system that supports light and dark modes, 
+        custom color palettes, and CSS variables for complete customization.
+    </p>
+
+    <div class="doc-section">
+        <h2>Built-in Themes</h2>
+        <p>The library comes with two professionally designed themes:</p>
+        
+        <div class="theme-preview-grid">
+            <div class="theme-preview theme-preview--light">
+                <h4>Light Theme</h4>
+                <div class="preview-colors">
+                    <div class="color-swatch" style="background: #FFFFFF;">
+                        <span>Background</span>
+                    </div>
+                    <div class="color-swatch" style="background: #F8FAFC;">
+                        <span>Surface</span>
+                    </div>
+                    <div class="color-swatch" style="background: #3B82F6; color: white;">
+                        <span>Primary</span>
+                    </div>
+                    <div class="color-swatch" style="background: #1E293B; color: white;">
+                        <span>Foreground</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="theme-preview theme-preview--dark">
+                <h4>Dark Theme</h4>
+                <div class="preview-colors">
+                    <div class="color-swatch" style="background: #0F172A; color: white;">
+                        <span>Background</span>
+                    </div>
+                    <div class="color-swatch" style="background: #1E293B; color: white;">
+                        <span>Surface</span>
+                    </div>
+                    <div class="color-swatch" style="background: #60A5FA; color: black;">
+                        <span>Primary</span>
+                    </div>
+                    <div class="color-swatch" style="background: #E2E8F0; color: black;">
+                        <span>Foreground</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>How Theming Works</h2>
+        <p>The theming system uses CSS custom properties (variables) that are dynamically updated when the theme changes:</p>
+        
+        <CodeBlock Code="@cssVariablesCode" Language="css" Title="CSS Variables" />
+        
+        <p>These variables cascade throughout your application, ensuring consistent theming across all components.</p>
+    </div>
+
+    <div class="doc-section">
+        <h2>Theme Initialization</h2>
+        <p>Themes should be initialized in your main layout component:</p>
+        
+        <CodeBlock Code="@initializationCode" Language="razor" Title="MainLayout.razor" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Using Theme Variables</h2>
+        <p>You can use theme variables in your components and styles:</p>
+        
+        <CodeBlock Code="@usageCode" Language="css" Title="Component Styles" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Theme Palette Structure</h2>
+        <p>Each theme defines the following color properties:</p>
+        
+        <PropertyTable TItem="PaletteProperty" Items="@PaletteProperties">
+            <PropertyTemplate Context="prop">
+                <td><code>@prop.Name</code></td>
+                <td>@prop.Description</td>
+                <td><code>@prop.CssVariable</code></td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+
+    <div class="doc-section">
+        <h2>Automatic Theme Detection</h2>
+        <p>The theming system can automatically detect the user's system preference:</p>
+        
+        <CodeBlock Code="@autoDetectCode" Language="csharp" Title="Auto Theme Detection" />
+    </div>
+
+    <div class="doc-section">
+        <h2>Theme Persistence</h2>
+        <p>The selected theme is automatically persisted to localStorage and restored on subsequent visits. 
+           The theme also syncs across multiple browser tabs/windows.</p>
+    </div>
+
+    <div class="doc-section">
+        <h2>Live Theme Example</h2>
+        <p>Try switching themes to see how components adapt:</p>
+        
+        <div class="theme-demo">
+            <UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon" />
+            
+            <div class="demo-components">
+                <div class="demo-card">
+                    <h4>Surface Card</h4>
+                    <p>This card uses surface and foreground colors from the current theme.</p>
+                </div>
+                
+                <div class="demo-buttons">
+                    <button class="demo-button demo-button--primary">Primary Button</button>
+                    <button class="demo-button demo-button--secondary">Secondary Button</button>
+                </div>
+                
+                <div class="demo-status">
+                    <div class="status-item status-item--success">Success</div>
+                    <div class="status-item status-item--warning">Warning</div>
+                    <div class="status-item status-item--error">Error</div>
+                    <div class="status-item status-item--info">Info</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string cssVariablesCode = @":root {
+    /* Main colors */
+    --palette-primary: #3B82F6;
+    --palette-primary-contrast: #FFFFFF;
+    --palette-secondary: #8B5CF6;
+    --palette-secondary-contrast: #FFFFFF;
+    
+    /* Surface colors */
+    --palette-background: #FFFFFF;
+    --palette-surface: #F8FAFC;
+    --palette-foreground: #1E293B;
+    
+    /* Status colors */
+    --palette-error: #EF4444;
+    --palette-warning: #F59E0B;
+    --palette-info: #3B82F6;
+    --palette-success: #10B981;
+}";
+
+    private string initializationCode = @"@inject IThemeJsInterop ThemeInterop
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Initialize with a specific theme
+            await ThemeInterop.InitializeAsync(""dark"");
+            
+            // Or auto-detect system preference
+            await ThemeInterop.InitializeAsync(""auto"");
+        }
+    }
+}";
+
+    private string usageCode = @".my-component {
+    /* Use theme colors */
+    background: var(--palette-surface);
+    color: var(--palette-foreground);
+    border: 1px solid var(--palette-primary);
+}
+
+.my-button {
+    background: var(--palette-primary);
+    color: var(--palette-primary-contrast);
+}
+
+.my-button:hover {
+    /* Colors automatically adapt to theme changes */
+    background: var(--palette-primary-light);
+}";
+
+    private string autoDetectCode = @"// Check if user prefers dark mode
+@media (prefers-color-scheme: dark) {
+    /* System prefers dark mode */
+}
+
+// In C# code
+await ThemeInterop.InitializeAsync(""auto"");";
+
+    private record PaletteProperty(string Name, string Description, string CssVariable);
+
+    private List<PaletteProperty> PaletteProperties = new()
+    {
+        new("Primary", "Main brand color for primary actions", "--palette-primary"),
+        new("PrimaryContrast", "Text color for primary backgrounds", "--palette-primary-contrast"),
+        new("Secondary", "Secondary brand color for accents", "--palette-secondary"),
+        new("SecondaryContrast", "Text color for secondary backgrounds", "--palette-secondary-contrast"),
+        new("Background", "Main page background color", "--palette-background"),
+        new("Surface", "Elevated surface color (cards, panels)", "--palette-surface"),
+        new("Foreground", "Main text and icon color", "--palette-foreground"),
+        new("Error", "Error state color", "--palette-error"),
+        new("Warning", "Warning state color", "--palette-warning"),
+        new("Info", "Informational state color", "--palette-info"),
+        new("Success", "Success state color", "--palette-success"),
+    };
+}
+
+<style>
+    .theme-preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .theme-preview {
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .theme-preview h4 {
+        margin: 0;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .theme-preview--light h4 {
+        background: #F8FAFC;
+        color: #1E293B;
+    }
+
+    .theme-preview--dark h4 {
+        background: #1E293B;
+        color: #E2E8F0;
+    }
+
+    .preview-colors {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .color-swatch {
+        padding: 1.5rem 1rem;
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .theme-demo {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center;
+        padding: 2rem;
+        background: var(--palette-surface);
+        border-radius: 0.5rem;
+    }
+
+    .demo-components {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .demo-card {
+        padding: 1.5rem;
+        background: var(--palette-background);
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.5rem;
+    }
+
+    .demo-card h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--palette-foreground);
+    }
+
+    .demo-card p {
+        margin: 0;
+        color: var(--palette-foreground);
+        opacity: 0.8;
+    }
+
+    .demo-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .demo-button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+    .demo-button:hover {
+        opacity: 0.8;
+    }
+
+    .demo-button--primary {
+        background: var(--palette-primary);
+        color: var(--palette-primary-contrast);
+    }
+
+    .demo-button--secondary {
+        background: var(--palette-secondary);
+        color: var(--palette-secondary-contrast);
+    }
+
+    .demo-status {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .status-item {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: white;
+    }
+
+    .status-item--success {
+        background: var(--palette-success);
+    }
+
+    .status-item--warning {
+        background: var(--palette-warning);
+    }
+
+    .status-item--error {
+        background: var(--palette-error);
+    }
+
+    .status-item--info {
+        background: var(--palette-info);
+    }
+</style>

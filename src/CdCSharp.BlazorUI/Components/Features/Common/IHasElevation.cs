@@ -2,5 +2,5 @@
 
 public interface IHasElevation
 {
-    int Elevation { get; set; }
+    int? Elevation { get; set; }
 }

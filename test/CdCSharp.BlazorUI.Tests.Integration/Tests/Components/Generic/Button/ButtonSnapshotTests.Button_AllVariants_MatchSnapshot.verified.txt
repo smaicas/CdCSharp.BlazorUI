@@ -1,6 +1,6 @@
 ﻿[
   {
     Variant: Default,
-    Html: <button class="ui-button ui-button--default ui-has-ripple" style="--ui-ripple-duration: 600ms" type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Default Button</span></button>
+    Html: <button class="ui-button ui-button--default ui-size-medium ui-has-ripple ui-density-standard" type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Default Button</span></button>
   }
 ]

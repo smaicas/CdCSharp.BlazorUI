@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 using System.Reflection;
 using System.Text;
 
-public static class CssGenerator
+public static class CssThemeGenerator
 {
     private static readonly PropertyInfo[] PaletteProperties =
         typeof(UIThemePaletteBase)

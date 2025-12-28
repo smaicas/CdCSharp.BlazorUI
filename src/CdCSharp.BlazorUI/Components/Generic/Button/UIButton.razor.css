@@ -1,7 +1,15 @@
 ﻿.ui-button {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    /* Base values as CSS custom properties */
+    --ui-button-gap: 0.5rem;
+    --ui-button-padding-y: 0.5rem;
+    --ui-button-padding-x: 1rem;
+    --ui-button-min-height: 2.5rem;
+    /* Apply with density multiplier */
+    gap: calc(var(--ui-button-gap) * var(--ui-density-spacing-multiplier, 1));
+    padding: calc(var(--ui-button-padding-y) * var(--ui-density-spacing-multiplier, 1)) calc(var(--ui-button-padding-x) * var(--ui-density-spacing-multiplier, 1));
+    min-height: calc(var(--ui-button-min-height) * var(--ui-density-spacing-multiplier, 1));
 }
 
 .ui-button__text {
@@ -10,9 +18,37 @@
 
 .ui-button svg {
     pointer-events: none;
+    /* Icon size remains constant across densities */
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 /* Specific: Only Icon */
 .ui-button--icon-only {
-    padding: 0.5rem;
+    --ui-button-icon-only-padding: 0.5rem;
+    padding: calc(var(--ui-button-icon-only-padding) * var(--ui-density-spacing-multiplier, 1));
+}
+
+/* Size variations with density support */
+.ui-button.ui-size-small {
+    --ui-button-padding-y: 0.375rem;
+    --ui-button-padding-x: 0.75rem;
+    --ui-button-min-height: 2rem;
+}
+
+.ui-button.ui-size-large {
+    --ui-button-padding-y: 0.625rem;
+    --ui-button-padding-x: 1.25rem;
+    --ui-button-min-height: 3rem;
+}
+
+/* Icon sizes by button size (not affected by density) */
+.ui-button.ui-size-small svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.ui-button.ui-size-large svg {
+    width: 1.5rem;
+    height: 1.5rem;
 }

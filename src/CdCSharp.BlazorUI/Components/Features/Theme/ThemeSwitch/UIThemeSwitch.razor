@@ -51,8 +51,9 @@
     private RenderFragment RenderSunMoon() => __builder =>
     {
         <button @attributes="AdditionalAttributes"
-                @onclick="ToggleLightDark"
+                @onclick="SwitchTheme"
                 class="@GetSunMoonClasses()"
+                disabled="@_isTransitioning"
                 aria-label="@($"Switch to {GetOppositeTheme()} mode")">
             <span class="ui-theme-switch__sun-moon-container">
                 <span class="ui-theme-switch__icon-wrapper">
@@ -71,36 +72,30 @@
 
     private async Task SwitchTheme()
     {
+        if (_isTransitioning) return;
+
         _isTransitioning = true;
         StateHasChanged();
 
-        // Small delay for animation start
-        await Task.Delay(50);
-
-        string newTheme = await ThemeInterop.ToggleThemeAsync(AvailableThemes);
-        _currentTheme = newTheme;
-
-        if (OnThemeChanged.HasDelegate)
+        try
         {
-            await OnThemeChanged.InvokeAsync(newTheme);
+            // For SunMoon variant, use light/dark only; for others use AvailableThemes
+            string[] themesToUse = Variant == UIThemeSwitchVariant.SunMoon
+                ? new[] { "light", "dark" }
+                : AvailableThemes;
+
+            string newTheme = await ThemeInterop.ToggleThemeAsync(themesToUse);
+            _currentTheme = newTheme;
+
+            if (OnThemeChanged.HasDelegate)
+            {
+                await OnThemeChanged.InvokeAsync(newTheme);
+            }
         }
-
-        // Keep transition state for animation duration
-        await Task.Delay(300);
-        _isTransitioning = false;
-        StateHasChanged();
-    }
-
-    private async Task ToggleLightDark()
-    {
-        // For SunMoon variant, always toggle between light and dark
-        string[] themes = { "light", "dark" };
-        string newTheme = await ThemeInterop.ToggleThemeAsync(themes);
-        _currentTheme = newTheme;
-
-        if (OnThemeChanged.HasDelegate)
+        finally
         {
-            await OnThemeChanged.InvokeAsync(newTheme);
+            _isTransitioning = false;
+            StateHasChanged();
         }
     }
 

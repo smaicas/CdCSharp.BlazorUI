@@ -1,0 +1,116 @@
+﻿@if (!string.IsNullOrWhiteSpace(Code))
+{
+    <div class="code-block">
+        @if (!string.IsNullOrWhiteSpace(Title))
+        {
+            <div class="code-block__header">
+                <span class="code-block__title">@Title</span>
+                <button class="code-block__copy" @onclick="CopyCode" title="Copy to clipboard">
+                    @if (_copied)
+                    {
+                        <span>✓ Copied</span>
+                    }
+                    else
+                    {
+                        <span>Copy</span>
+                    }
+                </button>
+            </div>
+        }
+        <pre class="code-block__pre"><code class="code-block__code @GetLanguageClass()">@GetFormattedCode()</code></pre>
+    </div>
+}
+
+@code {
+    [Parameter] public string Code { get; set; } = string.Empty;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string Language { get; set; } = "razor";
+
+    private bool _copied = false;
+
+    private string GetLanguageClass() => $"language-{Language}";
+
+    private string GetFormattedCode()
+    {
+        // Remove leading/trailing whitespace from the entire code block
+        var trimmed = Code.Trim();
+
+        // Find the minimum indentation level
+        var lines = trimmed.Split('\n');
+        var minIndent = lines
+            .Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(line => line.Length - line.TrimStart().Length)
+            .DefaultIfEmpty(0)
+            .Min();
+
+        // Remove the common indentation from all lines
+        var formattedLines = lines.Select(line =>
+            line.Length > minIndent ? line.Substring(minIndent) : line
+        );
+
+        return string.Join("\n", formattedLines);
+    }
+
+    private async Task CopyCode()
+    {
+        // In a real implementation, this would use JS interop to copy to clipboard
+        _copied = true;
+        StateHasChanged();
+        await Task.Delay(2000);
+        _copied = false;
+        StateHasChanged();
+    }
+}
+
+<style>
+    .code-block {
+        margin: 1rem 0;
+        border: 1px solid var(--palette-foreground);
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+
+    .code-block__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        background: var(--palette-surface);
+        border-bottom: 1px solid var(--palette-foreground);
+    }
+
+    .code-block__title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        opacity: 0.7;
+    }
+
+    .code-block__copy {
+        padding: 0.25rem 0.75rem;
+        border: 1px solid var(--palette-foreground);
+        background: transparent;
+        color: var(--palette-foreground);
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .code-block__copy:hover {
+            background: var(--palette-foreground);
+            color: var(--palette-background);
+        }
+
+    .code-block__pre {
+        margin: 0;
+        padding: 1rem;
+        overflow-x: auto;
+        background: var(--palette-surface);
+    }
+
+    .code-block__code {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+</style>

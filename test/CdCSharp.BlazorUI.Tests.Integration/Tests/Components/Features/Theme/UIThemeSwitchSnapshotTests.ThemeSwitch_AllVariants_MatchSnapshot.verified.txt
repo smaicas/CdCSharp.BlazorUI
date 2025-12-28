@@ -1,0 +1,10 @@
+﻿[
+  {
+    Variant: Default,
+    Html: <button class="ui-theme-switch ui-theme-switch--default" blazor:onclick="<EVENT>" b-pxfrwcszl5><span class="ui-theme-switch__content " b-pxfrwcszl5><span class="ui-theme-switch__icon" b-pxfrwcszl5>☀️</span><span class="ui-theme-switch__label" b-pxfrwcszl5>Light</span></span></button>
+  },
+  {
+    Variant: SunMoon,
+    Html: <button blazor:onclick="<EVENT>" class="ui-theme-switch ui-theme-switch--sunmoon ui-theme-switch--light" aria-label="Switch to dark mode" b-pxfrwcszl5><span class="ui-theme-switch__sun-moon-container" b-pxfrwcszl5><span class="ui-theme-switch__icon-wrapper" b-pxfrwcszl5><span class="ui-theme-switch__sun" b-pxfrwcszl5>☀️</span></span></span></button>
+  }
+]
