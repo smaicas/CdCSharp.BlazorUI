@@ -70,6 +70,8 @@ public class CssColor : IEquatable<CssColor>
 
     //private readonly ColorVariant? _associatedColorVariant;
     private readonly byte[] _valuesAsByte;
+    private readonly string? _cssVariable;
+    private readonly bool _isCssVariable;
 
     /// <summary>
     /// The Alpha value.
@@ -243,20 +245,27 @@ public class CssColor : IEquatable<CssColor>
     /// <summary>
     /// Constructs a CssColor from string representation (RGB/RGBA/HEX)
     /// </summary>
-    public CssColor(string value)
+    public CssColor(string value, bool isCssVariable = false)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Color value cannot be null or empty.", nameof(value));
 
-        value = value.Trim().ToLowerInvariant();
+        if (isCssVariable)
+        {
+            _cssVariable = value;
+            _isCssVariable = true;
+            // No need to process further for CSS variables
+            return;
+        }
 
+        // Existing logic for RGB/RGBA/HEX
+        value = value.Trim().ToLowerInvariant();
         byte[] bytes = value switch
         {
             _ when IsRgb(value) => ParseRgb(value),
             _ when IsHex(value) => ParseHex(value),
             _ => throw new ArgumentException("Invalid CSS color format.", nameof(value))
         };
-
         _valuesAsByte = bytes;
         CalculateHsl();
     }
@@ -528,6 +537,11 @@ public class CssColor : IEquatable<CssColor>
 
     public string ToString(ColorOutputFormats format)
     {
+        if (_isCssVariable && _cssVariable != null)
+        {
+            return _cssVariable;
+        }
+
         return format switch
         {
             ColorOutputFormats.Hex => Value.Substring(0, 7),

@@ -6,7 +6,7 @@
     justify-content: center;
     border: none;
     background: var(--palette-surface);
-    color: var(--palette-foreground);
+    color: var(--palette-backgroundcontrast);
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     cursor: pointer;

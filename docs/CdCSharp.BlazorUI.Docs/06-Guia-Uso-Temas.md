@@ -23,7 +23,7 @@ Todos los estilos de la librería utilizan variables CSS para los colores de la p
 | `--palette-secondary` | Color secundario/acento. |
 | `--palette-background` | Color de fondo principal (cuerpo de la app). |
 | `--palette-surface` | Color de fondo de contenedores y superficies. |
-| `--palette-foreground` | Color del texto y elementos en primer plano. |
+| `--palette-backgroundcontrast` | Color del texto y elementos en primer plano. |
 
 Para aplicar un tema, el componente `UIBlazorLayout` o la lógica JS Interop inserta el ID del tema como una clase en el `<body>` o en el elemento raíz.
 
@@ -86,7 +86,7 @@ html[data-theme="custom"] {
   --palette-secondarycontrast: var(--custom-secondarycontrast);
   --palette-background: var(--custom-background);
   --palette-surface: var(--custom-surface);
-  --palette-foreground: var(--custom-foreground);
+  --palette-backgroundcontrast: var(--custom-foreground);
   --palette-error: var(--custom-error);
   --palette-success: var(--custom-success);
   --palette-warning: var(--custom-warning);

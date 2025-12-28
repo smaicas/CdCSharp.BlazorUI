@@ -147,6 +147,39 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
             }
         }
 
+        if (this is IHasBorder hasBorder)
+        {
+            // Procesar el radius del borde completo (tiene prioridad)
+            if (hasBorder.Border?.Radius != null)
+            {
+                styles["border-radius"] = hasBorder.Border.GetRadiusCssValue();
+            }
+
+            // Border completo
+            if (hasBorder.Border != null)
+            {
+                styles["border"] = hasBorder.Border.ToCssValue();
+            }
+
+            // Bordes individuales
+            if (hasBorder.BorderTop != null)
+            {
+                styles["border-top"] = hasBorder.BorderTop.ToCssValue();
+            }
+            if (hasBorder.BorderRight != null)
+            {
+                styles["border-right"] = hasBorder.BorderRight.ToCssValue();
+            }
+            if (hasBorder.BorderBottom != null)
+            {
+                styles["border-bottom"] = hasBorder.BorderBottom.ToCssValue();
+            }
+            if (hasBorder.BorderLeft != null)
+            {
+                styles["border-left"] = hasBorder.BorderLeft.ToCssValue();
+            }
+        }
+
         // Build component styles string
         string componentStylesString = string.Join("; ", styles.Select(kv => $"{kv.Key}: {kv.Value}"));
 

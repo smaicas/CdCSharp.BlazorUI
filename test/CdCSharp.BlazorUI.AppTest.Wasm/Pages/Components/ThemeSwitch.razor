@@ -99,7 +99,7 @@
                 <h4>Surface Colors</h4>
                 <code>--palette-background</code>
                 <code>--palette-surface</code>
-                <code>--palette-foreground</code>
+                <code>--palette-backgroundcontrast</code>
             </div>
             <div class="variable-group">
                 <h4>Status Colors</h4>
@@ -181,68 +181,3 @@ private async Task<string> GetCurrentTheme()
         new("Disabled", "bool", "false", "Whether the switch is disabled"),
     };
 }
-
-<style>
-    .theme-switch-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-    }
-
-    .theme-switch-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        padding: 2rem;
-        background: var(--palette-surface);
-        border-radius: 0.5rem;
-    }
-
-    .theme-switch-item span {
-        font-weight: 500;
-    }
-
-    .layout-example {
-        border: 1px solid var(--palette-foreground);
-        border-radius: 0.5rem;
-        overflow: hidden;
-    }
-
-    .example-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        background: var(--palette-surface);
-        border-bottom: 1px solid var(--palette-foreground);
-    }
-
-    .example-header h3 {
-        margin: 0;
-    }
-
-    .example-content {
-        padding: 1.5rem;
-    }
-
-    .theme-variables {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 2rem;
-        margin-top: 1rem;
-    }
-
-    .variable-group h4 {
-        margin: 0 0 0.5rem 0;
-        font-size: 0.875rem;
-        text-transform: uppercase;
-        opacity: 0.7;
-    }
-
-    .variable-group code {
-        display: block;
-        margin: 0.25rem 0;
-    }
-</style>

@@ -14,8 +14,8 @@
 <div class="doc-page">
     <h1>Buttons</h1>
     <p class="doc-intro">
-        The UIButton component is a versatile button with support for loading states, icons, 
-        ripple effects, elevation, transitions, and more.
+        The UIButton component is a versatile button with support for loading states, icons,
+        ripple effects, elevation, transitions, borders, and more.
     </p>
 
     <div class="doc-section">
@@ -59,7 +59,7 @@
             <Demo>
                 <div class="demo-row">
                     <UIButton Text="Save" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
-                    <UIButton Text="Delete" TrailingIcon="@UIIcons.MaterialIconsRound.i_cabin" />
+                    <UIButton Text="Delete" TrailingIcon="@UIIcons.MaterialIconsRound.i_delete" />
                     <UIButton Text="Edit" LeadingIcon="@UIIcons.MaterialIconsRound.i_edit" TrailingIcon="@UIIcons.MaterialIconsRound.i_chevron_right" />
                 </div>
             </Demo>
@@ -72,9 +72,23 @@
             <Demo>
                 <div class="demo-row">
                     <UIButton Text="No Elevation" Elevation="0" />
-                    <UIButton Text="Low Elevation" Elevation="2" />
-                    <UIButton Text="Medium Elevation" Elevation="4" />
-                    <UIButton Text="High Elevation" Elevation="8" />
+                    <UIButton Text="Low" Elevation="2" />
+                    <UIButton Text="Medium" Elevation="4" />
+                    <UIButton Text="High" Elevation="8" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Borders</h2>
+        <ComponentDemo Code="@bordersCode">
+            <Demo>
+                <div class="demo-row">
+                    <UIButton Text="Default Border" Border="@BorderPresets.Default" />
+                    <UIButton Text="Primary Border" Border="@BorderPresets.Primary" />
+                    <UIButton Text="Rounded" Border="@BorderPresets.Rounded" />
+                    <UIButton Text="Pill" Border="@BorderPresets.Pill" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -108,28 +122,6 @@
     </div>
 
     <div class="doc-section">
-        <h2>Ripple Effect</h2>
-        <ComponentDemo Code="@rippleCode">
-            <Demo>
-                <div class="demo-row">
-                    <UIButton Text="With Ripple" DisableRipple="false" />
-                    <UIButton Text="Without Ripple" DisableRipple="true" />
-                    <UIButton Text="Custom Ripple Color" DisableRipple="false" RippleColor="@UIColor.Purple.Default" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
-        <h2>Full Width</h2>
-        <ComponentDemo Code="@fullWidthCode">
-            <Demo>
-                <UIButton Text="Full Width Button" FullWidth="true" />
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
         <h2>Properties</h2>
         <PropertyTable TItem="ButtonProperty" Items="@ButtonProperties">
             <PropertyTemplate Context="prop">
@@ -143,52 +135,35 @@
 </div>
 
 @code {
-    // Code samples as strings to avoid formatting issues
     private string basicUsageCode = @"<UIButton Text=""Click Me"" OnClick=""@(() => Console.WriteLine(""Clicked!""))"" />";
-    
+
     private string sizesCode = @"<UIButton Text=""Small"" Size=""SizeEnum.Small"" />
 <UIButton Text=""Medium"" Size=""SizeEnum.Medium"" />
 <UIButton Text=""Large"" Size=""SizeEnum.Large"" />";
 
-    private string loadingCode = @"<UIButton Text=""Loading Spinner"" 
-          IsLoading=""true"" 
-          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />
+    private string loadingCode = @"<UIButton Text=""Loading Spinner""
+          IsLoading=""true""
+          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />";
 
-<UIButton Text=""Loading Dots"" 
-          IsLoading=""true"" 
-          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Dots"" />
-
-<UIButton Text=""Loading Pulse"" 
-          IsLoading=""true"" 
-          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Pulse"" />";
-
-    private string iconsCode = @"<UIButton Text=""Save"" LeadingIcon=""@UIIcons.Common.Save"" />
-<UIButton Text=""Delete"" TrailingIcon=""@UIIcons.Common.Trash"" />
-<UIButton Text=""Edit"" 
-          LeadingIcon=""@UIIcons.Common.Edit"" 
-          TrailingIcon=""@UIIcons.Common.ChevronRight"" />";
+    private string iconsCode = @"<UIButton Text=""Save"" LeadingIcon=""@UIIcons.MaterialIconsRound.i_save"" />
+<UIButton Text=""Delete"" TrailingIcon=""@UIIcons.MaterialIconsRound.i_delete"" />";
 
     private string elevationCode = @"<UIButton Text=""No Elevation"" Elevation=""0"" />
-<UIButton Text=""Low Elevation"" Elevation=""2"" />
-<UIButton Text=""Medium Elevation"" Elevation=""4"" />
-<UIButton Text=""High Elevation"" Elevation=""8"" />";
+<UIButton Text=""Low"" Elevation=""2"" />
+<UIButton Text=""Medium"" Elevation=""4"" />
+<UIButton Text=""High"" Elevation=""8"" />";
+
+    private string bordersCode = @"<UIButton Text=""Default Border"" Border=""@BorderPresets.Default"" />
+<UIButton Text=""Primary Border"" Border=""@BorderPresets.Primary"" />
+<UIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
+<UIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
 
     private string densityCode = @"<UIButton Text=""Comfortable"" Density=""DensityEnum.Comfortable"" />
 <UIButton Text=""Standard"" Density=""DensityEnum.Standard"" />
 <UIButton Text=""Compact"" Density=""DensityEnum.Compact"" />";
 
     private string transitionsCode = @"<UIButton Text=""Hover Scale"" Transitions=""@UITransitionPresets.HoverScale"" />
-<UIButton Text=""Hover Lift"" Transitions=""@UITransitionPresets.HoverLift"" />
-<UIButton Text=""Hover Glow"" Transitions=""@UITransitionPresets.HoverGlow"" />
-<UIButton Text=""Focus Shadow"" Transitions=""@UITransitionPresets.FocusShadow"" />";
-
-    private string rippleCode = @"<UIButton Text=""With Ripple"" DisableRipple=""false"" />
-<UIButton Text=""Without Ripple"" DisableRipple=""true"" />
-<UIButton Text=""Custom Ripple Color"" 
-          DisableRipple=""false"" 
-          RippleColor=""@UIColor.Purple"" />";
-
-    private string fullWidthCode = @"<UIButton Text=""Full Width Button"" FullWidth=""true"" />";
+<UIButton Text=""Hover Lift"" Transitions=""@UITransitionPresets.HoverLift"" />";
 
     private record ButtonProperty(string Name, string Type, string Default, string Description);
 
@@ -198,42 +173,23 @@
         new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click event handler"),
         new("Disabled", "bool", "false", "Whether the button is disabled"),
         new("Size", "SizeEnum", "Medium", "Size of the button (Small, Medium, Large)"),
-        new("Density", "DensityEnum", "Standard", "Density of the button (Comfortable, Standard, Compact)"),
+        new("Density", "DensityEnum", "Standard", "Density of the button"),
         new("IsLoading", "bool", "false", "Whether the button is in loading state"),
         new("LoadingIndicatorVariant", "UILoadingIndicatorVariant?", "null", "Type of loading indicator"),
         new("LeadingIcon", "string?", "null", "Icon to display before the text"),
         new("TrailingIcon", "string?", "null", "Icon to display after the text"),
-        new("Elevation", "int", "0", "Elevation level (0-24)"),
+        new("Elevation", "int?", "null", "Elevation level (0-24)"),
+        new("Border", "BorderStyle?", "null", "Border style for all sides"),
+        new("BorderTop", "BorderStyle?", "null", "Top border style"),
+        new("BorderRight", "BorderStyle?", "null", "Right border style"),
+        new("BorderBottom", "BorderStyle?", "null", "Bottom border style"),
+        new("BorderLeft", "BorderStyle?", "null", "Left border style"),
         new("DisableRipple", "bool", "false", "Whether to disable ripple effect"),
         new("RippleColor", "CssColor?", "null", "Custom color for ripple effect"),
+        new("RippleDuration", "int?", "null", "Ripple animation duration in milliseconds"),
         new("FullWidth", "bool", "false", "Whether the button should take full width"),
         new("Transitions", "UITransitions?", "null", "Transition animations"),
+        new("BackgroundColor", "CssColor?", "null", "Background color"),
+        new("Color", "CssColor?", "null", "Text color"),
     };
 }
-
-<style>
-    .doc-page {
-        max-width: 1000px;
-    }
-
-    .doc-intro {
-        font-size: 1.125rem;
-        margin-bottom: 2rem;
-        opacity: 0.8;
-    }
-
-    .doc-section {
-        margin-bottom: 3rem;
-    }
-
-    .doc-section h2 {
-        margin-bottom: 1rem;
-    }
-
-    .demo-row {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-</style>

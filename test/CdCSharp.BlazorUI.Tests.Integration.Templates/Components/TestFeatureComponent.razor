@@ -16,6 +16,7 @@
 @implements IHasTransitions
 @implements IHasLoading
 @implements IHasRipple
+@implements IHasBorder
 
 <div @ref="_rootElement" @attributes="AdditionalAttributes">
     @if (IsLoading && LoadingIndicatorVariant != null)
@@ -58,7 +59,12 @@
     // IHasDisabled
     [Parameter] public bool Disabled { get; set; }
 
-    // public override ElementReference GetRootElement() => _rootElement;
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
 
     public override IEnumerable<string> GetAdditionalCssClasses()
     {

@@ -559,6 +559,27 @@ public class UIComponentBaseTests : TestContextBase
         element.ShouldNotHaveClass("ui-full-width"); // 9 % 2 = 1 (false)
     }
 
+    [Fact(DisplayName = "Border_WithAllFeatures_AppliesCorrectly")]
+    public void Border_WithAllFeatures_AppliesCorrectly()
+    {
+        // Arrange
+        IRenderedComponent<TestFeatureComponent> cut = Render<TestFeatureComponent>(parameters => parameters
+            .Add(p => p.Border, new BorderStyle("2px", BorderStyleType.Solid, UIColor.Palette.Primary, 12))
+            .Add(p => p.BorderTop, new BorderStyle("4px", BorderStyleType.Dashed, UIColor.Red.Default))
+            .AddUnmatched("style", "margin: 10px"));
+
+        // Assert
+        IElement element = cut.Find("div");
+        string? style = element.GetAttribute("style");
+
+        // All borders should be present
+        style.Should().Contain("border: 2px solid var(--palette-primary)");
+        style.Should().Contain("border-top: 4px dashed");
+        style.Should().Contain("border-radius: 12px");
+        // User style preserved
+        style.Should().Contain("margin: 10px");
+    }
+
     #endregion
 
     #region Transition Classes Tests

@@ -1,0 +1,18 @@
+﻿[
+  {
+    BorderType: Default,
+    Html: <button class="ui-button ui-button--default ui-size-medium ui-has-ripple ui-density-standard" style="border: 1px solid rgba(153,153,153,1)" type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Default Border</span></button>
+  },
+  {
+    BorderType: Primary,
+    Html: <button class="ui-button ui-button--default ui-size-medium ui-has-ripple ui-density-standard" style="border: 2px solid var(--palette-primary)" type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Primary Border</span></button>
+  },
+  {
+    BorderType: Rounded,
+    Html: <button class="ui-button ui-button--default ui-size-medium ui-has-ripple ui-density-standard" style="border-radius: 4px; border: 1px solid rgba(153,153,153,1)" type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Rounded Border</span></button>
+  },
+  {
+    BorderType: Pill,
+    Html: <button class="ui-button ui-button--default ui-size-medium ui-has-ripple ui-density-standard" style="border-radius: 9999px; border: 1px solid rgba(153,153,153,1)" type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Pill Border</span></button>
+  }
+]

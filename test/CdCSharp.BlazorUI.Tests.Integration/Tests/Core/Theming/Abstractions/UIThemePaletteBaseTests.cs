@@ -14,25 +14,59 @@ public class UIThemePaletteBaseTests
         TestThemePalette palette = new();
 
         // Assert
-        palette.Id.Should().Be("default");
-        palette.Name.Should().Be("Default");
-
-        // Main colors
-        palette.Primary.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#3B82F6");
-        palette.PrimaryContrast.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#FFFFFF");
-        palette.Secondary.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#8B5CF6");
-        palette.SecondaryContrast.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#FFFFFF");
+        palette.Id.Should().Be("dark");
+        palette.Name.Should().Be("Dark");
 
         // Surface colors
-        palette.Background.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#FFFFFF");
-        palette.Surface.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#F8FAFC");
-        palette.Foreground.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#1E293B");
+        palette.Background.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
+
+        palette.BackgroundContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#F1F5F9");
+
+        palette.Surface.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#1E293B");
+
+        palette.SurfaceContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#F1F5F9");
+
+        // Main colors
+        palette.Primary.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#60A5FA");
+
+        palette.PrimaryContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
+
+        palette.Secondary.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#A78BFA");
+
+        palette.SecondaryContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
 
         // Status colors
-        palette.Error.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#EF4444");
-        palette.Success.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#10B981");
-        palette.Warning.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#F59E0B");
-        palette.Info.ToString(ColorOutputFormats.Hex).Should().BeEquivalentTo("#3B82F6");
+        palette.Success.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#10B981");
+
+        palette.SuccessContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
+
+        palette.Warning.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#F59E0B");
+
+        palette.WarningContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
+
+        palette.Error.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#EF4444");
+
+        palette.ErrorContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
+
+        palette.Info.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#3B82F6");
+
+        palette.InfoContrast.ToString(ColorOutputFormats.Hex)
+            .Should().BeEquivalentTo("#0F172A");
     }
 
     [Fact(DisplayName = "Properties_CanBeSetAndRetrieved")]
@@ -42,12 +76,24 @@ public class UIThemePaletteBaseTests
         TestThemePalette palette = new();
         CssColor testColor = new("#123456");
 
-        // Act & Assert - Test all properties
+        // Act & Assert
         palette.Id = "custom-id";
         palette.Id.Should().Be("custom-id");
 
         palette.Name = "Custom Name";
         palette.Name.Should().Be("Custom Name");
+
+        palette.Background = testColor;
+        palette.Background.Should().Be(testColor);
+
+        palette.BackgroundContrast = testColor;
+        palette.BackgroundContrast.Should().Be(testColor);
+
+        palette.Surface = testColor;
+        palette.Surface.Should().Be(testColor);
+
+        palette.SurfaceContrast = testColor;
+        palette.SurfaceContrast.Should().Be(testColor);
 
         palette.Primary = testColor;
         palette.Primary.Should().Be(testColor);
@@ -61,26 +107,29 @@ public class UIThemePaletteBaseTests
         palette.SecondaryContrast = testColor;
         palette.SecondaryContrast.Should().Be(testColor);
 
-        palette.Background = testColor;
-        palette.Background.Should().Be(testColor);
-
-        palette.Surface = testColor;
-        palette.Surface.Should().Be(testColor);
-
-        palette.Foreground = testColor;
-        palette.Foreground.Should().Be(testColor);
-
-        palette.Error = testColor;
-        palette.Error.Should().Be(testColor);
-
         palette.Success = testColor;
         palette.Success.Should().Be(testColor);
+
+        palette.SuccessContrast = testColor;
+        palette.SuccessContrast.Should().Be(testColor);
 
         palette.Warning = testColor;
         palette.Warning.Should().Be(testColor);
 
+        palette.WarningContrast = testColor;
+        palette.WarningContrast.Should().Be(testColor);
+
+        palette.Error = testColor;
+        palette.Error.Should().Be(testColor);
+
+        palette.ErrorContrast = testColor;
+        palette.ErrorContrast.Should().Be(testColor);
+
         palette.Info = testColor;
         palette.Info.Should().Be(testColor);
+
+        palette.InfoContrast = testColor;
+        palette.InfoContrast.Should().Be(testColor);
     }
 
     // Concrete implementation for testing

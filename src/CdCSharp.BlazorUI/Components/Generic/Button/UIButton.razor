@@ -18,6 +18,7 @@
 @implements IHasElevation
 @implements IHasRipple
 @implements IHasDensity
+@implements IHasBorder
 
 @{
     base.BuildRenderTree(__builder);
@@ -60,6 +61,13 @@
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
 
     /* ========= Variant ========= */
 

@@ -16,42 +16,106 @@
         <p>The library comes with two professionally designed themes:</p>
         
         <div class="theme-preview-grid">
-            <div class="theme-preview theme-preview--light">
+
+            <!-- LIGHT THEME -->
+            <div class="theme-preview">
                 <h4>Light Theme</h4>
                 <div class="preview-colors">
-                    <div class="color-swatch" style="background: #FFFFFF;">
+
+                    <div class="color-swatch"
+                         style="background: var(--light-background); color: var(--light-backgroundcontrast);">
                         <span>Background</span>
                     </div>
-                    <div class="color-swatch" style="background: #F8FAFC;">
+
+                    <div class="color-swatch"
+                         style="background: var(--light-surface); color: var(--light-surfacecontrast);">
                         <span>Surface</span>
                     </div>
-                    <div class="color-swatch" style="background: #3B82F6; color: white;">
+
+                    <div class="color-swatch"
+                         style="background: var(--light-primary); color: var(--light-primarycontrast);">
                         <span>Primary</span>
                     </div>
-                    <div class="color-swatch" style="background: #1E293B; color: white;">
-                        <span>Foreground</span>
+
+                    <div class="color-swatch"
+                         style="background: var(--light-secondary); color: var(--light-secondarycontrast);">
+                        <span>Secondary</span>
                     </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--light-success); color: var(--light-successcontrast);">
+                        <span>Success</span>
+                    </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--light-warning); color: var(--light-warningcontrast);">
+                        <span>Warning</span>
+                    </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--light-error); color: var(--light-errorcontrast);">
+                        <span>Error</span>
+                    </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--light-info); color: var(--light-infocontrast);">
+                        <span>Info</span>
+                    </div>
+
                 </div>
             </div>
-            
-            <div class="theme-preview theme-preview--dark">
+
+            <!-- DARK THEME -->
+            <div class="theme-preview">
                 <h4>Dark Theme</h4>
                 <div class="preview-colors">
-                    <div class="color-swatch" style="background: #0F172A; color: white;">
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-background); color: var(--dark-backgroundcontrast);">
                         <span>Background</span>
                     </div>
-                    <div class="color-swatch" style="background: #1E293B; color: white;">
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-surface); color: var(--dark-surfacecontrast);">
                         <span>Surface</span>
                     </div>
-                    <div class="color-swatch" style="background: #60A5FA; color: black;">
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-primary); color: var(--dark-primarycontrast);">
                         <span>Primary</span>
                     </div>
-                    <div class="color-swatch" style="background: #E2E8F0; color: black;">
-                        <span>Foreground</span>
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-secondary); color: var(--dark-secondarycontrast);">
+                        <span>Secondary</span>
                     </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-success); color: var(--dark-successcontrast);">
+                        <span>Success</span>
+                    </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-warning); color: var(--dark-warningcontrast);">
+                        <span>Warning</span>
+                    </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-error); color: var(--dark-errorcontrast);">
+                        <span>Error</span>
+                    </div>
+
+                    <div class="color-swatch"
+                         style="background: var(--dark-info); color: var(--dark-infocontrast);">
+                        <span>Info</span>
+                    </div>
+
                 </div>
             </div>
+
         </div>
+
+
     </div>
 
     <div class="doc-section">
@@ -143,7 +207,7 @@
     /* Surface colors */
     --palette-background: #FFFFFF;
     --palette-surface: #F8FAFC;
-    --palette-foreground: #1E293B;
+    --palette-backgroundcontrast: #1E293B;
     
     /* Status colors */
     --palette-error: #EF4444;
@@ -171,7 +235,7 @@
     private string usageCode = @".my-component {
     /* Use theme colors */
     background: var(--palette-surface);
-    color: var(--palette-foreground);
+    color: var(--palette-backgroundcontrast);
     border: 1px solid var(--palette-primary);
 }
 
@@ -203,149 +267,10 @@ await ThemeInterop.InitializeAsync(""auto"");";
         new("SecondaryContrast", "Text color for secondary backgrounds", "--palette-secondary-contrast"),
         new("Background", "Main page background color", "--palette-background"),
         new("Surface", "Elevated surface color (cards, panels)", "--palette-surface"),
-        new("Foreground", "Main text and icon color", "--palette-foreground"),
+        new("Foreground", "Main text and icon color", "--palette-backgroundcontrast"),
         new("Error", "Error state color", "--palette-error"),
         new("Warning", "Warning state color", "--palette-warning"),
         new("Info", "Informational state color", "--palette-info"),
         new("Success", "Success state color", "--palette-success"),
     };
 }
-
-<style>
-    .theme-preview-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-    }
-
-    .theme-preview {
-        border-radius: 0.5rem;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .theme-preview h4 {
-        margin: 0;
-        padding: 1rem;
-        text-align: center;
-    }
-
-    .theme-preview--light h4 {
-        background: #F8FAFC;
-        color: #1E293B;
-    }
-
-    .theme-preview--dark h4 {
-        background: #1E293B;
-        color: #E2E8F0;
-    }
-
-    .preview-colors {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .color-swatch {
-        padding: 1.5rem 1rem;
-        text-align: center;
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-
-    .theme-demo {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        align-items: center;
-        padding: 2rem;
-        background: var(--palette-surface);
-        border-radius: 0.5rem;
-    }
-
-    .demo-components {
-        display: flex;
-        flex-direction: column;
-        gap: 1.5rem;
-        width: 100%;
-        max-width: 600px;
-    }
-
-    .demo-card {
-        padding: 1.5rem;
-        background: var(--palette-background);
-        border: 1px solid var(--palette-foreground);
-        border-radius: 0.5rem;
-    }
-
-    .demo-card h4 {
-        margin: 0 0 0.5rem 0;
-        color: var(--palette-foreground);
-    }
-
-    .demo-card p {
-        margin: 0;
-        color: var(--palette-foreground);
-        opacity: 0.8;
-    }
-
-    .demo-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-    }
-
-    .demo-button {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: opacity 0.2s;
-    }
-
-    .demo-button:hover {
-        opacity: 0.8;
-    }
-
-    .demo-button--primary {
-        background: var(--palette-primary);
-        color: var(--palette-primary-contrast);
-    }
-
-    .demo-button--secondary {
-        background: var(--palette-secondary);
-        color: var(--palette-secondary-contrast);
-    }
-
-    .demo-status {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .status-item {
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: white;
-    }
-
-    .status-item--success {
-        background: var(--palette-success);
-    }
-
-    .status-item--warning {
-        background: var(--palette-warning);
-    }
-
-    .status-item--error {
-        background: var(--palette-error);
-    }
-
-    .status-item--info {
-        background: var(--palette-info);
-    }
-</style>

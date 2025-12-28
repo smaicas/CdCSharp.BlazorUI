@@ -18,7 +18,7 @@
         <h2>Basic Usage</h2>
         <ComponentDemo Code="@basicIconCode">
             <Demo>
-                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_heart_broken" />
+                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_favorite" />
             </Demo>
         </ComponentDemo>
     </div>
@@ -51,9 +51,22 @@
     </div>
 
     <div class="doc-section">
-        <h2>Common Icons</h2>
+        <h2>Icon Examples</h2>
         <div class="icon-grid">
-            @foreach (var icon in GetCommonIcons())
+            @foreach (var icon in GetSampleIcons())
+            {
+                <div class="icon-item">
+                    <UISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <code>@icon.Name</code>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="doc-section">
+        <h2>Icon Examples</h2>
+        <div class="icon-grid">
+            @foreach (var icon in GetSampleIcons())
             {
                 <div class="icon-item">
                     <UISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
@@ -77,19 +90,6 @@
     </div>
 
     <div class="doc-section">
-        <h2>Using with Theme Colors</h2>
-        <ComponentDemo Code="@themeColorsCode">
-            <Demo>
-                <div class="demo-row">
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_settings" />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_supervised_user_circle"  />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_add_alert"  />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
         <h2>Properties</h2>
         <PropertyTable TItem="IconProperty" Items="@IconProperties">
             <PropertyTemplate Context="prop">
@@ -103,20 +103,16 @@
 </div>
 
 @code {
-    private string basicIconCode = @"<UISvgIcon Icon=""@UIIcons.Common.Heart"" />";
+    private string basicIconCode = @"<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_favorite"" />";
 
-    private string sizesCode = @"<UISvgIcon Icon=""@UIIcons.Common.Star"" Size=""SizeEnum.Small"" />
-<UISvgIcon Icon=""@UIIcons.Common.Star"" Size=""SizeEnum.Medium"" />
-<UISvgIcon Icon=""@UIIcons.Common.Star"" Size=""SizeEnum.Large"" />";
+    private string sizesCode = @"<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Small"" />
+<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Medium"" />
+<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Large"" />";
 
-    private string colorsCode = @"<UISvgIcon Icon=""@UIIcons.Common.Check"" Color=""@UIColor.Green"" />
-<UISvgIcon Icon=""@UIIcons.Common.Warning"" Color=""@UIColor.Orange"" />
-<UISvgIcon Icon=""@UIIcons.Common.Error"" Color=""@UIColor.Red"" />
-<UISvgIcon Icon=""@UIIcons.Common.Info"" Color=""@UIColor.Blue"" />";
-
-    private string themeColorsCode = @"<UISvgIcon Icon=""@UIIcons.Common.Settings"" Color=""var(--palette-primary)"" />
-<UISvgIcon Icon=""@UIIcons.Common.User"" Color=""var(--palette-secondary)"" />
-<UISvgIcon Icon=""@UIIcons.Common.Alert"" Color=""var(--palette-warning)"" />";
+    private string colorsCode = @"<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_check"" Color=""@UIColor.Green.Default"" />
+<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_warning"" Color=""@UIColor.Orange.Default"" />
+<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_error"" Color=""@UIColor.Red.Default"" />
+<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_info"" Color=""@UIColor.Blue.Default"" />";
 
     private record IconProperty(string Name, string Type, string Default, string Description);
 
@@ -124,29 +120,30 @@
     {
         new("Icon", "string", "required", "SVG content of the icon"),
         new("Size", "SizeEnum", "Medium", "Size of the icon (Small, Medium, Large)"),
-        new("Color", "string?", "null", "Color of the icon (CSS color value or UIColor)"),
-        new("Width", "string?", "null", "Custom width (overrides Size)"),
-        new("Height", "string?", "null", "Custom height (overrides Size)"),
+        new("Color", "CssColor?", "null", "Color of the icon"),
+        new("Title", "string?", "null", "Accessibility title for the icon"),
+        new("ViewBox", "string", "0 0 24 24", "SVG viewBox attribute"),
+        new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click event handler"),
     };
 
     private record IconExample(string Name, string Value);
 
-    private List<IconExample> GetCommonIcons()
+    private List<IconExample> GetSampleIcons()
     {
         return new List<IconExample>
         {
-            new("UIIcons.Common.Home", UIIcons.MaterialIconsRound.i_home),
-            new("UIIcons.Common.User", UIIcons.MaterialIconsRound.i_verified_user),
-            new("UIIcons.Common.Settings", UIIcons.MaterialIconsRound.i_settings),
-            new("UIIcons.Common.Search", UIIcons.MaterialIconsRound.i_search),
-            new("UIIcons.Common.Heart", UIIcons.MaterialIconsRound.i_monitor_heart),
-            new("UIIcons.Common.Star", UIIcons.MaterialIconsRound.i_star),
-            new("UIIcons.Common.Check", UIIcons.MaterialIconsRound.i_check),
-            new("UIIcons.Common.Close", UIIcons.MaterialIconsRound.i_close),
-            new("UIIcons.Common.Edit", UIIcons.MaterialIconsRound.i_edit),
-            new("UIIcons.Common.Delete", UIIcons.MaterialIconsRound.i_delete),
-            new("UIIcons.Common.Save", UIIcons.MaterialIconsRound.i_save),
-            new("UIIcons.Common.Download", UIIcons.MaterialIconsRound.i_download),
+            new("Home", UIIcons.MaterialIconsRound.i_home),
+            new("Settings", UIIcons.MaterialIconsRound.i_settings),
+            new("Search", UIIcons.MaterialIconsRound.i_search),
+            new("Favorite", UIIcons.MaterialIconsRound.i_favorite),
+            new("Star", UIIcons.MaterialIconsRound.i_star),
+            new("Check", UIIcons.MaterialIconsRound.i_check),
+            new("Close", UIIcons.MaterialIconsRound.i_close),
+            new("Edit", UIIcons.MaterialIconsRound.i_edit),
+            new("Delete", UIIcons.MaterialIconsRound.i_delete),
+            new("Save", UIIcons.MaterialIconsRound.i_save),
+            new("Download", UIIcons.MaterialIconsRound.i_download),
+            new("Upload", UIIcons.MaterialIconsRound.i_upload),
         };
     }
 
@@ -154,42 +151,12 @@
     {
         return new List<IconExample>
         {
-            new("UIIcons.Brands.Gmail", UIIcons.Brands.Gmail),
-            new("UIIcons.Brands.GitHub", UIIcons.Brands.GitHub),
-            new("UIIcons.Brands.Twitter", UIIcons.Brands.Twitter),
-            new("UIIcons.Brands.Facebook", UIIcons.Brands.Facebook),
+            new("Gmail", UIIcons.Brands.Gmail),
+            new("GitHub", UIIcons.Brands.GitHub),
+            new("Twitter", UIIcons.Brands.Twitter),
+            new("Facebook", UIIcons.Brands.Facebook),
+            new("LinkedIn", UIIcons.Brands.LinkedIn),
+            new("YouTube", UIIcons.Brands.YouTube),
         };
     }
 }
-
-<style>
-    .demo-row {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .icon-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1rem;
-        margin: 1rem 0;
-    }
-
-    .icon-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 1rem;
-        background: var(--palette-surface);
-        border-radius: 0.5rem;
-        border: 1px solid var(--palette-foreground);
-    }
-
-    .icon-item code {
-        font-size: 0.75rem;
-        text-align: center;
-        word-break: break-all;
-    }
-</style>

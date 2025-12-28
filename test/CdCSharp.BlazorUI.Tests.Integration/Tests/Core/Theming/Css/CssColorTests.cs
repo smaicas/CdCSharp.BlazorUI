@@ -293,4 +293,27 @@ public class CssColorTests
         lighten1.Alteration.Should().BeGreaterThan(0);
         darken2.Alteration.Should().BeGreaterThan(0);
     }
+
+    [Fact(DisplayName = "Constructor_WithCssVariable_StoresVariable")]
+    public void CssColor_Constructor_WithCssVariable_StoresVariable()
+    {
+        // Act
+        CssColor color = new("var(--palette-primary)", true);
+
+        // Assert
+        color.ToString(ColorOutputFormats.Rgba).Should().Be("var(--palette-primary)");
+    }
+
+    [Theory(DisplayName = "Constructor_WithCssVariable_VariousCases")]
+    [InlineData("var(--palette-primary)", true, "var(--palette-primary)")]
+    [InlineData("#FF0000", false, "rgba(255,0,0,1)")]
+    [InlineData("rgb(255,0,0)", false, "rgba(255,0,0,1)")]
+    public void CssColor_Constructor_WithCssVariable_VariousCases(string input, bool isCssVariable, string expected)
+    {
+        // Act
+        CssColor color = new(input, isCssVariable);
+
+        // Assert
+        color.ToString(ColorOutputFormats.Rgba).Should().Be(expected);
+    }
 }

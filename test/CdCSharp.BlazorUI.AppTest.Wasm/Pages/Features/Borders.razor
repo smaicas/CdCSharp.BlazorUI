@@ -1,0 +1,153 @@
+﻿@page "/features/borders"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Generic.Button
+@using CdCSharp.BlazorUI.Css
+
+<PageTitle>Borders - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>Borders</h1>
+    <p class="doc-intro">
+        The border system provides a flexible way to add borders to components with support for
+        different styles, widths, colors, and corner radius.
+    </p>
+
+    <div class="doc-section">
+        <h2>Border Presets</h2>
+        <p>Use predefined border styles for common scenarios:</p>
+
+        <ComponentDemo Code="@borderPresetsCode">
+            <Demo>
+                <div class="border-examples">
+                    <UIButton Text="Default" Border="@BorderPresets.Default" />
+                    <UIButton Text="Subtle" Border="@BorderPresets.Subtle" />
+                    <UIButton Text="Strong" Border="@BorderPresets.Strong" />
+                    <UIButton Text="Primary" Border="@BorderPresets.Primary" />
+                    <UIButton Text="Error" Border="@BorderPresets.Error" />
+                    <UIButton Text="Success" Border="@BorderPresets.Success" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Border Radius</h2>
+        <p>Apply different corner radius styles:</p>
+
+        <ComponentDemo Code="@borderRadiusCode">
+            <Demo>
+                <div class="border-examples">
+                    <UIButton Text="Square" Border="@BorderPresets.Default" />
+                    <UIButton Text="Rounded" Border="@BorderPresets.Rounded" />
+                    <UIButton Text="Large Rounded" Border="@BorderPresets.RoundedLarge" />
+                    <UIButton Text="Pill" Border="@BorderPresets.Pill" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Border Styles</h2>
+        <p>Different border line styles:</p>
+
+        <ComponentDemo Code="@borderStylesCode">
+            <Demo>
+                <div class="border-examples">
+                    <UIButton Text="Solid" Border="@BorderPresets.Default" />
+                    <UIButton Text="Dashed" Border="@BorderPresets.Dashed" />
+                    <UIButton Text="Dotted" Border="@BorderPresets.Dotted" />
+                    <UIButton Text="Double" Border="@BorderPresets.Double" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Individual Borders</h2>
+        <p>Apply borders to specific sides:</p>
+
+        <ComponentDemo Code="@individualBordersCode">
+            <Demo>
+                <div class="border-examples">
+                    <UIButton Text="Top Only" BorderTop="@BorderPresets.Primary" />
+                    <UIButton Text="Bottom Only" BorderBottom="@BorderPresets.Primary" />
+                    <UIButton Text="Left & Right"
+                              BorderLeft="@BorderPresets.Primary"
+                              BorderRight="@BorderPresets.Primary" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>Custom Borders</h2>
+        <p>Create custom border styles:</p>
+
+        <ComponentDemo Code="@customBordersCode">
+            <Demo>
+                <div class="border-examples">
+                    <UIButton Text="Custom Style" Border="@_customBorder" />
+                    <UIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
+                </div>
+            </Demo>
+        </ComponentDemo>
+    </div>
+
+    <div class="doc-section">
+        <h2>BorderStyle Properties</h2>
+        <PropertyTable TItem="BorderProperty" Items="@BorderProperties">
+            <PropertyTemplate Context="prop">
+                <td><code>@prop.Name</code></td>
+                <td><code>@prop.Type</code></td>
+                <td>@prop.Description</td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+</div>
+
+@code {
+    private BorderStyle _customBorder = new("3px", BorderStyleType.Solid, UIColor.Purple.Default);
+    private BorderStyle _customBorderWithRadius = new BorderStyle("2px", BorderStyleType.Solid, UIColor.Blue.Default).WithRadius(16);
+
+    private string borderPresetsCode = @"<UIButton Text=""Default"" Border=""@BorderPresets.Default"" />
+<UIButton Text=""Primary"" Border=""@BorderPresets.Primary"" />
+<UIButton Text=""Error"" Border=""@BorderPresets.Error"" />
+<UIButton Text=""Success"" Border=""@BorderPresets.Success"" />";
+
+    private string borderRadiusCode = @"<UIButton Text=""Square"" Border=""@BorderPresets.Default"" />
+<UIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
+<UIButton Text=""Large Rounded"" Border=""@BorderPresets.RoundedLarge"" />
+<UIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
+
+    private string borderStylesCode = @"<UIButton Text=""Solid"" Border=""@BorderPresets.Default"" />
+<UIButton Text=""Dashed"" Border=""@BorderPresets.Dashed"" />
+<UIButton Text=""Dotted"" Border=""@BorderPresets.Dotted"" />
+<UIButton Text=""Double"" Border=""@BorderPresets.Double"" />";
+
+    private string individualBordersCode = @"<UIButton Text=""Top Only"" BorderTop=""@BorderPresets.Primary"" />
+<UIButton Text=""Bottom Only"" BorderBottom=""@BorderPresets.Primary"" />
+<UIButton Text=""Left & Right""
+         BorderLeft=""@BorderPresets.Primary""
+         BorderRight=""@BorderPresets.Primary"" />";
+
+    private string customBordersCode = @"// Create a custom border
+private BorderStyle _customBorder = new(""3px"", BorderStyleType.Solid, UIColor.Purple.Default);
+
+// Create a border with radius
+private BorderStyle _customBorderWithRadius = new BorderStyle(""2px"", BorderStyleType.Solid, UIColor.Blue.Default)
+    .WithRadius(16);
+
+<UIButton Text=""Custom Style"" Border=""@_customBorder"" />
+<UIButton Text=""Custom with Radius"" Border=""@_customBorderWithRadius"" />";
+
+    private record BorderProperty(string Name, string Type, string Description);
+
+    private List<BorderProperty> BorderProperties = new()
+    {
+        new("Width", "string", "The width of the border (e.g., '1px', '2px')"),
+        new("Style", "BorderStyleType", "The style of the border line (Solid, Dashed, Dotted, etc.)"),
+        new("Color", "CssColor", "The color of the border"),
+        new("Radius", "int?", "Optional corner radius in pixels"),
+    };
+}

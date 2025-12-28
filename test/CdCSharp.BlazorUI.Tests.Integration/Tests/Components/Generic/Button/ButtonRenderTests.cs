@@ -1,7 +1,9 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
+using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Css;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
 
@@ -153,5 +155,40 @@ public class ButtonRenderTests : TestContextBase
         IElement button = cut.Find("button");
         IElement lastChild = button.Children[button.Children.Length - 1];
         lastChild.ShouldHaveTagName("svg");
+    }
+
+    [Fact(DisplayName = "WithBorder_AppliesInlineStyles")]
+    public void Button_WithBorder_AppliesInlineStyles()
+    {
+        // Arrange
+        BorderStyle borderStyle = new("2px", BorderStyleType.Solid, UIColor.Palette.Primary);
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Bordered Button")
+            .Add(p => p.Border, borderStyle));
+
+        // Assert
+        IElement button = cut.Find("button");
+        string? style = button.GetAttribute("style");
+        style.Should().Contain("border: 2px solid var(--palette-primary)");
+    }
+
+    [Fact(DisplayName = "WithBorderAndRadius_AppliesCorrectStyles")]
+    public void Button_WithBorderAndRadius_AppliesCorrectStyles()
+    {
+        // Arrange
+        BorderStyle borderStyle = new("1px", BorderStyleType.Solid, UIColor.Gray.Default, 8);
+
+        // Act
+        IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
+            .Add(p => p.Text, "Rounded Button")
+            .Add(p => p.Border, borderStyle));
+
+        // Assert
+        IElement button = cut.Find("button");
+        string? style = button.GetAttribute("style");
+        style.Should().Contain("border: 1px solid");
+        style.Should().Contain("border-radius: 8px");
     }
 }
