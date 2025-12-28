@@ -33,7 +33,7 @@
 
     private RenderFragment RenderSpinner() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
+        <div @attributes="ComputedAttributes">
             <svg class="ui-loading-spinner" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
@@ -42,7 +42,7 @@
 
     private RenderFragment RenderLinear() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
+        <div @attributes="ComputedAttributes">
             <div class="ui-loading-linear">
                 <div class="ui-loading-linear__bar"></div>
             </div>
@@ -51,7 +51,7 @@
 
     private RenderFragment RenderCircularProgress() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
+        <div @attributes="ComputedAttributes">
             <svg class="ui-loading-circular" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
@@ -60,7 +60,7 @@
 
     private RenderFragment RenderDots() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
+        <div @attributes="ComputedAttributes">
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
@@ -69,7 +69,7 @@
 
     private RenderFragment RenderPulse() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
+        <div @attributes="ComputedAttributes">
             <span class="ui-loading-pulse"></span>
         </div>
     };

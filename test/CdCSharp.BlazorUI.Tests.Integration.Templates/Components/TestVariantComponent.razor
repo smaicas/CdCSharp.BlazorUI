@@ -21,7 +21,7 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <button @attributes="AdditionalAttributes"
+        <button @attributes="ComputedAttributes"
                 @onclick="OnClick"
                 disabled="@Disabled">
             @Text
@@ -30,7 +30,7 @@
 
     private RenderFragment RenderAlternative() => __builder =>
     {
-        <div @attributes="AdditionalAttributes"
+        <div @attributes="ComputedAttributes"
              @onclick="OnClick"
              class="@($"{ComputedCssClasses} alternative-style")">
             <span>Alt: @Text</span>

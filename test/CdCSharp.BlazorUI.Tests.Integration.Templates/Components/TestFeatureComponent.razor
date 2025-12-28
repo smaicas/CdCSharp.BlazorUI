@@ -18,7 +18,7 @@
 @implements IHasRipple
 @implements IHasBorder
 
-<div @ref="_rootElement" @attributes="AdditionalAttributes">
+<div @ref="_rootElement" @attributes="ComputedAttributes">
     @if (IsLoading && LoadingIndicatorVariant != null)
     {
         <span class="test-loading-indicator">Loading...</span>

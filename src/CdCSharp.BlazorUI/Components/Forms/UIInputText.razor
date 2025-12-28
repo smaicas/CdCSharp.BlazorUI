@@ -1,67 +1,120 @@
-﻿@using CdCSharp.BlazorUI.Components.Features.Loading
+﻿@using CdCSharp.BlazorUI.Components.Features.Common
+@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Features.Behaviors
 @using CdCSharp.BlazorUI.Components.Forms.Abstractions
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Css
 @using Microsoft.AspNetCore.Components.Forms
 
 @inherits UIInputComponentBase<string>
+@implements IHasSize
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasDensity
+@implements IHasElevation
+@implements IHasBorder
+@implements IHasRipple
+@implements IJsBehavior
 
-@if (!string.IsNullOrWhiteSpace(Label))
-{
-    <label for="@_inputId" class="ui-input__label">
-        @Label
-        @if (Required)
+@* <ui-wrapper @attributes="DataAttributes"> *@
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label for="@_inputId" class="ui-input__label">
+            @Label
+            @if (Required)
+            {
+                <span class="ui-input__required">*</span>
+            }
+        </label>
+    }
+
+    <div class="ui-input__container">
+        <input @ref="_inputElement"
+               @attributes="ComputedAttributes"
+               type="@Type"
+               id="@_inputId"
+               value="@CurrentValue"
+               @onchange="HandleChange"
+               @oninput="HandleInput"
+               aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+               aria-describedby="@_helperTextId"
+               aria-invalid="@_hasErrors.ToString().ToLower()"
+               aria-required="@Required.ToString().ToLower()" />
+
+        @if (IsLoading && LoadingIndicatorVariant != null)
         {
-            <span class="ui-input__required">*</span>
+            <div class="ui-input__loading">
+                <UILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+            </div>
         }
-    </label>
-}
 
-<div class="ui-input__container">
-    <input @ref="_inputElement"
-           @attributes="ComputedAttributes"
-           type="@Type"
-           id="@_inputId"
-           value="@CurrentValue"
-           @onchange="HandleChange"
-           @oninput="HandleInput"
-           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-           aria-describedby="@_helperTextId"
-           aria-invalid="@_hasErrors.ToString().ToLower()"
-           aria-required="@Required.ToString().ToLower()" />
-
-    @if (IsLoading && LoadingIndicatorVariant != null)
-    {
-        <div class="ui-input__loading">
-            <UILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-        </div>
-    }
-
-    @if (_hasErrors && EditContext != null && ValueExpression != null)
-    {
-        <div class="ui-input__validation">
-            <ValidationMessage For="ValueExpression" />
-        </div>
-    }
-</div>
-
-@if (!string.IsNullOrWhiteSpace(HelperText))
-{
-    <div id="@_helperTextId" class="ui-input__helper-text">
-        @HelperText
+        @if (_hasErrors && EditContext != null && ValueExpression != null)
+        {
+            <div class="ui-input__validation">
+                <ValidationMessage For="ValueExpression" />
+            </div>
+        }
     </div>
-}
+
+    @if (!string.IsNullOrWhiteSpace(HelperText))
+    {
+        <div id="@_helperTextId" class="ui-input__helper-text">
+            @HelperText
+        </div>
+    }
+
+@* </ui-wrapper> *@
 
 @code {
     private ElementReference _inputElement;
     private string _inputId = $"ui-input-{Guid.NewGuid():N}";
     private string _helperTextId = $"ui-helper-{Guid.NewGuid():N}";
     private bool _hasErrors;
+    private FieldIdentifier _fieldIdentifier;
 
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public UILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasElevation
+    [Parameter] public int? Elevation { get; set; }
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
+
+    // IHasRipple
+    [Parameter] public bool DisableRipple { get; set; }
+    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public int? RippleDuration { get; set; }
+
+    // Input specific parameters
     [Parameter] public string Type { get; set; } = "text";
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter] public EventCallback<string> OnInput { get; set; }
+    [Parameter] public InputVariant Variant { get; set; } = InputVariant.Outlined;
 
-    // For validation display
-    private FieldIdentifier _fieldIdentifier;
+    // Computed properties
+    private bool IsDisabled => Disabled || IsLoading;
 
     protected override void OnInitialized()
     {
@@ -77,6 +130,16 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+
+        // Add specific attributes to computed attributes
+        ComputedAttributes["disabled"] = IsDisabled;
+        ComputedAttributes["readonly"] = ReadOnly;
+        ComputedAttributes["required"] = Required;
+
+        if (!string.IsNullOrWhiteSpace(Placeholder))
+        {
+            ComputedAttributes["placeholder"] = Placeholder;
+        }
 
         // Update validation state
         if (EditContext != null && ValueExpression != null)
@@ -123,6 +186,27 @@
         return true;
     }
 
+    // Override to add component-specific CSS classes
+    public override IEnumerable<string> GetAdditionalCssClasses()
+    {
+        // First get base classes (includes CssClass from InputBase)
+        foreach (var cssClass in base.GetAdditionalCssClasses())
+        {
+            yield return cssClass;
+        }
+
+        // Then add component-specific classes
+        yield return "ui-input";
+        yield return "ui-input-text";
+        yield return $"ui-input--{Variant.ToString().ToLowerInvariant()}";
+
+        if (IsDisabled) yield return "ui-input--disabled";
+        if (ReadOnly) yield return "ui-input--readonly";
+        if (Required) yield return "ui-input--required";
+        if (_hasErrors) yield return "ui-input--error";
+    }
+
+    // IJsBehavior implementation
     public ElementReference GetRootElement() => _inputElement;
 
     protected override void Dispose(bool disposing)

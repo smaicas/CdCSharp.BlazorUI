@@ -4,7 +4,7 @@
     // Basic template that does not add any classes (inherits all from @attributes)
     public RenderFragment BasicCustomTemplate(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.AdditionalAttributes"
+        <button @attributes="component.ComputedAttributes"
                 @onclick="component.OnClick"
                 disabled="@component.Disabled">
             @component.Text
@@ -14,7 +14,7 @@
     // Simple template that adds a single class
     public RenderFragment AddsOneClassTemplate(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.AdditionalAttributes"
+        <button @attributes="component.ComputedAttributes"
                 class="@($"{component.ComputedCssClasses} btn-glass")"
                 @onclick="component.OnClick"
                 disabled="@component.Disabled">
@@ -25,7 +25,7 @@
     // Template that removes class from AdditionalAttributes and adds its own
     public RenderFragment OverrideClassTemplate(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.AdditionalAttributes"
+        <button @attributes="component.ComputedAttributes"
                 class="btn-override-only"
                 @onclick="component.OnClick"
                 disabled="@component.Disabled">
@@ -38,7 +38,7 @@
     {
         <button data-variant="custom"
                 data-test="template-value"
-                @attributes="component.AdditionalAttributes"
+                @attributes="component.ComputedAttributes"
                 @onclick="component.OnClick"
                 disabled="@component.Disabled">
             @component.Text
@@ -48,7 +48,7 @@
     // Template for data attributes - template has priority
     public RenderFragment DataAttributeTemplatePriority(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.AdditionalAttributes"
+        <button @attributes="component.ComputedAttributes"
                 data-variant="custom"
                 data-test="template-value-priority"
                 @onclick="component.OnClick"
@@ -60,7 +60,7 @@
     // Registered variant template
     public RenderFragment RegisteredTemplate(TestVariantComponent component) => __builder =>
     {
-        <div @attributes="component.AdditionalAttributes"
+        <div @attributes="component.ComputedAttributes"
              class="@($"{component.ComputedCssClasses} registered-variant")">
             <span>Registered: @component.Text</span>
         </div>

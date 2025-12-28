@@ -35,7 +35,7 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <button @attributes="AdditionalAttributes"
+        <button @attributes="ComputedAttributes"
                 @onclick="SwitchTheme"
                 disabled="@_isTransitioning">
             <span class="ui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">
@@ -50,7 +50,7 @@
 
     private RenderFragment RenderSunMoon() => __builder =>
     {
-        <button @attributes="AdditionalAttributes"
+        <button @attributes="ComputedAttributes"
                 @onclick="SwitchTheme"
                 class="@GetSunMoonClasses()"
                 disabled="@_isTransitioning"

@@ -65,7 +65,7 @@
     border: none;
     border-bottom: 1px solid rgba(0, 0, 0, 0.42);
     border-radius: 0;
-    padding: 4px 0;
+    padding: 4px 2px;
 }
 
     .ui-input--standard:hover:not(:disabled) {
