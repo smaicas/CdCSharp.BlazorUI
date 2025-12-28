@@ -1,5 +1,4 @@
-﻿// Components/Abstractions/UIComponentBase.cs
-using CdCSharp.BlazorUI.Components.Features.Behaviors;
+﻿using CdCSharp.BlazorUI.Components.Features.Behaviors;
 using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Core.Css;

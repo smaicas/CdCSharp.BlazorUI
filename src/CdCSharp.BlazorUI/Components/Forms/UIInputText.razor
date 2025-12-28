@@ -1,0 +1,137 @@
+﻿@using CdCSharp.BlazorUI.Components.Features.Loading
+@using CdCSharp.BlazorUI.Components.Forms.Abstractions
+@using Microsoft.AspNetCore.Components.Forms
+
+@inherits UIInputComponentBase<string>
+
+@if (!string.IsNullOrWhiteSpace(Label))
+{
+    <label for="@_inputId" class="ui-input__label">
+        @Label
+        @if (Required)
+        {
+            <span class="ui-input__required">*</span>
+        }
+    </label>
+}
+
+<div class="ui-input__container">
+    <input @ref="_inputElement"
+           @attributes="ComputedAttributes"
+           type="@Type"
+           id="@_inputId"
+           value="@CurrentValue"
+           @onchange="HandleChange"
+           @oninput="HandleInput"
+           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+           aria-describedby="@_helperTextId"
+           aria-invalid="@_hasErrors.ToString().ToLower()"
+           aria-required="@Required.ToString().ToLower()" />
+
+    @if (IsLoading && LoadingIndicatorVariant != null)
+    {
+        <div class="ui-input__loading">
+            <UILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+        </div>
+    }
+
+    @if (_hasErrors && EditContext != null && ValueExpression != null)
+    {
+        <div class="ui-input__validation">
+            <ValidationMessage For="ValueExpression" />
+        </div>
+    }
+</div>
+
+@if (!string.IsNullOrWhiteSpace(HelperText))
+{
+    <div id="@_helperTextId" class="ui-input__helper-text">
+        @HelperText
+    </div>
+}
+
+@code {
+    private ElementReference _inputElement;
+    private string _inputId = $"ui-input-{Guid.NewGuid():N}";
+    private string _helperTextId = $"ui-helper-{Guid.NewGuid():N}";
+    private bool _hasErrors;
+
+    [Parameter] public string Type { get; set; } = "text";
+    [Parameter] public bool UpdateOnInput { get; set; }
+    [Parameter] public EventCallback<string> OnInput { get; set; }
+
+    // For validation display
+    private FieldIdentifier _fieldIdentifier;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        // Create FieldIdentifier from ValueExpression if available
+        if (ValueExpression != null)
+        {
+            _fieldIdentifier = FieldIdentifier.Create(ValueExpression);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // Update validation state
+        if (EditContext != null && ValueExpression != null)
+        {
+            _hasErrors = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+
+            // Subscribe to validation state changes
+            EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+        }
+    }
+
+    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        if (EditContext != null && ValueExpression != null)
+        {
+            _hasErrors = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        CurrentValueAsString = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        if (UpdateOnInput)
+        {
+            CurrentValueAsString = e.Value?.ToString() ?? string.Empty;
+        }
+
+        if (OnInput.HasDelegate)
+        {
+            await OnInput.InvokeAsync(e.Value?.ToString() ?? string.Empty);
+        }
+    }
+
+    // Support for different input types
+    protected override bool TryParseValueFromString(string? value, out string? result, out string validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = string.Empty;
+        return true;
+    }
+
+    public ElementReference GetRootElement() => _inputElement;
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && EditContext != null)
+        {
+            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+        }
+
+        base.Dispose(disposing);
+    }
+}

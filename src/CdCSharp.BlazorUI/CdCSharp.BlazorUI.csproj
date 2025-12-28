@@ -34,7 +34,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Components\Forms\" />
 	  <Folder Include="Types\Behaviors\" />
 	</ItemGroup>
 

@@ -14,8 +14,8 @@ public class UIThemePaletteBaseTests
         TestThemePalette palette = new();
 
         // Assert
-        palette.Id.Should().Be("dark");
-        palette.Name.Should().Be("Dark");
+        palette.Id.Should().Be("default");
+        palette.Name.Should().Be("Default");
 
         // Surface colors
         palette.Background.ToString(ColorOutputFormats.Hex)
