@@ -2,12 +2,15 @@
 using CdCSharp.BlazorUI.Components.Features.Behaviors;
 using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components.Forms.Abstractions;
 
+// Clase base original - sin cambios
 public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable
 {
     private IJSObjectReference? _behaviorInstance;
@@ -138,5 +141,53 @@ public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDi
             await _behaviorInstance.InvokeVoidAsync("dispose");
             await _behaviorInstance.DisposeAsync();
         }
+    }
+}
+
+// Nueva clase base para inputs con variantes
+public abstract class UIInputComponentBase<TValue, TComponent, TVariant>
+    : UIInputComponentBase<TValue>, IVariantComponent<TVariant>
+    where TComponent : UIInputComponentBase<TValue, TComponent, TVariant>
+    where TVariant : Variant
+{
+    private RenderFragment? _resolvedTemplate;
+    private VariantHelper<TComponent, TVariant>? _variantHelper;
+
+    [Parameter] public TVariant? Variant { get; set; }
+
+    protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
+    public abstract TVariant DefaultVariant { get; }
+
+    [Inject] private IUniversalVariantRegistry? VariantRegistry { get; set; }
+
+    // Implementation of IVariantComponent interfaces
+    Variant IVariantComponent.CurrentVariant => CurrentVariant;
+    Type IVariantComponent.VariantType => typeof(TVariant);
+    public TVariant CurrentVariant => Variant ?? DefaultVariant;
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        // Let the base class handle its render logic first
+        base.BuildRenderTree(builder);
+
+        // Then add the variant template
+        if (_resolvedTemplate is not null)
+        {
+            builder.AddContent(0, _resolvedTemplate);
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        // First let the base class handle its parameter setting
+        base.OnParametersSet();
+
+        // Then handle variant resolution
+        _variantHelper ??= new VariantHelper<TComponent, TVariant>(
+            (TComponent)this,
+            VariantRegistry);
+
+        Variant ??= DefaultVariant;
+        _resolvedTemplate = _variantHelper.ResolveTemplate(Variant, BuiltInTemplates);
     }
 }

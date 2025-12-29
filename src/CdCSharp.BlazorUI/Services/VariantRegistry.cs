@@ -3,30 +3,47 @@ using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Services;
 
-public interface IVariantRegistry<TComponent, TVariant>
-    where TComponent : UIVariantComponentBase<TComponent, TVariant>
-    where TVariant : Variant
+public interface IUniversalVariantRegistry
 {
-    RenderFragment? GetTemplate(TVariant variant, TComponent component);
+    void Register<TComponent, TVariant>(
+        TVariant variant,
+        Func<TComponent, RenderFragment> template)
+        where TComponent : ComponentBase
+        where TVariant : Variant;
 
-    void Register(TVariant variant, Func<TComponent, RenderFragment> template);
+    RenderFragment? GetTemplate(Type componentType, Variant variant, ComponentBase component);
 }
 
-public sealed class VariantRegistry<TComponent, TVariant> : IVariantRegistry<TComponent, TVariant>
-    where TComponent : UIVariantComponentBase<TComponent, TVariant>
-    where TVariant : Variant
+public sealed class UniversalVariantRegistry : IUniversalVariantRegistry
 {
-    private readonly Dictionary<TVariant, Func<TComponent, RenderFragment>> _templates = [];
+    private readonly Dictionary<(Type ComponentType, Type VariantType, string VariantName), Delegate> _templates = [];
 
-    public RenderFragment? GetTemplate(TVariant variant, TComponent component)
+    public void Register<TComponent, TVariant>(
+        TVariant variant,
+        Func<TComponent, RenderFragment> template)
+        where TComponent : ComponentBase
+        where TVariant : Variant
     {
-        return _templates.TryGetValue(variant, out Func<TComponent, RenderFragment>? template)
-            ? template(component)
-            : null;
+        (Type, Type, string Name) key = (typeof(TComponent), typeof(TVariant), variant.Name);
+        _templates[key] = template;
     }
 
-    public void Register(TVariant variant, Func<TComponent, RenderFragment> template)
+    public RenderFragment? GetTemplate(Type componentType, Variant variant, ComponentBase component)
     {
-        _templates[variant] = template;
+        Type? currentType = componentType;
+
+        while (currentType != null && currentType != typeof(ComponentBase))
+        {
+            (Type currentType, Type, string Name) key = (currentType, variant.GetType(), variant.Name);
+
+            if (_templates.TryGetValue(key, out Delegate? template))
+            {
+                return template.DynamicInvoke(component) as RenderFragment;
+            }
+
+            currentType = currentType.BaseType;
+        }
+
+        return null;
     }
 }

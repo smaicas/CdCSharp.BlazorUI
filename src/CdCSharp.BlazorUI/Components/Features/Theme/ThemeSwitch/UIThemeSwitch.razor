@@ -23,7 +23,7 @@
         _currentTheme = await ThemeInterop.GetThemeAsync();
     }
 
-    protected override UIThemeSwitchVariant DefaultVariant
+    public override UIThemeSwitchVariant DefaultVariant
         => UIThemeSwitchVariant.Default;
 
     protected override Dictionary<UIThemeSwitchVariant, Func<UIThemeSwitch, RenderFragment>> BuiltInTemplates
@@ -54,11 +54,7 @@
 
     private RenderFragment RenderSunMoon() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="theme-switch"
-                      data-ui-variant="sunmoon"
-                      data-ui-theme="@_currentTheme"
-                      data-ui-transitioning="@(_isTransitioning ? "true" : "false")">
+        <ui-component @attributes="ComputedAttributes">
             <button @onclick="SwitchTheme"
                     disabled="@_isTransitioning"
                     aria-label="@($"Switch to {GetOppositeTheme()} mode")">

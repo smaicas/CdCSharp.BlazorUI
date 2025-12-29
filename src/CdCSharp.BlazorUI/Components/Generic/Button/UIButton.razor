@@ -71,7 +71,7 @@
 
     /* ========= Variant ========= */
 
-    protected override UIButtonVariant DefaultVariant => UIButtonVariant.Default;
+    public override UIButtonVariant DefaultVariant => UIButtonVariant.Default;
 
     protected override Dictionary<UIButtonVariant, Func<UIButton, RenderFragment>> BuiltInTemplates { get; } = new()
     {
@@ -90,9 +90,7 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <ui-component @attributes="@ComputedAttributes"
-                      data-ui-component="button"
-                      data-ui-variant="@(Variant ?? DefaultVariant).Name.ToLowerInvariant()">
+        <ui-component @attributes="@ComputedAttributes">
             <button @ref="_buttonElement"
                     type="button"
                     disabled="@IsDisabled"

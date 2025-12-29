@@ -42,7 +42,7 @@ internal sealed class ComponentStyleBuilder
     private void ProcessInterfaces(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         // Extraer nombre del componente
-        string componentName = ToKebabCase(component.GetType().Name);
+        string componentName = ToKebabCaseComponentName(component.GetType().Name);
         ComputedAttributes["data-ui-component"] = componentName;
 
         // IHasVariant
@@ -212,10 +212,15 @@ internal sealed class ComponentStyleBuilder
         }
     }
 
-    private static string ToKebabCase(string value)
+    private static string ToKebabCaseComponentName(string value)
     {
         if (string.IsNullOrEmpty(value))
             return value;
+
+        if (value.StartsWith("UI", StringComparison.InvariantCultureIgnoreCase))
+        {
+            value = value[2..];
+        }
 
         StringBuilder sb = new();
         for (int i = 0; i < value.Length; i++)

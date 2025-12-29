@@ -20,7 +20,7 @@
 
     /* ========= Variant ========= */
 
-    protected override UILoadingIndicatorVariant DefaultVariant => UILoadingIndicatorVariant.Spinner;
+    public override UILoadingIndicatorVariant DefaultVariant => UILoadingIndicatorVariant.Spinner;
 
     protected override Dictionary<UILoadingIndicatorVariant, Func<UILoadingIndicator, RenderFragment>> BuiltInTemplates { get; } = new()
     {
@@ -35,9 +35,7 @@
 
     private RenderFragment RenderSpinner() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="loading-indicator"
-                      data-ui-variant="spinner">
+        <ui-component @attributes="ComputedAttributes">
             <svg class="ui-loading-spinner" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
@@ -46,9 +44,7 @@
 
     private RenderFragment RenderLinear() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="loading-indicator"
-                      data-ui-variant="linearindeterminate">
+        <ui-component @attributes="ComputedAttributes">
             <div class="ui-loading-linear">
                 <div class="ui-loading-linear__bar"></div>
             </div>
@@ -57,9 +53,7 @@
 
     private RenderFragment RenderCircularProgress() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="loading-indicator"
-                      data-ui-variant="circularprogress">
+        <ui-component @attributes="ComputedAttributes">
             <svg class="ui-loading-circular" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
@@ -68,9 +62,7 @@
 
     private RenderFragment RenderDots() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="loading-indicator"
-                      data-ui-variant="dots">
+        <ui-component @attributes="ComputedAttributes">
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
@@ -79,9 +71,7 @@
 
     private RenderFragment RenderPulse() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="loading-indicator"
-                      data-ui-variant="pulse">
+        <ui-component @attributes="ComputedAttributes">
             <span class="ui-loading-pulse"></span>
         </ui-component>
     };

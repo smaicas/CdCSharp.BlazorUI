@@ -1,12 +1,8 @@
 ﻿using CdCSharp.BlazorUI.Components.Abstractions;
 using CdCSharp.BlazorUI.Components.Features.Behaviors;
-using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
-using CdCSharp.BlazorUI.Components.Generic.Button;
-using CdCSharp.BlazorUI.Components.Generic.Svg;
 using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -16,11 +12,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddMemoryCache();
 
-        // Variant registries
-        RegisterVariantRegistry<UIButton, UIButtonVariant>(services);
-        RegisterVariantRegistry<UISvgIcon, UISvgIconVariant>(services);
-        RegisterVariantRegistry<UIThemeSwitch, UIThemeSwitchVariant>(services);
-        RegisterVariantRegistry<UILoadingIndicator, UILoadingIndicatorVariant>(services);
+        // Un solo registry para todo
+        services.AddSingleton<IUniversalVariantRegistry, UniversalVariantRegistry>();
 
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
@@ -31,80 +24,34 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddBlazorUIVariants(
         this IServiceCollection services,
-        Action<VariantRegistryBuilder> configure)
+        Action<UniversalVariantBuilder> configure)
     {
-        VariantRegistryBuilder builder = new(services);
+        ServiceProvider sp = services.BuildServiceProvider();
+        UniversalVariantRegistry registry = sp.GetService<IUniversalVariantRegistry>() as UniversalVariantRegistry
+            ?? throw new InvalidOperationException("Must call AddBlazorUI before AddBlazorUIVariants");
+
+        UniversalVariantBuilder builder = new(registry);
         configure(builder);
         return services;
-    }
-
-    private static void RegisterVariantRegistry<TComponent, TVariant>(IServiceCollection services)
-        where TComponent : UIVariantComponentBase<TComponent, TVariant>
-        where TVariant : Variant
-    {
-        services.TryAddSingleton<VariantRegistry<TComponent, TVariant>>();
-        services.TryAddSingleton<IVariantRegistry<TComponent, TVariant>>(sp =>
-            sp.GetRequiredService<VariantRegistry<TComponent, TVariant>>());
     }
 }
 
 #region Variant Registry Builders
 
-public sealed class VariantRegistryBuilder
+public sealed class UniversalVariantBuilder
 {
-    private readonly IServiceCollection _services;
+    private readonly UniversalVariantRegistry _registry;
 
-    public VariantRegistryBuilder(IServiceCollection services)
+    public UniversalVariantBuilder(UniversalVariantRegistry registry)
     {
-        _services = services;
-    }
-
-    public VariantRegistryBuilder<TComponent, TVariant> For<TComponent, TVariant>()
-        where TComponent : UIVariantComponentBase<TComponent, TVariant>
-        where TVariant : Variant
-    {
-        VariantRegistry<TComponent, TVariant> registry = GetOrCreateRegistry<TComponent, TVariant>();
-        return new VariantRegistryBuilder<TComponent, TVariant>(_services, registry);
-    }
-
-    private VariantRegistry<TComponent, TVariant> GetOrCreateRegistry<TComponent, TVariant>()
-        where TComponent : UIVariantComponentBase<TComponent, TVariant>
-        where TVariant : Variant
-    {
-        ServiceDescriptor? descriptor = _services.FirstOrDefault(d =>
-            d.ServiceType == typeof(VariantRegistry<TComponent, TVariant>));
-
-        if (descriptor?.ImplementationInstance is VariantRegistry<TComponent, TVariant> existing)
-        {
-            return existing;
-        }
-
-        VariantRegistry<TComponent, TVariant> registry = new();
-
-        _services.AddSingleton(registry);
-        _services.AddSingleton<IVariantRegistry<TComponent, TVariant>>(registry);
-
-        return registry;
-    }
-}
-
-public sealed class VariantRegistryBuilder<TComponent, TVariant>
-    where TComponent : UIVariantComponentBase<TComponent, TVariant>
-    where TVariant : Variant
-{
-    private readonly VariantRegistry<TComponent, TVariant> _registry;
-    private readonly IServiceCollection _services;
-    public VariantRegistryBuilder(
-        IServiceCollection services,
-        VariantRegistry<TComponent, TVariant> registry)
-    {
-        _services = services;
         _registry = registry;
     }
 
-    public VariantRegistryBuilder<TComponent, TVariant> Register(
+    public UniversalVariantBuilder Register<TComponent, TVariant>(
         TVariant variant,
         Func<TComponent, RenderFragment> template)
+        where TComponent : ComponentBase
+        where TVariant : Variant
     {
         _registry.Register(variant, template);
         return this;

@@ -6,7 +6,7 @@
 @using CdCSharp.BlazorUI.Css
 @using Microsoft.AspNetCore.Components.Forms
 
-@inherits UIInputComponentBase<string>
+@inherits UIInputComponentBase<string, UIInputText, InputTextVariant>
 @implements IHasSize
 @implements IHasFullWidth
 @implements IHasLoading
@@ -16,58 +16,9 @@
 @implements IHasRipple
 @implements IJsBehavior
 
-<ui-component @attributes="ComputedAttributes">
-
-    @if (!string.IsNullOrWhiteSpace(Label))
-    {
-        <label for="@_inputId" class="ui-input__label">
-            @Label
-            @if (Required)
-            {
-                <span class="ui-input__required">*</span>
-            }
-        </label>
-    }
-
-    <div class="ui-input__container">
-        <input @ref="_inputElement"
-               type="text"
-               id="@_inputId"
-               value="@CurrentValue"
-               @onchange="HandleChange"
-               @oninput="HandleInput"
-               aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-               aria-describedby="@_helperTextId"
-               aria-invalid="@IsError.ToString().ToLower()"
-               aria-required="@Required.ToString().ToLower()"
-               placeholder="@Placeholder"
-               disabled="@IsDisabled"
-               readonly="@ReadOnly"
-               required="@Required" />
-
-        @if (IsLoading && LoadingIndicatorVariant != null)
-        {
-            <div class="ui-input__loading">
-                <UILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-            </div>
-        }
-
-        @if (IsError && EditContext != null && ValueExpression != null)
-        {
-            <div class="ui-input__validation">
-                <ValidationMessage For="ValueExpression" />
-            </div>
-        }
-    </div>
-
-    @if (!string.IsNullOrWhiteSpace(HelperText))
-    {
-        <div id="@_helperTextId" class="ui-input__helper-text">
-            @HelperText
-        </div>
-    }
-
-</ui-component>
+@{
+    base.BuildRenderTree(__builder);
+}
 
 @code {
     private ElementReference _inputElement;
@@ -108,6 +59,94 @@
     [Parameter] public string? HelperText { get; set; }
     [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter] public EventCallback<string> OnInput { get; set; }
+
+    /* ========= Variant ========= */
+
+    public override InputTextVariant DefaultVariant => InputTextVariant.Outlined;
+
+    protected override IReadOnlyDictionary<InputTextVariant, Func<UIInputText, RenderFragment>> BuiltInTemplates { get; } = new Dictionary<InputTextVariant, Func<UIInputText, RenderFragment>>
+    {
+        [InputTextVariant.Outlined] = i => i.RenderOutlined(),
+        [InputTextVariant.Filled] = i => i.RenderFilled(),
+        [InputTextVariant.Standard] = i => i.RenderStandard()
+    };
+
+    /* ========= Render Methods ========= */
+
+    private RenderFragment RenderOutlined() => __builder =>
+    {
+        <ui-component @attributes="ComputedAttributes">
+            @RenderInputContent()
+        </ui-component>
+    };
+
+    private RenderFragment RenderFilled() => __builder =>
+    {
+        <ui-component @attributes="ComputedAttributes">
+            @RenderInputContent()
+        </ui-component>
+    };
+
+    private RenderFragment RenderStandard() => __builder =>
+    {
+        <ui-component @attributes="ComputedAttributes">
+            @RenderInputContent()
+        </ui-component>
+    };
+
+    private RenderFragment RenderInputContent() => __builder =>
+    {
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label for="@_inputId" class="ui-input__label">
+                @Label
+                @if (Required)
+                {
+                    <span class="ui-input__required">*</span>
+                }
+            </label>
+        }
+
+        <div class="ui-input__container">
+            <input @ref="_inputElement"
+                   type="text"
+                   id="@_inputId"
+                   value="@CurrentValue"
+                   @onchange="HandleChange"
+                   @oninput="HandleInput"
+                   aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+                   aria-describedby="@_helperTextId"
+                   aria-invalid="@IsError.ToString().ToLower()"
+                   aria-required="@Required.ToString().ToLower()"
+                   placeholder="@Placeholder"
+                   disabled="@IsDisabled"
+                   readonly="@ReadOnly"
+                   required="@Required" />
+
+            @if (IsLoading && LoadingIndicatorVariant != null)
+            {
+                <div class="ui-input__loading">
+                    <UILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                </div>
+            }
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="ui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(HelperText))
+        {
+            <div id="@_helperTextId" class="ui-input__helper-text">
+                @HelperText
+            </div>
+        }
+    };
+
+    /* ========= Event Handlers ========= */
 
     private async Task HandleChange(ChangeEventArgs e)
     {
