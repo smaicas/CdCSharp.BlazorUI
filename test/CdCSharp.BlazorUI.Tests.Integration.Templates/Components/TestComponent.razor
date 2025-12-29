@@ -2,35 +2,13 @@
 
 @inherits UIComponentBase
 
-<div @attributes="ComputedAttributes">
-    <span class="test-content">@Text</span>
-</div>
-
+<ui-component @attributes="ComputedAttributes">
+    <div>
+        <span class="test-content">@Text</span>
+    </div>
+</ui-component>
 @code {
     [Parameter] public string Text { get; set; } = "Test Component";
-
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        yield return "test-component";
-        if (IsPrimary)
-        {
-            yield return "test-component--primary";
-        }
-    }
-
-    public override Dictionary<string, string> GetAdditionalInlineStyles()
-    {
-        Dictionary<string, string> styles = new();
-        if (!string.IsNullOrEmpty(Color))
-        {
-            styles["color"] = Color;
-        }
-        if (!string.IsNullOrEmpty(BackgroundColor))
-        {
-            styles["background-color"] = BackgroundColor;
-        }
-        return styles;
-    }
 
     [Parameter] public bool IsPrimary { get; set; }
     [Parameter] public string? Color { get; set; }

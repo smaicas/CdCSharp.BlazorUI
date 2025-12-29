@@ -16,7 +16,7 @@
 @implements IHasRipple
 @implements IJsBehavior
 
-@* <ui-wrapper @attributes="DataAttributes"> *@
+<ui-component @attributes="ComputedAttributes">
 
     @if (!string.IsNullOrWhiteSpace(Label))
     {
@@ -31,16 +31,19 @@
 
     <div class="ui-input__container">
         <input @ref="_inputElement"
-               @attributes="ComputedAttributes"
-               type="@Type"
+               type="text"
                id="@_inputId"
                value="@CurrentValue"
                @onchange="HandleChange"
                @oninput="HandleInput"
                aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                aria-describedby="@_helperTextId"
-               aria-invalid="@_hasErrors.ToString().ToLower()"
-               aria-required="@Required.ToString().ToLower()" />
+               aria-invalid="@IsError.ToString().ToLower()"
+               aria-required="@Required.ToString().ToLower()"
+               placeholder="@Placeholder"
+               disabled="@IsDisabled"
+               readonly="@ReadOnly"
+               required="@Required" />
 
         @if (IsLoading && LoadingIndicatorVariant != null)
         {
@@ -49,7 +52,7 @@
             </div>
         }
 
-        @if (_hasErrors && EditContext != null && ValueExpression != null)
+        @if (IsError && EditContext != null && ValueExpression != null)
         {
             <div class="ui-input__validation">
                 <ValidationMessage For="ValueExpression" />
@@ -64,14 +67,12 @@
         </div>
     }
 
-@* </ui-wrapper> *@
+</ui-component>
 
 @code {
     private ElementReference _inputElement;
     private string _inputId = $"ui-input-{Guid.NewGuid():N}";
     private string _helperTextId = $"ui-helper-{Guid.NewGuid():N}";
-    private bool _hasErrors;
-    private FieldIdentifier _fieldIdentifier;
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
@@ -102,63 +103,11 @@
     [Parameter] public int? RippleDuration { get; set; }
 
     // Input specific parameters
-    [Parameter] public string Type { get; set; } = "text";
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
-    [Parameter] public bool Required { get; set; }
-    [Parameter] public bool ReadOnly { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter] public EventCallback<string> OnInput { get; set; }
-    [Parameter] public InputVariant Variant { get; set; } = InputVariant.Outlined;
-
-    // Computed properties
-    private bool IsDisabled => Disabled || IsLoading;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        // Create FieldIdentifier from ValueExpression if available
-        if (ValueExpression != null)
-        {
-            _fieldIdentifier = FieldIdentifier.Create(ValueExpression);
-        }
-    }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        // Add specific attributes to computed attributes
-        ComputedAttributes["disabled"] = IsDisabled;
-        ComputedAttributes["readonly"] = ReadOnly;
-        ComputedAttributes["required"] = Required;
-
-        if (!string.IsNullOrWhiteSpace(Placeholder))
-        {
-            ComputedAttributes["placeholder"] = Placeholder;
-        }
-
-        // Update validation state
-        if (EditContext != null && ValueExpression != null)
-        {
-            _hasErrors = EditContext.GetValidationMessages(_fieldIdentifier).Any();
-
-            // Subscribe to validation state changes
-            EditContext.OnValidationStateChanged += HandleValidationStateChanged;
-        }
-    }
-
-    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
-    {
-        if (EditContext != null && ValueExpression != null)
-        {
-            _hasErrors = EditContext.GetValidationMessages(_fieldIdentifier).Any();
-            StateHasChanged();
-        }
-    }
 
     private async Task HandleChange(ChangeEventArgs e)
     {
@@ -186,36 +135,6 @@
         return true;
     }
 
-    // Override to add component-specific CSS classes
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        // First get base classes (includes CssClass from InputBase)
-        foreach (var cssClass in base.GetAdditionalCssClasses())
-        {
-            yield return cssClass;
-        }
-
-        // Then add component-specific classes
-        yield return "ui-input";
-        yield return "ui-input-text";
-        yield return $"ui-input--{Variant.ToString().ToLowerInvariant()}";
-
-        if (IsDisabled) yield return "ui-input--disabled";
-        if (ReadOnly) yield return "ui-input--readonly";
-        if (Required) yield return "ui-input--required";
-        if (_hasErrors) yield return "ui-input--error";
-    }
-
     // IJsBehavior implementation
     public ElementReference GetRootElement() => _inputElement;
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing && EditContext != null)
-        {
-            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
-        }
-
-        base.Dispose(disposing);
-    }
 }

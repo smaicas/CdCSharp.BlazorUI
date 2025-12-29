@@ -1,6 +1,10 @@
-﻿.ui-button {
+﻿ui-component[data-ui-component="button"] button {
     display: inline-flex;
     align-items: center;
+    background-color: inherit; /* Inherits from ui-component */
+    color: inherit; /* Inherits from ui-component */
+    border: none;
+    cursor: pointer;
     /* Base values as CSS custom properties */
     --ui-button-gap: 0.5rem;
     --ui-button-padding-y: 0.5rem;
@@ -12,43 +16,48 @@
     min-height: calc(var(--ui-button-min-height) * var(--ui-density-spacing-multiplier, 1));
 }
 
-.ui-button__text {
+ui-component[data-ui-component="button"] .ui-button__text {
     white-space: nowrap;
 }
 
-.ui-button svg {
+ui-component[data-ui-component="button"] svg {
     pointer-events: none;
-    /* Icon size remains constant across densities */
     width: 1.25rem;
     height: 1.25rem;
 }
 
-/* Specific: Only Icon */
-.ui-button--icon-only {
+/* Icon only button */
+ui-component[data-ui-component="button"]:not(:has(.ui-button__text)) button {
     --ui-button-icon-only-padding: 0.5rem;
     padding: calc(var(--ui-button-icon-only-padding) * var(--ui-density-spacing-multiplier, 1));
 }
 
-/* Size variations with density support */
-.ui-button.ui-size-small {
+/* Size variations */
+ui-component[data-ui-component="button"][data-ui-size="small"] {
     --ui-button-padding-y: 0.375rem;
     --ui-button-padding-x: 0.75rem;
     --ui-button-min-height: 2rem;
 }
 
-.ui-button.ui-size-large {
+ui-component[data-ui-component="button"][data-ui-size="large"] {
     --ui-button-padding-y: 0.625rem;
     --ui-button-padding-x: 1.25rem;
     --ui-button-min-height: 3rem;
 }
 
-/* Icon sizes by button size (not affected by density) */
-.ui-button.ui-size-small svg {
+/* Icon sizes by button size */
+ui-component[data-ui-component="button"][data-ui-size="small"] svg {
     width: 1rem;
     height: 1rem;
 }
 
-.ui-button.ui-size-large svg {
+ui-component[data-ui-component="button"][data-ui-size="large"] svg {
     width: 1.5rem;
     height: 1.5rem;
+}
+
+/* Disabled state */
+ui-component[data-ui-component="button"] button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
 }

@@ -152,10 +152,10 @@ public class UIThemeSwitchVariantTests : TestContextBase
         button.ShouldNotHaveClass("ui-theme-switch--light");
     }
 
-    [Theory(DisplayName = "AllVariants_HaveBaseClasses")]
+    [Theory(DisplayName = "AllVariants_HaveCorrectDataAttributes")]
     [InlineData("Default")]
     [InlineData("SunMoon")]
-    public void ThemeSwitch_AllVariants_HaveBaseClasses(string variantName)
+    public void ThemeSwitch_AllVariants_HaveCorrectDataAttributes(string variantName)
     {
         // Arrange
         UIThemeSwitchVariant variant = variantName switch
@@ -170,8 +170,8 @@ public class UIThemeSwitchVariantTests : TestContextBase
             .Add(p => p.Variant, variant));
 
         // Assert
-        IElement button = cut.Find("button");
-        button.ShouldHaveClass("ui-theme-switch");
-        button.ShouldHaveClass($"ui-theme-switch--{variantName.ToLower()}");
+        IElement uiComponent = cut.FindByDataComponent("theme-switch");
+        uiComponent.Should().NotBeNull();
+        uiComponent.ShouldHaveDataVariant(variantName.ToLowerInvariant());
     }
 }

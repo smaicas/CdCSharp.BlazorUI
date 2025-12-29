@@ -2,182 +2,204 @@
 using CdCSharp.BlazorUI.Components.Features.Common;
 using CdCSharp.BlazorUI.Components.Features.Loading;
 using CdCSharp.BlazorUI.Core.Css;
-using CdCSharp.BlazorUI.Css;
 using Microsoft.AspNetCore.Components;
+using System.Text;
 
 namespace CdCSharp.BlazorUI.Components.Abstractions;
 
 internal sealed class ComponentStyleBuilder
 {
-    private string? _lastComputedCssClasses;
-    private string? _originalUserClasses;
-    private string? _lastComputedStyles;
     private string? _originalUserStyles;
 
-    public string ComputedCssClasses { get; private set; } = string.Empty;
     public Dictionary<string, object> ComputedAttributes { get; private set; } = [];
 
     public void BuildStyles(
         ComponentBase component,
-        IReadOnlyDictionary<string, object>? additionalAttributes,
-        IEnumerable<string> additionalCssClasses,
-        Dictionary<string, string> additionalInlineStyles)
+        IReadOnlyDictionary<string, object>? additionalAttributes)
     {
         // Start with a fresh dictionary, copying from additionalAttributes if provided
         ComputedAttributes = additionalAttributes != null
             ? new Dictionary<string, object>(additionalAttributes)
             : [];
 
-        // Handle CSS Classes
-        string currentClasses = ComputedAttributes.TryGetValue("class", out object? existingClass)
-            ? existingClass.ToString() ?? string.Empty
-            : string.Empty;
-
-        // Detect if these are original user classes or our computed classes
-        if (_lastComputedCssClasses == null || currentClasses != _lastComputedCssClasses)
-        {
-            _originalUserClasses = currentClasses;
-        }
-
-        // Handle Inline Styles
+        // Handle inline styles from user
         string currentStyles = ComputedAttributes.TryGetValue("style", out object? existingStyle)
             ? existingStyle.ToString() ?? string.Empty
             : string.Empty;
 
-        if (_lastComputedStyles == null || currentStyles != _lastComputedStyles)
-        {
-            _originalUserStyles = currentStyles;
-        }
+        _originalUserStyles = currentStyles;
 
-        // Get component classes directly from additionalCssClasses
-        List<string> componentClasses = [.. additionalCssClasses];
+        // Dictionary for CSS variables
+        Dictionary<string, string> cssVariables = [];
 
         // Process all interfaces
-        ProcessInterfaces(component, componentClasses, additionalInlineStyles);
+        ProcessInterfaces(component, cssVariables);
 
-        // Combine component classes with original user classes
-        ComputedCssClasses = string.IsNullOrWhiteSpace(_originalUserClasses)
-            ? string.Join(" ", componentClasses)
-            : $"{string.Join(" ", componentClasses)} {_originalUserClasses}".Trim();
-
-        // Store computed classes for next render
-        _lastComputedCssClasses = ComputedCssClasses;
-
-        // Update ComputedAttributes with classes
-        if (!string.IsNullOrWhiteSpace(ComputedCssClasses))
-        {
-            ComputedAttributes["class"] = ComputedCssClasses;
-        }
-        else if (ComputedAttributes.ContainsKey("class"))
-        {
-            ComputedAttributes.Remove("class");
-        }
-
-        // Build inline styles
-        BuildInlineStyles(component, additionalInlineStyles);
+        // Build inline styles with CSS variables
+        BuildInlineStyles(cssVariables);
     }
 
-    private void ProcessInterfaces(ComponentBase component, List<string> componentClasses, Dictionary<string, string> styles)
+    private void ProcessInterfaces(ComponentBase component, Dictionary<string, string> cssVariables)
     {
-        // Check if component implements IHasTransitions
+        // Extraer nombre del componente
+        string componentName = ToKebabCase(component.GetType().Name);
+        ComputedAttributes["data-ui-component"] = componentName;
+
+        // IHasVariant
+        if (component is IVariantComponent uiComponent)
+        {
+            ComputedAttributes["data-ui-variant"] = uiComponent.CurrentVariant.Name.ToLowerInvariant();
+        }
+
+        // IHasTransitions
         if (component is IHasTransitions hasTransitions && hasTransitions.Transitions?.HasTransitions == true)
         {
-            componentClasses.Add(CssClassesReference.HasTransitions);
-            foreach (string cssClass in hasTransitions.Transitions.GetCssClasses().Split(' ', StringSplitOptions.RemoveEmptyEntries))
-            {
-                componentClasses.Add(cssClass);
-            }
+            ComputedAttributes["data-ui-transitions"] = hasTransitions.Transitions.GetDataAttributeValue();
 
-            foreach ((string? key, string? value) in hasTransitions.Transitions.GetInlineStyles())
+            foreach ((string key, string value) in hasTransitions.Transitions.GetCssVariables())
             {
-                styles[key] = value;
+                cssVariables[key] = value;
             }
         }
 
-        // Check if component implements IHasSize
+        // IHasSize
         if (component is IHasSize hasSize)
         {
-            componentClasses.Add(CssClassesReference.Size(hasSize.Size));
+            ComputedAttributes["data-ui-size"] = hasSize.Size.ToString().ToLowerInvariant();
         }
 
-        // Check if component implements IHasFullWidth
+        // IHasFullWidth
         if (component is IHasFullWidth hasFullWidth && hasFullWidth.FullWidth)
         {
-            componentClasses.Add(CssClassesReference.FullWidth);
+            ComputedAttributes["data-ui-fullwidth"] = "true";
         }
 
-        // Check if component implements IHasLoading
+        // IHasLoading
         if (component is IHasLoading hasLoading && hasLoading.IsLoading)
         {
-            componentClasses.Add(CssClassesReference.Loading);
+            ComputedAttributes["data-ui-loading"] = "true";
         }
 
-        // Check if component implements IHasElevation
+        // IHasElevation
         if (component is IHasElevation hasElevation && hasElevation.Elevation != null)
         {
-            componentClasses.Add(CssClassesReference.Elevation(Math.Clamp((int)hasElevation.Elevation, 0, 24)));
+            ComputedAttributes["data-ui-elevation"] = hasElevation.Elevation.Value.ToString();
         }
 
-        // Check if component implements IHasRipple
+        // IHasRipple
         if (component is IHasRipple hasRipple && !hasRipple.DisableRipple)
         {
-            componentClasses.Add(CssClassesReference.HasRipple);
+            ComputedAttributes["data-ui-ripple"] = "true";
 
             if (hasRipple.RippleColor != null)
             {
-                styles["--ui-ripple-color"] = hasRipple.RippleColor.ToString(ColorOutputFormats.Rgba);
+                cssVariables["--ui-ripple-color"] = hasRipple.RippleColor.ToString(ColorOutputFormats.Rgba);
             }
 
             if (hasRipple.RippleDuration > 0)
             {
-                styles["--ui-ripple-duration"] = $"{hasRipple.RippleDuration}ms";
+                cssVariables["--ui-ripple-duration"] = $"{hasRipple.RippleDuration}ms";
             }
         }
 
-        // Check if component implements IHasDensity
+        // IHasDensity
         if (component is IHasDensity hasDensity)
         {
-            componentClasses.Add(CssClassesReference.Density(hasDensity.Density));
+            ComputedAttributes["data-ui-density"] = hasDensity.Density.ToString().ToLowerInvariant();
+        }
+
+        // IHasBackgroundColor
+        if (component is IHasBackgroundColor hasBackgroundColor && hasBackgroundColor.BackgroundColor != null)
+        {
+            cssVariables["--ui-bg-color"] = hasBackgroundColor.BackgroundColor.ToString(ColorOutputFormats.Rgba);
+        }
+
+        // IHasColor
+        if (component is IHasColor hasColor && hasColor.Color != null)
+        {
+            cssVariables["--ui-color"] = hasColor.Color.ToString(ColorOutputFormats.Rgba);
+        }
+
+        // IHasBorder
+        if (component is IHasBorder hasBorder)
+        {
+            if (hasBorder.Border != null)
+            {
+                cssVariables["--ui-border-width"] = hasBorder.Border.Width;
+                cssVariables["--ui-border-style"] = hasBorder.Border.Style.ToString().ToLowerInvariant();
+                cssVariables["--ui-border-color"] = hasBorder.Border.Color.ToString(ColorOutputFormats.Rgba);
+
+                if (hasBorder.Border.Radius.HasValue)
+                {
+                    cssVariables["--ui-border-radius"] = $"{hasBorder.Border.Radius}px";
+                }
+            }
+
+            // Individual borders
+            if (hasBorder.BorderTop != null)
+            {
+                cssVariables["--ui-border-top-width"] = hasBorder.BorderTop.Width;
+                cssVariables["--ui-border-top-style"] = hasBorder.BorderTop.Style.ToString().ToLowerInvariant();
+                cssVariables["--ui-border-top-color"] = hasBorder.BorderTop.Color.ToString(ColorOutputFormats.Rgba);
+            }
+
+            if (hasBorder.BorderRight != null)
+            {
+                cssVariables["--ui-border-right-width"] = hasBorder.BorderRight.Width;
+                cssVariables["--ui-border-right-style"] = hasBorder.BorderRight.Style.ToString().ToLowerInvariant();
+                cssVariables["--ui-border-right-color"] = hasBorder.BorderRight.Color.ToString(ColorOutputFormats.Rgba);
+            }
+
+            if (hasBorder.BorderBottom != null)
+            {
+                cssVariables["--ui-border-bottom-width"] = hasBorder.BorderBottom.Width;
+                cssVariables["--ui-border-bottom-style"] = hasBorder.BorderBottom.Style.ToString().ToLowerInvariant();
+                cssVariables["--ui-border-bottom-color"] = hasBorder.BorderBottom.Color.ToString(ColorOutputFormats.Rgba);
+            }
+
+            if (hasBorder.BorderLeft != null)
+            {
+                cssVariables["--ui-border-left-width"] = hasBorder.BorderLeft.Width;
+                cssVariables["--ui-border-left-style"] = hasBorder.BorderLeft.Style.ToString().ToLowerInvariant();
+                cssVariables["--ui-border-left-color"] = hasBorder.BorderLeft.Color.ToString(ColorOutputFormats.Rgba);
+            }
+        }
+
+        if (component is IHasError hasError)
+        {
+            ComputedAttributes["data-ui-error"] = hasError.IsError ? "true" : "false";
+        }
+
+        // IHasDisabled - siempre incluir
+        if (component is IHasDisabled hasDisabled)
+        {
+            ComputedAttributes["data-ui-disabled"] = hasDisabled.IsDisabled ? "true" : "false";
+        }
+
+        // IHasReadOnly - siempre incluir
+        if (component is IHasReadOnly hasReadOnly)
+        {
+            ComputedAttributes["data-ui-readonly"] = hasReadOnly.IsReadOnly ? "true" : "false";
+        }
+
+        // IHasRequired - siempre incluir
+        if (component is IHasRequired hasRequired)
+        {
+            ComputedAttributes["data-ui-required"] = hasRequired.IsRequired ? "true" : "false";
         }
     }
 
-    private void BuildInlineStyles(ComponentBase component, Dictionary<string, string> styles)
+    private void BuildInlineStyles(Dictionary<string, string> cssVariables)
     {
-        if (component is IHasBorder hasBorder)
-        {
-            if (hasBorder.Border?.Radius != null)
-            {
-                styles["border-radius"] = hasBorder.Border.GetRadiusCssValue();
-            }
-
-            if (hasBorder.Border != null)
-                styles["border"] = hasBorder.Border.ToCssValue();
-
-            if (hasBorder.BorderTop != null)
-                styles["border-top"] = hasBorder.BorderTop.ToCssValue();
-
-            if (hasBorder.BorderRight != null)
-                styles["border-right"] = hasBorder.BorderRight.ToCssValue();
-
-            if (hasBorder.BorderBottom != null)
-                styles["border-bottom"] = hasBorder.BorderBottom.ToCssValue();
-
-            if (hasBorder.BorderLeft != null)
-                styles["border-left"] = hasBorder.BorderLeft.ToCssValue();
-        }
-
-        // Build component styles string
-        string componentStylesString = string.Join("; ", styles.Select(kv => $"{kv.Key}: {kv.Value}"));
+        // Build styles string from CSS variables
+        string cssVariablesString = string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"));
 
         // Combine with original user styles
         string computedStyles = string.IsNullOrWhiteSpace(_originalUserStyles)
-            ? componentStylesString
-            : string.IsNullOrWhiteSpace(componentStylesString)
+            ? cssVariablesString
+            : string.IsNullOrWhiteSpace(cssVariablesString)
                 ? _originalUserStyles
-                : $"{componentStylesString}; {_originalUserStyles}";
-
-        // Store computed styles for next render
-        _lastComputedStyles = computedStyles;
+                : $"{cssVariablesString}; {_originalUserStyles}";
 
         // Update ComputedAttributes with styles
         if (!string.IsNullOrWhiteSpace(computedStyles))
@@ -188,5 +210,30 @@ internal sealed class ComponentStyleBuilder
         {
             ComputedAttributes.Remove("style");
         }
+    }
+
+    private static string ToKebabCase(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        StringBuilder sb = new();
+        for (int i = 0; i < value.Length; i++)
+        {
+            char c = value[i];
+
+            if (char.IsUpper(c))
+            {
+                if (i > 0)
+                    sb.Append('-');
+                sb.Append(char.ToLower(c));
+            }
+            else
+            {
+                sb.Append(c);
+            }
+        }
+
+        return sb.ToString();
     }
 }

@@ -4,7 +4,12 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace CdCSharp.BlazorUI.Components.Abstractions;
 
-public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponentBase
+public interface IVariantComponent
+{
+    Variant CurrentVariant { get; }
+}
+
+public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponentBase, IVariantComponent
     where TComponent : UIVariantComponentBase<TComponent, TVariant>
     where TVariant : Variant
 {
@@ -18,6 +23,8 @@ public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponent
 
     protected abstract TVariant DefaultVariant { get; }
     [Inject] private IVariantRegistry<TComponent, TVariant>? VariantRegistry { get; set; }
+
+    Variant IVariantComponent.CurrentVariant => Variant ?? DefaultVariant;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

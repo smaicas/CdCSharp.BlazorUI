@@ -1,0 +1,6 @@
+﻿[
+  {
+    Variant: Default,
+    Html: <ui-component data-ui-size="medium" data-ui-ripple="true" data-ui-density="standard" data-ui-component="button" data-ui-variant="Default.Name.ToLowerInvariant()" b-1bj5h85gdq><button type="button" blazor:onclick="<EVENT>" b-1bj5h85gdq blazor:elementReference="<GUID>"><span class="ui-button__text" b-1bj5h85gdq>Default Button</span></button></ui-component>
+  }
+]

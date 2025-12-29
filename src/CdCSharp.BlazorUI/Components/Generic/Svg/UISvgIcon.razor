@@ -6,8 +6,8 @@
 @using Microsoft.AspNetCore.Components.Web
 
 @inherits UIVariantComponentBase<UISvgIcon, UISvgIconVariant>
-
 @implements IHasSize
+@implements IHasColor
 
 @{
     base.BuildRenderTree(__builder);
@@ -35,34 +35,19 @@
     };
 
     private RenderFragment RenderDefault() => __builder =>
-{
-    <svg @attributes="@ComputedAttributes"
-         @onclick="@OnClick"
-         focusable="false"
-         viewBox="@ViewBox"
-         aria-hidden="true">
-        @if (Title != null)
-        {
-            <title>@Title</title>
-        }
-        @((MarkupString)Icon)
-    </svg>
-};
-
-    public override IEnumerable<string> GetAdditionalCssClasses()
     {
-        return [CssClassesReference.UISvgIcon];
-    }
-
-    public override Dictionary<string, string> GetAdditionalInlineStyles()
-    {
-        if (Color == null)
-        {
-            return base.GetAdditionalInlineStyles();
-        }
-        return new()
-        {
-           {"color", Color.ToString(ColorOutputFormats.Rgba) }
-        };
-    }
+        <ui-component @attributes="@ComputedAttributes"
+                      data-ui-component="svg-icon"
+                      @onclick="@OnClick">
+            <svg focusable="false"
+                 viewBox="@ViewBox"
+                 aria-hidden="true">
+                @if (Title != null)
+                {
+                    <title>@Title</title>
+                }
+                @((MarkupString)Icon)
+            </svg>
+        </ui-component>
+    };
 }

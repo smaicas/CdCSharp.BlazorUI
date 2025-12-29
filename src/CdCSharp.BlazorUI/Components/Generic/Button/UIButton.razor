@@ -5,10 +5,7 @@
 @using CdCSharp.BlazorUI.Components.Features.Transitions
 @using CdCSharp.BlazorUI.Components.Generic.Svg
 @using CdCSharp.BlazorUI.Core.Css
-@using CdCSharp.BlazorUI.Core.Theming
 @using CdCSharp.BlazorUI.Css
-@using CdCSharp.BlazorUI.Media.Icons
-
 
 @inherits UIVariantComponentBase<UIButton, UIButtonVariant>
 @implements IHasTransitions
@@ -19,20 +16,19 @@
 @implements IHasRipple
 @implements IHasDensity
 @implements IHasBorder
+@implements IHasBackgroundColor
+@implements IHasColor
 
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
-
     /* ========= Public API ========= */
 
     [Parameter] public string? Text { get; set; }
     [Parameter] public string? LeadingIcon { get; set; }
     [Parameter] public string? TrailingIcon { get; set; }
-    [Parameter] public CssColor? BackgroundColor { get; set; }
-    [Parameter] public CssColor? Color { get; set; }
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
@@ -50,9 +46,7 @@
     [Parameter] public UILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
 
     // IHasElevation
-    private int _elevation;
-    [Parameter]
-    public int? Elevation { get; set; }
+    [Parameter] public int? Elevation { get; set; }
 
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }
@@ -68,6 +62,12 @@
     [Parameter] public BorderStyle? BorderRight { get; set; }
     [Parameter] public BorderStyle? BorderBottom { get; set; }
     [Parameter] public BorderStyle? BorderLeft { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
 
     /* ========= Variant ========= */
 
@@ -90,34 +90,37 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <button @ref="_buttonElement"
-                @attributes="ComputedAttributes"
-                type="button"
-                disabled="@IsDisabled"
-                @onclick="HandleClick">
+        <ui-component @attributes="@ComputedAttributes"
+                      data-ui-component="button"
+                      data-ui-variant="@(Variant ?? DefaultVariant).Name.ToLowerInvariant()">
+            <button @ref="_buttonElement"
+                    type="button"
+                    disabled="@IsDisabled"
+                    @onclick="HandleClick">
 
-            @if (IsLoading && LoadingIndicatorVariant != null)
-            {
-                <UILoadingIndicator Variant="@LoadingIndicatorVariant"
-                                    Size="Size"
-                                    Color="@Color" />
-            }
-            else if (LeadingIcon != null)
-            {
-                <UISvgIcon Icon="@LeadingIcon" Size="@Size" />
-            }
+                @if (IsLoading && LoadingIndicatorVariant != null)
+                {
+                    <UILoadingIndicator Variant="@LoadingIndicatorVariant"
+                                        Size="Size"
+                                        Color="@Color" />
+                }
+                else if (LeadingIcon != null)
+                {
+                    <UISvgIcon Icon="@LeadingIcon" Size="@Size" />
+                }
 
-            @if (!string.IsNullOrWhiteSpace(Text))
-            {
-                <span class="@CssClassesReference.UIButton__Text">@Text</span>
-            }
+                @if (!string.IsNullOrWhiteSpace(Text))
+                {
+                    <span class="ui-button__text">@Text</span>
+                }
 
-            @if (TrailingIcon != null && !IsLoading)
-            {
-                <UISvgIcon Icon="@TrailingIcon" Size="@Size" />
-            }
+                @if (TrailingIcon != null && !IsLoading)
+                {
+                    <UISvgIcon Icon="@TrailingIcon" Size="@Size" />
+                }
 
-        </button>
+            </button>
+        </ui-component>
     };
 
     /* ========= Event Handlers ========= */
@@ -128,33 +131,5 @@
         {
             await OnClick.InvokeAsync(args);
         }
-    }
-
-    /* ========= Styling ========= */
-
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        yield return CssClassesReference.UIButton;
-        yield return CssClassesReference.Variant(CssClassesReference.UIButton, Variant ?? DefaultVariant);
-        if (Text == null)
-        {
-            yield return CssClassesReference.Specific(CssClassesReference.UIButton, "icon-only");
-        }
-    }
-
-    override public Dictionary<string, string> GetAdditionalInlineStyles()
-    {
-        Dictionary<string, string> styles = new();
-
-        if (BackgroundColor != null)
-        {
-            styles.TryAdd("background-color", BackgroundColor.ToString(ColorOutputFormats.Rgba));
-        }
-        if (Color != null)
-        {
-            styles.TryAdd("color", Color.ToString(ColorOutputFormats.Rgba));
-        }
-
-        return styles;
     }
 }

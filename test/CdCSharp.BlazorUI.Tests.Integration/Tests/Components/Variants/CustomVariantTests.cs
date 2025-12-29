@@ -73,14 +73,14 @@ public class CustomVariantTests : TestContextBase
         cut.Find("button").ShouldHaveClass("test-variant-component--custom");
     }
 
-    [Fact(DisplayName = "ComplexTemplate_MergesMultipleClasses")]
-    public void CustomVariant_ComplexTemplate_MergesMultipleClasses()
+    [Fact(DisplayName = "ComplexTemplate_MergesMultipleDataAttributes")]
+    public void CustomVariant_ComplexTemplate_MergesMultipleDataAttributes()
     {
         // Arrange
         TestVariant complexVariant = TestVariant.Custom("Complex");
         IVariantRegistry<TestVariantComponent, TestVariant> registry =
             Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
-        registry.Register(complexVariant, _templates.AddsOneClassTemplate);
+        registry.Register(complexVariant, _templates.AddsDataAttributeTemplate);
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -88,28 +88,31 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Complex Component")
             .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
             {
-                { "class", "user-extra" },
-                { "id", "complex-btn" }
+            { "data-user", "extra" },
+            { "id", "complex-btn" }
             }));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        string? classAttribute = button.GetAttribute("class");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
+        AngleSharp.Dom.IElement button = uiComponent.QuerySelector("button");
 
-        // All classes should be present in correct order
-        classAttribute.Should().NotBeNull();
-        classAttribute.Should().Be("test-variant-component test-variant-component--complex user-extra btn-glass");
+        // Verify ui-component wrapper attributes
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "complex");
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass"); // From AddsDataAttributeTemplate
+        uiComponent.ShouldHaveDataAttribute("user", "extra"); // From AdditionalAttributes
+
+        // Verify button still has its attributes
         button.GetAttribute("id").Should().Be("complex-btn");
     }
 
-    [Fact(DisplayName = "ComplexTemplateVariantBuilder_MergesMultipleClasses")]
-    public void CustomVariant_ComplexTemplateVariantBuilder_MergesMultipleClasses()
+    [Fact(DisplayName = "ComplexTemplateVariantBuilder_MergesMultipleDataAttributes")]
+    public void CustomVariant_ComplexTemplateVariantBuilder_MergesMultipleDataAttributes()
     {
         // Arrange
         TestVariant complexVariant = TestVariant.Custom("Complex");
-
         Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
-            .Register(complexVariant, _templates.AddsOneClassTemplate));
+            .Register(complexVariant, _templates.AddsDataAttributeTemplate));
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -117,18 +120,19 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Complex Component")
             .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
             {
-                { "class", "user-extra" },
-                { "id", "complex-btn" }
+            { "data-user", "extra" },
+            { "id", "complex-btn" }
             }));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        string? classAttribute = button.GetAttribute("class");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
 
-        // All classes should be present in correct order
-        classAttribute.Should().NotBeNull();
-        classAttribute.Should().Be("test-variant-component test-variant-component--complex user-extra btn-glass");
-        button.GetAttribute("id").Should().Be("complex-btn");
+        // Verify all data attributes are merged correctly
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "complex");
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass"); // From template
+        uiComponent.ShouldHaveDataAttribute("user", "extra"); // From AdditionalAttributes
+        uiComponent.GetAttribute("id").Should().Be("complex-btn");
     }
 
     [Fact(DisplayName = "DataAttributes_TemplateCanHavePriority")]
@@ -231,14 +235,14 @@ public class CustomVariantTests : TestContextBase
         button.GetAttribute("data-test").Should().Be("user-value"); // User overrides template
     }
 
-    [Fact(DisplayName = "MergeTemplate_PreservesAllClasses")]
-    public void CustomVariant_MergeTemplate_PreservesAllClasses()
+    [Fact(DisplayName = "MergeTemplate_PreservesAllDataAttributes")]
+    public void CustomVariant_MergeTemplate_PreservesAllDataAttributes()
     {
         // Arrange - This demonstrates the RECOMMENDED approach
         TestVariant glassVariant = TestVariant.Custom("Glass");
         IVariantRegistry<TestVariantComponent, TestVariant> registry =
             Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
-        registry.Register(glassVariant, _templates.AddsOneClassTemplate);
+        registry.Register(glassVariant, _templates.AddsDataAttributeTemplate);
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -246,22 +250,22 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Glass Component"));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        // Component classes are preserved
-        button.ShouldHaveClass("test-variant-component");
-        button.ShouldHaveClass("test-variant-component--glass");
-        // Template class is added
-        button.ShouldHaveClass("btn-glass");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
+
+        // Component data attributes are preserved
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "glass");
+        // Template data attribute is added
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass");
     }
 
-    [Fact(DisplayName = "MergeTemplateVariantBuilder_PreservesAllClasses")]
-    public void CustomVariant_MergeTemplateVariantBuilder_PreservesAllClasses()
+    [Fact(DisplayName = "MergeTemplateVariantBuilder_PreservesAllDataAttributes")]
+    public void CustomVariant_MergeTemplateVariantBuilder_PreservesAllDataAttributes()
     {
         // Arrange - This demonstrates the RECOMMENDED approach
         TestVariant glassVariant = TestVariant.Custom("Glass");
-
         Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
-            .Register(glassVariant, _templates.AddsOneClassTemplate));
+            .Register(glassVariant, _templates.AddsDataAttributeTemplate));
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -269,60 +273,56 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Glass Component"));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        // Component classes are preserved
-        button.ShouldHaveClass("test-variant-component");
-        button.ShouldHaveClass("test-variant-component--glass");
-        // Template class is added
-        button.ShouldHaveClass("btn-glass");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
+
+        // Component data attributes are preserved
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "glass");
+        // Template data attribute is added
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass");
     }
 
-    [Fact(DisplayName = "OverrideTemplate_ReplacesAllClasses")]
-    public void CustomVariant_OverrideTemplate_ReplacesAllClasses()
+    [Fact(DisplayName = "OverrideTemplate_ReplacesDataAttributes")]
+    public void CustomVariant_OverrideTemplate_ReplacesDataAttributes()
     {
-        // Arrange - This demonstrates a template that completely overrides classes
+        // Arrange - This demonstrates a template that overrides specific attributes
         TestVariant overrideVariant = TestVariant.Custom("Override");
         IVariantRegistry<TestVariantComponent, TestVariant> registry =
             Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
-        registry.Register(overrideVariant, _templates.OverrideClassTemplate);
+        registry.Register(overrideVariant, _templates.OverrideDataAttributeTemplate);
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
             .Add(p => p.Variant, overrideVariant)
             .Add(p => p.Text, "Override Component"));
 
-        // Assert - Only template classes are present
-        AngleSharp.Dom.IElement element = cut.Find("button");
-        string? classAttribute = element.GetAttribute("class");
+        // Assert
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
 
-        classAttribute.Should().NotBeNull();
-        classAttribute.Should().Be("btn-override-only");
-        // Component classes are NOT preserved
-        element.ShouldNotHaveClass("test-variant-component");
+        // Template overrides the variant
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "override"); // Not "override" from variant name
+        uiComponent.ShouldHaveDataAttribute("ui-state", "custom");
     }
 
-    [Fact(DisplayName = "OverrideTemplateVariantBuilder_ReplacesAllClasses")]
-    public void CustomVariant_OverrideTemplateVariantBuilder_ReplacesAllClasses()
+    [Fact(DisplayName = "OverrideTemplateVariantBuilder_ReplacesDataAttributes")]
+    public void CustomVariant_OverrideTemplateVariantBuilder_ReplacesDataAttributes()
     {
-        // Arrange - This demonstrates a template that completely overrides classes
+        // Arrange - This demonstrates a template that overrides specific attributes
         TestVariant overrideVariant = TestVariant.Custom("Override");
-
         Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
-            .Register(overrideVariant, _templates.OverrideClassTemplate));
+            .Register(overrideVariant, _templates.OverrideDataAttributeTemplate));
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
             .Add(p => p.Variant, overrideVariant)
             .Add(p => p.Text, "Override Component"));
 
-        // Assert - Only template classes are present
-        AngleSharp.Dom.IElement element = cut.Find("button");
-        string? classAttribute = element.GetAttribute("class");
+        // Assert
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
 
-        classAttribute.Should().NotBeNull();
-        classAttribute.Should().Be("btn-override-only");
-        // Component classes are NOT preserved
-        element.ShouldNotHaveClass("test-variant-component");
+        // Template overrides the variant attribute
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "override"); // Not "Override" from variant name
+        uiComponent.ShouldHaveDataAttribute("ui-state", "custom");
     }
 
     [Fact(DisplayName = "TypedVariant_WorksCorrectly")]
@@ -331,7 +331,7 @@ public class CustomVariantTests : TestContextBase
         // Arrange
         IVariantRegistry<TestVariantComponent, TestVariant> registry =
             Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
-        registry.Register(MyCustomTestVariants.MyCustom1, _templates.AddsOneClassTemplate);
+        registry.Register(MyCustomTestVariants.MyCustom1, _templates.AddsDataAttributeTemplate);
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -339,10 +339,10 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Typed Variant Component"));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        button.ShouldHaveClass("test-variant-component");
-        button.ShouldHaveClass("test-variant-component--mycustom1");
-        button.ShouldHaveClass("btn-glass");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "mycustom1");
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass");
     }
 
     [Fact(DisplayName = "TypedVariantVariantBuilder_WorksCorrectly")]
@@ -350,7 +350,7 @@ public class CustomVariantTests : TestContextBase
     {
         // Arrange
         Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
-            .Register(MyCustomTestVariants.MyCustom1, _templates.AddsOneClassTemplate));
+            .Register(MyCustomTestVariants.MyCustom1, _templates.AddsDataAttributeTemplate));
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -358,10 +358,10 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Typed Variant Component"));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        button.ShouldHaveClass("test-variant-component");
-        button.ShouldHaveClass("test-variant-component--mycustom1");
-        button.ShouldHaveClass("btn-glass");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "mycustom1");
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass");
     }
 
     [Fact(DisplayName = "UnregisteredVariant_RendersNothing")]
@@ -379,14 +379,14 @@ public class CustomVariantTests : TestContextBase
         cut.Markup.Should().BeEmpty();
     }
 
-    [Fact(DisplayName = "UserClasses_PreservedInCorrectOrder")]
-    public void CustomVariant_UserClasses_PreservedInCorrectOrder()
+    [Fact(DisplayName = "UserDataAttributes_PreservedWithCorrectPriority")]
+    public void CustomVariant_UserDataAttributes_PreservedWithCorrectPriority()
     {
         // Arrange
         TestVariant glassVariant = TestVariant.Custom("Glass");
         IVariantRegistry<TestVariantComponent, TestVariant> registry =
             Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
-        registry.Register(glassVariant, _templates.AddsOneClassTemplate);
+        registry.Register(glassVariant, _templates.AddsDataAttributeTemplate);
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -394,26 +394,28 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Glass Component")
             .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
             {
-                { "class", "user-class-1 user-class-2" }
+            { "data-user", "value1" },
+            { "data-test", "value2" }
             }));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        string? classAttribute = button.GetAttribute("class");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
 
-        classAttribute.Should().NotBeNull();
-        // Order: component classes, user classes, template classes
-        classAttribute.Should().Be("test-variant-component test-variant-component--glass user-class-1 user-class-2 btn-glass");
+        // All data attributes should be present
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "glass");
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass"); // From template
+        uiComponent.ShouldHaveDataAttribute("user", "value1"); // From user
+        uiComponent.ShouldHaveDataAttribute("test", "value2"); // From user
     }
 
-    [Fact(DisplayName = "UserClassesVariantBuilder_PreservedInCorrectOrder")]
-    public void CustomVariant_UserClassesVariantBuilder_PreservedInCorrectOrder()
+    [Fact(DisplayName = "UserDataAttributesVariantBuilder_PreservedWithCorrectPriority")]
+    public void CustomVariant_UserDataAttributesVariantBuilder_PreservedWithCorrectPriority()
     {
         // Arrange
         TestVariant glassVariant = TestVariant.Custom("Glass");
-
         Services.AddBlazorUIVariants(builder => builder.For<TestVariantComponent, TestVariant>()
-            .Register(glassVariant, _templates.AddsOneClassTemplate));
+            .Register(glassVariant, _templates.AddsDataAttributeTemplate));
 
         // Act
         IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
@@ -421,15 +423,43 @@ public class CustomVariantTests : TestContextBase
             .Add(p => p.Text, "Glass Component")
             .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
             {
-                { "class", "user-class-1 user-class-2" }
+            { "data-user-1", "value1" },
+            { "data-user-2", "value2" }
             }));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        string? classAttribute = button.GetAttribute("class");
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
 
-        classAttribute.Should().NotBeNull();
-        // Order: component classes, user classes, template classes
-        classAttribute.Should().Be("test-variant-component test-variant-component--glass user-class-1 user-class-2 btn-glass");
+        // Verify all data attributes are present
+        uiComponent.ShouldHaveDataAttribute("ui-component", "test-variant");
+        uiComponent.ShouldHaveDataAttribute("ui-variant", "glass");
+        uiComponent.ShouldHaveDataAttribute("custom-modifier", "glass"); // From template
+        uiComponent.ShouldHaveDataAttribute("user-1", "value1"); // From user
+        uiComponent.ShouldHaveDataAttribute("user-2", "value2"); // From user
+    }
+
+    [Fact(DisplayName = "DataAttributePriority_TemplateOverridesUser")]
+    public void CustomVariant_DataAttributePriority_TemplateOverridesUser()
+    {
+        // Arrange
+        TestVariant priorityVariant = TestVariant.Custom("Priority");
+        IVariantRegistry<TestVariantComponent, TestVariant> registry =
+            Services.GetRequiredService<IVariantRegistry<TestVariantComponent, TestVariant>>();
+        registry.Register(priorityVariant, _templates.DataAttributeTemplatePriority);
+
+        // Act
+        IRenderedComponent<TestVariantComponent> cut = Render<TestVariantComponent>(parameters => parameters
+            .Add(p => p.Variant, priorityVariant)
+            .Add(p => p.Text, "Priority Test")
+            .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
+            {
+            { "data-test", "user-value" } // This should be overridden
+            }));
+
+        // Assert
+        AngleSharp.Dom.IElement uiComponent = cut.FindByDataComponent("test-variant");
+
+        // Template value should win
+        uiComponent.ShouldHaveDataAttribute("test", "template-value-priority");
     }
 }

@@ -12,35 +12,79 @@ public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDi
 {
     private IJSObjectReference? _behaviorInstance;
     private readonly ComponentStyleBuilder _styleBuilder = new();
+    private FieldIdentifier _fieldIdentifier;
 
     [Inject] private IBehaviorJsInterop? BehaviorJsInterop { get; set; }
 
-    public string ComputedCssClasses => _styleBuilder.ComputedCssClasses;
+    // Common parameters for all inputs
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool Required { get; set; }
+
+    // Computed states - available for all inputs
+    public bool IsError { get; private set; }
+    public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.IsLoading);
+    public bool IsReadOnly => ReadOnly;
+    public bool IsRequired => Required;
 
     // This is what components will use with @attributes
     protected Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
 
-    // Now returns CssClass from InputBase as part of the collection
-    public virtual IEnumerable<string> GetAdditionalCssClasses()
+    protected override void OnInitialized()
     {
-        if (!string.IsNullOrWhiteSpace(CssClass))
+        base.OnInitialized();
+
+        if (ValueExpression != null)
         {
-            yield return CssClass;
+            _fieldIdentifier = FieldIdentifier.Create(ValueExpression);
         }
     }
 
-    public virtual Dictionary<string, string> GetAdditionalInlineStyles() => [];
-
     protected override void OnParametersSet()
     {
-        _styleBuilder.BuildStyles(
-            this,
-            AdditionalAttributes, // This comes from InputBase as IReadOnlyDictionary
-            GetAdditionalCssClasses(),
-            GetAdditionalInlineStyles()
-        );
+        // Build state attributes
+        Dictionary<string, object> stateAttributes = new()
+        {
+            ["data-ui-error"] = IsError ? "true" : "false",
+            ["data-ui-disabled"] = IsDisabled ? "true" : "false",
+            ["data-ui-readonly"] = IsReadOnly ? "true" : "false",
+            ["data-ui-required"] = IsRequired ? "true" : "false"
+        };
+
+        // Combine with AdditionalAttributes
+        IReadOnlyDictionary<string, object> combinedAttributes =
+            AdditionalAttributes != null
+                ? stateAttributes.Concat(AdditionalAttributes).ToDictionary(x => x.Key, x => x.Value)
+                : stateAttributes;
+
+        _styleBuilder.BuildStyles(this, combinedAttributes);
+
+        // Update validation state
+        if (EditContext != null && ValueExpression != null)
+        {
+            IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+
+            // Subscribe only once
+            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+            EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+        }
 
         base.OnParametersSet();
+    }
+
+    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        if (EditContext != null && ValueExpression != null)
+        {
+            bool hadErrors = IsError;
+            IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+
+            if (hadErrors != IsError)
+            {
+                // Rebuild attributes if state changed
+                OnParametersSet();
+            }
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -66,9 +110,6 @@ public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDi
                 };
             }
 
-            // Add more behaviors here as needed
-            // if (this is IHasTooltip hasTooltip) { ... }
-
             // Attach behaviors if any configured
             if (config.HasAnyBehavior)
             {
@@ -78,6 +119,16 @@ public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDi
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && EditContext != null)
+        {
+            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+        }
+
+        base.Dispose(disposing);
     }
 
     public virtual async ValueTask DisposeAsync()

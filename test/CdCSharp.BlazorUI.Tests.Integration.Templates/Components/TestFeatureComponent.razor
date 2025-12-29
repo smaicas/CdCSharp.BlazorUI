@@ -18,13 +18,15 @@
 @implements IHasRipple
 @implements IHasBorder
 
-<div @ref="_rootElement" @attributes="ComputedAttributes">
-    @if (IsLoading && LoadingIndicatorVariant != null)
-    {
-        <span class="test-loading-indicator">Loading...</span>
-    }
-    <span class="test-content">Test Component Content</span>
-</div>
+<ui-component @attributes="ComputedAttributes">
+    <div @ref="_rootElement" >
+        @if (IsLoading && LoadingIndicatorVariant != null)
+        {
+            <span class="test-loading-indicator">Loading...</span>
+        }
+        <span class="test-content">Test Component Content</span>
+    </div>
+</ui-component>
 
 @code {
     private ElementReference _rootElement;
@@ -66,27 +68,5 @@
     [Parameter] public BorderStyle? BorderBottom { get; set; }
     [Parameter] public BorderStyle? BorderLeft { get; set; }
 
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        yield return "test-feature-component";
-
-        if (!string.IsNullOrWhiteSpace(Color?.ToString()))
-        {
-            yield return "has-custom-color";
-        }
-    }
-
     public ElementReference GetRootElement() => _rootElement;
-
-    public override Dictionary<string, string> GetAdditionalInlineStyles()
-    {
-        var styles = new Dictionary<string, string>();
-
-        if (Color != null)
-        {
-            styles["color"] = Color.ToString();
-        }
-
-        return styles;
-    }
 }

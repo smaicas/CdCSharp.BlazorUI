@@ -35,39 +35,47 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <button @attributes="ComputedAttributes"
-                @onclick="SwitchTheme"
-                disabled="@_isTransitioning">
-            <span class="ui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">
-                @if (ShowIcon)
-                {
-                    <span class="ui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
-                }
-                <span class="ui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
-            </span>
-        </button>
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="theme-switch"
+                      data-ui-variant="default"
+                      data-ui-transitioning="@(_isTransitioning ? "true" : "false")">
+            <button @onclick="SwitchTheme"
+                    disabled="@_isTransitioning">
+                <span class="ui-theme-switch__content">
+                    @if (ShowIcon)
+                    {
+                        <span class="ui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
+                    }
+                    <span class="ui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
+                </span>
+            </button>
+        </ui-component>
     };
 
     private RenderFragment RenderSunMoon() => __builder =>
     {
-        <button @attributes="ComputedAttributes"
-                @onclick="SwitchTheme"
-                class="@GetSunMoonClasses()"
-                disabled="@_isTransitioning"
-                aria-label="@($"Switch to {GetOppositeTheme()} mode")">
-            <span class="ui-theme-switch__sun-moon-container">
-                <span class="ui-theme-switch__icon-wrapper">
-                    @if (_currentTheme == "light")
-                    {
-                        <span class="ui-theme-switch__sun">☀️</span>
-                    }
-                    else
-                    {
-                        <span class="ui-theme-switch__moon">🌙</span>
-                    }
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="theme-switch"
+                      data-ui-variant="sunmoon"
+                      data-ui-theme="@_currentTheme"
+                      data-ui-transitioning="@(_isTransitioning ? "true" : "false")">
+            <button @onclick="SwitchTheme"
+                    disabled="@_isTransitioning"
+                    aria-label="@($"Switch to {GetOppositeTheme()} mode")">
+                <span class="ui-theme-switch__sun-moon-container">
+                    <span class="ui-theme-switch__icon-wrapper">
+                        @if (_currentTheme == "light")
+                        {
+                            <span class="ui-theme-switch__sun">☀️</span>
+                        }
+                        else
+                        {
+                            <span class="ui-theme-switch__moon">🌙</span>
+                        }
+                    </span>
                 </span>
-            </span>
-        </button>
+            </button>
+        </ui-component>
     };
 
     private async Task SwitchTheme()
@@ -123,17 +131,5 @@
     private string GetOppositeTheme()
     {
         return _currentTheme == "light" ? "dark" : "light";
-    }
-
-    private string GetSunMoonClasses()
-    {
-        return ComputedCssClasses + " " +
-               (_currentTheme == "light" ? "ui-theme-switch--light" : "ui-theme-switch--dark");
-    }
-
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        yield return CssClassesReference.UIThemeSwitch;
-        yield return CssClassesReference.Variant(CssClassesReference.UIThemeSwitch, Variant ?? DefaultVariant);
     }
 }

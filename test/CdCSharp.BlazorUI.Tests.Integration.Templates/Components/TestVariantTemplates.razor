@@ -1,68 +1,87 @@
 ﻿@using Microsoft.AspNetCore.Components
-
 @code {
-    // Basic template that does not add any classes (inherits all from @attributes)
+    // Basic template that does not add any attributes (inherits all from @attributes)
     public RenderFragment BasicCustomTemplate(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.ComputedAttributes"
-                @onclick="component.OnClick"
-                disabled="@component.Disabled">
-            @component.Text
-        </button>
+        <ui-component @attributes="component.ComputedAttributes">
+            <button @onclick="component.OnClick"
+                    disabled="@component.Disabled">
+                @component.Text
+            </button>
+        </ui-component>
     };
 
-    // Simple template that adds a single class
-    public RenderFragment AddsOneClassTemplate(TestVariantComponent component) => __builder =>
+    // Simple template that adds additional data attributes
+    public RenderFragment AddsDataAttributeTemplate(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.ComputedAttributes"
-                class="@($"{component.ComputedCssClasses} btn-glass")"
-                @onclick="component.OnClick"
-                disabled="@component.Disabled">
-            @component.Text
-        </button>
+        <ui-component @attributes="component.ComputedAttributes"
+                      data-custom-modifier="glass">
+            <button @onclick="component.OnClick"
+                    disabled="@component.Disabled">
+                @component.Text
+            </button>
+        </ui-component>
     };
 
-    // Template that removes class from AdditionalAttributes and adds its own
-    public RenderFragment OverrideClassTemplate(TestVariantComponent component) => __builder =>
+    // Template that overrides data attributes
+    public RenderFragment OverrideDataAttributeTemplate(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.ComputedAttributes"
-                class="btn-override-only"
-                @onclick="component.OnClick"
-                disabled="@component.Disabled">
-            Override: @component.Text
-        </button>
+        <ui-component @attributes="component.ComputedAttributes"
+                      data-ui-variant="override"
+                      data-ui-state="custom">
+            <button @onclick="component.OnClick"
+                    disabled="@component.Disabled">
+                Override: @component.Text
+            </button>
+        </ui-component>
     };
 
-    // Template for data attributes - user can override
+    // Template for data attributes - user attributes have priority (attributes first)
     public RenderFragment DataAttributeTemplate(TestVariantComponent component) => __builder =>
     {
-        <button data-variant="custom"
-                data-test="template-value"
-                @attributes="component.ComputedAttributes"
-                @onclick="component.OnClick"
-                disabled="@component.Disabled">
-            @component.Text
-        </button>
+        <ui-component data-variant="custom"
+                      data-test="template-value"
+                      @attributes="component.ComputedAttributes">
+            <button @onclick="component.OnClick"
+                    disabled="@component.Disabled">
+                @component.Text
+            </button>
+        </ui-component>
     };
 
-    // Template for data attributes - template has priority
+    // Template for data attributes - template has priority (attributes last)
     public RenderFragment DataAttributeTemplatePriority(TestVariantComponent component) => __builder =>
     {
-        <button @attributes="component.ComputedAttributes"
-                data-variant="custom"
-                data-test="template-value-priority"
-                @onclick="component.OnClick"
-                disabled="@component.Disabled">
-            @component.Text
-        </button>
+        <ui-component @attributes="component.ComputedAttributes"
+                      data-variant="custom"
+                      data-test="template-value-priority">
+            <button @onclick="component.OnClick"
+                    disabled="@component.Disabled">
+                @component.Text
+            </button>
+        </ui-component>
     };
 
     // Registered variant template
     public RenderFragment RegisteredTemplate(TestVariantComponent component) => __builder =>
     {
-        <div @attributes="component.ComputedAttributes"
-             class="@($"{component.ComputedCssClasses} registered-variant")">
+        <ui-component @attributes="component.ComputedAttributes"
+                      data-custom="registered-variant">
             <span>Registered: @component.Text</span>
-        </div>
+        </ui-component>
+    };
+
+    // Template that modifies attributes if needed
+    public RenderFragment ModifiedAttributesTemplate(TestVariantComponent component) => __builder =>
+    {
+        var attrs = new Dictionary<string, object>(component.ComputedAttributes);
+        attrs["data-modified"] = "true";
+
+        <ui-component @attributes="attrs">
+            <button @onclick="component.OnClick"
+                    disabled="@component.Disabled">
+                Modified: @component.Text
+            </button>
+        </ui-component>
     };
 }

@@ -1,0 +1,25 @@
+﻿[
+  {
+    Variant: Spinner,
+    Html: <ui-component data-ui-size="medium" data-ui-component="loading-indicator" data-ui-variant="spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  },
+  {
+    Variant: LinearIndeterminate,
+    Html: <ui-component data-ui-size="medium" data-ui-component="loading-indicator" data-ui-variant="linearindeterminate" b-2rktlkqi2e><div class="ui-loading-linear" b-2rktlkqi2e><div class="ui-loading-linear__bar" b-2rktlkqi2e></div></div></ui-component>
+  },
+  {
+    Variant: CircularProgress,
+    Html: <ui-component data-ui-size="medium" data-ui-component="loading-indicator" data-ui-variant="circularprogress" b-2rktlkqi2e><svg class="ui-loading-circular" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  },
+  {
+    Variant: Dots,
+    Html:
+<ui-component data-ui-size="medium" data-ui-component="loading-indicator" data-ui-variant="dots" b-2rktlkqi2e><span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span>
+            <span class="ui-loading-dot" b-2rktlkqi2e></span></ui-component>
+  },
+  {
+    Variant: Pulse,
+    Html: <ui-component data-ui-size="medium" data-ui-component="loading-indicator" data-ui-variant="pulse" b-2rktlkqi2e><span class="ui-loading-pulse" b-2rktlkqi2e></span></ui-component>
+  }
+]

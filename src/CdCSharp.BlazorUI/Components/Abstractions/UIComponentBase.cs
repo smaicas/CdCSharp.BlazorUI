@@ -16,24 +16,12 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
 
     [Inject] private IBehaviorJsInterop? BehaviorJsInterop { get; set; }
 
-    public string ComputedCssClasses => _styleBuilder.ComputedCssClasses;
-
     // This is what components will use with @attributes
     public Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
 
-    public virtual IEnumerable<string> GetAdditionalCssClasses() => [];
-
-    public virtual Dictionary<string, string> GetAdditionalInlineStyles() => [];
-
     protected override void OnParametersSet()
     {
-        _styleBuilder.BuildStyles(
-            this,
-            AdditionalAttributes,
-            GetAdditionalCssClasses(),
-            GetAdditionalInlineStyles()
-        );
-
+        _styleBuilder.BuildStyles(this, AdditionalAttributes);
         base.OnParametersSet();
     }
 
@@ -59,9 +47,6 @@ public abstract class UIComponentBase : ComponentBase, IAsyncDisposable
                     Duration = hasRipple.RippleDuration
                 };
             }
-
-            // Add more behaviors here as needed
-            // if (this is IHasTooltip hasTooltip) { ... }
 
             // Attach behaviors if any configured
             if (config.HasAnyBehavior)

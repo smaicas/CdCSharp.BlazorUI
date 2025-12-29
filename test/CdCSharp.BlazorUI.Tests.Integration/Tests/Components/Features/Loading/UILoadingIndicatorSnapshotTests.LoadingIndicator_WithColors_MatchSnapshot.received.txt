@@ -1,0 +1,22 @@
+﻿[
+  {
+    ColorName: Primary,
+    Html: <ui-component data-ui-size="medium" style="--ui-color: rgba(0,0,255,1)" data-ui-component="loading-indicator" data-ui-variant="spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  },
+  {
+    ColorName: Success,
+    Html: <ui-component data-ui-size="medium" style="--ui-color: rgba(0,128,0,1)" data-ui-component="loading-indicator" data-ui-variant="spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  },
+  {
+    ColorName: Warning,
+    Html: <ui-component data-ui-size="medium" style="--ui-color: rgba(255,165,0,1)" data-ui-component="loading-indicator" data-ui-variant="spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  },
+  {
+    ColorName: Error,
+    Html: <ui-component data-ui-size="medium" style="--ui-color: rgba(255,0,0,1)" data-ui-component="loading-indicator" data-ui-variant="spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  },
+  {
+    ColorName: Custom,
+    Html: <ui-component data-ui-size="medium" style="--ui-color: rgba(156,39,176,1)" data-ui-component="loading-indicator" data-ui-variant="spinner" b-2rktlkqi2e><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-2rktlkqi2e><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-2rktlkqi2e></circle></svg></ui-component>
+  }
+]

@@ -5,12 +5,14 @@
 
 @inherits UIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
 @implements IHasSize
+@implements IHasColor
 
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
+    // IHasColor
     [Parameter] public CssColor? Color { get; set; }
 
     // IHasSize
@@ -33,64 +35,54 @@
 
     private RenderFragment RenderSpinner() => __builder =>
     {
-        <div @attributes="ComputedAttributes">
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="loading-indicator"
+                      data-ui-variant="spinner">
             <svg class="ui-loading-spinner" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
-        </div>
+        </ui-component>
     };
 
     private RenderFragment RenderLinear() => __builder =>
     {
-        <div @attributes="ComputedAttributes">
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="loading-indicator"
+                      data-ui-variant="linearindeterminate">
             <div class="ui-loading-linear">
                 <div class="ui-loading-linear__bar"></div>
             </div>
-        </div>
+        </ui-component>
     };
 
     private RenderFragment RenderCircularProgress() => __builder =>
     {
-        <div @attributes="ComputedAttributes">
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="loading-indicator"
+                      data-ui-variant="circularprogress">
             <svg class="ui-loading-circular" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
-        </div>
+        </ui-component>
     };
 
     private RenderFragment RenderDots() => __builder =>
     {
-        <div @attributes="ComputedAttributes">
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="loading-indicator"
+                      data-ui-variant="dots">
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
-        </div>
+        </ui-component>
     };
 
     private RenderFragment RenderPulse() => __builder =>
     {
-        <div @attributes="ComputedAttributes">
+        <ui-component @attributes="ComputedAttributes"
+                      data-ui-component="loading-indicator"
+                      data-ui-variant="pulse">
             <span class="ui-loading-pulse"></span>
-        </div>
+        </ui-component>
     };
-
-    /* ========= Styling ========= */
-
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        yield return CssClassesReference.UILoadingIndicator;
-        yield return CssClassesReference.Variant(CssClassesReference.UILoadingIndicator, Variant ?? DefaultVariant);
-    }
-
-    public override Dictionary<string, string> GetAdditionalInlineStyles()
-    {
-        Dictionary<string, string> styles = new();
-
-        if (Color != null)
-        {
-            styles["color"] = Color.ToString(ColorOutputFormats.Rgba);
-        }
-
-        return styles;
-    }
 }

@@ -1,5 +1,4 @@
 ﻿using CdCSharp.BlazorUI.Components.Features.Transitions;
-using CdCSharp.BlazorUI.Css;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.Transitions;
@@ -50,27 +49,27 @@ public class UITransitionsTests
         transitions.AddTransition(trigger, config);
 
         // Act
-        Dictionary<string, string> styles = transitions.GetInlineStyles();
+        Dictionary<string, string> cssVariables = transitions.GetCssVariables();
 
         // Assert
-        styles.Should().ContainKey($"--ui-transition-{expectedPrefix}-duration");
+        cssVariables.Should().ContainKey($"--ui-transition-{expectedPrefix}-duration");
     }
 
-    [Fact(DisplayName = "GetCssClasses_Empty_ReturnsEmptyString")]
-    public void UITransitions_GetCssClasses_Empty_ReturnsEmptyString()
+    [Fact(DisplayName = "GetDataAttributeValue_Empty_ReturnsEmptyString")]
+    public void UITransitions_GetDataAttributeValue_Empty_ReturnsEmptyString()
     {
         // Arrange
         UITransitions transitions = new();
 
         // Act
-        string cssClasses = transitions.GetCssClasses();
+        string dataAttributeValue = transitions.GetDataAttributeValue();
 
         // Assert
-        cssClasses.Should().BeEmpty();
+        dataAttributeValue.Should().BeEmpty();
     }
 
-    [Fact(DisplayName = "GetCssClasses_ReturnsCorrectClasses")]
-    public void UITransitions_GetCssClasses_ReturnsCorrectClasses()
+    [Fact(DisplayName = "GetDataAttributeValue_ReturnsCorrectValue")]
+    public void UITransitions_GetDataAttributeValue_ReturnsCorrectValue()
     {
         // Arrange
         UITransitions transitions = new();
@@ -78,28 +77,45 @@ public class UITransitionsTests
         transitions.AddTransition(TransitionTrigger.Focus, new TransitionConfig { Type = TransitionType.Shadow });
 
         // Act
-        string cssClasses = transitions.GetCssClasses();
+        string dataAttributeValue = transitions.GetDataAttributeValue();
 
         // Assert
-        cssClasses.Should().Contain(CssClassesReference.Transition(TransitionTrigger.Hover, TransitionType.Scale));
-        cssClasses.Should().Contain(CssClassesReference.Transition(TransitionTrigger.Focus, TransitionType.Shadow));
+        dataAttributeValue.Should().Contain("ui-transition-hover-scale");
+        dataAttributeValue.Should().Contain("ui-transition-focus-shadow");
+        string[] values = dataAttributeValue.Split(' ');
+        values.Should().HaveCount(2);
     }
 
-    [Fact(DisplayName = "GetInlineStyles_Empty_ReturnsEmptyDictionary")]
-    public void UITransitions_GetInlineStyles_Empty_ReturnsEmptyDictionary()
+    [Fact(DisplayName = "GetDataAttributeValue_MultipleTransitionsPerTrigger")]
+    public void UITransitions_GetDataAttributeValue_MultipleTransitionsPerTrigger()
+    {
+        // Arrange
+        UITransitions transitions = new();
+        transitions.AddTransition(TransitionTrigger.Hover, new TransitionConfig { Type = TransitionType.Scale });
+        transitions.AddTransition(TransitionTrigger.Hover, new TransitionConfig { Type = TransitionType.Fade });
+
+        // Act
+        string dataAttributeValue = transitions.GetDataAttributeValue();
+
+        // Assert
+        dataAttributeValue.Should().Be("ui-transition-hover-scale ui-transition-hover-fade");
+    }
+
+    [Fact(DisplayName = "GetCssVariables_Empty_ReturnsEmptyDictionary")]
+    public void UITransitions_GetCssVariables_Empty_ReturnsEmptyDictionary()
     {
         // Arrange
         UITransitions transitions = new();
 
         // Act
-        Dictionary<string, string> styles = transitions.GetInlineStyles();
+        Dictionary<string, string> cssVariables = transitions.GetCssVariables();
 
         // Assert
-        styles.Should().BeEmpty();
+        cssVariables.Should().BeEmpty();
     }
 
-    [Fact(DisplayName = "GetInlineStyles_IncludesCustomProperties")]
-    public void UITransitions_GetInlineStyles_IncludesCustomProperties()
+    [Fact(DisplayName = "GetCssVariables_IncludesCustomProperties")]
+    public void UITransitions_GetCssVariables_IncludesCustomProperties()
     {
         // Arrange
         UITransitions transitions = new();
@@ -115,17 +131,17 @@ public class UITransitionsTests
         transitions.AddTransition(TransitionTrigger.Hover, config);
 
         // Act
-        Dictionary<string, string> styles = transitions.GetInlineStyles();
+        Dictionary<string, string> cssVariables = transitions.GetCssVariables();
 
         // Assert
-        styles.Should().ContainKey("--ui-transition-hover-scale")
+        cssVariables.Should().ContainKey("--ui-transition-hover-scale")
             .WhoseValue.Should().Be("1.2");
-        styles.Should().ContainKey("--ui-transition-hover-origin")
+        cssVariables.Should().ContainKey("--ui-transition-hover-origin")
             .WhoseValue.Should().Be("center");
     }
 
-    [Fact(DisplayName = "GetInlineStyles_ReturnsCorrectStyles")]
-    public void UITransitions_GetInlineStyles_ReturnsCorrectStyles()
+    [Fact(DisplayName = "GetCssVariables_ReturnsCorrectVariables")]
+    public void UITransitions_GetCssVariables_ReturnsCorrectVariables()
     {
         // Arrange
         UITransitions transitions = new();
@@ -139,14 +155,14 @@ public class UITransitionsTests
         transitions.AddTransition(TransitionTrigger.Hover, config);
 
         // Act
-        Dictionary<string, string> styles = transitions.GetInlineStyles();
+        Dictionary<string, string> cssVariables = transitions.GetCssVariables();
 
         // Assert
-        styles.Should().ContainKey("--ui-transition-hover-duration")
+        cssVariables.Should().ContainKey("--ui-transition-hover-duration")
             .WhoseValue.Should().Be("300ms");
-        styles.Should().ContainKey("--ui-transition-hover-delay")
+        cssVariables.Should().ContainKey("--ui-transition-hover-delay")
             .WhoseValue.Should().Be("50ms");
-        styles.Should().ContainKey("--ui-transition-hover-easing")
+        cssVariables.Should().ContainKey("--ui-transition-hover-easing")
             .WhoseValue.Should().Be("ease-in-out");
     }
 

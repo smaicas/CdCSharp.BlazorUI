@@ -141,6 +141,31 @@ public static class TestExtensions
         }
     }
 
+    public static void ShouldHaveDataAttribute(this IElement element, string attributeName, string expectedValue)
+    {
+        element.GetAttribute($"data-{attributeName}")
+            .Should().Be(expectedValue, $"element should have data-{attributeName}='{expectedValue}'");
+    }
+
+    public static void ShouldHaveDataComponent(this IElement element, string componentName)
+    {
+        element.ShouldHaveDataAttribute("ui-component", componentName);
+    }
+
+    public static void ShouldHaveDataVariant(this IElement element, string variantName)
+    {
+        element.ShouldHaveDataAttribute("ui-variant", variantName);
+    }
+
+    public static IElement FindByDataComponent<TComponent>(this IRenderedComponent<TComponent> fragment, string componentName) where TComponent : IComponent
+    {
+        return fragment.Find<TComponent>($"[data-ui-component='{componentName}']");
+    }
+
+    public static IElement FindByDataVariant<TComponent>(this IRenderedComponent<TComponent> fragment, string variantName) where TComponent : IComponent
+    {
+        return fragment.Find<TComponent>($"[data-ui-variant='{variantName}']");
+    }
     /// <summary>
     /// Renders a component multiple times with the same parameters to test stability
     /// </summary>

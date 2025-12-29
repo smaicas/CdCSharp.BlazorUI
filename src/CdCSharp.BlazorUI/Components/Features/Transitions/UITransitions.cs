@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Css;
-
-namespace CdCSharp.BlazorUI.Components.Features.Transitions;
+﻿namespace CdCSharp.BlazorUI.Components.Features.Transitions;
 
 public enum TransitionTrigger
 {
@@ -31,18 +29,18 @@ public class UITransitions
             kvp => (IReadOnlyList<TransitionConfig>)kvp.Value
         );
 
-    public string GetCssClasses()
+    public string GetDataAttributeValue()
     {
         return string.Join(" ",
             _transitions.SelectMany(t =>
                 t.Value.Select(cfg =>
-                    CssClassesReference.Transition(t.Key, cfg.Type)
+                    $"ui-transition-{t.Key.ToString().ToLower()}-{cfg.Type.ToString().ToLower()}"
                 )));
     }
 
-    public Dictionary<string, string> GetInlineStyles()
+    public Dictionary<string, string> GetCssVariables()
     {
-        Dictionary<string, string> styles = [];
+        Dictionary<string, string> variables = [];
 
         foreach ((TransitionTrigger trigger, List<TransitionConfig> configs) in _transitions)
         {
@@ -51,22 +49,22 @@ public class UITransitions
                 string prefix = $"--ui-transition-{trigger.ToString().ToLower()}";
 
                 if (config.Duration.HasValue)
-                    styles[$"{prefix}-duration"] =
+                    variables[$"{prefix}-duration"] =
                         $"{config.Duration.Value.TotalMilliseconds}ms";
 
                 if (config.Delay.HasValue)
-                    styles[$"{prefix}-delay"] =
+                    variables[$"{prefix}-delay"] =
                         $"{config.Delay.Value.TotalMilliseconds}ms";
 
                 if (!string.IsNullOrEmpty(config.Easing))
-                    styles[$"{prefix}-easing"] = config.Easing;
+                    variables[$"{prefix}-easing"] = config.Easing;
 
                 foreach (KeyValuePair<string, string> prop in config.CustomProperties)
-                    styles[$"{prefix}-{prop.Key}"] = prop.Value;
+                    variables[$"{prefix}-{prop.Key}"] = prop.Value;
             }
         }
 
-        return styles;
+        return variables;
     }
 
     internal void AddTransition(TransitionTrigger trigger, TransitionConfig config)
@@ -85,14 +83,12 @@ public enum TransitionType
 {
     // Transform
     Scale,
-
     Rotate,
     Translate,
     Skew,
 
     // Appearance
     Fade,
-
     Blur,
     Brightness,
     Contrast,
@@ -103,7 +99,6 @@ public enum TransitionType
 
     // Layout
     Shadow,
-
     Border,
 
     // Modern CSS
@@ -111,7 +106,6 @@ public enum TransitionType
 
     // Combinations
     Lift,
-
     Glow,
     Pulse,
     Shake

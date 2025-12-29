@@ -21,7 +21,7 @@ public class CssClassesReference
     public const string UILoadingIndicator = "ui-loading-indicator";
 
     // Transitions
-    public static string HasTransitions => "ui-has-transitions";
+    //public static string HasTransitions => "ui-has-transitions";
 
     // General size classes
     public const string SizeSmall = "ui-size-small";

@@ -1,0 +1,10 @@
+﻿[
+  {
+    Variant: Default,
+    Html: <ui-component data-ui-component="theme-switch" data-ui-variant="default" data-ui-transitioning="false" b-pxfrwcszl5><button blazor:onclick="<EVENT>" b-pxfrwcszl5><span class="ui-theme-switch__content" b-pxfrwcszl5><span class="ui-theme-switch__icon" b-pxfrwcszl5>☀️</span><span class="ui-theme-switch__label" b-pxfrwcszl5>Light</span></span></button></ui-component>
+  },
+  {
+    Variant: SunMoon,
+    Html: <ui-component data-ui-component="theme-switch" data-ui-variant="sunmoon" data-ui-theme="light" data-ui-transitioning="false" b-pxfrwcszl5><button blazor:onclick="<EVENT>" aria-label="Switch to dark mode" b-pxfrwcszl5><span class="ui-theme-switch__sun-moon-container" b-pxfrwcszl5><span class="ui-theme-switch__icon-wrapper" b-pxfrwcszl5><span class="ui-theme-switch__sun" b-pxfrwcszl5>☀️</span></span></span></button></ui-component>
+  }
+]

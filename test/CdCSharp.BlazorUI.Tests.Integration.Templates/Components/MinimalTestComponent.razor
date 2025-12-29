@@ -3,16 +3,13 @@
 @inherits UIComponentBase
 @implements IJsBehavior
 
-<div @ref="_rootElement" @attributes="ComputedAttributes">Minimal Component</div>
+<ui-component @attributes="ComputedAttributes">
+    <div @ref="_rootElement">Minimal Component</div>
+</ui-component>
 
 @code {
 
     private ElementReference _rootElement;
 
     public ElementReference GetRootElement() => _rootElement;
-
-    public override IEnumerable<string> GetAdditionalCssClasses()
-    {
-        yield return "minimal-component";
-    }
 }

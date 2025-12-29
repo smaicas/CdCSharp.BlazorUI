@@ -14,22 +14,32 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Abstractions;
 [Trait("Abstractions", "UIComponentBase")]
 public class UIComponentBaseTests : TestContextBase
 {
-    [Fact(DisplayName = "ComputedCssClasses_ContainsAllClasses")]
-    public async Task UIComponentBase_ComputedCssClasses_ContainsAllClasses()
+    [Fact(DisplayName = "RenderedElement_ContainsAllDataAttributes")]
+    public async Task UIComponentBase_RenderedElement_ContainsAllDataAttributes()
     {
         // Arrange & Act
         IRenderedComponent<TestComponent> cut = Render<TestComponent>(parameters => parameters
             .Add(p => p.IsPrimary, true)
             .Add(p => p.AdditionalAttributes, new Dictionary<string, object>
             {
-                { "class", "user-class" }
+            { "data-custom", "user-value" },
+            { "id", "test-id" },
+            { "class", "user-class" }
             }));
 
-        // Assert
-        TestComponent instance = cut.Instance;
-        instance.ComputedCssClasses.Should().Be("test-component test-component--primary user-class");
+        // Assert - verify in the rendered DOM
+        IElement element = cut.Find("[data-ui-component]");
 
-        //await DisposeAsync();
+        // Verify component data attributes
+        element.ShouldHaveDataAttribute("ui-component", "test-component");
+        element.ShouldHaveDataAttribute("ui-variant", "primary"); // Assuming IsPrimary maps to variant
+
+        // Verify additional attributes are merged
+        element.ShouldHaveDataAttribute("custom", "user-value");
+        element.GetAttribute("id").Should().Be("test-id");
+
+        // If classes are still supported
+        element.GetAttribute("class").Should().Contain("user-class");
     }
 
     [Fact(DisplayName = "ConditionalClasses_AppliedCorrectly")]

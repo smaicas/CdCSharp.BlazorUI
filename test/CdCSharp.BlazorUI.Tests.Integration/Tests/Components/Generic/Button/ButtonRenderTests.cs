@@ -12,18 +12,20 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Generic.Button;
 [Trait("Components", "UIButton")]
 public class ButtonRenderTests : TestContextBase
 {
-    [Fact(DisplayName = "DefaultVariant_RendersWithCorrectCssClasses")]
-    public void Button_DefaultVariant_RendersWithCorrectCssClasses()
+    [Fact(DisplayName = "DefaultVariant_RendersWithCorrectDataAttributes")]
+    public void Button_DefaultVariant_RendersWithCorrectDataAttributes()
     {
         // Act
         IRenderedComponent<UIButton> cut = Render<UIButton>(parameters => parameters
-            .Add(p => p.Text, "Test Button"));
+            .Add(p => p.Text, "Click me"));
 
         // Assert
-        IElement button = cut.Find("button");
-        button.ClassList
-            .Should().Contain("ui-button")
-            .And.Contain("ui-button--default");
+        IElement uiComponent = cut.FindByDataComponent("button");
+        uiComponent.Should().NotBeNull();
+        uiComponent.ShouldHaveDataVariant("default");
+
+        IElement? button = uiComponent.QuerySelector("button");
+        button.Should().NotBeNull();
     }
 
     [Theory(DisplayName = "DisabledState_RendersCorrectly")]

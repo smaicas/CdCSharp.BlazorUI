@@ -14,44 +14,51 @@ public static class CssCommonClasses
    Auto-generated - Do not edit manually
    ======================================== */
 
+ui-component {{
+    display: inline-flex;
+    /* Color variables with fallback to palette */
+    background-color: var(--ui-bg-color, inherit);
+    color: var(--ui-color, inherit);
+}}
+
 /* Size Classes */
-.ui-size-small {{
+ui-component[data-ui-size=""small""] {{
     font-size: 0.875rem;
 }}
 
-.ui-size-medium {{
+ui-component[data-ui-size=""medium""] {{
     font-size: 1rem;
 }}
 
-.ui-size-large {{
+ui-component[data-ui-size=""large""] {{
     font-size: 1.125rem;
 }}
 
 /* Density Classes */
-.ui-density-comfortable {{
+ui-component[data-ui-density=""comfortable""] {{
     --ui-density-spacing-multiplier: 1.5;
 }}
 
-.ui-density-standard {{
+ui-component[data-ui-density=""standard""] {{
     --ui-density-spacing-multiplier: 1;
 }}
 
-.ui-density-compact {{
+ui-component[data-ui-density=""compact""] {{
     --ui-density-spacing-multiplier: 0.75;
 }}
 
 /* Full Width */
-.ui-full-width {{
+ui-component[data-ui-fullwidth=""true""] {{
     width: 100%;
 }}
 
 /* Loading State */
-.ui-loading {{
+ui-component[data-ui-loading=""true""] {{
     pointer-events: none;
     position: relative;
 }}
 
-.ui-loading::after {{
+ui-component[data-ui-loading=""true""]::after {{
     content: '';
     position: absolute;
     inset: 0;
@@ -60,7 +67,7 @@ public static class CssCommonClasses
 }}
 
 @media (prefers-color-scheme: dark) {{
-    .ui-loading::after {{
+    ui-component[data-ui-loading=""true""]::after {{
         background-color: rgba(0, 0, 0, 0.6);
     }}
 }}
@@ -69,12 +76,12 @@ public static class CssCommonClasses
 {GenerateElevationClasses()}
 
 /* Ripple Effect */
-.ui-has-ripple {{
+ui-component[data-ui-ripple=""true""] {{
     position: relative;
     overflow: hidden;
 }}
 
-.ui-ripple {{
+ui-component[data-ui-ripple=""true""] .ui-ripple {{
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
@@ -83,12 +90,37 @@ public static class CssCommonClasses
     pointer-events: none;
 }}
 
-[data-theme=""dark""] .ui-ripple {{
+[data-theme=""dark""] ui-component[data-ui-ripple=""true""] .ui-ripple {{
     background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.5));
 }}
 
-[data-theme=""light""] .ui-ripple {{
+[data-theme=""light""] ui-component[data-ui-ripple=""true""] .ui-ripple {{
     background-color: var(--ui-ripple-color, rgba(0, 0, 0, 0.5));
+}}
+
+/* Border styles using CSS variables */
+ui-component {{
+    border-width: var(--ui-border-width, 0);
+    border-style: var(--ui-border-style, solid);
+    border-color: var(--ui-border-color, transparent);
+    border-radius: var(--ui-border-radius, 0);
+    
+    /* Individual borders override */
+    border-top-width: var(--ui-border-top-width, var(--ui-border-width, 0));
+    border-top-style: var(--ui-border-top-style, var(--ui-border-style, solid));
+    border-top-color: var(--ui-border-top-color, var(--ui-border-color, transparent));
+    
+    border-right-width: var(--ui-border-right-width, var(--ui-border-width, 0));
+    border-right-style: var(--ui-border-right-style, var(--ui-border-style, solid));
+    border-right-color: var(--ui-border-right-color, var(--ui-border-color, transparent));
+    
+    border-bottom-width: var(--ui-border-bottom-width, var(--ui-border-width, 0));
+    border-bottom-style: var(--ui-border-bottom-style, var(--ui-border-style, solid));
+    border-bottom-color: var(--ui-border-bottom-color, var(--ui-border-color, transparent));
+    
+    border-left-width: var(--ui-border-left-width, var(--ui-border-width, 0));
+    border-left-style: var(--ui-border-left-style, var(--ui-border-style, solid));
+    border-left-color: var(--ui-border-left-color, var(--ui-border-color, transparent));
 }}
 
 @keyframes ui-ripple-animation {{
@@ -108,17 +140,16 @@ public static class CssCommonClasses
 
         for (int i = 0; i <= 24; i++)
         {
-            (string? umbra, string? penumbra, string? ambient) = GetElevationValues(i);
-
             if (i == 0)
             {
-                sb.AppendLine(".ui-elevation-0 {");
+                sb.AppendLine($"ui-component[data-ui-elevation=\"{i}\"] {{");
                 sb.AppendLine("    box-shadow: none;");
                 sb.AppendLine("}");
             }
             else
             {
-                sb.AppendLine($".ui-elevation-{i} {{");
+                (string umbra, string penumbra, string ambient) = GetElevationValues(i);
+                sb.AppendLine($"ui-component[data-ui-elevation=\"{i}\"] {{");
                 sb.AppendLine($"    box-shadow: {umbra}, {penumbra}, {ambient};");
                 sb.AppendLine("}");
             }

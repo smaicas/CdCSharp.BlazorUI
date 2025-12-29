@@ -1,4 +1,5 @@
-﻿using Bunit;
+﻿using AngleSharp.Dom;
+using Bunit;
 using CdCSharp.BlazorUI.Components.Generic.Button;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using FluentAssertions;
@@ -16,9 +17,9 @@ public class ButtonVariantTests : TestContextBase
             .Add(p => p.Text, "Default Button"));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
-        button.ShouldHaveClass("ui-button");
-        button.ShouldHaveClass("ui-button--default");
+        IElement uiComponent = cut.FindByDataComponent("button");
+        uiComponent.Should().NotBeNull();
+        uiComponent.ShouldHaveDataVariant("default");
     }
 
     [Fact(DisplayName = "DefaultVariantWithIcons_RendersCorrectStructure")]
@@ -31,10 +32,14 @@ public class ButtonVariantTests : TestContextBase
             .Add(p => p.TrailingIcon, "<path />"));
 
         // Assert
-        AngleSharp.Dom.IElement button = cut.Find("button");
+        IElement uiComponent = cut.FindByDataComponent("button");
+        IElement? button = uiComponent.QuerySelector("button");
+
+        button.Should().NotBeNull();
         button.Children.Should().HaveCount(3);
         button.Children[0].ShouldHaveTagName("svg"); // Leading icon
         button.Children[1].ShouldHaveTagName("span"); // Text
+        button.Children[1].ShouldHaveClass("ui-button__text"); // This class still exists
         button.Children[2].ShouldHaveTagName("svg"); // Trailing icon
     }
 }
