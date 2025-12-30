@@ -1,7 +1,5 @@
 ﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
-using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Core.Theming.Abstractions;
-using System.Reflection;
 using System.Text;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
@@ -19,7 +17,6 @@ public class ThemesCssGenerator : IAssetGenerator
 
     public async Task GenerateAsync()
     {
-        // Use existing theme generator
         string css = CssThemeGenerator.Generate("dark",
             [new Core.Themes.DarkTheme(), new Core.Themes.LightTheme()]);
 
@@ -30,12 +27,6 @@ public class ThemesCssGenerator : IAssetGenerator
 
 public static class CssThemeGenerator
 {
-    private static readonly PropertyInfo[] PaletteProperties =
-        typeof(UIThemePaletteBase)
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(p => p.PropertyType == typeof(CssColor))
-            .ToArray();
-
     public static string Generate(
         string defaultTheme,
         IReadOnlyCollection<UIThemePaletteBase> palettes)
@@ -45,56 +36,43 @@ public static class CssThemeGenerator
         sb.AppendLine(":root {");
         sb.AppendLine("  /* === Theme palettes === */");
 
-        // 1️⃣ Variables por paleta
+        // 1. Generate theme-specific variables for all themes
         foreach (UIThemePaletteBase palette in palettes)
         {
-            string themeId = palette.Id;
-
-            foreach (PropertyInfo prop in PaletteProperties)
+            Dictionary<string, string> themeVariables = palette.GetThemeVariables();
+            foreach (KeyValuePair<string, string> variable in themeVariables)
             {
-                string cssName = CssNameHelper.ToCssVariable(prop.Name);
-                CssColor color = (CssColor)prop.GetValue(palette)!;
-
-                sb.AppendLine($"  --{themeId}-{cssName}: {color};");
+                sb.AppendLine($"  {variable.Key}: {variable.Value};");
             }
         }
 
-        sb.AppendLine();
         sb.AppendLine("  /* === Default palette mapping === */");
 
-        // 2️⃣ Mapping por defecto
+        // 2. Map --palette-* to the default theme
         UIThemePaletteBase defaultPalette = palettes.First(p => p.Id == defaultTheme);
-
-        foreach (PropertyInfo prop in PaletteProperties)
+        Dictionary<string, string> defaultMapping = defaultPalette.GetPaletteMapping();
+        foreach (KeyValuePair<string, string> variable in defaultMapping)
         {
-            string cssName = CssNameHelper.ToCssVariable(prop.Name);
-            sb.AppendLine($"  --palette-{cssName}: var(--{defaultTheme}-{cssName});");
+            sb.AppendLine($"  {variable.Key}: {variable.Value};");
         }
 
         sb.AppendLine("}");
-        sb.AppendLine();
 
-        // 3️⃣ Mapping por selector
+        // 3. Generate theme selectors
         foreach (UIThemePaletteBase palette in palettes)
         {
             sb.AppendLine($"html[data-theme=\"{palette.Id}\"] {{");
 
-            foreach (PropertyInfo prop in PaletteProperties)
+            Dictionary<string, string> mapping = palette.GetPaletteMapping();
+            foreach (KeyValuePair<string, string> variable in mapping)
             {
-                string cssName = CssNameHelper.ToCssVariable(prop.Name);
-                sb.AppendLine($"  --palette-{cssName}: var(--{palette.Id}-{cssName});");
+                sb.AppendLine($"  {variable.Key}: {variable.Value};");
             }
 
             sb.AppendLine("}");
-            sb.AppendLine();
         }
 
-        return sb.ToString();
+        // Remove the last empty line
+        return sb.ToString().TrimEnd();
     }
-}
-
-internal static class CssNameHelper
-{
-    public static string ToCssVariable(string name)
-        => name.ToLowerInvariant();
 }

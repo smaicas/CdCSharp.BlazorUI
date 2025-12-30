@@ -28,7 +28,7 @@ public class ColorClassGenerator : IIncrementalGenerator
         IncrementalValueProvider<(Compilation Left, ImmutableArray<ClassToGenerate> Right)> compilationAndClasses =
             context.CompilationProvider.Combine(classDeclarations.Collect());
 
-        context.RegisterSourceOutput(compilationAndClasses, (spc, source) => Execute(source.Left, source.Right, spc));
+        context.RegisterSourceOutput(compilationAndClasses, (spc, source) => Execute(source.Right, spc));
     }
 
     private record ClassToGenerate(INamedTypeSymbol Symbol, int VariantLevels);
@@ -71,7 +71,7 @@ public class ColorClassGenerator : IIncrementalGenerator
                    .Any(a => a.Name.ToString().Contains(AttributeNameContains));
     }
 
-    private void Execute(Compilation compilation, ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
+    private void Execute(ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
     {
         if (classes.IsDefaultOrEmpty)
             return;

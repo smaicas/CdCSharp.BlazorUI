@@ -53,9 +53,15 @@
 		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" />
 		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
 		<!-- Clean output -->
-		<Delete Files="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
-		<Delete Files="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
-		<Delete Files="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
+		<ItemGroup>
+			<BlazorUICssFiles Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
+			<BlazorUIJsFiles Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
+			<BlazorUIJsMapFiles Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
+		</ItemGroup>
+
+		<Delete Files="@(BlazorUICssFiles)" />
+		<Delete Files="@(BlazorUIJsFiles)" />
+		<Delete Files="@(BlazorUIJsMapFiles)" />
 
 		<!-- Clean configuration files -->
 		<Delete Files="$(BlazorUIProjectPath)\package.json" TreatErrorsAsWarnings="true" />

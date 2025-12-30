@@ -124,7 +124,6 @@ public class BuildConfigurationManager
 
     private string GetMainCssTemplate() => """
 @import './reset.css';
-@import './tokens.css';
 @import './themes.css';
 @import './initialize-themes.css';
 @import './common-classes.css';
