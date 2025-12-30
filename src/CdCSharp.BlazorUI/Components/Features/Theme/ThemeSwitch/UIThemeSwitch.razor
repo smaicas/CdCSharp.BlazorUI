@@ -1,7 +1,7 @@
 ﻿@using CdCSharp.BlazorUI.Components.Abstractions
 @using CdCSharp.BlazorUI.Css
 
-@inherits UIVariantComponentBase<UIThemeSwitch, UIThemeSwitchVariant>
+@inherits BUIVariantComponentBase<UIThemeSwitch, UIThemeSwitchVariant>
 
 @inject IThemeJsInterop ThemeInterop
 
@@ -35,71 +35,71 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes"
-                      data-ui-component="theme-switch"
-                      data-ui-variant="default"
-                      data-ui-transitioning="@(_isTransitioning ? "true" : "false")">
-            <button @onclick="SwitchTheme"
-                    disabled="@_isTransitioning">
-                <span class="ui-theme-switch__content">
-                    @if (ShowIcon)
-                    {
-                        <span class="ui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
-                    }
-                    <span class="ui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
-                </span>
-            </button>
-        </ui-component>
+        <button @attributes="AdditionalAttributes"
+                @onclick="SwitchTheme"
+                disabled="@_isTransitioning">
+            <span class="ui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">
+                @if (ShowIcon)
+                {
+                    <span class="ui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
+                }
+                <span class="ui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
+            </span>
+        </button>
     };
 
     private RenderFragment RenderSunMoon() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
-            <button @onclick="SwitchTheme"
-                    disabled="@_isTransitioning"
-                    aria-label="@($"Switch to {GetOppositeTheme()} mode")">
-                <span class="ui-theme-switch__sun-moon-container">
-                    <span class="ui-theme-switch__icon-wrapper">
-                        @if (_currentTheme == "light")
-                        {
-                            <span class="ui-theme-switch__sun">☀️</span>
-                        }
-                        else
-                        {
-                            <span class="ui-theme-switch__moon">🌙</span>
-                        }
-                    </span>
+        <button @attributes="AdditionalAttributes"
+                @onclick="ToggleLightDark"
+                aria-label="@($"Switch to {GetOppositeTheme()} mode")">
+            <span class="ui-theme-switch__sun-moon-container">
+                <span class="ui-theme-switch__icon-wrapper">
+                    @if (_currentTheme == "light")
+                    {
+                        <span class="ui-theme-switch__sun">☀️</span>
+                    }
+                    else
+                    {
+                        <span class="ui-theme-switch__moon">🌙</span>
+                    }
                 </span>
-            </button>
-        </ui-component>
+            </span>
+        </button>
     };
 
     private async Task SwitchTheme()
     {
-        if (_isTransitioning) return;
-
         _isTransitioning = true;
         StateHasChanged();
 
-        try
+        // Small delay for animation start
+        await Task.Delay(50);
+
+        string newTheme = await ThemeInterop.ToggleThemeAsync(AvailableThemes);
+        _currentTheme = newTheme;
+
+        if (OnThemeChanged.HasDelegate)
         {
-            // For SunMoon variant, use light/dark only; for others use AvailableThemes
-            string[] themesToUse = Variant == UIThemeSwitchVariant.SunMoon
-                ? new[] { "light", "dark" }
-                : AvailableThemes;
-
-            string newTheme = await ThemeInterop.ToggleThemeAsync(themesToUse);
-            _currentTheme = newTheme;
-
-            if (OnThemeChanged.HasDelegate)
-            {
-                await OnThemeChanged.InvokeAsync(newTheme);
-            }
+            await OnThemeChanged.InvokeAsync(newTheme);
         }
-        finally
+
+        // Keep transition state for animation duration
+        await Task.Delay(300);
+        _isTransitioning = false;
+        StateHasChanged();
+    }
+
+    private async Task ToggleLightDark()
+    {
+        // For SunMoon variant, always toggle between light and dark
+        string[] themes = { "light", "dark" };
+        string newTheme = await ThemeInterop.ToggleThemeAsync(themes);
+        _currentTheme = newTheme;
+
+        if (OnThemeChanged.HasDelegate)
         {
-            _isTransitioning = false;
-            StateHasChanged();
+            await OnThemeChanged.InvokeAsync(newTheme);
         }
     }
 

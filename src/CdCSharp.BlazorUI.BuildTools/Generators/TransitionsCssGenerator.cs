@@ -1,8 +1,30 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+using System.Diagnostics.CodeAnalysis;
 
-namespace CdCSharp.BlazorUI.BuildTools.Gens;
+namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
 [ExcludeFromCodeCoverage]
+public class TransitionsCssGenerator : IAssetGenerator
+{
+    private readonly BuildContext _context;
+
+    public string Name => "Transitions CSS";
+
+    public TransitionsCssGenerator(BuildContext context)
+    {
+        _context = context;
+    }
+
+    public async Task GenerateAsync()
+    {
+        // Use existing generator
+        string css = CssTransitionClasses.GetCss();
+
+        string outputPath = _context.GetFullPath("CssBundle/transition-classes.css");
+        await File.WriteAllTextAsync(outputPath, css);
+    }
+}
+
 public static class CssTransitionClasses
 {
     public static string GetCss() => @"

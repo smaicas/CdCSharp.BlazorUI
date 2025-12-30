@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace CdCSharp.BlazorUI.Components.Abstractions;
 
-public abstract class UIVariantComponentBase<TComponent, TVariant> : UIComponentBase, IVariantComponent<TVariant>
-    where TComponent : UIVariantComponentBase<TComponent, TVariant>
+public abstract class BUIVariantComponentBase<TComponent, TVariant> : BUIComponentBase, IVariantComponent<TVariant>
+    where TComponent : BUIVariantComponentBase<TComponent, TVariant>
     where TVariant : Variant
 {
     private RenderFragment? _resolvedTemplate;

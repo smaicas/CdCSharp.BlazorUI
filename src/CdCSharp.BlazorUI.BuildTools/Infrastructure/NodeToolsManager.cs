@@ -1,28 +1,92 @@
-﻿using System.Diagnostics;
+﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace CdCSharp.BlazorUI.BuildTools;
+namespace CdCSharp.BlazorUI.BuildTools.Infrastructure;
 
-public static class NpmManager
+/// <summary>
+/// Manages all Node.js based tools (npm, npx, vite, etc.)
+/// </summary>
+public class NodeToolsManager
 {
-    public static async Task EnsureNpmInstalled(string workingDirectory)
+    private readonly BuildContext _context;
+
+    public NodeToolsManager(BuildContext context)
     {
-        string nodeModulesPath = Path.Combine(workingDirectory, "node_modules");
+        _context = context;
+    }
+
+    /// <summary>
+    /// Ensures npm packages are installed
+    /// </summary>
+    public async Task EnsurePackagesInstalledAsync()
+    {
+        string nodeModulesPath = _context.GetFullPath("node_modules");
 
         if (!Directory.Exists(nodeModulesPath))
         {
-            Console.WriteLine("node_modules not found. Running npm install...");
-            await RunNpmInstall(workingDirectory);
+            Console.WriteLine("    - Installing npm packages...");
+            await RunNpmInstallAsync();
         }
     }
 
-    public static async Task RunNpmInstall(string workingDirectory)
+    /// <summary>
+    /// Builds CSS using Vite
+    /// </summary>
+    public async Task BuildCssAsync()
     {
-        await RunCommand(GetNpmPath(), "install", workingDirectory);
+        await RunViteBuildAsync("vite.config.css.js");
     }
 
-    public static async Task RunViteBuild(string workingDirectory, string configFile = null)
+    /// <summary>
+    /// Builds JavaScript/TypeScript using Vite
+    /// </summary>
+    public async Task BuildJsAsync()
+    {
+        await RunViteBuildAsync("vite.config.js");
+    }
+
+    /// <summary>
+    /// Verifies Node.js is installed
+    /// </summary>
+    public async Task VerifyNodeInstalledAsync()
+    {
+        try
+        {
+            Process process = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "node",
+                    Arguments = "--version",
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            process.Start();
+            await process.WaitForExitAsync();
+
+            if (process.ExitCode != 0)
+            {
+                throw new InvalidOperationException("Node.js verification failed");
+            }
+        }
+        catch
+        {
+            throw new InvalidOperationException(
+                "Node.js is required to build BlazorUI. Please install Node.js from https://nodejs.org/");
+        }
+    }
+
+    private async Task RunNpmInstallAsync()
+    {
+        await RunCommand(GetNpmPath(), "install", _context.ProjectPath);
+    }
+
+    private async Task RunViteBuildAsync(string configFile)
     {
         string args = "vite build";
         if (!string.IsNullOrWhiteSpace(configFile))
@@ -30,7 +94,7 @@ public static class NpmManager
             args += $" --config {configFile}";
         }
 
-        await RunCommand(GetNpxPath(), args, workingDirectory);
+        await RunCommand(GetNpxPath(), args, _context.ProjectPath);
     }
 
     private static string GetNpmPath()
@@ -38,7 +102,7 @@ public static class NpmManager
         return TryGetSystemCommand("npm", out string systemNpm)
             ? systemNpm
             : throw new InvalidOperationException(
-            "Node.js/npm not found. Please install Node.js from https://nodejs.org/");
+                "Node.js/npm not found. Please install Node.js from https://nodejs.org/");
     }
 
     private static string GetNpxPath()
@@ -46,7 +110,7 @@ public static class NpmManager
         return TryGetSystemCommand("npx", out string systemNpx)
             ? systemNpx
             : throw new InvalidOperationException(
-            "npx not found. Please install Node.js from https://nodejs.org/");
+                "npx not found. Please install Node.js from https://nodejs.org/");
     }
 
     private static async Task RunCommand(string fileName, string arguments, string workingDirectory)

@@ -10,8 +10,8 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components.Forms.Abstractions;
 
-// Clase base original - sin cambios
-public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable
+// Base class without variants
+public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable
 {
     private IJSObjectReference? _behaviorInstance;
     private readonly ComponentStyleBuilder _styleBuilder = new();
@@ -144,10 +144,10 @@ public abstract class UIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDi
     }
 }
 
-// Nueva clase base para inputs con variantes
-public abstract class UIInputComponentBase<TValue, TComponent, TVariant>
-    : UIInputComponentBase<TValue>, IVariantComponent<TVariant>
-    where TComponent : UIInputComponentBase<TValue, TComponent, TVariant>
+// Base class with variants
+public abstract class BUIInputComponentBase<TValue, TComponent, TVariant>
+    : BUIInputComponentBase<TValue>, IVariantComponent<TVariant>
+    where TComponent : BUIInputComponentBase<TValue, TComponent, TVariant>
     where TVariant : Variant
 {
     private RenderFragment? _resolvedTemplate;

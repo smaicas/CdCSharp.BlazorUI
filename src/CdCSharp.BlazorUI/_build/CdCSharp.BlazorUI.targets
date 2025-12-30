@@ -1,142 +1,61 @@
 <Project>
-
-	<!-- Properties for CSS and JS generation -->
 	<PropertyGroup>
 		<BlazorUIBuildEnabled Condition="'$(BlazorUIBuildEnabled)' == ''">true</BlazorUIBuildEnabled>
 		<BlazorUIProjectPath Condition="'$(BlazorUIProjectPath)' == ''">$(MSBuildProjectDirectory)</BlazorUIProjectPath>
-		<BuildToolsTimeout Condition="'$(BuildToolsTimeout)' == ''">120000</BuildToolsTimeout>
+		<BuildToolsProject>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\CdCSharp.BlazorUI.BuildTools.csproj</BuildToolsProject>
+		<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
+		<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
 	</PropertyGroup>
 
-	<!-- Target: Verify Node.js is installed -->
-	<Target Name="CheckNodeJsInstalled"
-            BeforeTargets="EnsureBuildToolsCompiled">
-
-		<Exec Command="node --version"
-              IgnoreExitCode="true"
-              ConsoleToMSBuild="true">
-			<Output TaskParameter="ExitCode" PropertyName="NodeExitCode" />
-		</Exec>
-
-		<Error Text="Node.js is required to build BlazorUI. Please install Node.js from https://nodejs.org/"
-               Condition="'$(NodeExitCode)' != '0'" />
-	</Target>
-
-	<!-- Target: Compile BuildTools if needed -->
-	<Target Name="EnsureBuildToolsCompiled"
-            BeforeTargets="InitializeBlazorUIConfig">
-
-		<Message Text="Compile BuildTools..." Importance="high" />
-		<MSBuild Projects="$(BuildToolsProject)"
-                 Targets="Build"
-                 Properties="Configuration=$(Configuration)" />
-
-	</Target>
-
-	<!-- Target: Initialize configuration files -->
-	<Target Name="InitializeBlazorUIConfig"
-            BeforeTargets="GenerateBlazorUIAssets"
-            Condition="'$(BlazorUIBuildEnabled)' == 'true' AND !Exists('$(BlazorUIProjectPath)\package.json')">
-
-		<Message Text="Initializing BlazorUI configuration files..." Importance="high" />
-
-		<PropertyGroup>
-			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
-			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
-		</PropertyGroup>
-
-		<!-- Use exe if exists (Windows) or DLL if it does not exists -->
-		<Exec Command="&quot;$(BuildToolsExe)&quot; init &quot;$(BlazorUIProjectPath)&quot;"
-              Condition="Exists('$(BuildToolsExe)')"
-              ConsoleToMSBuild="true"
-              Timeout="$(BuildToolsTimeout)"
-              ContinueOnError="false" />
-
-		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; init &quot;$(BlazorUIProjectPath)&quot;"
-              Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
-              ConsoleToMSBuild="true"
-              Timeout="$(BuildToolsTimeout)"
-              ContinueOnError="false" />
-
-	</Target>
-
-	<!-- Target(MAIN): Executes all compilation tasks -->
-	<Target Name="GenerateBlazorUIAssets"
-            BeforeTargets="BeforeBuild"
-            DependsOnTargets="EnsureBuildToolsCompiled"
-            Condition="'$(BlazorUIBuildEnabled)' == 'true'">
+	<!-- Main build target -->
+	<Target Name="BuildBlazorUIAssets"
+			BeforeTargets="BeforeBuild"
+			DependsOnTargets="EnsureBuildToolsCompiled"
+			Condition="'$(BlazorUIBuildEnabled)' == 'true'">
 
 		<Message Text="Building BlazorUI assets..." Importance="high" />
 
-		<PropertyGroup>
-			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
-			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
-		</PropertyGroup>
+		<!-- Use exe if exists (Windows) or DLL otherwise -->
+		<Exec Command="&quot;$(BuildToolsExe)&quot; build &quot;$(BlazorUIProjectPath)&quot;"
+			  Condition="Exists('$(BuildToolsExe)')"
+			  ConsoleToMSBuild="true"
+			  ContinueOnError="false" />
 
-		<!-- Error: Can't find compiled executable -->
-		<Error Text="BuildTools executable not found. Expected at: $(BuildToolsExe) or $(BuildToolsDll)"
-               Condition="!Exists('$(BuildToolsExe)') AND !Exists('$(BuildToolsDll)')" />
-
-		<Message Text="Using BuildTools executable: $(BuildToolsExe)"
-                 Condition="Exists('$(BuildToolsExe)')"
-                 Importance="high" />
-		<Message Text="Using BuildTools DLL: $(BuildToolsDll)"
-                 Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
-                 Importance="high" />
-
-		<!-- Use exe if exists (Windows) or DLL if it does not exists -->
-		<Exec Command="&quot;$(BuildToolsExe)&quot; all &quot;$(BlazorUIProjectPath)&quot;"
-              Condition="Exists('$(BuildToolsExe)')"
-              ConsoleToMSBuild="true"
-              IgnoreExitCode="false"
-              Timeout="$(BuildToolsTimeout)"
-              ContinueOnError="false"
-              LogStandardErrorAsError="true" />
-
-		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; all &quot;$(BlazorUIProjectPath)&quot;"
-              Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
-              ConsoleToMSBuild="true"
-              IgnoreExitCode="false"
-              Timeout="$(BuildToolsTimeout)"
-              ContinueOnError="false"
-              LogStandardErrorAsError="true" />
+		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; build &quot;$(BlazorUIProjectPath)&quot;"
+			  Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
+			  ConsoleToMSBuild="true"
+			  ContinueOnError="false" />
 
 		<!-- Include generated files -->
 		<ItemGroup>
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
-			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\*.js" />
-			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\*.js.map" />
+			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
+			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
 		</ItemGroup>
 
-		<Message Text="BlazorUI assets built successfully!" Importance="high" />
-
 	</Target>
 
-	<!-- Target: Generate themes only (usefull for development) -->
-	<Target Name="GenerateBlazorUIThemes"
-            DependsOnTargets="EnsureBuildToolsCompiled"
-            Condition="'$(BlazorUIBuildEnabled)' == 'true'">
+	<!-- Ensure BuildTools is compiled -->
+	<Target Name="EnsureBuildToolsCompiled"
+			BeforeTargets="BuildBlazorUIAssets">
 
-		<PropertyGroup>
-			<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
-			<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
-		</PropertyGroup>
+		<Message Text="Ensuring BuildTools is compiled..." Importance="normal" />
 
-		<Exec Command="&quot;$(BuildToolsExe)&quot; themes &quot;$(BlazorUIProjectPath)\CssBundle\themes.css&quot;"
-              Condition="Exists('$(BuildToolsExe)')"
-              ConsoleToMSBuild="true"
-              Timeout="$(BuildToolsTimeout)" />
-
-		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; themes &quot;$(BlazorUIProjectPath)\CssBundle\themes.css&quot;"
-              Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
-              ConsoleToMSBuild="true"
-              Timeout="$(BuildToolsTimeout)" />
+		<MSBuild Projects="$(BuildToolsProject)"
+				 Targets="Build"
+				 Properties="Configuration=$(Configuration)"
+				 Condition="!Exists('(BuildToolsExe)′)AND!Exists(′(BuildToolsExe)') AND !Exists('(BuildToolsExe)′)AND!Exists(′(BuildToolsDll)')" />
 
 	</Target>
-
-	<!-- Target: Clean all generated files -->
+	<!-- Clean target -->
 	<Target Name="CleanBlazorUIAssets" BeforeTargets="Clean">
-		<!-- Clean CssBundle folder -->
+		<!-- Clean generated files -->
 		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" />
+		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
+		<!-- Clean output -->
+		<Delete Files="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
+		<Delete Files="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
+		<Delete Files="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
 
 		<!-- Clean configuration files -->
 		<Delete Files="$(BlazorUIProjectPath)\package.json" TreatErrorsAsWarnings="true" />
@@ -146,16 +65,6 @@
 		<Delete Files="$(BlazorUIProjectPath)\vite.config.css.js" TreatErrorsAsWarnings="true" />
 		<Delete Files="$(BlazorUIProjectPath)\.npmrc" TreatErrorsAsWarnings="true" />
 
-		<!-- Clean node_modules -->
-		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
-
-		<!-- Clean blazorui.css from wwwroot/css -->
-		<Delete Files="$(BlazorUIProjectPath)\wwwroot\css\blazorui.css" TreatErrorsAsWarnings="true" />
-
-		<!-- Limpiar la carpeta de JavaScript compilado manteniendo la estructura -->
-		<RemoveDir Directories="$(BlazorUIProjectPath)\wwwroot\js\Types" />
-
-		<Message Text="BlazorUI generated assets cleaned successfully!" Importance="high" />
+		<Message Text="BlazorUI assets cleaned successfully!" Importance="high" />
 	</Target>
-
 </Project>

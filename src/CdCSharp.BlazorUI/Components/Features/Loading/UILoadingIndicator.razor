@@ -1,18 +1,15 @@
 ﻿@using CdCSharp.BlazorUI.Components.Abstractions
 @using CdCSharp.BlazorUI.Components.Features.Common
 @using CdCSharp.BlazorUI.Core.Css
-@using CdCSharp.BlazorUI.Css
 
-@inherits UIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
+@inherits BUIVariantComponentBase<UILoadingIndicator, UILoadingIndicatorVariant>
 @implements IHasSize
-@implements IHasColor
 
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
-    // IHasColor
     [Parameter] public CssColor? Color { get; set; }
 
     // IHasSize
@@ -35,44 +32,44 @@
 
     private RenderFragment RenderSpinner() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <div @attributes="AdditionalAttributes">
             <svg class="ui-loading-spinner" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
-        </ui-component>
+        </div>
     };
 
     private RenderFragment RenderLinear() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <div @attributes="AdditionalAttributes">
             <div class="ui-loading-linear">
                 <div class="ui-loading-linear__bar"></div>
             </div>
-        </ui-component>
+        </div>
     };
 
     private RenderFragment RenderCircularProgress() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <div @attributes="AdditionalAttributes">
             <svg class="ui-loading-circular" viewBox="0 0 50 50">
                 <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
             </svg>
-        </ui-component>
+        </div>
     };
 
     private RenderFragment RenderDots() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <div @attributes="AdditionalAttributes">
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
             <span class="ui-loading-dot"></span>
-        </ui-component>
+        </div>
     };
 
     private RenderFragment RenderPulse() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <div @attributes="AdditionalAttributes">
             <span class="ui-loading-pulse"></span>
-        </ui-component>
+        </div>
     };
 }

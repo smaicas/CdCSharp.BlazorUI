@@ -1,6 +1,26 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+using System.Diagnostics.CodeAnalysis;
 
-namespace CdCSharp.BlazorUI.BuildTools.Gens;
+namespace CdCSharp.BlazorUI.BuildTools.Generators;
+
+public class CssResetGenerator : IAssetGenerator
+{
+    private readonly BuildContext _context;
+
+    public string Name => "CSS Reset";
+
+    public CssResetGenerator(BuildContext context)
+    {
+        _context = context;
+    }
+
+    public async Task GenerateAsync()
+    {
+        string css = CssReset.GetCss();
+        string outputPath = _context.GetFullPath("CssBundle/reset.css");
+        await File.WriteAllTextAsync(outputPath, css);
+    }
+}
 
 [ExcludeFromCodeCoverage]
 public static class CssReset

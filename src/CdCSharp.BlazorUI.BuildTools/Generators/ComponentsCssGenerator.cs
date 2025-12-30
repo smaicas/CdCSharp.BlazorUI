@@ -1,9 +1,31 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace CdCSharp.BlazorUI.BuildTools.Gens;
+namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
 [ExcludeFromCodeCoverage]
+public class ComponentsCssGenerator : IAssetGenerator
+{
+    private readonly BuildContext _context;
+
+    public string Name => "Components CSS";
+
+    public ComponentsCssGenerator(BuildContext context)
+    {
+        _context = context;
+    }
+
+    public async Task GenerateAsync()
+    {
+        // Use existing generator
+        string css = CssCommonClasses.GetCss();
+
+        string outputPath = _context.GetFullPath("CssBundle/common-classes.css");
+        await File.WriteAllTextAsync(outputPath, css);
+    }
+}
+
 public static class CssCommonClasses
 {
     public static string GetCss()

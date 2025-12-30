@@ -2,6 +2,6 @@
 
 namespace CdCSharp.BlazorUI.Components.Generic.Img;
 
-public abstract class UIImg : UIComponentBase
+public abstract class UIImg : BUIComponentBase
 {
 }
