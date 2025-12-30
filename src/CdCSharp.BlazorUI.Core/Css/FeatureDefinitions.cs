@@ -30,9 +30,6 @@ public static class FeatureDefinitions
 
         // Behavior features
         public const string Ripple = "data-ui-ripple";
-
-        // Debug
-        public const string Features = "data-ui-features";
     }
 
     /// <summary>
@@ -43,8 +40,6 @@ public static class FeatureDefinitions
         // Colors
         public const string BackgroundColor = "--ui-bg-color";
         public const string Color = "--ui-color";
-        public const string Black = "--ui-color-black";
-        public const string White = "--ui-color-white";
 
         // Ripple
         public const string RippleColor = "--ui-ripple-color";
@@ -87,51 +82,26 @@ public static class FeatureDefinitions
     /// </summary>
     public static class CssClasses
     {
-        // Component wrapper
-        public const string Component = "ui-component";
-
         // Ripple effect
         public const string Ripple = "ui-ripple";
 
         // Button parts
-        public const string Button = "ui-button";
         public const string ButtonText = "ui-button__text";
-        public const string ButtonIcon = "ui-button__icon";
-        public const string ButtonLoader = "ui-button__loader";
 
         // Input parts
-        public const string Input = "ui-input";
         public const string InputLabel = "ui-input__label";
         public const string InputContainer = "ui-input__container";
-        public const string InputField = "ui-input__field";
         public const string InputRequired = "ui-input__required";
         public const string InputLoading = "ui-input__loading";
         public const string InputValidation = "ui-input__validation";
         public const string InputHelperText = "ui-input__helper-text";
 
         // Loading indicator parts
-        public const string LoadingIndicator = "ui-loading";
-        public const string LoadingSpinner = "ui-loading--spinner";
-        public const string LoadingLinear = "ui-loading--linear";
-        public const string LoadingLinearBar = "ui-loading--linear__bar";
-        public const string LoadingCircular = "ui-loading--circular";
-        public const string LoadingDot = "ui-loading--dot";
-        public const string LoadingPulse = "ui-loading--pulse";
-
-        // Icon
-        public const string Icon = "ui-icon";
-
-        // Card parts
-        public const string Card = "ui-card";
-        public const string CardHeader = "ui-card__header";
-        public const string CardContent = "ui-card__content";
-        public const string CardActions = "ui-card__actions";
-
-        // List parts
-        public const string List = "ui-list";
-        public const string ListItem = "ui-list__item";
-        public const string ListItemIcon = "ui-list__item-icon";
-        public const string ListItemContent = "ui-list__item-content";
-        public const string ListItemActions = "ui-list__item-actions";
+        public const string LoadingSpinner = "ui-loading-spinner";
+        public const string LoadingLinear = "ui-loading-linear";
+        public const string LoadingLinearBar = "ui-loading-linear__bar";
+        public const string LoadingCircular = "ui-loading-circular";
+        public const string LoadingDot = "ui-loading-dot";
+        public const string LoadingPulse = "ui-loading-pulse";
     }
 }

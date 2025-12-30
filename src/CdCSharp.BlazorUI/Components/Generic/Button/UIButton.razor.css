@@ -1,8 +1,8 @@
 ﻿ui-component[data-ui-component="button"] button {
     display: inline-flex;
     align-items: center;
-    background-color: inherit; /* Inherits from ui-component */
-    color: inherit; /* Inherits from ui-component */
+    background-color: inherit;
+    color: inherit;
     border: none;
     cursor: pointer;
     /* Base values as CSS custom properties */
@@ -16,7 +16,8 @@
     min-height: calc(var(--ui-button-min-height) * var(--ui-density-spacing-multiplier, 1));
 }
 
-ui-component[data-ui-component="button"] .ui-button__text {
+/* Using CSS classes from FeatureDefinitions */
+.ui-button__text {
     white-space: nowrap;
 }
 
@@ -32,26 +33,26 @@ ui-component[data-ui-component="button"]:not(:has(.ui-button__text)) button {
     padding: calc(var(--ui-button-icon-only-padding) * var(--ui-density-spacing-multiplier, 1));
 }
 
-/* Size variations */
-ui-component[data-ui-component="button"][data-ui-size="small"] {
+/* Size variations using data attributes from FeatureDefinitions */
+ui-component[data-ui-size="small"] {
     --ui-button-padding-y: 0.375rem;
     --ui-button-padding-x: 0.75rem;
     --ui-button-min-height: 2rem;
 }
 
-ui-component[data-ui-component="button"][data-ui-size="large"] {
+ui-component[data-ui-size="large"] {
     --ui-button-padding-y: 0.625rem;
     --ui-button-padding-x: 1.25rem;
     --ui-button-min-height: 3rem;
 }
 
 /* Icon sizes by button size */
-ui-component[data-ui-component="button"][data-ui-size="small"] svg {
+ui-component[data-ui-size="small"] svg {
     width: 1rem;
     height: 1rem;
 }
 
-ui-component[data-ui-component="button"][data-ui-size="large"] svg {
+ui-component[data-ui-size="large"] svg {
     width: 1.5rem;
     height: 1.5rem;
 }
