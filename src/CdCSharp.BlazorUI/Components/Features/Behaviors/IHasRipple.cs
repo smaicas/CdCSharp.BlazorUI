@@ -2,7 +2,7 @@
 
 namespace CdCSharp.BlazorUI.Components.Features.Behaviors;
 
-public interface IHasRipple : IJsBehavior
+public interface IHasRipple
 {
     bool DisableRipple { get; set; }
     CssColor? RippleColor { get; set; }

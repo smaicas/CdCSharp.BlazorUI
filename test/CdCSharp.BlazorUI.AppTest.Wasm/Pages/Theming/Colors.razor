@@ -3,6 +3,7 @@
 @using CdCSharp.BlazorUI.Components.Generic.Button
 @using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Css
+@using System.Reflection
 
 <PageTitle>Colors - CdCSharp.BlazorUI</PageTitle>
 
@@ -18,95 +19,40 @@
         <p>These colors are defined by the current theme and change automatically when switching themes:</p>
 
         <div class="palette-grid">
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-primary)"></div>
-                <h4>Primary</h4>
-                <code>--palette-primary</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-secondary)"></div>
-                <h4>Secondary</h4>
-                <code>--palette-secondary</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-background); border: 1px solid var(--palette-backgroundcontrast)"></div>
-                <h4>Background</h4>
-                <code>--palette-background</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-surface)"></div>
-                <h4>Surface</h4>
-                <code>--palette-surface</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-error)"></div>
-                <h4>Error</h4>
-                <code>--palette-error</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-warning)"></div>
-                <h4>Warning</h4>
-                <code>--palette-warning</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-info)"></div>
-                <h4>Info</h4>
-                <code>--palette-info</code>
-            </div>
-            <div class="palette-item">
-                <div class="palette-swatch" style="background: var(--palette-success)"></div>
-                <h4>Success</h4>
-                <code>--palette-success</code>
-            </div>
+            @foreach (var paletteColor in UIColorPalette)
+            {
+                <div class="palette-item">
+                    <h4>@paletteColor.Key</h4>
+                    <div class="palette-swatch" style="@($"background: {paletteColor.Value}; color: {paletteColor.Value.GetBestContrast()}")">
+                        @paletteColor.Key
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
     <div class="doc-section">
-        <h2>UIColor System</h2>
-        <p>The UIColor system provides predefined colors with automatic light and dark variants:</p>
+        <h2>UIColor Full Palette</h2>
+        <p>This section shows all predefined colors in <code>UIColor</code> with their Lighten/Darken variants.</p>
 
-        <h3>Color Variants</h3>
-        <p>Each color has 7 variants:</p>
-        <ul>
-            <li><code>Lighten3</code> - 30% lighter</li>
-            <li><code>Lighten2</code> - 20% lighter</li>
-            <li><code>Lighten1</code> - 10% lighter</li>
-            <li><code>Default</code> - Base color</li>
-            <li><code>Darken1</code> - 10% darker</li>
-            <li><code>Darken2</code> - 20% darker</li>
-            <li><code>Darken3</code> - 30% darker</li>
-        </ul>
-
-        <h3>Example: Blue Variants</h3>
-        <div class="color-variants">
-            <div class="variant-item">
-                <UIButton Text="Lighten3" Color="@UIColor.Blue.Lighten3" />
-                <code>UIColor.Blue.Lighten3</code>
-            </div>
-            <div class="variant-item">
-                <UIButton Text="Lighten2" Color="@UIColor.Blue.Lighten2" />
-                <code>UIColor.Blue.Lighten2</code>
-            </div>
-            <div class="variant-item">
-                <UIButton Text="Lighten1" Color="@UIColor.Blue.Lighten1" />
-                <code>UIColor.Blue.Lighten1</code>
-            </div>
-            <div class="variant-item">
-                <UIButton Text="Default" Color="@UIColor.Blue.Default" />
-                <code>UIColor.Blue.Default</code>
-            </div>
-            <div class="variant-item">
-                <UIButton Text="Darken1" Color="@UIColor.Blue.Darken1" />
-                <code>UIColor.Blue.Darken1</code>
-            </div>
-            <div class="variant-item">
-                <UIButton Text="Darken2" Color="@UIColor.Blue.Darken2" />
-                <code>UIColor.Blue.Darken2</code>
-            </div>
-            <div class="variant-item">
-                <UIButton Text="Darken3" Color="@UIColor.Blue.Darken3" />
-                <code>UIColor.Blue.Darken3</code>
-            </div>
+        <div class="palette-grid">
+            @foreach (var colorClass in UIColorColorClasses)
+            {
+                <div class="palette-color-block">
+                    <h4>@colorClass.Name</h4>
+                    <div class="color-variants">
+                        @foreach (var prop in colorClass.Properties)
+                        {
+                            <div class="variant-item">
+                                <UIButton Text="@prop.Name"
+                                          BackgroundColor="@(prop.Value)"
+                                          Color="@(prop.Value.GetBestContrast())" />
+                                <code>@($"UIColor.{colorClass.Name}.{prop.Name}")</code>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -116,9 +62,9 @@
         <ComponentDemo Code="@usingColorsCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Theme Primary" BackgroundColor="@(new CssColor("var(--palette-primary)", true))" />
-                    <UIButton Text="UIColor Blue" BackgroundColor="@UIColor.Blue.Default" />
-                    <UIButton Text="Custom Color" BackgroundColor="@(new CssColor("#FF5722"))" />
+                    <UIButton Text="Theme Primary" BackgroundColor="@(new CssColor("var(--palette-primary)", true))" TextColor="@(new CssColor("var(--palette-primary)", true).GetBestContrast())" />
+                    <UIButton Text="UIColor Blue" BackgroundColor="@UIColor.Blue.Default" TextColor="@UIColor.Blue.Default.GetBestContrast()" />
+                    <UIButton Text="Custom Color" BackgroundColor="@(new CssColor("#FF5722"))" TextColor="@(new CssColor("#FF5722").GetBestContrast())" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -133,13 +79,13 @@
 
 @code {
     private string usingColorsCode = @"// Using theme palette colors
-<UIButton Text=""Theme Primary"" BackgroundColor=""@(new CssColor(""var(--palette-primary)"", true))"" />
+<UIButton Text=""Theme Primary"" BackgroundColor=""@(new CssColor(""var(--palette-primary)"", true))"" TextColor=""@(new CssColor(""var(--palette-primary)"", true).GetBestContrast())"" />
 
 // Using UIColor constants
-<UIButton Text=""UIColor Blue"" BackgroundColor=""@UIColor.Blue.Default"" />
+<UIButton Text=""UIColor Blue"" BackgroundColor=""@UIColor.Blue.Default"" TextColor=""@UIColor.Blue.Default.GetBestContrast()"" />
 
 // Using custom hex color
-<UIButton Text=""Custom Color"" BackgroundColor=""@(new CssColor(""#FF5722""))"" />";
+<UIButton Text=""Custom Color"" BackgroundColor=""@(new CssColor(""#FF5722""))"" TextColor=""@(new CssColor(""#FF5722"").GetBestContrast())"" />";
 
     private string customColorsCode = @"// Create from hex
 CssColor customColor1 = new CssColor(""#FF5722"");
@@ -152,4 +98,38 @@ CssColor customColor3 = new CssColor(255, 87, 34, 0.5);
 
 // Use CSS variables
 CssColor themeColor = new CssColor(""var(--palette-primary)"", true);";
+
+    // Representa una clase de UIColor con sus propiedades CssColor
+    private record UIColorClass(string Name, List<(string Name, CssColor Value)> Properties);
+
+    private List<UIColorClass> UIColorColorClasses { get; set; } = new();
+    private Dictionary<string, CssColor> UIColorPalette { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        // Obtener todas las clases internas públicas estáticas de UIColor
+        var innerTypes = typeof(UIColor).GetNestedTypes(BindingFlags.Public | BindingFlags.Static);
+
+        foreach (var type in innerTypes)
+        {
+            // Para Palette, guardamos en un diccionario
+            if (type.Name == "Palette")
+            {
+                var paletteProps = type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                                       .Where(p => p.PropertyType == typeof(CssColor))
+                                       .ToDictionary(p => p.Name, p => (CssColor)p.GetValue(null)!);
+
+                UIColorPalette = paletteProps;
+            }
+            else
+            {
+                var props = type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                                .Where(p => p.PropertyType == typeof(CssColor))
+                                .Select(p => (p.Name, (CssColor)p.GetValue(null)!))
+                                .ToList();
+
+                UIColorColorClasses.Add(new UIColorClass(type.Name, props));
+            }
+        }
+    }
 }

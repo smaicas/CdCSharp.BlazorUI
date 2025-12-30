@@ -23,12 +23,6 @@ public class UITransitions
 
     public bool HasTransitions => _transitions.Any();
 
-    public IReadOnlyDictionary<TransitionTrigger, IReadOnlyList<TransitionConfig>> Transitions =>
-            _transitions.ToDictionary(
-            kvp => kvp.Key,
-            kvp => (IReadOnlyList<TransitionConfig>)kvp.Value
-        );
-
     public string GetDataAttributeValue()
     {
         return string.Join(" ",

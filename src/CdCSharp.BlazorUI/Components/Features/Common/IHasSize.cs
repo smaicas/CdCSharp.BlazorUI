@@ -2,7 +2,7 @@
 
 public interface IHasSize
 {
-    SizeEnum Size { get; }
+    SizeEnum Size { get; set; }
 }
 public enum SizeEnum
 {

@@ -70,7 +70,6 @@ public class BuildPipeline
         List<IAssetGenerator> generators =
         [
             new CssResetGenerator(_context),
-            new TokensCssGenerator(_context),
             new ThemesCssGenerator(_context),
             new ComponentsCssGenerator(_context),
             new TransitionsCssGenerator(_context),

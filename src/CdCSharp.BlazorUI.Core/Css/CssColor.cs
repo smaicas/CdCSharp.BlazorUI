@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace CdCSharp.BlazorUI.Core.Css;
@@ -37,7 +36,7 @@ public enum ColorOutputFormats
 
 public class CssColorVariant
 {
-    private const double VariantModifier = 0.050;
+    private const double VariantModifier = 0.030; // 5% per alteration step
 
     public CssColorVariant(Modifier modifier, double alteration)
     {
@@ -222,24 +221,23 @@ public class CssColor : IEquatable<CssColor>
     }
 
     /// <summary>
-    /// Constructs a CssColor from System.Drawing.Color and optional variant
+    /// Constructs a CssColor from RGBA and optional variant
     /// </summary>
-    public CssColor(Color color, CssColorVariant? colorVariant)
+    public CssColor(byte r, byte g, byte b, byte a, CssColorVariant? colorVariant = null)
+        : this(r, g, b, a)
     {
-        CssColor currentColor = new(color.R, color.G, color.B, color.A);
-
         if (colorVariant != null)
         {
-            currentColor = colorVariant.Mode switch
+            CssColor modifiedColor = colorVariant.Mode switch
             {
-                CssColorVariant.Modifier.Darken => currentColor.ColorDarken(colorVariant.Alteration),
-                CssColorVariant.Modifier.Lighten => currentColor.ColorLighten(colorVariant.Alteration),
+                CssColorVariant.Modifier.Darken => ColorDarken(colorVariant.Alteration),
+                CssColorVariant.Modifier.Lighten => ColorLighten(colorVariant.Alteration),
                 _ => throw new ArgumentOutOfRangeException(nameof(colorVariant), colorVariant, null),
             };
-        }
 
-        _valuesAsByte = new[] { currentColor.R, currentColor.G, currentColor.B, currentColor.A };
-        CalculateHsl();
+            _valuesAsByte = new[] { modifiedColor.R, modifiedColor.G, modifiedColor.B, modifiedColor.A };
+            CalculateHsl();
+        }
     }
 
     /// <summary>
@@ -454,6 +452,65 @@ public class CssColor : IEquatable<CssColor>
     }
 
     #endregion Methods
+
+    #region Contrast Helpers
+
+    private static CssColor? _contrastBlack;
+    private static CssColor? _contrastWhite;
+
+    /// <summary>
+    /// Allows setting a custom "black" for contrast calculations (optional).
+    /// </summary>
+    public static void SetContrastBlack(CssColor black) => _contrastBlack = black;
+
+    /// <summary>
+    /// Allows setting a custom "white" for contrast calculations (optional).
+    /// </summary>
+    public static void SetContrastWhite(CssColor white) => _contrastWhite = white;
+
+    /// <summary>
+    /// Returns the best contrast color (black or white) for this color.
+    /// Uses CSS variables with fallback if no custom values are set.
+    /// </summary>
+    public CssColor GetBestContrast()
+    {
+        // Black and white with optional custom overrides
+        CssColor black = _contrastBlack ?? new CssColor($"var({FeatureDefinitions.CssVariables.Black}, #000000)", true);
+        CssColor white = _contrastWhite ?? new CssColor($"var({FeatureDefinitions.CssVariables.White}, #ffffff)", true);
+
+        double L = GetRelativeLuminance();
+
+        // WCAG contrast formula
+        double contrastWithBlack = (L + 0.05) / 0.05;
+        double contrastWithWhite = (1.05) / (L + 0.05);
+
+        return contrastWithWhite > contrastWithBlack ? white : black;
+    }
+
+    /// <summary>
+    /// Returns the relative luminance of the current color (0 = dark, 1 = light)
+    /// using the WCAG 2.1 formula.
+    /// </summary>
+    public double GetRelativeLuminance()
+    {
+        if (_isCssVariable || _valuesAsByte == null)
+        {
+            // For Css variables, we cannot compute luminance, return a neutral value
+            return 0.5;
+        }
+
+        double RsRGB = R / 255.0;
+        double GsRGB = G / 255.0;
+        double BsRGB = B / 255.0;
+
+        double Rlin = RsRGB <= 0.03928 ? RsRGB / 12.92 : Math.Pow((RsRGB + 0.055) / 1.055, 2.4);
+        double Glin = GsRGB <= 0.03928 ? GsRGB / 12.92 : Math.Pow((GsRGB + 0.055) / 1.055, 2.4);
+        double Blin = BsRGB <= 0.03928 ? BsRGB / 12.92 : Math.Pow((BsRGB + 0.055) / 1.055, 2.4);
+
+        return 0.2126 * Rlin + 0.7152 * Glin + 0.0722 * Blin;
+    }
+
+    #endregion
 
     #region Helper
 

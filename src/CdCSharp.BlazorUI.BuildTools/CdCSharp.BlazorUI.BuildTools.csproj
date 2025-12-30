@@ -15,8 +15,4 @@
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Gens\" />
-	</ItemGroup>
-
 </Project>
