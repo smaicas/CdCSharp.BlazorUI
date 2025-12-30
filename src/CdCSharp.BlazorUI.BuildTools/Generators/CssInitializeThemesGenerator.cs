@@ -63,12 +63,12 @@ public static class CssInitializeTheme
           background-color: var(--palette-warning);
         }
 
-        .ui-color-danger {
-          color: var(--palette-danger);
+        .ui-color-error {
+          color: var(--palette-error);
         }
 
-        .ui-bg-danger {
-          background-color: var(--palette-danger);
+        .ui-bg-error {
+          background-color: var(--palette-error);
         }
 
         .ui-color-info {

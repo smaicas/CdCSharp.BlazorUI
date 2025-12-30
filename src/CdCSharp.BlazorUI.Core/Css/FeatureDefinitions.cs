@@ -104,4 +104,24 @@ public static class FeatureDefinitions
         public const string LoadingDot = "ui-loading-dot";
         public const string LoadingPulse = "ui-loading-pulse";
     }
+
+    /// <summary>
+    /// Size values
+    /// </summary>
+    public static class SizeValues
+    {
+        public const string Small = "small";
+        public const string Medium = "medium";
+        public const string Large = "large";
+    }
+
+    /// <summary>
+    /// Density values
+    /// </summary>
+    public static class DensityValues
+    {
+        public const string Comfortable = "comfortable";
+        public const string Standard = "standard";
+        public const string Compact = "compact";
+    }
 }

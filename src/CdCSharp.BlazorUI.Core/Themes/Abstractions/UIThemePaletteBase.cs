@@ -35,6 +35,10 @@ public abstract class UIThemePaletteBase
     public CssColor Secondary { get; set; } = new("#A78BFA");
     public CssColor SecondaryContrast { get; set; } = new("#0F172A");
 
+    // Base colors for contrast calculations
+    public CssColor Black { get; set; } = new("#010101");
+    public CssColor White { get; set; } = new("#e9e9e9");
+
     /// <summary>
     /// Gets theme-specific CSS variables (e.g., --dark-background, --light-background)
     /// </summary>

@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+using CdCSharp.BlazorUI.Core.Css;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -18,9 +19,7 @@ public class ComponentsCssGenerator : IAssetGenerator
 
     public async Task GenerateAsync()
     {
-        // Use existing generator
         string css = CssCommonClasses.GetCss();
-
         string outputPath = _context.GetFullPath("CssBundle/common-classes.css");
         await File.WriteAllTextAsync(outputPath, css);
     }
@@ -30,57 +29,68 @@ public static class CssCommonClasses
 {
     public static string GetCss()
     {
-        string css = $@"
+        StringBuilder sb = new();
+
+        sb.AppendLine(@"
 /* ========================================
    Common Component Classes
    Auto-generated - Do not edit manually
    ======================================== */
 
-ui-component {{
+ui-component {
     display: inline-flex;
-    /* Color variables with fallback to palette */
-    background-color: var(--ui-bg-color, inherit);
-    color: var(--ui-color, inherit);
-}}
+    /* Color variables with fallback to palette */");
 
-/* Size Classes */
-ui-component[data-ui-size=""small""] {{
-    font-size: 0.875rem;
-}}
+        sb.AppendLine($"    background-color: var({FeatureDefinitions.CssVariables.BackgroundColor}, inherit);");
+        sb.AppendLine($"    color: var({FeatureDefinitions.CssVariables.Color}, inherit);");
+        sb.AppendLine(@"}
 
-ui-component[data-ui-size=""medium""] {{
-    font-size: 1rem;
-}}
+/* Size Classes */");
 
-ui-component[data-ui-size=""large""] {{
-    font-size: 1.125rem;
-}}
+        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Small}\"] {{");
+        sb.AppendLine("    font-size: 0.875rem;");
+        sb.AppendLine("}");
+        sb.AppendLine();
 
-/* Density Classes */
-ui-component[data-ui-density=""comfortable""] {{
-    --ui-density-spacing-multiplier: 1.5;
-}}
+        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Medium}\"] {{");
+        sb.AppendLine("    font-size: 1rem;");
+        sb.AppendLine("}");
+        sb.AppendLine();
 
-ui-component[data-ui-density=""standard""] {{
-    --ui-density-spacing-multiplier: 1;
-}}
+        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Large}\"] {{");
+        sb.AppendLine("    font-size: 1.125rem;");
+        sb.AppendLine("}");
 
-ui-component[data-ui-density=""compact""] {{
-    --ui-density-spacing-multiplier: 0.75;
-}}
+        sb.AppendLine(@"
+/* Density Classes */");
 
+        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Comfortable}\"] {{");
+        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 1.5;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Standard}\"] {{");
+        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 1;");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Compact}\"] {{");
+        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 0.75;");
+        sb.AppendLine("}");
+
+        sb.AppendLine($@"
 /* Full Width */
-ui-component[data-ui-fullwidth=""true""] {{
+ui-component[{FeatureDefinitions.DataAttributes.FullWidth}=""true""] {{
     width: 100%;
 }}
 
 /* Loading State */
-ui-component[data-ui-loading=""true""] {{
+ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""] {{
     pointer-events: none;
     position: relative;
 }}
 
-ui-component[data-ui-loading=""true""]::after {{
+ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
     content: '';
     position: absolute;
     inset: 0;
@@ -89,60 +99,104 @@ ui-component[data-ui-loading=""true""]::after {{
 }}
 
 @media (prefers-color-scheme: dark) {{
-    ui-component[data-ui-loading=""true""]::after {{
+    ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
         background-color: rgba(0, 0, 0, 0.6);
     }}
 }}
 
-/* Elevation */
-{GenerateElevationClasses()}
+/* Elevation */");
 
+        sb.Append(GenerateElevationClasses());
+
+        sb.AppendLine($@"
 /* Ripple Effect */
-ui-component[data-ui-ripple=""true""] {{
+ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] {{
     position: relative;
     overflow: hidden;
 }}
 
-ui-component[data-ui-ripple=""true""] .ui-ripple {{
+ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
-    animation: ui-ripple-animation var(--ui-ripple-duration, 600ms) ease-out;
-    background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.5));
+    animation: ui-ripple-animation var({FeatureDefinitions.CssVariables.RippleDuration}, 600ms) ease-out;
+    background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(255, 255, 255, 0.5));
     pointer-events: none;
 }}
 
-[data-theme=""dark""] ui-component[data-ui-ripple=""true""] .ui-ripple {{
-    background-color: var(--ui-ripple-color, rgba(255, 255, 255, 0.5));
+[data-theme=""dark""] ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
+    background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(255, 255, 255, 0.5));
 }}
 
-[data-theme=""light""] ui-component[data-ui-ripple=""true""] .ui-ripple {{
-    background-color: var(--ui-ripple-color, rgba(0, 0, 0, 0.5));
+[data-theme=""light""] ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
+    background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(0, 0, 0, 0.5));
 }}
 
 /* Border styles using CSS variables */
 ui-component {{
-    border-width: var(--ui-border-width, 0);
-    border-style: var(--ui-border-style, solid);
-    border-color: var(--ui-border-color, transparent);
-    border-radius: var(--ui-border-radius, 0);
+    border-width: var({FeatureDefinitions.CssVariables.BorderWidth}, 0);
+    border-style: var({FeatureDefinitions.CssVariables.BorderStyle}, solid);
+    border-color: var({FeatureDefinitions.CssVariables.BorderColor}, transparent);
+    border-radius: var({FeatureDefinitions.CssVariables.BorderRadius}, 0);
     
     /* Individual borders override */
-    border-top-width: var(--ui-border-top-width, var(--ui-border-width, 0));
-    border-top-style: var(--ui-border-top-style, var(--ui-border-style, solid));
-    border-top-color: var(--ui-border-top-color, var(--ui-border-color, transparent));
+    border-top-width: var({FeatureDefinitions.CssVariables.BorderTopWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
+    border-top-style: var({FeatureDefinitions.CssVariables.BorderTopStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
+    border-top-color: var({FeatureDefinitions.CssVariables.BorderTopColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
     
-    border-right-width: var(--ui-border-right-width, var(--ui-border-width, 0));
-    border-right-style: var(--ui-border-right-style, var(--ui-border-style, solid));
-    border-right-color: var(--ui-border-right-color, var(--ui-border-color, transparent));
+    border-right-width: var({FeatureDefinitions.CssVariables.BorderRightWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
+    border-right-style: var({FeatureDefinitions.CssVariables.BorderRightStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
+    border-right-color: var({FeatureDefinitions.CssVariables.BorderRightColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
     
-    border-bottom-width: var(--ui-border-bottom-width, var(--ui-border-width, 0));
-    border-bottom-style: var(--ui-border-bottom-style, var(--ui-border-style, solid));
-    border-bottom-color: var(--ui-border-bottom-color, var(--ui-border-color, transparent));
+    border-bottom-width: var({FeatureDefinitions.CssVariables.BorderBottomWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
+    border-bottom-style: var({FeatureDefinitions.CssVariables.BorderBottomStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
+    border-bottom-color: var({FeatureDefinitions.CssVariables.BorderBottomColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
     
-    border-left-width: var(--ui-border-left-width, var(--ui-border-width, 0));
-    border-left-style: var(--ui-border-left-style, var(--ui-border-style, solid));
-    border-left-color: var(--ui-border-left-color, var(--ui-border-color, transparent));
+    border-left-width: var({FeatureDefinitions.CssVariables.BorderLeftWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
+    border-left-style: var({FeatureDefinitions.CssVariables.BorderLeftStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
+    border-left-color: var({FeatureDefinitions.CssVariables.BorderLeftColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
+}}
+
+/* Generic SVG styles */
+ui-component svg {{
+    pointer-events: none;
+    fill: currentColor;
+}}
+
+/* SVG sizing based on component size */
+ui-component[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Small}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+    width: 1rem;
+    height: 1rem;
+}}
+
+ui-component[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Medium}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+    width: 1.25rem;
+    height: 1.25rem;
+}}
+
+ui-component[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Large}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+    width: 1.5rem;
+    height: 1.5rem;
+}}
+
+/* Generic disabled states for form controls */
+ui-component[{FeatureDefinitions.DataAttributes.Disabled}=""true""] input,
+ui-component[{FeatureDefinitions.DataAttributes.Disabled}=""true""] textarea,
+ui-component[{FeatureDefinitions.DataAttributes.Disabled}=""true""] select {{
+    cursor: not-allowed;
+    opacity: 0.6;
+}}
+
+ui-component[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] input,
+ui-component[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] textarea,
+ui-component[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] select {{
+    cursor: default;
+}}
+
+ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] input,
+ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] textarea,
+ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] select {{
+    border-color: var(--palette-error);
 }}
 
 @keyframes ui-ripple-animation {{
@@ -151,9 +205,9 @@ ui-component {{
         opacity: 0;
     }}
 }}
-";
+");
 
-        return css;
+        return sb.ToString();
     }
 
     private static string GenerateElevationClasses()
@@ -164,14 +218,14 @@ ui-component {{
         {
             if (i == 0)
             {
-                sb.AppendLine($"ui-component[data-ui-elevation=\"{i}\"] {{");
+                sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
                 sb.AppendLine("    box-shadow: none;");
                 sb.AppendLine("}");
             }
             else
             {
                 (string umbra, string penumbra, string ambient) = GetElevationValues(i);
-                sb.AppendLine($"ui-component[data-ui-elevation=\"{i}\"] {{");
+                sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
                 sb.AppendLine($"    box-shadow: {umbra}, {penumbra}, {ambient};");
                 sb.AppendLine("}");
             }

@@ -3,6 +3,7 @@
     flex-direction: column;
 }
 
+/* Component-specific BEM classes */
 .ui-input__label {
     display: block;
     margin-bottom: 0.25rem;
@@ -19,6 +20,27 @@
     position: relative;
 }
 
+.ui-input__loading {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.ui-input__validation {
+    color: var(--palette-error);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.ui-input__helper-text {
+    color: inherit;
+    opacity: 0.7;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Base input styles */
 ui-component[data-ui-component="input-text"] input {
     width: 100%;
     font-family: inherit;
@@ -90,58 +112,9 @@ ui-component[data-ui-component="input-text"][data-ui-variant="standard"] input {
         border-bottom-color: var(--palette-primary);
         border-bottom-width: 2px;
     }
-
-/* States using data attributes from FeatureDefinitions */
-ui-component[data-ui-disabled="true"] input {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-ui-component[data-ui-readonly="true"] input {
-    cursor: default;
-}
-
-ui-component[data-ui-error="true"] input {
-    border-color: var(--palette-error);
-}
-
-/* Loading */
-.ui-input__loading {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-/* Validation */
-.ui-input__validation {
-    color: var(--palette-error);
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-}
-
-/* Helper Text */
-.ui-input__helper-text {
-    color: inherit;
-    opacity: 0.7;
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-}
-
-/* Density adjustments */
-ui-component[data-ui-density="comfortable"] input {
-    padding: 12px 16px;
-}
-
-ui-component[data-ui-density="compact"] input {
-    padding: 4px 8px;
-}
-
-/* Size adjustments */
-ui-component[data-ui-size="small"] input {
-    font-size: 0.875rem;
-}
-
-ui-component[data-ui-size="large"] input {
-    font-size: 1.125rem;
+/* Component-specific density with multiplier */
+ui-component[data-ui-component="input-text"] input {
+    --ui-input-padding-y: 8px;
+    --ui-input-padding-x: 12px;
+    padding: calc(var(--ui-input-padding-y) * var(--ui-density-spacing-multiplier, 1)) calc(var(--ui-input-padding-x) * var(--ui-density-spacing-multiplier, 1));
 }

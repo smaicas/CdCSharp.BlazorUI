@@ -475,8 +475,8 @@ public class CssColor : IEquatable<CssColor>
     public CssColor GetBestContrast()
     {
         // Black and white with optional custom overrides
-        CssColor black = _contrastBlack ?? new CssColor($"var({FeatureDefinitions.CssVariables.Black}, #000000)", true);
-        CssColor white = _contrastWhite ?? new CssColor($"var({FeatureDefinitions.CssVariables.White}, #ffffff)", true);
+        CssColor black = _contrastBlack ?? new CssColor("var(--palette-black, #000000)", true);
+        CssColor white = _contrastWhite ?? new CssColor("var(--palette-white, #ffffff)", true);
 
         double L = GetRelativeLuminance();
 
