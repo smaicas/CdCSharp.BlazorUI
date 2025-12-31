@@ -1,7 +1,6 @@
 ﻿@page "/features/elevation"
+@using CdCSharp.BlazorUI.Abstractions.Behaviors.Transitions
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Transitions
-@using CdCSharp.BlazorUI.Components.Generic.Button
 
 <PageTitle>Elevation - CdCSharp.BlazorUI</PageTitle>
 
@@ -34,11 +33,11 @@
         <ComponentDemo Code="@elevationCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="No Elevation" Elevation="0" />
-                    <UIButton Text="Low" Elevation="2" />
-                    <UIButton Text="Medium" Elevation="4" />
-                    <UIButton Text="High" Elevation="8" />
-                    <UIButton Text="Very High" Elevation="16" />
+                    <BUIButton Text="No Elevation" Elevation="0" />
+                    <BUIButton Text="Low" Elevation="2" />
+                    <BUIButton Text="Medium" Elevation="4" />
+                    <BUIButton Text="High" Elevation="8" />
+                    <BUIButton Text="Very High" Elevation="16" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -87,7 +86,7 @@
                         <p>This card elevates on hover using transitions.</p>
                     </div>
 
-                    <UIButton Text="Elevating Button"
+                    <BUIButton Text="Elevating Button"
                               Elevation="2"
                               Transitions="@transitions" />
                 </div>
@@ -121,16 +120,16 @@
 
 @code {
 
-    UITransitions transitions = UITransitionPresets.Create()
+    BUITransitions transitions = BUITransitionPresets.Create()
                                      .OnHover()
                                      .Shadow("0 8px 16px rgba(0, 0, 0, 0.2)")
                                      .Build();
 
-    private string elevationCode = @"<UIButton Text=""No Elevation"" Elevation=""0"" />
-<UIButton Text=""Low"" Elevation=""2"" />
-<UIButton Text=""Medium"" Elevation=""4"" />
-<UIButton Text=""High"" Elevation=""8"" />
-<UIButton Text=""Very High"" Elevation=""16"" />";
+    private string elevationCode = @"<BUIButton Text=""No Elevation"" Elevation=""0"" />
+<BUIButton Text=""Low"" Elevation=""2"" />
+<BUIButton Text=""Medium"" Elevation=""4"" />
+<BUIButton Text=""High"" Elevation=""8"" />
+<BUIButton Text=""Very High"" Elevation=""16"" />";
 
     private string interactiveCode = @"<!-- Card with hover elevation -->
 <div class=""card ui-elevation-2 ui-has-transitions ui-transition-hover-lift"">
@@ -139,9 +138,9 @@
 </div>
 
 <!-- Button with dynamic elevation -->
-<UIButton Text=""Elevating Button""
+<BUIButton Text=""Elevating Button""
          Elevation=""2""
-         Transitions=""@UITransitionPresets.Create()
+         Transitions=""@BUITransitionPresets.Create()
              .OnHover()
              .Shadow(""0 8px 16px rgba(0,0,0,0.2)"")
              .Build()"" />";

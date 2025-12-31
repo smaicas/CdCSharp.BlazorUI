@@ -1,0 +1,45 @@
+﻿@using CdCSharp.BlazorUI.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components
+
+@inherits BUIVariantComponentBase<BUISvgIcon, BUISvgIconVariant>
+@implements IHasSize
+@implements IHasColor
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter][EditorRequired] public required string Icon { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public string ViewBox { get; set; } = "0 0 24 24";
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    public override BUISvgIconVariant DefaultVariant => BUISvgIconVariant.Default;
+
+    protected override Dictionary<BUISvgIconVariant, Func<BUISvgIcon, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [BUISvgIconVariant.Default] = b => b.RenderDefault(),
+    };
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <ui-component @attributes="@ComputedAttributes"
+                      data-ui-component="svg-icon"
+                      @onclick="@OnClick">
+            <svg focusable="false"
+                 viewBox="@ViewBox"
+                 aria-hidden="true">
+                @if (Title != null)
+                {
+                    <title>@Title</title>
+                }
+                @((MarkupString)Icon)
+            </svg>
+        </ui-component>
+    };
+}

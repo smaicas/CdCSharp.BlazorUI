@@ -1,10 +1,5 @@
 ﻿@page "/components/loading"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Loading
-@using CdCSharp.BlazorUI.Components.Features.Common
-@using CdCSharp.BlazorUI.Components.Generic.Button
-@using CdCSharp.BlazorUI.Core.Theming
-@using CdCSharp.BlazorUI.Css
 
 <PageTitle>Loading Indicators - CdCSharp.BlazorUI</PageTitle>
 
@@ -21,23 +16,23 @@
             <Demo>
                 <div class="loading-grid">
                     <div class="loading-item">
-                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" />
+                        <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" />
                         <span>Spinner</span>
                     </div>
                     <div class="loading-item">
-                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.Dots" />
+                        <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Dots" />
                         <span>Dots</span>
                     </div>
                     <div class="loading-item">
-                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.Pulse" />
+                        <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Pulse" />
                         <span>Pulse</span>
                     </div>
                     <div class="loading-item">
-                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.LinearIndeterminate" />
+                        <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.LinearIndeterminate" />
                         <span>LinearIndeterminate</span>
                     </div>
                     <div class="loading-item">
-                        <UILoadingIndicator Variant="UILoadingIndicatorVariant.CircularProgress" />
+                        <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" />
                         <span>CircularProgress</span>
                     </div>
                 </div>
@@ -50,9 +45,9 @@
         <ComponentDemo Code="@sizesCode">
             <Demo>
                 <div class="demo-row">
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Size="SizeEnum.Small" />
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Size="SizeEnum.Medium" />
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Size="SizeEnum.Large" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="SizeEnum.Small" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="SizeEnum.Medium" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="SizeEnum.Large" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -63,10 +58,10 @@
         <ComponentDemo Code="@colorsCode">
             <Demo>
                 <div class="demo-row">
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Color="@UIColor.Blue.Default" />
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Color="@UIColor.Green.Default" />
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" Color="@UIColor.Red.Default" />
-                    <UILoadingIndicator Variant="UILoadingIndicatorVariant.Spinner" class="color-primary" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Color="@BUIColor.Blue.Default" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Color="@BUIColor.Green.Default" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Color="@BUIColor.Red.Default" />
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" class="color-primary" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -77,16 +72,16 @@
         <ComponentDemo Code="@buttonIntegrationCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Loading..." 
+                    <BUIButton Text="Loading..." 
                              IsLoading="true" 
-                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
-                    <UIButton Text="Saving..." 
+                             LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
+                    <BUIButton Text="Saving..." 
                              IsLoading="true" 
-                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Dots" 
-                             Color="@UIColor.Green.Default" />
-                    <UIButton Text="Processing..." 
+                             LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" 
+                             Color="@BUIColor.Green.Default" />
+                    <BUIButton Text="Processing..." 
                              IsLoading="true" 
-                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Pulse" 
+                             LoadingIndicatorVariant="BUILoadingIndicatorVariant.Pulse" 
                              Size="SizeEnum.Large" />
                 </div>
             </Demo>
@@ -101,7 +96,7 @@
                     @if (_isLoading)
                     {
                         <div class="loading-overlay">
-                            <UILoadingIndicator Variant="UILoadingIndicatorVariant.CircularProgress" Size="SizeEnum.Large" />
+                            <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" Size="SizeEnum.Large" />
                             <p>Loading data...</p>
                         </div>
                     }
@@ -112,10 +107,10 @@
                             <p>This content appears after loading.</p>
                         </div>
                     }
-                    <UIButton Text="@(_isLoading ? "Loading..." : "Simulate Load")" 
+                    <BUIButton Text="@(_isLoading ? "Loading..." : "Simulate Load")" 
                              OnClick="SimulateLoading" 
                              IsLoading="_isLoading"
-                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Dots" />
+                             LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -144,28 +139,28 @@
         _isLoading = false;
     }
 
-    private string variantsCode = @"<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Dots"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Pulse"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Bar"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Ring"" />";
+    private string variantsCode = @"<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Dots"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Pulse"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Bar"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Ring"" />";
 
-    private string sizesCode = @"<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Small"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Medium"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Large"" />";
+    private string sizesCode = @"<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Small"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Medium"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" Size=""SizeEnum.Large"" />";
 
-    private string colorsCode = @"<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Color=""@UIColor.Blue"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Color=""@UIColor.Green"" />
-<UILoadingIndicator Variant=""UILoadingIndicatorVariant.Spinner"" Color=""var(--palette-primary)"" />";
+    private string colorsCode = @"<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" Color=""@UIColor.Blue"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" Color=""@UIColor.Green"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" Color=""var(--palette-primary)"" />";
 
-    private string buttonIntegrationCode = @"<UIButton Text=""Loading..."" 
+    private string buttonIntegrationCode = @"<BUIButton Text=""Loading..."" 
          IsLoading=""true"" 
-         LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />";
+         LoadingIndicatorVariant=""BUILoadingIndicatorVariant.Spinner"" />";
 
     private string loadingStateCode = @"@if (_isLoading)
 {
     <div class=""loading-overlay"">
-        <UILoadingIndicator Variant=""UILoadingIndicatorVariant.Ring"" Size=""SizeEnum.Large"" />
+        <BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Ring"" Size=""SizeEnum.Large"" />
         <p>Loading data...</p>
     </div>
 }
@@ -181,7 +176,7 @@ else
 
     private List<LoadingProperty> LoadingProperties = new()
     {
-        new("Variant", "UILoadingIndicatorVariant", "Spinner", "The visual style of the loading indicator"),
+        new("Variant", "BUILoadingIndicatorVariant", "Spinner", "The visual style of the loading indicator"),
         new("Size", "SizeEnum", "Medium", "Size of the loading indicator"),
         new("Color", "string?", "null", "Color of the loading indicator (CSS color or UIColor)"),
     };

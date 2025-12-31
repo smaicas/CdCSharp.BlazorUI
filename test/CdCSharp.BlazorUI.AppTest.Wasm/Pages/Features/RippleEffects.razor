@@ -1,9 +1,6 @@
 ﻿@page "/features/ripple-effects"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Generic.Button
 @using CdCSharp.BlazorUI.Core.Css
-@using CdCSharp.BlazorUI.Core.Theming
-@using CdCSharp.BlazorUI.Css
 
 <PageTitle>Ripple Effects - CdCSharp.BlazorUI</PageTitle>
 
@@ -19,8 +16,8 @@
         <ComponentDemo Code="@basicRippleCode">
             <Demo>
                 <div class="ripple-demo">
-                    <UIButton Text="Click for Ripple" DisableRipple="false" />
-                    <UIButton Text="No Ripple" DisableRipple="true" />
+                    <BUIButton Text="Click for Ripple" DisableRipple="false" />
+                    <BUIButton Text="No Ripple" DisableRipple="true" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -31,11 +28,11 @@
         <ComponentDemo Code="@rippleColorsCode">
             <Demo>
                 <div class="ripple-demo">
-                    <UIButton Text="Default Ripple" DisableRipple="false" />
-                    <UIButton Text="Blue Ripple" DisableRipple="false" RippleColor="@UIColor.Blue.Default" />
-                    <UIButton Text="Green Ripple" DisableRipple="false" RippleColor="@UIColor.Green.Default" />
-                    <UIButton Text="Red Ripple" DisableRipple="false" RippleColor="@UIColor.Red.Default" />
-                    <UIButton Text="Custom Color" DisableRipple="false" RippleColor="@(new CssColor("#FF6B6B"))" />
+                    <BUIButton Text="Default Ripple" DisableRipple="false" />
+                    <BUIButton Text="Blue Ripple" DisableRipple="false" RippleColor="@BUIColor.Blue.Default" />
+                    <BUIButton Text="Green Ripple" DisableRipple="false" RippleColor="@BUIColor.Green.Default" />
+                    <BUIButton Text="Red Ripple" DisableRipple="false" RippleColor="@BUIColor.Red.Default" />
+                    <BUIButton Text="Custom Color" DisableRipple="false" RippleColor="@(new CssColor("#FF6B6B"))" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -46,9 +43,9 @@
         <ComponentDemo Code="@rippleDurationCode">
             <Demo>
                 <div class="ripple-demo">
-                    <UIButton Text="Fast (300ms)" DisableRipple="false" RippleDuration="300" />
-                    <UIButton Text="Normal (600ms)" DisableRipple="false" RippleDuration="600" />
-                    <UIButton Text="Slow (1000ms)" DisableRipple="false" RippleDuration="1000" />
+                    <BUIButton Text="Fast (300ms)" DisableRipple="false" RippleDuration="300" />
+                    <BUIButton Text="Normal (600ms)" DisableRipple="false" RippleDuration="600" />
+                    <BUIButton Text="Slow (1000ms)" DisableRipple="false" RippleDuration="1000" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -143,17 +140,17 @@
 </div>
 
 @code {
-    private string basicRippleCode = @"<UIButton Text=""Click for Ripple"" DisableRipple=""false"" />
-<UIButton Text=""No Ripple"" DisableRipple=""true"" />";
+    private string basicRippleCode = @"<BUIButton Text=""Click for Ripple"" DisableRipple=""false"" />
+<BUIButton Text=""No Ripple"" DisableRipple=""true"" />";
 
-    private string rippleColorsCode = @"<UIButton Text=""Default Ripple"" DisableRipple=""false"" />
-<UIButton Text=""Blue Ripple"" DisableRipple=""false"" RippleColor=""@UIColor.Blue"" />
-<UIButton Text=""Green Ripple"" DisableRipple=""false"" RippleColor=""@UIColor.Green"" />
-<UIButton Text=""Custom Color"" DisableRipple=""false"" RippleColor=""@(new CssColor(""#FF6B6B""))"" />";
+    private string rippleColorsCode = @"<BUIButton Text=""Default Ripple"" DisableRipple=""false"" />
+<BUIButton Text=""Blue Ripple"" DisableRipple=""false"" RippleColor=""@UIColor.Blue"" />
+<BUIButton Text=""Green Ripple"" DisableRipple=""false"" RippleColor=""@UIColor.Green"" />
+<BUIButton Text=""Custom Color"" DisableRipple=""false"" RippleColor=""@(new CssColor(""#FF6B6B""))"" />";
 
-    private string rippleDurationCode = @"<UIButton Text=""Fast (300ms)"" DisableRipple=""false"" RippleDuration=""300"" />
-<UIButton Text=""Normal (600ms)"" DisableRipple=""false"" RippleDuration=""600"" />
-<UIButton Text=""Slow (1000ms)"" DisableRipple=""false"" RippleDuration=""1000"" />";
+    private string rippleDurationCode = @"<BUIButton Text=""Fast (300ms)"" DisableRipple=""false"" RippleDuration=""300"" />
+<BUIButton Text=""Normal (600ms)"" DisableRipple=""false"" RippleDuration=""600"" />
+<BUIButton Text=""Slow (1000ms)"" DisableRipple=""false"" RippleDuration=""1000"" />";
 
     private string customImplementationCode = @"@implements IHasRipple
 @implements IJsBehavior

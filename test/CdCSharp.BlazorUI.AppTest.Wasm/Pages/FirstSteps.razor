@@ -1,14 +1,7 @@
 ﻿@page "/getting-started/first-steps"
+@using CdCSharp.BlazorUI.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Abstractions.Behaviors.Transitions
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Common
-@using CdCSharp.BlazorUI.Components.Features.Transitions
-@using CdCSharp.BlazorUI.Components.Generic.Button
-@using CdCSharp.BlazorUI.Components.Generic.Svg
-@using CdCSharp.BlazorUI.Components.Features.Loading
-@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
-@using CdCSharp.BlazorUI.Css
-@using CdCSharp.BlazorUI.Media.Icons
-@using CdCSharp.BlazorUI.Core.Theming
 
 <PageTitle>First Steps - CdCSharp.BlazorUI</PageTitle>
 
@@ -25,7 +18,7 @@
         
         <ComponentDemo Code="@firstButtonCode">
             <Demo>
-                <UIButton Text="Hello BlazorUI!" 
+                <BUIButton Text="Hello BlazorUI!" 
                          OnClick="@(() => _clickCount++)" />
                 <p style="margin-top: 1rem;">Button clicked: @_clickCount times</p>
             </Demo>
@@ -39,15 +32,15 @@
         <ComponentDemo Code="@enhancedButtonCode">
             <Demo>
                 <div class="demo-buttons">
-                    <UIButton Text="Save" 
-                             LeadingIcon="@UIIcons.MaterialIconsRound.i_save"
+                    <BUIButton Text="Save" 
+                             LeadingIcon="@BUIIcons.MaterialIconsRound.i_save"
                              OnClick="SaveData"
                              IsLoading="@_isSaving"
-                             LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
+                             LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
                     
-                    <UIButton Text="Delete" 
-                              TrailingIcon="@UIIcons.MaterialIconsRound.i_restore_from_trash"
-                             Color="@UIColor.Red.Default" />
+                    <BUIButton Text="Delete" 
+                              TrailingIcon="@BUIIcons.MaterialIconsRound.i_restore_from_trash"
+                             Color="@BUIColor.Red.Default" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -64,28 +57,28 @@
                     
                     <div class="form-group">
                         <label>Theme Preference</label>
-                        <UIThemeSwitch />
+                        <BUIThemeSelector />
                     </div>
                     
                     <div class="form-group">
                         <label>Display Density</label>
                         <div class="button-group">
-                            <UIButton Text="Comfortable" 
+                            <BUIButton Text="Comfortable" 
                                      Density="DensityEnum.Comfortable"
                                      OnClick="@(() => _selectedDensity = DensityEnum.Comfortable)" />
-                            <UIButton Text="Standard" 
+                            <BUIButton Text="Standard" 
                                      Density="DensityEnum.Standard"
                                      OnClick="@(() => _selectedDensity = DensityEnum.Standard)" />
-                            <UIButton Text="Compact" 
+                            <BUIButton Text="Compact" 
                                      Density="DensityEnum.Compact"
                                      OnClick="@(() => _selectedDensity = DensityEnum.Compact)" />
                         </div>
                     </div>
                     
                     <div class="form-actions">
-                        <UIButton Text="Save Settings" 
-                                 LeadingIcon="@UIIcons.MaterialIconsRound.i_save"
-                                 Transitions="@UITransitionPresets.HoverLift"
+                        <BUIButton Text="Save Settings" 
+                                 LeadingIcon="@BUIIcons.MaterialIconsRound.i_save"
+                                 Transitions="@BUITransitionPresets.HoverLift"
                                  OnClick="SaveSettings" />
                     </div>
                 </div>
@@ -104,13 +97,13 @@
                     {
                         <div class="custom-card ui-elevation-2 ui-has-transitions ui-transition-hover-lift">
                             <div class="card-icon">
-                                <UISvgIcon Icon="@card.Icon" Size="SizeEnum.Large" class="color-primary" />
+                                <BUISvgIcon Icon="@card.Icon" Size="SizeEnum.Large" class="color-primary" />
                             </div>
                             <h4>@card.Title</h4>
                             <p>@card.Description</p>
-                            <UIButton Text="Learn More" 
+                            <BUIButton Text="Learn More" 
                                      Size="SizeEnum.Small"
-                                     Transitions="@UITransitionPresets.HoverScale" />
+                                     Transitions="@BUITransitionPresets.HoverScale" />
                         </div>
                     }
                 </div>
@@ -125,14 +118,14 @@
         <ComponentDemo Code="@transitionsExampleCode">
             <Demo>
                 <div class="transition-examples">
-                    <UIButton Text="Hover to Scale" 
-                             Transitions="@UITransitionPresets.HoverScale" />
+                    <BUIButton Text="Hover to Scale" 
+                             Transitions="@BUITransitionPresets.HoverScale" />
                     
-                    <UIButton Text="Hover to Lift" 
-                             Transitions="@UITransitionPresets.HoverLift"
+                    <BUIButton Text="Hover to Lift" 
+                             Transitions="@BUITransitionPresets.HoverLift"
                              Elevation="2" />
                     
-                    <UIButton Text="Custom Animation" 
+                    <BUIButton Text="Custom Animation" 
                              Transitions="@_customTransition" />
                 </div>
             </Demo>
@@ -196,7 +189,7 @@
         await Task.Delay(1000);
     }
 
-    private UITransitions _customTransition = UITransitionPresets.Create()
+    private BUITransitions _customTransition = BUITransitionPresets.Create()
         .OnHover()
             .Scale(1.05f, options => {
                 options.Duration = TimeSpan.FromMilliseconds(400);
@@ -209,33 +202,33 @@
 
     private List<CardData> _sampleCards = new()
     {
-        new(UIIcons.MaterialIconsRound.i_flashlight_on, "Fast", "Optimized for performance with minimal overhead."),
-        new(UIIcons.MaterialIconsRound.i_palette, "Beautiful", "Professional design with customizable themes."),
-        new(UIIcons.MaterialIconsRound.i_code, "Simple", "Clean API that's easy to learn and use."),
+        new(BUIIcons.MaterialIconsRound.i_flashlight_on, "Fast", "Optimized for performance with minimal overhead."),
+        new(BUIIcons.MaterialIconsRound.i_palette, "Beautiful", "Professional design with customizable themes."),
+        new(BUIIcons.MaterialIconsRound.i_code, "Simple", "Clean API that's easy to learn and use."),
     };
 
-    private string firstButtonCode = @"<UIButton Text=""Hello BlazorUI!"" 
+    private string firstButtonCode = @"<BUIButton Text=""Hello BlazorUI!"" 
          OnClick=""@(() => Console.WriteLine(\""Clicked!\""))"" />";
 
-    private string enhancedButtonCode = @"<UIButton Text=""Save"" 
-         LeadingIcon=""@UIIcons.Common.Save""
+    private string enhancedButtonCode = @"<BUIButton Text=""Save"" 
+         LeadingIcon=""@BUIIcons.Common.Save""
          OnClick=""SaveData""
          IsLoading=""@_isSaving""
          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />
 
-<UIButton Text=""Delete"" 
-         TrailingIcon=""@UIIcons.Common.Trash""
+<BUIButton Text=""Delete"" 
+         TrailingIcon=""@BUIIcons.Common.Trash""
          Color=""@UIColor.Red"" />";
 
     private string formExampleCode = @"<div class=""form-group"">
     <label>Theme Preference</label>
-    <UIThemeSwitch />
+    <BUIThemeSelector />
 </div>
 
 <div class=""form-group"">
     <label>Display Density</label>
     <div class=""button-group"">
-        <UIButton Text=""Comfortable"" 
+        <BUIButton Text=""Comfortable"" 
                  Density=""DensityEnum.Comfortable""
                  OnClick=""@(() => _selectedDensity = DensityEnum.Comfortable)""
                  Color=""@(_selectedDensity == DensityEnum.Comfortable ? \""var(--palette-primary)\"" : null)"" />
@@ -245,19 +238,19 @@
 
     private string cardComponentCode = @"<div class=""custom-card ui-elevation-2 ui-has-transitions ui-transition-hover-lift"">
     <div class=""card-icon"">
-        <UISvgIcon Icon=""@UIIcons.Common.Lightning"" Size=""SizeEnum.Large"" Color=""var(--palette-primary)"" />
+        <BUISvgIcon Icon=""@BUIIcons.Common.Lightning"" Size=""SizeEnum.Large"" Color=""var(--palette-primary)"" />
     </div>
     <h4>Fast Performance</h4>
     <p>Optimized for speed and efficiency.</p>
-    <UIButton Text=""Learn More"" Size=""SizeEnum.Small"" />
+    <BUIButton Text=""Learn More"" Size=""SizeEnum.Small"" />
 </div>";
 
     private string transitionsExampleCode = @"// Using preset transitions
-<UIButton Text=""Hover to Scale"" 
-         Transitions=""@UITransitionPresets.HoverScale"" />
+<BUIButton Text=""Hover to Scale"" 
+         Transitions=""@BUITransitionPresets.HoverScale"" />
 
 // Creating custom transitions
-private UITransitions _customTransition = UITransitionPresets.Create()
+private BUITransitions _customTransition = BUITransitionPresets.Create()
     .OnHover()
         .Scale(1.05f, options => {
             options.Duration = TimeSpan.FromMilliseconds(400);
@@ -276,10 +269,10 @@ private UITransitions _customTransition = UITransitionPresets.Create()
     <header class=""dashboard-header"">
         <h1>Dashboard</h1>
         <div class=""header-actions"">
-            <UIButton Text=""New Item"" 
-                     LeadingIcon=""@UIIcons.Common.Plus""
-                     Transitions=""@UITransitionPresets.HoverLift"" />
-            <UIThemeSwitch Variant=""UIThemeSwitchVariant.SunMoon"" />
+            <BUIButton Text=""New Item"" 
+                     LeadingIcon=""@BUIIcons.Common.Plus""
+                     Transitions=""@BUITransitionPresets.HoverLift"" />
+            <BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />
         </div>
     </header>
 
@@ -288,7 +281,7 @@ private UITransitions _customTransition = UITransitionPresets.Create()
             @foreach (var stat in Statistics)
             {
                 <div class=""stat-card ui-elevation-2"">
-                    <UISvgIcon Icon=""@stat.Icon"" Size=""SizeEnum.Large"" />
+                    <BUISvgIcon Icon=""@stat.Icon"" Size=""SizeEnum.Large"" />
                     <h3>@stat.Value</h3>
                     <p>@stat.Label</p>
                 </div>
@@ -298,13 +291,13 @@ private UITransitions _customTransition = UITransitionPresets.Create()
         <div class=""actions-section"">
             <h2>Quick Actions</h2>
             <div class=""action-buttons"">
-                <UIButton Text=""Generate Report"" 
-                         Icon=""@UIIcons.Common.Document""
+                <BUIButton Text=""Generate Report"" 
+                         Icon=""@BUIIcons.Common.Document""
                          IsLoading=""@_isGenerating""
                          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Dots"" />
                 
-                <UIButton Text=""Export Data"" 
-                         Icon=""@UIIcons.Common.Download""
+                <BUIButton Text=""Export Data"" 
+                         Icon=""@BUIIcons.Common.Download""
                          Elevation=""2"" />
             </div>
         </div>
@@ -316,9 +309,9 @@ private UITransitions _customTransition = UITransitionPresets.Create()
     
     private List<StatData> Statistics = new()
     {
-        new(\""1,234\"", \""Active Users\"", UIIcons.Common.Users),
-        new(\""567\"", \""Transactions\"", UIIcons.Common.TrendingUp),
-        new(\""89%\"", \""Success Rate\"", UIIcons.Common.CheckCircle),
+        new(\""1,234\"", \""Active Users\"", BUIIcons.Common.Users),
+        new(\""567\"", \""Transactions\"", BUIIcons.Common.TrendingUp),
+        new(\""89%\"", \""Success Rate\"", BUIIcons.Common.CheckCircle),
     };
     
     private record StatData(string Value, string Label, string Icon);

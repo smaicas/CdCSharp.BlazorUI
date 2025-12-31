@@ -1,9 +1,5 @@
 ﻿@page "/features/density"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Transitions
-@using CdCSharp.BlazorUI.Components.Generic.Button
-@using CdCSharp.BlazorUI.Components.Features.Common
-@using CdCSharp.BlazorUI.Media.Icons
 
 <PageTitle>Density - CdCSharp.BlazorUI</PageTitle>
 
@@ -22,7 +18,7 @@
                 <h4>Comfortable</h4>
                 <p>More spacing, touch-friendly, better for mobile or accessibility.</p>
                 <div class="density-demo">
-                    <UIButton Text="Comfortable Button" Density="DensityEnum.Comfortable" />
+                    <BUIButton Text="Comfortable Button" Density="DensityEnum.Comfortable" />
                     <div class="density-card ui-density-comfortable">
                         <h5>Card Content</h5>
                         <p>This card has comfortable spacing.</p>
@@ -34,7 +30,7 @@
                 <h4>Standard</h4>
                 <p>Default spacing, balanced for most use cases.</p>
                 <div class="density-demo">
-                    <UIButton Text="Standard Button" Density="DensityEnum.Standard" />
+                    <BUIButton Text="Standard Button" Density="DensityEnum.Standard" />
                     <div class="density-card ui-density-standard">
                         <h5>Card Content</h5>
                         <p>This card has standard spacing.</p>
@@ -46,7 +42,7 @@
                 <h4>Compact</h4>
                 <p>Less spacing, more content visible, good for data-dense interfaces.</p>
                 <div class="density-demo">
-                    <UIButton Text="Compact Button" Density="DensityEnum.Compact" />
+                    <BUIButton Text="Compact Button" Density="DensityEnum.Compact" />
                     <div class="density-card ui-density-compact">
                         <h5>Card Content</h5>
                         <p>This card has compact spacing.</p>
@@ -63,18 +59,18 @@
                 <div class="component-grid">
                     <div>
                         <h5>Comfortable</h5>
-                        <UIButton Text="Action" Density="DensityEnum.Comfortable" />
-                        <UIButton Text="Action" Density="DensityEnum.Comfortable" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
+                        <BUIButton Text="Action" Density="DensityEnum.Comfortable" />
+                        <BUIButton Text="Action" Density="DensityEnum.Comfortable" LeadingIcon="@BUIIcons.MaterialIconsRound.i_save" />
                     </div>
                     <div>
                         <h5>Standard</h5>
-                        <UIButton Text="Action" Density="DensityEnum.Standard" />
-                        <UIButton Text="Action" Density="DensityEnum.Standard" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
+                        <BUIButton Text="Action" Density="DensityEnum.Standard" />
+                        <BUIButton Text="Action" Density="DensityEnum.Standard" LeadingIcon="@BUIIcons.MaterialIconsRound.i_save" />
                     </div>
                     <div>
                         <h5>Compact</h5>
-                        <UIButton Text="Action" Density="DensityEnum.Compact" />
-                        <UIButton Text="Action" Density="DensityEnum.Compact" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
+                        <BUIButton Text="Action" Density="DensityEnum.Compact" />
+                        <BUIButton Text="Action" Density="DensityEnum.Compact" LeadingIcon="@BUIIcons.MaterialIconsRound.i_save" />
                     </div>
                 </div>
             </Demo>
@@ -143,15 +139,15 @@
         <ComponentDemo Code="@combinedFeaturesCode">
             <Demo>
                 <div class="feature-combination">
-                    <UIButton Text="Compact + Elevated" 
+                    <BUIButton Text="Compact + Elevated" 
                              Density="DensityEnum.Compact" 
                              Elevation="4" />
                     
-                    <UIButton Text="Comfortable + Transition" 
+                    <BUIButton Text="Comfortable + Transition" 
                              Density="DensityEnum.Comfortable" 
-                             Transitions="@UITransitionPresets.HoverScale" />
+                             Transitions="@BUITransitionPresets.HoverScale" />
                     
-                    <UIButton Text="Compact + Full Width" 
+                    <BUIButton Text="Compact + Full Width" 
                              Density="DensityEnum.Compact" 
                              FullWidth="true" />
                 </div>
@@ -162,9 +158,9 @@
 
 @code {
     private string componentComparisonCode = @"<!-- Different density levels -->
-<UIButton Text=""Action"" Density=""DensityEnum.Comfortable"" />
-<UIButton Text=""Action"" Density=""DensityEnum.Standard"" />
-<UIButton Text=""Action"" Density=""DensityEnum.Compact"" />";
+<BUIButton Text=""Action"" Density=""DensityEnum.Comfortable"" />
+<BUIButton Text=""Action"" Density=""DensityEnum.Standard"" />
+<BUIButton Text=""Action"" Density=""DensityEnum.Compact"" />";
 
     private string globalDensityCode = @"// In your App.razor or MainLayout
 <CascadingValue Value=""@DensityEnum.Compact"" Name=""DefaultDensity"">
@@ -211,15 +207,15 @@ builder.Services.AddBlazorUI(options =>
     }
 }";
 
-    private string combinedFeaturesCode = @"<UIButton Text=""Compact + Elevated"" 
+    private string combinedFeaturesCode = @"<BUIButton Text=""Compact + Elevated"" 
          Density=""DensityEnum.Compact"" 
          Elevation=""4"" />
 
-<UIButton Text=""Comfortable + Transition"" 
+<BUIButton Text=""Comfortable + Transition"" 
          Density=""DensityEnum.Comfortable"" 
-         Transitions=""@UITransitionPresets.HoverScale"" />
+         Transitions=""@BUITransitionPresets.HoverScale"" />
 
-<UIButton Text=""Compact + Full Width"" 
+<BUIButton Text=""Compact + Full Width"" 
          Density=""DensityEnum.Compact"" 
          FullWidth=""true"" />";
 }

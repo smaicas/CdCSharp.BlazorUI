@@ -1,7 +1,6 @@
 ﻿@page "/features/transitions"
+@using CdCSharp.BlazorUI.Abstractions.Behaviors.Transitions
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Transitions
-@using CdCSharp.BlazorUI.Components.Generic.Button
 
 <PageTitle>Transitions - CdCSharp.BlazorUI</PageTitle>
 
@@ -19,22 +18,22 @@
         <div class="transition-grid">
             <div class="transition-demo">
                 <h4>Hover Scale</h4>
-                <UIButton Text="Hover Me" Transitions="@UITransitionPresets.HoverScale" />
+                <BUIButton Text="Hover Me" Transitions="@BUITransitionPresets.HoverScale" />
             </div>
 
             <div class="transition-demo">
                 <h4>Hover Lift</h4>
-                <UIButton Text="Hover Me" Transitions="@UITransitionPresets.HoverLift" Elevation="2" />
+                <BUIButton Text="Hover Me" Transitions="@BUITransitionPresets.HoverLift" Elevation="2" />
             </div>
 
             <div class="transition-demo">
                 <h4>Hover Glow</h4>
-                <UIButton Text="Hover Me" Transitions="@UITransitionPresets.HoverGlow" />
+                <BUIButton Text="Hover Me" Transitions="@BUITransitionPresets.HoverGlow" />
             </div>
 
             <div class="transition-demo">
                 <h4>Focus Ring</h4>
-                <UIButton Text="Tab to Focus" Transitions="@UITransitionPresets.FocusRing" />
+                <BUIButton Text="Tab to Focus" Transitions="@BUITransitionPresets.FocusRing" />
             </div>
         </div>
     </div>
@@ -45,8 +44,8 @@
         <ComponentDemo Code="@materialEffectsCode">
             <Demo>
                 <div class="transition-grid">
-                    <UIButton Text="Material Button" Transitions="@UITransitionPresets.MaterialButton" />
-                    <UIButton Text="Card Hover" Transitions="@UITransitionPresets.CardHover" />
+                    <BUIButton Text="Material Button" Transitions="@BUITransitionPresets.MaterialButton" />
+                    <BUIButton Text="Card Hover" Transitions="@BUITransitionPresets.CardHover" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -58,7 +57,7 @@
 
         <ComponentDemo Code="@customTransitionCode">
             <Demo>
-                <UIButton Text="Custom Effect" Transitions="@_customTransition" />
+                <BUIButton Text="Custom Effect" Transitions="@_customTransition" />
             </Demo>
         </ComponentDemo>
     </div>
@@ -69,8 +68,8 @@
         <ComponentDemo Code="@combinedEffectsCode">
             <Demo>
                 <div class="transition-grid">
-                    <UIButton Text="Interactive" Transitions="@UITransitionPresets.Interactive" />
-                    <UIButton Text="Premium" Transitions="@UITransitionPresets.PremiumButton" />
+                    <BUIButton Text="Interactive" Transitions="@BUITransitionPresets.Interactive" />
+                    <BUIButton Text="Premium" Transitions="@BUITransitionPresets.PremiumButton" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -117,7 +116,7 @@
 </div>
 
 @code {
-    private UITransitions _customTransition = UITransitionPresets.Create()
+    private BUITransitions _customTransition = BUITransitionPresets.Create()
         .OnHover()
             .Scale(1.1f, options =>
             {
@@ -127,10 +126,10 @@
             .Shadow("0 10px 20px rgba(139, 92, 246, 0.3)")
         .Build();
 
-    private string materialEffectsCode = @"<UIButton Text=""Material Button"" Transitions=""@UITransitionPresets.MaterialButton"" />
-<UIButton Text=""Card Hover"" Transitions=""@UITransitionPresets.CardHover"" />";
+    private string materialEffectsCode = @"<BUIButton Text=""Material Button"" Transitions=""@BUITransitionPresets.MaterialButton"" />
+<BUIButton Text=""Card Hover"" Transitions=""@BUITransitionPresets.CardHover"" />";
 
-    private string customTransitionCode = @"private UITransitions _customTransition = UITransitionPresets.Create()
+    private string customTransitionCode = @"private BUITransitions _customTransition = BUITransitionPresets.Create()
     .OnHover()
         .Scale(1.1f, options => {
             options.Duration = TimeSpan.FromMilliseconds(400);
@@ -139,8 +138,8 @@
         .Shadow(""0 10px 20px rgba(139, 92, 246, 0.3)"")
     .Build();
 
-<UIButton Text=""Custom Effect"" Transitions=""@_customTransition"" />";
+<BUIButton Text=""Custom Effect"" Transitions=""@_customTransition"" />";
 
-    private string combinedEffectsCode = @"<UIButton Text=""Interactive"" Transitions=""@UITransitionPresets.Interactive"" />
-<UIButton Text=""Premium"" Transitions=""@UITransitionPresets.PremiumButton"" />";
+    private string combinedEffectsCode = @"<BUIButton Text=""Interactive"" Transitions=""@BUITransitionPresets.Interactive"" />
+<BUIButton Text=""Premium"" Transitions=""@BUITransitionPresets.PremiumButton"" />";
 }

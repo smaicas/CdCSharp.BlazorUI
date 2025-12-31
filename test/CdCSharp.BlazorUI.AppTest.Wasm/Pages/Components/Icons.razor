@@ -1,24 +1,19 @@
 ﻿@page "/components/icons"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Generic.Svg
-@using CdCSharp.BlazorUI.Css
-@using CdCSharp.BlazorUI.Media.Icons
-@using CdCSharp.BlazorUI.Components.Features.Common
-@using CdCSharp.BlazorUI.Core.Theming
 
 <PageTitle>Icons - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
     <h1>Icons</h1>
     <p class="doc-intro">
-        The UISvgIcon component provides a flexible way to display SVG icons with customizable size and color.
+        The BBUISvgIcon component provides a flexible way to display SVG icons with customizable size and color.
     </p>
 
     <div class="doc-section">
         <h2>Basic Usage</h2>
         <ComponentDemo Code="@basicIconCode">
             <Demo>
-                <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_favorite" />
+                <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite" />
             </Demo>
         </ComponentDemo>
     </div>
@@ -28,9 +23,9 @@
         <ComponentDemo Code="@sizesCode">
             <Demo>
                 <div class="demo-row">
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -41,10 +36,10 @@
         <ComponentDemo Code="@colorsCode">
             <Demo>
                 <div class="demo-row">
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_check" Color="@UIColor.Green.Default" />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_warning" Color="@UIColor.Orange.Default" />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_error" Color="@UIColor.Red.Default" />
-                    <UISvgIcon Icon="@UIIcons.MaterialIconsRound.i_info" Color="@UIColor.Blue.Default" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_check" Color="@BUIColor.Green.Default" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_warning" Color="@BUIColor.Orange.Default" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_error" Color="@BUIColor.Red.Default" />
+                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info" Color="@BUIColor.Blue.Default" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -56,7 +51,7 @@
             @foreach (var icon in GetSampleIcons())
             {
                 <div class="icon-item">
-                    <UISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <BBUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
                     <code>@icon.Name</code>
                 </div>
             }
@@ -69,7 +64,7 @@
             @foreach (var icon in GetSampleIcons())
             {
                 <div class="icon-item">
-                    <UISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <BBUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
                     <code>@icon.Name</code>
                 </div>
             }
@@ -82,7 +77,7 @@
             @foreach (var icon in GetBrandIcons())
             {
                 <div class="icon-item">
-                    <UISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <BBUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
                     <code>@icon.Name</code>
                 </div>
             }
@@ -103,16 +98,16 @@
 </div>
 
 @code {
-    private string basicIconCode = @"<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_favorite"" />";
+    private string basicIconCode = @"<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_favorite"" />";
 
-    private string sizesCode = @"<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Small"" />
-<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Medium"" />
-<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Large"" />";
+    private string sizesCode = @"<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Small"" />
+<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Medium"" />
+<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Large"" />";
 
-    private string colorsCode = @"<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_check"" Color=""@UIColor.Green.Default"" />
-<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_warning"" Color=""@UIColor.Orange.Default"" />
-<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_error"" Color=""@UIColor.Red.Default"" />
-<UISvgIcon Icon=""@UIIcons.MaterialIconsRound.i_info"" Color=""@UIColor.Blue.Default"" />";
+    private string colorsCode = @"<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_check"" Color=""@UIColor.Green.Default"" />
+<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_warning"" Color=""@UIColor.Orange.Default"" />
+<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_error"" Color=""@UIColor.Red.Default"" />
+<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_info"" Color=""@UIColor.Blue.Default"" />";
 
     private record IconProperty(string Name, string Type, string Default, string Description);
 
@@ -132,18 +127,18 @@
     {
         return new List<IconExample>
         {
-            new("Home", UIIcons.MaterialIconsRound.i_home),
-            new("Settings", UIIcons.MaterialIconsRound.i_settings),
-            new("Search", UIIcons.MaterialIconsRound.i_search),
-            new("Favorite", UIIcons.MaterialIconsRound.i_favorite),
-            new("Star", UIIcons.MaterialIconsRound.i_star),
-            new("Check", UIIcons.MaterialIconsRound.i_check),
-            new("Close", UIIcons.MaterialIconsRound.i_close),
-            new("Edit", UIIcons.MaterialIconsRound.i_edit),
-            new("Delete", UIIcons.MaterialIconsRound.i_delete),
-            new("Save", UIIcons.MaterialIconsRound.i_save),
-            new("Download", UIIcons.MaterialIconsRound.i_download),
-            new("Upload", UIIcons.MaterialIconsRound.i_upload),
+            new("Home", BUIIcons.MaterialIconsRound.i_home),
+            new("Settings", BUIIcons.MaterialIconsRound.i_settings),
+            new("Search", BUIIcons.MaterialIconsRound.i_search),
+            new("Favorite", BUIIcons.MaterialIconsRound.i_favorite),
+            new("Star", BUIIcons.MaterialIconsRound.i_star),
+            new("Check", BUIIcons.MaterialIconsRound.i_check),
+            new("Close", BUIIcons.MaterialIconsRound.i_close),
+            new("Edit", BUIIcons.MaterialIconsRound.i_edit),
+            new("Delete", BUIIcons.MaterialIconsRound.i_delete),
+            new("Save", BUIIcons.MaterialIconsRound.i_save),
+            new("Download", BUIIcons.MaterialIconsRound.i_download),
+            new("Upload", BUIIcons.MaterialIconsRound.i_upload),
         };
     }
 
@@ -151,12 +146,12 @@
     {
         return new List<IconExample>
         {
-            new("Gmail", UIIcons.Brands.Gmail),
-            new("GitHub", UIIcons.Brands.GitHub),
-            new("Twitter", UIIcons.Brands.Twitter),
-            new("Facebook", UIIcons.Brands.Facebook),
-            new("LinkedIn", UIIcons.Brands.LinkedIn),
-            new("YouTube", UIIcons.Brands.YouTube),
+            new("Gmail", BUIIcons.Brands.Gmail),
+            new("GitHub", BUIIcons.Brands.GitHub),
+            new("Twitter", BUIIcons.Brands.Twitter),
+            new("Facebook", BUIIcons.Brands.Facebook),
+            new("LinkedIn", BUIIcons.Brands.LinkedIn),
+            new("YouTube", BUIIcons.Brands.YouTube),
         };
     }
 }

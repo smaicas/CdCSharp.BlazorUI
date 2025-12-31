@@ -1,9 +1,7 @@
 ﻿@page "/theming/colors"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Generic.Button
-@using CdCSharp.BlazorUI.Core.Css
-@using CdCSharp.BlazorUI.Css
 @using System.Reflection
+@using CdCSharp.BlazorUI.Core.Css
 
 <PageTitle>Colors - CdCSharp.BlazorUI</PageTitle>
 
@@ -44,7 +42,7 @@
                         @foreach (var prop in colorClass.Properties)
                         {
                             <div class="variant-item">
-                                <UIButton Text="@prop.Name"
+                                <BUIButton Text="@prop.Name"
                                           BackgroundColor="@(prop.Value)"
                                           Color="@(prop.Value.GetBestContrast())" />
                                 <code>@($"UIColor.{colorClass.Name}.{prop.Name}")</code>
@@ -62,9 +60,9 @@
         <ComponentDemo Code="@usingColorsCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Theme Primary" BackgroundColor="@(new CssColor("var(--palette-primary)", true))" TextColor="@(new CssColor("var(--palette-primary)", true).GetBestContrast())" />
-                    <UIButton Text="UIColor Blue" BackgroundColor="@UIColor.Blue.Default" TextColor="@UIColor.Blue.Default.GetBestContrast()" />
-                    <UIButton Text="Custom Color" BackgroundColor="@(new CssColor("#FF5722"))" TextColor="@(new CssColor("#FF5722").GetBestContrast())" />
+                    <BUIButton Text="Theme Primary" BackgroundColor="@(new CssColor("var(--palette-primary)", true))" TextColor="@(new CssColor("var(--palette-primary)", true).GetBestContrast())" />
+                    <BUIButton Text="UIColor Blue" BackgroundColor="@BUIColor.Blue.Default" TextColor="@BUIColor.Blue.Default.GetBestContrast()" />
+                    <BUIButton Text="Custom Color" BackgroundColor="@(new CssColor("#FF5722"))" TextColor="@(new CssColor("#FF5722").GetBestContrast())" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -79,13 +77,13 @@
 
 @code {
     private string usingColorsCode = @"// Using theme palette colors
-<UIButton Text=""Theme Primary"" BackgroundColor=""@(new CssColor(""var(--palette-primary)"", true))"" TextColor=""@(new CssColor(""var(--palette-primary)"", true).GetBestContrast())"" />
+<BUIButton Text=""Theme Primary"" BackgroundColor=""@(new CssColor(""var(--palette-primary)"", true))"" TextColor=""@(new CssColor(""var(--palette-primary)"", true).GetBestContrast())"" />
 
 // Using UIColor constants
-<UIButton Text=""UIColor Blue"" BackgroundColor=""@UIColor.Blue.Default"" TextColor=""@UIColor.Blue.Default.GetBestContrast()"" />
+<BUIButton Text=""UIColor Blue"" BackgroundColor=""@UIColor.Blue.Default"" TextColor=""@UIColor.Blue.Default.GetBestContrast()"" />
 
 // Using custom hex color
-<UIButton Text=""Custom Color"" BackgroundColor=""@(new CssColor(""#FF5722""))"" TextColor=""@(new CssColor(""#FF5722"").GetBestContrast())"" />";
+<BUIButton Text=""Custom Color"" BackgroundColor=""@(new CssColor(""#FF5722""))"" TextColor=""@(new CssColor(""#FF5722"").GetBestContrast())"" />";
 
     private string customColorsCode = @"// Create from hex
 CssColor customColor1 = new CssColor(""#FF5722"");
@@ -108,7 +106,7 @@ CssColor themeColor = new CssColor(""var(--palette-primary)"", true);";
     protected override void OnInitialized()
     {
         // Obtener todas las clases internas públicas estáticas de UIColor
-        var innerTypes = typeof(UIColor).GetNestedTypes(BindingFlags.Public | BindingFlags.Static);
+        var innerTypes = typeof(BUIColor).GetNestedTypes(BindingFlags.Public | BindingFlags.Static);
 
         foreach (var type in innerTypes)
         {

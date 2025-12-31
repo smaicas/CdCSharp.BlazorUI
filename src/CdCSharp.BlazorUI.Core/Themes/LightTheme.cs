@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 
 namespace CdCSharp.BlazorUI.Core.Themes;
 
-public class LightTheme : UIThemePaletteBase
+public class LightTheme : BUIThemePaletteBase
 {
     public LightTheme()
     {

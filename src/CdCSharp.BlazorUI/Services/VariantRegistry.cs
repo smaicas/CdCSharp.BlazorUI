@@ -1,9 +1,9 @@
-﻿using CdCSharp.BlazorUI.Components.Abstractions;
+﻿using CdCSharp.BlazorUI.Abstractions.Components.Variants;
 using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Services;
 
-public interface IUniversalVariantRegistry
+public interface IVariantRegistry
 {
     void Register<TComponent, TVariant>(
         TVariant variant,
@@ -14,7 +14,7 @@ public interface IUniversalVariantRegistry
     RenderFragment? GetTemplate(Type componentType, Variant variant, ComponentBase component);
 }
 
-public sealed class UniversalVariantRegistry : IUniversalVariantRegistry
+public sealed class VariantRegistry : IVariantRegistry
 {
     private readonly Dictionary<(Type ComponentType, Type VariantType, string VariantName), Delegate> _templates = [];
 

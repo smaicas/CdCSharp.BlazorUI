@@ -2,7 +2,7 @@
 
 namespace CdCSharp.BlazorUI.Core.Themes;
 
-public class DarkTheme : UIThemePaletteBase
+public class DarkTheme : BUIThemePaletteBase
 {
     public DarkTheme()
     {

@@ -1,8 +1,6 @@
 ﻿@page "/features/borders"
+@using CdCSharp.BlazorUI.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Common
-@using CdCSharp.BlazorUI.Components.Generic.Button
-@using CdCSharp.BlazorUI.Css
 
 <PageTitle>Borders - CdCSharp.BlazorUI</PageTitle>
 
@@ -20,12 +18,12 @@
         <ComponentDemo Code="@borderPresetsCode">
             <Demo>
                 <div class="border-examples">
-                    <UIButton Text="Default" Border="@BorderPresets.Default" />
-                    <UIButton Text="Subtle" Border="@BorderPresets.Subtle" />
-                    <UIButton Text="Strong" Border="@BorderPresets.Strong" />
-                    <UIButton Text="Primary" Border="@BorderPresets.Primary" />
-                    <UIButton Text="Error" Border="@BorderPresets.Error" />
-                    <UIButton Text="Success" Border="@BorderPresets.Success" />
+                    <BUIButton Text="Default" Border="@BUIBorderPresets.Default" />
+                    <BUIButton Text="Subtle" Border="@BUIBorderPresets.Subtle" />
+                    <BUIButton Text="Strong" Border="@BUIBorderPresets.Strong" />
+                    <BUIButton Text="Primary" Border="@BUIBorderPresets.Primary" />
+                    <BUIButton Text="Error" Border="@BUIBorderPresets.Error" />
+                    <BUIButton Text="Success" Border="@BUIBorderPresets.Success" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -38,10 +36,10 @@
         <ComponentDemo Code="@borderRadiusCode">
             <Demo>
                 <div class="border-examples">
-                    <UIButton Text="Square" Border="@BorderPresets.Default" />
-                    <UIButton Text="Rounded" Border="@BorderPresets.Rounded" />
-                    <UIButton Text="Large Rounded" Border="@BorderPresets.RoundedLarge" />
-                    <UIButton Text="Pill" Border="@BorderPresets.Pill" />
+                    <BUIButton Text="Square" Border="@BUIBorderPresets.Default" />
+                    <BUIButton Text="Rounded" Border="@BUIBorderPresets.Rounded" />
+                    <BUIButton Text="Large Rounded" Border="@BUIBorderPresets.RoundedLarge" />
+                    <BUIButton Text="Pill" Border="@BUIBorderPresets.Pill" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -54,10 +52,10 @@
         <ComponentDemo Code="@borderStylesCode">
             <Demo>
                 <div class="border-examples">
-                    <UIButton Text="Solid" Border="@BorderPresets.Default" />
-                    <UIButton Text="Dashed" Border="@BorderPresets.Dashed" />
-                    <UIButton Text="Dotted" Border="@BorderPresets.Dotted" />
-                    <UIButton Text="Double" Border="@BorderPresets.Double" />
+                    <BUIButton Text="Solid" Border="@BUIBorderPresets.Default" />
+                    <BUIButton Text="Dashed" Border="@BUIBorderPresets.Dashed" />
+                    <BUIButton Text="Dotted" Border="@BUIBorderPresets.Dotted" />
+                    <BUIButton Text="Double" Border="@BUIBorderPresets.Double" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -70,11 +68,11 @@
         <ComponentDemo Code="@individualBordersCode">
             <Demo>
                 <div class="border-examples">
-                    <UIButton Text="Top Only" BorderTop="@BorderPresets.Primary" />
-                    <UIButton Text="Bottom Only" BorderBottom="@BorderPresets.Primary" />
-                    <UIButton Text="Left & Right"
-                              BorderLeft="@BorderPresets.Primary"
-                              BorderRight="@BorderPresets.Primary" />
+                    <BUIButton Text="Top Only" BorderTop="@BUIBorderPresets.Primary" />
+                    <BUIButton Text="Bottom Only" BorderBottom="@BUIBorderPresets.Primary" />
+                    <BUIButton Text="Left & Right"
+                              BorderLeft="@BUIBorderPresets.Primary"
+                              BorderRight="@BUIBorderPresets.Primary" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -87,8 +85,8 @@
         <ComponentDemo Code="@customBordersCode">
             <Demo>
                 <div class="border-examples">
-                    <UIButton Text="Custom Style" Border="@_customBorder" />
-                    <UIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
+                    <BUIButton Text="Custom Style" Border="@_customBorder" />
+                    <BUIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -107,27 +105,27 @@
 </div>
 
 @code {
-    private BorderStyle _customBorder = new("3px", BorderStyleType.Solid, UIColor.Purple.Default);
-    private BorderStyle _customBorderWithRadius = new BorderStyle("2px", BorderStyleType.Solid, UIColor.Blue.Default).WithRadius(16);
+    private BorderStyle _customBorder = new("3px", BorderStyleType.Solid, BUIColor.Purple.Default);
+    private BorderStyle _customBorderWithRadius = new BorderStyle("2px", BorderStyleType.Solid, BUIColor.Blue.Default).WithRadius(16);
 
-    private string borderPresetsCode = @"<UIButton Text=""Default"" Border=""@BorderPresets.Default"" />
-<UIButton Text=""Primary"" Border=""@BorderPresets.Primary"" />
-<UIButton Text=""Error"" Border=""@BorderPresets.Error"" />
-<UIButton Text=""Success"" Border=""@BorderPresets.Success"" />";
+    private string borderPresetsCode = @"<BUIButton Text=""Default"" Border=""@BorderPresets.Default"" />
+<BUIButton Text=""Primary"" Border=""@BorderPresets.Primary"" />
+<BUIButton Text=""Error"" Border=""@BorderPresets.Error"" />
+<BUIButton Text=""Success"" Border=""@BorderPresets.Success"" />";
 
-    private string borderRadiusCode = @"<UIButton Text=""Square"" Border=""@BorderPresets.Default"" />
-<UIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
-<UIButton Text=""Large Rounded"" Border=""@BorderPresets.RoundedLarge"" />
-<UIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
+    private string borderRadiusCode = @"<BUIButton Text=""Square"" Border=""@BorderPresets.Default"" />
+<BUIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
+<BUIButton Text=""Large Rounded"" Border=""@BorderPresets.RoundedLarge"" />
+<BUIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
 
-    private string borderStylesCode = @"<UIButton Text=""Solid"" Border=""@BorderPresets.Default"" />
-<UIButton Text=""Dashed"" Border=""@BorderPresets.Dashed"" />
-<UIButton Text=""Dotted"" Border=""@BorderPresets.Dotted"" />
-<UIButton Text=""Double"" Border=""@BorderPresets.Double"" />";
+    private string borderStylesCode = @"<BUIButton Text=""Solid"" Border=""@BorderPresets.Default"" />
+<BUIButton Text=""Dashed"" Border=""@BorderPresets.Dashed"" />
+<BUIButton Text=""Dotted"" Border=""@BorderPresets.Dotted"" />
+<BUIButton Text=""Double"" Border=""@BorderPresets.Double"" />";
 
-    private string individualBordersCode = @"<UIButton Text=""Top Only"" BorderTop=""@BorderPresets.Primary"" />
-<UIButton Text=""Bottom Only"" BorderBottom=""@BorderPresets.Primary"" />
-<UIButton Text=""Left & Right""
+    private string individualBordersCode = @"<BUIButton Text=""Top Only"" BorderTop=""@BorderPresets.Primary"" />
+<BUIButton Text=""Bottom Only"" BorderBottom=""@BorderPresets.Primary"" />
+<BUIButton Text=""Left & Right""
          BorderLeft=""@BorderPresets.Primary""
          BorderRight=""@BorderPresets.Primary"" />";
 
@@ -138,8 +136,8 @@ private BorderStyle _customBorder = new(""3px"", BorderStyleType.Solid, UIColor.
 private BorderStyle _customBorderWithRadius = new BorderStyle(""2px"", BorderStyleType.Solid, UIColor.Blue.Default)
     .WithRadius(16);
 
-<UIButton Text=""Custom Style"" Border=""@_customBorder"" />
-<UIButton Text=""Custom with Radius"" Border=""@_customBorderWithRadius"" />";
+<BUIButton Text=""Custom Style"" Border=""@_customBorder"" />
+<BUIButton Text=""Custom with Radius"" Border=""@_customBorderWithRadius"" />";
 
     private record BorderProperty(string Name, string Type, string Description);
 

@@ -25,8 +25,8 @@
 	<ItemGroup>
 		<None Include="_build\CdCSharp.BlazorUI.targets" Pack="true" PackagePath="build\" />
 	</ItemGroup>
-	<!--
-	Importar los targets localmente para desarrollo -->
+	
+	<!-- Importar los targets localmente para desarrollo -->
 	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
 
 	<ItemGroup>

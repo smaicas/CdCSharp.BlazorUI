@@ -1,18 +1,16 @@
 ﻿@page "/components/forms/input-text"
-@using CdCSharp.BlazorUI.Components.Forms.Abstractions
-@using CdCSharp.BlazorUI.Components.Forms.Text
 
-<UIInputText @bind-Value="_value1" Label="Test Input 1" Size="BlazorUI.Components.Features.Common.SizeEnum.Small" />
+<BUIInputText @bind-Value="_value1" Label="Test Input 1" Size="SizeEnum.Small" />
 <br />
-<UIInputText @bind-Value="_value1" Label="Test Input 1" Size="BlazorUI.Components.Features.Common.SizeEnum.Medium" />
+<BUIInputText @bind-Value="_value1" Label="Test Input 1" Size="SizeEnum.Medium" />
 <br />
-<UIInputText @bind-Value="_value1" Label="Test Input 1" Size="BlazorUI.Components.Features.Common.SizeEnum.Large" />
+<BUIInputText @bind-Value="_value1" Label="Test Input 1" Size="SizeEnum.Large" />
 <br />
-<UIInputText @bind-Value="_value1" Variant="InputTextVariant.Outlined" Label="Outlined 1" Size="BlazorUI.Components.Features.Common.SizeEnum.Large" />
+<BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Outlined" Label="Outlined 1" Size="SizeEnum.Large" />
 <br />
-<UIInputText @bind-Value="_value1" Variant="InputTextVariant.Filled" Label="Filled 1" Size="BlazorUI.Components.Features.Common.SizeEnum.Large" />
+<BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Filled" Label="Filled 1" Size="SizeEnum.Large" />
 <br />
-<UIInputText @bind-Value="_value1" Variant="InputTextVariant.Standard" Label="Standard 1" Size="BlazorUI.Components.Features.Common.SizeEnum.Large" />
+<BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Standard" Label="Standard 1" Size="SizeEnum.Large" />
 
 @code {
     private string _value1 = string.Empty;

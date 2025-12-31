@@ -1,13 +1,12 @@
 ﻿@page "/components/theme-switch"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
 
 <PageTitle>Theme Switch - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
     <h1>Theme Switch</h1>
     <p class="doc-intro">
-        The UIThemeSwitch component provides an intuitive way for users to toggle between light and dark themes.
+        The BUIThemeSelector component provides an intuitive way for users to toggle between light and dark themes.
         It includes multiple variants and smooth transitions.
     </p>
 
@@ -17,11 +16,11 @@
             <Demo>
                 <div class="theme-switch-grid">
                     <div class="theme-switch-item">
-                        <UIThemeSwitch Variant="UIThemeSwitchVariant.Default" />
+                        <BUIThemeSelector Variant="BUIThemeSelectorVariant.Default" />
                         <span>Default</span>
                     </div>
                     <div class="theme-switch-item">
-                        <UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon" />
+                        <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
                         <span>Sun/Moon</span>
                     </div>
                 </div>
@@ -50,7 +49,7 @@
                 <div class="layout-example">
                     <header class="example-header">
                         <h3>My Application</h3>
-                        <UIThemeSwitch Variant="UIThemeSwitchVariant.SunMoon" />
+                        <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
                     </header>
                     <div class="example-content">
                         <p>The theme switch is typically placed in the header for easy access.</p>
@@ -114,16 +113,16 @@
 
 @code {
     private string variantsCode = @"<!-- Default variant with text -->
-<UIThemeSwitch Variant=""UIThemeSwitchVariant.Default"" />
+<BUIThemeSelector Variant=""BUIThemeSelectorVariant.Default"" />
 
 <!-- Sun/Moon icon variant -->
-<UIThemeSwitch Variant=""UIThemeSwitchVariant.SunMoon"" />";
+<BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />";
 
     private string integrationCode = @"@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
 
 <header>
     <h1>My App</h1>
-    <UIThemeSwitch Variant=""UIThemeSwitchVariant.SunMoon"" />
+    <BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />
 </header>";
 
     private string programmaticCode = @"@inject IThemeJsInterop ThemeInterop
@@ -177,7 +176,7 @@ private async Task<string> GetCurrentTheme()
 
     private List<ThemeSwitchProperty> ThemeSwitchProperties = new()
     {
-        new("Variant", "UIThemeSwitchVariant?", "Default", "Visual variant of the theme switch"),
+        new("Variant", "BUIThemeSelectorVariant?", "Default", "Visual variant of the theme switch"),
         new("Disabled", "bool", "false", "Whether the switch is disabled"),
     };
 }

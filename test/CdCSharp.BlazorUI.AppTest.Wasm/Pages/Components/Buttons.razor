@@ -1,20 +1,12 @@
 ﻿@page "/components/buttons"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using CdCSharp.BlazorUI.Components.Features.Loading
-@using CdCSharp.BlazorUI.Components.Features.Transitions
-@using CdCSharp.BlazorUI.Components.Generic.Button
-@using CdCSharp.BlazorUI.Components.Generic.Svg
-@using CdCSharp.BlazorUI.Css
-@using CdCSharp.BlazorUI.Media.Icons
-@using CdCSharp.BlazorUI.Components.Features.Common
-@using CdCSharp.BlazorUI.Core.Theming
 
 <PageTitle>Buttons - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
     <h1>Buttons</h1>
     <p class="doc-intro">
-        The UIButton component is a versatile button with support for loading states, icons,
+        The BUIButton component is a versatile button with support for loading states, icons,
         ripple effects, elevation, transitions, borders, and more.
     </p>
 
@@ -22,7 +14,7 @@
         <h2>Basic Usage</h2>
         <ComponentDemo Code="@basicUsageCode">
             <Demo>
-                <UIButton Text="Click Me" OnClick="@(() => Console.WriteLine("Clicked!"))" />
+                <BUIButton Text="Click Me" OnClick="@(() => Console.WriteLine("Clicked!"))" />
             </Demo>
         </ComponentDemo>
     </div>
@@ -32,9 +24,9 @@
         <ComponentDemo Code="@sizesCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Small" Size="SizeEnum.Small" />
-                    <UIButton Text="Medium" Size="SizeEnum.Medium" />
-                    <UIButton Text="Large" Size="SizeEnum.Large" />
+                    <BUIButton Text="Small" Size="SizeEnum.Small" />
+                    <BUIButton Text="Medium" Size="SizeEnum.Medium" />
+                    <BUIButton Text="Large" Size="SizeEnum.Large" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -45,9 +37,9 @@
         <ComponentDemo Code="@loadingCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Loading Spinner" IsLoading="true" LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
-                    <UIButton Text="Loading Dots" IsLoading="true" LoadingIndicatorVariant="UILoadingIndicatorVariant.Dots" />
-                    <UIButton Text="Loading Pulse" IsLoading="true" LoadingIndicatorVariant="UILoadingIndicatorVariant.Pulse" />
+                    <BUIButton Text="Loading Spinner" IsLoading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
+                    <BUIButton Text="Loading Dots" IsLoading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" />
+                    <BUIButton Text="Loading Pulse" IsLoading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Pulse" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -58,9 +50,9 @@
         <ComponentDemo Code="@iconsCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Save" LeadingIcon="@UIIcons.MaterialIconsRound.i_save" />
-                    <UIButton Text="Delete" TrailingIcon="@UIIcons.MaterialIconsRound.i_delete" />
-                    <UIButton Text="Edit" LeadingIcon="@UIIcons.MaterialIconsRound.i_edit" TrailingIcon="@UIIcons.MaterialIconsRound.i_chevron_right" />
+                    <BUIButton Text="Save" LeadingIcon="@BUIIcons.MaterialIconsRound.i_save" />
+                    <BUIButton Text="Delete" TrailingIcon="@BUIIcons.MaterialIconsRound.i_delete" />
+                    <BUIButton Text="Edit" LeadingIcon="@BUIIcons.MaterialIconsRound.i_edit" TrailingIcon="@BUIIcons.MaterialIconsRound.i_chevron_right" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -71,10 +63,10 @@
         <ComponentDemo Code="@elevationCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="No Elevation" Elevation="0" />
-                    <UIButton Text="Low" Elevation="2" />
-                    <UIButton Text="Medium" Elevation="4" />
-                    <UIButton Text="High" Elevation="8" />
+                    <BUIButton Text="No Elevation" Elevation="0" />
+                    <BUIButton Text="Low" Elevation="2" />
+                    <BUIButton Text="Medium" Elevation="4" />
+                    <BUIButton Text="High" Elevation="8" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -85,10 +77,10 @@
         <ComponentDemo Code="@bordersCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Default Border" Border="@BorderPresets.Default" />
-                    <UIButton Text="Primary Border" Border="@BorderPresets.Primary" />
-                    <UIButton Text="Rounded" Border="@BorderPresets.Rounded" />
-                    <UIButton Text="Pill" Border="@BorderPresets.Pill" />
+                    <BUIButton Text="Default Border" Border="@BUIBorderPresets.Default" />
+                    <BUIButton Text="Primary Border" Border="@BUIBorderPresets.Primary" />
+                    <BUIButton Text="Rounded" Border="@BUIBorderPresets.Rounded" />
+                    <BUIButton Text="Pill" Border="@BUIBorderPresets.Pill" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -99,9 +91,9 @@
         <ComponentDemo Code="@densityCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Comfortable" Density="DensityEnum.Comfortable" />
-                    <UIButton Text="Standard" Density="DensityEnum.Standard" />
-                    <UIButton Text="Compact" Density="DensityEnum.Compact" />
+                    <BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" />
+                    <BUIButton Text="Standard" Density="DensityEnum.Standard" />
+                    <BUIButton Text="Compact" Density="DensityEnum.Compact" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -112,10 +104,10 @@
         <ComponentDemo Code="@transitionsCode">
             <Demo>
                 <div class="demo-row">
-                    <UIButton Text="Hover Scale" Transitions="@UITransitionPresets.HoverScale" />
-                    <UIButton Text="Hover Lift" Transitions="@UITransitionPresets.HoverLift" />
-                    <UIButton Text="Hover Glow" Transitions="@UITransitionPresets.HoverGlow" />
-                    <UIButton Text="Focus Ring" Transitions="@UITransitionPresets.FocusRing" />
+                    <BUIButton Text="Hover Scale" Transitions="@BUITransitionPresets.HoverScale" />
+                    <BUIButton Text="Hover Lift" Transitions="@BUITransitionPresets.HoverLift" />
+                    <BUIButton Text="Hover Glow" Transitions="@BUITransitionPresets.HoverGlow" />
+                    <BUIButton Text="Focus Ring" Transitions="@BUITransitionPresets.FocusRing" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -135,35 +127,35 @@
 </div>
 
 @code {
-    private string basicUsageCode = @"<UIButton Text=""Click Me"" OnClick=""@(() => Console.WriteLine(""Clicked!""))"" />";
+    private string basicUsageCode = @"<BUIButton Text=""Click Me"" OnClick=""@(() => Console.WriteLine(""Clicked!""))"" />";
 
-    private string sizesCode = @"<UIButton Text=""Small"" Size=""SizeEnum.Small"" />
-<UIButton Text=""Medium"" Size=""SizeEnum.Medium"" />
-<UIButton Text=""Large"" Size=""SizeEnum.Large"" />";
+    private string sizesCode = @"<BUIButton Text=""Small"" Size=""SizeEnum.Small"" />
+<BUIButton Text=""Medium"" Size=""SizeEnum.Medium"" />
+<BUIButton Text=""Large"" Size=""SizeEnum.Large"" />";
 
-    private string loadingCode = @"<UIButton Text=""Loading Spinner""
+    private string loadingCode = @"<BUIButton Text=""Loading Spinner""
           IsLoading=""true""
           LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />";
 
-    private string iconsCode = @"<UIButton Text=""Save"" LeadingIcon=""@UIIcons.MaterialIconsRound.i_save"" />
-<UIButton Text=""Delete"" TrailingIcon=""@UIIcons.MaterialIconsRound.i_delete"" />";
+    private string iconsCode = @"<BUIButton Text=""Save"" LeadingIcon=""@BUIIcons.MaterialIconsRound.i_save"" />
+<BUIButton Text=""Delete"" TrailingIcon=""@BUIIcons.MaterialIconsRound.i_delete"" />";
 
-    private string elevationCode = @"<UIButton Text=""No Elevation"" Elevation=""0"" />
-<UIButton Text=""Low"" Elevation=""2"" />
-<UIButton Text=""Medium"" Elevation=""4"" />
-<UIButton Text=""High"" Elevation=""8"" />";
+    private string elevationCode = @"<BUIButton Text=""No Elevation"" Elevation=""0"" />
+<BUIButton Text=""Low"" Elevation=""2"" />
+<BUIButton Text=""Medium"" Elevation=""4"" />
+<BUIButton Text=""High"" Elevation=""8"" />";
 
-    private string bordersCode = @"<UIButton Text=""Default Border"" Border=""@BorderPresets.Default"" />
-<UIButton Text=""Primary Border"" Border=""@BorderPresets.Primary"" />
-<UIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
-<UIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
+    private string bordersCode = @"<BUIButton Text=""Default Border"" Border=""@BorderPresets.Default"" />
+<BUIButton Text=""Primary Border"" Border=""@BorderPresets.Primary"" />
+<BUIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
+<BUIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
 
-    private string densityCode = @"<UIButton Text=""Comfortable"" Density=""DensityEnum.Comfortable"" />
-<UIButton Text=""Standard"" Density=""DensityEnum.Standard"" />
-<UIButton Text=""Compact"" Density=""DensityEnum.Compact"" />";
+    private string densityCode = @"<BUIButton Text=""Comfortable"" Density=""DensityEnum.Comfortable"" />
+<BUIButton Text=""Standard"" Density=""DensityEnum.Standard"" />
+<BUIButton Text=""Compact"" Density=""DensityEnum.Compact"" />";
 
-    private string transitionsCode = @"<UIButton Text=""Hover Scale"" Transitions=""@UITransitionPresets.HoverScale"" />
-<UIButton Text=""Hover Lift"" Transitions=""@UITransitionPresets.HoverLift"" />";
+    private string transitionsCode = @"<BUIButton Text=""Hover Scale"" Transitions=""@BUITransitionPresets.HoverScale"" />
+<BUIButton Text=""Hover Lift"" Transitions=""@BUITransitionPresets.HoverLift"" />";
 
     private record ButtonProperty(string Name, string Type, string Default, string Description);
 
@@ -188,7 +180,7 @@
         new("RippleColor", "CssColor?", "null", "Custom color for ripple effect"),
         new("RippleDuration", "int?", "null", "Ripple animation duration in milliseconds"),
         new("FullWidth", "bool", "false", "Whether the button should take full width"),
-        new("Transitions", "UITransitions?", "null", "Transition animations"),
+        new("Transitions", "BUITransitions?", "null", "Transition animations"),
         new("BackgroundColor", "CssColor?", "null", "Background color"),
         new("Color", "CssColor?", "null", "Text color"),
     };

@@ -29,7 +29,7 @@ public static class CssThemeGenerator
 {
     public static string Generate(
         string defaultTheme,
-        IReadOnlyCollection<UIThemePaletteBase> palettes)
+        IReadOnlyCollection<BUIThemePaletteBase> palettes)
     {
         StringBuilder sb = new();
 
@@ -37,7 +37,7 @@ public static class CssThemeGenerator
         sb.AppendLine("  /* === Theme palettes === */");
 
         // 1. Generate theme-specific variables for all themes
-        foreach (UIThemePaletteBase palette in palettes)
+        foreach (BUIThemePaletteBase palette in palettes)
         {
             Dictionary<string, string> themeVariables = palette.GetThemeVariables();
             foreach (KeyValuePair<string, string> variable in themeVariables)
@@ -49,7 +49,7 @@ public static class CssThemeGenerator
         sb.AppendLine("  /* === Default palette mapping === */");
 
         // 2. Map --palette-* to the default theme
-        UIThemePaletteBase defaultPalette = palettes.First(p => p.Id == defaultTheme);
+        BUIThemePaletteBase defaultPalette = palettes.First(p => p.Id == defaultTheme);
         Dictionary<string, string> defaultMapping = defaultPalette.GetPaletteMapping();
         foreach (KeyValuePair<string, string> variable in defaultMapping)
         {
@@ -59,7 +59,7 @@ public static class CssThemeGenerator
         sb.AppendLine("}");
 
         // 3. Generate theme selectors
-        foreach (UIThemePaletteBase palette in palettes)
+        foreach (BUIThemePaletteBase palette in palettes)
         {
             sb.AppendLine($"html[data-theme=\"{palette.Id}\"] {{");
 

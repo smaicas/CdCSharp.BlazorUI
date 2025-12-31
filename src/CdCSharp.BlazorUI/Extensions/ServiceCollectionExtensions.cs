@@ -1,6 +1,6 @@
-﻿using CdCSharp.BlazorUI.Components.Abstractions;
-using CdCSharp.BlazorUI.Components.Features.Behaviors;
-using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch;
+﻿using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript;
+using CdCSharp.BlazorUI.Abstractions.Components.Variants;
+using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
 using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
 
@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddMemoryCache();
 
         // Un solo registry para todo
-        services.AddSingleton<IUniversalVariantRegistry, UniversalVariantRegistry>();
+        services.AddSingleton<IVariantRegistry, VariantRegistry>();
 
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
@@ -27,7 +27,7 @@ public static class ServiceCollectionExtensions
         Action<VariantBuilder> configure)
     {
         ServiceProvider sp = services.BuildServiceProvider();
-        UniversalVariantRegistry registry = sp.GetService<IUniversalVariantRegistry>() as UniversalVariantRegistry
+        VariantRegistry registry = sp.GetService<IVariantRegistry>() as VariantRegistry
             ?? throw new InvalidOperationException("Must call AddBlazorUI before AddBlazorUIVariants");
 
         VariantBuilder builder = new(registry);
@@ -44,9 +44,9 @@ public static class ServiceCollectionExtensions
 /// </summary>
 public sealed class VariantBuilder
 {
-    private readonly UniversalVariantRegistry _registry;
+    private readonly VariantRegistry _registry;
 
-    internal VariantBuilder(UniversalVariantRegistry registry)
+    internal VariantBuilder(VariantRegistry registry)
     {
         _registry = registry;
     }
@@ -76,9 +76,9 @@ public sealed class VariantBuilder
 public sealed class ComponentVariantBuilder<TComponent>
     where TComponent : ComponentBase
 {
-    private readonly UniversalVariantRegistry _registry;
+    private readonly VariantRegistry _registry;
 
-    internal ComponentVariantBuilder(UniversalVariantRegistry registry)
+    internal ComponentVariantBuilder(VariantRegistry registry)
     {
         _registry = registry;
     }
