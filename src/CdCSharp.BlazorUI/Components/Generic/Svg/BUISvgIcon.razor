@@ -28,8 +28,7 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <ui-component @attributes="@ComputedAttributes"
-                      data-ui-component="svg-icon"
+        <bui-component @attributes="@ComputedAttributes"
                       @onclick="@OnClick">
             <svg focusable="false"
                  viewBox="@ViewBox"
@@ -40,6 +39,6 @@
                 }
                 @((MarkupString)Icon)
             </svg>
-        </ui-component>
+        </bui-component>
     };
 }

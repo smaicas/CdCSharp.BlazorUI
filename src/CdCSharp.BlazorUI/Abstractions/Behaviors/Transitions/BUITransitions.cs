@@ -28,7 +28,7 @@ public class BUITransitions
         return string.Join(" ",
             _transitions.SelectMany(t =>
                 t.Value.Select(cfg =>
-                    $"ui-transition-{t.Key.ToString().ToLower()}-{cfg.Type.ToString().ToLower()}"
+                    $"bui-transition-{t.Key.ToString().ToLower()}-{cfg.Type.ToString().ToLower()}"
                 )));
     }
 
@@ -40,7 +40,7 @@ public class BUITransitions
         {
             foreach (TransitionConfig config in configs)
             {
-                string prefix = $"--ui-transition-{trigger.ToString().ToLower()}";
+                string prefix = $"--bui-transition-{trigger.ToString().ToLower()}";
 
                 if (config.Duration.HasValue)
                     variables[$"{prefix}-duration"] =

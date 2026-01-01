@@ -99,22 +99,24 @@
 
     private RenderFragment RenderFlags() => __builder =>
     {
-        <div class="ui-culture-selector__flag-list">
-            @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
-            {
-                bool isActive = culture.Name == _currentCulture.Name;
-                <button class="ui-culture-selector__flag-button @(isActive ? "active" : "")"
-                        @onclick="() => SetCultureAsync(culture.Name)"
-                        title="@culture.DisplayName"
-                        disabled="@isActive">
-                    @GetFlag(culture.Name)
-                    @if (ShowName)
-                    {
-                        <span class="ui-culture-selector__flag-label">@culture.DisplayName</span>
-                    }
-                </button>
-            }
-        </div>
+        <bui-component @attributes="ComputedAttributes">
+            <div class="ui-culture-selector__flag-list">
+                @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
+                {
+                    bool isActive = culture.Name == _currentCulture.Name;
+                    <button class="ui-culture-selector__flag-button @(isActive ? "active" : "")"
+                            @onclick="() => SetCultureAsync(culture.Name)"
+                            title="@culture.DisplayName"
+                            disabled="@isActive">
+                        @GetFlag(culture.Name)
+                        @if (ShowName)
+                        {
+                            <span class="ui-culture-selector__flag-label">@culture.DisplayName</span>
+                        }
+                    </button>
+                }
+            </div>
+        </bui-component>
     };
 
     private async Task OnCultureChangeAsync(ChangeEventArgs e)

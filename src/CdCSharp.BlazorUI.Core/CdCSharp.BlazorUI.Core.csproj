@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Components\**" />
+	  <EmbeddedResource Remove="Components\**" />
+	  <None Remove="Components\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<InternalsVisibleTo Include="CdCSharp.BlazorUI.Tests.Integration" />
 	</ItemGroup>
 
@@ -17,9 +23,5 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core.CodeGeneration\CdCSharp.BlazorUI.Core.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Components\" />
 	</ItemGroup>
 </Project>

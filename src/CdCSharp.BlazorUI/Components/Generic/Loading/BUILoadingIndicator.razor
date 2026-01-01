@@ -33,44 +33,54 @@
 
     private RenderFragment RenderSpinner() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
-            <svg class="ui-loading-spinner" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
-            </svg>
-        </div>
+        <bui-component @attributes="ComputedAttributes">
+            <div>
+                <svg class="ui-loading-spinner" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+                </svg>
+            </div>
+        </bui-component>
     };
 
     private RenderFragment RenderLinear() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
-            <div class="ui-loading-linear">
-                <div class="ui-loading-linear__bar"></div>
+        <bui-component @attributes="ComputedAttributes">
+            <div>
+                <div class="ui-loading-linear">
+                    <div class="ui-loading-linear__bar"></div>
+                </div>
             </div>
-        </div>
+        </bui-component>
     };
 
     private RenderFragment RenderCircularProgress() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
-            <svg class="ui-loading-circular" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
-            </svg>
-        </div>
+        <bui-component @attributes="ComputedAttributes">
+            <div>
+                <svg class="ui-loading-circular" viewBox="0 0 50 50">
+                    <circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4"></circle>
+                </svg>
+            </div>
+        </bui-component>
     };
 
     private RenderFragment RenderDots() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
-            <span class="ui-loading-dot"></span>
-            <span class="ui-loading-dot"></span>
-            <span class="ui-loading-dot"></span>
-        </div>
+        <bui-component @attributes="ComputedAttributes">
+            <div>
+                <span class="ui-loading-dot"></span>
+                <span class="ui-loading-dot"></span>
+                <span class="ui-loading-dot"></span>
+            </div>
+        </bui-component>
     };
 
     private RenderFragment RenderPulse() => __builder =>
     {
-        <div @attributes="AdditionalAttributes">
-            <span class="ui-loading-pulse"></span>
-        </div>
+        <bui-component @attributes="ComputedAttributes">
+            <div>
+                <span class="ui-loading-pulse"></span>
+            </div>
+        </bui-component>
     };
 }

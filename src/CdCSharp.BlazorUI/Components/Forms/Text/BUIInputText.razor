@@ -73,30 +73,30 @@
 
     private RenderFragment RenderOutlined() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <bui-component @attributes="ComputedAttributes">
             @RenderInputContent()
-        </ui-component>
+        </bui-component>
     };
 
     private RenderFragment RenderFilled() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <bui-component @attributes="ComputedAttributes">
             @RenderInputContent()
-        </ui-component>
+        </bui-component>
     };
 
     private RenderFragment RenderStandard() => __builder =>
     {
-        <ui-component @attributes="ComputedAttributes">
+        <bui-component @attributes="ComputedAttributes">
             @RenderInputContent()
-        </ui-component>
+        </bui-component>
     };
 
     private RenderFragment RenderInputContent() => __builder =>
     {
         @if (!string.IsNullOrWhiteSpace(Label))
         {
-            <label for="@_inputId" class="ui-input__label">
+            <label for="@_inputId" class="bui-input__label">
                 @Label
                 @if (Required)
                 {
@@ -105,7 +105,7 @@
             </label>
         }
 
-        <div class="ui-input__container">
+        <div class="bui-input__container">
             <input @ref="_inputElement"
                    type="text"
                    id="@_inputId"
@@ -123,14 +123,14 @@
 
             @if (IsLoading && LoadingIndicatorVariant != null)
             {
-                <div class="ui-input__loading">
-                    <UILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                <div class="bui-input__loading">
+                    <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
                 </div>
             }
 
             @if (IsError && EditContext != null && ValueExpression != null)
             {
-                <div class="ui-input__validation">
+                <div class="bui-input__validation">
                     <ValidationMessage For="ValueExpression" />
                 </div>
             }
@@ -138,7 +138,7 @@
 
         @if (!string.IsNullOrWhiteSpace(HelperText))
         {
-            <div id="@_helperTextId" class="ui-input__helper-text">
+            <div id="@_helperTextId" class="bui-input__helper-text">
                 @HelperText
             </div>
         }

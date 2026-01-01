@@ -211,7 +211,7 @@ internal sealed class BUIComponentAttributesBuilder
     private static string ToKebabCaseComponentName(string value)
     {
         if (string.IsNullOrEmpty(value)) return value;
-        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase)) value = value[2..];
+        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase)) value = value[3..];
 
         StringBuilder sb = new();
         for (int i = 0; i < value.Length; i++)

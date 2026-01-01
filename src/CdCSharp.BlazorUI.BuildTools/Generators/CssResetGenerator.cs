@@ -37,39 +37,39 @@ public static class CssReset
            --------------------------------------------------------- */
         :root {
             /* Typography */
-            --blazorui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
-            --blazorui-font-heading: var(--blazorui-font-base);
-            --blazorui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            --blazorui-base-font-size: 16px;
-            --blazorui-base-line-height: 1.5;
-            --blazorui-heading-line-height: 1.2;
+            --bui-font-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+            --bui-font-heading: var(--bui-font-base);
+            --bui-font-monospace: ui-monospace, "Cascadia Mono", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --bui-base-font-size: 16px;
+            --bui-base-line-height: 1.5;
+            --bui-heading-line-height: 1.2;
             /* Spacing */
-            --blazorui-body-margin: 8px;
-            --blazorui-space-1: 0.5em;
-            --blazorui-space-2: 1em;
+            --bui-body-margin: 8px;
+            --bui-space-1: 0.5em;
+            --bui-space-2: 1em;
             /* Heading scale */
-            --blazorui-h1-size: 2em;
-            --blazorui-h2-size: 1.5em;
-            --blazorui-h3-size: 1.17em;
-            --blazorui-h4-size: 1em;
-            --blazorui-h5-size: 0.83em;
-            --blazorui-h6-size: 0.67em;
+            --bui-h1-size: 2em;
+            --bui-h2-size: 1.5em;
+            --bui-h3-size: 1.17em;
+            --bui-h4-size: 1em;
+            --bui-h5-size: 0.83em;
+            --bui-h6-size: 0.67em;
             /* UI states */
-            --blazorui-focus-color: Highlight;
-            --blazorui-focus-width: 2px;
-            --blazorui-focus-offset: 2px;
-            --blazorui-disabled-opacity: 0.5;
-            --blazorui-placeholder-opacity: 0.6;
+            --bui-focus-color: Highlight;
+            --bui-focus-width: 2px;
+            --bui-focus-offset: 2px;
+            --bui-disabled-opacity: 0.5;
+            --bui-placeholder-opacity: 0.6;
             /* Separators */
-            --blazorui-hr-color: gray;
-            --blazorui-hr-width: 1px;
-            --blazorui-hr-style: inset;
+            --bui-hr-color: gray;
+            --bui-hr-width: 1px;
+            --bui-hr-style: inset;
             /* Tables */
-            --blazorui-table-border-spacing: 2px;
+            --bui-table-border-spacing: 2px;
             /* Media */
-            --blazorui-media-max-width: 100%;
+            --bui-media-max-width: 100%;
             /* Interaction */
-            --blazorui-tap-highlight: transparent;
+            --bui-tap-highlight: transparent;
         }
 
         /* ---------------------------------------------------------
@@ -91,14 +91,14 @@ public static class CssReset
            --------------------------------------------------------- */
         html {
             block-size: 100%;
-            font-size: var(--blazorui-base-font-size);
+            font-size: var(--bui-base-font-size);
         }
 
         body {
-            margin: var(--blazorui-body-margin);
-            font-family: var(--blazorui-font-base);
+            margin: var(--bui-body-margin);
+            font-family: var(--bui-font-base);
             font-size: 1rem;
-            line-height: var(--blazorui-base-line-height);
+            line-height: var(--bui-base-line-height);
         }
 
         /* ---------------------------------------------------------
@@ -112,44 +112,44 @@ public static class CssReset
            Headings & Text Content
            --------------------------------------------------------- */
         :where(h1, h2, h3, h4, h5, h6) {
-            font-family: var(--blazorui-font-heading);
+            font-family: var(--bui-font-heading);
             font-weight: bold;
-            line-height: var(--blazorui-heading-line-height);
+            line-height: var(--bui-heading-line-height);
         }
 
         h1 {
-            font-size: var(--blazorui-h1-size);
+            font-size: var(--bui-h1-size);
             margin-block: 0.67em;
         }
 
         h2 {
-            font-size: var(--blazorui-h2-size);
+            font-size: var(--bui-h2-size);
             margin-block: 0.83em;
         }
 
         h3 {
-            font-size: var(--blazorui-h3-size);
-            margin-block: var(--blazorui-space-2);
+            font-size: var(--bui-h3-size);
+            margin-block: var(--bui-space-2);
         }
 
         h4 {
-            font-size: var(--blazorui-h4-size);
+            font-size: var(--bui-h4-size);
             margin-block: 1.33em;
         }
 
         h5 {
-            font-size: var(--blazorui-h5-size);
+            font-size: var(--bui-h5-size);
             margin-block: 1.67em;
         }
 
         h6 {
-            font-size: var(--blazorui-h6-size);
+            font-size: var(--bui-h6-size);
             margin-block: 2.33em;
         }
 
         p,
         blockquote {
-            margin-block: var(--blazorui-space-2);
+            margin-block: var(--bui-space-2);
         }
 
         blockquote {
@@ -160,7 +160,7 @@ public static class CssReset
         pre,
         kbd,
         samp {
-            font-family: var(--blazorui-font-monospace);
+            font-family: var(--bui-font-monospace);
             font-size: 0.875em;
         }
 
@@ -173,7 +173,7 @@ public static class CssReset
            --------------------------------------------------------- */
         ul,
         ol {
-            margin-block: var(--blazorui-space-2);
+            margin-block: var(--bui-space-2);
             padding-inline-start: 40px;
         }
 
@@ -190,7 +190,7 @@ public static class CssReset
            --------------------------------------------------------- */
         table {
             border-collapse: separate;
-            border-spacing: var(--blazorui-table-border-spacing);
+            border-spacing: var(--bui-table-border-spacing);
         }
 
         caption {
@@ -207,7 +207,7 @@ public static class CssReset
            --------------------------------------------------------- */
         :where(img, svg, video, canvas, picture) {
             display: inline-block;
-            max-width: var(--blazorui-media-max-width);
+            max-width: var(--bui-media-max-width);
             height: auto;
         }
 
@@ -215,8 +215,8 @@ public static class CssReset
            Horizontal Rule
            --------------------------------------------------------- */
         hr {
-            margin-block: var(--blazorui-space-1);
-            border: var(--blazorui-hr-width) var(--blazorui-hr-style) var(--blazorui-hr-color);
+            margin-block: var(--bui-space-1);
+            border: var(--bui-hr-width) var(--bui-hr-style) var(--bui-hr-color);
             overflow: hidden;
         }
 
@@ -262,7 +262,7 @@ public static class CssReset
         /* Disabled state */
         :where(button, input, select, textarea):disabled {
             cursor: default;
-            opacity: var(--blazorui-disabled-opacity);
+            opacity: var(--bui-disabled-opacity);
         }
 
         /* Autofill (WebKit) */
@@ -274,7 +274,7 @@ public static class CssReset
         /* Placeholder */
         ::placeholder {
             color: inherit;
-            opacity: var(--blazorui-placeholder-opacity);
+            opacity: var(--bui-placeholder-opacity);
         }
 
         /* ---------------------------------------------------------
@@ -285,13 +285,13 @@ public static class CssReset
         }
 
         :focus-visible {
-            outline: var(--blazorui-focus-width) solid var(--blazorui-focus-color);
-            outline-offset: var(--blazorui-focus-offset);
+            outline: var(--bui-focus-width) solid var(--bui-focus-color);
+            outline-offset: var(--bui-focus-offset);
         }
 
         /* Touch interaction */
         :where(button, input, textarea, select, a) {
-            -webkit-tap-highlight-color: var(--blazorui-tap-highlight);
+            -webkit-tap-highlight-color: var(--bui-tap-highlight);
         }
 
         /* ---------------------------------------------------------

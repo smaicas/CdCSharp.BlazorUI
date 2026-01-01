@@ -37,5 +37,5 @@ La configuración de Vite está diseñada para optimizar el rendimiento de la li
 
 * **Output de JS**: Utiliza `format: 'es'` y la opción `preserveEntrySignatures: 'strict'` en `vite.config.js`. Esto es esencial para que Blazor JS Interop pueda importar los módulos JavaScript individuales (ej. `ThemeJsInterop.js`) de forma dinámica con `import(...)` sin que Vite los fusione.
 * **CSS Principal**: El archivo `main.css` actúa como el punto de entrada, importando:
-    * `reset.css`: CSS Reset y definición de tokens de diseño como variables CSS (`--blazorui-font-base`, `--blazorui-space-1`).
-    * `themes.css`: Definición de las variables de color dentro de las clases de tema (`.ui-theme-light`, `.ui-theme-dark`).
+    * `reset.css`: CSS Reset y definición de tokens de diseño como variables CSS (`--bui-font-base`, `--bui-space-1`).
+    * `themes.css`: Definición de las variables de color dentro de las clases de tema (`.bui-theme-light`, `.bui-theme-dark`).

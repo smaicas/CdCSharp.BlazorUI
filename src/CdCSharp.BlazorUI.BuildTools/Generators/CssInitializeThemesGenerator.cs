@@ -31,60 +31,60 @@ public static class CssInitializeTheme
           color: var(--palette-backgroundcontrast);
         }
 
-        .ui-color-primary {
+        .bui-color-primary {
           color: var(--palette-primary);
         }
 
-        .ui-bg-primary {
+        .bui-bg-primary {
           background-color: var(--palette-primary);
         }
 
-        .ui-color-secondary {
+        .bui-color-secondary {
           color: var(--palette-secondary);
         }
 
-        .ui-bg-secondary {
+        .bui-bg-secondary {
           background-color: var(--palette-secondary);
         }
 
-        .ui-color-success {
+        .bui-color-success {
           color: var(--palette-success);
         }
 
-        .ui-bg-success {
+        .bui-bg-success {
           background-color: var(--palette-success);
         }
 
-        .ui-color-warning {
+        .bui-color-warning {
           color: var(--palette-warning);
         }
 
-        .ui-bg-warning {
+        .bui-bg-warning {
           background-color: var(--palette-warning);
         }
 
-        .ui-color-error {
+        .bui-color-error {
           color: var(--palette-error);
         }
 
-        .ui-bg-error {
+        .bui-bg-error {
           background-color: var(--palette-error);
         }
 
-        .ui-color-info {
+        .bui-color-info {
           color: var(--palette-info);
         }
 
-        .ui-bg-info {
+        .bui-bg-info {
           background-color: var(--palette-info);
         }
 
-        .ui-primary {
+        .bui-primary {
           color: var(--palette-primarycontrast);
           background-color: var(--palette-primary);
         }
 
-        .ui-secondary {
+        .bui-secondary {
           color: var(--palette-secondarycontrast);
           background-color: var(--palette-secondary);
         }

@@ -1,79 +1,79 @@
-﻿ui-component[data-ui-component="culture-selector"] {
+﻿bui-component[data-bui-component="culture-selector"] {
     display: inline-flex;
     align-items: center;
 }
 
 /* Dropdown variant */
-.ui-culture-selector__select {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--palette-surface);
-    border-radius: 4px;
-    background-color: var(--palette-surface);
-    color: var(--palette-surfacecontrast);
-    font-size: inherit;
-    cursor: pointer;
-    transition: all 200ms ease;
-}
-
-    .ui-culture-selector__select:hover {
-        border-color: var(--palette-primary);
+    bui-component[data-bui-component="culture-selector"] .bui-culture-selector__select {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--palette-surface);
+        border-radius: 4px;
+        background-color: var(--palette-surface);
+        color: var(--palette-surfacecontrast);
+        font-size: inherit;
+        cursor: pointer;
+        transition: all 200ms ease;
     }
 
-    .ui-culture-selector__select:focus {
-        outline: none;
-        border-color: var(--palette-primary);
-        box-shadow: 0 0 0 2px rgba(var(--palette-primary-rgb), 0.2);
-    }
+        bui-component[data-bui-component="culture-selector"] .bui-culture-selector__select:hover {
+            border-color: var(--palette-primary);
+        }
+
+        bui-component[data-bui-component="culture-selector"] .bui-culture-selector__select:focus {
+            outline: none;
+            border-color: var(--palette-primary);
+            box-shadow: 0 0 0 2px rgba(var(--palette-primary-rgb), 0.2);
+        }
 
 /* Buttons variant */
-.ui-culture-selector__button-group {
-    display: flex;
-    gap: 0.5rem;
-}
+    bui-component[data-bui-component="culture-selector"] .bui-culture-selector__button-group {
+        display: flex;
+        gap: 0.5rem;
+    }
 
 /* Flags variant */
-.ui-culture-selector__flag-list {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.ui-culture-selector__flag-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    background: transparent;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 200ms ease;
-}
-
-    .ui-culture-selector__flag-button:hover {
-        background-color: rgba(var(--palette-primary-rgb), 0.1);
+    bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-list {
+        display: flex;
+        gap: 0.5rem;
     }
 
-    .ui-culture-selector__flag-button.active {
-        border-color: var(--palette-primary);
-        background-color: rgba(var(--palette-primary-rgb), 0.1);
+    bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: transparent;
+        border: 2px solid transparent;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 200ms ease;
     }
 
-.ui-culture-selector__flag {
-    font-size: 1.5em;
-    line-height: 1;
-}
+        bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button:hover {
+            background-color: rgba(var(--palette-primary-rgb), 0.1);
+        }
 
-.ui-culture-selector__name {
-    font-weight: 500;
-    font-size: 0.875em;
-}
+        bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button.active {
+            border-color: var(--palette-primary);
+            background-color: rgba(var(--palette-primary-rgb), 0.1);
+        }
+
+    bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag {
+        font-size: 1.5em;
+        line-height: 1;
+    }
+
+    bui-component[data-bui-component="culture-selector"] .bui-culture-selector__name {
+        font-weight: 500;
+        font-size: 0.875em;
+    }
 
 /* Size variations */
-ui-component[data-ui-component="culture-selector"][data-ui-size="small"] {
+bui-component[data-bui-component="culture-selector"][data-bui-size="small"] {
     font-size: 0.875rem;
 }
 
-ui-component[data-ui-component="culture-selector"][data-ui-size="large"] {
+bui-component[data-bui-component="culture-selector"][data-bui-size="large"] {
     font-size: 1.125rem;
 }

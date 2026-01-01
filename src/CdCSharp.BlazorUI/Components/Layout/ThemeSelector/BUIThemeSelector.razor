@@ -41,37 +41,39 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <button @attributes="AdditionalAttributes"
-                @onclick="SwitchTheme"
-                disabled="@_isTransitioning">
-            <span class="ui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">
-                @if (ShowIcon)
-                {
-                    <span class="ui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
-                }
-                <span class="ui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
-            </span>
-        </button>
+        <bui-component @attributes="ComputedAttributes">
+            <button @onclick="SwitchTheme"
+                    disabled="@_isTransitioning">
+                <span class="bui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">
+                    @if (ShowIcon)
+                    {
+                        <span class="bui-theme-switch__icon">@GetThemeIcon(_currentTheme)</span>
+                    }
+                    <span class="bui-theme-switch__label">@GetThemeLabel(_currentTheme)</span>
+                </span>
+            </button>
+        </bui-component>
     };
 
     private RenderFragment RenderSunMoon() => __builder =>
     {
-        <button @attributes="AdditionalAttributes"
-                @onclick="ToggleLightDark"
-                aria-label="@($"Switch to {GetOppositeTheme()} mode")">
-            <span class="ui-theme-switch__sun-moon-container">
-                <span class="ui-theme-switch__icon-wrapper">
-                    @if (_currentTheme == "light")
-                    {
-                        <span class="ui-theme-switch__sun">☀️</span>
-                    }
-                    else
-                    {
-                        <span class="ui-theme-switch__moon">🌙</span>
-                    }
+        <bui-component @attributes="ComputedAttributes">
+            <button @onclick="ToggleLightDark"
+                    aria-label="@($"Switch to {GetOppositeTheme()} mode")">
+                <span class="bui-theme-switch__sun-moon-container">
+                    <span class="bui-theme-switch__icon-wrapper">
+                        @if (_currentTheme == "light")
+                        {
+                            <span class="bui-theme-switch__sun">☀️</span>
+                        }
+                        else
+                        {
+                            <span class="bui-theme-switch__moon">🌙</span>
+                        }
+                    </span>
                 </span>
-            </span>
-        </button>
+            </button>
+        </bui-component>
     };
 
     private async Task SwitchTheme()

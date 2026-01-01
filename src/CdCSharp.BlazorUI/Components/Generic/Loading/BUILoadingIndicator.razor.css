@@ -1,30 +1,30 @@
-﻿ui-component[data-ui-component="loading-indicator"] {
+﻿bui-component[data-bui-component="loading-indicator"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 /* Spinner Variant */
-ui-component[data-ui-variant="spinner"] .ui-loading-spinner {
+bui-component[data-bui-variant="spinner"] .bui-loading-spinner {
     width: 100%;
     height: 100%;
-    animation: ui-loading-spinner-rotate 2s linear infinite;
+    animation: bui-loading-spinner-rotate 2s linear infinite;
 }
 
-ui-component[data-ui-variant="spinner"] circle {
+bui-component[data-bui-variant="spinner"] circle {
     stroke-dasharray: 1, 200;
     stroke-dashoffset: 0;
-    animation: ui-loading-spinner-dash 1.5s ease-in-out infinite;
+    animation: bui-loading-spinner-dash 1.5s ease-in-out infinite;
     stroke-linecap: round;
 }
 
-@keyframes ui-loading-spinner-rotate {
+@keyframes bui-loading-spinner-rotate {
     100% {
         transform: rotate(360deg);
     }
 }
 
-@keyframes ui-loading-spinner-dash {
+@keyframes bui-loading-spinner-dash {
     0% {
         stroke-dasharray: 1, 200;
         stroke-dashoffset: 0;
@@ -42,7 +42,7 @@ ui-component[data-ui-variant="spinner"] circle {
 }
 
 /* Linear Variant */
-ui-component[data-ui-variant="linearindeterminate"] .ui-loading-linear {
+bui-component[data-bui-variant="linearindeterminate"] .bui-loading-linear {
     width: 100%;
     height: 4px;
     background-color: currentColor;
@@ -51,13 +51,13 @@ ui-component[data-ui-variant="linearindeterminate"] .ui-loading-linear {
     position: relative;
 }
 
-ui-component[data-ui-variant="linearindeterminate"] .ui-loading-linear__bar {
+bui-component[data-bui-variant="linearindeterminate"] .bui-loading-linear__bar {
     height: 100%;
     background-color: currentColor;
-    animation: ui-loading-linear 2s ease-in-out infinite;
+    animation: bui-loading-linear 2s ease-in-out infinite;
 }
 
-@keyframes ui-loading-linear {
+@keyframes bui-loading-linear {
     0% {
         transform: translateX(-100%);
         width: 100%;
@@ -75,46 +75,46 @@ ui-component[data-ui-variant="linearindeterminate"] .ui-loading-linear__bar {
 }
 
 /* Circular Progress Variant */
-ui-component[data-ui-variant="circularprogress"] .ui-loading-circular {
+bui-component[data-bui-variant="circularprogress"] .bui-loading-circular {
     width: 100%;
     height: 100%;
-    animation: ui-loading-circular-rotate 1s linear infinite;
+    animation: bui-loading-circular-rotate 1s linear infinite;
 }
 
-ui-component[data-ui-variant="circularprogress"] circle {
+bui-component[data-bui-variant="circularprogress"] circle {
     stroke-dasharray: 80, 200;
     stroke-dashoffset: 0;
     stroke-linecap: round;
 }
 
-@keyframes ui-loading-circular-rotate {
+@keyframes bui-loading-circular-rotate {
     100% {
         transform: rotate(360deg);
     }
 }
 
 /* Dots Variant */
-ui-component[data-ui-variant="dots"] {
+bui-component[data-bui-variant="dots"] {
     gap: 0.25em;
 }
 
-    ui-component[data-ui-variant="dots"] .ui-loading-dot {
+    bui-component[data-bui-variant="dots"] .bui-loading-dot {
         width: 0.25em;
         height: 0.25em;
         background-color: currentColor;
         border-radius: 50%;
-        animation: ui-loading-dots 1.4s ease-in-out infinite;
+        animation: bui-loading-dots 1.4s ease-in-out infinite;
     }
 
-        ui-component[data-ui-variant="dots"] .ui-loading-dot:nth-child(1) {
+        bui-component[data-bui-variant="dots"] .bui-loading-dot:nth-child(1) {
             animation-delay: -0.32s;
         }
 
-        ui-component[data-ui-variant="dots"] .ui-loading-dot:nth-child(2) {
+        bui-component[data-bui-variant="dots"] .bui-loading-dot:nth-child(2) {
             animation-delay: -0.16s;
         }
 
-@keyframes ui-loading-dots {
+@keyframes bui-loading-dots {
     0%, 80%, 100% {
         transform: scale(0);
         opacity: 0.5;
@@ -127,15 +127,15 @@ ui-component[data-ui-variant="dots"] {
 }
 
 /* Pulse Variant */
-ui-component[data-ui-variant="pulse"] .ui-loading-pulse {
+bui-component[data-bui-variant="pulse"] .bui-loading-pulse {
     width: 100%;
     height: 100%;
     background-color: currentColor;
     border-radius: 50%;
-    animation: ui-loading-pulse 1.5s ease-out infinite;
+    animation: bui-loading-pulse 1.5s ease-out infinite;
 }
 
-@keyframes ui-loading-pulse {
+@keyframes bui-loading-pulse {
     0% {
         transform: scale(0);
         opacity: 1;
@@ -148,17 +148,17 @@ ui-component[data-ui-variant="pulse"] .ui-loading-pulse {
 }
 
 /* Size modifiers - specific to loading indicator */
-ui-component[data-ui-component="loading-indicator"][data-ui-size="small"] {
+bui-component[data-bui-component="loading-indicator"][data-bui-size="small"] {
     width: 1rem;
     height: 1rem;
 }
 
-ui-component[data-ui-component="loading-indicator"][data-ui-size="medium"] {
+bui-component[data-bui-component="loading-indicator"][data-bui-size="medium"] {
     width: 1.5rem;
     height: 1.5rem;
 }
 
-ui-component[data-ui-component="loading-indicator"][data-ui-size="large"] {
+bui-component[data-bui-component="loading-indicator"][data-bui-size="large"] {
     width: 2rem;
     height: 2rem;
 }

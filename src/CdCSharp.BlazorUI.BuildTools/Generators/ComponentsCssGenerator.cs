@@ -31,66 +31,106 @@ public static class CssCommonClasses
     {
         StringBuilder sb = new();
 
-        sb.AppendLine(@"
+        sb.AppendLine(@$"
 /* ========================================
    Common Component Classes
    Auto-generated - Do not edit manually
    ======================================== */
 
-ui-component {
+{FeatureDefinitions.Tags.Component} {{
     display: inline-flex;
     /* Color variables with fallback to palette */");
 
         sb.AppendLine($"    background-color: var({FeatureDefinitions.CssVariables.BackgroundColor}, inherit);");
         sb.AppendLine($"    color: var({FeatureDefinitions.CssVariables.Color}, inherit);");
-        sb.AppendLine(@"}
+        sb.AppendLine(@"}");
+        sb.AppendLine();
 
-/* Size Classes */");
+        sb.AppendLine(@$"
+/* Component-specific BEM classes */
+.{FeatureDefinitions.CssClasses.InputLabel} {{
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    color: inherit;
+}}
 
-        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Small}\"] {{");
+.{FeatureDefinitions.CssClasses.InputRequired} {{
+    color: var(--palette-error);
+    margin-left: 0.125rem;
+}}
+
+.{FeatureDefinitions.CssClasses.InputContainer} {{
+    position: relative;
+}}
+
+.{FeatureDefinitions.CssClasses.InputLoading} {{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}}
+
+.{FeatureDefinitions.CssClasses.InputValidation} {{
+    color: var(--palette-error);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}}
+
+.{FeatureDefinitions.CssClasses.InputHelperText} {{
+    color: inherit;
+    opacity: 0.7;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}}
+");
+
+        sb.AppendLine();
+        sb.AppendLine("/* Size Classes */");
+        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Small}\"] {{");
         sb.AppendLine("    font-size: 0.875rem;");
         sb.AppendLine("}");
         sb.AppendLine();
 
-        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Medium}\"] {{");
+        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Medium}\"] {{");
         sb.AppendLine("    font-size: 1rem;");
         sb.AppendLine("}");
         sb.AppendLine();
 
-        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Large}\"] {{");
+        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Large}\"] {{");
         sb.AppendLine("    font-size: 1.125rem;");
         sb.AppendLine("}");
 
         sb.AppendLine(@"
 /* Density Classes */");
 
-        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Comfortable}\"] {{");
+        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Comfortable}\"] {{");
         sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 1.5;");
         sb.AppendLine("}");
         sb.AppendLine();
 
-        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Standard}\"] {{");
+        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Standard}\"] {{");
         sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 1;");
         sb.AppendLine("}");
         sb.AppendLine();
 
-        sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Compact}\"] {{");
+        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Compact}\"] {{");
         sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 0.75;");
         sb.AppendLine("}");
 
         sb.AppendLine($@"
 /* Full Width */
-ui-component[{FeatureDefinitions.DataAttributes.FullWidth}=""true""] {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.FullWidth}=""true""] {{
     width: 100%;
 }}
 
 /* Loading State */
-ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""] {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Loading}=""true""] {{
     pointer-events: none;
     position: relative;
 }}
 
-ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
     content: '';
     position: absolute;
     inset: 0;
@@ -99,7 +139,7 @@ ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
 }}
 
 @media (prefers-color-scheme: dark) {{
-    ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
+    {FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
         background-color: rgba(0, 0, 0, 0.6);
     }}
 }}
@@ -110,12 +150,12 @@ ui-component[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
 
         sb.AppendLine($@"
 /* Ripple Effect */
-ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] {{
     position: relative;
     overflow: hidden;
 }}
 
-ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
@@ -124,16 +164,16 @@ ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefin
     pointer-events: none;
 }}
 
-[data-theme=""dark""] ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
+[data-theme=""dark""] {FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
     background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(255, 255, 255, 0.5));
 }}
 
-[data-theme=""light""] ui-component[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
+[data-theme=""light""] {FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
     background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(0, 0, 0, 0.5));
 }}
 
 /* Border styles using CSS variables */
-ui-component {{
+{FeatureDefinitions.Tags.Component} {{
     border-width: var({FeatureDefinitions.CssVariables.BorderWidth}, 0);
     border-style: var({FeatureDefinitions.CssVariables.BorderStyle}, solid);
     border-color: var({FeatureDefinitions.CssVariables.BorderColor}, transparent);
@@ -158,48 +198,48 @@ ui-component {{
 }}
 
 /* Generic SVG styles */
-ui-component svg {{
+{FeatureDefinitions.Tags.Component} svg {{
     pointer-events: none;
     fill: currentColor;
 }}
 
 /* SVG sizing based on component size */
-ui-component[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Small}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Small}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
     width: 1rem;
     height: 1rem;
 }}
 
-ui-component[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Medium}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Medium}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
     width: 1.25rem;
     height: 1.25rem;
 }}
 
-ui-component[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Large}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Large}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
     width: 1.5rem;
     height: 1.5rem;
 }}
 
 /* Generic disabled states for form controls */
-ui-component[{FeatureDefinitions.DataAttributes.Disabled}=""true""] input,
-ui-component[{FeatureDefinitions.DataAttributes.Disabled}=""true""] textarea,
-ui-component[{FeatureDefinitions.DataAttributes.Disabled}=""true""] select {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Disabled}=""true""] input,
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Disabled}=""true""] textarea,
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Disabled}=""true""] select {{
     cursor: not-allowed;
     opacity: 0.6;
 }}
 
-ui-component[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] input,
-ui-component[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] textarea,
-ui-component[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] select {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] input,
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] textarea,
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] select {{
     cursor: default;
 }}
 
-ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] input,
-ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] textarea,
-ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] select {{
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Error}=""true""] input,
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Error}=""true""] textarea,
+{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Error}=""true""] select {{
     border-color: var(--palette-error);
 }}
 
-@keyframes ui-ripple-animation {{
+@keyframes bui-ripple-animation {{
     to {{
         transform: scale(4);
         opacity: 0;
@@ -218,14 +258,14 @@ ui-component[{FeatureDefinitions.DataAttributes.Error}=""true""] select {{
         {
             if (i == 0)
             {
-                sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
+                sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
                 sb.AppendLine("    box-shadow: none;");
                 sb.AppendLine("}");
             }
             else
             {
                 (string umbra, string penumbra, string ambient) = GetElevationValues(i);
-                sb.AppendLine($"ui-component[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
+                sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
                 sb.AppendLine($"    box-shadow: {umbra}, {penumbra}, {ambient};");
                 sb.AppendLine("}");
             }

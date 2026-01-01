@@ -45,22 +45,7 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
 
     protected override void OnParametersSet()
     {
-        // Build state attributes
-        Dictionary<string, object> stateAttributes = new()
-        {
-            ["data-ui-error"] = IsError ? "true" : "false",
-            ["data-ui-disabled"] = IsDisabled ? "true" : "false",
-            ["data-ui-readonly"] = IsReadOnly ? "true" : "false",
-            ["data-ui-required"] = IsRequired ? "true" : "false"
-        };
-
-        // Combine with AdditionalAttributes
-        IReadOnlyDictionary<string, object> combinedAttributes =
-            AdditionalAttributes != null
-                ? stateAttributes.Concat(AdditionalAttributes).ToDictionary(x => x.Key, x => x.Value)
-                : stateAttributes;
-
-        _styleBuilder.BuildStyles(this, combinedAttributes);
+        _styleBuilder.BuildStyles(this, AdditionalAttributes);
 
         // Update validation state
         if (EditContext != null && ValueExpression != null)

@@ -5,31 +5,36 @@
 /// </summary>
 public static class FeatureDefinitions
 {
+    public static class Tags
+    {
+        public const string Component = "bui-component";
+    }
+
     /// <summary>
     /// Data attribute names used by features
     /// </summary>
     public static class DataAttributes
     {
         // Component identification
-        public const string Component = "data-ui-component";
-        public const string Variant = "data-ui-variant";
+        public const string Component = "data-bui-component";
+        public const string Variant = "data-bui-variant";
 
         // Common features
-        public const string Size = "data-ui-size";
-        public const string Density = "data-ui-density";
-        public const string FullWidth = "data-ui-fullwidth";
-        public const string Elevation = "data-ui-elevation";
-        public const string Transitions = "data-ui-transitions";
+        public const string Size = "data-bui-size";
+        public const string Density = "data-bui-density";
+        public const string FullWidth = "data-bui-fullwidth";
+        public const string Elevation = "data-bui-elevation";
+        public const string Transitions = "data-bui-transitions";
 
         // State features
-        public const string Loading = "data-ui-loading";
-        public const string Disabled = "data-ui-disabled";
-        public const string ReadOnly = "data-ui-readonly";
-        public const string Required = "data-ui-required";
-        public const string Error = "data-ui-error";
+        public const string Loading = "data-bui-loading";
+        public const string Disabled = "data-bui-disabled";
+        public const string ReadOnly = "data-bui-readonly";
+        public const string Required = "data-bui-required";
+        public const string Error = "data-bui-error";
 
         // Behavior features
-        public const string Ripple = "data-ui-ripple";
+        public const string Ripple = "data-bui-ripple";
     }
 
     /// <summary>
@@ -38,43 +43,43 @@ public static class FeatureDefinitions
     public static class CssVariables
     {
         // Colors
-        public const string BackgroundColor = "--ui-bg-color";
-        public const string Color = "--ui-color";
+        public const string BackgroundColor = "--bui-bg-color";
+        public const string Color = "--bui-color";
 
         // Ripple
-        public const string RippleColor = "--ui-ripple-color";
-        public const string RippleDuration = "--ui-ripple-duration";
+        public const string RippleColor = "--bui-ripple-color";
+        public const string RippleDuration = "--bui-ripple-duration";
 
         // Borders - General
-        public const string BorderWidth = "--ui-border-width";
-        public const string BorderStyle = "--ui-border-style";
-        public const string BorderColor = "--ui-border-color";
-        public const string BorderRadius = "--ui-border-radius";
+        public const string BorderWidth = "--bui-border-width";
+        public const string BorderStyle = "--bui-border-style";
+        public const string BorderColor = "--bui-border-color";
+        public const string BorderRadius = "--bui-border-radius";
 
         // Borders - Individual sides
-        public const string BorderTopWidth = "--ui-border-top-width";
-        public const string BorderTopStyle = "--ui-border-top-style";
-        public const string BorderTopColor = "--ui-border-top-color";
+        public const string BorderTopWidth = "--bui-border-top-width";
+        public const string BorderTopStyle = "--bui-border-top-style";
+        public const string BorderTopColor = "--bui-border-top-color";
 
-        public const string BorderRightWidth = "--ui-border-right-width";
-        public const string BorderRightStyle = "--ui-border-right-style";
-        public const string BorderRightColor = "--ui-border-right-color";
+        public const string BorderRightWidth = "--bui-border-right-width";
+        public const string BorderRightStyle = "--bui-border-right-style";
+        public const string BorderRightColor = "--bui-border-right-color";
 
-        public const string BorderBottomWidth = "--ui-border-bottom-width";
-        public const string BorderBottomStyle = "--ui-border-bottom-style";
-        public const string BorderBottomColor = "--ui-border-bottom-color";
+        public const string BorderBottomWidth = "--bui-border-bottom-width";
+        public const string BorderBottomStyle = "--bui-border-bottom-style";
+        public const string BorderBottomColor = "--bui-border-bottom-color";
 
-        public const string BorderLeftWidth = "--ui-border-left-width";
-        public const string BorderLeftStyle = "--ui-border-left-style";
-        public const string BorderLeftColor = "--ui-border-left-color";
+        public const string BorderLeftWidth = "--bui-border-left-width";
+        public const string BorderLeftStyle = "--bui-border-left-style";
+        public const string BorderLeftColor = "--bui-border-left-color";
 
         // Transitions
-        public const string TransitionDuration = "--ui-transition-duration";
-        public const string TransitionEasing = "--ui-transition-easing";
-        public const string TransitionDelay = "--ui-transition-delay";
+        public const string TransitionDuration = "--bui-transition-duration";
+        public const string TransitionEasing = "--bui-transition-easing";
+        public const string TransitionDelay = "--bui-transition-delay";
 
         // Layout
-        public const string DensitySpacingMultiplier = "--ui-density-spacing-multiplier";
+        public const string DensitySpacingMultiplier = "--bui-density-spacing-multiplier";
     }
 
     /// <summary>
@@ -83,26 +88,26 @@ public static class FeatureDefinitions
     public static class CssClasses
     {
         // Ripple effect
-        public const string Ripple = "ui-ripple";
+        public const string Ripple = "bui-ripple";
 
         // Button parts
-        public const string ButtonText = "ui-button__text";
+        public const string ButtonText = "bui-button__text";
 
         // Input parts
-        public const string InputLabel = "ui-input__label";
-        public const string InputContainer = "ui-input__container";
-        public const string InputRequired = "ui-input__required";
-        public const string InputLoading = "ui-input__loading";
-        public const string InputValidation = "ui-input__validation";
-        public const string InputHelperText = "ui-input__helper-text";
+        public const string InputLabel = "bui-input__label";
+        public const string InputContainer = "bui-input__container";
+        public const string InputRequired = "bui-input__required";
+        public const string InputLoading = "bui-input__loading";
+        public const string InputValidation = "bui-input__validation";
+        public const string InputHelperText = "bui-input__helper-text";
 
         // Loading indicator parts
-        public const string LoadingSpinner = "ui-loading-spinner";
-        public const string LoadingLinear = "ui-loading-linear";
-        public const string LoadingLinearBar = "ui-loading-linear__bar";
-        public const string LoadingCircular = "ui-loading-circular";
-        public const string LoadingDot = "ui-loading-dot";
-        public const string LoadingPulse = "ui-loading-pulse";
+        public const string LoadingSpinner = "bui-loading-spinner";
+        public const string LoadingLinear = "bui-loading-linear";
+        public const string LoadingLinearBar = "bui-loading-linear__bar";
+        public const string LoadingCircular = "bui-loading-circular";
+        public const string LoadingDot = "bui-loading-dot";
+        public const string LoadingPulse = "bui-loading-pulse";
     }
 
     /// <summary>

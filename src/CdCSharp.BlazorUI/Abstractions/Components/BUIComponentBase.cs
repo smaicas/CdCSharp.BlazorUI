@@ -20,8 +20,8 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable
 
     protected override void OnParametersSet()
     {
-        _styleBuilder.BuildStyles(this, AdditionalAttributes);
         base.OnParametersSet();
+        _styleBuilder.BuildStyles(this, AdditionalAttributes);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

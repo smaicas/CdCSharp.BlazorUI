@@ -26,7 +26,7 @@ class RippleBehavior {
         const y = e.clientY - rect.top - size / 2;
 
         const ripple = document.createElement('span');
-        ripple.className = 'ui-ripple';
+        ripple.className = 'bui-ripple';
         ripple.style.width = ripple.style.height = size + 'px';
         ripple.style.left = x + 'px';
         ripple.style.top = y + 'px';

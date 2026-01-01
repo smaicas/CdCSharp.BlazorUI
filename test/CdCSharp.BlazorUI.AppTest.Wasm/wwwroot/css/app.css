@@ -115,9 +115,9 @@ code {
 
 /*Override CSS Variables form BlazorUI fonts*/
 :root {
-    --blazorui-font-base: 'Roboto Custom', system-ui, sans-serif;
-    --blazorui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
-    --blazorui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
+    --bui-font-base: 'Roboto Custom', system-ui, sans-serif;
+    --bui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
+    --bui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
 }
 
 
@@ -585,9 +585,9 @@ code {
 
 /* Override CSS Variables for BlazorUI fonts */
 :root {
-    --blazorui-font-base: 'Roboto Custom', system-ui, sans-serif;
-    --blazorui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
-    --blazorui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
+    --bui-font-base: 'Roboto Custom', system-ui, sans-serif;
+    --bui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
+    --bui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
     /* Add RGB versions for opacity support */
     --palette-backgroundcontrast-rgb: 30, 41, 59; /* For light theme */
 }

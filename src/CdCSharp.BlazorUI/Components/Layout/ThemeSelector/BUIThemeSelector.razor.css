@@ -1,10 +1,10 @@
 ﻿/* Base styles */
-ui-component[data-ui-component="theme-switch"] {
+bui-component[data-bui-component="theme-selector"] {
     position: relative;
     overflow: hidden;
 }
 
-    ui-component[data-ui-component="theme-switch"] button {
+    bui-component[data-bui-component="theme-selector"] button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -15,21 +15,21 @@ ui-component[data-ui-component="theme-switch"] {
         transition: all 0.3s ease;
     }
 
-        ui-component[data-ui-component="theme-switch"] button:hover {
+        bui-component[data-bui-component="theme-selector"] button:hover {
             transform: translateY(-1px);
         }
 
-        ui-component[data-ui-component="theme-switch"] button:active {
+        bui-component[data-bui-component="theme-selector"] button:active {
             transform: translateY(0);
         }
 
-        ui-component[data-ui-component="theme-switch"] button:disabled {
+        bui-component[data-bui-component="theme-selector"] button:disabled {
             cursor: not-allowed;
             opacity: 0.7;
         }
 
 /* Default variant */
-ui-component[data-ui-variant="default"] button {
+bui-component[data-bui-variant="default"] button {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     min-width: 120px;
@@ -37,32 +37,32 @@ ui-component[data-ui-variant="default"] button {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-    ui-component[data-ui-variant="default"] button:hover {
+    bui-component[data-bui-variant="default"] button:hover {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
 
-ui-component[data-ui-variant="default"] .ui-theme-switch__content {
+bui-component[data-bui-variant="default"] .bui-theme-switch__content {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-ui-component[data-ui-variant="default"][data-ui-transitioning="true"] .ui-theme-switch__content {
+bui-component[data-bui-variant="default"][data-bui-transitioning="true"] .bui-theme-switch__content {
     opacity: 0;
     transform: scale(0.8);
 }
 
-ui-component[data-ui-variant="default"] .ui-theme-switch__icon {
+bui-component[data-bui-variant="default"] .bui-theme-switch__icon {
     font-size: 1.2rem;
     line-height: 1;
 }
 
-ui-component[data-ui-variant="default"] .ui-theme-switch__label {
+bui-component[data-bui-variant="default"] .bui-theme-switch__label {
     font-weight: 500;
 }
 /* SunMoon variant */
-ui-component[data-ui-variant="sunmoon"] button {
+bui-component[data-bui-variant="sunmoon"] button {
     width: 60px;
     height: 32px;
     padding: 0.25rem;
@@ -72,11 +72,11 @@ ui-component[data-ui-variant="sunmoon"] button {
     position: relative;
 }
 
-ui-component[data-ui-variant="sunmoon"][data-ui-theme="light"] button {
+html[data-theme="light"] bui-component[data-bui-variant="sunmoon"] button {
     background: linear-gradient(135deg, #87CEEB, #98D8E8);
 }
 
-ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__sun-moon-container {
+bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__sun-moon-container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -85,7 +85,7 @@ ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__sun-moon-container {
     position: relative;
 }
 
-ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__icon-wrapper {
+bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__icon-wrapper {
     width: 24px;
     height: 24px;
     background: white;
@@ -98,16 +98,16 @@ ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__icon-wrapper {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-ui-component[data-ui-variant="sunmoon"][data-ui-theme="light"] .ui-theme-switch__icon-wrapper {
+html[data-theme="light"] bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__icon-wrapper {
     transform: translateX(0);
 }
 
-ui-component[data-ui-variant="sunmoon"][data-ui-theme="dark"] .ui-theme-switch__icon-wrapper {
+html[data-theme="dark"] bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__icon-wrapper {
     transform: translateX(28px);
 }
 
-ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__sun,
-ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__moon {
+bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__sun,
+bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__moon {
     font-size: 0.875rem;
     line-height: 1;
     display: flex;
@@ -115,11 +115,11 @@ ui-component[data-ui-variant="sunmoon"] .ui-theme-switch__moon {
     justify-content: center;
 }
 /* Animation for icon rotation */
-ui-component[data-ui-variant="sunmoon"][data-ui-theme="light"] .ui-theme-switch__sun {
+html[data-theme="light"] bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__sun {
     animation: rotate-in 0.3s ease-out;
 }
 
-ui-component[data-ui-variant="sunmoon"][data-ui-theme="dark"] .ui-theme-switch__moon {
+html[data-theme="dark"] bui-component[data-bui-variant="sunmoon"] .bui-theme-switch__moon {
     animation: rotate-in 0.3s ease-out;
 }
 
@@ -135,11 +135,11 @@ ui-component[data-ui-variant="sunmoon"][data-ui-theme="dark"] .ui-theme-switch__
     }
 }
 /* Hover effect for SunMoon */
-ui-component[data-ui-variant="sunmoon"] button:hover .ui-theme-switch__icon-wrapper {
+bui-component[data-bui-variant="sunmoon"] button:hover .bui-theme-switch__icon-wrapper {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
 }
 /* Focus styles */
-ui-component[data-ui-component="theme-switch"] button:focus-visible {
+bui-component[data-bui-component="theme-selector"] button:focus-visible {
     outline: 2px solid var(--palette-primary);
     outline-offset: 2px;
 }
