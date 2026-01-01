@@ -1,0 +1,205 @@
+﻿@using CdCSharp.BlazorUI.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Localization.Abstractions
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Localization
+@using System.Globalization
+@using Microsoft.JSInterop
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@* BUICultureSelector Requires rendermode interactive in Blazor Server *@
+
+@inherits BUIVariantComponentBase<BUICultureSelector, BUICultureSelectorVariant>
+@implements IHasSize
+
+@inject NavigationManager Navigation
+@inject ILocalizationPersistence LocalizationPersistence
+@inject LocalizationSettings LocalizationSettings
+@inject IStringLocalizer<BUICultureSelector> Localizer
+@inject IJSRuntime JSRuntime
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool ShowFlag { get; set; } = true;
+    [Parameter] public bool ShowName { get; set; } = true;
+    [Parameter] public EventCallback<CultureInfo> OnCultureChanged { get; set; }
+
+    private CultureInfo _currentCulture = CultureInfo.CurrentUICulture;
+
+    public override BUICultureSelectorVariant DefaultVariant => BUICultureSelectorVariant.Dropdown;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currentCulture = CultureInfo.CurrentUICulture;
+        await base.OnInitializedAsync();
+    }
+
+    protected override IReadOnlyDictionary<BUICultureSelectorVariant, Func<BUICultureSelector, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUICultureSelectorVariant, Func<BUICultureSelector, RenderFragment>>
+        {
+            [BUICultureSelectorVariant.Dropdown] = c => c.RenderDropdown(),
+            [BUICultureSelectorVariant.Buttons] = c => c.RenderButtons(),
+            [BUICultureSelectorVariant.Flags] = c => c.RenderFlags()
+        };
+
+    private RenderFragment RenderDropdown() => __builder =>
+    {
+        <select class="ui-culture-selector__select"
+                value="@_currentCulture.Name"
+                @onchange="OnCultureChangeAsync">
+            @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
+            {
+                <option value="@culture.Name">
+                    @if (ShowFlag)
+                    {
+                        @GetFlag(culture.Name)
+                        @if (ShowName)
+                        {
+                            <text>&nbsp;</text>
+                        }
+                    }
+                    @if (ShowName)
+                    {
+                        @culture.DisplayName
+                    }
+                </option>
+            }
+        </select>
+    };
+
+    private RenderFragment RenderButtons() => __builder =>
+    {
+        <div class="ui-culture-selector__button-group">
+            @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
+            {
+                bool isActive = culture.Name == _currentCulture.Name;
+                <BUIButton OnClick="() => SetCultureAsync(culture.Name)"
+                           Size="Size"
+                           Disabled="isActive">
+                    @if (ShowFlag)
+                    {
+                        @GetFlag(culture.Name)
+                        @if (ShowName)
+                        {
+                            <text>&nbsp;</text>
+                        }
+                    }
+                    @if (ShowName)
+                    {
+                        @culture.DisplayName
+                    }
+                </BUIButton>
+            }
+        </div>
+    };
+
+    private RenderFragment RenderFlags() => __builder =>
+    {
+        <div class="ui-culture-selector__flag-list">
+            @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
+            {
+                bool isActive = culture.Name == _currentCulture.Name;
+                <button class="ui-culture-selector__flag-button @(isActive ? "active" : "")"
+                        @onclick="() => SetCultureAsync(culture.Name)"
+                        title="@culture.DisplayName"
+                        disabled="@isActive">
+                    @GetFlag(culture.Name)
+                    @if (ShowName)
+                    {
+                        <span class="ui-culture-selector__flag-label">@culture.DisplayName</span>
+                    }
+                </button>
+            }
+        </div>
+    };
+
+    private async Task OnCultureChangeAsync(ChangeEventArgs e)
+    {
+        if (e.Value is string cultureName)
+        {
+            await SetCultureAsync(cultureName);
+        }
+    }
+
+    private async Task SetCultureAsync(string cultureName)
+    {
+        if (string.IsNullOrEmpty(cultureName) || cultureName == _currentCulture.Name)
+            return;
+
+        CultureInfo? newCulture = LocalizationSettings.SupportedCultures
+            .FirstOrDefault(c => c.Name == cultureName);
+
+        if (newCulture == null)
+            return;
+
+        try
+        {
+            if (OperatingSystem.IsBrowser())
+            {
+                // WASM: Guardar en localStorage y recargar
+                await LocalizationPersistence.SetStoredCultureAsync(cultureName);
+                Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+            }
+            else
+            {
+                // Server: Redirigir directamente al endpoint que establecerá la cookie
+                Uri uri = new Uri(Navigation.Uri);
+                string pathAndQuery = uri.GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+                string cultureEscaped = Uri.EscapeDataString(cultureName);
+                string uriEscaped = Uri.EscapeDataString(pathAndQuery);
+
+                Navigation.NavigateTo(
+                    $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}",
+                    forceLoad: true);
+            }
+
+            // Invoke callback if provided
+            if (OnCultureChanged.HasDelegate)
+            {
+                await OnCultureChanged.InvokeAsync(newCulture);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Error setting culture: {ex.Message}");
+        }
+    }
+
+    private string GetFlag(string cultureName) => cultureName?.ToUpperInvariant() switch
+    {
+        "EN-US" => "🇺🇸",
+        "ES-ES" => "🇪🇸",
+        "FR-FR" => "🇫🇷",
+        "DE-DE" => "🇩🇪",
+        "IT-IT" => "🇮🇹",
+        "PT-BR" => "🇧🇷",
+        "PT-PT" => "🇵🇹",
+        "ZH-CN" => "🇨🇳",
+        "JA-JP" => "🇯🇵",
+        "KO-KR" => "🇰🇷",
+        "RU-RU" => "🇷🇺",
+        "AR-SA" => "🇸🇦",
+        "HI-IN" => "🇮🇳",
+        "NL-NL" => "🇳🇱",
+        "SV-SE" => "🇸🇪",
+        "NO-NO" => "🇳🇴",
+        "DA-DK" => "🇩🇰",
+        "FI-FI" => "🇫🇮",
+        "PL-PL" => "🇵🇱",
+        "TR-TR" => "🇹🇷",
+        "CS-CZ" => "🇨🇿",
+        "EL-GR" => "🇬🇷",
+        "HE-IL" => "🇮🇱",
+        "TH-TH" => "🇹🇭",
+        "VI-VN" => "🇻🇳",
+        "ID-ID" => "🇮🇩",
+        "MS-MY" => "🇲🇾",
+        "UK-UA" => "🇺🇦",
+        _ => "🌐"
+    };
+
+}

@@ -36,6 +36,13 @@
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
+    <script>
+        window.blazorCulture = {
+            get: () => window.localStorage['BlazorUI.Culture'],
+            set: (value) => window.localStorage['BlazorUI.Culture'] = value
+        };
+    </script>
+    <script src="_content/CdCSharp.BlazorUI/js/Types/Localization/LocalizationInterop.min.js"></script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
     <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
 </body>

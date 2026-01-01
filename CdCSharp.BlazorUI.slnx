@@ -18,5 +18,8 @@
   <Project Path="src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj" Id="a67069d5-56c2-49fa-adec-656079117b53" />
   <Project Path="src/CdCSharp.BlazorUI.Core.CodeGeneration/CdCSharp.BlazorUI.Core.CodeGeneration.csproj" Id="6ba20f9a-6292-42d8-a0d8-b45440bef1ea" />
   <Project Path="src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj" Id="4d42e187-5c5c-441e-a3bf-59ecb330e6e6" />
+  <Project Path="src/CdCSharp.BlazorUI.Localization.Abstractions/CdCSharp.BlazorUI.Localization.Abstractions.csproj" Id="1f8c6208-5b9a-468c-b2cc-8dba217ca870" />
+  <Project Path="src/CdCSharp.BlazorUI.Localization.Server/CdCSharp.BlazorUI.Localization.Server.csproj" Id="cc099920-bfe2-4cbb-ad43-85f57c86d3a4" />
+  <Project Path="src/CdCSharp.BlazorUI.Localization.Wasm/CdCSharp.BlazorUI.Localization.Wasm.csproj" Id="7203c218-f90d-4664-8e5f-d21641df712e" />
   <Project Path="src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj" />
 </Solution>

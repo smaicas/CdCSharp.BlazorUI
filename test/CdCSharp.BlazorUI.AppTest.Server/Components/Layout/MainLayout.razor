@@ -1,6 +1,29 @@
-﻿@inherits LayoutComponentBase
+﻿@using CdCSharp.BlazorUI.Components.Layout
+@inherits BUIBlazorLayout
 
-@Body
+<div class="doc-layout">
+    <header class="doc-header">
+        <div class="doc-header__brand">
+            <h1>CdCSharp.BlazorUI</h1>
+            <span class="doc-header__version">v1.0.0</span>
+        </div>
+        <div class="doc-header__actions">
+            <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
+        </div>
+    </header>
+
+    <div class="doc-container">
+        <nav class="doc-sidebar">
+            <NavMenu />
+        </nav>
+
+        <main class="doc-content">
+            <div class="doc-content__wrapper">
+                @Body
+            </div>
+        </main>
+    </div>
+</div>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.

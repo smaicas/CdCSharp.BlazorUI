@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI.Localization.Server\CdCSharp.BlazorUI.Localization.Server.csproj" />
     <ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
   </ItemGroup>
 

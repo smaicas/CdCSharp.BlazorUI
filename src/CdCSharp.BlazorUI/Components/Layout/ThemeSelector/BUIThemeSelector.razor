@@ -19,9 +19,14 @@
     private string _currentTheme = "light";
     private bool _isTransitioning = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _currentTheme = await ThemeInterop.GetThemeAsync();
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender)
+        {
+            _currentTheme = await ThemeInterop.GetThemeAsync();
+        }
     }
 
     public override BUIThemeSelectorVariant DefaultVariant

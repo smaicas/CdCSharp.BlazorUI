@@ -1,6 +1,17 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Localization
+
+@inject IStringLocalizer<Home> L
 
 <PageTitle>CdCSharp.BlazorUI - Component Library</PageTitle>
+
+<br />
+<br />
+<span>@L["TEST"]</span>
+<br />
+<br />
+<BUICultureSelector />
+<br />
 
 <div class="home-hero">
     <h1 class="home-hero__title">CdCSharp.BlazorUI</h1>
@@ -10,11 +21,11 @@
     </p>
     <div class="home-hero__actions">
         <BUIButton Text="Get Started"
-                  OnClick="@(() => NavigationManager.NavigateTo("/getting-started/installation"))"
-                  Transitions="@BUITransitionPresets.HoverLift" />
+                   OnClick="@(() => NavigationManager.NavigateTo("/getting-started/installation"))"
+                   Transitions="@BUITransitionPresets.HoverLift" />
         <BUIButton Text="View Components"
-                  OnClick="@(() => NavigationManager.NavigateTo("/components/buttons"))"
-                  Variant="BUIButtonVariant.Default" />
+                   OnClick="@(() => NavigationManager.NavigateTo("/components/buttons"))"
+                   Variant="BUIButtonVariant.Default" />
     </div>
 </div>
 
