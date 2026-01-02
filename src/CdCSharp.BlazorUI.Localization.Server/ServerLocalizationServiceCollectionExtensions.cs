@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServerLocalizationServiceCollectionExtensions
 {
-    public static IServiceCollection AddCdCSharpBlazorUILocalization(
+    public static IServiceCollection AddBlazorUILocalization(
         this IServiceCollection services,
         Action<LocalizationSettings>? configure = null)
     {

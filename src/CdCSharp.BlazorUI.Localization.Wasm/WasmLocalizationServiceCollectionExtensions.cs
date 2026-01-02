@@ -1,11 +1,14 @@
 ﻿using CdCSharp.BlazorUI.Localization.Abstractions;
 using CdCSharp.BlazorUI.Localization.Wasm;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.JSInterop;
+using System.Globalization;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WasmLocalizationServiceCollectionExtensions
 {
-    public static IServiceCollection AddCdCSharpBlazorUILocalization(
+    public static IServiceCollection AddBlazorUILocalization(
         this IServiceCollection services,
         Action<LocalizationSettings>? configure = null)
     {
@@ -20,5 +23,43 @@ public static class WasmLocalizationServiceCollectionExtensions
         services.AddScoped<ILocalizationPersistence, WasmLocalizationPersistence>();
 
         return services;
+    }
+}
+
+public static class WasmLocalizationHostExtensions
+{
+    public static async Task<WebAssemblyHost> UseBlazorUILocalization(
+        this WebAssemblyHost host,
+        string defaultCulture = "en-US")
+    {
+        IJSRuntime js = host.Services.GetRequiredService<IJSRuntime>();
+        try
+        {
+            // Using eval to access localStorage directly
+            string? storedCulture = await js.InvokeAsync<string?>("eval", $"window.localStorage.getItem('{WasmLocalizationPersistence.CULTURE_KEY}')");
+
+            if (!string.IsNullOrEmpty(storedCulture))
+            {
+                CultureInfo culture = new(storedCulture);
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+            }
+            else
+            {
+                CultureInfo culture = new(defaultCulture);
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+                await js.InvokeVoidAsync("eval", $"window.localStorage.setItem('{WasmLocalizationPersistence.CULTURE_KEY}', '{defaultCulture}')");
+            }
+        }
+        catch
+        {
+            CultureInfo culture = new(defaultCulture);
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+        }
+
+        return host;
     }
 }

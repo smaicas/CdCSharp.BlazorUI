@@ -10,7 +10,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddBlazorUI();
 
-builder.Services.AddCdCSharpBlazorUILocalization(options =>
+builder.Services.AddBlazorUILocalization(options =>
 {
     options.SupportedCultures =
     [

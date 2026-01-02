@@ -1,1 +1,0 @@
-﻿<button class="ui-theme-switch ui-theme-switch--default" blazor:onclick="<EVENT>" b-pxfrwcszl5><span class="ui-theme-switch__content " b-pxfrwcszl5><span class="ui-theme-switch__icon" b-pxfrwcszl5>💚</span><span class="ui-theme-switch__label" b-pxfrwcszl5>Green</span></span></button>

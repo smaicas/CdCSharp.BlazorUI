@@ -11,7 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddBlazorUI();
-builder.Services.AddCdCSharpBlazorUILocalization(options =>
+builder.Services.AddBlazorUILocalization(options =>
 {
     options.SupportedCultures =
     [
@@ -27,40 +27,10 @@ WebAssemblyHost host = builder.Build();
 const string defaultCulture = "en-US";
 IJSRuntime js = host.Services.GetRequiredService<IJSRuntime>();
 
-try
-{
-    // Intentar obtener la cultura guardada
-    string? storedCulture = await js.InvokeAsync<string?>("blazorCulture.get");
-
-    if (!string.IsNullOrEmpty(storedCulture))
-    {
-        CultureInfo culture = new(storedCulture);
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
-    }
-    else
-    {
-        // Si no hay cultura guardada, usar la predeterminada
-        CultureInfo culture = new(defaultCulture);
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
-
-        // Guardar la cultura predeterminada
-        await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);
-    }
-}
-catch
-{
-    // En caso de error, usar la cultura predeterminada
-    CultureInfo culture = new(defaultCulture);
-    CultureInfo.DefaultThreadCurrentCulture = culture;
-    CultureInfo.DefaultThreadCurrentUICulture = culture;
-}
-
 //try
 //{
-//    // Usar eval para acceder directamente a localStorage
-//    string? storedCulture = await js.InvokeAsync<string?>("eval", "window.localStorage.getItem('BlazorUI.Culture')");
+//    // Intentar obtener la cultura guardada
+//    string? storedCulture = await js.InvokeAsync<string?>("blazorCulture.get");
 
 //    if (!string.IsNullOrEmpty(storedCulture))
 //    {
@@ -70,18 +40,23 @@ catch
 //    }
 //    else
 //    {
+//        // Si no hay cultura guardada, usar la predeterminada
 //        CultureInfo culture = new(defaultCulture);
 //        CultureInfo.DefaultThreadCurrentCulture = culture;
 //        CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-//        await js.InvokeVoidAsync("eval", $"window.localStorage.setItem('BlazorUI.Culture', '{defaultCulture}')");
+//        // Guardar la cultura predeterminada
+//        await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);
 //    }
 //}
 //catch
 //{
+//    // En caso de error, usar la cultura predeterminada
 //    CultureInfo culture = new(defaultCulture);
 //    CultureInfo.DefaultThreadCurrentCulture = culture;
 //    CultureInfo.DefaultThreadCurrentUICulture = culture;
 //}
+
+await host.UseBlazorUILocalization();
 
 await host.RunAsync();

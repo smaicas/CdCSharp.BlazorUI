@@ -159,7 +159,7 @@ public static class CssCommonClasses
     position: absolute;
     border-radius: 50%;
     transform: scale(0);
-    animation: ui-ripple-animation var({FeatureDefinitions.CssVariables.RippleDuration}, 600ms) ease-out;
+    animation: bui-ripple-animation var({FeatureDefinitions.CssVariables.RippleDuration}, 600ms) ease-out;
     background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(255, 255, 255, 0.5));
     pointer-events: none;
 }}

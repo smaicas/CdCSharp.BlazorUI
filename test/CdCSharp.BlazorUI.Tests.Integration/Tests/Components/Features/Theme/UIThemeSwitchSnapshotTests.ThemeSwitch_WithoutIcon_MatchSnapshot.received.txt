@@ -1,1 +1,0 @@
-﻿<ui-component data-ui-component="theme-switch" data-ui-variant="default" data-ui-transitioning="false" b-pxfrwcszl5><button blazor:onclick="<EVENT>" b-pxfrwcszl5><span class="ui-theme-switch__content" b-pxfrwcszl5><span class="ui-theme-switch__label" b-pxfrwcszl5>Light</span></span></button></ui-component>

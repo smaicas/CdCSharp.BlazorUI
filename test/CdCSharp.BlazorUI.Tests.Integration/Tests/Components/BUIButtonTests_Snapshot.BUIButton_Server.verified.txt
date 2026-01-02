@@ -1,0 +1,6 @@
+﻿[
+  {
+    Variant: Default,
+    Html: <bui-component data-bui-component="button" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-fullwidth="false" data-bui-elevation="0" data-bui-loading="false" data-bui-ripple="true" b-7qedpwcil1><button type="button" blazor:onclick="<EVENT>" b-7qedpwcil1 blazor:elementReference="<GUID>"><span class="ui-button__text" b-7qedpwcil1>Default Button</span></button></bui-component>
+  }
+]

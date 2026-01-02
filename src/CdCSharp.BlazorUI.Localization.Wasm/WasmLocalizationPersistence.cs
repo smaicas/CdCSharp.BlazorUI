@@ -5,6 +5,8 @@ namespace CdCSharp.BlazorUI.Localization.Wasm;
 
 internal class WasmLocalizationPersistence : ILocalizationPersistence
 {
+    public const string CULTURE_KEY = "BlazorUI.Culture";
+
     private readonly IJSRuntime _jsRuntime;
     private IJSObjectReference? _module;
 
@@ -16,7 +18,7 @@ internal class WasmLocalizationPersistence : ILocalizationPersistence
     private async Task<IJSObjectReference> GetModuleAsync()
     {
         _module ??= await _jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/CdCSharp.BlazorUI/js/Types/Localization/LocalizationInterop.min.js");
+            "import", "./_content/CdCSharp.BlazorUI/js/Types/Storage/LocalStorageInterop.min.js");
         return _module;
     }
 
@@ -25,7 +27,7 @@ internal class WasmLocalizationPersistence : ILocalizationPersistence
         try
         {
             IJSObjectReference module = await GetModuleAsync();
-            return await module.InvokeAsync<string?>("getStoredCulture");
+            return await module.InvokeAsync<string?>("get", CULTURE_KEY);
         }
         catch
         {
@@ -36,6 +38,6 @@ internal class WasmLocalizationPersistence : ILocalizationPersistence
     public async Task SetStoredCultureAsync(string culture)
     {
         IJSObjectReference module = await GetModuleAsync();
-        await module.InvokeVoidAsync("setStoredCulture", culture);
+        await module.InvokeVoidAsync("set", CULTURE_KEY, culture);
     }
 }
