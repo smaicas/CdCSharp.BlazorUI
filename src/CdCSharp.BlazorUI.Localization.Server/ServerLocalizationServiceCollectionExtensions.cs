@@ -15,9 +15,6 @@ public static class ServerLocalizationServiceCollectionExtensions
         configure?.Invoke(options);
         services.AddSingleton(options);
 
-        // Add Runtime detector
-        services.AddSingleton<IBlazorRuntime, ServerBlazorRuntime>();
-
         // Add standard localization
         services.AddLocalization(opts => opts.ResourcesPath = options.ResourcesPath);
 
@@ -48,6 +45,7 @@ public static class ApplicationBuilderExtensions
     public static IApplicationBuilder UseBlazorUILocalizationServer(
         this IApplicationBuilder app)
     {
+        //return app;
         return app.UseRequestLocalization();
     }
 }

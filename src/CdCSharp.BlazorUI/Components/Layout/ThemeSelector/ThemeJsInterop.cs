@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Abstractions.JSInterop;
+﻿using CdCSharp.BlazorUI.Core.Abstractions.JSInterop;
 using CdCSharp.BlazorUI.Types;
 using Microsoft.JSInterop;
 

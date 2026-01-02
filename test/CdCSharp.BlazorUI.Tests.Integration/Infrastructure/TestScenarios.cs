@@ -44,16 +44,3 @@ public class TestScenarios
         }
     ];
 }
-
-public static class ErrorTestScenarios
-{
-    public static IEnumerable<object[]> All =>
-    [
-        new object[]
-        {
-            new BlazorScenario(
-                "MissingRuntime",
-                () => new MissingRuntimeTestContext())
-        }
-    ];
-}

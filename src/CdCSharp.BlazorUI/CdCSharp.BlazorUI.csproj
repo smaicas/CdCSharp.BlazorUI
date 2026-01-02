@@ -35,14 +35,4 @@
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Localization.Abstractions\CdCSharp.BlazorUI.Localization.Abstractions.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Types\Behaviors\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Types\Storage\LocalStorageInterop.ts">
-	    <SubType>Code</SubType>
-	  </None>
-	</ItemGroup>
-
 </Project>

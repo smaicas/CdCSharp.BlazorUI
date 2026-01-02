@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;

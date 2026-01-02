@@ -16,9 +16,6 @@ public static class WasmLocalizationServiceCollectionExtensions
         configure?.Invoke(options);
         services.AddSingleton(options);
 
-        // Add Runtime detector
-        services.AddSingleton<IBlazorRuntime, WasmBlazorRuntime>();
-
         // Add standard localization
         services.AddLocalization(opts => opts.ResourcesPath = options.ResourcesPath);
 
@@ -35,6 +32,7 @@ public static class WasmLocalizationHostExtensions
         this WebAssemblyHost host,
         string defaultCulture = "en-US")
     {
+        Console.WriteLine("HOST BUILD EJECUTADO" + DateTime.Now);
         IJSRuntime js = host.Services.GetRequiredService<IJSRuntime>();
         try
         {

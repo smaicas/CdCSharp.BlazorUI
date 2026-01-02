@@ -1,5 +1,6 @@
 ﻿using Bunit;
 using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
@@ -19,7 +20,7 @@ public class BUIButtonVariantTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         // Arrange
-        VariantRegistry registry = ctx.Services.GetRequiredService<IVariantRegistry>() as VariantRegistry;
+        VariantRegistry? registry = ctx.Services.GetRequiredService<IVariantRegistry>() as VariantRegistry;
         BUIButtonVariant customVariant = BUIButtonVariant.Custom("GlassButton");
 
         registry!.Register<BUIButton, BUIButtonVariant>(

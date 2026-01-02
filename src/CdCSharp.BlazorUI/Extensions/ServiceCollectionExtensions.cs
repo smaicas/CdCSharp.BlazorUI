@@ -1,10 +1,10 @@
 ﻿using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript;
-using CdCSharp.BlazorUI.Abstractions.Components.Variants;
 using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
-using CdCSharp.BlazorUI.Localization.Abstractions;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
+using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -20,8 +20,6 @@ public static class ServiceCollectionExtensions
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
         services.AddScoped<IBehaviorJsInterop, BehaviorJsInterop>();
-
-        services.TryAddSingleton<IBlazorRuntime, MissingBlazorRuntime>();
 
         return services;
     }

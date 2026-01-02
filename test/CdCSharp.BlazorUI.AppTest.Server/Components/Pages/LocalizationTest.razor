@@ -1,6 +1,7 @@
 ﻿@page "/localization-test"
 @using System.Globalization
 @using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Components.Server
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<LocalizationTest> Localizer
 
@@ -20,17 +21,12 @@
 
 <div style="margin: 2rem 0;">
     <h3>@Localizer["SelectLanguage"]:</h3>
-    <BUICultureSelector Variant="BUICultureSelectorVariant.Dropdown" />
-</div>
-
-<div style="margin: 2rem 0;">
-    <h3>Variant Buttons:</h3>
-    <BUICultureSelector Variant="BUICultureSelectorVariant.Buttons" />
+    <BUICultureSelector @rendermode="InteractiveServer" Variant="BUICultureSelectorVariant.Dropdown" />
 </div>
 
 <div style="margin: 2rem 0;">
     <h3>Variant Flags:</h3>
-    <BUICultureSelector Variant="BUICultureSelectorVariant.Flags" ShowName="false" />
+    <BUICultureSelector @rendermode="InteractiveServer" Variant="BUICultureSelectorVariant.Flags" ShowName="false" />
 </div>
 
 @code {

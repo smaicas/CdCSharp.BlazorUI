@@ -1,11 +1,12 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
-using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Localization.Abstractions;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using BUICultureSelector = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector;
+using BUICultureSelectorVariant = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.CultureSelector;
 
@@ -48,24 +49,5 @@ public class BUICultureSelectorRenderingTests
         // Assert
         cut.Markup.Should().Contain("🇺🇸"); // en-US flag
         cut.Markup.Should().Contain("🇪🇸"); // es-ES flag
-    }
-
-    [Theory]
-    [MemberData(nameof(ErrorTestScenarios.All), MemberType = typeof(ErrorTestScenarios))]
-    public async Task Should_Throw_If_BlazorRuntime_Not_Registered(BlazorScenario scenario)
-    {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
-
-        Func<Task> act = async () =>
-        {
-            // Renderiza el componente
-            IRenderedComponent<BUICultureSelector> cut = ctx.Render<BUICultureSelector>();
-            // Como tu validación es en OnInitializedAsync, el render lanzará
-            await cut.InvokeAsync(() => Task.CompletedTask);
-        };
-
-        // Verifica que lanza la excepción correcta
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("*BUICultureSelector requires registered IBlazorRuntime*");
     }
 }

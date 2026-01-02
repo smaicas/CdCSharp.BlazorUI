@@ -17,5 +17,5 @@ public class LocalizationSettings
     /// <summary>
     /// Cookie name for Server implementation
     /// </summary>
-    public string CultureCookieName { get; set; } = ".AspNetCore.Culture";
+    public string CultureCookieName { get; set; } = ".BlazorUI.Culture";
 }

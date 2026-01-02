@@ -1,0 +1,15 @@
+﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Core.Abstractions.Services;
+
+public interface IVariantRegistry
+{
+    void Register<TComponent, TVariant>(
+        TVariant variant,
+        Func<TComponent, RenderFragment> template)
+        where TComponent : ComponentBase
+        where TVariant : Variant;
+
+    RenderFragment? GetTemplate(Type componentType, Variant variant, ComponentBase component);
+}
