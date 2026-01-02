@@ -68,6 +68,9 @@
     // IHasColor
     [Parameter] public CssColor? Color { get; set; }
 
+    // IJsBehavior
+    public ElementReference GetRootElement() => _buttonElement;
+
     /* ========= Variant ========= */
 
     public override BUIButtonVariant DefaultVariant => BUIButtonVariant.Default;
@@ -81,9 +84,6 @@
 
     private bool IsDisabled => Disabled || IsLoading;
     private ElementReference _buttonElement;
-
-    // IJsBehavior implementation
-    public ElementReference GetRootElement() => _buttonElement;
 
     /* ========= Render ========= */
 
@@ -108,7 +108,7 @@
 
                 @if (!string.IsNullOrWhiteSpace(Text))
                 {
-                    <span class="ui-button__text">@Text</span>
+                    <span class="bui-button__text">@Text</span>
                 }
 
                 @if (TrailingIcon != null && !IsLoading)

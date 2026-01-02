@@ -8,13 +8,16 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WasmLocalizationServiceCollectionExtensions
 {
-    public static IServiceCollection AddBlazorUILocalization(
+    public static IServiceCollection AddBlazorUILocalizationWasm(
         this IServiceCollection services,
         Action<LocalizationSettings>? configure = null)
     {
         LocalizationSettings options = new();
         configure?.Invoke(options);
         services.AddSingleton(options);
+
+        // Add Runtime detector
+        services.AddSingleton<IBlazorRuntime, WasmBlazorRuntime>();
 
         // Add standard localization
         services.AddLocalization(opts => opts.ResourcesPath = options.ResourcesPath);
@@ -28,7 +31,7 @@ public static class WasmLocalizationServiceCollectionExtensions
 
 public static class WasmLocalizationHostExtensions
 {
-    public static async Task<WebAssemblyHost> UseBlazorUILocalization(
+    public static async Task<WebAssemblyHost> UseBlazorUILocalizationWasm(
         this WebAssemblyHost host,
         string defaultCulture = "en-US")
     {

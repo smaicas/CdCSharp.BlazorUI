@@ -9,8 +9,6 @@
 
 		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 
-		<!--<UserSecretsId>feca363d-2abb-405e-831d-31020f965de8</UserSecretsId>-->
-
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,4 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+﻿using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 
 public abstract class ComponentTestBase : IDisposable
 {

@@ -10,7 +10,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddBlazorUI();
 
-builder.Services.AddBlazorUILocalization(options =>
+builder.Services.AddBlazorUILocalizationServer(options =>
 {
     options.SupportedCultures =
     [
@@ -35,7 +35,7 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 app.UseHttpsRedirection();
 
 // Add localization middleware - IMPORTANTE: debe ir antes de UseAntiforgery y MapRazorComponents
-app.UseCdCSharpBlazorUILocalization();
+app.UseBlazorUILocalizationServer();
 
 app.UseAntiforgery();
 

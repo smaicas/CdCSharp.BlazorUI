@@ -1,0 +1,30 @@
+﻿@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components.Layout
+@using System.Globalization
+
+<div class="test-culture-consumer">
+    <BUICultureSelector Variant="@Variant"
+                        Size="@Size"
+                        ShowFlag="@ShowFlag"
+                        ShowName="@ShowName"
+                        OnCultureChanged="@HandleCultureChanged">
+    </BUICultureSelector>
+
+    <div class="selected-culture">Selected: @_selectedCulture</div>
+</div>
+
+@code {
+    [Parameter] public BUICultureSelectorVariant? Variant { get; set; }
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool ShowFlag { get; set; } = true;
+    [Parameter] public bool ShowName { get; set; } = true;
+    [Parameter] public EventCallback<string> OnCultureSelected { get; set; }
+
+    private string _selectedCulture = "none";
+
+    private async Task HandleCultureChanged(CultureInfo culture)
+    {
+        _selectedCulture = culture.Name;
+        await OnCultureSelected.InvokeAsync(culture.Name);
+    }
+}

@@ -3,19 +3,22 @@ using System.Text.RegularExpressions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 
-public static class ModuleInitializer
+public static class VerifyConfig
 {
     static readonly Regex ElementReferenceRegex =
         new(@"blazor:elementReference=""[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     static readonly Regex OnClickRegex =
-        new(@"blazor:(onclick|onchange|onsubmit)=""\d+""",
+        new(@"blazor:(onclick|onchange|oninput|onfocus|onblur|onsubmit)=""\d+""",
             RegexOptions.Compiled);
 
     [ModuleInitializer]
     public static void Init()
     {
+        VerifierSettings.DontScrubGuids();
+        VerifierSettings.DontScrubDateTimes();
+
         VerifierSettings.AddScrubber(sb =>
         {
             string text = sb.ToString();

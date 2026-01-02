@@ -24,7 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI.Localization.Server\CdCSharp.BlazorUI.Localization.Server.csproj" />
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI.Localization.Wasm\CdCSharp.BlazorUI.Localization.Wasm.csproj" />
     <ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+    <ProjectReference Include="..\CdCSharp.BlazorUI.Tests.Integration.Templates\CdCSharp.BlazorUI.Tests.Integration.Templates.csproj" />
   </ItemGroup>
 
   <ItemGroup>

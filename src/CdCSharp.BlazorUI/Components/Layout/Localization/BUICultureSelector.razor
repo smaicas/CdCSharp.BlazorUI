@@ -17,6 +17,7 @@
 @inject LocalizationSettings LocalizationSettings
 @inject IStringLocalizer<BUICultureSelector> Localizer
 @inject IJSRuntime JSRuntime
+@inject IBlazorRuntime BlazorRuntime
 
 @{
     base.BuildRenderTree(__builder);
@@ -34,6 +35,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        if (BlazorRuntime == null)
+            throw new InvalidOperationException(
+                "BUICultureSelector requires registered IBlazorRuntime. " +
+                "Use AddBlazorUILocalizationServer() o AddBlazorUILocalizationWasm() depending on hosting.");
+
         _currentCulture = CultureInfo.CurrentUICulture;
         await base.OnInitializedAsync();
     }
@@ -140,7 +146,7 @@
 
         try
         {
-            if (OperatingSystem.IsBrowser())
+            if (BlazorRuntime.IsWasm)
             {
                 // WASM: Guardar en localStorage y recargar
                 await LocalizationPersistence.SetStoredCultureAsync(cultureName);

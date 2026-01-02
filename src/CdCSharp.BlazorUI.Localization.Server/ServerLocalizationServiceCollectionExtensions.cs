@@ -7,13 +7,16 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ServerLocalizationServiceCollectionExtensions
 {
-    public static IServiceCollection AddBlazorUILocalization(
+    public static IServiceCollection AddBlazorUILocalizationServer(
         this IServiceCollection services,
         Action<LocalizationSettings>? configure = null)
     {
         LocalizationSettings options = new();
         configure?.Invoke(options);
         services.AddSingleton(options);
+
+        // Add Runtime detector
+        services.AddSingleton<IBlazorRuntime, ServerBlazorRuntime>();
 
         // Add standard localization
         services.AddLocalization(opts => opts.ResourcesPath = options.ResourcesPath);
@@ -42,7 +45,7 @@ public static class ServerLocalizationServiceCollectionExtensions
 
 public static class ApplicationBuilderExtensions
 {
-    public static IApplicationBuilder UseCdCSharpBlazorUILocalization(
+    public static IApplicationBuilder UseBlazorUILocalizationServer(
         this IApplicationBuilder app)
     {
         return app.UseRequestLocalization();

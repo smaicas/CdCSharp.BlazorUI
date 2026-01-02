@@ -1,10 +1,59 @@
-﻿namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+﻿using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+
+public sealed record BlazorScenario(
+    string Name,
+    Func<BlazorTestContextBase> CreateContext);
 
 public class TestScenarios
 {
     public static IEnumerable<object[]> All =>
-        [
-            new object[] { new ServerTestContext() },
-            new object[] { new WasmTestContext() },
-        ];
+    [
+        new object[]
+        {
+            new BlazorScenario(
+                "Server",
+                () => new ServerTestContext())
+        },
+        new object[]
+        {
+            new BlazorScenario(
+                "Wasm",
+                () => new WasmTestContext())
+        }
+    ];
+
+    public static IEnumerable<object[]> OnlyWasm =>
+    [
+        new object[]
+        {
+            new BlazorScenario(
+                "Wasm",
+                () => new WasmTestContext())
+        }
+    ];
+
+    public static IEnumerable<object[]> OnlyServer =>
+    [
+        new object[]
+        {
+            new BlazorScenario(
+                "Wasm",
+                () => new WasmTestContext())
+        }
+    ];
+}
+
+public static class ErrorTestScenarios
+{
+    public static IEnumerable<object[]> All =>
+    [
+        new object[]
+        {
+            new BlazorScenario(
+                "MissingRuntime",
+                () => new MissingRuntimeTestContext())
+        }
+    ];
 }

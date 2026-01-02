@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Fakes;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 
 public abstract class BlazorTestContextBase : BunitContext
 {
