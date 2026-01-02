@@ -6,14 +6,14 @@
 <div class="doc-page">
     <h1>Icons</h1>
     <p class="doc-intro">
-        The BBUISvgIcon component provides a flexible way to display SVG icons with customizable size and color.
+        The BUISvgIcon component provides a flexible way to display SVG icons with customizable size and color.
     </p>
 
     <div class="doc-section">
         <h2>Basic Usage</h2>
         <ComponentDemo Code="@basicIconCode">
             <Demo>
-                <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite" />
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite" />
             </Demo>
         </ComponentDemo>
     </div>
@@ -23,9 +23,9 @@
         <ComponentDemo Code="@sizesCode">
             <Demo>
                 <div class="demo-row">
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -36,10 +36,10 @@
         <ComponentDemo Code="@colorsCode">
             <Demo>
                 <div class="demo-row">
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_check" Color="@BUIColor.Green.Default" />
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_warning" Color="@BUIColor.Orange.Default" />
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_error" Color="@BUIColor.Red.Default" />
-                    <BBUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info" Color="@BUIColor.Blue.Default" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_check" Color="@BUIColor.Green.Default" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_warning" Color="@BUIColor.Orange.Default" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_error" Color="@BUIColor.Red.Default" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info" Color="@BUIColor.Blue.Default" />
                 </div>
             </Demo>
         </ComponentDemo>
@@ -51,7 +51,7 @@
             @foreach (var icon in GetSampleIcons())
             {
                 <div class="icon-item">
-                    <BBUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
                     <code>@icon.Name</code>
                 </div>
             }
@@ -64,7 +64,7 @@
             @foreach (var icon in GetSampleIcons())
             {
                 <div class="icon-item">
-                    <BBUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
                     <code>@icon.Name</code>
                 </div>
             }
@@ -77,7 +77,7 @@
             @foreach (var icon in GetBrandIcons())
             {
                 <div class="icon-item">
-                    <BBUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
                     <code>@icon.Name</code>
                 </div>
             }
@@ -98,16 +98,16 @@
 </div>
 
 @code {
-    private string basicIconCode = @"<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_favorite"" />";
+    private string basicIconCode = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_favorite"" />";
 
-    private string sizesCode = @"<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Small"" />
-<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Medium"" />
-<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Large"" />";
+    private string sizesCode = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Small"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Medium"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Large"" />";
 
-    private string colorsCode = @"<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_check"" Color=""@UIColor.Green.Default"" />
-<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_warning"" Color=""@UIColor.Orange.Default"" />
-<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_error"" Color=""@UIColor.Red.Default"" />
-<BBUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_info"" Color=""@UIColor.Blue.Default"" />";
+    private string colorsCode = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_check"" Color=""@UIColor.Green.Default"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_warning"" Color=""@UIColor.Orange.Default"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_error"" Color=""@UIColor.Red.Default"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_info"" Color=""@UIColor.Blue.Default"" />";
 
     private record IconProperty(string Name, string Type, string Default, string Description);
 

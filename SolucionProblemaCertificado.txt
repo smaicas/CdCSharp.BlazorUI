@@ -1,0 +1,5 @@
+Remove-BinObj
+$env:ASPNETCORE_Kestrel__Certificates__Default__Password=""
+$env:ASPNETCORE_Kestrel__Certificates__Default__Subject="localhost"
+dotnet nuget locals all --clear
+dotnet build --no-incremental
