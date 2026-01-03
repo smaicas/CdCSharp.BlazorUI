@@ -1,31 +1,19 @@
-﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+﻿using CdCSharp.BuildTools;
+using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
+[ExcludeFromCodeCoverage]
+[AssetGenerator]
 public class CssInitializeThemesGenerator : IAssetGenerator
 {
-    private readonly BuildContext _context;
 
     public string Name => "Initialize Themes CSS";
 
-    public CssInitializeThemesGenerator(BuildContext context)
-    {
-        _context = context;
-    }
+    public string FileName => "initialize-themes.css";
 
-    public async Task GenerateAsync()
-    {
-        string css = CssInitializeTheme.GetCss();
-        string outputPath = _context.GetFullPath("CssBundle/initialize-themes.css");
-        await File.WriteAllTextAsync(outputPath, css);
-    }
-}
-
-[ExcludeFromCodeCoverage]
-public static class CssInitializeTheme
-{
-    public static string GetCss() => """
+    public async Task<string> GetContent() => """
         body {
           background-color: var(--palette-background);
           color: var(--palette-backgroundcontrast);

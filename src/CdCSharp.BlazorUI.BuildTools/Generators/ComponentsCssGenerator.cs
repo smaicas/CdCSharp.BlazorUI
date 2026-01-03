@@ -1,33 +1,20 @@
-﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
-using CdCSharp.BlazorUI.Core.Css;
+﻿using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BuildTools;
+using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
 [ExcludeFromCodeCoverage]
+[AssetGenerator]
 public class ComponentsCssGenerator : IAssetGenerator
 {
-    private readonly BuildContext _context;
-
     public string Name => "Components CSS";
 
-    public ComponentsCssGenerator(BuildContext context)
-    {
-        _context = context;
-    }
+    public string FileName => "common-classes.css";
 
-    public async Task GenerateAsync()
-    {
-        string css = CssCommonClasses.GetCss();
-        string outputPath = _context.GetFullPath("CssBundle/common-classes.css");
-        await File.WriteAllTextAsync(outputPath, css);
-    }
-}
-
-public static class CssCommonClasses
-{
-    public static string GetCss()
+    public async Task<string> GetContent()
     {
         StringBuilder sb = new();
 

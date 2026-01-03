@@ -4,17 +4,9 @@
       "commandName": "WSL2",
       "distributionName": ""
     },
-    "All": {
+    "BUILD": {
       "commandName": "Project",
-      "commandLineArgs": "all \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\CdCSharp.BlazorUI\""
-    },
-    "NPM": {
-      "commandName": "Project",
-      "commandLineArgs": "npm \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\CdCSharp.BlazorUI\""
-    },
-    "INIT": {
-      "commandName": "Project",
-      "commandLineArgs": "init \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\CdCSharp.BlazorUI\""
+      "commandLineArgs": "\"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\CdCSharp.BlazorUI\""
     }
   }
 }

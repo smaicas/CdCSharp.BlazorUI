@@ -1,28 +1,21 @@
-﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
-using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+﻿using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+using CdCSharp.BuildTools;
+using CdCSharp.BuildTools.Attributes;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
+[ExcludeFromCodeCoverage]
+[AssetGenerator]
 public class ThemesCssGenerator : IAssetGenerator
 {
-    private readonly BuildContext _context;
-
     public string Name => "Themes CSS";
 
-    public ThemesCssGenerator(BuildContext context)
-    {
-        _context = context;
-    }
+    public string FileName => "themes.css";
 
-    public async Task GenerateAsync()
-    {
-        string css = CssThemeGenerator.Generate("dark",
+    public async Task<string> GetContent() => CssThemeGenerator.Generate("dark",
             [new Core.Themes.DarkTheme(), new Core.Themes.LightTheme()]);
-
-        string outputPath = _context.GetFullPath("CssBundle/themes.css");
-        await File.WriteAllTextAsync(outputPath, css);
-    }
 }
 
 public static class CssThemeGenerator

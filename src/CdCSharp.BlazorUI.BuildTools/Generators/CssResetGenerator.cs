@@ -1,31 +1,18 @@
-﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+﻿using CdCSharp.BuildTools;
+using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
+[ExcludeFromCodeCoverage]
+[AssetGenerator]
 public class CssResetGenerator : IAssetGenerator
 {
-    private readonly BuildContext _context;
-
     public string Name => "CSS Reset";
 
-    public CssResetGenerator(BuildContext context)
-    {
-        _context = context;
-    }
+    public string FileName => "reset.css";
 
-    public async Task GenerateAsync()
-    {
-        string css = CssReset.GetCss();
-        string outputPath = _context.GetFullPath("CssBundle/reset.css");
-        await File.WriteAllTextAsync(outputPath, css);
-    }
-}
-
-[ExcludeFromCodeCoverage]
-public static class CssReset
-{
-    public static string GetCss() => """
+    public async Task<string> GetContent() => """
         /* =========================================================
            CSS BASE / RESET
            Purpose: Normalize browser defaults while preserving

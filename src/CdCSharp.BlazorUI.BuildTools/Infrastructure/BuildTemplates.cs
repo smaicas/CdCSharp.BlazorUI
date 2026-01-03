@@ -1,88 +1,28 @@
-﻿using CdCSharp.BlazorUI.BuildTools.Pipeline;
+﻿using CdCSharp.BuildTools.Attributes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.BuildTools.Infrastructure;
 
-public class BuildConfigurationManager
+[ExcludeFromCodeCoverage]
+public class BuildTemplates
 {
-    private readonly BuildContext _context;
+    [BuildTemplate(".npmrc")]
+    public static string GetNpmRcTemplate() => """
+        fund=false
+        audit=false  
+        """;
 
-    public BuildConfigurationManager(BuildContext context)
-    {
-        _context = context;
-    }
+    [BuildTemplate("CssBundle/entry.js")]
+    public static string GetEntryJsTemplate() => """import "./main.css";""";
 
-    public async Task InitializeAsync()
-    {
-        await EnsurePackageJsonAsync();
-        await EnsureTsConfigAsync();
-        await EnsureViteConfigsAsync();
-        await EnsureNpmrcAsync();
-        await EnsureCssEntryAsync();
-    }
-
-    private async Task EnsurePackageJsonAsync()
-    {
-        string path = _context.GetFullPath("package.json");
-        if (File.Exists(path)) return;
-
-        string content = GetPackageJsonTemplate();
-        await File.WriteAllTextAsync(path, content);
-    }
-
-    private async Task EnsureTsConfigAsync()
-    {
-        string path = _context.GetFullPath("tsconfig.json");
-        if (File.Exists(path)) return;
-
-        string content = GetTsConfigTemplate();
-        await File.WriteAllTextAsync(path, content);
-    }
-
-    private async Task EnsureViteConfigsAsync()
-    {
-        string jsPath = _context.GetFullPath("vite.config.js");
-        if (!File.Exists(jsPath))
-        {
-            await File.WriteAllTextAsync(jsPath, GetViteJsConfigTemplate());
-        }
-
-        string cssPath = _context.GetFullPath("vite.config.css.js");
-        if (!File.Exists(cssPath))
-        {
-            await File.WriteAllTextAsync(cssPath, GetViteCssConfigTemplate());
-        }
-    }
-
-    private async Task EnsureNpmrcAsync()
-    {
-        string path = _context.GetFullPath(".npmrc");
-        if (File.Exists(path)) return;
-
-        await File.WriteAllTextAsync(path, "fund=false\naudit=false\n");
-    }
-
-    private async Task EnsureCssEntryAsync()
-    {
-        string mainCssPath = _context.GetFullPath("CssBundle/main.css");
-        if (!File.Exists(mainCssPath))
-        {
-            await File.WriteAllTextAsync(mainCssPath, GetMainCssTemplate());
-        }
-
-        string entryJsPath = _context.GetFullPath("CssBundle/entry.js");
-        if (!File.Exists(entryJsPath))
-        {
-            await File.WriteAllTextAsync(entryJsPath, "import \"./main.css\";\n");
-        }
-    }
-
-    private string GetPackageJsonTemplate() => """
+    [BuildTemplate("package.json")]
+    public static string GetPackageJsonTemplate() => """
 {
   "name": "cdcsharp-blazorui",
   "version": "1.0.0",
   "description": "BlazorUI Component Library",
   "type": "module",
-  "private": true,
+  "public static": true,
   "scripts": {
     "build": "echo 'Use MSBuild to build BlazorUI'"
   },
@@ -95,7 +35,8 @@ public class BuildConfigurationManager
 }
 """;
 
-    private string GetTsConfigTemplate() => """
+    [BuildTemplate("tsconfig.json")]
+    public static string GetTsConfigTemplate() => """
 {
   "compilerOptions": {
     "baseUrl": "./",
@@ -122,7 +63,8 @@ public class BuildConfigurationManager
 }
 """;
 
-    private string GetMainCssTemplate() => """
+    [BuildTemplate("CssBundle/main.css")]
+    public static string GetMainCssTemplate() => """
 @import './reset.css';
 @import './themes.css';
 @import './initialize-themes.css';
@@ -130,7 +72,8 @@ public class BuildConfigurationManager
 @import './transition-classes.css';
 """;
 
-    private string GetViteJsConfigTemplate() => """
+    [BuildTemplate("vite.config.js")]
+    public static string GetViteJsConfigTemplate() => """
 import { defineConfig } from 'vite';
 import path from 'path';
 import { glob } from 'glob';
@@ -178,7 +121,8 @@ export default defineConfig({
 });
 """;
 
-    private string GetViteCssConfigTemplate() => """
+    [BuildTemplate("vite.config.css.js")]
+    public static string GetViteCssConfigTemplate() => """
 import { defineConfig } from "vite";
 
 export default defineConfig({

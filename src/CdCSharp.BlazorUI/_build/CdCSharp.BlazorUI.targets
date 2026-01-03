@@ -16,12 +16,12 @@
 		<Message Text="Building BlazorUI assets..." Importance="high" />
 
 		<!-- Use exe if exists (Windows) or DLL otherwise -->
-		<Exec Command="&quot;$(BuildToolsExe)&quot; build &quot;$(BlazorUIProjectPath)&quot;"
+		<Exec Command="&quot;$(BuildToolsExe)&quot; &quot;$(BlazorUIProjectPath)&quot;"
 			  Condition="Exists('$(BuildToolsExe)')"
 			  ConsoleToMSBuild="true"
 			  ContinueOnError="false" />
 
-		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; build &quot;$(BlazorUIProjectPath)&quot;"
+		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; &quot;$(BlazorUIProjectPath)&quot;"
 			  Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
 			  ConsoleToMSBuild="true"
 			  ContinueOnError="false" />
@@ -44,7 +44,7 @@
 		<MSBuild Projects="$(BuildToolsProject)"
 				 Targets="Build"
 				 Properties="Configuration=$(Configuration)"
-				 Condition="!Exists('(BuildToolsExe)′)AND!Exists(′(BuildToolsExe)') AND !Exists('(BuildToolsExe)′)AND!Exists(′(BuildToolsDll)')" />
+				 Condition="!Exists('(BuildToolsExe)′)AND !Exists(′(BuildToolsExe)') AND !Exists('(BuildToolsExe)′) AND !Exists(′(BuildToolsDll)')" />
 
 	</Target>
 	<!-- Clean target -->
