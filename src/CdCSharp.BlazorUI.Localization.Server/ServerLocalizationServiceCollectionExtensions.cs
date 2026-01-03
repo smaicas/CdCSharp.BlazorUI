@@ -1,6 +1,7 @@
 ﻿using CdCSharp.BlazorUI.Localization.Abstractions;
 using CdCSharp.BlazorUI.Localization.Server;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,6 @@ public static class ServerLocalizationServiceCollectionExtensions
 
         // Add Server-specific services
         services.AddHttpContextAccessor();
-        services.AddScoped<ILocalizationPersistence, ServerLocalizationPersistence>();
 
         // Configure request localization
         services.Configure<RequestLocalizationOptions>(opts =>
@@ -36,16 +36,18 @@ public static class ServerLocalizationServiceCollectionExtensions
             });
         });
 
+        services.AddTransient<IStartupFilter, CultureEndpointStartupFilter>();
+
         return services;
     }
 }
 
-public static class ApplicationBuilderExtensions
-{
-    public static IApplicationBuilder UseBlazorUILocalizationServer(
-        this IApplicationBuilder app)
-    {
-        //return app;
-        return app.UseRequestLocalization();
-    }
-}
+//public static class ApplicationBuilderExtensions
+//{
+//    public static IApplicationBuilder UseBlazorUILocalizationServer(
+//        this IApplicationBuilder app)
+//    {
+//        //return app;
+
+//    }
+//}

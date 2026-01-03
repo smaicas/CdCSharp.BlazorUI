@@ -14,10 +14,8 @@
 @implements IHasSize
 
 @inject NavigationManager Navigation
-@inject ILocalizationPersistence LocalizationPersistence
 @inject LocalizationSettings LocalizationSettings
 @inject IStringLocalizer<BUICultureSelector> Localizer
-@inject IJSRuntime JSRuntime
 
 @{
     base.BuildRenderTree(__builder);
@@ -114,7 +112,6 @@
 
         try
         {
-            // Server: Redirigir directamente al endpoint que establecerá la cookie
             Uri uri = new Uri(Navigation.Uri);
             string pathAndQuery = uri.GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
             string cultureEscaped = Uri.EscapeDataString(cultureName);
@@ -124,7 +121,6 @@
                 $"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}",
                 forceLoad: true);
 
-            // Invoke callback if provided
             if (OnCultureChanged.HasDelegate)
             {
                 await OnCultureChanged.InvokeAsync(newCulture);
