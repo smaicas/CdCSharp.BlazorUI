@@ -98,12 +98,12 @@
                 @if (IsLoading && LoadingIndicatorVariant != null)
                 {
                     <BUILoadingIndicator Variant="@LoadingIndicatorVariant"
-                                        Size="Size"
-                                        Color="@Color" />
+                                         Size="Size"
+                                         Color="@Color" />
                 }
                 else if (LeadingIcon != null)
                 {
-                    <BUISvgIcon Icon="@LeadingIcon" Size="@Size" />
+                    <BUISvgIcon Icon="@LeadingIcon" class="bui-button__icon bui-button__icon--leading" Size="@Size" />
                 }
 
                 @if (!string.IsNullOrWhiteSpace(Text))
@@ -113,7 +113,7 @@
 
                 @if (TrailingIcon != null && !IsLoading)
                 {
-                    <BUISvgIcon Icon="@TrailingIcon" Size="@Size" />
+                    <BUISvgIcon Icon="@TrailingIcon" class="bui-button__icon bui-button__icon--trailing" Size="@Size" />
                 }
 
             </button>

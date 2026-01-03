@@ -13,7 +13,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    [Inject] private IBehaviorJsInterop? BehaviorJsInterop { get; set; }
+    [Inject] public required IBehaviorJsInterop BehaviorJsInterop { get; set; }
 
     // This is what components will use with @attributes
     public Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;

@@ -25,15 +25,11 @@ public static class ServiceCollectionExtensions
     }
 
     public static IServiceCollection AddBlazorUIVariants(
-        this IServiceCollection services,
-        Action<VariantBuilder> configure)
+    this IServiceCollection services,
+    Action<VariantBuilder> configure)
     {
-        ServiceProvider sp = services.BuildServiceProvider();
-        VariantRegistry registry = sp.GetService<IVariantRegistry>() as VariantRegistry
-            ?? throw new InvalidOperationException("Must call AddBlazorUI before AddBlazorUIVariants");
-
-        VariantBuilder builder = new(registry);
-        configure(builder);
+        services.AddSingleton<IVariantRegistryInitializer>(
+            new VariantRegistryInitializer(configure));
 
         return services;
     }
@@ -46,9 +42,9 @@ public static class ServiceCollectionExtensions
 /// </summary>
 public sealed class VariantBuilder
 {
-    private readonly VariantRegistry _registry;
+    private readonly IVariantRegistry _registry;
 
-    internal VariantBuilder(VariantRegistry registry)
+    internal VariantBuilder(IVariantRegistry registry)
     {
         _registry = registry;
     }
@@ -78,9 +74,9 @@ public sealed class VariantBuilder
 public sealed class ComponentVariantBuilder<TComponent>
     where TComponent : ComponentBase
 {
-    private readonly VariantRegistry _registry;
+    private readonly IVariantRegistry _registry;
 
-    internal ComponentVariantBuilder(VariantRegistry registry)
+    internal ComponentVariantBuilder(IVariantRegistry registry)
     {
         _registry = registry;
     }

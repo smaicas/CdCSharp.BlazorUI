@@ -5,7 +5,7 @@
   },
   {
     Name: WithIcon,
-    Html: <bui-component data-bui-component="button" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-fullwidth="false" data-bui-elevation="0" data-bui-loading="false" data-bui-ripple="true" b-7qedpwcil1><button type="button" blazor:onclick="<EVENT>" b-7qedpwcil1 blazor:elementReference="<GUID>"><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></bui-component><span class="bui-button__text" b-7qedpwcil1>Icon Button</span></button></bui-component>
+    Html: <bui-component data-bui-component="button" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-fullwidth="false" data-bui-elevation="0" data-bui-loading="false" data-bui-ripple="true" b-7qedpwcil1><button type="button" blazor:onclick="<EVENT>" b-7qedpwcil1 blazor:elementReference="<GUID>"><bui-component class="bui-button__icon bui-button__icon--leading" data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></bui-component><span class="bui-button__text" b-7qedpwcil1>Icon Button</span></button></bui-component>
   },
   {
     Name: Loading,

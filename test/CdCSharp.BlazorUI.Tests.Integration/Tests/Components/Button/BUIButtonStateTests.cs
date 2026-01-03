@@ -1,0 +1,244 @@
+﻿using AngleSharp.Dom;
+using Bunit;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
+using FluentAssertions;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
+
+[Trait("Component State", "BUIButton")]
+public class BUIButtonStateTests
+{
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Update_State_When_Parameters_Change(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Initial Text")
+            .Add(c => c.Disabled, false));
+
+        // Act - Update text
+        cut.Render(p => p
+            .Add(c => c.Text, "Updated Text"));
+
+        // Assert
+        cut.Find("button").TextContent.Should().Be("Updated Text");
+
+        // Act - Disable button
+        cut.Render(p => p
+            .Add(c => c.Disabled, true));
+
+        // Assert
+        cut.Find("button").GetAttribute("disabled").Should().NotBeNull();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Toggle_Loading_State_Correctly(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Submit")
+            .Add(c => c.IsLoading, false));
+
+        IElement component = cut.Find("bui-component");
+
+        // Assert initial state
+        component.GetAttribute("data-bui-loading").Should().Be("false");
+        cut.Find("button").GetAttribute("disabled").Should().BeNull();
+        cut.FindComponents<BUILoadingIndicator>().Should().BeEmpty();
+
+        // Act - Set loading
+        cut.Render(p => p
+            .Add(c => c.IsLoading, true)
+            .Add(c => c.LoadingIndicatorVariant, BUILoadingIndicatorVariant.Dots));
+
+        // Assert loading state
+        component.GetAttribute("data-bui-loading").Should().Be("true");
+        cut.Find("button").GetAttribute("disabled").Should().NotBeNull();
+        cut.FindComponent<BUILoadingIndicator>().Should().NotBeNull();
+
+        // Act - Clear loading
+        cut.Render(p => p
+            .Add(c => c.IsLoading, false));
+
+        // Assert final state
+        component.GetAttribute("data-bui-loading").Should().Be("false");
+        cut.Find("button").GetAttribute("disabled").Should().BeNull();
+        cut.FindComponents<BUILoadingIndicator>().Should().BeEmpty();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Handle_Multiple_State_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Multi-State")
+            .Add(c => c.Size, SizeEnum.Medium)
+            .Add(c => c.Variant, BUIButtonVariant.Default));
+
+        IElement component = cut.Find("bui-component");
+
+        // Act & Assert - Change multiple properties
+        cut.Render(p => p
+            .Add(c => c.Size, SizeEnum.Large)
+            .Add(c => c.Elevation, 4));
+
+        component.GetAttribute("data-bui-size").Should().Be("large");
+        component.GetAttribute("data-bui-variant").Should().Be("default");
+        component.GetAttribute("data-bui-elevation").Should().Be("4");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Preserve_User_Attributes_Through_State_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        Dictionary<string, object> customAttributes = new()
+        {
+            { "data-testid", "my-button" },
+            { "class", "custom-class" },
+            { "style", "margin: 10px;" }
+        };
+
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Button")
+            .Add(c => c.AdditionalAttributes, customAttributes));
+
+        // Act - Change other properties
+        cut.Render(p => p
+            .Add(c => c.Disabled, true)
+            .Add(c => c.Size, SizeEnum.Small));
+
+        // Assert - Custom attributes preserved
+        IElement component = cut.Find("bui-component");
+        component.GetAttribute("data-testid").Should().Be("my-button");
+        component.ClassList.Should().Contain("custom-class");
+        component.GetAttribute("style").Should().Contain("margin: 10px;");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Handle_Rapid_State_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        int clickCount = 0;
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Rapid Change")
+            .Add(c => c.OnClick, _ => clickCount++));
+
+        // Act - Rapid clicks and state changes
+        cut.Find("button").Click();
+        cut.Render(p => p.Add(c => c.Disabled, true));
+        cut.Find("button").Click(); // Should not increment
+        cut.Render(p => p.Add(c => c.Disabled, false));
+        cut.Find("button").Click();
+
+        // Assert
+        clickCount.Should().Be(2); // Only 2 clicks when enabled
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Update_Icon_States_Correctly(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange - Start with no icons
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Icon Test"));
+
+        // Assert no icons
+        cut.FindAll(".bui-button__icon").Should().BeEmpty();
+
+        // Act - Add leading icon
+        cut.Render(p => p
+            .Add(c => c.LeadingIcon, BUIIcons.MaterialIconsOutlined.i_home));
+
+        // Assert leading icon
+        cut.FindAll(".bui-button__icon--leading").Should().HaveCount(1);
+
+        // Act - Add trailing icon
+        cut.Render(p => p
+            .Add(c => c.TrailingIcon, BUIIcons.MaterialIconsOutlined.i_arrow_forward));
+
+        // Assert both icons
+        cut.FindAll(".bui-button__icon").Should().HaveCount(2);
+
+        // Act - Remove leading icon
+        cut.Render(p => p
+            .Add(c => c.LeadingIcon, null));
+
+        // Assert only trailing icon
+        cut.FindAll(".bui-button__icon--trailing").Should().HaveCount(1);
+        cut.FindAll(".bui-button__icon--leading").Should().BeEmpty();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Handle_Color_State_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        CssColor initialColor = new("#FF0000");
+        CssColor updatedColor = new("#00FF00");
+
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Color Button")
+            .Add(c => c.Color, initialColor));
+
+        // Act
+        cut.Render(p => p
+            .Add(c => c.Color, updatedColor)
+            .Add(c => c.BackgroundColor, new CssColor("#0000FF")));
+
+        // Assert
+        IElement component = cut.Find("bui-component");
+        string style = component.GetAttribute("style");
+        style.Should().Contain("--bui-color: rgba(0,255,0,1)");
+        style.Should().Contain("--bui-bg-color: rgba(0,0,255,1)");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Handle_Ripple_Configuration_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
+            .Add(c => c.Text, "Ripple Button")
+            .Add(c => c.DisableRipple, false));
+
+        // Act - Disable ripple
+        cut.Render(p => p
+            .Add(c => c.DisableRipple, true));
+
+        // Assert
+        IElement component = cut.Find("bui-component");
+        component.GetAttribute("data-bui-ripple").Should().Be("false");
+
+        // Act - Re-enable with custom color
+        cut.Render(p => p
+            .Add(c => c.DisableRipple, false)
+            .Add(c => c.RippleColor, new CssColor("#FF00FF")));
+
+        // Assert
+        component.GetAttribute("data-bui-ripple").Should().Be("true");
+    }
+}

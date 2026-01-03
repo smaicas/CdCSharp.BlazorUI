@@ -13,3 +13,8 @@ public interface IVariantRegistry
 
     RenderFragment? GetTemplate(Type componentType, Variant variant, ComponentBase component);
 }
+
+public interface IVariantRegistryInitializer
+{
+    void Initialize(IVariantRegistry registry);
+}
