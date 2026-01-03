@@ -1,7 +1,12 @@
-﻿using CdCSharp.BlazorUI.Localization.Abstractions;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Localization.Wasm;
+
+public interface ILocalizationPersistence
+{
+    Task<string?> GetStoredCultureAsync();
+    Task SetStoredCultureAsync(string culture);
+}
 
 internal class WasmLocalizationPersistence : ILocalizationPersistence
 {

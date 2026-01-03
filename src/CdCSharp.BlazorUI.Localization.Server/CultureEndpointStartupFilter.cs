@@ -1,5 +1,4 @@
-﻿using CdCSharp.BlazorUI.Localization.Abstractions;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -13,10 +12,8 @@ public class CultureEndpointStartupFilter : IStartupFilter
     {
         return app =>
         {
-            // Accedemos a los settings directamente desde el root provider para evitar scopes innecesarios
             LocalizationSettings settings = app.ApplicationServices.GetRequiredService<LocalizationSettings>();
 
-            // 1. Configurar el Middleware de Localización (Esto debe ir antes de Routing)
             app.UseRequestLocalization(o =>
             {
                 o.SupportedCultures = settings.SupportedCultures;
@@ -29,7 +26,6 @@ public class CultureEndpointStartupFilter : IStartupFilter
                 };
             });
 
-            // 2. Middleware para interceptar la ruta de forma manual (evita conflictos con UseEndpoints)
             app.Use(async (context, nextMiddleware) =>
             {
                 if (context.Request.Path.Equals("/Culture/Set", StringComparison.OrdinalIgnoreCase))

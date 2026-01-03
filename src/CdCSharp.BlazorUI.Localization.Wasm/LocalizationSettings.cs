@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace CdCSharp.BlazorUI.Localization.Abstractions;
+namespace CdCSharp.BlazorUI.Localization.Wasm;
 
 public class LocalizationSettings
 {
@@ -13,9 +13,4 @@ public class LocalizationSettings
     ];
 
     public string ResourcesPath { get; set; } = "Resources";
-
-    /// <summary>
-    /// Cookie name for Server implementation
-    /// </summary>
-    public string CultureCookieName { get; set; } = ".BlazorUI.Culture";
 }

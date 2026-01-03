@@ -9,7 +9,7 @@
   },
   {
     Name: Loading,
-    Html: <bui-component data-bui-component="button" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-fullwidth="false" data-bui-elevation="0" data-bui-loading="true" data-bui-ripple="true" b-7qedpwcil1><button type="button" disabled blazor:onclick="<EVENT>" b-7qedpwcil1 blazor:elementReference="<GUID>"><bui-component data-bui-component="loading-indicator" data-bui-variant="spinner" data-bui-size="medium" b-9uouee14ai><div b-9uouee14ai><svg class="ui-loading-spinner" viewBox="0 0 50 50" b-9uouee14ai><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-9uouee14ai></circle></svg></div></bui-component><span class="bui-button__text" b-7qedpwcil1>Loading</span></button></bui-component>
+    Html: <bui-component data-bui-component="button" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-fullwidth="false" data-bui-elevation="0" data-bui-loading="true" data-bui-ripple="true" b-7qedpwcil1><button type="button" disabled blazor:onclick="<EVENT>" b-7qedpwcil1 blazor:elementReference="<GUID>"><bui-component data-bui-component="loading-indicator" data-bui-variant="spinner" data-bui-size="medium" b-9uouee14ai><div b-9uouee14ai><svg class="bui-loading-spinner" viewBox="0 0 50 50" b-9uouee14ai><circle cx="25" cy="25" r="20" fill="none" stroke="currentColor" stroke-width="4" b-9uouee14ai></circle></svg></div></bui-component><span class="bui-button__text" b-7qedpwcil1>Loading</span></button></bui-component>
   },
   {
     Name: Disabled,

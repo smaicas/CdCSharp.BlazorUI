@@ -1,7 +1,5 @@
-﻿using CdCSharp.BlazorUI.Localization.Abstractions;
-using CdCSharp.BlazorUI.Localization.Wasm;
+﻿using CdCSharp.BlazorUI.Localization.Wasm;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.JSInterop;
 using System.Globalization;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -32,12 +30,10 @@ public static class WasmLocalizationHostExtensions
         this WebAssemblyHost host,
         string defaultCulture = "en-US")
     {
-        Console.WriteLine("HOST BUILD EJECUTADO" + DateTime.Now);
-        IJSRuntime js = host.Services.GetRequiredService<IJSRuntime>();
+        ILocalizationPersistence locPersistence = host.Services.GetRequiredService<ILocalizationPersistence>();
         try
         {
-            // Using eval to access localStorage directly
-            string? storedCulture = await js.InvokeAsync<string?>("eval", $"window.localStorage.getItem('{WasmLocalizationPersistence.CULTURE_KEY}')");
+            string? storedCulture = await locPersistence.GetStoredCultureAsync();
 
             if (!string.IsNullOrEmpty(storedCulture))
             {
@@ -51,7 +47,7 @@ public static class WasmLocalizationHostExtensions
                 CultureInfo.DefaultThreadCurrentCulture = culture;
                 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-                await js.InvokeVoidAsync("eval", $"window.localStorage.setItem('{WasmLocalizationPersistence.CULTURE_KEY}', '{defaultCulture}')");
+                await locPersistence.SetStoredCultureAsync(defaultCulture);
             }
         }
         catch

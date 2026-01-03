@@ -9,8 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
-[Trait("Component", "BUIButton")]
-[Trait("Pillar", "Variants")]
+[Trait("Component Variants", "BUIButton")]
 public class BUIButtonVariantTests
 {
     [Theory]

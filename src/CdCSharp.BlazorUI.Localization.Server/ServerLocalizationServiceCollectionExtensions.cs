@@ -1,5 +1,4 @@
-﻿using CdCSharp.BlazorUI.Localization.Abstractions;
-using CdCSharp.BlazorUI.Localization.Server;
+﻿using CdCSharp.BlazorUI.Localization.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
@@ -41,13 +40,3 @@ public static class ServerLocalizationServiceCollectionExtensions
         return services;
     }
 }
-
-//public static class ApplicationBuilderExtensions
-//{
-//    public static IApplicationBuilder UseBlazorUILocalizationServer(
-//        this IApplicationBuilder app)
-//    {
-//        //return app;
-
-//    }
-//}

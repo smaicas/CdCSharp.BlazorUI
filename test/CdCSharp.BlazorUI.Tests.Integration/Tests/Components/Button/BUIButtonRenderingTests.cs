@@ -6,8 +6,7 @@ using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
-[Trait("Component", "BUIButton")]
-[Trait("Pillar", "Rendering")]
+[Trait("Component Rendering", "BUIButton")]
 public class BUIButtonRenderingTests
 {
     [Theory]

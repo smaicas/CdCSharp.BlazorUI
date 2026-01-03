@@ -2,9 +2,11 @@
   <Folder Name="/docs/">
     <Project Path="docs/CdCSharp.BlazorUI.Docs/CdCSharp.BlazorUI.Docs.csproj" Id="ff3d4d51-7c0a-4234-9776-6074506020d7" />
   </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />
+    <Project Path="samples/CdCSharp.BlazorUI.AppTest.Wasm/CdCSharp.BlazorUI.AppTest.Wasm.csproj" Id="0fdf0470-1472-4082-98f6-08ce7101e926" />
+  </Folder>
   <Folder Name="/test/">
-    <Project Path="test/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />
-    <Project Path="test/CdCSharp.BlazorUI.AppTest.Wasm/CdCSharp.BlazorUI.AppTest.Wasm.csproj" Id="0fdf0470-1472-4082-98f6-08ce7101e926" />
     <Project Path="test/CdCSharp.BlazorUI.Tests.Integration.Templates/CdCSharp.BlazorUI.Tests.Integration.Templates.csproj" Id="5dc784c4-634b-4043-b718-1fd61d48d14b" />
     <Project Path="test/CdCSharp.BlazorUI.Tests.Integration/CdCSharp.BlazorUI.Tests.Integration.csproj" Id="adba42f4-5632-4ee9-8656-917fa72c6c0a" />
   </Folder>
@@ -19,7 +21,6 @@
   <Project Path="src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj" Id="a67069d5-56c2-49fa-adec-656079117b53" />
   <Project Path="src/CdCSharp.BlazorUI.Core.CodeGeneration/CdCSharp.BlazorUI.Core.CodeGeneration.csproj" Id="6ba20f9a-6292-42d8-a0d8-b45440bef1ea" />
   <Project Path="src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj" Id="4d42e187-5c5c-441e-a3bf-59ecb330e6e6" />
-  <Project Path="src/CdCSharp.BlazorUI.Localization.Abstractions/CdCSharp.BlazorUI.Localization.Abstractions.csproj" Id="1f8c6208-5b9a-468c-b2cc-8dba217ca870" />
   <Project Path="src/CdCSharp.BlazorUI.Localization.Server/CdCSharp.BlazorUI.Localization.Server.csproj" Id="cc099920-bfe2-4cbb-ad43-85f57c86d3a4" />
   <Project Path="src/CdCSharp.BlazorUI.Localization.Wasm/CdCSharp.BlazorUI.Localization.Wasm.csproj" Id="7203c218-f90d-4664-8e5f-d21641df712e" />
   <Project Path="src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj" />

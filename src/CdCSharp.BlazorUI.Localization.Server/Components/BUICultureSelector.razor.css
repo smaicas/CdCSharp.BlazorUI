@@ -3,7 +3,7 @@
     align-items: center;
 }
 
-/* Dropdown variant */
+    /* Dropdown variant */
     bui-component[data-bui-component="culture-selector"] .bui-culture-selector__select {
         width: 100%;
         padding: 0.5rem 1rem;
@@ -23,16 +23,16 @@
         bui-component[data-bui-component="culture-selector"] .bui-culture-selector__select:focus {
             outline: none;
             border-color: var(--palette-primary);
-            box-shadow: 0 0 0 2px rgba(var(--palette-primary-rgb), 0.2);
+            box-shadow: 0 0 0 2px var(--palette-primary, 0.2);
         }
 
-/* Buttons variant */
+    /* Buttons variant */
     bui-component[data-bui-component="culture-selector"] .bui-culture-selector__button-group {
         display: flex;
         gap: 0.5rem;
     }
 
-/* Flags variant */
+    /* Flags variant */
     bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-list {
         display: flex;
         gap: 0.5rem;
@@ -51,12 +51,12 @@
     }
 
         bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button:hover {
-            background-color: rgba(var(--palette-primary-rgb), 0.1);
+            background-color: rgba(var(--palette-primary), 0.1);
         }
 
         bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button.active {
             border-color: var(--palette-primary);
-            background-color: rgba(var(--palette-primary-rgb), 0.1);
+            background-color: rgba(var(--palette-primary), 0.1);
         }
 
     bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag {
@@ -69,11 +69,11 @@
         font-size: 0.875em;
     }
 
-/* Size variations */
-bui-component[data-bui-component="culture-selector"][data-bui-size="small"] {
-    font-size: 0.875rem;
-}
+    /* Size variations */
+    bui-component[data-bui-component="culture-selector"][data-bui-size="small"] {
+        font-size: 0.875rem;
+    }
 
-bui-component[data-bui-component="culture-selector"][data-bui-size="large"] {
-    font-size: 1.125rem;
-}
+    bui-component[data-bui-component="culture-selector"][data-bui-size="large"] {
+        font-size: 1.125rem;
+    }

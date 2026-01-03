@@ -23,7 +23,7 @@
         bui-component[data-bui-component="culture-selector"] .bui-culture-selector__select:focus {
             outline: none;
             border-color: var(--palette-primary);
-            box-shadow: 0 0 0 2px rgba(var(--palette-primary-rgb), 0.2);
+            box-shadow: 0 0 0 2px var(--palette-primary, 0.2);
         }
 
 /* Buttons variant */
@@ -51,12 +51,12 @@
     }
 
         bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button:hover {
-            background-color: rgba(var(--palette-primary-rgb), 0.1);
+            background-color: rgba(var(--palette-primary), 0.1);
         }
 
         bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag-button.active {
             border-color: var(--palette-primary);
-            background-color: rgba(var(--palette-primary-rgb), 0.1);
+            background-color: rgba(var(--palette-primary), 0.1);
         }
 
     bui-component[data-bui-component="culture-selector"] .bui-culture-selector__flag {

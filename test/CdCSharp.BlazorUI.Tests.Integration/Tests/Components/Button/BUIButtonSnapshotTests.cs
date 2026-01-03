@@ -5,8 +5,7 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
-[Trait("Component", "BUIButton")]
-[Trait("Pillar", "Snapshot")]
+[Trait("Component Snapshots", "BUIButton")]
 public class BUIButtonSnapshotTests
 {
     [Theory]
@@ -49,6 +48,6 @@ public class BUIButtonSnapshotTests
             };
         });
 
-        await Verify(results);
+        await Verify(results).UseParameters(scenario.Name); ;
     }
 }

@@ -1,30 +1,30 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
-using CdCSharp.BlazorUI.Localization.Abstractions;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using BUICultureSelector = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector;
 using BUICultureSelectorVariant = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant;
+using LocalizationSettings = CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.CultureSelector;
 
-[Trait("Component", "BUICultureSelector")]
-[Trait("Pillar", "Rendering")]
-public class BUICultureSelectorRenderingTests
+[Trait("Component Rendering", "BUICultureSelector")]
+public class Wasm_BUICultureSelectorRenderingTests : TestFixtureBase<WasmTestContext>
 {
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Render_Dropdown_Variant_With_Options(BlazorScenario scenario)
+    public Wasm_BUICultureSelectorRenderingTests(WasmTestContext context) : base(context)
     {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
+    }
 
+    [Fact]
+    public async Task Should_Render_Dropdown_Variant_With_Options()
+    {
         // Arrange
-        LocalizationSettings localizationSettings = ctx.Services.GetRequiredService<LocalizationSettings>();
+        LocalizationSettings localizationSettings = Context.Services.GetRequiredService<LocalizationSettings>();
 
         // Act
-        Bunit.IRenderedComponent<BUICultureSelector> cut = ctx.Render<BUICultureSelector>(p => p
+        Bunit.IRenderedComponent<BUICultureSelector> cut = Context.Render<BUICultureSelector>(p => p
             .Add(c => c.Variant, BUICultureSelectorVariant.Dropdown));
 
         // Assert
@@ -35,14 +35,11 @@ public class BUICultureSelectorRenderingTests
         options.Count.Should().Be(localizationSettings.SupportedCultures.Count);
     }
 
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Render_Flags_When_ShowFlag_Is_True(BlazorScenario scenario)
+    [Fact]
+    public async Task Should_Render_Flags_When_ShowFlag_Is_True()
     {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
-
         // Act
-        Bunit.IRenderedComponent<BUICultureSelector> cut = ctx.Render<BUICultureSelector>(p => p
+        Bunit.IRenderedComponent<BUICultureSelector> cut = Context.Render<BUICultureSelector>(p => p
             .Add(c => c.Variant, BUICultureSelectorVariant.Flags)
             .Add(c => c.ShowFlag, true));
 

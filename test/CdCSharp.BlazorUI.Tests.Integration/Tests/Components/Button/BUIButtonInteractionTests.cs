@@ -7,8 +7,7 @@ using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Button;
 
-[Trait("Component", "BUIButton")]
-[Trait("Pillar", "Interaction")]
+[Trait("Component Interaction", "BUIButton")]
 public class BUIButtonInteractionTests
 {
     [Theory]
@@ -19,7 +18,7 @@ public class BUIButtonInteractionTests
 
         // Arrange
         int clickCount = 0;
-        IRenderedComponent<TestButtonConsumer> cut = ctx.Render<TestButtonConsumer>(p => p
+        IRenderedComponent<TestBUIButtonConsumer> cut = ctx.Render<TestBUIButtonConsumer>(p => p
             .Add(c => c.ButtonText, "Click Me")
             .Add(c => c.OnButtonClicked, count => clickCount = count));
 

@@ -8,6 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Tests\Components\Button\BlazorScenario { Name = Server, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.received.txt\**" />
+    <Compile Remove="Tests\Components\Button\BlazorScenario { Name = Server, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.verified.txt\**" />
+    <Compile Remove="Tests\Components\Button\BlazorScenario { Name = Wasm, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.received.txt\**" />
+    <Compile Remove="Tests\Components\Button\BlazorScenario { Name = Wasm, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.verified.txt\**" />
+    <EmbeddedResource Remove="Tests\Components\Button\BlazorScenario { Name = Server, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.received.txt\**" />
+    <EmbeddedResource Remove="Tests\Components\Button\BlazorScenario { Name = Server, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.verified.txt\**" />
+    <EmbeddedResource Remove="Tests\Components\Button\BlazorScenario { Name = Wasm, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.received.txt\**" />
+    <EmbeddedResource Remove="Tests\Components\Button\BlazorScenario { Name = Wasm, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.verified.txt\**" />
+    <None Remove="Tests\Components\Button\BlazorScenario { Name = Server, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.received.txt\**" />
+    <None Remove="Tests\Components\Button\BlazorScenario { Name = Server, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.verified.txt\**" />
+    <None Remove="Tests\Components\Button\BlazorScenario { Name = Wasm, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.received.txt\**" />
+    <None Remove="Tests\Components\Button\BlazorScenario { Name = Wasm, CreateContext = System.Func`1[CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts.BlazorTestContextBase] }_Should_Match_Snapshots_For_All_States.verified.txt\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="bunit" Version="2.4.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="FluentAssertions" Version="8.8.0" />

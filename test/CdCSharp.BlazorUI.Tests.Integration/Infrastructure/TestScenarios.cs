@@ -39,8 +39,8 @@ public class TestScenarios
         new object[]
         {
             new BlazorScenario(
-                "Wasm",
-                () => new WasmTestContext())
+                "Server",
+                () => new ServerTestContext())
         }
     ];
 }

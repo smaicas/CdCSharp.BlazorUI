@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
-    <ProjectReference Include="..\CdCSharp.BlazorUI.Localization.Abstractions\CdCSharp.BlazorUI.Localization.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>
