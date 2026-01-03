@@ -45,6 +45,8 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
 
     protected override void OnParametersSet()
     {
+        UpdateErrorState();
+
         _styleBuilder.BuildStyles(this, AdditionalAttributes);
 
         // Update validation state
@@ -60,18 +62,29 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
         base.OnParametersSet();
     }
 
-    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    private void UpdateErrorState()
     {
         if (EditContext != null && ValueExpression != null)
         {
-            bool hadErrors = IsError;
             IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+        }
+        else
+        {
+            IsError = false;
+        }
+    }
 
-            if (hadErrors != IsError)
-            {
-                // Rebuild attributes if state changed
-                OnParametersSet();
-            }
+    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        bool hadErrors = IsError;
+        UpdateErrorState();
+
+        if (hadErrors != IsError)
+        {
+            // En lugar de llamar a OnParametersSet (que re-suscribe eventos), 
+            // llamamos directamente a la reconstrucción de estilos y notificamos el cambio.
+            _styleBuilder.BuildStyles(this, AdditionalAttributes);
+            StateHasChanged();
         }
     }
 

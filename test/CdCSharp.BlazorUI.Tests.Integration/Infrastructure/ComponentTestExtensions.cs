@@ -12,12 +12,4 @@ public static class ComponentTestExtensions
             .Replace("\r", "\n")
             .Trim();
     }
-
-    public static void WaitForAssertion<TComponent>(
-        this IRenderedComponent<TComponent> fragment,
-        Action assertion,
-        TimeSpan? timeout = null) where TComponent : IComponent
-    {
-        fragment.WaitForAssertion(assertion, timeout);
-    }
 }

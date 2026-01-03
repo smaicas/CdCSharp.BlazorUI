@@ -1,0 +1,339 @@
+﻿using AngleSharp.Dom;
+using Bunit;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
+using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
+using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
+using CdCSharp.BlazorUI.Tests.Integration.Templates.Components.BaseComponents;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using NSubstitute;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.BaseComponents;
+
+/// <summary>
+/// Functional contract tests for <see cref="BUIInputComponentBase{T}"/>.
+///
+/// These tests define and enforce the following system-level rules:
+///
+/// 1 - VALIDATION ENGINE INTEGRATION: 
+///     - Components MUST synchronize with Blazor's <see cref="EditContext"/> and 
+///       reflect validation states using 'data-bui-error="true/false"'.
+///     - Components MUST clean up event subscriptions on disposal to prevent 
+///       memory leaks or 'ObjectDisposedException' during validation callbacks.
+///
+/// 2 - BINDING COMPLIANCE: 
+///     - As an extension of 'InputBase', components MUST receive a 'ValueExpression'.
+///     - Failure to provide 'ValueExpression' MUST result in an <see cref="InvalidOperationException"/> 
+///       to maintain compatibility with Blazor's validation metadata.
+///
+/// 3 - INTERACTIVE STATES:
+///     - 'Disabled' and 'ReadOnly' states MUST be synchronized between 'data-bui-*' 
+///       attributes (for styling) and native HTML attributes (for browser behavior).
+///     - 'IsLoading' MUST act as a master override, forcing the component into 
+///       a disabled state.
+///
+/// 4 - VALUE SYNCHRONIZATION: 
+///     - UI-driven changes MUST update the 'CurrentValue' and trigger the 
+///       associated 'ValueExpression' within the Dispatcher context.
+///
+/// 5 - DOM INTEGRITY: 
+///     - All 'AdditionalAttributes' MUST be splatted onto the primary input element.
+///     - JS behaviors MUST NOT attempt to attach to the input if it is in a 
+///       loading/disabled state.
+///       
+/// </summary>
+[Trait("Core", "BUIInputComponentBase")]
+public class BUIInputComponentBaseTests
+{
+    private readonly IBehaviorJsInterop _jsInterop = Substitute.For<IBehaviorJsInterop>();
+    private readonly IJSObjectReference _jsModule = Substitute.For<IJSObjectReference>();
+
+    // Clase auxiliar para evitar ConstantExpression en ValueExpression
+    private class TestModel
+    {
+        public string Value { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+    }
+
+    #region Behavioral Tests (Design & Style)
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Input_Should_Apply_Design_Attributes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value) // Referencia a propiedad
+            .Add(c => c.Size, SizeEnum.Small)
+            .Add(c => c.Density, DensityEnum.Compact)
+            .Add(c => c.FullWidth, true)
+            .Add(c => c.Elevation, 4)
+        );
+
+        IElement input = cut.Find("input");
+        input.GetAttribute("data-bui-size").Should().Be("small");
+        input.GetAttribute("data-bui-density").Should().Be("compact");
+        input.GetAttribute("data-bui-fullwidth").Should().Be("true");
+        input.GetAttribute("data-bui-elevation").Should().Be("4");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Input_Should_Generate_Css_Variables_For_Colors_And_Borders(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value)
+            .Add(c => c.Color, new CssColor("#0000FF"))
+            .Add(c => c.Border, new BorderStyle("2px", BorderStyleType.Solid, new CssColor("#FF0000"), 8))
+        );
+
+        string? style = cut.Find("input").GetAttribute("style");
+        style.Should().Contain("--bui-color: rgba(0,0,255,1)");
+        style.Should().Contain("--bui-border-width: 2px");
+        style.Should().Contain("--bui-border-radius: 8px");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Input_Should_Merge_User_Styles_With_Computed_Variables(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        Dictionary<string, object> additionalAttrs = new()
+        { { "style", "margin-top: 10px;" } };
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value)
+            .Add(c => c.AdditionalAttributes, additionalAttrs)
+            .Add(c => c.Color, BUIColor.Coral.Default)
+        );
+
+        string? style = cut.Find("input").GetAttribute("style");
+        style.Should().Contain("margin-top: 10px;");
+        style.Should().Contain("--bui-color: rgba(255,127,80,1)");
+    }
+
+    #endregion
+
+    #region Input Logic & Validation Tests
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Update_Error_Attribute_When_Validation_Fails(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        EditContext editContext = new(model);
+        ValidationMessageStore messageStore = new(editContext);
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Name)
+            .AddCascadingValue(editContext));
+
+        // Act
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            messageStore.Add(editContext.Field(nameof(TestModel.Name)), "Error");
+            editContext.NotifyValidationStateChanged();
+        });
+
+        // Wait component to react to validation event and update its HTML markup.
+        cut.WaitForState(() => cut.Find("input").HasAttribute("data-bui-error"));
+
+        // Assert
+        cut.Find("input").GetAttribute("data-bui-error").Should().Be("true");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Reset_Error_Attribute_When_Validation_Is_Fixed(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        EditContext editContext = new(model);
+        ValidationMessageStore messageStore = new(editContext);
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Name)
+            .AddCascadingValue(editContext));
+
+        // 1. Poner error
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            messageStore.Add(editContext.Field(nameof(TestModel.Name)), "Error");
+            editContext.NotifyValidationStateChanged();
+        });
+
+        cut.WaitForState(() => cut.Find("input").GetAttribute("data-bui-error") == "true");
+
+        // 2. Quitar error (Cubre la rama hadErrors != IsError en BUIInputComponentBase)
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            messageStore.Clear();
+            editContext.NotifyValidationStateChanged();
+        });
+
+        cut.WaitForState(() => cut.Find("input").GetAttribute("data-bui-error") == "false"
+                            || !cut.Find("input").HasAttribute("data-bui-error"));
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Skip_JS_Behavior_When_Loading(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        ctx.Services.AddSingleton(_jsInterop);
+
+        ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value)
+            .Add(c => c.IsLoading, true));
+
+        await _jsInterop.DidNotReceive().AttachBehaviorsAsync(Arg.Any<ElementReference>(), Arg.Any<BehaviorConfiguration>());
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Unsubscribe_From_Validation_On_Dispose(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        EditContext editContext = new(model);
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value)
+            .AddCascadingValue(editContext));
+
+        // Act: Disponer el componente
+        await ctx.Renderer.Dispatcher.InvokeAsync(() => cut.Dispose());
+
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            Action act = () => editContext.NotifyValidationStateChanged();
+            act.Should().NotThrow();
+        });
+    }
+
+    #endregion
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Attach_And_Dispose_JS_Behavior(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        ctx.Services.AddSingleton(_jsInterop);
+        // Arrange
+        _jsInterop.AttachBehaviorsAsync(Arg.Any<ElementReference>(), Arg.Any<BehaviorConfiguration>())
+                  .Returns(_jsModule);
+
+        // Act
+        TestModel model = new();
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.Value, "initial")
+            .Add(c => c.ValueExpression, () => model.Value));
+        await cut.Instance.DisposeAsync();
+
+        // Assert
+        await _jsInterop.Received(1).AttachBehaviorsAsync(Arg.Any<ElementReference>(), Arg.Any<BehaviorConfiguration>());
+        await _jsModule.Received(1).InvokeVoidAsync("dispose", Arg.Any<object[]>());
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Update_CurrentValue_When_Input_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.Value, "initial")
+            .Add(c => c.ValueExpression, () => model.Value));
+
+        // Simulamos cambio en el input (ejecuta CurrentValueAsString = value)
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            cut.Find("input").Change("updated");
+        });
+
+        cut.Instance.Value.Should().Be("updated");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task DisposeAsync_Should_Be_NullSafe_If_JS_Never_Attached(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        ctx.Services.AddSingleton(_jsInterop);
+        TestModel model = new();
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value));
+
+        // Act & Assert: No debería lanzar excepción aunque el interop no haya devuelto nada
+        await cut.Instance.DisposeAsync();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Input_Should_Handle_ReadOnly_State(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+
+        // Act
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value)
+            .Add(c => c.ReadOnly, true));
+
+        // Assert: IHasReadOnly logic
+        IElement input = cut.Find("input");
+        input.GetAttribute("data-bui-readonly").Should().Be("true");
+        input.HasAttribute("readonly").Should().BeTrue();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Input_Loading_Should_Override_Disabled_Visuals(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+
+        // Act: Loading y Disabled a la vez
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value)
+            .Add(c => c.IsLoading, true));
+
+        // Assert: Verificar que data-bui-loading prevalece o coexiste según tu Builder
+        IElement input = cut.Find("input");
+        input.GetAttribute("data-bui-loading").Should().Be("true");
+        //  public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.IsLoading);
+        input.GetAttribute("data-bui-disabled").Should().Be("true");
+        input.HasAttribute("disabled").Should().BeTrue();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Throw_When_ValueExpression_Is_Missing(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Act
+        Action act = () => ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.Value, "No Expression"));
+
+        // Assert: Verificamos que se respeta el contrato de InputBase
+        act.Should().Throw<InvalidOperationException>()
+           .WithMessage("*requires a value for the 'ValueExpression' parameter*");
+    }
+}
