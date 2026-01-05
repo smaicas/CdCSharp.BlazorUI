@@ -1,0 +1,130 @@
+﻿@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+<div class="datepicker-wrapper">
+    <div class="calendar">
+        <!-- Navegación de meses -->
+        <div class="nav">
+            <button type="button" @onclick="PrevMonth">‹</button>
+            <strong>@CurrentMonth.ToString("MMMM yyyy", CultureInfo.CurrentCulture)</strong>
+            <button type="button" @onclick="NextMonth">›</button>
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="weekdays">
+            @foreach (var d in WeekDays)
+            {
+                <span>@d</span>
+            }
+        </div>
+
+        <!-- Días del mes -->
+        <div class="days">
+            @foreach (var day in Days)
+            {
+                <button type="button"
+                        class="day @(day.IsSelected ? "selected" : "") @(day.IsToday ? "today" : "")"
+                        disabled="@(!day.IsCurrentMonth)"
+                        @onclick="() => SelectDate(day.Date)">
+                    @day.Date.Day
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public DateOnly? Value { get; set; }
+    [Parameter] public EventCallback<DateOnly?> ValueChanged { get; set; }
+
+    private DateTime CurrentMonth = DateTime.Today;
+    private DateOnly SelectedDate = DateOnly.FromDateTime(DateTime.Today);
+
+    protected override void OnParametersSet()
+    {
+        if (Value.HasValue)
+        {
+            SelectedDate = Value.Value;
+            CurrentMonth = new DateTime(Value.Value.Year, Value.Value.Month, 1);
+        }
+    }
+
+    private void PrevMonth() => CurrentMonth = CurrentMonth.AddMonths(-1);
+    private void NextMonth() => CurrentMonth = CurrentMonth.AddMonths(1);
+
+    private async Task SelectDate(DateTime date)
+    {
+        SelectedDate = DateOnly.FromDateTime(date);
+        await ValueChanged.InvokeAsync(SelectedDate);
+    }
+
+    private IEnumerable<string> WeekDays => CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames;
+
+    private IEnumerable<DayCell> Days
+    {
+        get
+        {
+            var firstOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+            var start = firstOfMonth.AddDays(-(int)firstOfMonth.DayOfWeek);
+
+            return Enumerable.Range(0, 42).Select(i =>
+            {
+                var d = start.AddDays(i);
+                return new DayCell
+                {
+                    Date = d,
+                    IsCurrentMonth = d.Month == CurrentMonth.Month,
+                    IsSelected = SelectedDate.DayNumber == DateOnly.FromDateTime(d).DayNumber,
+                    IsToday = d.Date == DateTime.Today
+                };
+            });
+        }
+    }
+
+    private class DayCell
+    {
+        public DateTime Date { get; set; }
+        public bool IsCurrentMonth { get; set; }
+        public bool IsSelected { get; set; }
+        public bool IsToday { get; set; }
+    }
+}
+
+<style>
+    .datepicker-wrapper {
+        text-align: center;
+    }
+
+    .calendar {
+        display: inline-block;
+    }
+
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: .5rem;
+    }
+
+    .weekdays, .days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .day {
+        border: none;
+        background: transparent;
+        padding: .4rem;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+        .day.today {
+            outline: 1px solid #0078ff;
+        }
+
+        .day.selected {
+            background: #0078ff;
+            color: #fff;
+        }
+</style>

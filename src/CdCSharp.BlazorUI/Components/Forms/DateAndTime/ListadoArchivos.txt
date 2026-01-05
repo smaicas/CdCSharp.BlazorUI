@@ -1,0 +1,566 @@
+=== BUIDatePicker.razor ===
+
+@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+<div class="datepicker-wrapper">
+    <div class="calendar">
+        <!-- Navegación de meses -->
+        <div class="nav">
+            <button type="button" @onclick="PrevMonth">‹</button>
+            <strong>@CurrentMonth.ToString("MMMM yyyy", CultureInfo.CurrentCulture)</strong>
+            <button type="button" @onclick="NextMonth">›</button>
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="weekdays">
+            @foreach (var d in WeekDays)
+            {
+                <span>@d</span>
+            }
+        </div>
+
+        <!-- Días del mes -->
+        <div class="days">
+            @foreach (var day in Days)
+            {
+                <button type="button"
+                        class="day @(day.IsSelected ? "selected" : "") @(day.IsToday ? "today" : "")"
+                        disabled="@(!day.IsCurrentMonth)"
+                        @onclick="() => SelectDate(day.Date)">
+                    @day.Date.Day
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public DateOnly? Value { get; set; }
+    [Parameter] public EventCallback<DateOnly?> ValueChanged { get; set; }
+
+    private DateTime CurrentMonth = DateTime.Today;
+    private DateOnly SelectedDate = DateOnly.FromDateTime(DateTime.Today);
+
+    protected override void OnParametersSet()
+    {
+        if (Value.HasValue)
+        {
+            SelectedDate = Value.Value;
+            CurrentMonth = new DateTime(Value.Value.Year, Value.Value.Month, 1);
+        }
+    }
+
+    private void PrevMonth() => CurrentMonth = CurrentMonth.AddMonths(-1);
+    private void NextMonth() => CurrentMonth = CurrentMonth.AddMonths(1);
+
+    private async Task SelectDate(DateTime date)
+    {
+        SelectedDate = DateOnly.FromDateTime(date);
+        await ValueChanged.InvokeAsync(SelectedDate);
+    }
+
+    private IEnumerable<string> WeekDays => CultureInfo.CurrentCulture.DateTimeFormat.AbbreviatedDayNames;
+
+    private IEnumerable<DayCell> Days
+    {
+        get
+        {
+            var firstOfMonth = new DateTime(CurrentMonth.Year, CurrentMonth.Month, 1);
+            var start = firstOfMonth.AddDays(-(int)firstOfMonth.DayOfWeek);
+
+            return Enumerable.Range(0, 42).Select(i =>
+            {
+                var d = start.AddDays(i);
+                return new DayCell
+                {
+                    Date = d,
+                    IsCurrentMonth = d.Month == CurrentMonth.Month,
+                    IsSelected = SelectedDate.DayNumber == DateOnly.FromDateTime(d).DayNumber,
+                    IsToday = d.Date == DateTime.Today
+                };
+            });
+        }
+    }
+
+    private class DayCell
+    {
+        public DateTime Date { get; set; }
+        public bool IsCurrentMonth { get; set; }
+        public bool IsSelected { get; set; }
+        public bool IsToday { get; set; }
+    }
+}
+
+<style>
+    .datepicker-wrapper {
+        text-align: center;
+    }
+
+    .calendar {
+        display: inline-block;
+    }
+
+    .nav {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: .5rem;
+    }
+
+    .weekdays, .days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+    }
+
+    .day {
+        border: none;
+        background: transparent;
+        padding: .4rem;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+        .day.today {
+            outline: 1px solid #0078ff;
+        }
+
+        .day.selected {
+            background: #0078ff;
+            color: #fff;
+        }
+</style>
+
+
+
+=== BUIInputDateTime.razor ===
+
+@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@typeparam TValue
+@inherits InputBase<TValue>
+
+<div class="idt-wrapper">
+    <input class="idt-input @CssClass"
+           value="@CurrentValueAsString"
+           readonly
+           name="@NameAttributeValue"
+           @attributes="AdditionalAttributes" />
+
+    <button type="button" class="idt-btn" @onclick="TogglePicker">📅</button>
+</div>
+
+@if (IsOpen)
+{
+    <div class="picker-overlay" @onclick="ClosePicker">
+        <div class="picker-modal" @onclick:stopPropagation>
+            @if (ShowDate)
+            {
+                <BUIDatePicker Value="DateValue" ValueChanged="OnDateChanged" />
+            }
+            @if (ShowTime)
+            {
+                <BUITimePicker Value="TimeValue" ValueChanged="OnTimeChanged" />
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsOpen;
+
+    private bool ShowDate;
+    private bool ShowTime;
+
+    private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    private TimeOnly TimeValue { get; set; } = TimeOnly.MinValue;
+
+    protected override void OnInitialized()
+    {
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        ShowDate = t == typeof(DateOnly) || t == typeof(DateTime) || t == typeof(DateTimeOffset);
+        ShowTime = t == typeof(TimeOnly) || t == typeof(DateTime) || t == typeof(DateTimeOffset);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (CurrentValue == null) return;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        if (t == typeof(DateOnly)) DateValue = (DateOnly)(object)CurrentValue!;
+        else if (t == typeof(TimeOnly)) TimeValue = (TimeOnly)(object)CurrentValue!;
+        else if (t == typeof(DateTime))
+        {
+            var dt = (DateTime)(object)CurrentValue!;
+            DateValue = DateOnly.FromDateTime(dt);
+            TimeValue = TimeOnly.FromDateTime(dt);
+        }
+        else if (t == typeof(DateTimeOffset))
+        {
+            var dto = (DateTimeOffset)(object)CurrentValue!;
+            DateValue = DateOnly.FromDateTime(dto.DateTime);
+            TimeValue = TimeOnly.FromDateTime(dto.DateTime);
+        }
+    }
+
+    private void TogglePicker() => IsOpen = !IsOpen;
+    private void ClosePicker() => IsOpen = false;
+
+    // Actualización instantánea
+    private async Task OnDateChanged(DateOnly? value)
+    {
+        if (value.HasValue) DateValue = value.Value;
+        await UpdateCurrentValue();
+    }
+
+    private async Task OnTimeChanged(TimeOnly? value)
+    {
+        if (value.HasValue) TimeValue = value.Value;
+        await UpdateCurrentValue();
+    }
+
+    private async Task UpdateCurrentValue()
+    {
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        object newValue = t switch
+        {
+            Type x when x == typeof(DateOnly) => DateValue,
+            Type x when x == typeof(TimeOnly) => TimeValue,
+            Type x when x == typeof(DateTime) => DateValue.ToDateTime(TimeValue),
+            Type x when x == typeof(DateTimeOffset) => new DateTimeOffset(DateValue.ToDateTime(TimeValue)),
+            _ => throw new InvalidOperationException()
+        };
+
+        CurrentValue = (TValue)newValue;
+        await Task.CompletedTask;
+    }
+
+    protected override string? FormatValueAsString(TValue? value)
+    {
+        if (value == null) return string.Empty;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        return t switch
+        {
+            Type x when x == typeof(DateOnly)
+                => ((DateOnly)(object)value).ToString("d", CultureInfo.CurrentCulture), // fecha corta según cultura
+
+            Type x when x == typeof(TimeOnly)
+                => ((TimeOnly)(object)value).ToString("t", CultureInfo.CurrentCulture), // hora corta según cultura
+
+            Type x when x == typeof(DateTime)
+                => ((DateTime)(object)value).ToString("g", CultureInfo.CurrentCulture), // fecha y hora corta según cultura
+
+            Type x when x == typeof(DateTimeOffset)
+                => ((DateTimeOffset)(object)value).ToString("g", CultureInfo.CurrentCulture), // fecha y hora corta según cultura
+
+            _ => value.ToString()
+        };
+    }
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string? validationErrorMessage)
+    {
+        result = default!;
+        validationErrorMessage = null;
+
+        if (string.IsNullOrWhiteSpace(value)) return true;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        try
+        {
+            object parsed = t switch
+            {
+                Type x when x == typeof(DateOnly) => DateOnly.ParseExact(value!, "dd/MM/yyyy", CultureInfo.CurrentCulture),
+                Type x when x == typeof(TimeOnly) => TimeOnly.ParseExact(value!, "HH:mm", CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateTime) => DateTime.ParseExact(value!, "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateTimeOffset) => DateTimeOffset.ParseExact(value!, "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture),
+                _ => throw new InvalidOperationException()
+            };
+
+            result = (TValue)parsed;
+            return true;
+        }
+        catch
+        {
+            validationErrorMessage = $"Formato inválido para {DisplayName ?? FieldIdentifier.FieldName}";
+            return false;
+        }
+    }
+}
+
+<style>
+    /* Wrapper */
+    .idt-wrapper {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        position: relative;
+    }
+    /* Input */
+    .idt-input {
+        flex: 1;
+        padding: .6rem .75rem;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        background: white;
+        cursor: pointer;
+    }
+    /* Botón calendario */
+    .idt-btn {
+        border-radius: 10px;
+        padding: .6rem .75rem;
+        border: 1px solid #ccc;
+        background: white;
+        cursor: pointer;
+    }
+    /* Overlay modal */
+    .picker-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.35);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+        transition: opacity 0.3s ease;
+        z-index: 9999;
+    }
+    /* Modal */
+    .picker-modal {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 16px;
+        max-width: 450px;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: 0 12px 24px rgba(0,0,0,.25);
+        transition: transform 0.2s ease;
+    }
+    /* Hover y foco */
+    .idt-btn:hover, .idt-input:hover {
+        border-color: #0078ff;
+    }
+
+    .idt-btn:focus, .idt-input:focus {
+        outline: none;
+        border-color: #005ecb;
+        box-shadow: 0 0 0 2px rgba(0,120,255,.3);
+    }
+    /* Picker footer opcional (si se quisiera) */
+    .picker-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .primary {
+        background: #0078ff;
+        color: #fff;
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .secondary {
+        background: #eee;
+        color: #333;
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+
+
+=== BUITimePicker.razor ===
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+@using System.Globalization
+
+<div class="timepicker-wrapper">
+    <label>
+        Hora
+        <input type="number"
+               min="@HourMin"
+               max="@HourMax"
+               value="@DisplayHour"
+               @onchange="OnHourChanged" />
+    </label>
+    <label>
+        Minutos
+        <input type="number"
+               min="0"
+               max="59"
+               value="@Minute"
+               @onchange="OnMinuteChanged" />
+    </label>
+
+    <label>
+        Formato
+        <select @onchange="OnFormatChanged" value="@Format">
+            <option value="24">24h</option>
+            <option value="12">AM/PM</option>
+        </select>
+    </label>
+
+    @if (Format == "12")
+    {
+        <label>
+            <select @onchange="OnAmPmChanged" value="@AmPm">
+                <option value="AM">AM</option>
+                <option value="PM">PM</option>
+            </select>
+        </label>
+    }
+</div>
+
+@code {
+    [Parameter] public TimeOnly? Value { get; set; }
+    [Parameter] public EventCallback<TimeOnly?> ValueChanged { get; set; }
+
+    private int Hour;
+    private int Minute;
+    private string Format = "24"; // "24" o "12"
+    private string AmPm = "AM";
+
+    private int HourMin => Format == "24" ? 0 : 1;
+    private int HourMax => Format == "24" ? 23 : 12;
+
+    private int DisplayHour
+    {
+        get
+        {
+            if (Format == "24") return Hour;
+            int h = Hour % 12;
+            if (h == 0) h = 12;
+            return h;
+        }
+        set
+        {
+            if (Format == "24")
+            {
+                Hour = value;
+            }
+            else
+            {
+                Hour = AmPm == "PM" ? (value % 12) + 12 : value % 12;
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        // Detectar formato por cultura si no se ha establecido explícitamente
+        if (CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern.Contains("tt"))
+            Format = "12";
+        else
+            Format = "24";
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Value.HasValue)
+        {
+            Hour = Value.Value.Hour;
+            Minute = Value.Value.Minute;
+
+            if (Format == "12")
+                AmPm = Hour >= 12 ? "PM" : "AM";
+        }
+    }
+
+    private async Task UpdateValue()
+    {
+        var t = new TimeOnly(Hour, Minute);
+        await ValueChanged.InvokeAsync(t);
+    }
+
+    private void OnHourChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var h))
+        {
+            h = Math.Clamp(h, HourMin, HourMax);
+            DisplayHour = h;
+            _ = UpdateValue();
+        }
+    }
+
+    private void OnMinuteChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var m))
+        {
+            Minute = Math.Clamp(m, 0, 59);
+            _ = UpdateValue();
+        }
+    }
+
+    private void OnFormatChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (value != null && value != Format)
+        {
+            // Convertir la hora actual al nuevo formato
+            if (value == "12")
+            {
+                AmPm = Hour >= 12 ? "PM" : "AM";
+                if (Hour == 0) Hour = 12;
+                else if (Hour > 12) Hour -= 12;
+            }
+            else // 24h
+            {
+                if (AmPm == "PM" && Hour < 12) Hour += 12;
+                if (AmPm == "AM" && Hour == 12) Hour = 0;
+            }
+
+            Format = value;
+            _ = UpdateValue();
+        }
+    }
+
+    private void OnAmPmChanged(ChangeEventArgs e)
+    {
+        var value = e.Value?.ToString();
+        if (value == "AM" || value == "PM")
+        {
+            AmPm = value;
+
+            // Ajustar la hora según AM/PM
+            if (AmPm == "PM" && Hour < 12) Hour += 12;
+            if (AmPm == "AM" && Hour == 12) Hour = 0;
+
+            _ = UpdateValue();
+        }
+    }
+}
+
+<style>
+    .timepicker-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        align-items: center;
+    }
+
+        .timepicker-wrapper input,
+        .timepicker-wrapper select {
+            width: 60px;
+            padding: .3rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+</style>
+
+
+

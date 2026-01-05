@@ -1,0 +1,245 @@
+﻿@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@typeparam TValue
+@inherits InputBase<TValue>
+
+<div class="idt-wrapper">
+    <input class="idt-input @CssClass"
+           value="@CurrentValueAsString"
+           readonly
+           name="@NameAttributeValue"
+           @attributes="AdditionalAttributes" />
+
+    <button type="button" class="idt-btn" @onclick="TogglePicker">📅</button>
+</div>
+
+@if (IsOpen)
+{
+    <div class="picker-overlay" @onclick="ClosePicker">
+        <div class="picker-modal" @onclick:stopPropagation>
+            @if (ShowDate)
+            {
+                <BUIDatePicker Value="DateValue" ValueChanged="OnDateChanged" />
+            }
+            @if (ShowTime)
+            {
+                <BUITimePicker Value="TimeValue" ValueChanged="OnTimeChanged" />
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsOpen;
+
+    private bool ShowDate;
+    private bool ShowTime;
+
+    private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    private TimeOnly TimeValue { get; set; } = TimeOnly.MinValue;
+
+    protected override void OnInitialized()
+    {
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        ShowDate = t == typeof(DateOnly) || t == typeof(DateTime) || t == typeof(DateTimeOffset);
+        ShowTime = t == typeof(TimeOnly) || t == typeof(DateTime) || t == typeof(DateTimeOffset);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (CurrentValue == null) return;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        if (t == typeof(DateOnly)) DateValue = (DateOnly)(object)CurrentValue!;
+        else if (t == typeof(TimeOnly)) TimeValue = (TimeOnly)(object)CurrentValue!;
+        else if (t == typeof(DateTime))
+        {
+            var dt = (DateTime)(object)CurrentValue!;
+            DateValue = DateOnly.FromDateTime(dt);
+            TimeValue = TimeOnly.FromDateTime(dt);
+        }
+        else if (t == typeof(DateTimeOffset))
+        {
+            var dto = (DateTimeOffset)(object)CurrentValue!;
+            DateValue = DateOnly.FromDateTime(dto.DateTime);
+            TimeValue = TimeOnly.FromDateTime(dto.DateTime);
+        }
+    }
+
+    private void TogglePicker() => IsOpen = !IsOpen;
+    private void ClosePicker() => IsOpen = false;
+
+    // Actualización instantánea
+    private async Task OnDateChanged(DateOnly? value)
+    {
+        if (value.HasValue) DateValue = value.Value;
+        await UpdateCurrentValue();
+    }
+
+    private async Task OnTimeChanged(TimeOnly? value)
+    {
+        if (value.HasValue) TimeValue = value.Value;
+        await UpdateCurrentValue();
+    }
+
+    private async Task UpdateCurrentValue()
+    {
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        object newValue = t switch
+        {
+            Type x when x == typeof(DateOnly) => DateValue,
+            Type x when x == typeof(TimeOnly) => TimeValue,
+            Type x when x == typeof(DateTime) => DateValue.ToDateTime(TimeValue),
+            Type x when x == typeof(DateTimeOffset) => new DateTimeOffset(DateValue.ToDateTime(TimeValue)),
+            _ => throw new InvalidOperationException()
+        };
+
+        CurrentValue = (TValue)newValue;
+        await Task.CompletedTask;
+    }
+
+    protected override string? FormatValueAsString(TValue? value)
+    {
+        if (value == null) return string.Empty;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        return t switch
+        {
+            Type x when x == typeof(DateOnly)
+                => ((DateOnly)(object)value).ToString("d", CultureInfo.CurrentCulture), // fecha corta según cultura
+
+            Type x when x == typeof(TimeOnly)
+                => ((TimeOnly)(object)value).ToString("t", CultureInfo.CurrentCulture), // hora corta según cultura
+
+            Type x when x == typeof(DateTime)
+                => ((DateTime)(object)value).ToString("g", CultureInfo.CurrentCulture), // fecha y hora corta según cultura
+
+            Type x when x == typeof(DateTimeOffset)
+                => ((DateTimeOffset)(object)value).ToString("g", CultureInfo.CurrentCulture), // fecha y hora corta según cultura
+
+            _ => value.ToString()
+        };
+    }
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string? validationErrorMessage)
+    {
+        result = default!;
+        validationErrorMessage = null;
+
+        if (string.IsNullOrWhiteSpace(value)) return true;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        try
+        {
+            object parsed = t switch
+            {
+                Type x when x == typeof(DateOnly) => DateOnly.ParseExact(value!, "dd/MM/yyyy", CultureInfo.CurrentCulture),
+                Type x when x == typeof(TimeOnly) => TimeOnly.ParseExact(value!, "HH:mm", CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateTime) => DateTime.ParseExact(value!, "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateTimeOffset) => DateTimeOffset.ParseExact(value!, "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture),
+                _ => throw new InvalidOperationException()
+            };
+
+            result = (TValue)parsed;
+            return true;
+        }
+        catch
+        {
+            validationErrorMessage = $"Formato inválido para {DisplayName ?? FieldIdentifier.FieldName}";
+            return false;
+        }
+    }
+}
+
+<style>
+    /* Wrapper */
+    .idt-wrapper {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        position: relative;
+    }
+    /* Input */
+    .idt-input {
+        flex: 1;
+        padding: .6rem .75rem;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        background: white;
+        cursor: pointer;
+    }
+    /* Botón calendario */
+    .idt-btn {
+        border-radius: 10px;
+        padding: .6rem .75rem;
+        border: 1px solid #ccc;
+        background: white;
+        cursor: pointer;
+    }
+    /* Overlay modal */
+    .picker-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.35);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(4px);
+        transition: opacity 0.3s ease;
+        z-index: 9999;
+    }
+    /* Modal */
+    .picker-modal {
+        background: #fff;
+        padding: 1rem;
+        border-radius: 16px;
+        max-width: 450px;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        box-shadow: 0 12px 24px rgba(0,0,0,.25);
+        transition: transform 0.2s ease;
+    }
+    /* Hover y foco */
+    .idt-btn:hover, .idt-input:hover {
+        border-color: #0078ff;
+    }
+
+    .idt-btn:focus, .idt-input:focus {
+        outline: none;
+        border-color: #005ecb;
+        box-shadow: 0 0 0 2px rgba(0,120,255,.3);
+    }
+    /* Picker footer opcional (si se quisiera) */
+    .picker-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+    }
+
+    .primary {
+        background: #0078ff;
+        color: #fff;
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .secondary {
+        background: #eee;
+        color: #333;
+        border-radius: 8px;
+        padding: .5rem 1rem;
+        border: none;
+        cursor: pointer;
+    }
+</style>

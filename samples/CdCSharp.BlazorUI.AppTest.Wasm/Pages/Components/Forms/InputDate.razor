@@ -1,22 +1,17 @@
 ﻿@page "/components/forms/input-date"
+@using CdCSharp.BlazorUI.Components.Forms
 
-<BUIInputDatePicker @bind-Value="_selectedDateTime"
-                    Label="Seleccionar DateTime"
-                    ShowTime="true" />
+<h3 class="title">Ejemplo DateTimePicker</h3>
 
-<BUIInputDatePicker @bind-Value="_selectedDateTimeOffset"
-                    Label="Seleccionar DateTimeOffset"
-                    ShowTime="true" />
-
-<BUIInputDatePicker @bind-Value="_selectedDate"
-                    Label="Seleccionar DateOnly"
-                    ShowTime="true" />
-
-<BUIInputDatePicker @bind-Value="_selectedTime"
-                    Label="Seleccionar TimeOnly"
-                    ShowTime="true" />
+<BUIInputDateTime @bind-Value="_selectedDateTime"></BUIInputDateTime>
+<BUIInputDateTime @bind-Value="_selectedDateTimeOffset"></BUIInputDateTime>
+<BUIInputDateTime @bind-Value="_selectedDate"></BUIInputDateTime>
+<BUIInputDateTime @bind-Value="_selectedTime"></BUIInputDateTime>
 
 @code {
+    private DateTime? SelectedDate;
+    private bool ShowPicker;
+
     private DateTime? _selectedDateTime;
     private DateTimeOffset? _selectedDateTimeOffset;
     private DateOnly? _selectedDate;
