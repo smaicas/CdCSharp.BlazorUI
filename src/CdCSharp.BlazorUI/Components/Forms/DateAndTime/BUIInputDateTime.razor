@@ -17,7 +17,9 @@
 
     <button type="button"
             class="idt-btn"
-            @onclick="TogglePicker"
+            @onclick="OpenPicker"
+            @onclick:preventDefault="true"
+            @onclick:stopPropagation="true"
             disabled="@IsReadOnly">
         📅
     </button>
@@ -25,8 +27,8 @@
 
 @if (IsOpen)
 {
-    <div class="picker-overlay" @onclick="ClosePicker">
-        <div class="picker-modal" @onclick:stopPropagation>
+    <div class="picker-overlay" @onclick="HandleOverlayClick" @onclick:stopPropagation="true">
+        <div class="picker-modal" @onclick:stopPropagation="true">
             @if (ShowDate)
             {
                 <BUIDatePicker Value="DateValue"
@@ -52,142 +54,139 @@
     [Parameter] public bool ReadOnly { get; set; }
     public bool IsReadOnly => ReadOnly;
 
-    // -------------------------
-    // Computed state
-    // -------------------------
+    private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 
     private string Format => GetCultureFormatString();
     private string DefaultText => GetDefaultText();
 
-    // -------------------------
-    // Lifecycle
-    // -------------------------
-
     protected override void OnInitialized()
     {
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        Type type = UnderlyingType;
 
-        ShowDate = t == typeof(DateOnly)
-                || t == typeof(DateTime)
-                || t == typeof(DateTimeOffset);
+        ShowDate = type == typeof(DateOnly)
+                || type == typeof(DateTime)
+                || type == typeof(DateTimeOffset);
 
-        ShowTime = t == typeof(TimeOnly)
-                || t == typeof(DateTime)
-                || t == typeof(DateTimeOffset);
+        ShowTime = type == typeof(TimeOnly)
+                || type == typeof(DateTime)
+                || type == typeof(DateTimeOffset);
     }
 
     protected override void OnParametersSet()
     {
         if (CurrentValue == null) return;
 
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        Type type = UnderlyingType;
 
-        if (t == typeof(DateOnly))
-            DateValue = (DateOnly)(object)CurrentValue!;
-        else if (t == typeof(TimeOnly))
-            TimeValue = (TimeOnly)(object)CurrentValue!;
-        else if (t == typeof(DateTime))
+        if (type == typeof(DateOnly))
         {
-            var dt = (DateTime)(object)CurrentValue!;
+            DateValue = (DateOnly)(object)CurrentValue;
+        }
+        else if (type == typeof(TimeOnly))
+        {
+            TimeValue = (TimeOnly)(object)CurrentValue;
+        }
+        else if (type == typeof(DateTime))
+        {
+            DateTime dt = (DateTime)(object)CurrentValue;
             DateValue = DateOnly.FromDateTime(dt);
             TimeValue = TimeOnly.FromDateTime(dt);
         }
-        else if (t == typeof(DateTimeOffset))
+        else if (type == typeof(DateTimeOffset))
         {
-            var dto = (DateTimeOffset)(object)CurrentValue!;
+            DateTimeOffset dto = (DateTimeOffset)(object)CurrentValue;
             DateValue = DateOnly.FromDateTime(dto.DateTime);
             TimeValue = TimeOnly.FromDateTime(dto.DateTime);
         }
     }
 
-    // -------------------------
-    // Validation
-    // -------------------------
+    private void OpenPicker()
+    {
+        IsOpen = true;
+    }
+
+    private void HandleOverlayClick()
+    {
+        IsOpen = false;
+    }
 
     private bool ValidateFinalValue(string text)
     {
         if (string.IsNullOrWhiteSpace(text)) return true;
 
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        Type type = UnderlyingType;
 
-        return t switch
+        return type switch
         {
-            Type x when x == typeof(DateOnly)
+            Type t when t == typeof(DateOnly)
                 => DateOnly.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
 
-            Type x when x == typeof(TimeOnly)
+            Type t when t == typeof(TimeOnly)
                 => TimeOnly.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
 
-            Type x when x == typeof(DateTime)
+            Type t when t == typeof(DateTime)
                 => DateTime.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
 
-            Type x when x == typeof(DateTimeOffset)
+            Type t when t == typeof(DateTimeOffset)
                 => DateTimeOffset.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
 
             _ => false
         };
     }
 
-    // -------------------------
-    // Picker sync
-    // -------------------------
-
     private async Task OnDateChanged(DateOnly? value)
     {
         if (value.HasValue)
+        {
             DateValue = value.Value;
-
-        await UpdateCurrentValue();
+            await UpdateCurrentValue();
+        }
     }
 
     private async Task OnTimeChanged(TimeOnly? value)
     {
         if (value.HasValue)
+        {
             TimeValue = value.Value;
-
-        await UpdateCurrentValue();
+            await UpdateCurrentValue();
+        }
     }
 
     private async Task UpdateCurrentValue()
     {
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        Type type = UnderlyingType;
 
-        object newValue = t switch
+        object newValue = type switch
         {
-            Type x when x == typeof(DateOnly) => DateValue,
-            Type x when x == typeof(TimeOnly) => TimeValue,
-            Type x when x == typeof(DateTime) => DateValue.ToDateTime(TimeValue),
-            Type x when x == typeof(DateTimeOffset)
-                => new DateTimeOffset(DateValue.ToDateTime(TimeValue)),
-            _ => throw new InvalidOperationException()
+            Type t when t == typeof(DateOnly) => DateValue,
+            Type t when t == typeof(TimeOnly) => TimeValue,
+            Type t when t == typeof(DateTime) => DateValue.ToDateTime(TimeValue),
+            Type t when t == typeof(DateTimeOffset) => new DateTimeOffset(DateValue.ToDateTime(TimeValue)),
+            _ => throw new InvalidOperationException($"Unsupported type: {type}")
         };
 
         CurrentValue = (TValue)newValue;
         await Task.CompletedTask;
     }
 
-    // -------------------------
-    // Formatting
-    // -------------------------
-
     protected override string? FormatValueAsString(TValue? value)
     {
         if (value == null) return string.Empty;
 
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        Type type = UnderlyingType;
 
-        return t switch
+        return type switch
         {
-            Type x when x == typeof(DateOnly)
+            Type t when t == typeof(DateOnly)
                 => ((DateOnly)(object)value).ToString(Format, CultureInfo.CurrentCulture),
 
-            Type x when x == typeof(TimeOnly)
+            Type t when t == typeof(TimeOnly)
                 => ((TimeOnly)(object)value).ToString(Format, CultureInfo.CurrentCulture),
 
-            Type x when x == typeof(DateTime)
+            Type t when t == typeof(DateTime)
                 => ((DateTime)(object)value).ToString(Format, CultureInfo.CurrentCulture),
 
-            Type x when x == typeof(DateTimeOffset)
+            Type t when t == typeof(DateTimeOffset)
                 => ((DateTimeOffset)(object)value).ToString(Format, CultureInfo.CurrentCulture),
 
             _ => value.ToString()
@@ -205,7 +204,9 @@
         if (string.IsNullOrWhiteSpace(value))
         {
             if (Nullable.GetUnderlyingType(typeof(TValue)) != null)
+            {
                 return true;
+            }
 
             validationErrorMessage = "El valor es requerido.";
             return false;
@@ -213,53 +214,45 @@
 
         try
         {
-            var type = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+            Type type = UnderlyingType;
 
             object parsed = type switch
             {
-                Type x when x == typeof(DateOnly)
+                Type t when t == typeof(DateOnly)
                     => DateOnly.ParseExact(value, Format, CultureInfo.CurrentCulture),
 
-                Type x when x == typeof(TimeOnly)
+                Type t when t == typeof(TimeOnly)
                     => TimeOnly.ParseExact(value, Format, CultureInfo.CurrentCulture),
 
-                Type x when x == typeof(DateTime)
+                Type t when t == typeof(DateTime)
                     => DateTime.ParseExact(value, Format, CultureInfo.CurrentCulture),
 
-                Type x when x == typeof(DateTimeOffset)
+                Type t when t == typeof(DateTimeOffset)
                     => DateTimeOffset.ParseExact(value, Format, CultureInfo.CurrentCulture),
 
-                _ => throw new InvalidOperationException()
+                _ => throw new InvalidOperationException($"Unsupported type: {type}")
             };
 
             result = (TValue)parsed;
             return true;
         }
-        catch
+        catch (FormatException)
         {
-            validationErrorMessage =
-                $"El valor '{value}' no coincide con el formato esperado ({Format}).";
+            validationErrorMessage = $"El valor '{value}' no coincide con el formato esperado ({Format}).";
             return false;
         }
     }
 
-    // -------------------------
-    // UI helpers
-    // -------------------------
-
-    private void TogglePicker() => IsOpen = !IsOpen;
-    private void ClosePicker() => IsOpen = false;
-
     private string GetCultureFormatString()
     {
-        var dtfi = CultureInfo.CurrentCulture.DateTimeFormat;
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        DateTimeFormatInfo dtfi = CultureInfo.CurrentCulture.DateTimeFormat;
+        Type type = UnderlyingType;
 
-        return t switch
+        return type switch
         {
-            Type x when x == typeof(DateOnly) => dtfi.ShortDatePattern,
-            Type x when x == typeof(TimeOnly) => dtfi.ShortTimePattern,
-            Type x when x == typeof(DateTime) || x == typeof(DateTimeOffset)
+            Type t when t == typeof(DateOnly) => dtfi.ShortDatePattern,
+            Type t when t == typeof(TimeOnly) => dtfi.ShortTimePattern,
+            Type t when t == typeof(DateTime) || t == typeof(DateTimeOffset)
                 => $"{dtfi.ShortDatePattern} {dtfi.ShortTimePattern}",
             _ => string.Empty
         };
@@ -267,21 +260,21 @@
 
     private string GetDefaultText()
     {
-        var now = DateTime.Now;
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        DateTime now = DateTime.Now;
+        Type type = UnderlyingType;
 
-        return t switch
+        return type switch
         {
-            Type x when x == typeof(DateOnly)
+            Type t when t == typeof(DateOnly)
                 => DateOnly.FromDateTime(now).ToString(Format, CultureInfo.CurrentCulture),
 
-            Type x when x == typeof(TimeOnly)
+            Type t when t == typeof(TimeOnly)
                 => TimeOnly.FromDateTime(now).ToString(Format, CultureInfo.CurrentCulture),
 
-            Type x when x == typeof(DateTime)
+            Type t when t == typeof(DateTime)
                 => now.ToString(Format, CultureInfo.CurrentCulture),
 
-            Type x when x == typeof(DateTimeOffset)
+            Type t when t == typeof(DateTimeOffset)
                 => DateTimeOffset.Now.ToString(Format, CultureInfo.CurrentCulture),
 
             _ => string.Empty

@@ -29,51 +29,81 @@ public static class DateComponentValidator
 
     private static bool ValidateDay(string value, Dictionary<DateComponentType, string>? ctx)
     {
-        if (!int.TryParse(value, out int day) || day is < 1 or > 31)
+        if (!int.TryParse(value, out int day) || day < 1 || day > 31)
             return false;
 
-        if (ctx != null &&
-            ctx.TryGetValue(DateComponentType.Month, out string? m) &&
-            int.TryParse(m, out int month))
+        if (ctx == null)
+            return true;
+
+        if (!ctx.TryGetValue(DateComponentType.Month, out string? monthStr) ||
+            !int.TryParse(monthStr, out int month) ||
+            month < 1 || month > 12)
         {
-            int year = 2024;
-
-            if (ctx.TryGetValue(DateComponentType.Year, out string? y) &&
-                int.TryParse(y, out int parsedYear))
-            {
-                year = parsedYear < 100
-                    ? ConvertTwoDigitYear(parsedYear)
-                    : parsedYear;
-            }
-
-            return day <= DateTime.DaysInMonth(year, month);
+            return true;
         }
 
-        return true;
+        int year = DateTime.Now.Year;
+
+        if (ctx.TryGetValue(DateComponentType.Year, out string? yearStr) &&
+            int.TryParse(yearStr, out int parsedYear))
+        {
+            year = parsedYear < 100
+                ? ConvertTwoDigitYear(parsedYear)
+                : parsedYear;
+        }
+
+        try
+        {
+            int maxDays = DateTime.DaysInMonth(year, month);
+            return day <= maxDays;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static bool ValidateMonth(string value)
-        => int.TryParse(value, out int m) && m is >= 1 and <= 12;
+        => int.TryParse(value, out int month) && month >= 1 && month <= 12;
 
     private static bool ValidateYear(string value)
-        => int.TryParse(value, out int y) &&
-           (value.Length <= 2 || y is >= 1900 and <= 2100);
+    {
+        if (!int.TryParse(value, out int year))
+            return false;
+
+        if (value.Length <= 2)
+            return true;
+
+        return year is >= 1900 and <= 2100;
+    }
 
     private static bool ValidateHour12(string value)
-        => int.TryParse(value, out int h) && h is >= 1 and <= 12;
+        => int.TryParse(value, out int hour) && hour >= 1 && hour <= 12;
 
     private static bool ValidateHour24(string value)
-        => int.TryParse(value, out int h) && h is >= 0 and <= 23;
+        => int.TryParse(value, out int hour) && hour >= 0 && hour <= 23;
 
     private static bool ValidateMinute(string value)
-        => int.TryParse(value, out int m) && m is >= 0 and <= 59;
+        => int.TryParse(value, out int minute) && minute >= 0 && minute <= 59;
 
     private static bool ValidateSecond(string value)
-        => int.TryParse(value, out int s) && s is >= 0 and <= 59;
+        => int.TryParse(value, out int second) && second >= 0 && second <= 59;
 
     private static bool ValidateAmPm(string value)
-        => value.ToUpperInvariant() is "A" or "P" or "AM" or "PM";
+    {
+        string upper = value.ToUpperInvariant();
+        return upper is "A" or "P" or "AM" or "PM";
+    }
 
     private static int ConvertTwoDigitYear(int year)
-        => CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(year);
+    {
+        try
+        {
+            return CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(year);
+        }
+        catch
+        {
+            return 2000 + year;
+        }
+    }
 }

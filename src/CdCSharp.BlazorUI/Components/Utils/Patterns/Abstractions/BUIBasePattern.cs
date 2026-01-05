@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
 
-public abstract class BUIBasePattern : ComponentBase, ITextPatternJsCallback
+public abstract class BUIBasePattern : ComponentBase, ITextPatternJsCallback, IAsyncDisposable
 {
     protected ElementReference _containerBox;
     protected TextPatternCallbacksRelay? _jsCallbacksRelay;
 
+    private string _text = string.Empty;
     private string _prevText = string.Empty;
     private string _prevFormat = string.Empty;
-    protected string _text = string.Empty;
+    private bool _isInitialized = false;
+    private bool _needsRefresh = false;
 
     [Parameter, EditorRequired]
     public string Format { get; set; } = string.Empty;
@@ -33,22 +35,35 @@ public abstract class BUIBasePattern : ComponentBase, ITextPatternJsCallback
     [Parameter]
     public string Text
     {
-        get => string.IsNullOrEmpty(_text) ? DefaultText : _text;
+        get => _text;
         set
         {
             if (_text == value) return;
             _text = value;
-            InvokeAsync(RefreshPattern);
-            TextChanged.InvokeAsync(_text);
+            _needsRefresh = true;
+        }
+    }
+
+    public string DisplayText => string.IsNullOrEmpty(_text) ? DefaultText : _text;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isInitialized && _needsRefresh)
+        {
+            _needsRefresh = false;
+            await RefreshPattern();
+            await TextChanged.InvokeAsync(_text);
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!firstRender) return;
-
-        _jsCallbacksRelay = new TextPatternCallbacksRelay(this);
-        await RefreshPattern();
+        if (firstRender)
+        {
+            _jsCallbacksRelay = new TextPatternCallbacksRelay(this);
+            _isInitialized = true;
+            await RefreshPattern();
+        }
     }
 
     protected override bool ShouldRender()
@@ -61,11 +76,13 @@ public abstract class BUIBasePattern : ComponentBase, ITextPatternJsCallback
 
     protected async Task RefreshPattern()
     {
+        if (!_isInitialized || _jsCallbacksRelay == null) return;
+
         List<ElementPattern> patterns = PreparePatterns();
         await Js.TextPatternAddDynamicAsync(
             _containerBox,
             patterns,
-            _jsCallbacksRelay!.DotNetReference,
+            _jsCallbacksRelay.DotNetReference,
             nameof(NotifyTextChanged),
             nameof(ValidatePartial));
     }
@@ -82,11 +99,26 @@ public abstract class BUIBasePattern : ComponentBase, ITextPatternJsCallback
         if (!ValidateFinal(text))
         {
             _text = DefaultText;
-            await RefreshPattern();
+            _needsRefresh = true;
+            StateHasChanged();
             return;
         }
 
-        Text = text;
+        _text = text;
+        await TextChanged.InvokeAsync(_text);
     }
+
     public abstract Task<bool> ValidatePartial(int index, string text);
+
+    public async ValueTask DisposeAsync()
+    {
+        _jsCallbacksRelay?.Dispose();
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual ValueTask DisposeAsyncCore()
+    {
+        return ValueTask.CompletedTask;
+    }
 }
