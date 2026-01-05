@@ -5,42 +5,32 @@
 
 <div style="display: flex; flex-direction: column; gap: 1rem;">
     <div>
-        <label>
-            DateOnly:
-            <BUIInputDateTime @bind-Value="dateOnlyValue" />
-        </label>
+        <span>DateOnly:</span>
+        <BUIInputDateTime @bind-Value="dateOnlyValue" />
         <p>Valor: @dateOnlyValue</p>
     </div>
 
     <div>
-        <label>
-            TimeOnly:
-            <BUIInputDateTime @bind-Value="timeOnlyValue" />
-        </label>
+        <span>TimeOnly:</span>
+        <BUIInputDateTime @bind-Value="timeOnlyValue" />
         <p>Valor: @timeOnlyValue</p>
     </div>
 
     <div>
-        <label>
-            DateTime:
-            <BUIInputDateTime @bind-Value="dateTimeValue" />
-        </label>
+        <span>DateTime:</span>
+        <BUIInputDateTime @bind-Value="dateTimeValue" />
         <p>Valor: @dateTimeValue</p>
     </div>
 
     <div>
-        <label>
-            DateTimeOffset:
-            <BUIInputDateTime @bind-Value="dateTimeOffsetValue" />
-        </label>
+        <span>DateTimeOffset:</span>
+        <BUIInputDateTime @bind-Value="dateTimeOffsetValue" />
         <p>Valor: @dateTimeOffsetValue</p>
     </div>
 
     <div>
-        <label>
-            Nullable DateTime:
-            <BUIInputDateTime @bind-Value="nullableDateTimeValue" />
-        </label>
+        <span>Nullable DateTime:</span>
+        <BUIInputDateTime @bind-Value="nullableDateTimeValue" />
         <p>Valor: @(nullableDateTimeValue?.ToString() ?? "null")</p>
     </div>
 </div>
