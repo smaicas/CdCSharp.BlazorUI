@@ -100,32 +100,61 @@ public static class DatePatternParser
             ? t
             : ComponentMap[spec[0].ToString()];
 
+        int minDigits = spec.Length;  // para regex/validación
+        int maxDigits = spec.Length;  // para regex/validación
+
+        string pattern = type switch
+        {
+            DateComponentType.Day or DateComponentType.Month or
+            DateComponentType.Hour12 or DateComponentType.Hour24 or
+            DateComponentType.Minute or DateComponentType.Second =>
+                spec.Length == 1 ? @"(\d{1,2})" : @"(\d{2})",
+
+            DateComponentType.Year =>
+                spec.Length == 2 ? @"(\d{2})" : @"(\d{4})",
+
+            DateComponentType.AmPm =>
+                spec.Length == 1 ? @"([AP])" : @"(AM|PM)",
+
+            _ => ""
+        };
+
+        // Para UI siempre mostrar 2 dígitos para hora, minuto, segundo
+        int uiMaxDigits = type switch
+        {
+            DateComponentType.Day or DateComponentType.Month or
+            DateComponentType.Hour12 or DateComponentType.Hour24 or
+            DateComponentType.Minute or DateComponentType.Second => 2,
+            _ => maxDigits
+        };
+
         DateComponent component = new()
         {
             Type = type,
-            MinDigits = spec.Length,
-            MaxDigits = spec.Length,
-            Pattern = type switch
-            {
-                DateComponentType.Day or DateComponentType.Month
-                    => spec.Length == 1 ? @"(\d{1,2})" : @"(\d{2})",
-
-                DateComponentType.Year
-                    => spec.Length == 2 ? @"(\d{2})" : @"(\d{4})",
-
-                DateComponentType.Hour12 or DateComponentType.Hour24
-                or DateComponentType.Minute or DateComponentType.Second
-                    => spec.Length == 1 ? @"(\d{1,2})" : @"(\d{2})",
-
-                DateComponentType.AmPm
-                    => spec.Length == 1 ? @"([AP])" : @"(AM|PM)",
-
-                _ => ""
-            }
+            MinDigits = minDigits,
+            MaxDigits = uiMaxDigits,
+            Pattern = pattern,
+            DefaultValue = GetValueForUI(type)
         };
 
-        component.DefaultValue = GetValue(component, DateTime.Now);
         return component;
+    }
+
+    private static string GetValueForUI(DateComponentType type)
+    {
+        DateTime now = DateTime.Now;
+        return type switch
+        {
+            DateComponentType.Day => now.Day.ToString("00"),
+            DateComponentType.Month => now.Month.ToString("00"),
+            DateComponentType.Year => now.Year.ToString("0000"),
+            DateComponentType.Hour12 => ((now.Hour % 12 == 0 ? 12 : now.Hour % 12)).ToString("00"),
+            DateComponentType.Hour24 => now.Hour.ToString("00"),
+            DateComponentType.Minute => now.Minute.ToString("00"),
+            DateComponentType.Second => now.Second.ToString("00"),
+            DateComponentType.AmPm => now.Hour < 12 ? "AM" : "PM",
+            _ => ""
+        };
     }
 
     private static string GetValue(DateComponent component, DateTime date)
@@ -149,10 +178,10 @@ public static class DatePatternParser
         };
 
     private static string GetElementPattern(DateComponent component)
-        => component.Type switch
-        {
-            DateComponentType.AmPm => new string('w', component.MaxDigits),
-            DateComponentType.Separator => "",
-            _ => new string('d', component.MaxDigits)
-        };
+    => component.Type switch
+    {
+        DateComponentType.AmPm => new string('w', component.MaxDigits),
+        DateComponentType.Separator => "",
+        _ => new string('d', component.MaxDigits)
+    };
 }

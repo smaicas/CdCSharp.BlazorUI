@@ -29,7 +29,7 @@
         return DatePatternParser.ConvertToElementPatterns(_parsedPattern, current);
     }
 
-    public override Task NotifyTextChanged(string text)
+    public override async Task NotifyTextChanged(string text)
     {
         if (DateTime.TryParseExact(
             text,
@@ -39,9 +39,8 @@
             out _))
         {
             Text = text;
+            await TextChanged.InvokeAsync(Text);
         }
-
-        return Task.CompletedTask;
     }
 
     public override Task<bool> ValidatePartial(int index, string text)
