@@ -1,19 +1,54 @@
 ﻿@page "/components/forms/input-date"
 @using CdCSharp.BlazorUI.Components.Forms
 
-<h3 class="title">Ejemplo DateTimePicker</h3>
+<h3>Test de componentes de fecha</h3>
 
-<BUIInputDateTime @bind-Value="_selectedDateTime"></BUIInputDateTime>
-<BUIInputDateTime @bind-Value="_selectedDateTimeOffset"></BUIInputDateTime>
-<BUIInputDateTime @bind-Value="_selectedDate"></BUIInputDateTime>
-<BUIInputDateTime @bind-Value="_selectedTime"></BUIInputDateTime>
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    <div>
+        <label>
+            DateOnly:
+            <BUIInputDateTime @bind-Value="dateOnlyValue" />
+        </label>
+        <p>Valor: @dateOnlyValue</p>
+    </div>
+
+    <div>
+        <label>
+            TimeOnly:
+            <BUIInputDateTime @bind-Value="timeOnlyValue" />
+        </label>
+        <p>Valor: @timeOnlyValue</p>
+    </div>
+
+    <div>
+        <label>
+            DateTime:
+            <BUIInputDateTime @bind-Value="dateTimeValue" />
+        </label>
+        <p>Valor: @dateTimeValue</p>
+    </div>
+
+    <div>
+        <label>
+            DateTimeOffset:
+            <BUIInputDateTime @bind-Value="dateTimeOffsetValue" />
+        </label>
+        <p>Valor: @dateTimeOffsetValue</p>
+    </div>
+
+    <div>
+        <label>
+            Nullable DateTime:
+            <BUIInputDateTime @bind-Value="nullableDateTimeValue" />
+        </label>
+        <p>Valor: @(nullableDateTimeValue?.ToString() ?? "null")</p>
+    </div>
+</div>
 
 @code {
-    private DateTime? SelectedDate;
-    private bool ShowPicker;
-
-    private DateTime? _selectedDateTime;
-    private DateTimeOffset? _selectedDateTimeOffset;
-    private DateOnly? _selectedDate;
-    private TimeOnly? _selectedTime;
+    private DateOnly dateOnlyValue = DateOnly.FromDateTime(DateTime.Now);
+    private TimeOnly timeOnlyValue = TimeOnly.FromDateTime(DateTime.Now);
+    private DateTime dateTimeValue = DateTime.Now;
+    private DateTimeOffset dateTimeOffsetValue = DateTimeOffset.Now;
+    private DateTime? nullableDateTimeValue = DateTime.Now;
 }

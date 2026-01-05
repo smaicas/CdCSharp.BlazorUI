@@ -2,6 +2,7 @@
 @using System.Diagnostics.CodeAnalysis
 @using System.Text.RegularExpressions
 @using CdCSharp.NjBlazor.Core.Strings
+@using System.Globalization
 
 @implements ITextPatternJsCallback
 
@@ -12,10 +13,11 @@
     private ElementReference _containerBox;
 
     private TextPatternCallbacksRelay? _jsCallbacksRelay;
-    private string? _pattern;
+    private ParsedDatePattern? _parsedPattern;
     private string? _prevFormat;
     private string? _prevText;
     private string _text = string.Empty;
+    private Dictionary<DateComponentType, string> _componentValues = new();
 
     /// <summary>
     /// Gets or sets a value indicating whether date formats are allowed.
@@ -63,10 +65,10 @@
 
     /// <summary>
     /// From 0 to N determine partial validations for the pattern.
-    /// Example: For pattern 2025-1-23 
-    ///  0 = 2025 
+    /// Example: For pattern 2025-1-23
+    ///  0 = 2025
     ///  1 = -
-    ///  2 = 1  
+    ///  2 = 1
     ///  3 = -
     ///  4 = 23
     /// </summary>
@@ -106,17 +108,7 @@
     [Parameter]
     public EventCallback<string> TextChanged { get; set; }
 
-    private string Pattern
-    {
-        get
-        {
-            if (_pattern == null)
-            {
-                _pattern = Format.ExtractRegex();
-            }
-            return _pattern;
-        }
-    }
+    // Remove this property - we'll handle parsing in PreparePatterns
 
     /// <summary>
     /// Gets or sets the TextPatternJsInterop for interacting with text patterns.
@@ -129,22 +121,68 @@
 
     public Task NotifyTextChanged(string text)
     {
-        // Valid pattern and valid function, sets de value
-        if (Regex.Match(text, Pattern).Success && (IsValidFunction == null || IsValidFunction(text)))
+        bool isValid = false;
+
+        if (AllowDateFormats && _parsedPattern != null)
+        {
+            // For date formats, use date-specific validation
+            isValid = DateTime.TryParseExact(text, Format, CultureInfo.CurrentCulture,
+                DateTimeStyles.None, out var _) ||
+                DateTime.TryParse(text, CultureInfo.CurrentCulture, DateTimeStyles.None, out var _);
+        }
+        else if (!string.IsNullOrEmpty(Format))
+        {
+            // For non-date formats, use regex validation
+            string pattern = Format.ExtractRegex();
+            if (!string.IsNullOrEmpty(pattern))
+            {
+                isValid = Regex.Match(text, pattern).Success;
+            }
+        }
+
+        if (isValid && (IsValidFunction == null || IsValidFunction(text)))
         {
             Text = text;
         }
+
         return Task.CompletedTask;
     }
 
     public Task<bool> ValidatePartial(int index, string text)
     {
-        if (PartialValidations == null) return Task.FromResult(true);
-
-        if (PartialValidations.TryGetValue(index, out Func<string, bool>? partialValidationFunction))
+        // First check custom validations
+        if (PartialValidations != null && PartialValidations.TryGetValue(index, out Func<string, bool>? partialValidationFunction))
         {
             return Task.FromResult(partialValidationFunction(text));
         }
+
+        // If using date formats, apply date-specific validation
+        if (AllowDateFormats && _parsedPattern != null)
+        {
+            int editableIndex = 0;
+            foreach (var component in _parsedPattern.Components)
+            {
+                if (component.Type != DateComponentType.Separator)
+                {
+                    if (editableIndex == index)
+                    {
+                        // Update component values for context-aware validation
+                        _componentValues[component.Type] = text;
+
+                        bool isValid = DateComponentValidator.ValidateComponent(
+                            component.Type,
+                            text,
+                            _parsedPattern,
+                            _componentValues
+                        );
+
+                        return Task.FromResult(isValid);
+                    }
+                    editableIndex++;
+                }
+            }
+        }
+
         return Task.FromResult(true);
     }
 
@@ -183,44 +221,95 @@
     private List<ElementPattern> PreparePatterns()
     {
         List<ElementPattern> result = [];
-        if (Pattern == null) return result;
 
-        string[] patternParts = Pattern.Split(")").Select(p => $"{p})").ToArray();
-        Match match = Regex.Match(Text, AllowDateFormats ? Pattern.Replace("d", "w") : Pattern);
-        bool success = match.Success;
-
-        if (success)
+        if (AllowDateFormats && !string.IsNullOrEmpty(Format))
         {
-            int currentCharIndex = 0;
-            for (int i = 1; i < match.Groups.Count; i++)
+            // Always use date parser for date formats
+            _parsedPattern = DatePatternParser.Parse(Format);
+
+            // Parse the current date value if available
+            DateTime? currentValue = null;
+            if (!string.IsNullOrEmpty(Text))
             {
-                string value = match.Groups[i].Value;
-                string currentDefaultValue = DefaultText.Substring(currentCharIndex, value.Length);
-                currentCharIndex += value.Length;
-                bool isSeparator = true;
-                bool isEditable = false;
-                if (Regex.Match(value, @"^[a-zA-Z0-9]+$").Success)
+                // Try to parse with the current format
+                if (DateTime.TryParseExact(Text, Format, CultureInfo.CurrentCulture,
+                    DateTimeStyles.None, out DateTime parsed))
                 {
-                    isSeparator = false;
-                    if (Editable)
+                    currentValue = parsed;
+                }
+                else if (DateTime.TryParse(Text, CultureInfo.CurrentCulture,
+                    DateTimeStyles.None, out parsed))
+                {
+                    currentValue = parsed;
+                }
+            }
+
+            // Convert to element patterns
+            result = DatePatternParser.ConvertToElementPatterns(_parsedPattern, currentValue);
+
+#if DEBUG
+            Console.WriteLine($"=== PreparePatterns Debug ===");
+            Console.WriteLine($"AllowDateFormats: {AllowDateFormats}");
+            Console.WriteLine($"Format: '{Format}'");
+            Console.WriteLine($"Text: '{Text}'");
+            Console.WriteLine($"DefaultText: '{DefaultText}'");
+            Console.WriteLine($"Components in parsed pattern: {_parsedPattern.Components.Count}");
+            for (int i = 0; i < _parsedPattern.Components.Count; i++)
+            {
+                var comp = _parsedPattern.Components[i];
+                Console.WriteLine($"  [{i}] Type={comp.Type}, Sep='{comp.SeparatorValue}', Default='{comp.DefaultValue}'");
+            }
+            Console.WriteLine($"Element patterns generated: {result.Count}");
+            for (int i = 0; i < result.Count; i++)
+            {
+                var elem = result[i];
+                Console.WriteLine($"  [{i}] Value='{elem.Value}', IsSep={elem.IsSeparator}, Default='{elem.DefaultValue}', Pattern='{elem.Pattern}'");
+            }
+#endif
+        }
+        else if (!string.IsNullOrEmpty(Format))
+        {
+            // Use original regex-based pattern parsing for non-date patterns
+            string pattern = Format.ExtractRegex();
+            if (!string.IsNullOrEmpty(pattern) && !string.IsNullOrEmpty(Text))
+            {
+                string[] patternParts = pattern.Split(")").Select(p => $"{p})").ToArray();
+                Match match = Regex.Match(Text, pattern);
+
+                if (match.Success)
+                {
+                    int currentCharIndex = 0;
+                    for (int i = 1; i < match.Groups.Count; i++)
                     {
-                        isEditable = true;
+                        string value = match.Groups[i].Value;
+                        string currentDefaultValue = DefaultText.Length > currentCharIndex
+                            ? DefaultText.Substring(currentCharIndex, Math.Min(value.Length, DefaultText.Length - currentCharIndex))
+                            : "";
+                        currentCharIndex += value.Length;
+                        bool isSeparator = !Regex.Match(value, @"^[a-zA-Z0-9]+$").Success;
+                        bool isEditable = !isSeparator && Editable;
+
+                        result.Add(new(patternParts[i - 1], value, value.Length, currentDefaultValue, isSeparator, isEditable));
                     }
                 }
-                result.Add(new(patternParts[i - 1], value, value.Length, currentDefaultValue, isSeparator, isEditable));
             }
         }
+
         return result;
     }
 
     private async Task RefreshPattern()
     {
         List<ElementPattern> patterns = PreparePatterns();
-        await TextPatternJs.TextPatternAddDynamicAsync(
-            _containerBox,
-            patterns,
-            _jsCallbacksRelay?.DotNetReference,
-            nameof(NotifyTextChanged),
-            nameof(ValidatePartial));
+
+        if (_jsCallbacksRelay?.DotNetReference != null)
+        {
+            await TextPatternJs.TextPatternAddDynamicAsync(
+                _containerBox,
+                patterns,
+                _jsCallbacksRelay.DotNetReference,
+                nameof(NotifyTextChanged),
+                nameof(ValidatePartial));
+        }
     }
 }

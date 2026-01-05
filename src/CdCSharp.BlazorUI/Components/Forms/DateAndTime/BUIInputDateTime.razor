@@ -9,24 +9,20 @@
 @implements IHasReadOnly
 
 <div class="idt-wrapper">
-    @*  <input class="idt-input @CssClass"
-           value="@CurrentValueAsString"
-           readonly
-           name="@NameAttributeValue"
-           @attributes="AdditionalAttributes" /> *@
-    <BUITextPattern @bind-Text="@CurrentValueAsStringWrapper"
-                    DefaultText="@GetCultureFormatString()"
-                    Format="@GetFormatTextFormat()"
+    <BUITextPattern @bind-Text="@CurrentValueAsString"
+                    DefaultText="@GetDefaultText()"
+                    Format="@GetCultureFormatString()"
                     AllowDateFormats="true"
                     Editable="@(IsReadOnly == false)"
-                    IsValidFunction="(text)=> DateTime.TryParse(text, out var _)" />
+                    IsValidFunction="ValidateDateTime"
+                    PartialValidations="GetPartialValidations()" />
 
-    <button type="button" class="idt-btn" @onclick="TogglePicker">📅</button>
+    <button type="button" class="idt-btn" @onclick="TogglePicker" disabled="@IsReadOnly">📅</button>
 </div>
 
 @if (IsOpen)
 {
-    <div class="picker-overlay" @onclick="ClosePicker">
+    <div class="picker-overlay" @onclick="ClosePicker" @onclick:stopPropagation>
         <div class="picker-modal" @onclick:stopPropagation>
             @if (ShowDate)
             {
@@ -44,6 +40,7 @@
     private bool IsOpen;
     private bool ShowDate;
     private bool ShowTime;
+    private ParsedDatePattern? _parsedPattern;
 
     private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly TimeValue { get; set; } = TimeOnly.MinValue;
@@ -51,40 +48,34 @@
     [Parameter] public bool ReadOnly { get; set; } = false;
     public bool IsReadOnly => ReadOnly;
 
-    protected string? CurrentValueAsStringWrapper
-    {
-        get => CurrentValueAsString;
-        set
-        {
-            if (value != CurrentValueAsString && DateTime.TryParse(value, out var _))
-            {
-                CurrentValueAsString = value;
-                if (value != null)
-                {
-                    // OnStringValueChanged(value).Wait();
-                }
-            }
-        }
-    }
-    protected string GetFormatTextFormat()
+    protected string GetDefaultText()
     {
         var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        var now = DateTime.Now;
+        var format = GetCultureFormatString();
 
-        return t switch
+        var defaultText = t switch
         {
-            Type x when x == typeof(DateOnly) => ((DateOnly)(object)DateOnly.MinValue).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            Type x when x == typeof(TimeOnly) => ((TimeOnly)(object)TimeOnly.MinValue).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            Type x when x == typeof(DateTime) => ((DateTime)(object)DateTime.UtcNow).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            Type x when x == typeof(DateTimeOffset) => ((DateTimeOffset)(object)DateTimeOffset.UtcNow).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            _ => DateTime.UtcNow.ToString()
+            Type x when x == typeof(DateOnly) => DateOnly.FromDateTime(now).ToString(format, CultureInfo.CurrentCulture),
+            Type x when x == typeof(TimeOnly) => TimeOnly.FromDateTime(now).ToString(format, CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTime) => now.ToString(format, CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTimeOffset) => DateTimeOffset.Now.ToString(format, CultureInfo.CurrentCulture),
+            _ => string.Empty
         };
+
+#if DEBUG
+        Console.WriteLine($"Default text for {t.Name}: '{defaultText}'");
+#endif
+
+        return defaultText;
     }
+
     protected string GetCultureFormatString()
     {
         var dtfi = CultureInfo.CurrentCulture.DateTimeFormat;
         var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 
-        return t switch
+        var format = t switch
         {
             Type x when x == typeof(DateOnly) => dtfi.ShortDatePattern,
             Type x when x == typeof(TimeOnly) => dtfi.ShortTimePattern,
@@ -92,6 +83,70 @@
                 => $"{dtfi.ShortDatePattern} {dtfi.ShortTimePattern}",
             _ => string.Empty
         };
+
+#if DEBUG
+        Console.WriteLine($"Culture format for {t.Name}: '{format}'");
+#endif
+
+        return format;
+    }
+
+    protected bool ValidateDateTime(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return true;
+
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        var format = GetCultureFormatString();
+
+        try
+        {
+            if (t == typeof(DateOnly))
+            {
+                return DateOnly.TryParseExact(text, format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
+            }
+            else if (t == typeof(TimeOnly))
+            {
+                return TimeOnly.TryParseExact(text, format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
+            }
+            else if (t == typeof(DateTime))
+            {
+                return DateTime.TryParseExact(text, format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
+            }
+            else if (t == typeof(DateTimeOffset))
+            {
+                return DateTimeOffset.TryParseExact(text, format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _);
+            }
+        }
+        catch { }
+
+        return false;
+    }
+
+    protected Dictionary<int, Func<string, bool>>? GetPartialValidations()
+    {
+        // Parse pattern on demand
+        if (_parsedPattern == null)
+        {
+            _parsedPattern = DatePatternParser.Parse(GetCultureFormatString());
+        }
+
+        var validations = new Dictionary<int, Func<string, bool>>();
+        var componentIndices = DateComponentValidator.GetComponentIndices(_parsedPattern);
+        var componentValues = new Dictionary<DateComponentType, string>();
+
+        foreach (var kvp in componentIndices)
+        {
+            var componentType = kvp.Key;
+            var index = kvp.Value;
+
+            validations[index] = (text) =>
+            {
+                componentValues[componentType] = text;
+                return DateComponentValidator.ValidateComponent(componentType, text, _parsedPattern, componentValues);
+            };
+        }
+
+        return validations;
     }
 
     protected override void OnInitialized()
@@ -155,37 +210,50 @@
         await Task.CompletedTask;
     }
 
-    // 2. Formateo usando los estándares de la cultura (coincide con GetFormatTextFormat)
     protected override string? FormatValueAsString(TValue? value)
     {
         if (value == null) return string.Empty;
 
         var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        var format = GetCultureFormatString();
 
         return t switch
         {
-            Type x when x == typeof(DateOnly) => ((DateOnly)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            Type x when x == typeof(TimeOnly) => ((TimeOnly)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            Type x when x == typeof(DateTime) => ((DateTime)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
-            Type x when x == typeof(DateTimeOffset) => ((DateTimeOffset)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateOnly) => ((DateOnly)(object)value).ToString(format, CultureInfo.CurrentCulture),
+            Type x when x == typeof(TimeOnly) => ((TimeOnly)(object)value).ToString(format, CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTime) => ((DateTime)(object)value).ToString(format, CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTimeOffset) => ((DateTimeOffset)(object)value).ToString(format, CultureInfo.CurrentCulture),
             _ => value.ToString()
         };
     }
 
-    // 3. Parseo dinámico: Eliminamos el hardcodeo de "dd/MM/yyyy"
     protected override bool TryParseValueFromString(string? value, out TValue result, out string? validationErrorMessage)
     {
         result = default!;
         validationErrorMessage = null;
 
-        if (string.IsNullOrWhiteSpace(value)) return true;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            var t = Nullable.GetUnderlyingType(typeof(TValue));
+            if (t != null)
+            {
+                // Nullable type, null is valid
+                result = default!;
+                return true;
+            }
+            else
+            {
+                validationErrorMessage = "El valor es requerido.";
+                return false;
+            }
+        }
 
-        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
-        var format = GetCultureFormatString(); // Obtenemos el formato según cultura
+        var type = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        var format = GetCultureFormatString();
 
         try
         {
-            object parsed = t switch
+            object parsed = type switch
             {
                 Type x when x == typeof(DateOnly) => DateOnly.ParseExact(value!, format, CultureInfo.CurrentCulture),
                 Type x when x == typeof(TimeOnly) => TimeOnly.ParseExact(value!, format, CultureInfo.CurrentCulture),
@@ -213,15 +281,7 @@
         gap: .5rem;
         position: relative;
     }
-    /* Input */
-    .idt-input {
-        flex: 1;
-        padding: .6rem .75rem;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        background: white;
-        cursor: pointer;
-    }
+
     /* Botón calendario */
     .idt-btn {
         border-radius: 10px;
@@ -230,6 +290,12 @@
         background: white;
         cursor: pointer;
     }
+
+        .idt-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
     /* Overlay modal */
     .picker-overlay {
         position: fixed;
@@ -242,6 +308,7 @@
         transition: opacity 0.3s ease;
         z-index: 9999;
     }
+
     /* Modal */
     .picker-modal {
         background: #fff;
@@ -255,38 +322,15 @@
         box-shadow: 0 12px 24px rgba(0,0,0,.25);
         transition: transform 0.2s ease;
     }
+
     /* Hover y foco */
-    .idt-btn:hover, .idt-input:hover {
+    .idt-btn:hover:not(:disabled) {
         border-color: #0078ff;
     }
 
-    .idt-btn:focus, .idt-input:focus {
+    .idt-btn:focus {
         outline: none;
         border-color: #005ecb;
         box-shadow: 0 0 0 2px rgba(0,120,255,.3);
-    }
-    /* Picker footer opcional (si se quisiera) */
-    .picker-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-    }
-
-    .primary {
-        background: #0078ff;
-        color: #fff;
-        border-radius: 8px;
-        padding: .5rem 1rem;
-        border: none;
-        cursor: pointer;
-    }
-
-    .secondary {
-        background: #eee;
-        color: #333;
-        border-radius: 8px;
-        padding: .5rem 1rem;
-        border: none;
-        cursor: pointer;
     }
 </style>
