@@ -1,16 +1,25 @@
 ﻿@using System.Globalization
+@using CdCSharp.BlazorUI.Components.Utils
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @typeparam TValue
 @inherits InputBase<TValue>
+@implements IHasReadOnly
 
 <div class="idt-wrapper">
-    <input class="idt-input @CssClass"
+    @*  <input class="idt-input @CssClass"
            value="@CurrentValueAsString"
            readonly
            name="@NameAttributeValue"
-           @attributes="AdditionalAttributes" />
+           @attributes="AdditionalAttributes" /> *@
+    <BUITextPattern @bind-Text="@CurrentValueAsStringWrapper"
+                    DefaultText="@GetCultureFormatString()"
+                    Format="@GetFormatTextFormat()"
+                    AllowDateFormats="true"
+                    Editable="@(IsReadOnly == false)"
+                    IsValidFunction="(text)=> DateTime.TryParse(text, out var _)" />
 
     <button type="button" class="idt-btn" @onclick="TogglePicker">📅</button>
 </div>
@@ -33,17 +42,61 @@
 
 @code {
     private bool IsOpen;
-
     private bool ShowDate;
     private bool ShowTime;
 
     private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly TimeValue { get; set; } = TimeOnly.MinValue;
 
-    protected override void OnInitialized()
+    [Parameter] public bool ReadOnly { get; set; } = false;
+    public bool IsReadOnly => ReadOnly;
+
+    protected string? CurrentValueAsStringWrapper
+    {
+        get => CurrentValueAsString;
+        set
+        {
+            if (value != CurrentValueAsString && DateTime.TryParse(value, out var _))
+            {
+                CurrentValueAsString = value;
+                if (value != null)
+                {
+                    // OnStringValueChanged(value).Wait();
+                }
+            }
+        }
+    }
+    protected string GetFormatTextFormat()
     {
         var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 
+        return t switch
+        {
+            Type x when x == typeof(DateOnly) => ((DateOnly)(object)DateOnly.MinValue).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(TimeOnly) => ((TimeOnly)(object)TimeOnly.MinValue).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTime) => ((DateTime)(object)DateTime.UtcNow).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTimeOffset) => ((DateTimeOffset)(object)DateTimeOffset.UtcNow).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            _ => DateTime.UtcNow.ToString()
+        };
+    }
+    protected string GetCultureFormatString()
+    {
+        var dtfi = CultureInfo.CurrentCulture.DateTimeFormat;
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        return t switch
+        {
+            Type x when x == typeof(DateOnly) => dtfi.ShortDatePattern,
+            Type x when x == typeof(TimeOnly) => dtfi.ShortTimePattern,
+            Type x when x == typeof(DateTime) || x == typeof(DateTimeOffset)
+                => $"{dtfi.ShortDatePattern} {dtfi.ShortTimePattern}",
+            _ => string.Empty
+        };
+    }
+
+    protected override void OnInitialized()
+    {
+        var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
         ShowDate = t == typeof(DateOnly) || t == typeof(DateTime) || t == typeof(DateTimeOffset);
         ShowTime = t == typeof(TimeOnly) || t == typeof(DateTime) || t == typeof(DateTimeOffset);
     }
@@ -73,7 +126,6 @@
     private void TogglePicker() => IsOpen = !IsOpen;
     private void ClosePicker() => IsOpen = false;
 
-    // Actualización instantánea
     private async Task OnDateChanged(DateOnly? value)
     {
         if (value.HasValue) DateValue = value.Value;
@@ -103,6 +155,7 @@
         await Task.CompletedTask;
     }
 
+    // 2. Formateo usando los estándares de la cultura (coincide con GetFormatTextFormat)
     protected override string? FormatValueAsString(TValue? value)
     {
         if (value == null) return string.Empty;
@@ -111,22 +164,15 @@
 
         return t switch
         {
-            Type x when x == typeof(DateOnly)
-                => ((DateOnly)(object)value).ToString("d", CultureInfo.CurrentCulture), // fecha corta según cultura
-
-            Type x when x == typeof(TimeOnly)
-                => ((TimeOnly)(object)value).ToString("t", CultureInfo.CurrentCulture), // hora corta según cultura
-
-            Type x when x == typeof(DateTime)
-                => ((DateTime)(object)value).ToString("g", CultureInfo.CurrentCulture), // fecha y hora corta según cultura
-
-            Type x when x == typeof(DateTimeOffset)
-                => ((DateTimeOffset)(object)value).ToString("g", CultureInfo.CurrentCulture), // fecha y hora corta según cultura
-
+            Type x when x == typeof(DateOnly) => ((DateOnly)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(TimeOnly) => ((TimeOnly)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTime) => ((DateTime)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
+            Type x when x == typeof(DateTimeOffset) => ((DateTimeOffset)(object)value).ToString(GetCultureFormatString(), CultureInfo.CurrentCulture),
             _ => value.ToString()
         };
     }
 
+    // 3. Parseo dinámico: Eliminamos el hardcodeo de "dd/MM/yyyy"
     protected override bool TryParseValueFromString(string? value, out TValue result, out string? validationErrorMessage)
     {
         result = default!;
@@ -135,15 +181,16 @@
         if (string.IsNullOrWhiteSpace(value)) return true;
 
         var t = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        var format = GetCultureFormatString(); // Obtenemos el formato según cultura
 
         try
         {
             object parsed = t switch
             {
-                Type x when x == typeof(DateOnly) => DateOnly.ParseExact(value!, "dd/MM/yyyy", CultureInfo.CurrentCulture),
-                Type x when x == typeof(TimeOnly) => TimeOnly.ParseExact(value!, "HH:mm", CultureInfo.CurrentCulture),
-                Type x when x == typeof(DateTime) => DateTime.ParseExact(value!, "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture),
-                Type x when x == typeof(DateTimeOffset) => DateTimeOffset.ParseExact(value!, "dd/MM/yyyy HH:mm", CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateOnly) => DateOnly.ParseExact(value!, format, CultureInfo.CurrentCulture),
+                Type x when x == typeof(TimeOnly) => TimeOnly.ParseExact(value!, format, CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateTime) => DateTime.ParseExact(value!, format, CultureInfo.CurrentCulture),
+                Type x when x == typeof(DateTimeOffset) => DateTimeOffset.ParseExact(value!, format, CultureInfo.CurrentCulture),
                 _ => throw new InvalidOperationException()
             };
 
@@ -152,7 +199,7 @@
         }
         catch
         {
-            validationErrorMessage = $"Formato inválido para {DisplayName ?? FieldIdentifier.FieldName}";
+            validationErrorMessage = $"El valor '{value}' no coincide con el formato esperado ({format}).";
             return false;
         }
     }

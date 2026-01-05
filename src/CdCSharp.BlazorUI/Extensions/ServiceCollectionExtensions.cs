@@ -1,5 +1,6 @@
 ﻿using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript;
 using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
+using CdCSharp.BlazorUI.Components.Utils;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
 using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
@@ -20,6 +21,7 @@ public static class ServiceCollectionExtensions
         // JS interop
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
         services.AddScoped<IBehaviorJsInterop, BehaviorJsInterop>();
+        services.AddScoped<ITextPatternJsInterop, TextPatternJsInterop>();
 
         return services;
     }
