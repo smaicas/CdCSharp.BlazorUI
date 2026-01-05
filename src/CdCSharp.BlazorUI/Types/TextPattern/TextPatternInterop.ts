@@ -7,33 +7,33 @@ export interface ElementPattern {
     isEditable: boolean;
 }
 
-// Mantenemos los WeakMaps como variables privadas del módulo
-let textPatternClickEvents = new WeakMap<HTMLSpanElement, EventListener>();
-let textPatternInputEvents = new WeakMap<HTMLSpanElement, EventListener>();
-let textPatternBlurEvents = new WeakMap<HTMLSpanElement, EventListener>();
-let textPatternKeyDownEvents = new WeakMap<HTMLSpanElement, EventListener>();
+// --- Event registry (WeakMaps) ---
 
-/**
- * Función principal exportada que Blazor llamará directamente.
- * Mantiene la lógica exacta de limpieza e inicialización original.
- */
+const textPatternEvents = {
+    click: new WeakMap<HTMLSpanElement, EventListener>(),
+    input: new WeakMap<HTMLSpanElement, EventListener>(),
+    blur: new WeakMap<HTMLSpanElement, EventListener>(),
+    keydown: new WeakMap<HTMLSpanElement, EventListener>()
+};
+
+// --- Public API (called from Blazor) ---
+
 export async function TextPatternAddDynamic(
     containerBox: HTMLDivElement,
     elements: Array<ElementPattern>,
     dotnet: any,
     dotnetNotifyChangeTextCallback: string,
     dotnetValidatePartialCallback: string): Promise<void> {
+
     if (!containerBox.appendChild) { return; }
 
     containerBox.innerHTML = '';
     containerBox.classList.add('text-pattern-container');
 
-    let editableIndex = 0; // Track only editable elements for validation callback
+    let editableIndex = 0;
 
-    for (let i: number = 0; i < elements.length; i++) {
-        let element: ElementPattern = elements[i];
-        let span: HTMLSpanElement = document.createElement('span');
-
+    for (const element of elements) {
+        const span = document.createElement('span');
         span.innerText = element.value;
         span.classList.add(element.isSeparator ? 'pattern-separator' : 'pattern-component');
 
@@ -43,16 +43,28 @@ export async function TextPatternAddDynamic(
         }
 
         if (element.isEditable) {
-            span.setAttribute('contenteditable', 'true');
+            span.contentEditable = 'true';
             span.dataset.index = editableIndex.toString();
             span.dataset.length = element.length.toString();
             span.dataset.defaultValue = element.defaultValue;
-            addTextPatternEvents(span, editableIndex, containerBox, element, dotnet, dotnetNotifyChangeTextCallback, dotnetValidatePartialCallback);
+
+            addTextPatternEvents(
+                span,
+                editableIndex,
+                containerBox,
+                element,
+                dotnet,
+                dotnetNotifyChangeTextCallback,
+                dotnetValidatePartialCallback);
+
             editableIndex++;
         }
+
         containerBox.appendChild(span);
     }
 }
+
+// --- Event wiring ---
 
 function addTextPatternEvents(
     span: HTMLSpanElement,
@@ -60,222 +72,213 @@ function addTextPatternEvents(
     containerBox: HTMLDivElement,
     elementPattern: ElementPattern,
     dotnet: any,
-    dotnetNotifyChangeTextCallback: string,
-    dotnetValidatePartialCallback: string) {
+    notifyCallback: string,
+    validateCallback: string) {
 
-    // Click event - select all text
-    const selectTextOnClickEvt = () => selectTextOnClick(span);
-    if (!textPatternClickEvents.get(span)) {
-        span.addEventListener("click", selectTextOnClickEvt);
-        textPatternClickEvents.set(span, selectTextOnClickEvt);
-    }
+    addEvent(span, 'click', textPatternEvents.click, () => selectTextOnClick(span));
 
-    // Input event - validate and navigate
-    const goNextOrPreventEvt = () =>
-        goNextOrPrevent(
+    addEvent(span, 'input', textPatternEvents.input, () =>
+        handleInput(
             span,
             index,
             containerBox,
             elementPattern,
             dotnet,
-            dotnetNotifyChangeTextCallback,
-            dotnetValidatePartialCallback);
-    if (!textPatternInputEvents.get(span)) {
-        span.addEventListener("input", goNextOrPreventEvt);
-        textPatternInputEvents.set(span, goNextOrPreventEvt);
-    }
+            notifyCallback,
+            validateCallback));
 
-    // Blur event - validate and set default
-    const setDefaultValueNotLengthEvt = () => setDefaultValueNotLength(span, elementPattern, dotnet, dotnetNotifyChangeTextCallback, containerBox);
-    if (!textPatternBlurEvents.get(span)) {
-        span.addEventListener("blur", setDefaultValueNotLengthEvt);
-        textPatternBlurEvents.set(span, setDefaultValueNotLengthEvt);
-    }
+    addEvent(span, 'blur', textPatternEvents.blur, () =>
+        setDefaultValueIfInvalid(span, elementPattern, dotnet, notifyCallback, containerBox));
 
-    // KeyDown event - handle navigation keys
-    const handleKeyDownEvt = (e: Event) => handleKeyDown(e as KeyboardEvent, span, containerBox);
-    if (!textPatternKeyDownEvents.get(span)) {
-        span.addEventListener("keydown", handleKeyDownEvt);
-        textPatternKeyDownEvents.set(span, handleKeyDownEvt);
+    addEvent(span, 'keydown', textPatternEvents.keydown, (e) =>
+        handleKeyDown(e as KeyboardEvent, span, containerBox));
+}
+
+function addEvent(
+    span: HTMLSpanElement,
+    type: keyof typeof textPatternEvents,
+    map: WeakMap<HTMLSpanElement, EventListener>,
+    handler: EventListener) {
+
+    if (!map.get(span)) {
+        span.addEventListener(type, handler);
+        map.set(span, handler);
     }
 }
 
-function selectTextOnClick(span: HTMLSpanElement) {
-    const range = document.createRange();
-    range.selectNodeContents(span);
-    const selection = window.getSelection();
-    if (!selection) { return; }
-    selection.removeAllRanges();
-    selection.addRange(range);
-}
+// --- Core input logic ---
 
-function handleKeyDown(event: KeyboardEvent, span: HTMLSpanElement, containerBox: HTMLDivElement) {
-    const key = event.key;
-    const cursorPosition = getCursorPositionWithinSpan(span);
-    const textLength = span.innerText.length;
-
-    if (key === 'ArrowLeft' && cursorPosition === 0) {
-        // Move to previous editable field
-        event.preventDefault();
-        const prevField = findPreviousEditableBlock(containerBox, span);
-        if (prevField) {
-            prevField.focus();
-            placeCaretAtEnd(prevField);
-        }
-    } else if (key === 'ArrowRight' && cursorPosition === textLength) {
-        // Move to next editable field
-        event.preventDefault();
-        const nextField = findNextEditableBlock(containerBox, span);
-        if (nextField) {
-            nextField.focus();
-            placeCaretAtStart(nextField);
-        }
-    } else if (key === 'Backspace' && cursorPosition === 0 && textLength === 0) {
-        // Move to previous field if current is empty
-        event.preventDefault();
-        const prevField = findPreviousEditableBlock(containerBox, span);
-        if (prevField) {
-            prevField.focus();
-            placeCaretAtEnd(prevField);
-        }
-    }
-}
-
-function goNextOrPrevent(
+function handleInput(
     span: HTMLSpanElement,
     index: number,
     containerBox: HTMLDivElement,
     elementPattern: ElementPattern,
     dotnet: any,
-    dotnetCallback: string,
-    dotnetValidatePartialCallback: string) {
+    notifyCallback: string,
+    validateCallback: string) {
 
-    if (span.innerText.length == 0) {
-        // Don't set default value immediately during input
+    if (span.innerText.length === 0) {
         return;
     }
 
-    if (span.innerText.length <= elementPattern.length) {
-        let cursor = getCursorPositionWithinSpan(span);
-        let flattenedPattern = elementPattern.pattern
-            .replace(/[\\\(\)\^\$]/g, "");
-        let text = span.innerText;
-        let splittedPattern = flattenedPattern.substring(0, text.length).split('');
+    const cursor = getCursorPositionWithinSpan(span);
 
-        let validText = '';
-        for (let chIndex = 0; chIndex < text.length; chIndex++) {
-            let valid = false;
-            let char = text[chIndex];
-            let patternChar = splittedPattern[chIndex];
+    const filtered = filterTextByPattern(
+        span.innerText,
+        elementPattern.pattern,
+        cursor,
+        elementPattern.length);
 
-            if (patternChar === 'w') {
-                valid = /[a-zA-Z]/.test(char);
-            }
-            else if (patternChar === 'd') {
-                valid = /[0-9]/.test(char);
-            }
+    span.innerText = filtered.text;
+    setCursorPositionWithinSpan(span, filtered.cursor);
 
-            if (valid) {
-                validText += char;
-            } else {
-                cursor = Math.max(0, cursor - 1);
-            }
-        }
-
-        span.innerText = validText;
-        setCursorPositionWithinSpan(span, cursor);
-
-        // Check if we've reached the maximum length
-        if (span.innerText.length >= elementPattern.length) {
-            // Validate the component before moving to next
-            dotnet.invokeMethodAsync(dotnetValidatePartialCallback, index, span.innerText).then((valid: boolean) => {
+    if (span.innerText.length >= elementPattern.length) {
+        dotnet.invokeMethodAsync(validateCallback, index, span.innerText)
+            .then((valid: boolean) => {
                 if (valid) {
-                    const nextBlock = findNextEditableBlock(containerBox, span);
-                    if (nextBlock) {
-                        setTimeout(() => {
-                            nextBlock.click();
-                            selectTextOnClick(nextBlock);
-                        }, 10);
-                    }
+                    moveToNext(containerBox, span);
                 } else {
-                    // Invalid value, reset to default
                     span.innerText = elementPattern.defaultValue;
                     selectTextOnClick(span);
                 }
             });
-        }
-
-        // Notify changes
-        if (dotnet) {
-            dotnet.invokeMethodAsync(dotnetCallback, containerBox.innerText);
-        }
-    } else {
-        // Text is too long, truncate it
-        span.innerText = span.innerText.substring(0, elementPattern.length);
-        placeCaretAtEnd(span);
-        if (dotnet) {
-            dotnet.invokeMethodAsync(dotnetCallback, containerBox.innerText);
-        }
     }
+
+    notifyDotNet(dotnet, notifyCallback, containerBox.innerText);
 }
 
-function setDefaultValueNotLength(
+// --- Filtering logic (pure function) ---
+
+function filterTextByPattern(
+    text: string,
+    pattern: string,
+    cursor: number,
+    maxLength: number): { text: string; cursor: number } {
+
+    const flattened = pattern.replace(/[\\\(\)\^\$]/g, '');
+    const allowed = flattened.substring(0, maxLength).split('');
+
+    let result = '';
+    let newCursor = cursor;
+
+    for (let i = 0; i < text.length && i < allowed.length; i++) {
+        const ch = text[i];
+        const p = allowed[i];
+
+        const valid =
+            (p === 'w' && /[a-zA-Z]/.test(ch)) ||
+            (p === 'd' && /[0-9]/.test(ch));
+
+        if (valid) {
+            result += ch;
+        } else {
+            newCursor = Math.max(0, newCursor - 1);
+        }
+    }
+
+    return {
+        text: result.substring(0, maxLength),
+        cursor: newCursor
+    };
+}
+
+// --- Default & validation helpers ---
+
+function setDefaultValueIfInvalid(
     span: HTMLSpanElement,
     elementPattern: ElementPattern,
     dotnet: any,
-    dotnetCallback: string,
+    callback: string,
     containerBox: HTMLDivElement) {
 
-    if (span.innerText.length === 0 || span.innerText.length !== elementPattern.length) {
+    if (span.innerText.length !== elementPattern.length) {
         span.innerText = elementPattern.defaultValue;
-        if (dotnet) {
-            dotnet.invokeMethodAsync(dotnetCallback, containerBox.innerText);
-        }
+        notifyDotNet(dotnet, callback, containerBox.innerText);
     }
 }
 
-// --- Helpers de Cursor y DOM ---
-
-function getCursorPositionWithinSpan(spanElement: HTMLElement): number {
-    let cursorPosition = 0;
-
-    if (window.getSelection) {
-        let selection = window.getSelection();
-        if (selection && selection.rangeCount > 0) {
-            let range = selection.getRangeAt(0);
-            let preSelectionRange = range.cloneRange();
-            preSelectionRange.selectNodeContents(spanElement);
-            preSelectionRange.setEnd(range.startContainer, range.startOffset);
-            cursorPosition = preSelectionRange.toString().length;
-        }
-    }
-
-    return cursorPosition;
+function notifyDotNet(dotnet: any, callback: string, value: string) {
+    dotnet?.invokeMethodAsync(callback, value);
 }
 
-function setCursorPositionWithinSpan(spanElement: HTMLElement, position: number): void {
-    let range = document.createRange();
-    let selection = window.getSelection();
+// --- Navigation helpers ---
 
-    if (selection && spanElement.childNodes.length > 0) {
-        try {
-            range.setStart(spanElement.childNodes[0] || spanElement, Math.min(position, spanElement.textContent?.length || 0));
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        } catch (e) {
-            // Handle range errors gracefully
-            placeCaretAtEnd(spanElement);
-        }
+function moveToNext(containerBox: HTMLDivElement, span: HTMLSpanElement) {
+    const next = findNextEditableBlock(containerBox, span);
+    if (next) {
+        setTimeout(() => {
+            next.click();
+            selectTextOnClick(next);
+        }, 10);
+    }
+}
+
+function handleKeyDown(event: KeyboardEvent, span: HTMLSpanElement, containerBox: HTMLDivElement) {
+    const cursor = getCursorPositionWithinSpan(span);
+    const len = span.innerText.length;
+
+    if (event.key === 'ArrowLeft' && cursor === 0) {
+        event.preventDefault();
+        const prev = findPreviousEditableBlock(containerBox, span);
+        prev?.focus();
+        if (prev) placeCaretAtEnd(prev);
+    }
+
+    if (event.key === 'ArrowRight' && cursor === len) {
+        event.preventDefault();
+        const next = findNextEditableBlock(containerBox, span);
+        next?.focus();
+        if (next) placeCaretAtStart(next);
+    }
+
+    if (event.key === 'Backspace' && cursor === 0 && len === 0) {
+        event.preventDefault();
+        const prev = findPreviousEditableBlock(containerBox, span);
+        prev?.focus();
+        if (prev) placeCaretAtEnd(prev);
+    }
+}
+
+// --- Cursor & DOM helpers (idénticos) ---
+
+function selectTextOnClick(span: HTMLSpanElement) {
+    const range = document.createRange();
+    range.selectNodeContents(span);
+    const sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+}
+
+function getCursorPositionWithinSpan(span: HTMLElement): number {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return 0;
+
+    const range = sel.getRangeAt(0);
+    const pre = range.cloneRange();
+    pre.selectNodeContents(span);
+    pre.setEnd(range.startContainer, range.startOffset);
+    return pre.toString().length;
+}
+
+function setCursorPositionWithinSpan(span: HTMLElement, position: number) {
+    const range = document.createRange();
+    const sel = window.getSelection();
+
+    try {
+        range.setStart(span.childNodes[0] || span, Math.min(position, span.textContent?.length ?? 0));
+        range.collapse(true);
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+    } catch {
+        placeCaretAtEnd(span);
     }
 }
 
 function findNextEditableBlock(containerBox: HTMLDivElement, current: HTMLSpanElement): HTMLElement | null {
-    let foundCurrent = false;
+    let found = false;
     for (const child of containerBox.children) {
-        if (child === current) {
-            foundCurrent = true;
-        } else if (foundCurrent && child instanceof HTMLSpanElement && child.contentEditable === "true") {
+        if (child === current) found = true;
+        else if (found && child instanceof HTMLSpanElement && child.contentEditable === 'true') {
             return child;
         }
     }
@@ -283,12 +286,11 @@ function findNextEditableBlock(containerBox: HTMLDivElement, current: HTMLSpanEl
 }
 
 function findPreviousEditableBlock(containerBox: HTMLDivElement, current: HTMLSpanElement): HTMLElement | null {
-    let previous: HTMLElement | null = null;
+    let prev: HTMLElement | null = null;
     for (const child of containerBox.children) {
-        if (child === current) {
-            return previous;
-        } else if (child instanceof HTMLSpanElement && child.contentEditable === "true") {
-            previous = child;
+        if (child === current) return prev;
+        if (child instanceof HTMLSpanElement && child.contentEditable === 'true') {
+            prev = child;
         }
     }
     return null;
@@ -296,26 +298,18 @@ function findPreviousEditableBlock(containerBox: HTMLDivElement, current: HTMLSp
 
 function placeCaretAtEnd(el: HTMLElement) {
     const range = document.createRange();
-    const selection = window.getSelection();
-
+    const sel = window.getSelection();
     range.selectNodeContents(el);
     range.collapse(false);
-
-    if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
+    sel?.removeAllRanges();
+    sel?.addRange(range);
 }
 
 function placeCaretAtStart(el: HTMLElement) {
     const range = document.createRange();
-    const selection = window.getSelection();
-
+    const sel = window.getSelection();
     range.selectNodeContents(el);
     range.collapse(true);
-
-    if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
+    sel?.removeAllRanges();
+    sel?.addRange(range);
 }

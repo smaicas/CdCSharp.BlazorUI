@@ -1,0 +1,67 @@
+﻿@using CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions
+@using CdCSharp.BlazorUI.Components.Utils.Patterns.TextPattern
+@using System.Text.RegularExpressions
+
+@namespace CdCSharp.BlazorUI.Components.Utils
+
+@inherits BUIBasePattern
+<div @ref="_containerBox"></div>
+
+@code {
+    [Parameter]
+    public Func<string, bool>? IsValidFunction { get; set; }
+
+    protected override List<ElementPattern> PreparePatterns()
+    {
+        var result = new List<ElementPattern>();
+
+        if (string.IsNullOrEmpty(Text) || string.IsNullOrEmpty(Format))
+            return result;
+
+        string regex = TextPatternRegexBuilder.Build(Format);
+        var match = Regex.Match(Text, regex);
+
+        if (!match.Success) return result;
+
+        string[] patternParts = regex.Split(")").Select(p => $"{p})").ToArray();
+        int charIndex = 0;
+
+        for (int i = 1; i < match.Groups.Count; i++)
+        {
+            string value = match.Groups[i].Value;
+            string defaultValue = DefaultText.Length > charIndex
+                ? DefaultText.Substring(charIndex, Math.Min(value.Length, DefaultText.Length - charIndex))
+                : "";
+
+            charIndex += value.Length;
+            bool isSeparator = !Regex.IsMatch(value, @"^[a-zA-Z0-9]+$");
+
+            result.Add(new ElementPattern(
+                patternParts[i - 1],
+                value,
+                value.Length,
+                defaultValue,
+                isSeparator,
+                Editable && !isSeparator
+            ));
+        }
+
+        return result;
+    }
+
+    public override Task NotifyTextChanged(string text)
+    {
+        string regex = TextPatternRegexBuilder.Build(Format);
+
+        if (Regex.IsMatch(text, regex) &&
+            (IsValidFunction == null || IsValidFunction(text)))
+        {
+            Text = text;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public override Task<bool> ValidatePartial(int index, string text)
+        => Task.FromResult(true);
+}

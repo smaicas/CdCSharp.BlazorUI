@@ -1,0 +1,76 @@
+﻿@using CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions
+@using System.Globalization
+@using CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern
+
+@namespace CdCSharp.BlazorUI.Components.Utils
+
+@inherits BUIBasePattern
+<div @ref="_containerBox"></div>
+
+@code {
+    private ParsedDatePattern? _parsedPattern;
+    private readonly Dictionary<DateComponentType, string> _componentValues = [];
+
+    protected override List<ElementPattern> PreparePatterns()
+    {
+        _parsedPattern = DatePatternParser.Parse(Format);
+
+        DateTime? current = null;
+        if (DateTime.TryParseExact(
+            Text,
+            Format,
+            CultureInfo.CurrentCulture,
+            DateTimeStyles.None,
+            out var parsed))
+        {
+            current = parsed;
+        }
+
+        return DatePatternParser.ConvertToElementPatterns(_parsedPattern, current);
+    }
+
+    public override Task NotifyTextChanged(string text)
+    {
+        if (DateTime.TryParseExact(
+            text,
+            Format,
+            CultureInfo.CurrentCulture,
+            DateTimeStyles.None,
+            out _))
+        {
+            Text = text;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public override Task<bool> ValidatePartial(int index, string text)
+    {
+        if (_parsedPattern == null)
+            return Task.FromResult(true);
+
+        int editableIndex = 0;
+
+        foreach (var component in _parsedPattern.Components)
+        {
+            if (component.Type == DateComponentType.Separator)
+                continue;
+
+            if (editableIndex == index)
+            {
+                _componentValues[component.Type] = text;
+
+                return Task.FromResult(
+                    DateComponentValidator.ValidateComponent(
+                        component.Type,
+                        text,
+                        _parsedPattern,
+                        _componentValues));
+            }
+
+            editableIndex++;
+        }
+
+        return Task.FromResult(true);
+    }
+}
