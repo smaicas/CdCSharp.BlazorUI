@@ -1,0 +1,177 @@
+﻿@page "/components/forms/input-select"
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>BUIInputSelect Samples</PageTitle>
+
+<style>
+    .sample-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .sample-card {
+        border: 1px solid #eee;
+        padding: 1.5rem;
+        border-radius: 8px;
+        background: #fafafa;
+    }
+
+    h3 {
+        margin-top: 0;
+        color: #333;
+        font-size: 1.1rem;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 0.5rem;
+    }
+</style>
+
+<div class="sample-grid">
+
+    @* --- VARIANTE: OUTLINED (Default) --- *@
+    <div class="sample-card">
+        <h3>Variante: Outlined</h3>
+        <BUIInputSelect TValue="string"
+                        Label="País"
+                        Placeholder="Selecciona un país..."
+                        Options="_countries"
+                        @bind-Value="_selectedCountry" />
+        <p>Seleccionado: @_selectedCountry</p>
+    </div>
+
+    @* --- VARIANTE: FILLED --- *@
+    <div class="sample-card">
+        <h3>Variante: Filled</h3>
+        <BUIInputSelect TValue="string"
+                        Variant="BUIInputSelectVariant.Filled"
+                        Label="Idioma"
+                        Options="_languages"
+                        @bind-Value="_selectedLang" />
+    </div>
+
+    @* --- ESTADO: CARGANDO --- *@
+    <div class="sample-card">
+        <h3>Estado: Loading</h3>
+        <BUIInputSelect TValue="int?"
+                        Label="Cargar Datos"
+                        IsLoading="true"
+                        LoadingIndicatorVariant="BUILoadingIndicatorVariant.CircularProgress"
+                        Placeholder="Buscando opciones..."
+                        @bind-Value="_selectedInt" />
+    </div>
+
+    @* --- TAMAÑOS Y DENSIDAD --- *@
+    <div class="sample-card">
+        <h3>Tamaños y Densidad</h3>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <BUIInputSelect TValue="string" Size="SizeEnum.Small" Density="DensityEnum.Compact"
+                            Label="Pequeño Compacto" Options="_simpleOptions" @bind-Value="_selectedString" />
+
+            <BUIInputSelect TValue="string" Size="SizeEnum.Large" Density="DensityEnum.Comfortable"
+                            Label="Grande Cómodo" Options="_simpleOptions" @bind-Value="_selectedString" />
+        </div>
+    </div>
+
+    @* --- ELEVACIÓN Y BORDES --- *@
+    <div class="sample-card">
+        <h3>Elevación y FullWidth</h3>
+        <BUIInputSelect TValue="string"
+                        FullWidth="true"
+                        Elevation="4"
+                        Label="Con Sombra (Elevación 4)"
+                        Placeholder="Despliega para ver sombra"
+                        Options="_simpleOptions"
+                        @bind-Value="_selectedString" />
+    </div>
+
+    @* --- VALIDACIÓN (EditContext) --- *@
+    <div class="sample-card">
+        <h3>Validación</h3>
+        <EditForm Model="_model" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <BUIInputSelect TValue="string"
+                            Label="Categoría Obligatoria"
+                            @bind-Value="_model.Category"
+                            Options="_categories"
+                            HelperText="Selecciona una opción para quitar el error" />
+            <div style="margin-top: 1rem;">
+                <button type="submit">Validar</button>
+            </div>
+        </EditForm>
+    </div>
+
+    @* --- ENUMS Y DISPLAY FUNC --- *@
+    <div class="sample-card">
+        <h3>Uso de Enums y DisplayFunc</h3>
+        <BUIInputSelect TValue="UserRole"
+                        Label="Rol de Usuario"
+                        Options="_roleOptions"
+                        DisplayFunc="@(v => $"Acceso: {v}")"
+                        @bind-Value="_selectedRole" />
+    </div>
+
+     @* --- MULTIPLE --- *@
+    @* <div class="sample-card">
+        <h3>Multiple</h3>
+        <BUIInputSelect Label="País"
+                        Placeholder="Selecciona un país..."
+                        Options="_countries"
+                        @bind-Value="_selectedCountries" />
+        <p>Seleccionado: @(string.Join(",", _selectedCountries))</p>
+    </div>  *@
+
+</div>
+
+@code {
+    private string? _selectedCountry;
+    private string? _selectedLang = "ES";
+    private int? _selectedInt;
+    private string _selectedString = "1";
+    private UserRole _selectedRole = UserRole.Guest;
+
+    private List<string> _selectedCountries = new();
+    private string[] _selectedCountries2 = [];
+
+    private List<BUIInputSelect<string>.SelectOption<string>> _countries = new() {
+        new() { Value = "ES", Label = "España" },
+        new() { Value = "MX", Label = "México" },
+        new() { Value = "AR", Label = "Argentina" }
+    };
+
+    private List<BUIInputSelect<string>.SelectOption<string>> _languages = new() {
+        new() { Value = "ES", Label = "Español" },
+        new() { Value = "EN", Label = "English" }
+    };
+
+    private List<BUIInputSelect<string>.SelectOption<string>> _simpleOptions = new() {
+        new() { Value = "1", Label = "Opción 1" },
+        new() { Value = "2", Label = "Opción 2" }
+    };
+
+    private List<BUIInputSelect<string>.SelectOption<string>> _categories = new() {
+        new() { Value = "DEV", Label = "Desarrollo" },
+        new() { Value = "DSG", Label = "Diseño" }
+    };
+
+    // Enum Test
+    public enum UserRole { Admin, Editor, Guest }
+    private List<BUIInputSelect<UserRole>.SelectOption<UserRole>> _roleOptions =
+        Enum.GetValues<UserRole>().Select(r => new BUIInputSelect<UserRole>.SelectOption<UserRole>
+        {
+            Value = r,
+            Label = r.ToString()
+        }).ToList();
+
+    // Form Validation Test
+    private SampleModel _model = new();
+    public class SampleModel
+    {
+        [Required(ErrorMessage = "Debes seleccionar una categoría")]
+        public string? Category { get; set; }
+    }
+
+    private void HandleValidSubmit() => Console.WriteLine("Formulario Válido");
+}

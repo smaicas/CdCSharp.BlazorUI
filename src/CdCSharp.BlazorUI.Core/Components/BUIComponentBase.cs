@@ -1,5 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
-using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Core.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -13,7 +13,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    [Inject] public required IBehaviorJsInterop BehaviorJsInterop { get; set; }
+    [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
     // This is what components will use with @attributes
     public Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
@@ -26,27 +26,11 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && BehaviorJsInterop != null && this is IJsBehavior jsBehavior)
+        if (firstRender)
         {
-            ElementReference rootElement = jsBehavior.GetRootElement();
-            BehaviorConfiguration config = new();
-
-            // Configure ripple if applicable
-            if (this is IHasRipple hasRipple && !hasRipple.DisableRipple)
-            {
-                config.Ripple = new RippleConfiguration
-                {
-                    Color = hasRipple.RippleColor?.ToString(ColorOutputFormats.Rgba),
-                    Duration = hasRipple.RippleDuration
-                };
-            }
-
-            // Attach behaviors if any configured
-            if (config.HasAnyBehavior)
-            {
-                _behaviorInstance = await BehaviorJsInterop.AttachBehaviorsAsync(
-                    rootElement, config);
-            }
+            _behaviorInstance = await BUIComponentJsBehaviorBuilder
+                .For(this, BehaviorJsInterop)
+                .BuildAndAttachAsync();
         }
 
         await base.OnAfterRenderAsync(firstRender);

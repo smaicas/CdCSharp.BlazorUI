@@ -8,7 +8,6 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components.BaseComponents;
 using FluentAssertions;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using NSubstitute;
@@ -208,7 +207,7 @@ public class BUIComponentBaseTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
         ctx.Services.AddSingleton(_jsInterop);
         // Arrange
-        _jsInterop.AttachBehaviorsAsync(Arg.Any<ElementReference>(), Arg.Any<BehaviorConfiguration>())
+        _jsInterop.AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>())
                   .Returns(_jsModule);
 
         // Act
@@ -216,7 +215,7 @@ public class BUIComponentBaseTests
         await cut.Instance.DisposeAsync();
 
         // Assert
-        await _jsInterop.Received(1).AttachBehaviorsAsync(Arg.Any<ElementReference>(), Arg.Any<BehaviorConfiguration>());
+        await _jsInterop.Received(1).AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>());
         await _jsModule.Received(1).InvokeVoidAsync("dispose", Arg.Any<object[]>());
     }
 

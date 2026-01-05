@@ -5,9 +5,7 @@ namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
 
 public interface IBehaviorJsInterop
 {
-    ValueTask<IJSObjectReference> AttachBehaviorsAsync(
-        ElementReference element,
-        BehaviorConfiguration configuration);
+    ValueTask<IJSObjectReference> AttachBehaviorsAsync(BehaviorConfiguration configuration);
 }
 
 public class BehaviorConfiguration
@@ -21,4 +19,6 @@ public class RippleConfiguration
 {
     public string? Color { get; set; }
     public int? Duration { get; set; }
+
+    public ElementReference RippleContainer { get; set; }
 }

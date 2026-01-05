@@ -1,0 +1,198 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@typeparam TValue
+
+@inherits BUIInputComponentBase<TValue, BUIInputRadio<TValue>, BUIInputRadioVariant>
+@implements IHasSize
+@implements IHasColor
+@implements IHasDensity
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private string _inputId = $"bui-radio-{Guid.NewGuid():N}";
+    private string _groupName = $"bui-radio-group-{Guid.NewGuid():N}";
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? GroupName { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    // For radio groups
+    [Parameter] public List<RadioOption<TValue>>? Options { get; set; }
+    [Parameter] public bool Inline { get; set; }
+
+    public override BUIInputRadioVariant DefaultVariant => BUIInputRadioVariant.Default;
+
+    protected override IReadOnlyDictionary<BUIInputRadioVariant, Func<BUIInputRadio<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputRadioVariant, Func<BUIInputRadio<TValue>, RenderFragment>>
+        {
+            [BUIInputRadioVariant.Default] = c => c.RenderDefault()
+        };
+
+    protected override void OnInitialized()
+    {
+        Type valueType = typeof(TValue);
+        Type underlyingType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+
+        if (!IsValidType(underlyingType))
+            throw new InvalidOperationException(
+                $"BUIInputRadio only supports string, numeric types, enum types, and their nullable versions. Provided type: {valueType.Name}");
+
+        if (!string.IsNullOrEmpty(GroupName))
+            _groupName = GroupName;
+
+        base.OnInitialized();
+    }
+
+    private bool IsValidType(Type type) =>
+        type == typeof(string) ||
+        type.IsEnum ||
+        type == typeof(int) ||
+        type == typeof(long) ||
+        type == typeof(short) ||
+        type == typeof(byte) ||
+        type == typeof(float) ||
+        type == typeof(double) ||
+        type == typeof(decimal);
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+        Type targetType = typeof(TValue);
+        Type underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        try
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                result = default!;
+                return targetType.IsGenericType && targetType.GetGenericTypeDefinition() == typeof(Nullable<>);
+            }
+
+            if (underlyingType == typeof(string))
+            {
+                result = (TValue)(object)value;
+                return true;
+            }
+
+            if (underlyingType.IsEnum)
+            {
+                result = (TValue)Enum.Parse(underlyingType, value);
+                return true;
+            }
+
+            result = (TValue)Convert.ChangeType(value, underlyingType);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            result = default!;
+            validationErrorMessage = $"Unable to parse '{value}' as {targetType.Name}: {ex.Message}";
+            return false;
+        }
+    }
+
+    private bool IsChecked(TValue? optionValue) =>
+        EqualityComparer<TValue>.Default.Equals(CurrentValue, optionValue);
+
+    // --- RENDERER ---
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes">
+            @if (Options != null && Options.Count > 0)
+            {
+                <div class="bui-radio-group @(Inline ? "bui-radio-group--inline" : "bui-radio-group--vertical")">
+                    @foreach (var option in Options)
+                    {
+                        var optionId = $"{_groupName}-{option.Value?.ToString() ?? "null"}";
+                        <div class="bui-radio-option">
+                            <div class="bui-input__container" @onclick="() => HandleClick(option.Value)">
+                                <input type="radio"
+                                       id="@optionId"
+                                       name="@_groupName"
+                                       value="@option.Value?.ToString()"
+                                       checked="@IsChecked(option.Value)"
+                                       disabled="@(IsDisabled || option.Disabled)"
+                                       @onclick:preventDefault="true"
+                                       class="bui-radio__input" />
+
+                                <span class="bui-radio__box" aria-hidden="true">
+                                    @if (IsChecked(option.Value))
+                                    {
+                                        <span class="bui-radio__dot"></span>
+                                    }
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(option.Label))
+                            {
+                                <label for="@optionId" class="bui-radio__label">
+                                    @option.Label
+                                </label>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else if (ChildContent != null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                <div class="bui-radio-option">
+                    <div class="bui-input__container" @onclick="() => HandleClick(Value)">
+                        <input type="radio"
+                               id="@_inputId"
+                               name="@_groupName"
+                               value="@CurrentValue?.ToString()"
+                               checked="@(CurrentValue?.Equals(Value) ?? false)"
+                               disabled="@IsDisabled"
+                               @onclick:preventDefault="true"
+                               class="bui-radio__input" />
+
+                        <span class="bui-radio__box" aria-hidden="true">
+                            @if (CurrentValue?.Equals(Value) ?? false)
+                            {
+                                <span class="bui-radio__dot"></span>
+                            }
+                        </span>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Label))
+                    {
+                        <label for="@_inputId" class="bui-radio__label">
+                            @Label
+                        </label>
+                    }
+                </div>
+            }
+        </bui-component>
+    };
+
+    private async Task HandleClick(TValue? value)
+    {
+        if (IsDisabled) return;
+        CurrentValue = value!;
+    }
+
+    public class RadioOption<T>
+    {
+        public T? Value { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public bool Disabled { get; set; }
+    }
+}

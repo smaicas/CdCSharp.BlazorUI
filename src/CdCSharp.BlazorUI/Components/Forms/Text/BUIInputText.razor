@@ -21,7 +21,7 @@
 }
 
 @code {
-    private ElementReference _inputElement;
+    private ElementReference _inputContainer;
     private string _inputId = $"bui-input-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
 
@@ -52,6 +52,7 @@
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public CssColor? RippleColor { get; set; }
     [Parameter] public int? RippleDuration { get; set; }
+    public ElementReference GetRippleContainer() => _inputContainer;
 
     // Input specific parameters
     [Parameter] public string? Placeholder { get; set; }
@@ -107,9 +108,8 @@
             </label>
         }
 
-        <div class="bui-input__container">
-            <input @ref="_inputElement"
-                   type="text"
+        <div class="bui-input__container" @ref="_inputContainer">
+            <input type="text"
                    id="@_inputId"
                    value="@CurrentValue"
                    @onchange="HandleChange"
@@ -173,7 +173,4 @@
         validationErrorMessage = string.Empty;
         return true;
     }
-
-    // IJsBehavior implementation
-    public ElementReference GetRootElement() => _inputElement;
 }

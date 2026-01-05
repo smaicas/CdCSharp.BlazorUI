@@ -1,0 +1,117 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@inherits BUIInputComponentBase<bool, BUIInputSwitch, BUIInputCheckboxVariant>
+@implements IHasSize
+@implements IHasDensity
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private string _inputId = $"bui-switch-{Guid.NewGuid():N}";
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    [Parameter] public string? Label { get; set; }
+
+    // Iconos opcionales On/Off (ej: ☀️ / 🌙)
+    [Parameter] public string? IconInactive { get; set; }
+    [Parameter] public string? IconActive { get; set; }
+    // Track colors
+    [Parameter] public CssColor? TrackColorInactive { get; set; }
+    [Parameter] public CssColor? TrackColorActive { get; set; }
+
+    // Siempre Variant Default
+    public override BUIInputCheckboxVariant DefaultVariant => BUIInputCheckboxVariant.Default;
+
+    protected override IReadOnlyDictionary<BUIInputCheckboxVariant, Func<BUIInputSwitch, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputCheckboxVariant, Func<BUIInputSwitch, RenderFragment>>
+        {
+            [BUIInputCheckboxVariant.Default] = c => c.RenderSwitch()
+        };
+
+    protected bool IsChecked => CurrentValue;
+
+    protected override bool TryParseValueFromString(string? value, out bool result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+        if (bool.TryParse(value, out var boolResult))
+        {
+            result = boolResult;
+            return true;
+        }
+
+        result = false;
+        validationErrorMessage = $"Unable to parse '{value}' as boolean.";
+        return false;
+    }
+
+    private RenderFragment RenderSwitch() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes"
+                       data-bui-checked="@IsChecked"
+                       style="@GetDynamicStyles()">
+            <div class="bui-input__container" @onclick="HandleClick">
+                <input type="checkbox"
+                       id="@_inputId"
+                       aria-checked="@IsChecked"
+                       checked="@IsChecked"
+                       disabled="@IsDisabled"
+                       @onclick:preventDefault="true"
+                       class="bui-switch__input" />
+
+                <span class="bui-switch__track" aria-hidden="true">
+                    <span class="bui-switch__thumb">
+                        @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
+                        {
+                            <span class="bui-switch__icon">
+                                @if (IsChecked && !string.IsNullOrWhiteSpace(IconInactive))
+                                {
+                                    @IconInactive
+                                }
+                                else if (!IsChecked && !string.IsNullOrWhiteSpace(IconActive))
+                                {
+                                    @IconActive
+                                }
+                            </span>
+                        }
+                    </span>
+                </span>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label for="@_inputId" class="bui-switch__label">@Label</label>
+            }
+        </bui-component>
+    };
+
+    private async Task HandleClick(MouseEventArgs e)
+    {
+        if (IsDisabled) return;
+
+        CurrentValue = !CurrentValue;
+        await ValueChanged.InvokeAsync(CurrentValue);
+    }
+
+    private string GetDynamicStyles()
+    {
+        var styles = new List<string>();
+        if (TrackColorInactive != null)
+            styles.Add($"--bui-input-switch-track-bg: {TrackColorInactive}");
+        if (TrackColorActive != null)
+            styles.Add($"--bui-input-switch-track-bg-checked: {TrackColorActive}");
+
+        return styles.Any() ? string.Join(";", styles) : string.Empty;
+    }
+}

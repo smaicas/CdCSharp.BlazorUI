@@ -2,7 +2,7 @@
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State;
 using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
-using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Core.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -17,7 +17,7 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
     private FieldIdentifier _fieldIdentifier;
 
-    [Inject] private IBehaviorJsInterop? BehaviorJsInterop { get; set; }
+    [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
     // Common parameters for all inputs
     [Parameter] public bool Disabled { get; set; }
@@ -90,33 +90,11 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && BehaviorJsInterop != null && this is IJsBehavior jsBehavior)
+        if (firstRender)
         {
-            // Check if component is loading - don't attach behaviors during loading state
-            if (this is IHasLoading hasLoading && hasLoading.IsLoading)
-            {
-                return; // Skip behavior attachment when loading
-            }
-
-            ElementReference rootElement = jsBehavior.GetRootElement();
-            BehaviorConfiguration config = new();
-
-            // Configure ripple if applicable
-            if (this is IHasRipple hasRipple && !hasRipple.DisableRipple)
-            {
-                config.Ripple = new RippleConfiguration
-                {
-                    Color = hasRipple.RippleColor?.ToString(ColorOutputFormats.Rgba),
-                    Duration = hasRipple.RippleDuration
-                };
-            }
-
-            // Attach behaviors if any configured
-            if (config.HasAnyBehavior)
-            {
-                _behaviorInstance = await BehaviorJsInterop.AttachBehaviorsAsync(
-                    rootElement, config);
-            }
+            _behaviorInstance = await BUIComponentJsBehaviorBuilder
+                .For(this, BehaviorJsInterop)
+                .BuildAndAttachAsync();
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -156,7 +134,7 @@ public abstract class BUIInputComponentBase<TValue, TComponent, TVariant>
     protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
     public abstract TVariant DefaultVariant { get; }
 
-    [Inject] private IVariantRegistry? VariantRegistry { get; set; }
+    [Inject] private IVariantRegistry VariantRegistry { get; set; } = default!;
 
     // Implementation of IVariantComponent interfaces
     Variant IVariantComponent.CurrentVariant => CurrentVariant;

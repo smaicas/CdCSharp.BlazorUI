@@ -1,0 +1,147 @@
+﻿@page "/utilities/icons"
+@using System.Reflection
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+
+<style>
+    .icon-gallery-container {
+        padding: 2rem;
+        font-family: sans-serif;
+    }
+
+    .category-title {
+        border-bottom: 2px solid #eaeaea;
+        padding-bottom: 0.5rem;
+        margin-top: 2rem;
+        color: #333;
+        text-transform: uppercase;
+        font-size: 1.2rem;
+    }
+
+    .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .icon-card {
+        border: 1px solid #f0f0f0;
+        border-radius: 8px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        background: #fff;
+    }
+
+        .icon-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+    .icon-preview {
+        margin-bottom: 0.75rem;
+        color: #444;
+    }
+
+    .icon-info {
+        width: 100%;
+        text-align: center;
+    }
+
+    .icon-name {
+        font-size: 0.75rem;
+        color: #666;
+        word-break: break-all;
+        display: block;
+    }
+</style>
+
+<div class="icon-gallery-container">
+    <header>
+        <h1>Galería de Iconos</h1>
+        <p>Total de categorías detectadas: @_iconCategories.Count</p>
+    </header>
+
+    @foreach (var category in _iconCategories)
+    {
+        <section class="icon-category">
+            <h2 class="category-title">Categoría: @category.Name</h2>
+            <div class="icon-grid">
+                @foreach (var icon in category.Icons)
+                {
+                    <div class="icon-card" title="Click para copiar nombre" @onclick="() => CopyToClipboard(category.Name, icon.Name)">
+                        <div class="icon-preview">
+                            <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                        </div>
+                        <div class="icon-info">
+                            <span class="icon-name">@icon.Name</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</div>
+
+@code {
+    private List<IconCategory> _iconCategories = new();
+
+    protected override void OnInitialized()
+    {
+        ExtractIcons();
+    }
+
+    private void ExtractIcons()
+    {
+        _iconCategories.Clear();
+
+        // Obtenemos todas las clases anidadas dentro de BUIIcons (ej: UI, Navigation, etc.)
+        var categories = typeof(BUIIcons).GetNestedTypes(BindingFlags.Public | BindingFlags.Static);
+
+        foreach (var cat in categories)
+        {
+            var categoryData = new IconCategory { Name = cat.Name };
+
+            // Obtenemos todas las constantes (public static literal)
+            var fields = cat.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+                            .Where(f => f.IsLiteral && !f.IsInitOnly);
+
+            foreach (var field in fields)
+            {
+                var value = field.GetRawConstantValue()?.ToString();
+                if (!string.IsNullOrEmpty(value))
+                {
+                    categoryData.Icons.Add(new IconInfo { Name = field.Name, Value = value });
+                }
+            }
+
+            if (categoryData.Icons.Any())
+            {
+                _iconCategories.Add(categoryData);
+            }
+        }
+    }
+
+    private void CopyToClipboard(string cat, string name)
+    {
+        // Aquí podrías implementar JS Interop para copiar "BUIIcons.@cat.@name"
+        Console.WriteLine($"Icono seleccionado: BUIIcons.{cat}.{name}");
+    }
+
+    public class IconCategory
+    {
+        public string Name { get; set; } = "";
+        public List<IconInfo> Icons { get; set; } = new();
+    }
+
+    public class IconInfo
+    {
+        public string Name { get; set; } = "";
+        public string Value { get; set; } = "";
+    }
+}

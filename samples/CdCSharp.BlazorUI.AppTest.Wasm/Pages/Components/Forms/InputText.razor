@@ -1,16 +1,34 @@
 ﻿@page "/components/forms/input-text"
 
-<BUIInputText @bind-Value="_value1" Label="Test Input 1" Size="SizeEnum.Small" />
-<br />
-<BUIInputText @bind-Value="_value1" Label="Test Input 1" Size="SizeEnum.Medium" />
-<br />
-<BUIInputText @bind-Value="_value1" Label="Test Input 1" Size="SizeEnum.Large" />
-<br />
-<BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Outlined" Label="Outlined 1" Size="SizeEnum.Large" />
-<br />
-<BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Filled" Label="Filled 1" Size="SizeEnum.Large" />
-<br />
-<BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Standard" Label="Standard 1" Size="SizeEnum.Large" />
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 600px;">
+
+    <h3>InputText - Tamaños</h3>
+    <BUIInputText @bind-Value="_value1" Label="Pequeño" Size="SizeEnum.Small" />
+    <BUIInputText @bind-Value="_value1" Label="Mediano" Size="SizeEnum.Medium" />
+    <BUIInputText @bind-Value="_value1" Label="Grande" Size="SizeEnum.Large" />
+
+    <hr />
+
+    <h3>InputText - Variantes</h3>
+    <BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Outlined" Label="Outlined" Placeholder="Escribe algo..." />
+    <BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Filled" Label="Filled" Placeholder="Escribe algo..." />
+    <BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Standard" Label="Standard" Placeholder="Escribe algo..." />
+
+    <hr />
+
+    <h3>Estados y Feedback</h3>
+    <BUIInputText @bind-Value="_value1" Label="Con Texto de Ayuda" HelperText="Tu información está segura con nosotros." />
+
+    <BUIInputText @bind-Value="_value1" Label="Estado de Carga"
+                  IsLoading="true"
+                  LoadingIndicatorVariant="BUILoadingIndicatorVariant.CircularProgress" />
+
+    <BUIInputText @bind-Value="_value1" Label="Deshabilitado" IsDisabled="true" Placeholder="No puedes editar esto" />
+
+    <BUIInputText @bind-Value="_value1" Label="Actualización inmediata"
+                  UpdateOnInput="true"
+                  HelperText="@($"Valor actual: {_value1}")" />
+</div>
 
 @code {
     private string _value1 = string.Empty;

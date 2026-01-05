@@ -211,13 +211,30 @@ internal sealed class BUIComponentAttributesBuilder
     private static string ToKebabCaseComponentName(string value)
     {
         if (string.IsNullOrEmpty(value)) return value;
-        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase)) value = value[3..];
 
+        // Clean generic notation (e.g., InputCheckbox`1 -> InputCheckbox)
+        int tickIndex = value.IndexOf('`');
+        if (tickIndex != -1)
+        {
+            value = value[..tickIndex];
+        }
+
+        // Clean "BUI" prefix
+        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase))
+        {
+            value = value[3..];
+        }
+
+        // Convert to kebab-case
         StringBuilder sb = new();
         for (int i = 0; i < value.Length; i++)
         {
             char c = value[i];
-            if (char.IsUpper(c) && i > 0) sb.Append('-');
+            // Only add hyphen if uppercase, not the first letter, and previous char is not already a hyphen
+            if (char.IsUpper(c) && i > 0 && value[i - 1] != '-')
+            {
+                sb.Append('-');
+            }
             sb.Append(char.ToLower(c));
         }
 

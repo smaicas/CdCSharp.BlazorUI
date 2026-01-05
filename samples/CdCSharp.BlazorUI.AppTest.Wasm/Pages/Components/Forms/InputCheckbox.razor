@@ -1,0 +1,228 @@
+﻿@page "/components/forms/input-checkbox"
+
+<div style="padding: 24px; display: flex; flex-direction: column; gap: 28px; max-width: 720px;">
+
+    <h2>BUIInputCheckbox y BUIInputSwitch</h2>
+    <p>
+        Ejemplos de checkbox avanzado con soporte para tri-estado, variantes, tamaños, density,
+        iconos personalizados, estados de error y deshabilitado.
+        También se incluyen ejemplos de BUIInputSwitch tipo interruptor, con iconos opcionales.
+    </p>
+
+    <!-- ====================================================== -->
+    <!-- TRI-STATE -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Tri-estado (bool?)</h3>
+        <p>
+            Soporta <code>true</code>, <code>false</code> y <code>null</code> (indeterminado).
+        </p>
+        <p>Valor actual: <b>@(_checkValue?.ToString() ?? "null (Indeterminado)")</b></p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <BUIInputCheckbox @bind-Value="_checkValue"
+                              Label="Checkbox tri-estado" />
+
+            <BUIInputCheckbox @bind-Value="_checkValue"
+                              Label="Tri-estado deshabilitado"
+                              Disabled="true" />
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- BOOLEAN -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Booleano simple</h3>
+        <p>Modo binario (<code>true / false</code>). El estado indeterminado está deshabilitado.</p>
+        <p>Valor actual: <b>@_boolValue</b></p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Label="Checkbox booleano" />
+
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Label="Checkbox deshabilitado"
+                              Disabled="true" />
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- SWITCH -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>BUIInputSwitch</h3>
+        <p>Variante visual tipo interruptor.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Label="Activar notificaciones" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Label="Switch deshabilitado"
+                            Disabled="true" />
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- SWITCH CON ICONOS -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Switch con iconos On/Off</h3>
+        <p>
+            Iconos opcionales dentro del thumb para indicar estados (ej: ☀️ / 🌙).
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Label="Tema"
+                            IconInactive="☀️"
+                            IconActive="🌙" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Label="Deshabilitado"
+                            IconInactive="☀️"
+                            IconActive="🌙"
+                            Disabled="true" />
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- SIZES -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Tamaños</h3>
+        <p>Los tamaños afectan a checkbox y switch.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Size="SizeEnum.Small"
+                              Label="Checkbox Small" />
+
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Size="SizeEnum.Medium"
+                              Label="Checkbox Medium" />
+
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Size="SizeEnum.Large"
+                              Label="Checkbox Large" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Size="SizeEnum.Small"
+                            Label="Switch Small" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Size="SizeEnum.Medium"
+                            Label="Switch Medium" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Size="SizeEnum.Large"
+                            Label="Switch Large" />
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- DENSITY -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Density</h3>
+        <p>Controla la compacidad del componente usando <code>--bui-density-spacing-multiplier</code>.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Density="DensityEnum.Compact"
+                              Label="Checkbox Compact" />
+
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Density="DensityEnum.Standard"
+                              Label="Checkbox Standard" />
+
+            <BUIInputCheckbox @bind-Value="_boolValue"
+                              Density="DensityEnum.Comfortable"
+                              Label="Checkbox Comfortable" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Density="DensityEnum.Compact"
+                            Label="Switch Compact" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Density="DensityEnum.Standard"
+                            Label="Switch Standard" />
+
+            <BUIInputSwitch @bind-Value="_switchValue"
+                            Density="DensityEnum.Comfortable"
+                            Label="Switch Comfortable" />
+        </div>
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- VOLORS -->
+    <!-- ====================================================== -->
+    <BUIInputSwitch @bind-Value="_switchValue"
+                    TrackColorInactive="@BUIColor.Violet.Darken2"
+                    TrackColorActive="@BUIColor.BlueViolet.Darken2"
+                    Label="Colored" />
+
+    <BUIInputSwitch @bind-Value="_switchValue"
+                    Label="Default Colors" />
+
+    <!-- ====================================================== -->
+    <!-- ICONOS PERSONALIZADOS -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Iconos personalizados en Checkbox</h3>
+        <p>Permite iconos distintos para checked, unchecked e indeterminate.</p>
+
+        <BUIInputCheckbox @bind-Value="_checkValue"
+                          Label="Favoritos"
+                          CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star_outline"
+                          IndeterminateIcon="@BUIIcons.MaterialIconsOutlined.i_star_half" />
+    </section>
+
+    <hr />
+
+    <!-- ====================================================== -->
+    <!-- ERROR STATE -->
+    <!-- ====================================================== -->
+    <section>
+        <h3>Estado de error</h3>
+        <p>El componente refleja el estado de validación.</p>
+
+        <EditForm Model="_model">
+            <BUIInputCheckbox @bind-Value="_model.AcceptTerms"
+                              Label="Aceptar términos"
+                              Required="true" />
+
+            <button type="submit" style="margin-top: 12px;">
+                Enviar
+            </button>
+        </EditForm>
+    </section>
+
+</div>
+
+@code {
+    private bool? _checkValue = null;
+    private bool _boolValue = false;
+    private bool _switchValue = false;
+
+    private DemoModel _model = new();
+
+    private class DemoModel
+    {
+        public bool AcceptTerms { get; set; }
+    }
+}

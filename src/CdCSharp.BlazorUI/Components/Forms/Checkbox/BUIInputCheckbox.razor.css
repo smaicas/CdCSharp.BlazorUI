@@ -1,0 +1,12 @@
+﻿bui-component[data-bui-component="input-checkbox"] .bui-input__container {
+    padding: calc(2px * var(--bui-density-spacing-multiplier, 1));
+}
+
+/* Hidden native input */
+bui-component[data-bui-component="input-checkbox"] .bui-switch__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}

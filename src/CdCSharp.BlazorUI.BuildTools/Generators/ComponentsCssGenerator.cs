@@ -26,6 +26,14 @@ public class ComponentsCssGenerator : IAssetGenerator
 
 {FeatureDefinitions.Tags.Component} {{
     display: inline-flex;
+    align-items: center;
+    gap: calc(0.75rem * var(--bui-density-spacing-multiplier, 1));
+    vertical-align: middle;
+    --bui-padding-base: 0.5rem; 
+    
+    /* Calculated padding to use by specific selectors */
+    --bui-calculated-padding: calc(var(--bui-padding-base) * var(--bui-density-spacing-multiplier, 1));
+
     /* Color variables with fallback to palette */");
 
         sb.AppendLine($"    background-color: var({FeatureDefinitions.CssVariables.BackgroundColor}, inherit);");
@@ -49,6 +57,8 @@ public class ComponentsCssGenerator : IAssetGenerator
 
 .{FeatureDefinitions.CssClasses.InputContainer} {{
     position: relative;
+    display: flex;
+    align-items: center;
 }}
 
 .{FeatureDefinitions.CssClasses.InputLoading} {{
@@ -102,7 +112,7 @@ public class ComponentsCssGenerator : IAssetGenerator
         sb.AppendLine();
 
         sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Compact}\"] {{");
-        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 0.75;");
+        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 0.5;");
         sb.AppendLine("}");
 
         sb.AppendLine($@"
@@ -186,7 +196,6 @@ public class ComponentsCssGenerator : IAssetGenerator
 
 /* Generic SVG styles */
 {FeatureDefinitions.Tags.Component} svg {{
-    pointer-events: none;
     fill: currentColor;
 }}
 

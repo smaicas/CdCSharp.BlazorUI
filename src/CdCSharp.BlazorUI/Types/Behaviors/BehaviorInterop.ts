@@ -1,6 +1,7 @@
 interface RippleConfiguration {
     color?: string;
     duration?: number;
+    rippleContainer: HTMLElement;
 }
 
 interface BehaviorConfiguration {
@@ -12,8 +13,8 @@ class RippleBehavior {
     private config: RippleConfiguration;
     private clickHandler: (e: MouseEvent) => void;
 
-    constructor(element: HTMLElement, config: RippleConfiguration) {
-        this.element = element;
+    constructor(config: RippleConfiguration) {
+        this.element = config.rippleContainer;
         this.config = config;
         this.clickHandler = this.handleClick.bind(this);
         this.element.addEventListener('click', this.clickHandler);
@@ -53,9 +54,9 @@ class RippleBehavior {
 class BehaviorManager {
     private behaviors: Array<{ dispose: () => void }> = [];
 
-    constructor(element: HTMLElement, config: BehaviorConfiguration) {
+    constructor(config: BehaviorConfiguration) {
         if (config.ripple) {
-            this.behaviors.push(new RippleBehavior(element, config.ripple));
+            this.behaviors.push(new RippleBehavior(config.ripple));
         }
     }
 
@@ -65,9 +66,6 @@ class BehaviorManager {
     }
 }
 
-export function attachBehaviors(
-    element: HTMLElement,
-    config: BehaviorConfiguration
-): BehaviorManager {
-    return new BehaviorManager(element, config);
+export function attachBehaviors(config: BehaviorConfiguration): BehaviorManager {
+    return new BehaviorManager(config);
 }

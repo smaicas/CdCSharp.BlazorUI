@@ -1,0 +1,106 @@
+﻿@page "/components/forms/input-radio"
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+
+<PageTitle>BUIInputRadio Samples</PageTitle>
+
+<div class="samples-container" style="padding: 2rem; display: flex; flex-direction: column; gap: 3rem;">
+
+    @* --- ESCENARIO 1: GRUPO AUTOMÁTICO POR LISTA --- *@
+    <section>
+        <h3>Radio Group (Data-driven)</h3>
+        <p>Seleccionado: <b>@_selectedFramework</b></p>
+
+        <BUIInputRadio TValue="string"
+                       Options="_frameworkOptions"
+                       @bind-Value="_selectedFramework"
+                       GroupName="frameworks" />
+    </section>
+
+    @* --- ESCENARIO 2: GRUPO INLINE (HORIZONTAL) --- *@
+    <section>
+        <h3>Inline Radio Group</h3>
+        <p>Género: <b>@_selectedGender</b></p>
+
+        <BUIInputRadio TValue="string"
+                       Options="_genderOptions"
+                       @bind-Value="_selectedGender"
+                       Inline="true"
+                       GroupName="gender" />
+    </section>
+
+    @* --- ESCENARIO 3: TAMAÑOS Y DENSIDADES --- *@
+    <section>
+        <h3>Sizes and Densities</h3>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <BUIInputRadio TValue="int" Label="Small & Compact"
+                           Size="SizeEnum.Small" Density="DensityEnum.Compact"
+                           @bind-Value="_sizeValue" />
+
+            <BUIInputRadio TValue="int" Label="Medium & Standard"
+                           Size="SizeEnum.Medium" Density="DensityEnum.Standard"
+                           @bind-Value="_sizeValue" />
+
+            <BUIInputRadio TValue="int" Label="Large & Comfortable"
+                           Size="SizeEnum.Large" Density="DensityEnum.Comfortable"
+                           @bind-Value="_sizeValue" />
+        </div>
+    </section>
+
+    @* --- ESCENARIO 4: ENUMS (USO COMÚN) --- *@
+    <section>
+        <h3>Enum Support</h3>
+        <p>Estado de Envío: <b>@_shippingStatus</b></p>
+
+        <BUIInputRadio TValue="ShippingStatus"
+                       Options="_statusOptions"
+                       @bind-Value="_shippingStatus"
+                       GroupName="shipping" />
+    </section>
+
+    @* --- ESCENARIO 5: ESTADO DESHABILITADO --- *@
+    <section>
+        <h3>Disabled State</h3>
+        <BUIInputRadio TValue="string" Label="Opción deshabilitada"
+                       Disabled="true" @bind-Value="_selectedFramework" />
+
+        <BUIInputRadio TValue="string" Label="Opción habilitada"
+                       @bind-Value="_selectedFramework" />
+    </section>
+
+</div>
+
+@code {
+    // Escenario 1
+    private string _selectedFramework = "Blazor";
+    private List<BUIInputRadio<string>.RadioOption<string>> _frameworkOptions = new()
+    {
+        new() { Value = "Blazor", Label = "Blazor WebAssembly" },
+        new() { Value = "React", Label = "React JS" },
+        new() { Value = "Angular", Label = "Angular" },
+        new() { Value = "Vue", Label = "Vue JS", Disabled = true }
+    };
+
+    // Escenario 2
+    private string _selectedGender = "N/A";
+    private List<BUIInputRadio<string>.RadioOption<string>> _genderOptions = new()
+    {
+        new() { Value = "M", Label = "Masculino" },
+        new() { Value = "F", Label = "Femenino" },
+        new() { Value = "N/A", Label = "Prefiero no decir" }
+    };
+
+    // Escenario 3
+    private int _sizeValue = 2;
+
+    // Escenario 4
+    private ShippingStatus _shippingStatus = ShippingStatus.Pending;
+    private List<BUIInputRadio<ShippingStatus>.RadioOption<ShippingStatus>> _statusOptions =
+        Enum.GetValues<ShippingStatus>().Select(s => new BUIInputRadio<ShippingStatus>.RadioOption<ShippingStatus>
+        {
+            Value = s,
+            Label = s.ToString()
+        }).ToList();
+
+    public enum ShippingStatus { Pending, Shipped, Delivered, Cancelled }
+}

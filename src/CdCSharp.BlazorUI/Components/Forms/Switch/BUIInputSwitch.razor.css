@@ -1,0 +1,106 @@
+﻿bui-component[data-bui-component="input-switch"] {
+    /* Factor de escala por defecto (Medium) */
+    --bui-input-switch-scale: 1;
+
+    &[data-bui-size="small"] {
+        --bui-input-switch-scale: 0.75;
+    }
+
+    &[data-bui-size="large"] {
+        --bui-input-switch-scale: 1.25;
+    }
+    /* Definición de variables finales usando el factor de escala */
+    --bui-input-switch-track-width: calc(60px * var(--bui-input-switch-scale));
+    --bui-input-switch-track-height: calc(32px * var(--bui-input-switch-scale));
+    --bui-input-switch-thumb-width: calc(24px * var(--bui-input-switch-scale));
+    --bui-input-switch-thumb-height: calc(24px * var(--bui-input-switch-scale));
+    --bui-input-switch-translate: calc(28px * var(--bui-input-switch-scale));
+    --bui-input-switch-icon-size: calc(0.875rem * var(--bui-input-switch-scale));
+}
+
+    /* Hidden native input */
+    bui-component[data-bui-component="input-switch"] .bui-switch__input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    /* Contenedor del switch */
+    bui-component[data-bui-component="input-switch"] .bui-switch__track {
+        width: var(--bui-input-switch-track-width);
+        height: var(--bui-input-switch-track-height);
+        padding: 0.25rem;
+        border-radius: 2rem;
+        background: var(--bui-input-switch-track-bg, #808080);
+        position: relative;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    /* Light/Dark theme simulada por atributo data-checked */
+    bui-component[data-bui-component="input-switch"][data-bui-checked] .bui-switch__track {
+        background: var(--bui-input-switch-track-bg-checked, var(--palette-primary));
+    }
+
+    /* Pulgar del switch */
+    bui-component[data-bui-component="input-switch"] .bui-switch__thumb {
+        width: var(--bui-input-switch-thumb-width);
+        height: var(--bui-input-switch-thumb-height);
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Estado activado: mover el thumb a la derecha */
+    bui-component[data-bui-component="input-switch"][data-bui-checked] .bui-switch__thumb {
+        transform: translateX(var(--bui-input-switch-translate));
+    }
+
+    /* Icono dentro del thumb */
+    bui-component[data-bui-component="input-switch"] .bui-switch__icon {
+        font-size: var(--bui-input-switch-icon-size);
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* Hover del thumb */
+    bui-component[data-bui-component="input-switch"] .bui-switch__track:hover .bui-switch__thumb {
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Focus accesible */
+    bui-component[data-bui-component="input-switch"] .bui-switch__input:focus-visible + .bui-switch__track .bui-switch__thumb {
+        outline: 2px solid var(--palette-primary);
+        outline-offset: 2px;
+    }
+
+/* Animación de rotación para iconos */
+@keyframes rotate-in {
+    from {
+        transform: rotate(-180deg) scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: rotate(0) scale(1);
+        opacity: 1;
+    }
+}
+
+bui-component[data-bui-component="input-switch"] .bui-switch__icon {
+    animation: rotate-in 0.3s ease-out;
+}
