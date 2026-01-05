@@ -1,0 +1,106 @@
+﻿@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@code {
+    [Parameter] public TimeSpan Time { get; set; }
+    [Parameter] public EventCallback<TimeSpan> OnTimeSelected { get; set; }
+    [Parameter] public string TimeFormat { get; set; } = "HH:mm";
+    [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+    [Parameter] public SizeEnum Size { get; set; }
+    [Parameter] public DensityEnum Density { get; set; }
+
+    private int Hours => Time.Hours;
+    private int Minutes => Time.Minutes;
+    private bool Is24Hour => TimeFormat.Contains("H");
+
+    private async Task SetHours(int hours)
+    {
+        var newTime = new TimeSpan(hours, Minutes, 0);
+        await OnTimeSelected.InvokeAsync(newTime);
+    }
+
+    private async Task SetMinutes(int minutes)
+    {
+        var newTime = new TimeSpan(Hours, minutes, 0);
+        await OnTimeSelected.InvokeAsync(newTime);
+    }
+
+    private async Task IncrementHours()
+    {
+        var newHours = (Hours + 1) % 24;
+        await SetHours(newHours);
+    }
+
+    private async Task DecrementHours()
+    {
+        var newHours = (Hours - 1 + 24) % 24;
+        await SetHours(newHours);
+    }
+
+    private async Task IncrementMinutes()
+    {
+        var newMinutes = (Minutes + 1) % 60;
+        if (newMinutes == 0) await IncrementHours();
+        await SetMinutes(newMinutes);
+    }
+
+    private async Task DecrementMinutes()
+    {
+        var newMinutes = (Minutes - 1 + 60) % 60;
+        if (newMinutes == 59) await DecrementHours();
+        await SetMinutes(newMinutes);
+    }
+
+    private string FormatHours()
+    {
+        if (Is24Hour) return Hours.ToString("D2");
+
+        var hour12 = Hours == 0 ? 12 : (Hours > 12 ? Hours - 12 : Hours);
+        return hour12.ToString("D2");
+    }
+
+    private string GetPeriod() => Hours >= 12 ? "PM" : "AM";
+
+    private async Task TogglePeriod()
+    {
+        if (!Is24Hour)
+        {
+            var newHours = Hours >= 12 ? Hours - 12 : Hours + 12;
+            await SetHours(newHours);
+        }
+    }
+}
+
+<div class="bui-timepicker" data-bui-size="@Size.ToString().ToLowerInvariant()" data-bui-density="@Density.ToString().ToLowerInvariant()">
+    <div class="bui-timepicker__column">
+        <button class="bui-timepicker__button" @onclick="IncrementHours" type="button">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" />
+        </button>
+        <div class="bui-timepicker__value">@FormatHours()</div>
+        <button class="bui-timepicker__button" @onclick="DecrementHours" type="button">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" />
+        </button>
+    </div>
+
+    <div class="bui-timepicker__separator">:</div>
+
+    <div class="bui-timepicker__column">
+        <button class="bui-timepicker__button" @onclick="IncrementMinutes" type="button">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" />
+        </button>
+        <div class="bui-timepicker__value">@Minutes.ToString("D2")</div>
+        <button class="bui-timepicker__button" @onclick="DecrementMinutes" type="button">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" />
+        </button>
+    </div>
+
+    @if (!Is24Hour)
+    {
+        <div class="bui-timepicker__column">
+            <button class="bui-timepicker__period" @onclick="TogglePeriod" type="button">
+                @GetPeriod()
+            </button>
+        </div>
+    }
+</div>

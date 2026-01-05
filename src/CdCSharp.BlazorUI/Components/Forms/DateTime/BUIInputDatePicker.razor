@@ -1,0 +1,458 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
+@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@typeparam TValue
+
+@inherits BUIInputComponentBase<TValue, BUIInputDatePicker<TValue>, BUIInputDatePickerVariant>
+@implements IHasSize
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasDensity
+@implements IHasElevation
+@implements IHasBorder
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private string _inputId = $"bui-datepicker-{Guid.NewGuid():N}";
+    private bool _isOpen = false;
+    private ElementReference _pickerContainer;
+    private DateTime _viewDate = DateTime.Today;
+    private DatePickerMode _mode = DatePickerMode.Day;
+    
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasElevation
+    [Parameter] public int? Elevation { get; set; } = 2;
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
+
+    // DatePicker specific
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public string DateFormat { get; set; } = "yyyy-MM-dd";
+    [Parameter] public string TimeFormat { get; set; } = "HH:mm";
+    [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+    [Parameter] public DateTime? MinDate { get; set; }
+    [Parameter] public DateTime? MaxDate { get; set; }
+    [Parameter] public List<DateTime>? DisabledDates { get; set; }
+    [Parameter] public DayOfWeek FirstDayOfWeek { get; set; } = DayOfWeek.Monday;
+    [Parameter] public bool ShowTime { get; set; }
+    [Parameter] public bool Inline { get; set; }
+    [Parameter] public bool ShowTodayButton { get; set; } = true;
+    [Parameter] public bool ShowClearButton { get; set; } = true;
+
+    // Internal state
+    private DateTime? _selectedDateTime;
+    private TimeSpan _selectedTime;
+
+    protected override void OnInitialized()
+    {
+        Type type = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        
+        if (type != typeof(DateTime) &&
+            type != typeof(DateTimeOffset) &&
+            type != typeof(DateOnly) &&
+            type != typeof(TimeOnly))
+            throw new InvalidOperationException($"Unsupported {GetType()} type param '{type}'.");
+
+        // Initialize view date and selected values
+        if (CurrentValue != null)
+        {
+            (_selectedDateTime, _selectedTime) = ExtractDateAndTime(CurrentValue);
+            if (_selectedDateTime.HasValue)
+                _viewDate = _selectedDateTime.Value;
+        }
+
+        // Auto-detect if we need time picker
+        if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeOnly))
+            ShowTime = ShowTime || type == typeof(TimeOnly);
+
+        base.OnInitialized();
+    }
+
+    public override BUIInputDatePickerVariant DefaultVariant => BUIInputDatePickerVariant.Outlined;
+
+    protected override IReadOnlyDictionary<BUIInputDatePickerVariant, Func<BUIInputDatePicker<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputDatePickerVariant, Func<BUIInputDatePicker<TValue>, RenderFragment>>
+        {
+            [BUIInputDatePickerVariant.Outlined] = p => p.RenderOutlined(),
+            [BUIInputDatePickerVariant.Filled] = p => p.RenderFilled(),
+            [BUIInputDatePickerVariant.Standard] = p => p.RenderStandard()
+        };
+
+    private (DateTime?, TimeSpan) ExtractDateAndTime(TValue value)
+    {
+        if (value == null) return (null, TimeSpan.Zero);
+
+        return value switch
+        {
+            DateTime dt => (dt.Date, dt.TimeOfDay),
+            DateTimeOffset dto => (dto.Date, dto.TimeOfDay),
+            DateOnly dateOnly => (dateOnly.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero),
+            TimeOnly timeOnly => (DateTime.Today, timeOnly.ToTimeSpan()),
+            _ => (null, TimeSpan.Zero)
+        };
+    }
+
+    private TValue? CombineDateAndTime(DateTime? date, TimeSpan time)
+    {
+        if (date == null && typeof(TValue) != typeof(TimeOnly)) return default;
+
+        Type targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        if (targetType == typeof(DateTime))
+            return (TValue)(object)(date!.Value.Date + time);
+            
+        if (targetType == typeof(DateTimeOffset))
+            return (TValue)(object)new DateTimeOffset(date!.Value.Date + time, TimeSpan.Zero);
+            
+        if (targetType == typeof(DateOnly))
+            return (TValue)(object)DateOnly.FromDateTime(date!.Value);
+            
+        if (targetType == typeof(TimeOnly))
+            return (TValue)(object)TimeOnly.FromTimeSpan(time);
+
+        return default;
+    }
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+        Type targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                result = default!;
+                return true;
+            }
+
+            if (targetType == typeof(DateTime))
+            {
+                if (DateTime.TryParse(value, Culture, DateTimeStyles.None, out DateTime dt))
+                {
+                    result = (TValue)(object)dt;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(DateTimeOffset))
+            {
+                if (DateTimeOffset.TryParse(value, Culture, DateTimeStyles.None, out DateTimeOffset dto))
+                {
+                    result = (TValue)(object)dto;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(DateOnly))
+            {
+                if (DateOnly.TryParse(value, Culture, DateTimeStyles.None, out DateOnly dateOnly))
+                {
+                    result = (TValue)(object)dateOnly;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(TimeOnly))
+            {
+                if (TimeOnly.TryParse(value, Culture, DateTimeStyles.None, out TimeOnly timeOnly))
+                {
+                    result = (TValue)(object)timeOnly;
+                    return true;
+                }
+            }
+
+            result = default!;
+            validationErrorMessage = $"Unable to parse '{value}' as {targetType.Name}";
+            return false;
+        }
+        catch (Exception ex)
+        {
+            result = default!;
+            validationErrorMessage = ex.Message;
+            return false;
+        }
+    }
+
+    private string GetDisplayValue()
+    {
+        if (CurrentValue == null) return string.Empty;
+
+        var (date, time) = ExtractDateAndTime(CurrentValue);
+        Type targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+        if (targetType == typeof(TimeOnly))
+            return time.ToString(TimeFormat);
+
+        if (targetType == typeof(DateOnly))
+            return date!.Value.ToString(DateFormat, Culture);
+
+        if (ShowTime && (targetType == typeof(DateTime) || targetType == typeof(DateTimeOffset)))
+            return $"{date!.Value.ToString(DateFormat, Culture)} {time.ToString(TimeFormat)}";
+
+        return date!.Value.ToString(DateFormat, Culture);
+    }
+
+    private void TogglePicker()
+    {
+        if (IsDisabled || IsLoading) return;
+        _isOpen = !_isOpen;
+        
+        if (_isOpen && _selectedDateTime.HasValue)
+            _viewDate = _selectedDateTime.Value;
+    }
+
+    private void SelectDate(DateTime date)
+    {
+        if (IsDateDisabled(date)) return;
+        
+        _selectedDateTime = date;
+        
+        if (!ShowTime || typeof(TValue) == typeof(DateOnly))
+        {
+            CurrentValue = CombineDateAndTime(_selectedDateTime, _selectedTime)!;
+            if (!Inline) _isOpen = false;
+        }
+    }
+
+    private void SelectTime(TimeSpan time)
+    {
+        _selectedTime = time;
+        
+        if (_selectedDateTime.HasValue || typeof(TValue) == typeof(TimeOnly))
+        {
+            CurrentValue = CombineDateAndTime(_selectedDateTime, _selectedTime)!;
+        }
+    }
+
+    private void SelectToday()
+    {
+        SelectDate(DateTime.Today);
+    }
+
+    private void Clear()
+    {
+        CurrentValue = default!;
+        _selectedDateTime = null;
+        _selectedTime = TimeSpan.Zero;
+        _viewDate = DateTime.Today;
+        if (!Inline) _isOpen = false;
+    }
+
+    private bool IsDateDisabled(DateTime date)
+    {
+        if (MinDate.HasValue && date < MinDate.Value) return true;
+        if (MaxDate.HasValue && date > MaxDate.Value) return true;
+        if (DisabledDates?.Contains(date.Date) == true) return true;
+        return false;
+    }
+
+    // Navigation methods
+    private void PreviousMonth() => _viewDate = _viewDate.AddMonths(-1);
+    private void NextMonth() => _viewDate = _viewDate.AddMonths(1);
+    private void PreviousYear() => _viewDate = _viewDate.AddYears(-1);
+    private void NextYear() => _viewDate = _viewDate.AddYears(1);
+
+    private void SetMode(DatePickerMode mode) => _mode = mode;
+    private void SelectMonth(int month)
+    {
+        _viewDate = new DateTime(_viewDate.Year, month, 1);
+        _mode = DatePickerMode.Day;
+    }
+    private void SelectYear(int year)
+    {
+        _viewDate = new DateTime(year, _viewDate.Month, 1);
+        _mode = DatePickerMode.Month;
+    }
+
+    // Render methods
+    private RenderFragment RenderOutlined() => RenderDatePicker();
+    private RenderFragment RenderFilled() => RenderDatePicker();
+    private RenderFragment RenderStandard() => RenderDatePicker();
+
+    private RenderFragment RenderDatePicker() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes" @ref="_pickerContainer">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label for="@_inputId" class="bui-input__label">
+                    @Label
+                    @if (Required)
+                    {
+                        <span class="bui-input__required">*</span>
+                    }
+                </label>
+            }
+
+            @if (!Inline)
+            {
+                <div class="bui-datepicker__input-container" @onclick="TogglePicker">
+                    <input type="text"
+                           id="@_inputId"
+                           value="@GetDisplayValue()"
+                           placeholder="@Placeholder"
+                           readonly
+                           disabled="@IsDisabled"
+                           class="bui-datepicker__input" />
+                    <span class="bui-datepicker__icon">
+                        <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_calendar_today" Size="Size" />
+                    </span>
+
+                    @if (IsLoading && LoadingIndicatorVariant != null)
+                    {
+                        <div class="bui-input__loading">
+                            <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (_isOpen || Inline)
+            {
+                <div class="bui-datepicker__dropdown @(Inline ? "bui-datepicker__dropdown--inline" : "")">
+                    <div class="bui-datepicker__header">
+                        <button class="bui-datepicker__nav-button" @onclick="PreviousYear" type="button">
+                            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" />
+                            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" />
+                        </button>
+                        <button class="bui-datepicker__nav-button" @onclick="PreviousMonth" type="button">
+                            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" />
+                        </button>
+                        
+                        <div class="bui-datepicker__header-title">
+                            <button class="bui-datepicker__header-button" @onclick="() => SetMode(DatePickerMode.Month)" type="button">
+                                @Culture.DateTimeFormat.GetMonthName(_viewDate.Month)
+                            </button>
+                            <button class="bui-datepicker__header-button" @onclick="() => SetMode(DatePickerMode.Year)" type="button">
+                                @_viewDate.Year
+                            </button>
+                        </div>
+                        
+                        <button class="bui-datepicker__nav-button" @onclick="NextMonth" type="button">
+                            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" />
+                        </button>
+                        <button class="bui-datepicker__nav-button" @onclick="NextYear" type="button">
+                            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" />
+                            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" />
+                        </button>
+                    </div>
+
+                    <div class="bui-datepicker__content">
+                        @switch (_mode)
+                        {
+                            case DatePickerMode.Day:
+                                <BUIDatePickerCalendar 
+                                    ViewDate="@_viewDate"
+                                    SelectedDate="@_selectedDateTime"
+                                    MinDate="@MinDate"
+                                    MaxDate="@MaxDate"
+                                    DisabledDates="@DisabledDates"
+                                    FirstDayOfWeek="@FirstDayOfWeek"
+                                    Culture="@Culture"
+                                    OnDateSelected="SelectDate"
+                                    Size="@Size"
+                                    Density="@Density" />
+                                break;
+                                
+                            case DatePickerMode.Month:
+                                <BUIDatePickerMonthPicker
+                                    ViewDate="@_viewDate"
+                                    Culture="@Culture"
+                                    OnMonthSelected="SelectMonth"
+                                    Size="@Size"
+                                    Density="@Density" />
+                                break;
+                                
+                            case DatePickerMode.Year:
+                                <BUIDatePickerYearPicker
+                                    ViewDate="@_viewDate"
+                                    MinYear="@MinDate?.Year"
+                                    MaxYear="@MaxDate?.Year"
+                                    OnYearSelected="SelectYear"
+                                    Size="@Size"
+                                    Density="@Density" />
+                                break;
+                        }
+                        
+                        @if (ShowTime)
+                        {
+                            <div class="bui-datepicker__divider"></div>
+                            <BUIDatePickerTimePicker
+                                Time="@_selectedTime"
+                                OnTimeSelected="SelectTime"
+                                TimeFormat="@TimeFormat"
+                                Culture="@Culture"
+                                Size="@Size"
+                                Density="@Density" />
+                        }
+                    </div>
+
+                    @if (ShowTodayButton || ShowClearButton)
+                    {
+                        <div class="bui-datepicker__footer">
+                            @if (ShowClearButton && CurrentValue != null)
+                            {
+                                <button class="bui-datepicker__footer-button" @onclick="Clear" type="button">
+                                    Clear
+                                </button>
+                            }
+                            @if (ShowTodayButton)
+                            {
+                                <button class="bui-datepicker__footer-button bui-datepicker__footer-button--primary" 
+                                        @onclick="SelectToday" 
+                                        type="button"
+                                        disabled="@IsDateDisabled(DateTime.Today)">
+                                    Today
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
+        </bui-component>
+    };
+
+    private enum DatePickerMode
+    {
+        Day,
+        Month,
+        Year
+    }
+}

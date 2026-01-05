@@ -1,0 +1,40 @@
+﻿@using System.Diagnostics.CodeAnalysis
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@implements IDisposable
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [CascadingParameter(Name = "ParentOptions")] public List<BUIInputDropdownOption>? ParentDropdownOptions { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    [DisallowNull]
+    public object Value { get; set; } = default!;
+
+    [Parameter] public bool Disabled { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (ParentDropdownOptions == null)
+        {
+            throw new InvalidOperationException($"{nameof(BUIInputDropdownOption)} must be used within a BUIInputDropdown.");
+        }
+
+        if (!ParentDropdownOptions.Contains(this))
+        {
+            var newOptions = ParentDropdownOptions;
+            newOptions.Add(this);
+            ParentDropdownOptions = newOptions;
+        }
+    }
+
+    public void Dispose()
+    {
+        ParentDropdownOptions?.Remove(this);
+    }
+}

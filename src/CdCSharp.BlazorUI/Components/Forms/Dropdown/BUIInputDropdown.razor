@@ -1,0 +1,432 @@
+﻿@using System.Collections
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@typeparam TValue
+
+@inherits BUIInputComponentBase<TValue, BUIInputDropdown<TValue>, BUIInputDropdownVariant>
+@implements IHasSize
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasDensity
+@implements IHasElevation
+@implements IHasBorder
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private string _inputId = $"bui-dropdown-{Guid.NewGuid():N}";
+    private bool _isOpen = false;
+    private ElementReference _dropdownContainer;
+    private bool _isMultiple;
+    private Type _elementType = typeof(object);
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasElevation
+    [Parameter] public int? Elevation { get; set; }
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
+
+    // Dropdown specific
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public Func<object?, string>? DisplayFunc { get; set; }
+    [Parameter] public int MaxHeight { get; set; } = 300;
+    [Parameter] public bool CloseOnSelect { get; set; } = true;
+    [Parameter] public bool ShowSelectAll { get; set; } = true;
+    [Parameter] public string SelectAllText { get; set; } = "Select All";
+    [Parameter] public string DeselectAllText { get; set; } = "Deselect All";
+
+    public readonly List<BUIInputDropdownOption> Options = [];
+
+    public override BUIInputDropdownVariant DefaultVariant => BUIInputDropdownVariant.Outlined;
+
+    public BUIInputDropdown()
+    {
+        Type type = typeof(TValue);
+        _isMultiple = type.IsArray || (typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string));
+
+        if (_isMultiple)
+        {
+            // Extract element type from array or IEnumerable
+            if (type.IsArray)
+            {
+                _elementType = type.GetElementType() ?? typeof(object);
+            }
+            else if (type.IsGenericType)
+            {
+                Type[] genericArgs = type.GetGenericArguments();
+                if (genericArgs.Length > 0)
+                {
+                    _elementType = genericArgs[0];
+                }
+            }
+        }
+    }
+
+    protected override IReadOnlyDictionary<BUIInputDropdownVariant, Func<BUIInputDropdown<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputDropdownVariant, Func<BUIInputDropdown<TValue>, RenderFragment>>
+        {
+            [BUIInputDropdownVariant.Outlined] = i => i.RenderOutlined(),
+            [BUIInputDropdownVariant.Filled] = i => i.RenderFilled(),
+            [BUIInputDropdownVariant.Standard] = i => i.RenderStandard()
+        };
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+        result = default!;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            if (_isMultiple)
+            {
+                result = CreateEmptyCollection();
+            }
+            return true;
+        }
+
+        try
+        {
+            if (!_isMultiple)
+            {
+                // Single value parsing
+                if (typeof(TValue) == typeof(string))
+                {
+                    result = (TValue)(object)value;
+                    return true;
+                }
+
+                result = (TValue)Convert.ChangeType(value, typeof(TValue));
+                return true;
+            }
+            else
+            {
+                // Multiple values parsing (comma separated)
+                string[] values = value.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                result = CreateCollectionFromValues(values);
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            validationErrorMessage = $"Unable to parse value: {ex.Message}";
+            return false;
+        }
+    }
+
+    protected override string? FormatValueAsString(TValue? value)
+    {
+        if (value == null) return string.Empty;
+
+        if (_isMultiple)
+        {
+            var values = GetSelectedValues();
+            var displayValues = values.Select(v => GetOptionDisplay(v)).Where(d => !string.IsNullOrEmpty(d));
+            return string.Join(", ", displayValues);
+        }
+
+        return GetOptionDisplay(value);
+    }
+
+    private string GetDisplayValue()
+    {
+        if (CurrentValue == null) return string.Empty;
+
+        if (_isMultiple)
+        {
+            var selectedCount = GetSelectedValues().Count();
+            if (selectedCount == 0) return string.Empty;
+            if (selectedCount == 1)
+            {
+                var firstValue = GetSelectedValues().FirstOrDefault();
+                return GetOptionDisplay(firstValue);
+            }
+            return $"{selectedCount} selected";
+        }
+
+        return GetOptionDisplay(CurrentValue);
+    }
+
+    private string GetOptionDisplay(object? value)
+    {
+        if (value == null) return string.Empty;
+
+        if (DisplayFunc != null)
+            return DisplayFunc(value);
+
+        var option = Options.FirstOrDefault(o => Equals(o.Value, value));
+        if (option?.ChildContent != null)
+            return value.ToString() ?? string.Empty; // In real implementation, we'd extract text from RenderFragment
+
+        return value.ToString() ?? string.Empty;
+    }
+
+    private bool IsSelected(object? value)
+    {
+        if (CurrentValue == null) return false;
+
+        if (!_isMultiple)
+        {
+            return Equals(CurrentValue, value);
+        }
+
+        return GetSelectedValues().Any(v => Equals(v, value));
+    }
+
+    private IEnumerable<object?> GetSelectedValues()
+    {
+        if (CurrentValue == null || !_isMultiple) yield break;
+
+        if (CurrentValue is IEnumerable enumerable and not string)
+        {
+            foreach (var item in enumerable)
+            {
+                yield return item;
+            }
+        }
+    }
+
+    private void ToggleDropdown()
+    {
+        if (IsDisabled || IsLoading) return;
+        _isOpen = !_isOpen;
+    }
+
+    private void SelectOption(object? value)
+    {
+        if (IsDisabled) return;
+
+        if (!_isMultiple)
+        {
+            CurrentValue = (TValue?)value;
+            if (CloseOnSelect)
+                _isOpen = false;
+        }
+        else
+        {
+            var currentValues = GetSelectedValues().ToList();
+
+            if (currentValues.Any(v => Equals(v, value)))
+            {
+                currentValues.RemoveAll(v => Equals(v, value));
+            }
+            else
+            {
+                currentValues.Add(value);
+            }
+
+            CurrentValue = CreateCollectionFromObjects(currentValues);
+        }
+    }
+
+    private void SelectAll()
+    {
+        if (!_isMultiple || IsDisabled) return;
+        CurrentValue = CreateCollectionFromObjects(Options.Select(o => o.Value).ToList());
+    }
+
+    private void DeselectAll()
+    {
+        if (!_isMultiple || IsDisabled) return;
+        CurrentValue = CreateEmptyCollection();
+    }
+
+    private TValue CreateEmptyCollection()
+    {
+        Type type = typeof(TValue);
+
+        if (type.IsArray)
+        {
+            return (TValue)(object)Array.CreateInstance(_elementType, 0);
+        }
+
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+        {
+            return (TValue)Activator.CreateInstance(type)!;
+        }
+
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+        {
+            Type listType = typeof(List<>).MakeGenericType(_elementType);
+            return (TValue)Activator.CreateInstance(listType)!;
+        }
+
+        return default!;
+    }
+
+    private TValue CreateCollectionFromObjects(List<object?> values)
+    {
+        Type type = typeof(TValue);
+
+        if (type.IsArray)
+        {
+            Array array = Array.CreateInstance(_elementType, values.Count);
+            for (int i = 0; i < values.Count; i++)
+            {
+                array.SetValue(values[i], i);
+            }
+            return (TValue)(object)array;
+        }
+
+        if (type.IsGenericType)
+        {
+            Type listType = typeof(List<>).MakeGenericType(_elementType);
+            IList list = (IList)Activator.CreateInstance(listType)!;
+            foreach (var value in values)
+            {
+                list.Add(value);
+            }
+
+            if (type.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                return (TValue)list;
+            }
+
+            return (TValue)(object)list;
+        }
+
+        return default!;
+    }
+
+    private TValue CreateCollectionFromValues(string[] values)
+    {
+        var objects = values.Select(v => Convert.ChangeType(v, _elementType)).ToList();
+        return CreateCollectionFromObjects(objects);
+    }
+
+    private RenderFragment RenderOutlined() => RenderDropdown();
+    private RenderFragment RenderFilled() => RenderDropdown();
+    private RenderFragment RenderStandard() => RenderDropdown();
+
+    private RenderFragment RenderDropdown() => __builder =>
+    {
+        <CascadingValue Value="Options" Name="ParentOptions" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+
+        <bui-component @attributes="ComputedAttributes" @ref="_dropdownContainer">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label for="@_inputId" class="bui-input__label">
+                    @Label
+                    @if (Required)
+                    {
+                        <span class="bui-input__required">*</span>
+                    }
+                </label>
+            }
+
+            <div class="bui-dropdown__container @(_isOpen ? "bui-dropdown__container--open" : "")">
+                <div class="bui-dropdown__trigger" @onclick="ToggleDropdown">
+                    <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
+                        @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
+                    </span>
+                    <span class="bui-dropdown__arrow">
+                        <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
+                    </span>
+
+                    @if (IsLoading && LoadingIndicatorVariant != null)
+                    {
+                        <div class="bui-input__loading">
+                            <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                        </div>
+                    }
+                </div>
+
+                @if (_isOpen)
+                {
+                    <div class="bui-dropdown__menu" style="max-height: @(MaxHeight)px;">
+                        @if (_isMultiple && ShowSelectAll && Options.Count > 0)
+                        {
+                            <div class="bui-dropdown__select-all">
+                                <button class="bui-dropdown__select-all-button"
+                                        @onclick="SelectAll"
+                                        type="button">
+                                    @SelectAllText
+                                </button>
+                                <button class="bui-dropdown__select-all-button"
+                                        @onclick="DeselectAll"
+                                        type="button">
+                                    @DeselectAllText
+                                </button>
+                            </div>
+                        }
+
+                        
+
+                        @foreach (var option in Options)
+                        {
+                            var isSelected = IsSelected(option.Value);
+
+                            <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(Disabled ? "bui-dropdown__option--disabled" : "")"
+                                 @onclick="()=>OptionClicked(option.Value)">
+                                @if (_isMultiple)
+                                {
+                                    <span class="bui-dropdown__checkbox">
+                                        <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
+                                                    Size="@Size" />
+                                    </span>
+                                }
+                                <span class="bui-dropdown__option-content">
+                                    @option.ChildContent
+                                </span>
+                            </div>
+                        }
+
+                        @if (Options.Count == 0)
+                        {
+                            <div class="bui-dropdown__no-options">
+                                No options available
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
+        </bui-component>
+    };
+
+
+    internal void OptionClicked(object? value)
+    {
+        SelectOption(value);
+    }
+}

@@ -113,7 +113,7 @@
                         @bind-Value="_selectedRole" />
     </div>
 
-     @* --- MULTIPLE --- *@
+    @* --- MULTIPLE --- *@
     @* <div class="sample-card">
         <h3>Multiple</h3>
         <BUIInputSelect Label="País"
@@ -122,6 +122,16 @@
                         @bind-Value="_selectedCountries" />
         <p>Seleccionado: @(string.Join(",", _selectedCountries))</p>
     </div>  *@
+
+    <div class="sample-card">
+        <h3>Dropdown</h3>
+        <BUIInputDropdown Label="Rol de Usuario"
+                          @bind-Value="_selectedRoles">
+            <BUIInputDropdownOption Value="UserRole.Admin">Administrador</BUIInputDropdownOption>
+            <BUIInputDropdownOption Value="UserRole.Editor">Editor</BUIInputDropdownOption>
+            <BUIInputDropdownOption Value="UserRole.Guest">Guest</BUIInputDropdownOption>
+        </BUIInputDropdown>
+    </div>
 
 </div>
 
@@ -134,6 +144,7 @@
 
     private List<string> _selectedCountries = new();
     private string[] _selectedCountries2 = [];
+    private List<UserRole> _selectedRoles = [];
 
     private List<BUIInputSelect<string>.SelectOption<string>> _countries = new() {
         new() { Value = "ES", Label = "España" },

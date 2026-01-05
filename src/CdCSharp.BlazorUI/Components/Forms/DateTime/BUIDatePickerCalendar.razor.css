@@ -1,0 +1,85 @@
+﻿/* Calendar styles */
+.bui-calendar {
+    --bui-calendar-scale: 1;
+    --bui-calendar-day-size: calc(36px * var(--bui-calendar-scale));
+    --bui-calendar-gap: calc(4px * var(--bui-calendar-scale) * var(--bui-density-spacing-multiplier, 1));
+}
+
+    .bui-calendar[data-bui-size="small"] {
+        --bui-calendar-scale: 0.75;
+    }
+
+    .bui-calendar[data-bui-size="large"] {
+        --bui-calendar-scale: 1.25;
+    }
+
+.bui-calendar__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--bui-calendar-gap);
+    margin-bottom: var(--bui-calendar-gap);
+}
+
+.bui-calendar__weekday {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: inherit;
+    opacity: 0.6;
+    height: var(--bui-calendar-day-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bui-calendar__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--bui-calendar-gap);
+}
+
+.bui-calendar__day {
+    width: var(--bui-calendar-day-size);
+    height: var(--bui-calendar-day-size);
+    border: none;
+    background: none;
+    color: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease;
+}
+
+    .bui-calendar__day:hover:not(:disabled) {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+[data-theme="dark"] .bui-calendar__day:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.bui-calendar__day--other-month {
+    opacity: 0.3;
+}
+
+.bui-calendar__day--today {
+    font-weight: bold;
+    background-color: rgba(var(--palette-primary), 0.1);
+}
+
+.bui-calendar__day--selected {
+    background-color: var(--palette-primary);
+    color: var(--palette-primarycontrast);
+}
+
+    .bui-calendar__day--selected:hover {
+        filter: brightness(1.1);
+    }
+
+.bui-calendar__day--disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}

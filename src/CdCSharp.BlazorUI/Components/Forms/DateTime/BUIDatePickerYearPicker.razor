@@ -1,0 +1,45 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
+
+@code {
+    [Parameter] public DateTime ViewDate { get; set; }
+    [Parameter] public int? MinYear { get; set; }
+    [Parameter] public int? MaxYear { get; set; }
+    [Parameter] public EventCallback<int> OnYearSelected { get; set; }
+    [Parameter] public SizeEnum Size { get; set; }
+    [Parameter] public DensityEnum Density { get; set; }
+
+    private List<int> GetYears()
+    {
+        var currentYear = ViewDate.Year;
+        var startYear = currentYear - (currentYear % 10) - 10;
+        var endYear = startYear + 30;
+        
+        if (MinYear.HasValue && startYear < MinYear.Value)
+            startYear = MinYear.Value;
+            
+        if (MaxYear.HasValue && endYear > MaxYear.Value)
+            endYear = MaxYear.Value;
+            
+        return Enumerable.Range(startYear, endYear - startYear + 1).ToList();
+    }
+
+    private async Task SelectYear(int year)
+    {
+        await OnYearSelected.InvokeAsync(year);
+    }
+
+    private bool IsCurrentYear(int year) => year == DateTime.Today.Year;
+    private bool IsSelectedYear(int year) => year == ViewDate.Year;
+
+}
+
+<div class="bui-yearpicker" data-bui-size="@Size.ToString().ToLowerInvariant()" data-bui-density="@Density.ToString().ToLowerInvariant()">
+    @foreach (var year in GetYears())
+    {
+        <button class="bui-yearpicker__year @(IsCurrentYear(year) ? "bui-yearpicker__year--current" : "") @(IsSelectedYear(year) ? "bui-yearpicker__year--selected" : "")"
+                @onclick="() => SelectYear(year)"
+                type="button">
+            @year
+        </button>
+    }
+</div>

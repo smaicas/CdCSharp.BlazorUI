@@ -1,0 +1,36 @@
+﻿/* Year picker styles */
+.bui-yearpicker {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.bui-yearpicker__year {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0.75rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 150ms ease;
+}
+
+    .bui-yearpicker__year:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+
+[data-theme="dark"] .bui-yearpicker__year:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.bui-yearpicker__year--current {
+    font-weight: bold;
+    background-color: rgba(var(--palette-primary), 0.1);
+}
+
+.bui-yearpicker__year--selected {
+    background-color: var(--palette-primary);
+    color: var(--palette-primarycontrast);
+}

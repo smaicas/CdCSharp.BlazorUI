@@ -1,0 +1,24 @@
+﻿@page "/components/forms/input-date"
+
+<BUIInputDatePicker @bind-Value="_selectedDateTime"
+                    Label="Seleccionar DateTime"
+                    ShowTime="true" />
+
+<BUIInputDatePicker @bind-Value="_selectedDateTimeOffset"
+                    Label="Seleccionar DateTimeOffset"
+                    ShowTime="true" />
+
+<BUIInputDatePicker @bind-Value="_selectedDate"
+                    Label="Seleccionar DateOnly"
+                    ShowTime="true" />
+
+<BUIInputDatePicker @bind-Value="_selectedTime"
+                    Label="Seleccionar TimeOnly"
+                    ShowTime="true" />
+
+@code {
+    private DateTime? _selectedDateTime;
+    private DateTimeOffset? _selectedDateTimeOffset;
+    private DateOnly? _selectedDate;
+    private TimeOnly? _selectedTime;
+}

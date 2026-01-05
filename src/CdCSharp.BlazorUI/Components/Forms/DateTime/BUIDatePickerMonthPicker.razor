@@ -1,0 +1,31 @@
+﻿@using System.Globalization
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@code {
+    [Parameter] public DateTime ViewDate { get; set; }
+    [Parameter] public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+    [Parameter] public EventCallback<int> OnMonthSelected { get; set; }
+    [Parameter] public SizeEnum Size { get; set; }
+    [Parameter] public DensityEnum Density { get; set; }
+
+    private async Task SelectMonth(int month)
+    {
+        await OnMonthSelected.InvokeAsync(month);
+    }
+
+    private bool IsCurrentMonth(int month) =>
+        month == DateTime.Today.Month && ViewDate.Year == DateTime.Today.Year;
+}
+
+<div class="bui-monthpicker" data-bui-size="@Size.ToString().ToLowerInvariant()" data-bui-density="@Density.ToString().ToLowerInvariant()">
+    @for (int i = 1; i <= 12; i++)
+    {
+        var month = i;
+        <button class="bui-monthpicker__month @(IsCurrentMonth(month) ? "bui-monthpicker__month--current" : "")"
+                @onclick="() => SelectMonth(month)"
+                type="button">
+            @Culture.DateTimeFormat.GetAbbreviatedMonthName(month)
+        </button>
+    }
+</div>
