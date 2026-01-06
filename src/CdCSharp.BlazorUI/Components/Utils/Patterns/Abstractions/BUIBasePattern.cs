@@ -9,7 +9,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     protected PatternCallbacksRelay? _jsCallbacksRelay;
     protected PatternState _patternState = new();
 
-    private string _text = string.Empty;
+    private string? _text = null;
     private bool _isInitialized = false;
 
     [Parameter, EditorRequired]
@@ -19,13 +19,13 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     public bool Editable { get; set; } = true;
 
     [Parameter]
-    public EventCallback<string> TextChanged { get; set; }
+    public EventCallback<string?> TextChanged { get; set; }
 
     [Inject]
     protected IPatternJsInterop Js { get; set; } = default!;
 
     [Parameter]
-    public string Text
+    public string? Text
     {
         get => _text;
         set
@@ -59,7 +59,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     }
 
     protected abstract PatternState CreatePatternState();
-    protected abstract void InitializeFromText(string text);
+    protected abstract void InitializeFromText(string? text);
     protected abstract bool ValidateComplete(string text);
 
     public async Task OnSpanInput(int index, string value)
@@ -82,6 +82,9 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         // Update state
         span.Value = filtered;
         StateHasChanged();
+
+        // Always notify on input to update Text to null if incomplete
+        await NotifyTextChanged();
     }
 
     public async Task<bool> OnSpanComplete(int index, string value)
@@ -95,15 +98,16 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
         if (!isValid)
         {
-            // Reset to empty and update JS
+            // Reset to placeholder and update JS
             span.Value = string.Empty;
-            await Js.UpdateSpanValueAsync(ComponentId, index, "");
+            await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
             await Js.SelectSpanContentAsync(ComponentId, index);
             StateHasChanged();
+            await NotifyTextChanged();
             return false;
         }
 
-        // Update text if all editable spans have values
+        // Update text
         await NotifyTextChanged();
         return true;
     }
@@ -122,12 +126,13 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
         SpanState span = _patternState.Spans[index];
 
-        // If incomplete, clear it
+        // If incomplete or empty, set to placeholder
         if (span.IsEditable && (!span.IsComplete || string.IsNullOrEmpty(span.Value)))
         {
             span.Value = string.Empty;
             await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
             StateHasChanged();
+            await NotifyTextChanged();
         }
     }
 
@@ -179,9 +184,10 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
     private async Task NotifyTextChanged()
     {
-        string actualText = _patternState.GetActualText();
+        // Get the actual text only if pattern is complete
+        string? actualText = _patternState.IsComplete ? _patternState.GetActualText() : null;
 
-        if (!string.IsNullOrEmpty(actualText) && actualText != _text)
+        if (_text != actualText)
         {
             _text = actualText;
             await TextChanged.InvokeAsync(_text);

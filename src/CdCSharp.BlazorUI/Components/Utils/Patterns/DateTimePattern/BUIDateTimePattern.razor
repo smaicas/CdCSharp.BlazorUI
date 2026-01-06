@@ -16,6 +16,7 @@
               data-maxlength="@span.MaxLength">@span.DisplayValue</span>
     }
 </div>
+@(Text != null ? @Text : "null")
 
 @code {
     private ParsedDatePattern? _parsedPattern;
@@ -49,9 +50,9 @@
         return state;
     }
 
-    protected override void InitializeFromText(string text)
+    protected override void InitializeFromText(string? text)
     {
-        // Reset all spans
+        // Reset all spans to empty (showing placeholders)
         foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
         {
             span.Value = string.Empty;
@@ -63,15 +64,15 @@
         // Try to parse with the format
         if (DateTime.TryParseExact(text, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
         {
-            int componentIndex = 0;
-            foreach (SpanState span in _patternState.Spans)
+            int spanIndex = 0;
+            foreach (DateComponent component in _parsedPattern.Components)
             {
-                if (span.IsEditable && componentIndex < _parsedPattern.Components.Count)
+                if (component.Type != DateComponentType.Separator && spanIndex < _patternState.Spans.Count)
                 {
-                    DateComponent component = _parsedPattern.Components[componentIndex];
+                    SpanState span = _patternState.Spans[spanIndex];
                     span.Value = GetComponentValue(component, date);
                 }
-                componentIndex++;
+                spanIndex++;
             }
         }
     }
@@ -166,6 +167,11 @@
         outline: none;
         color: #333;
     }
+
+        .pattern-editable:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+        }
 
         .pattern-editable:focus {
             background-color: #e3f2fd;

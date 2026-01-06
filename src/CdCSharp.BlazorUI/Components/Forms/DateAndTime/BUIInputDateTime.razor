@@ -23,6 +23,13 @@
     </button>
 </div>
 
+@if (EditContext != null && ValueExpression != null)
+{
+    <div class="bui-input__validation">
+        <ValidationMessage For="ValueExpression" />
+    </div>
+}
+
 @if (IsOpen)
 {
     <div class="picker-overlay" @onclick="HandleOverlayClick" @onclick:stopPropagation="true">
@@ -154,7 +161,7 @@
     {
         Type type = UnderlyingType;
 
-        object newValue = type switch
+        object? newValue = type switch
         {
             Type t when t == typeof(DateOnly) => DateValue,
             Type t when t == typeof(TimeOnly) => TimeValue,
@@ -163,7 +170,9 @@
             _ => throw new InvalidOperationException($"Unsupported type: {type}")
         };
 
-        CurrentValue = (TValue)newValue;
+        // EditContext?.NotifyFieldChanged(FieldIdentifier);
+
+        CurrentValue = (TValue?)newValue;
         await Task.CompletedTask;
     }
 

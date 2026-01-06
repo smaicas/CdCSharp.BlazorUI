@@ -1,44 +1,86 @@
 ﻿@page "/components/forms/input-date"
 @using CdCSharp.BlazorUI.Components.Forms
+@using System.ComponentModel.DataAnnotations
 
 <h3>Test de componentes de fecha</h3>
 
-<div style="display: flex; flex-direction: column; gap: 1rem;">
-    <div>
-        <span>DateOnly:</span>
-        <BUIInputDateTime @bind-Value="dateOnlyValue" />
-        <p>Valor: @dateOnlyValue</p>
-    </div>
+<EditForm Model="@model">
+    <DataAnnotationsValidator />
 
-    <div>
-        <span>TimeOnly:</span>
-        <BUIInputDateTime @bind-Value="timeOnlyValue" />
-        <p>Valor: @timeOnlyValue</p>
-    </div>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
 
-    <div>
-        <span>DateTime:</span>
-        <BUIInputDateTime @bind-Value="dateTimeValue" />
-        <p>Valor: @dateTimeValue</p>
-    </div>
+        <div>
+            <span>DateOnly:</span>
+            <BUIInputDateTime TValue="DateOnly"
+                              @bind-Value="model.DateOnly" />
+        </div>
+        <span> @model.DateOnly</span>
 
-    <div>
-        <span>DateTimeOffset:</span>
-        <BUIInputDateTime @bind-Value="dateTimeOffsetValue" />
-        <p>Valor: @dateTimeOffsetValue</p>
-    </div>
+        <div>
+            <span>TimeOnly:</span>
+            <BUIInputDateTime TValue="TimeOnly"
+                              @bind-Value="model.TimeOnly" />
+        </div>
+        <span> @model.TimeOnly</span>
 
-    <div>
-        <span>Nullable DateTime:</span>
-        <BUIInputDateTime @bind-Value="nullableDateTimeValue" />
-        <p>Valor: @(nullableDateTimeValue?.ToString() ?? "null")</p>
+        <div>
+            <span>DateTime:</span>
+            <BUIInputDateTime TValue="DateTime"
+                              @bind-Value="model.DateTime" />
+        </div>
+        <span> @model.DateTime</span>
+
+        <div>
+            <span>DateTimeOffset:</span>
+            <BUIInputDateTime TValue="DateTimeOffset"
+                              @bind-Value="model.DateTimeOffset" />
+        </div>
+        <span> @model.DateTimeOffset</span>
+
+        <div>
+            <span>Nullable DateTime:</span>
+            <BUIInputDateTime TValue="DateTime ?"
+                              @bind-Value="model.NullableDateTime" />
+        </div>
+        <span> @model.NullableDateTime</span>
+
     </div>
-</div>
+</EditForm>
+
+<p>
+    <strong>Valores actuales:</strong><br />
+    DateOnly: @model.DateOnly<br />
+    TimeOnly: @model.TimeOnly<br />
+    DateTime: @model.DateTime<br />
+    DateTimeOffset: @model.DateTimeOffset<br />
+    Nullable: @(model.NullableDateTime?.ToString() ?? "null")
+</p>
 
 @code {
-    private DateOnly dateOnlyValue = DateOnly.FromDateTime(DateTime.Now);
-    private TimeOnly timeOnlyValue = TimeOnly.FromDateTime(DateTime.Now);
-    private DateTime dateTimeValue = DateTime.Now;
-    private DateTimeOffset dateTimeOffsetValue = DateTimeOffset.Now;
-    private DateTime? nullableDateTimeValue = DateTime.Now;
+    private DateTestModel model = new()
+    {
+        DateOnly = DateOnly.FromDateTime(DateTime.Now),
+        TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
+        DateTime = DateTime.Now,
+        DateTimeOffset = DateTimeOffset.Now,
+        NullableDateTime = DateTime.Now
+    };
+
+    public class DateTestModel
+    {
+        [Required]
+        public DateOnly DateOnly { get; set; }
+
+        [Required]
+        public TimeOnly TimeOnly { get; set; }
+
+        [Required]
+        public DateTime DateTime { get; set; }
+
+        [Required]
+        public DateTimeOffset DateTimeOffset { get; set; }
+
+        [Required]
+        public DateTime? NullableDateTime { get; set; }
+    }
 }
