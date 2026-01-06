@@ -1,7 +1,9 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
 
-public interface ITextPatternJsCallback
+public interface IPatternJsCallback
 {
-    Task NotifyTextChanged(string text);
-    Task<bool> ValidatePartial(int index, string text);
+    Task HandleSpanInput(int index, string value);
+    Task HandleSpanFocus(int index);
+    Task HandleSpanBlur(int index);
+    Task HandlePaste(string text);
 }

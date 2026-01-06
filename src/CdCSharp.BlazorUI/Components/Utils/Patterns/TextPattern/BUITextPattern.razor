@@ -5,63 +5,204 @@
 @namespace CdCSharp.BlazorUI.Components.Utils
 
 @inherits BUIBasePattern
-<div @ref="_containerBox"></div>
+
+<div @ref="_containerBox" class="pattern-container">
+    @foreach (var span in _patternState.Spans)
+    {
+        <span @key="@($"span_{span.Index}")"
+              class="@GetSpanClass(span)"
+              contenteditable="@(span.IsEditable && Editable ? "true" : "false")"
+              data-index="@span.Index"
+              data-pattern="@span.Pattern"
+              data-maxlength="@span.MaxLength">@span.DisplayValue</span>
+    }
+</div>
 
 @code {
+
     [Parameter]
     public Func<string, bool>? IsValidFunction { get; set; }
 
-    protected override List<ElementPattern> PreparePatterns()
+    private Regex? _compiledRegex;
+    private List<string> _patternParts = new();
+
+    private string GetSpanClass(SpanState span)
     {
-        var result = new List<ElementPattern>();
+        return span.IsSeparator ? "pattern-separator" : "pattern-editable";
+    }
 
-        if (string.IsNullOrEmpty(Text) || string.IsNullOrEmpty(Format))
-            return result;
+    protected override PatternState CreatePatternState()
+    {
+        PatternState state = new();
 
-        string regex = TextPatternRegexBuilder.Build(Format);
-        var match = Regex.Match(Text, regex);
+        if (string.IsNullOrEmpty(Format))
+            return state;
 
-        if (!match.Success) return result;
+        // Build regex and extract pattern parts
+        string regexPattern = TextPatternRegexBuilder.Build(Format);
+        _compiledRegex = new Regex(regexPattern);
 
-        string[] patternParts = regex.Split(")").Select(p => $"{p})").ToArray();
-        int charIndex = 0;
+        // Parse the format to create spans
+        List<TextPatternPart> parts = ParseTextFormat(Format);
+        int spanIndex = 0;
 
+        foreach (TextPatternPart part in parts)
+        {
+            SpanState span = new()
+            {
+                Index = spanIndex++,
+                IsSeparator = part.IsSeparator,
+                IsEditable = !part.IsSeparator,
+                Pattern = part.IsNumeric ? "d" : (part.IsAlpha ? "w" : ""),
+                MaxLength = part.Length,
+                DefaultValue = part.DefaultValue
+            };
+
+            if (span.IsSeparator)
+            {
+                span.Value = part.DefaultValue;
+            }
+
+            state.Spans.Add(span);
+        }
+
+        return state;
+    }
+
+    protected override void InitializeFromText(string text)
+    {
+        if (string.IsNullOrEmpty(text) || _compiledRegex == null)
+        {
+            // Reset all editable spans to empty
+            foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
+            {
+                span.Value = string.Empty;
+            }
+            return;
+        }
+
+        // Try to match the text with the pattern
+        Match match = _compiledRegex.Match(text);
+
+        if (!match.Success)
+        {
+            // Reset if doesn't match
+            foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
+            {
+                span.Value = string.Empty;
+            }
+            return;
+        }
+
+        // Extract values from regex groups
+        int spanIndex = 0;
         for (int i = 1; i < match.Groups.Count; i++)
         {
             string value = match.Groups[i].Value;
-            string defaultValue = DefaultText.Length > charIndex
-                ? DefaultText.Substring(charIndex, Math.Min(value.Length, DefaultText.Length - charIndex))
-                : "";
 
-            charIndex += value.Length;
-            bool isSeparator = !Regex.IsMatch(value, @"^[a-zA-Z0-9]+$");
+            // Find the next editable span
+            while (spanIndex < _patternState.Spans.Count && !_patternState.Spans[spanIndex].IsEditable)
+            {
+                spanIndex++;
+            }
 
-            result.Add(new ElementPattern(
-                patternParts[i - 1],
-                value,
-                value.Length,
-                defaultValue,
-                isSeparator,
-                Editable && !isSeparator
-            ));
+            if (spanIndex < _patternState.Spans.Count)
+            {
+                _patternState.Spans[spanIndex].Value = value;
+                spanIndex++;
+            }
         }
-
-        return result;
     }
 
-    public override Task NotifyTextChanged(string text)
+    protected override bool ValidateSpan(int index, string value)
     {
-        string regex = TextPatternRegexBuilder.Build(Format);
-
-        if (Regex.IsMatch(text, regex) &&
-            (IsValidFunction == null || IsValidFunction(text)))
-        {
-            Text = text;
-        }
-
-        return Task.CompletedTask;
+        // For text pattern, validation is based on length and character type
+        // The pattern filtering already ensures correct character types
+        SpanState span = _patternState.Spans[index];
+        return value.Length <= span.MaxLength;
     }
 
-    public override Task<bool> ValidatePartial(int index, string text)
-        => Task.FromResult(true);
+    protected override bool ValidateComplete(string text)
+    {
+        if (_compiledRegex == null)
+            return false;
+
+        Match match = _compiledRegex.Match(text);
+
+        if (!match.Success)
+            return false;
+
+        // Additional validation if provided
+        if (IsValidFunction != null)
+        {
+            return IsValidFunction(text);
+        }
+
+        return true;
+    }
+
+    private List<TextPatternPart> ParseTextFormat(string format)
+    {
+        List<TextPatternPart> parts = new();
+        int i = 0;
+
+        while (i < format.Length)
+        {
+            char c = format[i];
+
+            if (char.IsLetter(c))
+            {
+                // Count consecutive letters
+                int start = i;
+                while (i < format.Length && char.IsLetter(format[i]))
+                    i++;
+
+                parts.Add(new TextPatternPart
+                {
+                    IsAlpha = true,
+                    Length = i - start,
+                    DefaultValue = new string(char.ToUpper(format[start]), i - start)
+                });
+            }
+            else if (char.IsDigit(c))
+            {
+                // Count consecutive digits
+                int start = i;
+                while (i < format.Length && char.IsDigit(format[i]))
+                    i++;
+
+                parts.Add(new TextPatternPart
+                {
+                    IsNumeric = true,
+                    Length = i - start,
+                    DefaultValue = new string('0', i - start)
+                });
+            }
+            else
+            {
+                // Separator
+                int start = i;
+                while (i < format.Length && !char.IsLetterOrDigit(format[i]))
+                    i++;
+
+                parts.Add(new TextPatternPart
+                {
+                    IsSeparator = true,
+                    Length = i - start,
+                    DefaultValue = format.Substring(start, i - start)
+                });
+            }
+        }
+
+        return parts;
+    }
+
+    private class TextPatternPart
+    {
+        public bool IsSeparator { get; set; }
+        public bool IsAlpha { get; set; }
+        public bool IsNumeric { get; set; }
+        public int Length { get; set; }
+        public string DefaultValue { get; set; } = string.Empty;
+    }
 }

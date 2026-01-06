@@ -1,358 +1,253 @@
-export interface ElementPattern {
-    pattern: string;
-    value: string;
-    length: number;
-    defaultValue: string;
-    isSeparator: boolean;
-    isEditable: boolean;
+interface PatternCallbacksRelay {
+    invokeMethodAsync(methodName: string, ...args: any[]): Promise<any>;
 }
 
-const textPatternEvents = {
-    click: new WeakMap<HTMLSpanElement, EventListener>(),
-    input: new WeakMap<HTMLSpanElement, EventListener>(),
-    blur: new WeakMap<HTMLSpanElement, EventListener>(),
-    keydown: new WeakMap<HTMLSpanElement, EventListener>()
-};
-
-export async function TextPatternAddDynamic(
-    containerBox: HTMLDivElement,
-    elements: Array<ElementPattern>,
-    dotnet: any,
-    dotnetNotifyChangeTextCallback: string,
-    dotnetValidatePartialCallback: string): Promise<void> {
-
-    if (!containerBox || !containerBox.appendChild) {
-        return;
-    }
-
-    cleanupContainer(containerBox);
-
-    containerBox.innerHTML = '';
-    containerBox.classList.add('text-pattern-container');
-
-    let editableIndex = 0;
-
-    for (const element of elements) {
-        const span = document.createElement('span');
-        span.innerText = element.value;
-        span.classList.add(element.isSeparator ? 'pattern-separator' : 'pattern-component');
-
-        if (element.isSeparator) {
-            containerBox.appendChild(span);
-            continue;
-        }
-
-        if (element.isEditable) {
-            span.contentEditable = 'true';
-            span.dataset.index = editableIndex.toString();
-            span.dataset.length = element.length.toString();
-            span.dataset.defaultValue = element.defaultValue;
-
-            addTextPatternEvents(
-                span,
-                editableIndex,
-                containerBox,
-                element,
-                dotnet,
-                dotnetNotifyChangeTextCallback,
-                dotnetValidatePartialCallback);
-
-            editableIndex++;
-        }
-
-        containerBox.appendChild(span);
-    }
-}
-
-function cleanupContainer(containerBox: HTMLDivElement) {
-    const spans = containerBox.querySelectorAll('span[contenteditable]');
-    spans.forEach(span => {
-        removeAllEvents(span as HTMLSpanElement);
-    });
-}
-
-function addTextPatternEvents(
-    span: HTMLSpanElement,
-    index: number,
-    containerBox: HTMLDivElement,
-    elementPattern: ElementPattern,
-    dotnet: any,
-    notifyCallback: string,
-    validateCallback: string) {
-
-    addEvent(span, 'click', textPatternEvents.click, () => selectTextOnClick(span));
-
-    addEvent(span, 'input', textPatternEvents.input, () =>
-        handleInput(
-            span,
-            index,
-            containerBox,
-            elementPattern,
-            dotnet,
-            notifyCallback,
-            validateCallback));
-
-    addEvent(span, 'blur', textPatternEvents.blur, () =>
-        setDefaultValueIfInvalid(span, elementPattern, dotnet, notifyCallback, containerBox));
-
-    addEvent(span, 'keydown', textPatternEvents.keydown, (e) =>
-        handleKeyDown(e as KeyboardEvent, span, containerBox));
-}
-
-function addEvent(
-    span: HTMLSpanElement,
-    type: keyof typeof textPatternEvents,
-    map: WeakMap<HTMLSpanElement, EventListener>,
-    handler: EventListener) {
-
-    const existingHandler = map.get(span);
-    if (existingHandler) {
-        span.removeEventListener(type, existingHandler);
-    }
-
-    span.addEventListener(type, handler);
-    map.set(span, handler);
-}
-
-function removeAllEvents(span: HTMLSpanElement) {
-    const eventTypes: Array<keyof typeof textPatternEvents> = ['click', 'input', 'blur', 'keydown'];
-
-    eventTypes.forEach(type => {
-        const handler = textPatternEvents[type].get(span);
-        if (handler) {
-            span.removeEventListener(type, handler);
-            textPatternEvents[type].delete(span);
-        }
-    });
-}
-
-function handleInput(
-    span: HTMLSpanElement,
-    index: number,
-    containerBox: HTMLDivElement,
-    elementPattern: ElementPattern,
-    dotnet: any,
-    notifyCallback: string,
-    validateCallback: string) {
-
-    if (span.innerText.length === 0) {
-        return;
-    }
-
-    const cursor = getCursorPositionWithinSpan(span);
-
-    const filtered = filterTextByPattern(
-        span.innerText,
-        elementPattern.pattern,
-        cursor,
-        elementPattern.length);
-
-    span.innerText = filtered.text;
-    setCursorPositionWithinSpan(span, filtered.cursor);
-
-    if (span.innerText.length >= elementPattern.length) {
-        dotnet.invokeMethodAsync(validateCallback, index, span.innerText)
-            .then((valid: boolean) => {
-                if (valid) {
-                    moveToNext(containerBox, span);
-                } else {
-                    span.innerText = elementPattern.defaultValue;
-                    selectTextOnClick(span);
-                }
-            })
-            .catch((error: any) => {
-                console.error('Validation error:', error);
-            });
-    }
-
-    notifyDotNet(dotnet, notifyCallback, containerBox.innerText);
-}
-
-function filterTextByPattern(
-    text: string,
-    pattern: string,
-    cursor: number,
-    maxLength: number): { text: string; cursor: number } {
-
-    const flattened = pattern.replace(/[\\\(\)\^\$]/g, '');
-    const allowed = flattened.substring(0, maxLength).split('');
-
-    let result = '';
-    let newCursor = cursor;
-
-    for (let i = 0; i < text.length && i < allowed.length; i++) {
-        const ch = text[i];
-        const p = allowed[i];
-
-        const valid =
-            (p === 'w' && /[a-zA-Z]/.test(ch)) ||
-            (p === 'd' && /[0-9]/.test(ch));
-
-        if (valid) {
-            result += ch;
-        } else {
-            newCursor = Math.max(0, newCursor - 1);
-        }
-    }
-
-    return {
-        text: result.substring(0, maxLength),
-        cursor: Math.min(newCursor, result.length)
+interface PatternInstance {
+    container: HTMLDivElement;
+    dotnetRef: PatternCallbacksRelay;
+    handlers: {
+        paste: (e: ClipboardEvent) => void;
+        keydown: (e: KeyboardEvent) => void;
+        input: (e: Event) => void;
+        focus: (e: FocusEvent) => void;
+        blur: (e: FocusEvent) => void;
     };
 }
 
-function setDefaultValueIfInvalid(
-    span: HTMLSpanElement,
-    elementPattern: ElementPattern,
-    dotnet: any,
-    callback: string,
-    containerBox: HTMLDivElement) {
+const patterns: Map<string, PatternInstance> = new Map();
 
-    if (span.innerText.length !== elementPattern.length) {
-        span.innerText = elementPattern.defaultValue;
-        notifyDotNet(dotnet, callback, containerBox.innerText);
-    }
+export function initializePattern(
+    container: HTMLDivElement,
+    dotnet: PatternCallbacksRelay,
+    componentId: string
+): void {
+    if (!container || !componentId) return;
+
+    // Clean up any existing instance
+    disposePattern(componentId);
+
+    // Create handlers bound to this instance
+    const handlers = {
+        paste: async (e: ClipboardEvent) => await handlePaste(e, dotnet),
+        keydown: async (e: KeyboardEvent) => await handleKeyDown(e, componentId),
+        input: async (e: Event) => await handleInput(e, dotnet),
+        focus: async (e: FocusEvent) => await handleFocus(e, dotnet),
+        blur: async (e: FocusEvent) => await handleBlur(e, dotnet)
+    };
+
+    // Add event listeners
+    container.addEventListener('paste', handlers.paste);
+    container.addEventListener('keydown', handlers.keydown);
+    container.addEventListener('input', handlers.input);
+    container.addEventListener('focus', handlers.focus, true);
+    container.addEventListener('blur', handlers.blur, true);
+
+    // Store the instance
+    patterns.set(componentId, {
+        container,
+        dotnetRef: dotnet,
+        handlers
+    });
 }
 
-function notifyDotNet(dotnet: any, callback: string, value: string) {
-    if (dotnet && callback) {
-        dotnet.invokeMethodAsync(callback, value)
-            .catch((error: any) => {
-                console.error('DotNet notification error:', error);
-            });
-    }
+async function handleInput(e: Event, dotnetRef: PatternCallbacksRelay): Promise<void> {
+    const target = e.target as HTMLElement;
+    if (!target || target.contentEditable !== 'true') return;
+
+    const index = parseInt(target.dataset.index || '-1');
+    if (index === -1) return;
+
+    const value = target.textContent || '';
+
+    // Small delay to ensure the cursor position is handled after the DOM update
+    await dotnetRef.invokeMethodAsync('HandleSpanInput', index, value)
+        .catch(error => console.error('Input callback error:', error));
 }
 
-function moveToNext(containerBox: HTMLDivElement, span: HTMLSpanElement) {
-    const next = findNextEditableBlock(containerBox, span);
-    if (next) {
-        setTimeout(() => {
-            next.click();
-            selectTextOnClick(next);
-        }, 10);
-    }
+async function handleFocus(e: FocusEvent, dotnetRef: PatternCallbacksRelay): Promise<void> {
+    const target = e.target as HTMLElement;
+    if (!target || target.contentEditable !== 'true') return;
+
+    const index = parseInt(target.dataset.index || '-1');
+    if (index === -1) return;
+
+    await dotnetRef.invokeMethodAsync('HandleSpanFocus', index)
+        .catch(error => console.error('Focus callback error:', error));
 }
 
-function handleKeyDown(event: KeyboardEvent, span: HTMLSpanElement, containerBox: HTMLDivElement) {
-    const cursor = getCursorPositionWithinSpan(span);
-    const len = span.innerText.length;
+async function handleBlur(e: FocusEvent, dotnetRef: PatternCallbacksRelay): Promise<void> {
+    const target = e.target as HTMLElement;
+    if (!target || target.contentEditable !== 'true') return;
 
-    if (event.key === 'ArrowLeft' && cursor === 0) {
-        event.preventDefault();
-        const prev = findPreviousEditableBlock(containerBox, span);
-        if (prev) {
-            prev.focus();
-            placeCaretAtEnd(prev);
+    const index = parseInt(target.dataset.index || '-1');
+    if (index === -1) return;
+
+    await dotnetRef.invokeMethodAsync('HandleSpanBlur', index)
+        .catch(error => console.error('Blur callback error:', error));
+}
+
+async function handlePaste(e: ClipboardEvent, dotnetRef: PatternCallbacksRelay): Promise<void> {
+    e.preventDefault();
+
+    if (!e.clipboardData) return;
+
+    const text = e.clipboardData.getData('text');
+
+    await dotnetRef.invokeMethodAsync('HandlePaste', text)
+        .catch(error => console.error('Paste callback error:', error));
+}
+
+async function handleKeyDown(e: KeyboardEvent, componentId: string): Promise<void> {
+    const target = e.target as HTMLElement;
+    if (!target || target.contentEditable !== 'true') return;
+
+    const index = parseInt(target.dataset.index || '-1');
+    if (index === -1) return;
+
+    if (e.key === 'Tab') {
+        e.preventDefault();
+
+        if (e.shiftKey) {
+            focusPreviousSpan(componentId, index);
+        } else {
+            focusNextSpan(componentId, index);
         }
     }
+}
 
-    if (event.key === 'ArrowRight' && cursor === len) {
-        event.preventDefault();
-        const next = findNextEditableBlock(containerBox, span);
-        if (next) {
-            next.focus();
-            placeCaretAtStart(next);
-        }
-    }
+export function updateSpanValue(componentId: string, index: number, value: string): void {
+    const instance = patterns.get(componentId);
+    if (!instance) return;
 
-    if (event.key === 'Backspace' && cursor === 0 && len === 0) {
-        event.preventDefault();
-        const prev = findPreviousEditableBlock(containerBox, span);
-        if (prev) {
-            prev.focus();
-            placeCaretAtEnd(prev);
+    const span = getSpanByIndex(instance.container, index);
+    if (span && span.textContent !== value) {
+        // Update the content
+        span.textContent = value;
+
+        // If the span is focused, position cursor at the end of the new value
+        if (document.activeElement === span) {
+            setCursorPosition(span, value.length);
         }
     }
 }
 
-function selectTextOnClick(span: HTMLSpanElement) {
+export function selectSpanContent(componentId: string, index: number): void {
+    const instance = patterns.get(componentId);
+    if (!instance) return;
+
+    const span = getSpanByIndex(instance.container, index);
+    if (!span) return;
+
     const range = document.createRange();
     range.selectNodeContents(span);
-    const sel = window.getSelection();
-    if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(range);
+
+    const selection = window.getSelection();
+    if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
     }
 }
 
-function getCursorPositionWithinSpan(span: HTMLElement): number {
-    const sel = window.getSelection();
-    if (!sel || sel.rangeCount === 0) return 0;
+export function focusSpan(componentId: string, index: number): void {
+    const instance = patterns.get(componentId);
+    if (!instance) return;
 
-    try {
-        const range = sel.getRangeAt(0);
-        const pre = range.cloneRange();
-        pre.selectNodeContents(span);
-        pre.setEnd(range.startContainer, range.startOffset);
-        return pre.toString().length;
-    } catch {
-        return 0;
+    const span = getSpanByIndex(instance.container, index);
+    if (span) {
+        span.focus();
+        setTimeout(() => selectSpanContent(componentId, index), 10);
     }
 }
 
-function setCursorPositionWithinSpan(span: HTMLElement, position: number) {
+function focusNextSpan(componentId: string, currentIndex: number): void {
+    const instance = patterns.get(componentId);
+    if (!instance) return;
+
+    const spans = getEditableSpans(instance.container);
+    const currentSpanIndex = spans.findIndex(s =>
+        parseInt(s.dataset.index || '-1') === currentIndex
+    );
+
+    if (currentSpanIndex >= 0 && currentSpanIndex < spans.length - 1) {
+        const nextSpan = spans[currentSpanIndex + 1];
+        const nextIndex = parseInt(nextSpan.dataset.index || '-1');
+        if (nextIndex >= 0) {
+            focusSpan(componentId, nextIndex);
+        }
+    }
+}
+
+function focusPreviousSpan(componentId: string, currentIndex: number): void {
+    const instance = patterns.get(componentId);
+    if (!instance) return;
+
+    const spans = getEditableSpans(instance.container);
+    const currentSpanIndex = spans.findIndex(s =>
+        parseInt(s.dataset.index || '-1') === currentIndex
+    );
+
+    if (currentSpanIndex > 0) {
+        const prevSpan = spans[currentSpanIndex - 1];
+        const prevIndex = parseInt(prevSpan.dataset.index || '-1');
+        if (prevIndex >= 0) {
+            focusSpan(componentId, prevIndex);
+        }
+    }
+}
+
+function getSpanByIndex(container: HTMLDivElement, index: number): HTMLSpanElement | null {
+    return container.querySelector(`[data-index="${index}"]`);
+}
+
+function getEditableSpans(container: HTMLDivElement): HTMLSpanElement[] {
+    return Array.from(
+        container.querySelectorAll('span[contenteditable="true"]')
+    );
+}
+
+function setCursorPosition(element: HTMLElement, position: number): void {
+    const selection = window.getSelection();
+    if (!selection) return;
+
+    // Ensure the element has focus
+    if (document.activeElement !== element) {
+        element.focus();
+    }
+
     const range = document.createRange();
-    const sel = window.getSelection();
 
-    if (!sel) return;
+    // Handle empty element or text node
+    if (element.childNodes.length === 0) {
+        // Create a text node if element is empty
+        const textNode = document.createTextNode('');
+        element.appendChild(textNode);
+    }
+
+    const textNode = element.childNodes[0];
+    const maxPosition = textNode.textContent?.length || 0;
+    const safePosition = Math.min(position, maxPosition);
 
     try {
-        const textNode = span.childNodes[0] || span;
-        const maxPosition = span.textContent?.length ?? 0;
-        const safePosition = Math.min(position, maxPosition);
-
         range.setStart(textNode, safePosition);
         range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    } catch {
-        placeCaretAtEnd(span);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    } catch (error) {
+        console.debug('Could not set cursor position:', error);
     }
 }
 
-function findNextEditableBlock(containerBox: HTMLDivElement, current: HTMLSpanElement): HTMLSpanElement | null {
-    let found = false;
-    for (const child of containerBox.children) {
-        if (child === current) {
-            found = true;
-        } else if (found && child instanceof HTMLSpanElement && child.contentEditable === 'true') {
-            return child;
-        }
-    }
-    return null;
-}
+export function disposePattern(componentId: string): void {
+    const instance = patterns.get(componentId);
+    if (!instance) return;
 
-function findPreviousEditableBlock(containerBox: HTMLDivElement, current: HTMLSpanElement): HTMLSpanElement | null {
-    let prev: HTMLSpanElement | null = null;
-    for (const child of containerBox.children) {
-        if (child === current) {
-            return prev;
-        }
-        if (child instanceof HTMLSpanElement && child.contentEditable === 'true') {
-            prev = child;
-        }
-    }
-    return null;
-}
+    // Remove event listeners
+    instance.container.removeEventListener('paste', instance.handlers.paste);
+    instance.container.removeEventListener('keydown', instance.handlers.keydown);
+    instance.container.removeEventListener('input', instance.handlers.input);
+    instance.container.removeEventListener('focus', instance.handlers.focus, true);
+    instance.container.removeEventListener('blur', instance.handlers.blur, true);
 
-function placeCaretAtEnd(el: HTMLElement) {
-    const range = document.createRange();
-    const sel = window.getSelection();
-    if (sel) {
-        range.selectNodeContents(el);
-        range.collapse(false);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
-}
-
-function placeCaretAtStart(el: HTMLElement) {
-    const range = document.createRange();
-    const sel = window.getSelection();
-    if (sel) {
-        range.selectNodeContents(el);
-        range.collapse(true);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    }
+    // Remove from map
+    patterns.delete(componentId);
 }

@@ -3,27 +3,37 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
 
-public sealed class TextPatternCallbacksRelay : IDisposable
+public sealed class PatternCallbacksRelay : IDisposable
 {
-    private readonly ITextPatternJsCallback _callbacks;
+    private readonly IPatternJsCallback _callbacks;
 
-    [DynamicDependency(nameof(NotifyTextChanged))]
-    [DynamicDependency(nameof(ValidatePartial))]
-    public TextPatternCallbacksRelay(ITextPatternJsCallback callbacks)
+    [DynamicDependency(nameof(HandleSpanInput))]
+    [DynamicDependency(nameof(HandleSpanFocus))]
+    [DynamicDependency(nameof(HandleSpanBlur))]
+    [DynamicDependency(nameof(HandlePaste))]
+    public PatternCallbacksRelay(IPatternJsCallback callbacks)
     {
         _callbacks = callbacks;
         DotNetReference = DotNetObjectReference.Create(this);
     }
 
-    public DotNetObjectReference<TextPatternCallbacksRelay> DotNetReference { get; }
+    public DotNetObjectReference<PatternCallbacksRelay> DotNetReference { get; }
 
     public void Dispose() => DotNetReference.Dispose();
 
     [JSInvokable]
-    public Task NotifyTextChanged(string text)
-        => _callbacks.NotifyTextChanged(text);
+    public Task HandleSpanInput(int index, string value)
+        => _callbacks.HandleSpanInput(index, value);
 
     [JSInvokable]
-    public Task<bool> ValidatePartial(int index, string text)
-        => _callbacks.ValidatePartial(index, text);
+    public Task HandleSpanFocus(int index)
+        => _callbacks.HandleSpanFocus(index);
+
+    [JSInvokable]
+    public Task HandleSpanBlur(int index)
+        => _callbacks.HandleSpanBlur(index);
+
+    [JSInvokable]
+    public Task HandlePaste(string text)
+        => _callbacks.HandlePaste(text);
 }

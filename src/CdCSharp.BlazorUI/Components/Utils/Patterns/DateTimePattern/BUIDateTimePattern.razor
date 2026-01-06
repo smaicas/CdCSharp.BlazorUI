@@ -5,71 +5,160 @@
 @namespace CdCSharp.BlazorUI.Components.Utils
 
 @inherits BUIBasePattern
-<div @ref="_containerBox"></div>
+
+<div @ref="_containerBox" class="pattern-container" data-pattern-id="@ComponentId">
+    @foreach (var span in _patternState.Spans)
+    {
+        <span @key="@($"span_{ComponentId}_{span.Index}")"
+              class="@GetSpanClass(span)"
+              contenteditable="@(span.IsEditable && Editable ? "true" : "false")"
+              data-index="@span.Index"
+              data-pattern="@span.Pattern"
+              data-maxlength="@span.MaxLength">@span.DisplayValue</span>
+    }
+</div>
 
 @code {
     private ParsedDatePattern? _parsedPattern;
-    private readonly Dictionary<DateComponentType, string> _componentValues = [];
+    private Dictionary<DateComponentType, string> _componentValues = new();
 
-    protected override List<ElementPattern> PreparePatterns()
+    private string GetSpanClass(SpanState span)
     {
+        return span.IsSeparator ? "pattern-separator" : "pattern-editable";
+    }
+
+    protected override PatternState CreatePatternState()
+    {
+        PatternState state = new();
         _parsedPattern = DatePatternParser.Parse(Format);
+        int spanIndex = 0;
 
-        DateTime? current = null;
-        if (DateTime.TryParseExact(
-            Text,
-            Format,
-            CultureInfo.CurrentCulture,
-            DateTimeStyles.None,
-            out var parsed))
+        foreach (DateComponent component in _parsedPattern.Components)
         {
-            current = parsed;
-        }
-
-        return DatePatternParser.ConvertToElementPatterns(_parsedPattern, current);
-    }
-
-    public override async Task NotifyTextChanged(string text)
-    {
-        if (DateTime.TryParseExact(
-            text,
-            Format,
-            CultureInfo.CurrentCulture,
-            DateTimeStyles.None,
-            out _))
-        {
-            Text = text;
-            await TextChanged.InvokeAsync(Text);
-        }
-    }
-
-    public override Task<bool> ValidatePartial(int index, string text)
-    {
-        if (_parsedPattern == null)
-            return Task.FromResult(true);
-
-        int editableIndex = 0;
-
-        foreach (var component in _parsedPattern.Components)
-        {
-            if (component.Type == DateComponentType.Separator)
-                continue;
-
-            if (editableIndex == index)
+            SpanState span = new()
             {
-                _componentValues[component.Type] = text;
+                Index = spanIndex++,
+                IsSeparator = component.Type == DateComponentType.Separator,
+                IsEditable = component.Type != DateComponentType.Separator,
+                Pattern = GetPatternForComponent(component.Type),
+                MaxLength = component.MaxDigits,
+                DefaultValue = component.DefaultValue
+            };
 
-                return Task.FromResult(
-                    DateComponentValidator.ValidateComponent(
-                        component.Type,
-                        text,
-                        _parsedPattern,
-                        _componentValues));
+            if (span.IsSeparator)
+            {
+                span.Value = component.SeparatorValue ?? "";
             }
 
-            editableIndex++;
+            state.Spans.Add(span);
         }
 
-        return Task.FromResult(true);
+        return state;
+    }
+
+    protected override void InitializeFromText(string text)
+    {
+        if (string.IsNullOrEmpty(text) || _parsedPattern == null)
+        {
+            // Reset all editable spans to empty (keep default values visible)
+            foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
+            {
+                span.Value = string.Empty;
+            }
+            _componentValues.Clear();
+            return;
+        }
+
+        // Try to parse with the format
+        if (DateTime.TryParseExact(text, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
+        {
+            int spanIndex = 0;
+
+            for (int i = 0; i < _parsedPattern.Components.Count; i++)
+            {
+                DateComponent component = _parsedPattern.Components[i];
+                SpanState span = _patternState.Spans[spanIndex++];
+
+                if (component.Type != DateComponentType.Separator)
+                {
+                    string value = GetComponentValue(component, date);
+                    span.Value = value;
+                    _componentValues[component.Type] = value;
+                }
+            }
+        }
+    }
+
+    protected override bool ValidateSpan(int index, string value)
+    {
+        if (_parsedPattern == null) return false;
+
+        // Find which component this span represents
+        int componentIndex = 0;
+        for (int i = 0; i <= index; i++)
+        {
+            if (i == index)
+            {
+                DateComponent component = _parsedPattern.Components[componentIndex];
+                if (component.Type != DateComponentType.Separator)
+                {
+                    _componentValues[component.Type] = value;
+                    return DateComponentValidator.ValidateComponent(
+                        component.Type,
+                        value,
+                        _parsedPattern,
+                        _componentValues);
+                }
+            }
+            componentIndex++;
+        }
+
+        return true;
+    }
+
+    protected override bool ValidateComplete(string text)
+    {
+        return DateTime.TryParseExact(
+            text,
+            Format,
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.None,
+            out _);
+    }
+
+    private string GetPatternForComponent(DateComponentType type)
+    {
+        return type switch
+        {
+            DateComponentType.Day => "d",
+            DateComponentType.Month => "d",
+            DateComponentType.Year => "d",
+            DateComponentType.Hour12 => "d",
+            DateComponentType.Hour24 => "d",
+            DateComponentType.Minute => "d",
+            DateComponentType.Second => "d",
+            DateComponentType.AmPm => "w",
+            _ => ""
+        };
+    }
+
+    private string GetComponentValue(DateComponent component, DateTime date)
+    {
+        return component.Type switch
+        {
+            DateComponentType.Day => date.Day.ToString("00"),
+            DateComponentType.Month => date.Month.ToString("00"),
+            DateComponentType.Year => component.MinDigits == 2
+                ? date.Year.ToString("00").Substring(2)
+                : date.Year.ToString("0000"),
+            DateComponentType.Hour12 => (date.Hour % 12 == 0 ? 12 : date.Hour % 12).ToString("00"),
+            DateComponentType.Hour24 => date.Hour.ToString("00"),
+            DateComponentType.Minute => date.Minute.ToString("00"),
+            DateComponentType.Second => date.Second.ToString("00"),
+            DateComponentType.AmPm => component.MinDigits == 1
+                ? (date.Hour < 12 ? "A" : "P")
+                : (date.Hour < 12 ? "AM" : "PM"),
+            _ => ""
+        };
     }
 }

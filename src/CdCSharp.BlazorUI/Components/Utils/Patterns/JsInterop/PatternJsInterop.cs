@@ -1,5 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
-using CdCSharp.BlazorUI.Core.Abstractions.JSInterop;
+﻿using CdCSharp.BlazorUI.Core.Abstractions.JSInterop;
 using CdCSharp.BlazorUI.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -8,14 +7,19 @@ namespace CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
 
 public interface IPatternJsInterop
 {
-    ValueTask TextPatternAddDynamicAsync(
+    ValueTask InitializePatternAsync(
         ElementReference containerBox,
-        IEnumerable<ElementPattern> elements,
-        DotNetObjectReference<TextPatternCallbacksRelay> dotnetReference,
-        string notifyChangedTextCallback,
-        string validatePartialCallback);
-}
+        DotNetObjectReference<PatternCallbacksRelay> dotnetReference,
+        string componentId);
 
+    ValueTask UpdateSpanValueAsync(string componentId, int index, string value);
+
+    ValueTask SelectSpanContentAsync(string componentId, int index);
+
+    ValueTask FocusSpanAsync(string componentId, int index);
+
+    ValueTask DisposePatternAsync(string componentId);
+}
 public sealed class PatternJsInterop
     : ModuleJsInteropBase, IPatternJsInterop
 {
@@ -24,22 +28,62 @@ public sealed class PatternJsInterop
     {
     }
 
-    public async ValueTask TextPatternAddDynamicAsync(
+    public async ValueTask InitializePatternAsync(
         ElementReference containerBox,
-        IEnumerable<ElementPattern> elements,
-        DotNetObjectReference<TextPatternCallbacksRelay> dotnetReference,
-        string notifyChangedTextCallback,
-        string validatePartialCallback)
+        DotNetObjectReference<PatternCallbacksRelay> dotnetReference,
+        string componentId)
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(
-            "TextPatternAddDynamic",
+            "initializePattern",
             containerBox,
-            elements,
             dotnetReference,
-            notifyChangedTextCallback,
-            validatePartialCallback);
+            componentId);
+    }
+
+    public async ValueTask UpdateSpanValueAsync(string componentId, int index, string value)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync(
+            "updateSpanValue",
+            componentId,
+            index,
+            value);
+    }
+
+    public async ValueTask SelectSpanContentAsync(string componentId, int index)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync(
+            "selectSpanContent",
+            componentId,
+            index);
+    }
+
+    public async ValueTask FocusSpanAsync(string componentId, int index)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync(
+            "focusSpan",
+            componentId,
+            index);
+    }
+
+    public async ValueTask DisposePatternAsync(string componentId)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync(
+            "disposePattern",
+            componentId);
     }
 }
