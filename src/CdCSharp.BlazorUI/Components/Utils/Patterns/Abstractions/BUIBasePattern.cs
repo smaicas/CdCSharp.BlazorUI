@@ -11,6 +11,8 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
     private string? _text = null;
     private bool _isInitialized = false;
+    private bool _suppressRender = false;
+    private int? _activeSpanIndex = null;
 
     [Parameter, EditorRequired]
     public string Format { get; set; } = string.Empty;
@@ -42,6 +44,16 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
     protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
 
+    protected override bool ShouldRender()
+    {
+        if (_suppressRender)
+        {
+            _suppressRender = false;
+            return false;
+        }
+        return true;
+    }
+
     protected override void OnInitialized()
     {
         _patternState = CreatePatternState();
@@ -69,21 +81,18 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         SpanState span = _patternState.Spans[index];
         if (!span.IsEditable) return;
 
-        // Filter input based on allowed characters
         string filtered = FilterInput(value, span.AllowedChars, span.MaxLength);
 
-        // Update in JS if filtered
         if (filtered != value)
         {
             await Js.UpdateSpanValueAsync(ComponentId, index, filtered);
-            return;
+            await Js.SetCaretToEndAsync(ComponentId, index);
         }
 
-        // Update state
         span.Value = filtered;
-        StateHasChanged();
 
-        // Always notify on input to update Text to null if incomplete
+        // Suprimir render durante la notificación
+        _suppressRender = true;
         await NotifyTextChanged();
     }
 
@@ -92,22 +101,19 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         if (!IsValidIndex(index)) return false;
 
         SpanState span = _patternState.Spans[index];
-
-        // Validate with span validator if exists
         bool isValid = span.Validator?.Invoke(value) ?? true;
 
         if (!isValid)
         {
-            // Reset to placeholder and update JS
             span.Value = string.Empty;
             await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
             await Js.SelectSpanContentAsync(ComponentId, index);
-            StateHasChanged();
+            _suppressRender = true;
             await NotifyTextChanged();
             return false;
         }
 
-        // Update text
+        _suppressRender = true;
         await NotifyTextChanged();
         return true;
     }
@@ -115,23 +121,22 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     public async Task OnSpanFocus(int index)
     {
         if (!IsValidIndex(index)) return;
-
-        // Select content is handled in TypeScript
-        await Task.CompletedTask;
+        _activeSpanIndex = index;
     }
 
     public async Task OnSpanBlur(int index)
     {
         if (!IsValidIndex(index)) return;
 
+        _activeSpanIndex = null;
+
         SpanState span = _patternState.Spans[index];
 
-        // If incomplete or empty, set to placeholder
         if (span.IsEditable && (!span.IsComplete || string.IsNullOrEmpty(span.Value)))
         {
             span.Value = string.Empty;
             await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
-            StateHasChanged();
+            _suppressRender = true;
             await NotifyTextChanged();
         }
     }

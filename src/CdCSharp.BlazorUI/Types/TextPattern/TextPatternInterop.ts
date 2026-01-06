@@ -48,22 +48,15 @@ async function handleInput(e: Event): Promise<void> {
     const maxLength = parseInt(target.dataset.maxlength || '0');
 
     try {
-        // Always notify C# of input
+        // Notificar a C# del input - C# decidirá si filtrar
         await instance.dotnetRef.invokeMethodAsync('OnSpanInput', index, value);
 
-        // If complete, validate
+        // Si está completo, validar y posiblemente avanzar
         if (value.length === maxLength) {
             const isValid = await instance.dotnetRef.invokeMethodAsync('OnSpanComplete', index, value);
 
             if (isValid) {
-                // Move to next span using click
-                const nextSpan = instance.container.querySelector(
-                    `[data-index="${index + 1}"][contenteditable="true"]`
-                ) as HTMLElement;
-
-                if (nextSpan) {
-                    setTimeout(() => nextSpan.click(), 10);
-                }
+                moveToNextSpan(instance, index);
             }
         }
     } catch (error) {
@@ -71,12 +64,51 @@ async function handleInput(e: Event): Promise<void> {
     }
 }
 
+function moveToNextSpan(instance: PatternInstance, currentIndex: number): void {
+    const nextSpan = instance.container.querySelector(
+        `[data-index="${currentIndex + 1}"][contenteditable="true"]`
+    ) as HTMLElement;
+
+    if (nextSpan) {
+        // Usar setTimeout para asegurar que el DOM está estable
+        setTimeout(() => {
+            nextSpan.focus();
+            selectSpanContent(instance.componentId, currentIndex + 1);
+        }, 0);
+    }
+}
+
+export function setCaretToEnd(componentId: string, index: number): void {
+    const instance = patternInstances.get(componentId);
+    if (!instance) return;
+
+    const span = instance.container.querySelector(
+        `[data-index="${index}"]`
+    ) as HTMLElement;
+
+    if (span && document.activeElement === span) {
+        const range = document.createRange();
+        const selection = window.getSelection();
+
+        // Colocar el caret al final del contenido
+        if (span.firstChild) {
+            range.setStart(span.firstChild, span.textContent?.length || 0);
+            range.collapse(true);
+        } else {
+            range.selectNodeContents(span);
+            range.collapse(false);
+        }
+
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }
+}
+
 async function handleClick(e: Event): Promise<void> {
     const target = e.target as HTMLElement;
     if (!isEditableSpan(target)) return;
 
-    // Select all content on click
-    selectSpanContent(target);
+    selectSpanContentInternal(target);
 }
 
 async function handleFocus(e: FocusEvent): Promise<void> {
@@ -183,11 +215,13 @@ export function updateSpanValue(componentId: string, index: number, value: strin
     ) as HTMLElement;
 
     if (span && span.textContent !== value) {
+        const isFocused = document.activeElement === span;
+
         span.textContent = value;
 
-        // If focused, maintain selection
-        if (document.activeElement === span) {
-            selectSpanContent(span);
+        // Si estaba enfocado, restaurar selección
+        if (isFocused) {
+            selectSpanContent(componentId, index);
         }
     }
 }
@@ -253,7 +287,20 @@ function getInstanceFromElement(element: HTMLElement): PatternInstance | null {
     return patternInstances.get(componentId) || null;
 }
 
-function selectSpanContent(span: HTMLElement): void {
+export function selectSpanContent(componentId: string, index: number): void {
+    const instance = patternInstances.get(componentId);
+    if (!instance) return;
+
+    const span = instance.container.querySelector(
+        `[data-index="${index}"]`
+    ) as HTMLElement;
+
+    if (span) {
+        selectSpanContentInternal(span);
+    }
+}
+
+function selectSpanContentInternal(span: HTMLElement): void {
     const range = document.createRange();
     range.selectNodeContents(span);
     const selection = window.getSelection();

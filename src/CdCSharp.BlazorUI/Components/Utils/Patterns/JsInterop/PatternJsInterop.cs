@@ -17,6 +17,7 @@ public interface IPatternJsInterop
     ValueTask SelectSpanContentAsync(string componentId, int index);
 
     ValueTask FocusSpanAsync(string componentId, int index);
+    ValueTask SetCaretToEndAsync(string componentId, int index);
 
     ValueTask DisposePatternAsync(string componentId);
 }
@@ -73,6 +74,17 @@ public sealed class PatternJsInterop
 
         await module.InvokeVoidAsync(
             "focusSpan",
+            componentId,
+            index);
+    }
+
+    public async ValueTask SetCaretToEndAsync(string componentId, int index)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync(
+            "setCaretToEnd",
             componentId,
             index);
     }
