@@ -2,8 +2,9 @@
 
 public interface IPatternJsCallback
 {
-    Task HandleSpanInput(int index, string value);
-    Task HandleSpanFocus(int index);
-    Task HandleSpanBlur(int index);
-    Task HandlePaste(string text);
+    Task OnSpanInput(int index, string value);
+    Task<bool> OnSpanComplete(int index, string value);
+    Task OnSpanFocus(int index);
+    Task OnSpanBlur(int index);
+    Task OnPaste(string text);
 }

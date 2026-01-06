@@ -6,7 +6,7 @@ public sealed class PatternState
 
     public bool IsComplete => Spans
         .Where(s => s.IsEditable)
-        .All(s => s.IsComplete && !string.IsNullOrEmpty(s.Value) && s.Value != s.DefaultValue);
+        .All(s => s.IsComplete && !string.IsNullOrEmpty(s.Value) && s.Value != s.Placeholder);
 
     public string GetFullText()
     {
@@ -15,16 +15,10 @@ public sealed class PatternState
 
     public string GetActualText()
     {
-        // Only return text if all editable spans have real values (not defaults)
-        bool hasAllValues = Spans
-            .Where(s => s.IsEditable)
-            .All(s => !string.IsNullOrEmpty(s.Value) && s.Value != s.DefaultValue);
-
-        if (!hasAllValues)
-            return string.Empty;
+        if (!IsComplete) return string.Empty;
 
         return string.Join("", Spans.Select(s =>
-            s.IsSeparator ? s.DefaultValue : s.Value
+            s.IsEditable ? s.Value : s.Placeholder
         ));
     }
 }

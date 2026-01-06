@@ -13,18 +13,16 @@
               class="@GetSpanClass(span)"
               contenteditable="@(span.IsEditable && Editable ? "true" : "false")"
               data-index="@span.Index"
-              data-pattern="@span.Pattern"
               data-maxlength="@span.MaxLength">@span.DisplayValue</span>
     }
 </div>
 
 @code {
     private ParsedDatePattern? _parsedPattern;
-    private Dictionary<DateComponentType, string> _componentValues = new();
 
     private string GetSpanClass(SpanState span)
     {
-        return span.IsSeparator ? "pattern-separator" : "pattern-editable";
+        return span.IsEditable ? "pattern-editable" : "pattern-separator";
     }
 
     protected override PatternState CreatePatternState()
@@ -38,17 +36,12 @@
             SpanState span = new()
             {
                 Index = spanIndex++,
-                IsSeparator = component.Type == DateComponentType.Separator,
                 IsEditable = component.Type != DateComponentType.Separator,
-                Pattern = GetPatternForComponent(component.Type),
+                AllowedChars = GetAllowedChars(component.Type),
                 MaxLength = component.MaxDigits,
-                DefaultValue = component.DefaultValue
+                Placeholder = component.DefaultValue,
+                Validator = value => ValidateDateComponent(component.Type, value)
             };
-
-            if (span.IsSeparator)
-            {
-                span.Value = component.SeparatorValue ?? "";
-            }
 
             state.Spans.Add(span);
         }
@@ -58,62 +51,29 @@
 
     protected override void InitializeFromText(string text)
     {
-        if (string.IsNullOrEmpty(text) || _parsedPattern == null)
+        // Reset all spans
+        foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
         {
-            // Reset all editable spans to empty (keep default values visible)
-            foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
-            {
-                span.Value = string.Empty;
-            }
-            _componentValues.Clear();
-            return;
+            span.Value = string.Empty;
         }
+
+        if (string.IsNullOrEmpty(text) || _parsedPattern == null)
+            return;
 
         // Try to parse with the format
         if (DateTime.TryParseExact(text, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
         {
-            int spanIndex = 0;
-
-            for (int i = 0; i < _parsedPattern.Components.Count; i++)
+            int componentIndex = 0;
+            foreach (SpanState span in _patternState.Spans)
             {
-                DateComponent component = _parsedPattern.Components[i];
-                SpanState span = _patternState.Spans[spanIndex++];
-
-                if (component.Type != DateComponentType.Separator)
+                if (span.IsEditable && componentIndex < _parsedPattern.Components.Count)
                 {
-                    string value = GetComponentValue(component, date);
-                    span.Value = value;
-                    _componentValues[component.Type] = value;
+                    DateComponent component = _parsedPattern.Components[componentIndex];
+                    span.Value = GetComponentValue(component, date);
                 }
+                componentIndex++;
             }
         }
-    }
-
-    protected override bool ValidateSpan(int index, string value)
-    {
-        if (_parsedPattern == null) return false;
-
-        // Find which component this span represents
-        int componentIndex = 0;
-        for (int i = 0; i <= index; i++)
-        {
-            if (i == index)
-            {
-                DateComponent component = _parsedPattern.Components[componentIndex];
-                if (component.Type != DateComponentType.Separator)
-                {
-                    _componentValues[component.Type] = value;
-                    return DateComponentValidator.ValidateComponent(
-                        component.Type,
-                        value,
-                        _parsedPattern,
-                        _componentValues);
-                }
-            }
-            componentIndex++;
-        }
-
-        return true;
     }
 
     protected override bool ValidateComplete(string text)
@@ -126,19 +86,47 @@
             out _);
     }
 
-    private string GetPatternForComponent(DateComponentType type)
+    protected override string NormalizeSeparators(string text)
+    {
+        // Replace common date separators with the one used in format
+        char separator = '/'; // Default
+
+        if (Format.Contains('-')) separator = '-';
+        else if (Format.Contains('.')) separator = '.';
+
+        return text
+            .Replace('-', separator)
+            .Replace('.', separator)
+            .Replace(',', separator)
+            .Replace('\\', separator)
+            .Replace(' ', separator);
+    }
+
+    private string GetAllowedChars(DateComponentType type)
     {
         return type switch
         {
-            DateComponentType.Day => "d",
-            DateComponentType.Month => "d",
-            DateComponentType.Year => "d",
-            DateComponentType.Hour12 => "d",
-            DateComponentType.Hour24 => "d",
-            DateComponentType.Minute => "d",
-            DateComponentType.Second => "d",
             DateComponentType.AmPm => "w",
-            _ => ""
+            DateComponentType.Separator => "",
+            _ => "d"
+        };
+    }
+
+    private bool ValidateDateComponent(DateComponentType type, string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return false;
+
+        return type switch
+        {
+            DateComponentType.Day => int.TryParse(value, out int d) && d >= 1 && d <= 31,
+            DateComponentType.Month => int.TryParse(value, out int m) && m >= 1 && m <= 12,
+            DateComponentType.Year => value.Length == 2 || value.Length == 4,
+            DateComponentType.Hour12 => int.TryParse(value, out int h) && h >= 1 && h <= 12,
+            DateComponentType.Hour24 => int.TryParse(value, out int h) && h >= 0 && h <= 23,
+            DateComponentType.Minute => int.TryParse(value, out int m) && m >= 0 && m <= 59,
+            DateComponentType.Second => int.TryParse(value, out int s) && s >= 0 && s <= 59,
+            DateComponentType.AmPm => value.ToUpperInvariant() is "A" or "P" or "AM" or "PM",
+            _ => true
         };
     }
 
@@ -155,10 +143,37 @@
             DateComponentType.Hour24 => date.Hour.ToString("00"),
             DateComponentType.Minute => date.Minute.ToString("00"),
             DateComponentType.Second => date.Second.ToString("00"),
-            DateComponentType.AmPm => component.MinDigits == 1
-                ? (date.Hour < 12 ? "A" : "P")
-                : (date.Hour < 12 ? "AM" : "PM"),
+            DateComponentType.AmPm => date.Hour < 12 ? "AM" : "PM",
             _ => ""
         };
     }
 }
+
+<style>
+    .pattern-container {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 6px 8px;
+        font-family: monospace;
+        font-size: 14px;
+    }
+
+    .pattern-editable {
+        min-width: 2ch;
+        text-align: center;
+        outline: none;
+        color: #333;
+    }
+
+        .pattern-editable:focus {
+            background-color: #e3f2fd;
+            border-radius: 2px;
+        }
+
+    .pattern-separator {
+        color: #666;
+        padding: 0 2px;
+    }
+</style>

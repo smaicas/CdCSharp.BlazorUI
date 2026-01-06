@@ -5,35 +5,43 @@ namespace CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
 
 public sealed class PatternCallbacksRelay : IDisposable
 {
-    private readonly IPatternJsCallback _callbacks;
+    private readonly IPatternJsCallback _callback;
 
-    [DynamicDependency(nameof(HandleSpanInput))]
-    [DynamicDependency(nameof(HandleSpanFocus))]
-    [DynamicDependency(nameof(HandleSpanBlur))]
-    [DynamicDependency(nameof(HandlePaste))]
-    public PatternCallbacksRelay(IPatternJsCallback callbacks)
+    [DynamicDependency(nameof(OnSpanInput))]
+    [DynamicDependency(nameof(OnSpanComplete))]
+    [DynamicDependency(nameof(OnSpanFocus))]
+    [DynamicDependency(nameof(OnSpanBlur))]
+    [DynamicDependency(nameof(OnPaste))]
+    public PatternCallbacksRelay(IPatternJsCallback callback)
     {
-        _callbacks = callbacks;
+        _callback = callback;
         DotNetReference = DotNetObjectReference.Create(this);
     }
 
     public DotNetObjectReference<PatternCallbacksRelay> DotNetReference { get; }
 
-    public void Dispose() => DotNetReference.Dispose();
+    [JSInvokable]
+    public Task OnSpanInput(int index, string value)
+        => _callback.OnSpanInput(index, value);
 
     [JSInvokable]
-    public Task HandleSpanInput(int index, string value)
-        => _callbacks.HandleSpanInput(index, value);
+    public Task<bool> OnSpanComplete(int index, string value)
+        => _callback.OnSpanComplete(index, value);
 
     [JSInvokable]
-    public Task HandleSpanFocus(int index)
-        => _callbacks.HandleSpanFocus(index);
+    public Task OnSpanFocus(int index)
+        => _callback.OnSpanFocus(index);
 
     [JSInvokable]
-    public Task HandleSpanBlur(int index)
-        => _callbacks.HandleSpanBlur(index);
+    public Task OnSpanBlur(int index)
+        => _callback.OnSpanBlur(index);
 
     [JSInvokable]
-    public Task HandlePaste(string text)
-        => _callbacks.HandlePaste(text);
+    public Task OnPaste(string text)
+        => _callback.OnPaste(text);
+
+    public void Dispose()
+    {
+        DotNetReference.Dispose();
+    }
 }

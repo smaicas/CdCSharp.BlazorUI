@@ -8,17 +8,12 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     protected ElementReference _containerBox;
     protected PatternCallbacksRelay? _jsCallbacksRelay;
     protected PatternState _patternState = new();
-    protected int _focusedSpanIndex = -1;
 
     private string _text = string.Empty;
     private bool _isInitialized = false;
-    private readonly string _componentId = $"pattern_{Guid.NewGuid():N}";
 
     [Parameter, EditorRequired]
     public string Format { get; set; } = string.Empty;
-
-    [Parameter, EditorRequired]
-    public string DefaultText { get; set; } = string.Empty;
 
     [Parameter]
     public bool Editable { get; set; } = true;
@@ -45,7 +40,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         }
     }
 
-    protected string ComponentId => _componentId;
+    protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
 
     protected override void OnInitialized()
     {
@@ -58,90 +53,89 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         if (firstRender)
         {
             _jsCallbacksRelay = new PatternCallbacksRelay(this);
-            await Js.InitializePatternAsync(_containerBox, _jsCallbacksRelay.DotNetReference, _componentId);
+            await Js.InitializePatternAsync(_containerBox, _jsCallbacksRelay.DotNetReference, ComponentId);
             _isInitialized = true;
         }
     }
 
     protected abstract PatternState CreatePatternState();
     protected abstract void InitializeFromText(string text);
-    protected abstract bool ValidateSpan(int index, string value);
     protected abstract bool ValidateComplete(string text);
 
-    public async Task HandleSpanInput(int index, string value)
+    public async Task OnSpanInput(int index, string value)
     {
-        if (index < 0 || index >= _patternState.Spans.Count) return;
+        if (!IsValidIndex(index)) return;
 
         SpanState span = _patternState.Spans[index];
         if (!span.IsEditable) return;
 
-        // Filter input based on span pattern and max length
-        string filtered = FilterInput(value, span.Pattern, span.MaxLength);
+        // Filter input based on allowed characters
+        string filtered = FilterInput(value, span.AllowedChars, span.MaxLength);
 
-        // If we're typing the first character and the span had default value, clear it
-        if (value.Length == 1 && span.Value == string.Empty && span.DisplayValue == span.DefaultValue)
-        {
-            // Just starting to type, accept the character
-            span.Value = filtered;
-            StateHasChanged();
-            await NotifyTextChanged();
-            return;
-        }
-
+        // Update in JS if filtered
         if (filtered != value)
         {
-            await Js.UpdateSpanValueAsync(_componentId, index, filtered);
+            await Js.UpdateSpanValueAsync(ComponentId, index, filtered);
             return;
         }
 
+        // Update state
         span.Value = filtered;
         StateHasChanged();
-
-        // If span is complete, validate
-        if (span.IsComplete)
-        {
-            if (ValidateSpan(index, span.Value))
-            {
-                await MoveToNextSpan(index);
-            }
-            else
-            {
-                // Reset to default
-                span.Value = string.Empty;
-                await Js.UpdateSpanValueAsync(_componentId, index, span.DefaultValue);
-                await Js.SelectSpanContentAsync(_componentId, index);
-                StateHasChanged();
-            }
-        }
-
-        await NotifyTextChanged();
     }
 
-    public async Task HandleSpanFocus(int index)
+    public async Task<bool> OnSpanComplete(int index, string value)
     {
-        if (index < 0 || index >= _patternState.Spans.Count) return;
-
-        _focusedSpanIndex = index;
-        await Js.SelectSpanContentAsync(_componentId, index);
-    }
-
-    public async Task HandleSpanBlur(int index)
-    {
-        if (index < 0 || index >= _patternState.Spans.Count) return;
+        if (!IsValidIndex(index)) return false;
 
         SpanState span = _patternState.Spans[index];
 
-        if (!span.IsComplete && !string.IsNullOrEmpty(span.Value))
+        // Validate with span validator if exists
+        bool isValid = span.Validator?.Invoke(value) ?? true;
+
+        if (!isValid)
+        {
+            // Reset to empty and update JS
+            span.Value = string.Empty;
+            await Js.UpdateSpanValueAsync(ComponentId, index, "");
+            await Js.SelectSpanContentAsync(ComponentId, index);
+            StateHasChanged();
+            return false;
+        }
+
+        // Update text if all editable spans have values
+        await NotifyTextChanged();
+        return true;
+    }
+
+    public async Task OnSpanFocus(int index)
+    {
+        if (!IsValidIndex(index)) return;
+
+        // Select content is handled in TypeScript
+        await Task.CompletedTask;
+    }
+
+    public async Task OnSpanBlur(int index)
+    {
+        if (!IsValidIndex(index)) return;
+
+        SpanState span = _patternState.Spans[index];
+
+        // If incomplete, clear it
+        if (span.IsEditable && (!span.IsComplete || string.IsNullOrEmpty(span.Value)))
         {
             span.Value = string.Empty;
-            await NotifyTextChanged();
+            await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
             StateHasChanged();
         }
     }
 
-    public async Task HandlePaste(string text)
+    public async Task OnPaste(string text)
     {
-        // Try to parse the pasted text with normalized separators
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        // Try to validate complete text
         string normalized = NormalizeSeparators(text);
 
         if (ValidateComplete(normalized))
@@ -152,7 +146,13 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         }
     }
 
-    private string FilterInput(string input, string pattern, int maxLength)
+    protected virtual string NormalizeSeparators(string text)
+    {
+        // Default implementation - can be overridden
+        return text;
+    }
+
+    private string FilterInput(string input, string allowedChars, int maxLength)
     {
         System.Text.StringBuilder result = new();
 
@@ -160,10 +160,11 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         {
             if (result.Length >= maxLength) break;
 
-            bool valid = pattern switch
+            bool valid = allowedChars switch
             {
                 "d" => char.IsDigit(c),
                 "w" => char.IsLetter(c),
+                "a" => char.IsLetterOrDigit(c),
                 _ => true
             };
 
@@ -173,41 +174,14 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         return result.ToString();
     }
 
-    protected virtual string NormalizeSeparators(string text)
-    {
-        // Replace common separators with the expected ones based on format
-        return text
-            .Replace('-', '/')
-            .Replace('.', '/')
-            .Replace(',', '/')
-            .Replace('\\', '/')
-            .Replace(' ', '/');
-    }
-
-    private async Task MoveToNextSpan(int currentIndex)
-    {
-        int nextIndex = -1;
-
-        for (int i = currentIndex + 1; i < _patternState.Spans.Count; i++)
-        {
-            if (_patternState.Spans[i].IsEditable)
-            {
-                nextIndex = i;
-                break;
-            }
-        }
-
-        if (nextIndex >= 0)
-        {
-            await Js.FocusSpanAsync(_componentId, nextIndex);
-        }
-    }
+    private bool IsValidIndex(int index)
+        => index >= 0 && index < _patternState.Spans.Count;
 
     private async Task NotifyTextChanged()
     {
         string actualText = _patternState.GetActualText();
 
-        if (!string.IsNullOrEmpty(actualText))
+        if (!string.IsNullOrEmpty(actualText) && actualText != _text)
         {
             _text = actualText;
             await TextChanged.InvokeAsync(_text);
@@ -218,7 +192,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     {
         if (_jsCallbacksRelay != null && _isInitialized)
         {
-            await Js.DisposePatternAsync(_componentId);
+            await Js.DisposePatternAsync(ComponentId);
             _jsCallbacksRelay.Dispose();
         }
         await DisposeAsyncCore();
