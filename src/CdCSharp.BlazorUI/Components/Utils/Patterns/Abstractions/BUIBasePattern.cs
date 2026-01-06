@@ -30,16 +30,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     public string? Text
     {
         get => _text;
-        set
-        {
-            if (_text == value) return;
-            _text = value;
-            if (_isInitialized)
-            {
-                InitializeFromText(_text);
-                StateHasChanged();
-            }
-        }
+        set => _text = value;
     }
 
     protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
@@ -58,6 +49,35 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     {
         _patternState = CreatePatternState();
         InitializeFromText(Text);
+    }
+
+    private string? _lastExternalText = null;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Detectar si Text cambió desde el exterior
+        if (_isInitialized && Text != _lastExternalText)
+        {
+            _lastExternalText = Text;
+
+            // Solo actualizar si el valor es diferente al estado interno
+            if (Text != _patternState.GetActualText())
+            {
+                InitializeFromText(Text);
+                await SyncSpansToJs();
+            }
+        }
+    }
+
+    private async Task SyncSpansToJs()
+    {
+        foreach (SpanState span in _patternState.Spans)
+        {
+            if (span.IsEditable)
+            {
+                await Js.UpdateSpanValueAsync(ComponentId, span.Index, span.DisplayValue);
+            }
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -189,12 +209,12 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
     private async Task NotifyTextChanged()
     {
-        // Get the actual text only if pattern is complete
         string? actualText = _patternState.IsComplete ? _patternState.GetActualText() : null;
 
         if (_text != actualText)
         {
             _text = actualText;
+            _lastExternalText = actualText;  // Mantener sincronizado
             await TextChanged.InvokeAsync(_text);
         }
     }
