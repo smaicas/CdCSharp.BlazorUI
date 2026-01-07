@@ -18,6 +18,7 @@ public interface IPatternJsInterop
 
     ValueTask FocusSpanAsync(string componentId, int index);
     ValueTask SetCaretToEndAsync(string componentId, int index);
+    ValueTask FocusFirstEditableAsync(string componentId);
 
     ValueTask DisposePatternAsync(string componentId);
 }
@@ -97,5 +98,12 @@ public sealed class PatternJsInterop
         await module.InvokeVoidAsync(
             "disposePattern",
             componentId);
+    }
+
+    public async ValueTask FocusFirstEditableAsync(string componentId)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+        await module.InvokeVoidAsync("focusFirstEditable", componentId);
     }
 }

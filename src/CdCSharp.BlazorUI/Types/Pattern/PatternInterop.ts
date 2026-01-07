@@ -17,17 +17,14 @@ export function initializePattern(
 ): void {
     if (!container || !componentId) return;
 
-    // Clean up existing instance
     disposePattern(componentId);
 
-    // Store instance
     patternInstances.set(componentId, {
         container,
         dotnetRef,
         componentId
     });
 
-    // Attach event listeners to container
     container.addEventListener('input', handleInput);
     container.addEventListener('focus', handleFocus, true);
     container.addEventListener('blur', handleBlur, true);
@@ -48,10 +45,8 @@ async function handleInput(e: Event): Promise<void> {
     const maxLength = parseInt(target.dataset.maxlength || '0');
 
     try {
-        // Notificar a C# del input - C# decidirá si filtrar
         await instance.dotnetRef.invokeMethodAsync('OnSpanInput', index, value);
 
-        // Si está completo, validar y posiblemente avanzar
         if (value.length === maxLength) {
             const isValid = await instance.dotnetRef.invokeMethodAsync('OnSpanComplete', index, value);
 
@@ -64,55 +59,9 @@ async function handleInput(e: Event): Promise<void> {
     }
 }
 
-function moveToNextSpan(instance: PatternInstance, currentIndex: number): void {
-    // Buscar el siguiente span editable con índice mayor al actual
-    const allEditableSpans = Array.from(
-        instance.container.querySelectorAll('[contenteditable="true"]')
-    ) as HTMLElement[];
-
-    const nextSpan = allEditableSpans.find(span => {
-        const spanIndex = getSpanIndex(span);
-        return spanIndex > currentIndex;
-    });
-
-    if (nextSpan) {
-        setTimeout(() => {
-            nextSpan.focus();
-            selectSpanContentInternal(nextSpan);
-        }, 0);
-    }
-}
-
-export function setCaretToEnd(componentId: string, index: number): void {
-    const instance = patternInstances.get(componentId);
-    if (!instance) return;
-
-    const span = instance.container.querySelector(
-        `[data-index="${index}"]`
-    ) as HTMLElement;
-
-    if (span && document.activeElement === span) {
-        const range = document.createRange();
-        const selection = window.getSelection();
-
-        // Colocar el caret al final del contenido
-        if (span.firstChild) {
-            range.setStart(span.firstChild, span.textContent?.length || 0);
-            range.collapse(true);
-        } else {
-            range.selectNodeContents(span);
-            range.collapse(false);
-        }
-
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-    }
-}
-
 async function handleClick(e: Event): Promise<void> {
     const target = e.target as HTMLElement;
 
-    // Manejar toggle
     if (isToggleSpan(target)) {
         const instance = getInstanceFromElement(target);
         if (!instance) return;
@@ -122,14 +71,8 @@ async function handleClick(e: Event): Promise<void> {
         return;
     }
 
-    // Manejar editable (código existente)
     if (!isEditableSpan(target)) return;
     selectSpanContentInternal(target);
-}
-
-function isToggleSpan(element: HTMLElement): boolean {
-    return element.tagName === 'SPAN' &&
-        element.classList.contains('pattern-toggle');
 }
 
 async function handleFocus(e: FocusEvent): Promise<void> {
@@ -184,7 +127,7 @@ async function handlePaste(e: ClipboardEvent): Promise<void> {
 
 async function handleKeyDown(e: KeyboardEvent): Promise<void> {
     const target = e.target as HTMLElement;
-    if (!isEditableSpan(target)) return;
+    if (!isEditableSpan(target) && !isToggleSpan(target)) return;
 
     const instance = getInstanceFromElement(target);
     if (!instance) return;
@@ -192,41 +135,81 @@ async function handleKeyDown(e: KeyboardEvent): Promise<void> {
     const index = getSpanIndex(target);
 
     if (e.key === 'Tab') {
-        e.preventDefault();
-
         const spans = Array.from(
-            instance.container.querySelectorAll('[contenteditable="true"]')
+            instance.container.querySelectorAll('[contenteditable="true"], .pattern-toggle')
         ) as HTMLElement[];
 
-        const currentIndex = spans.findIndex(s => s === target);
+        const currentIdx = spans.findIndex(s => s === target);
+        const isFirst = currentIdx === 0;
+        const isLast = currentIdx === spans.length - 1;
 
-        if (e.shiftKey && currentIndex > 0) {
-            spans[currentIndex - 1].click();
-        } else if (!e.shiftKey && currentIndex < spans.length - 1) {
-            spans[currentIndex + 1].click();
+        if ((isLast && !e.shiftKey) || (isFirst && e.shiftKey)) {
+            return;
         }
-    } else if (e.key === 'Backspace' && target.textContent === '') {
-        // Move to previous span if current is empty
+
         e.preventDefault();
 
-        const prevSpan = instance.container.querySelector(
-            `[data-index="${index - 1}"][contenteditable="true"]`
-        ) as HTMLElement;
-
-        if (prevSpan) {
-            prevSpan.click();
-            // Place cursor at end
-            const range = document.createRange();
-            const selection = window.getSelection();
-            range.selectNodeContents(prevSpan);
-            range.collapse(false);
-            selection?.removeAllRanges();
-            selection?.addRange(range);
+        let nextSpan: HTMLElement | null = null;
+        if (e.shiftKey && currentIdx > 0) {
+            nextSpan = spans[currentIdx - 1];
+        } else if (!e.shiftKey && currentIdx < spans.length - 1) {
+            nextSpan = spans[currentIdx + 1];
         }
+
+        if (nextSpan) {
+            nextSpan.focus();
+            if (isEditableSpan(nextSpan)) {
+                selectSpanContentInternal(nextSpan);
+            }
+        }
+    } else if (e.key === 'Backspace' && target.textContent === '' && isEditableSpan(target)) {
+        e.preventDefault();
+        moveToPrevEditableSpan(instance, index);
+    } else if ((e.key === ' ' || e.key === 'Enter') && isToggleSpan(target)) {
+        e.preventDefault();
+        await instance.dotnetRef.invokeMethodAsync('OnToggleClick', index);
     }
 }
 
-// Public methods for C#
+function moveToNextSpan(instance: PatternInstance, currentIndex: number): void {
+    const allEditableSpans = Array.from(
+        instance.container.querySelectorAll('[contenteditable="true"]')
+    ) as HTMLElement[];
+
+    const nextSpan = allEditableSpans.find(span => {
+        const spanIndex = getSpanIndex(span);
+        return spanIndex > currentIndex;
+    });
+
+    if (nextSpan) {
+        setTimeout(() => {
+            nextSpan.focus();
+            selectSpanContentInternal(nextSpan);
+        }, 0);
+    }
+}
+
+function moveToPrevEditableSpan(instance: PatternInstance, currentIndex: number): void {
+    const allEditableSpans = Array.from(
+        instance.container.querySelectorAll('[contenteditable="true"]')
+    ) as HTMLElement[];
+
+    const prevSpan = [...allEditableSpans].reverse().find(span => {
+        const spanIndex = getSpanIndex(span);
+        return spanIndex < currentIndex;
+    });
+
+    if (prevSpan) {
+        prevSpan.focus();
+        const range = document.createRange();
+        const selection = window.getSelection();
+        range.selectNodeContents(prevSpan);
+        range.collapse(false);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }
+}
+
 export function updateSpanValue(componentId: string, index: number, value: string): void {
     const instance = patternInstances.get(componentId);
     if (!instance) return;
@@ -240,25 +223,49 @@ export function updateSpanValue(componentId: string, index: number, value: strin
 
         span.textContent = value;
 
-        // Si estaba enfocado, restaurar selección
-        if (isFocused) {
-            selectSpanContent(componentId, index);
+        if (isFocused && isEditableSpan(span)) {
+            selectSpanContentInternal(span);
         }
     }
 }
 
-//export function selectSpanContent(componentId: string, index: number): void {
-//    const instance = patternInstances.get(componentId);
-//    if (!instance) return;
+export function selectSpanContent(componentId: string, index: number): void {
+    const instance = patternInstances.get(componentId);
+    if (!instance) return;
 
-//    const span = instance.container.querySelector(
-//        `[data-index="${index}"]`
-//    ) as HTMLElement;
+    const span = instance.container.querySelector(
+        `[data-index="${index}"]`
+    ) as HTMLElement;
 
-//    if (span) {
-//        selectSpanContent(span);
-//    }
-//}
+    if (span) {
+        selectSpanContentInternal(span);
+    }
+}
+
+export function setCaretToEnd(componentId: string, index: number): void {
+    const instance = patternInstances.get(componentId);
+    if (!instance) return;
+
+    const span = instance.container.querySelector(
+        `[data-index="${index}"]`
+    ) as HTMLElement;
+
+    if (span && document.activeElement === span) {
+        const range = document.createRange();
+        const selection = window.getSelection();
+
+        if (span.firstChild) {
+            range.setStart(span.firstChild, span.textContent?.length || 0);
+            range.collapse(true);
+        } else {
+            range.selectNodeContents(span);
+            range.collapse(false);
+        }
+
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+    }
+}
 
 export function focusSpan(componentId: string, index: number): void {
     const instance = patternInstances.get(componentId);
@@ -269,7 +276,22 @@ export function focusSpan(componentId: string, index: number): void {
     ) as HTMLElement;
 
     if (span) {
-        span.click();
+        span.focus();
+        selectSpanContentInternal(span);
+    }
+}
+
+export function focusFirstEditable(componentId: string): void {
+    const instance = patternInstances.get(componentId);
+    if (!instance) return;
+
+    const firstSpan = instance.container.querySelector(
+        '[contenteditable="true"]'
+    ) as HTMLElement;
+
+    if (firstSpan) {
+        firstSpan.focus();
+        selectSpanContentInternal(firstSpan);
     }
 }
 
@@ -277,7 +299,6 @@ export function disposePattern(componentId: string): void {
     const instance = patternInstances.get(componentId);
     if (!instance) return;
 
-    // Remove event listeners
     instance.container.removeEventListener('input', handleInput);
     instance.container.removeEventListener('focus', handleFocus, true);
     instance.container.removeEventListener('blur', handleBlur, true);
@@ -285,13 +306,15 @@ export function disposePattern(componentId: string): void {
     instance.container.removeEventListener('paste', handlePaste);
     instance.container.removeEventListener('keydown', handleKeyDown);
 
-    // Remove from map
     patternInstances.delete(componentId);
 }
 
-// Helper functions
 function isEditableSpan(element: HTMLElement): boolean {
     return element.tagName === 'SPAN' && element.contentEditable === 'true';
+}
+
+function isToggleSpan(element: HTMLElement): boolean {
+    return element.tagName === 'SPAN' && element.classList.contains('pattern-toggle');
 }
 
 function getSpanIndex(span: HTMLElement): number {
@@ -306,19 +329,6 @@ function getInstanceFromElement(element: HTMLElement): PatternInstance | null {
     if (!componentId) return null;
 
     return patternInstances.get(componentId) || null;
-}
-
-export function selectSpanContent(componentId: string, index: number): void {
-    const instance = patternInstances.get(componentId);
-    if (!instance) return;
-
-    const span = instance.container.querySelector(
-        `[data-index="${index}"]`
-    ) as HTMLElement;
-
-    if (span) {
-        selectSpanContentInternal(span);
-    }
 }
 
 function selectSpanContentInternal(span: HTMLElement): void {

@@ -5,41 +5,60 @@
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @typeparam TValue
-@inherits InputBase<TValue>
+@inherits BUIInputComponentBase<TValue>
 @implements IHasReadOnly
 
-<div class="idt-wrapper">
-    <BUIDateTimePattern @bind-Text="@CurrentValueAsString"
-                        Format="@Format"
-                        Editable="@(IsReadOnly == false)" />
-
-    @if (CanClear && !IsReadOnly)
+<div class="bui-input-datetime">
+    @if (!string.IsNullOrWhiteSpace(Label))
     {
-        <button type="button"
-                class="idt-btn idt-btn-clear"
-                @onclick="Clear"
-                @onclick:preventDefault="true"
-                @onclick:stopPropagation="true">
-            ✕
-        </button>
+        <label class="bui-input-datetime__label" @onclick="HandleLabelClick">
+            @Label
+            @if (Required)
+            {
+                <span class="bui-input-datetime__required">*</span>
+            }
+        </label>
     }
 
-    <button type="button"
-            class="idt-btn"
-            @onclick="OpenPicker"
-            @onclick:preventDefault="true"
-            @onclick:stopPropagation="true"
-            disabled="@IsReadOnly">
-        📅
-    </button>
-</div>
+    <div class="bui-input-datetime__wrapper">
+        <BUIDateTimePattern @ref="_patternRef"
+                            @bind-Text="@CurrentValueAsString"
+                            Format="@Format"
+                            Editable="@(!IsReadOnly)" />
 
-@if (EditContext != null && ValueExpression != null)
-{
-    <div class="bui-input__validation">
-        <ValidationMessage For="ValueExpression" />
+        @if (CanClear && !IsReadOnly)
+        {
+            <button type="button"
+                    class="bui-input-datetime__btn bui-input-datetime__btn--clear"
+                    @onclick="Clear"
+                    @onclick:preventDefault="true"
+                    @onclick:stopPropagation="true">
+                ✕
+            </button>
+        }
+
+        <button type="button"
+                class="bui-input-datetime__btn"
+                @onclick="OpenPicker"
+                @onclick:preventDefault="true"
+                @onclick:stopPropagation="true"
+                disabled="@IsReadOnly">
+            📅
+        </button>
     </div>
-}
+
+    @if (EditContext != null && ValueExpression != null)
+    {
+        <div class="bui-input-datetime__validation">
+            <ValidationMessage For="ValueExpression" />
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(HelperText))
+    {
+        <div class="bui-input-datetime__helper">@HelperText</div>
+    }
+</div>
 
 @if (IsOpen)
 {
@@ -64,11 +83,16 @@
     private bool ShowDate;
     private bool ShowTime;
     private TValue? _initialValue;
+    private BUIDateTimePattern? _patternRef;
 
     private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly TimeValue { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
 
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public bool Required { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
+
     public bool IsReadOnly => ReadOnly;
 
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
@@ -81,6 +105,8 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         _initialValue = Value;
 
         Type type = UnderlyingType;
@@ -96,6 +122,8 @@
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
+
         if (!HasValue) return;
 
         SyncPickersFromValue();
@@ -150,6 +178,14 @@
         }
     }
 
+    private async Task HandleLabelClick()
+    {
+        if (_patternRef != null)
+        {
+            await _patternRef.FocusAsync();
+        }
+    }
+
     private void HandleOverlayClick()
     {
         IsOpen = false;
@@ -196,7 +232,6 @@
 
         Type type = UnderlyingType;
 
-        // Para tipos no-nullable, detectar el valor default como "vacío"
         if (IsDefaultValue(value, type)) return null;
 
         return type switch

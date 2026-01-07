@@ -225,7 +225,6 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         return currentValue;
     }
 
-
     private bool IsValidIndex(int index)
         => index >= 0 && index < _patternState.Spans.Count;
 
@@ -238,6 +237,14 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
             _text = actualText;
             _lastExternalText = actualText;  // Mantener sincronizado
             await TextChanged.InvokeAsync(_text);
+        }
+    }
+
+    public async Task FocusAsync()
+    {
+        if (_isInitialized)
+        {
+            await Js.FocusFirstEditableAsync(ComponentId);
         }
     }
 

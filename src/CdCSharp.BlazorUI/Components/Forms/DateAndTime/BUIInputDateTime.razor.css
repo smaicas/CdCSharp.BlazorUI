@@ -1,46 +1,71 @@
-﻿/* Wrapper */
-.idt-wrapper {
+﻿.bui-input-datetime {
     display: flex;
-    align-items: center;
-    gap: .5rem;
-    position: relative;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
-/* Botones */
-.idt-btn {
-    border-radius: 10px;
-    padding: .6rem .75rem;
-    border: 1px solid #ccc;
-    background: white;
+.bui-input-datetime__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #333;
     cursor: pointer;
 }
 
-    .idt-btn:disabled {
+.bui-input-datetime__required {
+    color: #dc3545;
+    margin-left: 0.25rem;
+}
+
+.bui-input-datetime__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bui-input-datetime__btn {
+    border-radius: 10px;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid #ccc;
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+    .bui-input-datetime__btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
     }
 
-    .idt-btn:hover:not(:disabled) {
+    .bui-input-datetime__btn:hover:not(:disabled) {
         border-color: #0078ff;
     }
 
-    .idt-btn:focus {
+    .bui-input-datetime__btn:focus {
         outline: none;
         border-color: #005ecb;
         box-shadow: 0 0 0 2px rgba(0,120,255,.3);
     }
 
-/* Botón limpiar */
-.idt-btn-clear {
-    padding: .4rem .6rem;
+.bui-input-datetime__btn--clear {
+    padding: 0.4rem 0.6rem;
     font-size: 0.8rem;
     color: #666;
 }
 
-    .idt-btn-clear:hover:not(:disabled) {
+    .bui-input-datetime__btn--clear:hover:not(:disabled) {
         color: #c00;
         border-color: #c00;
     }
+
+.bui-input-datetime__validation {
+    font-size: 0.75rem;
+    color: #dc3545;
+}
+
+.bui-input-datetime__helper {
+    font-size: 0.75rem;
+    color: #666;
+}
 
 /* Overlay modal */
 .picker-overlay {
@@ -55,7 +80,6 @@
     z-index: 9999;
 }
 
-/* Modal */
 .picker-modal {
     background: #fff;
     padding: 1rem;

@@ -10,34 +10,20 @@
     <div style="display: flex; flex-direction: column; gap: 1rem;">
 
         <div>
-            <span>DateOnly:</span>
-            <BUIInputDateTime @bind-Value="model.DateOnly" />
+            <BUIInputDateTime Label="DateOnly" @bind-Value="model.DateOnly" />
         </div>
-        <span> @model.DateOnly</span>
 
         <div>
-            <span>TimeOnly:</span>
-            <BUIInputDateTime @bind-Value="model.TimeOnly" />
+            <BUIInputDateTime Label="TimeOnly" @bind-Value="model.TimeOnly" />
         </div>
-        <span> @model.TimeOnly</span>
 
         <div>
-            <span>DateTime:</span>
-            <BUIInputDateTime @bind-Value="model.DateTime" />
+            <BUIInputDateTime Label="DateTime" @bind-Value="model.DateTime" />
         </div>
-        <span> @model.DateTime</span>
 
         <div>
-            <span>DateTimeOffset:</span>
-            <BUIInputDateTime @bind-Value="model.DateTimeOffset" />
+            <BUIInputDateTime Label="DateTimeOffset" @bind-Value="model.DateTimeOffset" />
         </div>
-        <span> @model.DateTimeOffset</span>
-
-        <div>
-            <span>Nullable DateTime:</span>
-            <BUIInputDateTime @bind-Value="model.NullableDateTime" />
-        </div>
-        <span> @model.NullableDateTime</span>
 
     </div>
 </EditForm>
@@ -48,7 +34,6 @@
     TimeOnly: @model.TimeOnly<br />
     DateTime: @model.DateTime<br />
     DateTimeOffset: @model.DateTimeOffset<br />
-    Nullable: @(model.NullableDateTime?.ToString() ?? "null")
 </p>
 
 @code {
@@ -69,8 +54,5 @@
 
         [Required]
         public DateTimeOffset? DateTimeOffset { get; set; }
-
-        [Required]
-        public DateTime? NullableDateTime { get; set; }
     }
 }

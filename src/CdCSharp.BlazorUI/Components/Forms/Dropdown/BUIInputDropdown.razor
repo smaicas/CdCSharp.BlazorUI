@@ -360,7 +360,7 @@
 
                 @if (_isOpen)
                 {
-                    <div class="bui-dropdown__menu" style="max-height: @(MaxHeight)px;">
+                    <div class="bui-dropdown__menu" style="max-height: @($"{MaxHeight}px")">
                         @if (_isMultiple && ShowSelectAll && Options.Count > 0)
                         {
                             <div class="bui-dropdown__select-all">
@@ -377,14 +377,14 @@
                             </div>
                         }
 
-                        
+
 
                         @foreach (var option in Options)
                         {
                             var isSelected = IsSelected(option.Value);
 
                             <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(Disabled ? "bui-dropdown__option--disabled" : "")"
-                                 @onclick="()=>OptionClicked(option.Value)">
+                                 @onclick="() => OptionClicked(option.Value)">
                                 @if (_isMultiple)
                                 {
                                     <span class="bui-dropdown__checkbox">
