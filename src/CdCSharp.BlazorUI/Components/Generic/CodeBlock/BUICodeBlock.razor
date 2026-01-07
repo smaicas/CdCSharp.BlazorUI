@@ -1,5 +1,6 @@
 ﻿@using CdCSharp.BlazorUI.Components.Utils
-
+@using CdCSharp.BlazorUI.SyntaxHighlight
+@using CdCSharp.BlazorUI.SyntaxHighlight.Engines
 @namespace CdCSharp.BlazorUI.Components
 
 @inject IClipboardJsInterop Clipboard
@@ -7,37 +8,36 @@
 <div class="bui-code-block">
     <div class="bui-code-block__header">
         <span class="bui-code-block__title">
-            @Title ?? Language.ToUpperInvariant()
+            @(Title ?? Language.ToString().ToUpperInvariant())
         </span>
 
         <button class="bui-code-block__copy"
                 @onclick="CopyAsync"
                 disabled="@_copied">
-            @_copied ? "✓ Copied" : "Copy"
+            @(_copied ? "✓ Copied" : "Copy")
         </button>
     </div>
 
     <pre class="bui-code-block__pre">
-<code class="bui-code-block__code language-@Language">
-@FormattedCode
-</code>
+<code class="bui-code-block__code language-@Language">@HighlightedCode</code>
     </pre>
 </div>
 
 @code {
     [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
-    [Parameter] public string Language { get; set; } = "razor";
+    [Parameter] public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.CSharp;
     [Parameter] public string? Title { get; set; }
 
     private bool _copied;
-
-    private string FormattedCode => NormalizeIndentation(Code);
+    private Highlighter _highlighter = new Highlighter(new HtmlEngine());
+    // Convertimos a MarkupString para que Blazor renderice los <span class="...">
+    private MarkupString HighlightedCode => (MarkupString)_highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
 
     private async Task CopyAsync()
     {
-        await Clipboard.CopyTextAsync(FormattedCode);
+        // Al copiar, usamos el código normalizado pero SIN etiquetas HTML
+        await Clipboard.CopyTextAsync(NormalizeIndentation(Code));
         _copied = true;
-        StateHasChanged();
 
         await Task.Delay(1500);
         _copied = false;
@@ -46,7 +46,9 @@
 
     private static string NormalizeIndentation(string code)
     {
-        var lines = code.Trim().Split('\n');
+        if (string.IsNullOrWhiteSpace(code)) return string.Empty;
+
+        var lines = code.Split('\n');
 
         var minIndent = lines
             .Where(l => !string.IsNullOrWhiteSpace(l))
@@ -57,6 +59,6 @@
         return string.Join(
             "\n",
             lines.Select(l => l.Length >= minIndent ? l[minIndent..] : l)
-        );
+        ).Trim();
     }
 }

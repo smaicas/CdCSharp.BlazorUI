@@ -7,13 +7,7 @@
 .bui-input-datetime__label {
     font-size: 0.875rem;
     font-weight: 500;
-    color: #333;
     cursor: pointer;
-}
-
-.bui-input-datetime__required {
-    color: #dc3545;
-    margin-left: 0.25rem;
 }
 
 .bui-input-datetime__wrapper {

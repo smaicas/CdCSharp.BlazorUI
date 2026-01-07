@@ -1,4 +1,5 @@
-﻿<div class="bui-component-demo">
+﻿@using CdCSharp.BlazorUI.SyntaxHighlight
+<div class="bui-component-demo">
     <div class="bui-component-demo__preview">
         @Demo
     </div>
@@ -14,6 +15,6 @@
 @code {
     [Parameter, EditorRequired] public RenderFragment Demo { get; set; } = default!;
     [Parameter] public string? Code { get; set; }
-    [Parameter] public string Language { get; set; } = "razor";
+    [Parameter] public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.Xml;
     [Parameter] public string? CodeTitle { get; set; }
 }

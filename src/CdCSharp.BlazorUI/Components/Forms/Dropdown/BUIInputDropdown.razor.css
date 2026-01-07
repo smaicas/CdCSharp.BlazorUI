@@ -200,3 +200,51 @@ bui-component[data-bui-component="input-dropdown"][data-bui-error="true"] .bui-d
 bui-component[data-bui-component="input-dropdown"][data-bui-fullwidth="true"] {
     width: 100%;
 }
+
+/* Placement - Bottom (default) */
+bui-component[data-bui-component="input-dropdown"] .bui-dropdown__menu {
+    top: 100%;
+    bottom: auto;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+/* Placement - Top */
+bui-component[data-bui-component="input-dropdown"][data-bui-placement="top"] .bui-dropdown__menu {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+/* Placement - TopStart */
+bui-component[data-bui-component="input-dropdown"][data-bui-placement="topstart"] .bui-dropdown__menu {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+/* Placement - TopEnd */
+bui-component[data-bui-component="input-dropdown"][data-bui-placement="topend"] .bui-dropdown__menu {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+/* Placement - BottomStart */
+bui-component[data-bui-component="input-dropdown"][data-bui-placement="bottomstart"] .bui-dropdown__menu {
+    top: 100%;
+    bottom: auto;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+/* Placement - BottomEnd */
+bui-component[data-bui-component="input-dropdown"][data-bui-placement="bottomend"] .bui-dropdown__menu {
+    top: 100%;
+    bottom: auto;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
