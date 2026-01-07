@@ -90,10 +90,6 @@
 
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
-    [Parameter] public bool Required { get; set; }
-    [Parameter] public bool ReadOnly { get; set; }
-
-    public bool IsReadOnly => ReadOnly;
 
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 

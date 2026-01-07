@@ -1,0 +1,168 @@
+﻿@page "/components/forms/input-datetime"
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>InputDateTime - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>InputDateTime</h1>
+
+    <p class="doc-intro">
+        <strong>BUIInputDateTime</strong> is a form input component that adapts automatically
+        to the bound value type. It supports <code>DateOnly</code>, <code>TimeOnly</code>,
+        <code>DateTime</code> and <code>DateTimeOffset</code>, including validation,
+        culture-aware formatting and picker dialogs.
+    </p>
+
+    <EditForm Model="@model">
+        <DataAnnotationsValidator />
+
+        <!-- DateOnly -->
+        <div class="doc-section">
+            <h2>DateOnly</h2>
+
+            <ComponentDemo Code="@dateOnlyCode">
+                <Demo>
+                    <BUIInputDateTime Label="DateOnly"
+                                      Required="true"
+                                      @bind-Value="model.DateOnly" />
+                </Demo>
+            </ComponentDemo>
+        </div>
+
+        <!-- TimeOnly -->
+        <div class="doc-section">
+            <h2>TimeOnly</h2>
+
+            <ComponentDemo Code="@timeOnlyCode">
+                <Demo>
+                    <BUIInputDateTime Label="TimeOnly"
+                                      Required="true"
+                                      @bind-Value="model.TimeOnly" />
+                </Demo>
+            </ComponentDemo>
+        </div>
+
+        <!-- DateTime -->
+        <div class="doc-section">
+            <h2>DateTime</h2>
+
+            <ComponentDemo Code="@dateTimeCode">
+                <Demo>
+                    <BUIInputDateTime Label="DateTime"
+                                      Required="true"
+                                      HelperText="Select date and time"
+                                      @bind-Value="model.DateTime" />
+                </Demo>
+            </ComponentDemo>
+        </div>
+
+        <!-- DateTimeOffset -->
+        <div class="doc-section">
+            <h2>DateTimeOffset</h2>
+
+            <ComponentDemo Code="@dateTimeOffsetCode">
+                <Demo>
+                    <BUIInputDateTime Label="DateTimeOffset"
+                                      Required="true"
+                                      @bind-Value="model.DateTimeOffset" />
+                </Demo>
+            </ComponentDemo>
+        </div>
+    </EditForm>
+
+    <!-- Current values -->
+    <div class="doc-section">
+        <h2>Current Values</h2>
+
+        <pre class="demo-output">
+DateOnly: @model.DateOnly
+TimeOnly: @model.TimeOnly
+DateTime: @model.DateTime
+DateTimeOffset: @model.DateTimeOffset
+        </pre>
+    </div>
+
+    <!-- Properties -->
+    <div class="doc-section">
+        <h2>Properties</h2>
+
+        <PropertyTable TItem="InputDateTimeProperty"
+                       Items="@Properties">
+            <PropertyTemplate Context="prop">
+                <td><code>@prop.Name</code></td>
+                <td><code>@prop.Type</code></td>
+                <td><code>@prop.Default</code></td>
+                <td>@prop.Description</td>
+            </PropertyTemplate>
+        </PropertyTable>
+    </div>
+</div>
+
+@code {
+    private DateTestModel model = new();
+
+    public class DateTestModel
+    {
+        [Required] public DateOnly? DateOnly { get; set; }
+        [Required] public TimeOnly? TimeOnly { get; set; }
+        [Required] public DateTime? DateTime { get; set; }
+        [Required] public DateTimeOffset? DateTimeOffset { get; set; }
+    }
+
+    private string dateOnlyCode =
+@"<BUIInputDateTime Label=""DateOnly""
+                  Required
+                  @bind-Value=""model.DateOnly"" />";
+
+    private string timeOnlyCode =
+@"<BUIInputDateTime Label=""TimeOnly""
+                  Required
+                  @bind-Value=""model.TimeOnly"" />";
+
+    private string dateTimeCode =
+@"<BUIInputDateTime Label=""DateTime""
+                  Required
+                  HelperText=""Select date and time""
+                  @bind-Value=""model.DateTime"" />";
+
+    private string dateTimeOffsetCode =
+@"<BUIInputDateTime Label=""DateTimeOffset""
+                  Required
+                  @bind-Value=""model.DateTimeOffset"" />";
+
+    private record InputDateTimeProperty(
+        string Name,
+        string Type,
+        string Default,
+        string Description
+    );
+
+    private List<InputDateTimeProperty> Properties = new()
+    {
+        new("Value", "TValue", "null",
+            "Bound value. The behavior depends on TValue (DateOnly, TimeOnly, DateTime, DateTimeOffset)."),
+
+        new("ValueChanged", "EventCallback<TValue>", "-",
+            "Raised when the value changes."),
+
+        new("Label", "string?", "null",
+            "Label displayed above the input."),
+
+        new("HelperText", "string?", "null",
+            "Helper text displayed below the input."),
+
+        new("Required", "bool", "false",
+            "Marks the field as required and shows validation errors."),
+
+        new("ReadOnly", "bool", "false",
+            "Prevents user interaction while keeping the value visible."),
+
+        new("Disabled", "bool", "false",
+            "Disables the input entirely."),
+
+        new("Variant", "Variant?", "Default",
+            "Visual variant of the input component.")
+    };
+}

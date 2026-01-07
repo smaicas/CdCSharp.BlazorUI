@@ -7,6 +7,7 @@
     <Project Path="samples/CdCSharp.BlazorUI.AppTest.Wasm/CdCSharp.BlazorUI.AppTest.Wasm.csproj" Id="0fdf0470-1472-4082-98f6-08ce7101e926" />
   </Folder>
   <Folder Name="/test/">
+    <Project Path="test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/CdCSharp.BlazorUI.SyntaxHighlight.Tests.csproj" Id="15dbd024-6662-408e-a091-75d50b191b54" />
     <Project Path="test/CdCSharp.BlazorUI.Tests.Integration.Templates/CdCSharp.BlazorUI.Tests.Integration.Templates.csproj" Id="5dc784c4-634b-4043-b718-1fd61d48d14b" />
     <Project Path="test/CdCSharp.BlazorUI.Tests.Integration/CdCSharp.BlazorUI.Tests.Integration.csproj" Id="adba42f4-5632-4ee9-8656-917fa72c6c0a" />
   </Folder>
@@ -23,5 +24,6 @@
   <Project Path="src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj" Id="4d42e187-5c5c-441e-a3bf-59ecb330e6e6" />
   <Project Path="src/CdCSharp.BlazorUI.Localization.Server/CdCSharp.BlazorUI.Localization.Server.csproj" Id="cc099920-bfe2-4cbb-ad43-85f57c86d3a4" />
   <Project Path="src/CdCSharp.BlazorUI.Localization.Wasm/CdCSharp.BlazorUI.Localization.Wasm.csproj" Id="7203c218-f90d-4664-8e5f-d21641df712e" />
+  <Project Path="src/CdCSharp.BlazorUI.SyntaxHighlight/CdCSharp.BlazorUI.SyntaxHighlight.csproj" Id="93e5c0b8-4936-420e-8549-56b3f8260af0" />
   <Project Path="src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj" />
 </Solution>

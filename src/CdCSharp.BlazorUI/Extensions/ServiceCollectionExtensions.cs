@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript;
+using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
 using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
 using CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
@@ -22,6 +23,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IThemeJsInterop, ThemeJsInterop>();
         services.AddScoped<IBehaviorJsInterop, BehaviorJsInterop>();
         services.AddScoped<IPatternJsInterop, PatternJsInterop>();
+        services.AddScoped<IDropdownJsInterop, DropdownJsInterop>();
 
         return services;
     }

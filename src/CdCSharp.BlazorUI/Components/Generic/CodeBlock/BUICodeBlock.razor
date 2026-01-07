@@ -1,0 +1,62 @@
+﻿@using CdCSharp.BlazorUI.Components.Utils
+
+@namespace CdCSharp.BlazorUI.Components
+
+@inject IClipboardJsInterop Clipboard
+
+<div class="bui-code-block">
+    <div class="bui-code-block__header">
+        <span class="bui-code-block__title">
+            @Title ?? Language.ToUpperInvariant()
+        </span>
+
+        <button class="bui-code-block__copy"
+                @onclick="CopyAsync"
+                disabled="@_copied">
+            @_copied ? "✓ Copied" : "Copy"
+        </button>
+    </div>
+
+    <pre class="bui-code-block__pre">
+<code class="bui-code-block__code language-@Language">
+@FormattedCode
+</code>
+    </pre>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
+    [Parameter] public string Language { get; set; } = "razor";
+    [Parameter] public string? Title { get; set; }
+
+    private bool _copied;
+
+    private string FormattedCode => NormalizeIndentation(Code);
+
+    private async Task CopyAsync()
+    {
+        await Clipboard.CopyTextAsync(FormattedCode);
+        _copied = true;
+        StateHasChanged();
+
+        await Task.Delay(1500);
+        _copied = false;
+        StateHasChanged();
+    }
+
+    private static string NormalizeIndentation(string code)
+    {
+        var lines = code.Trim().Split('\n');
+
+        var minIndent = lines
+            .Where(l => !string.IsNullOrWhiteSpace(l))
+            .Select(l => l.TakeWhile(char.IsWhiteSpace).Count())
+            .DefaultIfEmpty(0)
+            .Min();
+
+        return string.Join(
+            "\n",
+            lines.Select(l => l.Length >= minIndent ? l[minIndent..] : l)
+        );
+    }
+}

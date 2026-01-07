@@ -131,14 +131,9 @@ public class ComponentsCssGenerator : IAssetGenerator
     content: '';
     position: absolute;
     inset: 0;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: inherit;
+    opacity: 0.3;
     pointer-events: none;
-}}
-
-@media (prefers-color-scheme: dark) {{
-    {FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
-        background-color: rgba(0, 0, 0, 0.6);
-    }}
 }}
 
 /* Elevation */");
