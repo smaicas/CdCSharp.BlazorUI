@@ -23,6 +23,7 @@ public enum SyntaxHighlightLanguage
     Perl,
     Php,
     Python,
+    Razor,
     Ruby,
     Sql,
     VBNET,
