@@ -12,6 +12,7 @@ public sealed class PatternCallbacksRelay : IDisposable
     [DynamicDependency(nameof(OnSpanFocus))]
     [DynamicDependency(nameof(OnSpanBlur))]
     [DynamicDependency(nameof(OnPaste))]
+    [DynamicDependency(nameof(OnToggleClick))]
     public PatternCallbacksRelay(IPatternJsCallback callback)
     {
         _callback = callback;
@@ -39,6 +40,10 @@ public sealed class PatternCallbacksRelay : IDisposable
     [JSInvokable]
     public Task OnPaste(string text)
         => _callback.OnPaste(text);
+
+    [JSInvokable]
+    public Task OnToggleClick(int index)
+    => _callback.OnToggleClick(index);
 
     public void Dispose()
     {

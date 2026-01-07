@@ -7,4 +7,6 @@ public interface IPatternJsCallback
     Task OnSpanFocus(int index);
     Task OnSpanBlur(int index);
     Task OnPaste(string text);
+    Task OnToggleClick(int index);
+
 }

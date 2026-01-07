@@ -9,6 +9,7 @@ public sealed class SpanState
     public int MaxLength { get; set; }
     public string AllowedChars { get; set; } = string.Empty; // "d" = digits, "w" = letters, "" = any
 
+    public bool IsToggle { get; set; } = false;
     // Validator for complete value
     public Func<string, bool>? Validator { get; set; }
 

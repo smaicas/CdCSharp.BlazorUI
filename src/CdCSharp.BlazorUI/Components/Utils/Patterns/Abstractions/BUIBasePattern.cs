@@ -204,6 +204,28 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         return result.ToString();
     }
 
+    public async Task OnToggleClick(int index)
+    {
+        if (!IsValidIndex(index)) return;
+
+        SpanState span = _patternState.Spans[index];
+        if (!span.IsToggle) return;
+
+        string newValue = ToggleValue(span.Value, span.Placeholder);
+        span.Value = newValue;
+
+        await Js.UpdateSpanValueAsync(ComponentId, index, newValue);
+
+        _suppressRender = true;
+        await NotifyTextChanged();
+    }
+    protected virtual string ToggleValue(string currentValue, string placeholder)
+    {
+        // Implementación por defecto - puede ser override
+        return currentValue;
+    }
+
+
     private bool IsValidIndex(int index)
         => index >= 0 && index < _patternState.Spans.Count;
 

@@ -65,15 +65,20 @@ async function handleInput(e: Event): Promise<void> {
 }
 
 function moveToNextSpan(instance: PatternInstance, currentIndex: number): void {
-    const nextSpan = instance.container.querySelector(
-        `[data-index="${currentIndex + 1}"][contenteditable="true"]`
-    ) as HTMLElement;
+    // Buscar el siguiente span editable con índice mayor al actual
+    const allEditableSpans = Array.from(
+        instance.container.querySelectorAll('[contenteditable="true"]')
+    ) as HTMLElement[];
+
+    const nextSpan = allEditableSpans.find(span => {
+        const spanIndex = getSpanIndex(span);
+        return spanIndex > currentIndex;
+    });
 
     if (nextSpan) {
-        // Usar setTimeout para asegurar que el DOM está estable
         setTimeout(() => {
             nextSpan.focus();
-            selectSpanContent(instance.componentId, currentIndex + 1);
+            selectSpanContentInternal(nextSpan);
         }, 0);
     }
 }
@@ -106,9 +111,25 @@ export function setCaretToEnd(componentId: string, index: number): void {
 
 async function handleClick(e: Event): Promise<void> {
     const target = e.target as HTMLElement;
-    if (!isEditableSpan(target)) return;
 
+    // Manejar toggle
+    if (isToggleSpan(target)) {
+        const instance = getInstanceFromElement(target);
+        if (!instance) return;
+
+        const index = getSpanIndex(target);
+        await instance.dotnetRef.invokeMethodAsync('OnToggleClick', index);
+        return;
+    }
+
+    // Manejar editable (código existente)
+    if (!isEditableSpan(target)) return;
     selectSpanContentInternal(target);
+}
+
+function isToggleSpan(element: HTMLElement): boolean {
+    return element.tagName === 'SPAN' &&
+        element.classList.contains('pattern-toggle');
 }
 
 async function handleFocus(e: FocusEvent): Promise<void> {
