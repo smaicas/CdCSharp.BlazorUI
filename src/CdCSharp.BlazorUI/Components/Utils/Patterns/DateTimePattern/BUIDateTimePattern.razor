@@ -7,7 +7,6 @@
 @inherits BUIBasePattern
 
 <div @ref="_containerBox" class="pattern-container" data-pattern-id="@ComponentId">
-    @* En BUIDateTimePattern.razor - Modificar el renderizado del span *@
 
     @foreach (var span in _patternState.Spans)
     {
@@ -28,7 +27,6 @@
         }
     }
 </div>
-@(Text != null ? @Text : "null")
 
 @code {
     private ParsedDatePattern? _parsedPattern;

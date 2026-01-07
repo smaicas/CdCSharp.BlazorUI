@@ -11,36 +11,31 @@
 
         <div>
             <span>DateOnly:</span>
-            <BUIInputDateTime TValue="DateOnly"
-                              @bind-Value="model.DateOnly" />
+            <BUIInputDateTime @bind-Value="model.DateOnly" />
         </div>
         <span> @model.DateOnly</span>
 
         <div>
             <span>TimeOnly:</span>
-            <BUIInputDateTime TValue="TimeOnly"
-                              @bind-Value="model.TimeOnly" />
+            <BUIInputDateTime @bind-Value="model.TimeOnly" />
         </div>
         <span> @model.TimeOnly</span>
 
         <div>
             <span>DateTime:</span>
-            <BUIInputDateTime TValue="DateTime"
-                              @bind-Value="model.DateTime" />
+            <BUIInputDateTime @bind-Value="model.DateTime" />
         </div>
         <span> @model.DateTime</span>
 
         <div>
             <span>DateTimeOffset:</span>
-            <BUIInputDateTime TValue="DateTimeOffset"
-                              @bind-Value="model.DateTimeOffset" />
+            <BUIInputDateTime @bind-Value="model.DateTimeOffset" />
         </div>
         <span> @model.DateTimeOffset</span>
 
         <div>
             <span>Nullable DateTime:</span>
-            <BUIInputDateTime TValue="DateTime ?"
-                              @bind-Value="model.NullableDateTime" />
+            <BUIInputDateTime @bind-Value="model.NullableDateTime" />
         </div>
         <span> @model.NullableDateTime</span>
 
@@ -59,26 +54,21 @@
 @code {
     private DateTestModel model = new()
     {
-        DateOnly = DateOnly.FromDateTime(DateTime.Now),
-        TimeOnly = TimeOnly.FromDateTime(DateTime.Now),
-        DateTime = DateTime.Now,
-        DateTimeOffset = DateTimeOffset.Now,
-        NullableDateTime = DateTime.Now
     };
 
     public class DateTestModel
     {
         [Required]
-        public DateOnly DateOnly { get; set; }
+        public DateOnly? DateOnly { get; set; }
 
         [Required]
-        public TimeOnly TimeOnly { get; set; }
+        public TimeOnly? TimeOnly { get; set; }
 
         [Required]
-        public DateTime DateTime { get; set; }
+        public DateTime? DateTime { get; set; }
 
         [Required]
-        public DateTimeOffset DateTimeOffset { get; set; }
+        public DateTimeOffset? DateTimeOffset { get; set; }
 
         [Required]
         public DateTime? NullableDateTime { get; set; }

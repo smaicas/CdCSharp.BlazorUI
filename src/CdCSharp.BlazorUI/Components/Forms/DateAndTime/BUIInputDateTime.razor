@@ -13,6 +13,17 @@
                         Format="@Format"
                         Editable="@(IsReadOnly == false)" />
 
+    @if (CanClear && !IsReadOnly)
+    {
+        <button type="button"
+                class="idt-btn idt-btn-clear"
+                @onclick="Clear"
+                @onclick:preventDefault="true"
+                @onclick:stopPropagation="true">
+            ✕
+        </button>
+    }
+
     <button type="button"
             class="idt-btn"
             @onclick="OpenPicker"
@@ -52,9 +63,10 @@
     private bool IsOpen;
     private bool ShowDate;
     private bool ShowTime;
+    private TValue? _initialValue;
 
     private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
-    private TimeOnly TimeValue { get; set; } = TimeOnly.MinValue;
+    private TimeOnly TimeValue { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
 
     [Parameter] public bool ReadOnly { get; set; }
     public bool IsReadOnly => ReadOnly;
@@ -62,10 +74,15 @@
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 
     private string Format => GetCultureFormatString();
-    private string DefaultText => GetDefaultText();
+
+    private bool HasValue => CurrentValue != null && !IsDefaultValue(CurrentValue, UnderlyingType);
+
+    private bool CanClear => !EqualityComparer<TValue>.Default.Equals(CurrentValue, _initialValue);
 
     protected override void OnInitialized()
     {
+        _initialValue = Value;
+
         Type type = UnderlyingType;
 
         ShowDate = type == typeof(DateOnly)
@@ -78,6 +95,13 @@
     }
 
     protected override void OnParametersSet()
+    {
+        if (!HasValue) return;
+
+        SyncPickersFromValue();
+    }
+
+    private void SyncPickersFromValue()
     {
         if (CurrentValue == null) return;
 
@@ -107,36 +131,28 @@
 
     private void OpenPicker()
     {
+        if (!HasValue)
+        {
+            DateValue = DateOnly.FromDateTime(DateTime.Today);
+            TimeValue = TimeOnly.FromDateTime(DateTime.Now);
+        }
+
         IsOpen = true;
+    }
+
+    private void Clear()
+    {
+        CurrentValue = _initialValue;
+
+        if (_initialValue != null && !IsDefaultValue(_initialValue, UnderlyingType))
+        {
+            SyncPickersFromValue();
+        }
     }
 
     private void HandleOverlayClick()
     {
         IsOpen = false;
-    }
-
-    private bool ValidateFinalValue(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text)) return true;
-
-        Type type = UnderlyingType;
-
-        return type switch
-        {
-            Type t when t == typeof(DateOnly)
-                => DateOnly.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
-
-            Type t when t == typeof(TimeOnly)
-                => TimeOnly.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
-
-            Type t when t == typeof(DateTime)
-                => DateTime.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
-
-            Type t when t == typeof(DateTimeOffset)
-                => DateTimeOffset.TryParseExact(text, Format, CultureInfo.CurrentCulture, DateTimeStyles.None, out _),
-
-            _ => false
-        };
     }
 
     private async Task OnDateChanged(DateOnly? value)
@@ -170,17 +186,18 @@
             _ => throw new InvalidOperationException($"Unsupported type: {type}")
         };
 
-        // EditContext?.NotifyFieldChanged(FieldIdentifier);
-
         CurrentValue = (TValue?)newValue;
         await Task.CompletedTask;
     }
 
     protected override string? FormatValueAsString(TValue? value)
     {
-        if (value == null) return string.Empty;
+        if (value == null) return null;
 
         Type type = UnderlyingType;
+
+        // Para tipos no-nullable, detectar el valor default como "vacío"
+        if (IsDefaultValue(value, type)) return null;
 
         return type switch
         {
@@ -200,6 +217,20 @@
         };
     }
 
+    private bool IsDefaultValue(TValue? value, Type type)
+    {
+        if (value == null) return true;
+
+        return type switch
+        {
+            Type t when t == typeof(DateOnly) => ((DateOnly)(object)value) == default,
+            Type t when t == typeof(TimeOnly) => ((TimeOnly)(object)value) == default,
+            Type t when t == typeof(DateTime) => ((DateTime)(object)value) == default,
+            Type t when t == typeof(DateTimeOffset) => ((DateTimeOffset)(object)value) == default,
+            _ => false
+        };
+    }
+
     protected override bool TryParseValueFromString(
         string? value,
         out TValue result,
@@ -210,13 +241,7 @@
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            if (Nullable.GetUnderlyingType(typeof(TValue)) != null)
-            {
-                return true;
-            }
-
-            validationErrorMessage = "El valor es requerido.";
-            return false;
+            return true;
         }
 
         try
@@ -261,29 +286,6 @@
             Type t when t == typeof(TimeOnly) => dtfi.ShortTimePattern,
             Type t when t == typeof(DateTime) || t == typeof(DateTimeOffset)
                 => $"{dtfi.ShortDatePattern} {dtfi.ShortTimePattern}",
-            _ => string.Empty
-        };
-    }
-
-    private string GetDefaultText()
-    {
-        DateTime now = DateTime.Now;
-        Type type = UnderlyingType;
-
-        return type switch
-        {
-            Type t when t == typeof(DateOnly)
-                => DateOnly.FromDateTime(now).ToString(Format, CultureInfo.CurrentCulture),
-
-            Type t when t == typeof(TimeOnly)
-                => TimeOnly.FromDateTime(now).ToString(Format, CultureInfo.CurrentCulture),
-
-            Type t when t == typeof(DateTime)
-                => now.ToString(Format, CultureInfo.CurrentCulture),
-
-            Type t when t == typeof(DateTimeOffset)
-                => DateTimeOffset.Now.ToString(Format, CultureInfo.CurrentCulture),
-
             _ => string.Empty
         };
     }

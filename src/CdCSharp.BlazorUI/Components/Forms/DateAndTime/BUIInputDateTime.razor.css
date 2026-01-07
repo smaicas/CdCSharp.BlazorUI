@@ -6,7 +6,7 @@
     position: relative;
 }
 
-/* Botón calendario */
+/* Botones */
 .idt-btn {
     border-radius: 10px;
     padding: .6rem .75rem;
@@ -18,6 +18,28 @@
     .idt-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    .idt-btn:hover:not(:disabled) {
+        border-color: #0078ff;
+    }
+
+    .idt-btn:focus {
+        outline: none;
+        border-color: #005ecb;
+        box-shadow: 0 0 0 2px rgba(0,120,255,.3);
+    }
+
+/* Botón limpiar */
+.idt-btn-clear {
+    padding: .4rem .6rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+    .idt-btn-clear:hover:not(:disabled) {
+        color: #c00;
+        border-color: #c00;
     }
 
 /* Overlay modal */
@@ -45,15 +67,4 @@
     gap: 1rem;
     box-shadow: 0 12px 24px rgba(0,0,0,.25);
     transition: transform 0.2s ease;
-}
-
-/* Hover y foco */
-.idt-btn:hover:not(:disabled) {
-    border-color: #0078ff;
-}
-
-.idt-btn:focus {
-    outline: none;
-    border-color: #005ecb;
-    box-shadow: 0 0 0 2px rgba(0,120,255,.3);
 }
