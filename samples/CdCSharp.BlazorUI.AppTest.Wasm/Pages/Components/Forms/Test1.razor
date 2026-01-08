@@ -1,0 +1,11 @@
+﻿@page "/Test1"
+
+<BUIInputRadio @bind-Value="_option">
+    <RadioOption Value="@("Option1")">Option1</RadioOption>
+    <RadioOption Value="@("Option2")">Option2</RadioOption>
+    <RadioOption Value="@("Option3")">Option3</RadioOption>
+</BUIInputRadio>
+
+@code {
+    private string _option = "Option1";
+}

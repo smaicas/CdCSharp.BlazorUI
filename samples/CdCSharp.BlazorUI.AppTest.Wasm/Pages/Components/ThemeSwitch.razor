@@ -1,182 +1,178 @@
 ﻿@page "/components/theme-switch"
-@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
 
-<PageTitle>Theme Switch - CdCSharp.BlazorUI</PageTitle>
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Core.Css
+
+<PageTitle>Theme Selector - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
-    <h1>Theme Switch</h1>
+    <h1>BUIThemeSelector</h1>
+
     <p class="doc-intro">
-        The BUIThemeSelector component provides an intuitive way for users to toggle between light and dark themes.
-        It includes multiple variants and smooth transitions.
+        <strong>BUIThemeSelector</strong> provides a UI control to switch between
+        application themes using the configured <code>IThemeJsInterop</code> service.
+        It does not define themes, but triggers theme changes through the theme system.
     </p>
 
-    <div class="doc-section">
+    <!-- VARIANTS -->
+    <section class="doc-section">
         <h2>Variants</h2>
-        <ComponentDemo Code="@variantsCode">
-            <Demo>
-                <div class="theme-switch-grid">
-                    <div class="theme-switch-item">
-                        <BUIThemeSelector Variant="BUIThemeSelectorVariant.Default" />
-                        <span>Default</span>
-                    </div>
-                    <div class="theme-switch-item">
-                        <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
-                        <span>Sun/Moon</span>
-                    </div>
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <ComponentDemo Definition="@VariantsDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>How It Works</h2>
-        <p>
-            The theme switch component automatically:
-        </p>
+    <!-- AVAILABLE THEMES -->
+    <section class="doc-section">
+        <h2>Available themes</h2>
+        <ComponentDemo Definition="@AvailableThemesDemo" />
+    </section>
+
+    <!-- ICON VISIBILITY -->
+    <section class="doc-section">
+        <h2>Show or hide icon</h2>
+        <ComponentDemo Definition="@ShowIconDemo" />
+    </section>
+
+    <!-- CUSTOM ICONS -->
+    <section class="doc-section">
+        <h2>Custom theme icons</h2>
+        <ComponentDemo Definition="@ThemeIconsDemo" />
+    </section>
+
+    <!-- THEME CHANGE EVENT -->
+    <section class="doc-section">
+        <h2>Theme change event</h2>
+        <ComponentDemo Definition="@OnThemeChangedDemo" />
+        <p>Last theme: <strong>@LastTheme</strong></p>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="doc-section">
+        <h2>How it works</h2>
         <ul>
-            <li>Detects the current theme on initialization</li>
-            <li>Persists the selected theme to localStorage</li>
-            <li>Updates CSS variables across the entire application</li>
-            <li>Provides smooth transitions between themes</li>
-            <li>Syncs theme changes across multiple tabs/windows</li>
+            <li>Reads the current theme from <code>IThemeJsInterop</code></li>
+            <li>Requests theme changes using <code>ToggleThemeAsync</code></li>
+            <li>Does not manage persistence or CSS variables</li>
+            <li>Theme logic lives outside of the component</li>
         </ul>
-    </div>
+    </section>
 
-    <div class="doc-section">
-        <h2>Integration Example</h2>
-        <ComponentDemo Code="@integrationCode">
-            <Demo>
-                <div class="layout-example">
-                    <header class="example-header">
-                        <h3>My Application</h3>
-                        <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
-                    </header>
-                    <div class="example-content">
-                        <p>The theme switch is typically placed in the header for easy access.</p>
-                    </div>
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
-        <h2>Programmatic Theme Control</h2>
-        <p>You can also control the theme programmatically using the IThemeJsInterop service:</p>
-        <CodeBlock Code="@programmaticCode" Language="csharp" Title="Theme Control" />
-    </div>
-
-    <div class="doc-section">
-        <h2>Customization</h2>
-        <p>The theme switch appearance adapts to the current theme automatically. You can further customize it with CSS variables:</p>
-        <CodeBlock Code="@customizationCode" Language="css" Title="CSS Customization" />
-    </div>
-
-    <div class="doc-section">
+    <!-- PROPERTIES -->
+    <section class="doc-section">
         <h2>Properties</h2>
-        <PropertyTable TItem="ThemeSwitchProperty" Items="@ThemeSwitchProperties">
-            <PropertyTemplate Context="prop">
-                <td><code>@prop.Name</code></td>
-                <td><code>@prop.Type</code></td>
-                <td><code>@prop.Default</code></td>
-                <td>@prop.Description</td>
-            </PropertyTemplate>
-        </PropertyTable>
-    </div>
-
-    <div class="doc-section">
-        <h2>Theme Variables</h2>
-        <p>When the theme changes, these CSS variables are updated:</p>
-        <div class="theme-variables">
-            <div class="variable-group">
-                <h4>Primary Colors</h4>
-                <code>--palette-primary</code>
-                <code>--palette-primary-contrast</code>
-                <code>--palette-secondary</code>
-                <code>--palette-secondary-contrast</code>
-            </div>
-            <div class="variable-group">
-                <h4>Surface Colors</h4>
-                <code>--palette-background</code>
-                <code>--palette-surface</code>
-                <code>--palette-backgroundcontrast</code>
-            </div>
-            <div class="variable-group">
-                <h4>Status Colors</h4>
-                <code>--palette-error</code>
-                <code>--palette-warning</code>
-                <code>--palette-info</code>
-                <code>--palette-success</code>
-            </div>
-        </div>
-    </div>
+        <PropertyTable Properties="@Properties" />
+    </section>
 </div>
 
 @code {
-    private string variantsCode = @"<!-- Default variant with text -->
-<BUIThemeSelector Variant=""BUIThemeSelectorVariant.Default"" />
+    private string? LastTheme;
 
-<!-- Sun/Moon icon variant -->
-<BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />";
+    /* ===================== DEMOS ===================== */
 
-    private string integrationCode = @"@using CdCSharp.BlazorUI.Components.Features.Theme.ThemeSwitch
-
-<header>
-    <h1>My App</h1>
-    <BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />
-</header>";
-
-    private string programmaticCode = @"@inject IThemeJsInterop ThemeInterop
-
-// Initialize theme on first render
-protected override async Task OnAfterRenderAsync(bool firstRender)
-{
-    if (firstRender)
+    private ComponentDemoDefinition VariantsDemo => new()
     {
-        // Set initial theme
-        await ThemeInterop.InitializeAsync(""dark"");
-        
-        // Or detect system preference
-        await ThemeInterop.InitializeAsync(""auto"");
+        Demo = RenderVariants(),
+        Code = """
+<BUIThemeSelector Variant="BUIThemeSelectorVariant.Default" />
+<BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
+"""
+    };
+
+    private ComponentDemoDefinition AvailableThemesDemo => new()
+    {
+        Demo = RenderAvailableThemes(),
+        Code = """
+<BUIThemeSelector AvailableThemes="new[] { "light", "dark", "high-contrast" }" />
+"""
+    };
+
+    private ComponentDemoDefinition ShowIconDemo => new()
+    {
+        Demo = RenderShowIcon(),
+        Code = """
+<BUIThemeSelector ShowIcon="false" />
+"""
+    };
+
+    private ComponentDemoDefinition ThemeIconsDemo => new()
+    {
+        Demo = RenderThemeIcons(),
+        Code = """
+<BUIThemeSelector ThemeIcons="new Dictionary<string, string>
+{
+    ["light"] = "☀️",
+    ["dark"] = "🌙",
+    ["high-contrast"] = "⚡"
+}" />
+"""
+    };
+
+    private ComponentDemoDefinition OnThemeChangedDemo => new()
+    {
+        Demo = RenderOnThemeChanged(),
+        Code = """
+<BUIThemeSelector OnThemeChanged="OnThemeChanged" />
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIThemeSelector Variant="BUIThemeSelectorVariant.Default" />
+            <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderAvailableThemes() => __builder =>
+    {
+        <BUIThemeSelector AvailableThemes="@(["light", "dark", "high-contrast"])" />
+        ;
+    };
+
+    private RenderFragment RenderShowIcon() => __builder =>
+    {
+        <BUIThemeSelector ShowIcon="false" />
+        ;
+    };
+
+    private RenderFragment RenderThemeIcons() => __builder =>
+    {
+        <BUIThemeSelector ThemeIcons="CustomIcons" />
+        ;
+    };
+
+    private RenderFragment RenderOnThemeChanged() => __builder =>
+    {
+        <BUIThemeSelector OnThemeChanged="OnThemeChanged" />
+        ;
+    };
+
+    /* ===================== DATA ===================== */
+
+    private Dictionary<string, string> CustomIcons = new()
+    {
+        ["light"] = "☀️",
+        ["dark"] = "🌙",
+        ["high-contrast"] = "⚡"
+    };
+
+    private void OnThemeChanged(string theme)
+    {
+        LastTheme = theme;
     }
-}
 
-// Change theme programmatically
-private async Task SetLightTheme()
-{
-    await ThemeInterop.SetThemeAsync(""light"");
-}
+    /* ===================== PROPERTIES ===================== */
 
-// Get current theme
-private async Task<string> GetCurrentTheme()
-{
-    return await ThemeInterop.GetThemeAsync();
-}";
-
-    private string customizationCode = @"/* Custom theme switch styles */
-.bui-theme-switch {
-    /* Custom size */
-    min-width: 140px;
-    height: 48px;
-    
-    /* Custom colors */
-    background: var(--my-custom-bg);
-    color: var(--my-custom-text);
-    
-    /* Custom border radius */
-    border-radius: 24px;
-}
-
-/* Sun/Moon variant customization */
-.bui-theme-switch--sunmoon {
-    width: 72px;
-    height: 36px;
-}";
-
-    private record ThemeSwitchProperty(string Name, string Type, string Default, string Description);
-
-    private List<ThemeSwitchProperty> ThemeSwitchProperties = new()
+    private List<PropertyDefinition> Properties = new()
     {
-        new("Variant", "BUIThemeSelectorVariant?", "Default", "Visual variant of the theme switch"),
-        new("Disabled", "bool", "false", "Whether the switch is disabled"),
+        new("Variant", "BUIThemeSelectorVariant?", "Default", "Visual variant of the selector"),
+        new("AvailableThemes", "string[]", "light, dark", "Themes that can be toggled"),
+        new("ShowIcon", "bool", "true", "Show icon in default variant"),
+        new("ThemeIcons", "Dictionary<string, string>?", "null", "Custom icons per theme"),
+        new("OnThemeChanged", "EventCallback<string>", "-", "Invoked when the theme changes"),
     };
 }

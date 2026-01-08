@@ -1,145 +1,886 @@
 ﻿@page "/features/transitions"
+
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions
+@using CdCSharp.BlazorUI.Core.Css
 
 <PageTitle>Transitions - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
     <h1>Transitions</h1>
+
     <p class="doc-intro">
-        The transitions system provides smooth animations for component interactions,
-        with presets for common effects and a builder API for custom animations.
+        <strong>BUITransitions</strong> is a powerful, fluent API for defining visual transitions
+        on components. It supports multiple triggers (hover, focus, active, disabled),
+        various effects (scale, shadow, glow, blur, etc.), custom easings, and can be combined
+        to create sophisticated animations.
     </p>
 
-    <div class="doc-section">
-        <h2>Transition Presets</h2>
-        <p>Ready-to-use transition effects:</p>
+    <!-- BASIC PRESETS -->
+    <section class="doc-section">
+        <h2>Basic presets</h2>
+        <p>Use <code>BUITransitionPresets</code> for common transition patterns.</p>
+        <ComponentDemo Definition="@BasicPresetsDemo" />
+    </section>
 
-        <div class="transition-grid">
-            <div class="transition-demo">
-                <h4>Hover Scale</h4>
-                <BUIButton Text="Hover Me" Transitions="@BUITransitionPresets.HoverScale" />
-            </div>
+    <!-- SCALE -->
+    <section class="doc-section">
+        <h2>Scale</h2>
+        <ComponentDemo Definition="@ScaleDemo" />
+    </section>
 
-            <div class="transition-demo">
-                <h4>Hover Lift</h4>
-                <BUIButton Text="Hover Me" Transitions="@BUITransitionPresets.HoverLift" Elevation="2" />
-            </div>
+    <!-- SHADOW -->
+    <section class="doc-section">
+        <h2>Shadow</h2>
+        <ComponentDemo Definition="@ShadowDemo" />
+    </section>
 
-            <div class="transition-demo">
-                <h4>Hover Glow</h4>
-                <BUIButton Text="Hover Me" Transitions="@BUITransitionPresets.HoverGlow" />
-            </div>
+    <!-- LIFT -->
+    <section class="doc-section">
+        <h2>Lift (translate + shadow)</h2>
+        <ComponentDemo Definition="@LiftDemo" />
+    </section>
 
-            <div class="transition-demo">
-                <h4>Focus Ring</h4>
-                <BUIButton Text="Tab to Focus" Transitions="@BUITransitionPresets.FocusRing" />
-            </div>
-        </div>
-    </div>
+    <!-- GLOW -->
+    <section class="doc-section">
+        <h2>Glow</h2>
+        <ComponentDemo Definition="@GlowDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Material Design Effects</h2>
+    <!-- FADE -->
+    <section class="doc-section">
+        <h2>Fade</h2>
+        <ComponentDemo Definition="@FadeDemo" />
+    </section>
 
-        <ComponentDemo Code="@materialEffectsCode">
-            <Demo>
-                <div class="transition-grid">
-                    <BUIButton Text="Material Button" Transitions="@BUITransitionPresets.MaterialButton" />
-                    <BUIButton Text="Card Hover" Transitions="@BUITransitionPresets.CardHover" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- ROTATE -->
+    <section class="doc-section">
+        <h2>Rotate</h2>
+        <ComponentDemo Definition="@RotateDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Custom Transitions</h2>
-        <p>Create custom transitions using the builder API:</p>
+    <!-- BLUR -->
+    <section class="doc-section">
+        <h2>Blur effects</h2>
+        <ComponentDemo Definition="@BlurDemo" />
+    </section>
 
-        <ComponentDemo Code="@customTransitionCode">
-            <Demo>
-                <BUIButton Text="Custom Effect" Transitions="@_customTransition" />
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- MULTIPLE TRIGGERS -->
+    <section class="doc-section">
+        <h2>Multiple triggers</h2>
+        <p>Combine different effects for hover, focus, and active states.</p>
+        <ComponentDemo Definition="@MultipleTriggersDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Combined Effects</h2>
+    <!-- COMBINED EFFECTS -->
+    <section class="doc-section">
+        <h2>Combined effects</h2>
+        <p>Chain multiple effects on the same trigger using <code>.And()</code>.</p>
+        <ComponentDemo Definition="@CombinedEffectsDemo" />
+    </section>
 
-        <ComponentDemo Code="@combinedEffectsCode">
-            <Demo>
-                <div class="transition-grid">
-                    <BUIButton Text="Interactive" Transitions="@BUITransitionPresets.Interactive" />
-                    <BUIButton Text="Premium" Transitions="@BUITransitionPresets.PremiumButton" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- CUSTOM DURATION -->
+    <section class="doc-section">
+        <h2>Custom duration</h2>
+        <ComponentDemo Definition="@CustomDurationDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Available Presets</h2>
+    <!-- CUSTOM EASING -->
+    <section class="doc-section">
+        <h2>Custom easing</h2>
+        <p>Use predefined easings or create custom cubic-bezier curves.</p>
+        <ComponentDemo Definition="@CustomEasingDemo" />
+    </section>
 
-        <div class="preset-list">
-            <div class="preset-item">
-                <code>HoverScale</code>
-                <p>Scales element on hover</p>
-            </div>
-            <div class="preset-item">
-                <code>HoverLift</code>
-                <p>Lifts element with shadow</p>
-            </div>
-            <div class="preset-item">
-                <code>HoverGlow</code>
-                <p>Adds glow effect</p>
-            </div>
-            <div class="preset-item">
-                <code>HoverFade</code>
-                <p>Fades opacity on hover</p>
-            </div>
-            <div class="preset-item">
-                <code>FocusRing</code>
-                <p>Shows focus ring</p>
-            </div>
-            <div class="preset-item">
-                <code>MaterialButton</code>
-                <p>Material Design button effect</p>
-            </div>
-            <div class="preset-item">
-                <code>CardHover</code>
-                <p>Card elevation on hover</p>
-            </div>
-            <div class="preset-item">
-                <code>Interactive</code>
-                <p>Combined hover, focus, and active states</p>
-            </div>
-        </div>
-    </div>
+    <!-- MATERIAL DESIGN -->
+    <section class="doc-section">
+        <h2>Material Design easings</h2>
+        <ComponentDemo Definition="@MaterialEasingDemo" />
+    </section>
+
+    <!-- ELASTIC & BOUNCE -->
+    <section class="doc-section">
+        <h2>Elastic & Bounce</h2>
+        <ComponentDemo Definition="@ElasticBounceDemo" />
+    </section>
+
+    <!-- PREMIUM PRESETS -->
+    <section class="doc-section">
+        <h2>Premium presets</h2>
+        <p>Complex, polished transitions for production use.</p>
+        <ComponentDemo Definition="@PremiumPresetsDemo" />
+    </section>
+
+    <!-- MODERN EFFECTS -->
+    <section class="doc-section">
+        <h2>Modern effects</h2>
+        <ComponentDemo Definition="@ModernEffectsDemo" />
+    </section>
+
+    <!-- DISABLED STATE -->
+    <section class="doc-section">
+        <h2>Disabled state transitions</h2>
+        <ComponentDemo Definition="@DisabledStateDemo" />
+    </section>
+
+    <!-- CUSTOM BUILDER -->
+    <section class="doc-section">
+        <h2>Custom builder</h2>
+        <p>Create fully custom transitions with the fluent API.</p>
+        <ComponentDemo Definition="@CustomBuilderDemo" />
+    </section>
+
+    <!-- API REFERENCE -->
+    <section class="doc-section">
+        <h2>Transition presets</h2>
+        <PropertyTable Properties="@PresetProperties" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Builder methods</h2>
+        <PropertyTable Properties="@BuilderMethods" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Easing presets</h2>
+        <PropertyTable Properties="@EasingPresets" />
+    </section>
 </div>
 
 @code {
-    private BUITransitions _customTransition = BUITransitionPresets.Create()
-        .OnHover()
-            .Scale(1.1f, options =>
-            {
-                options.Duration = TimeSpan.FromMilliseconds(400);
-                options.Easing = easing => easing.CubicBezier().MaterialStandard();
-            })
-            .Shadow("0 10px 20px rgba(139, 92, 246, 0.3)")
+
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition BasicPresetsDemo => new()
+    {
+        Demo = RenderBasicPresets(),
+        Code = """
+<BUIButton Text="Scale" Transitions="BUITransitionPresets.HoverScale" />
+<BUIButton Text="Shadow" Transitions="BUITransitionPresets.HoverShadow" />
+<BUIButton Text="Lift" Transitions="BUITransitionPresets.HoverLift" />
+<BUIButton Text="Glow" Transitions="BUITransitionPresets.HoverGlow" />
+<BUIButton Text="Fade" Transitions="BUITransitionPresets.HoverFade" />
+"""
+    };
+
+    private ComponentDemoDefinition ScaleDemo => new()
+    {
+        Demo = RenderScale(),
+        Code = """
+<BUIButton Text="Scale 1.05"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.05f)
+               .Build())" />
+
+<BUIButton Text="Scale 1.15"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.15f)
+               .Build())" />
+
+<BUIButton Text="Scale down 0.95"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(0.95f)
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        Demo = RenderShadow(),
+        Code = """
+<BUIButton Text="Subtle"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Shadow("0 2px 4px rgba(0,0,0,0.1)")
+               .Build())" />
+
+<BUIButton Text="Medium"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Shadow("0 4px 12px rgba(0,0,0,0.2)")
+               .Build())" />
+
+<BUIButton Text="Dramatic"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Shadow("0 10px 30px rgba(0,0,0,0.3)")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition LiftDemo => new()
+    {
+        Demo = RenderLift(),
+        Code = """
+<BUIButton Text="Lift" Transitions="BUITransitionPresets.HoverLift" />
+
+<BUIButton Text="Custom Lift"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Translate("0", "-8px")
+               .And()
+               .OnHover().Shadow("0 12px 24px rgba(0,0,0,0.2)")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition GlowDemo => new()
+    {
+        Demo = RenderGlow(),
+        Code = """
+<BUIButton Text="Blue glow"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Glow("rgba(59, 130, 246, 0.5)")
+               .Build())" />
+
+<BUIButton Text="Gold glow"
+           BackgroundColor="BUIColor.Gold.Default"
+           Color="BUIColor.Black.Default"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Glow("rgba(255, 215, 0, 0.6)")
+               .Build())" />
+
+<BUIButton Text="Purple glow"
+           BackgroundColor="BUIColor.Purple.Default"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Glow("rgba(139, 92, 246, 0.6)")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition FadeDemo => new()
+    {
+        Demo = RenderFade(),
+        Code = """
+<BUIButton Text="Fade 0.7"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Fade(0.7f)
+               .Build())" />
+
+<BUIButton Text="Fade 0.5"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Fade(0.5f)
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition RotateDemo => new()
+    {
+        Demo = RenderRotate(),
+        Code = """
+<BUIButton Text="Wiggle" Transitions="BUITransitionPresets.Wiggle" />
+
+<BUIButton Text="Rotate 5°"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Rotate("5deg")
+               .Build())" />
+
+<BUIButton Text="Rotate -5°"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Rotate("-5deg")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition BlurDemo => new()
+    {
+        Demo = RenderBlur(),
+        Code = """
+<BUIButton Text="Blur on hover"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Blur("2px")
+               .Build())" />
+
+<BUIButton Text="Backdrop blur"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().BackdropBlur("8px")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition MultipleTriggersDemo => new()
+    {
+        Demo = RenderMultipleTriggers(),
+        Code = """
+<BUIButton Text="Interactive"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.05f)
+               .And()
+               .OnFocus().Shadow("0 0 0 3px rgba(59, 130, 246, 0.4)")
+               .And()
+               .OnActive().Scale(0.95f)
+               .Build())" />
+
+@* Or use the preset *@
+<BUIButton Text="Interactive (preset)"
+           Transitions="BUITransitionPresets.Interactive" />
+"""
+    };
+
+    private ComponentDemoDefinition CombinedEffectsDemo => new()
+    {
+        Demo = RenderCombinedEffects(),
+        Code = """
+<BUIButton Text="Scale + Shadow + Glow"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.05f)
+               .And()
+               .OnHover().Shadow("0 8px 20px rgba(0,0,0,0.2)")
+               .And()
+               .OnHover().Glow("rgba(59, 130, 246, 0.4)")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition CustomDurationDemo => new()
+    {
+        Demo = RenderCustomDuration(),
+        Code = """
+<BUIButton Text="Fast (100ms)"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Duration = TimeSpan.FromMilliseconds(100))
+               .Build())" />
+
+<BUIButton Text="Normal (300ms)"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Duration = TimeSpan.FromMilliseconds(300))
+               .Build())" />
+
+<BUIButton Text="Slow (600ms)"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Duration = TimeSpan.FromMilliseconds(600))
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition CustomEasingDemo => new()
+    {
+        Demo = RenderCustomEasing(),
+        Code = """
+<BUIButton Text="Linear"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Easing = e => e.Linear())
+               .Build())" />
+
+<BUIButton Text="Ease In"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Easing = e => e.EaseIn())
+               .Build())" />
+
+<BUIButton Text="Ease Out"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Easing = e => e.EaseOut())
+               .Build())" />
+
+<BUIButton Text="Ease In Out"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o => o.Easing = e => e.EaseInOut())
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition MaterialEasingDemo => new()
+    {
+        Demo = RenderMaterialEasing(),
+        Code = """
+<BUIButton Text="Material Standard"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o =>
+               {
+                   o.Duration = TimeSpan.FromMilliseconds(300);
+                   o.Easing = e => e.CubicBezier().MaterialStandard();
+               })
+               .Build())" />
+
+<BUIButton Text="Material Accelerate"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o =>
+               {
+                   o.Duration = TimeSpan.FromMilliseconds(300);
+                   o.Easing = e => e.CubicBezier().MaterialAccelerate();
+               })
+               .Build())" />
+
+<BUIButton Text="Material Decelerate"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o =>
+               {
+                   o.Duration = TimeSpan.FromMilliseconds(300);
+                   o.Easing = e => e.CubicBezier().MaterialDecelerate();
+               })
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition ElasticBounceDemo => new()
+    {
+        Demo = RenderElasticBounce(),
+        Code = """
+<BUIButton Text="Elastic" Transitions="BUITransitionPresets.ElasticScale" />
+
+<BUIButton Text="Bounce" Transitions="BUITransitionPresets.BounceIn" />
+
+<BUIButton Text="Back Out"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnHover().Scale(1.1f, o =>
+               {
+                   o.Duration = TimeSpan.FromMilliseconds(400);
+                   o.Easing = e => e.CubicBezier().BackOut();
+               })
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition PremiumPresetsDemo => new()
+    {
+        Demo = RenderPremiumPresets(),
+        Code = """
+<BUIButton Text="Premium Button" Transitions="BUITransitionPresets.PremiumButton" />
+<BUIButton Text="Material Button" Transitions="BUITransitionPresets.MaterialButton" />
+<BUIButton Text="Card Hover" Transitions="BUITransitionPresets.CardHover" />
+<BUIButton Text="Perspective" Transitions="BUITransitionPresets.Perspective" />
+"""
+    };
+
+    private ComponentDemoDefinition ModernEffectsDemo => new()
+    {
+        Demo = RenderModernEffects(),
+        Code = """
+<BUIButton Text="Glassmorphism" Transitions="BUITransitionPresets.GlassMorphism" />
+<BUIButton Text="Modern Glass" Transitions="BUITransitionPresets.ModernGlass" />
+<BUIButton Text="Neumorphism" Transitions="BUITransitionPresets.Neumorphism" />
+<BUIButton Text="Color Shift" Transitions="BUITransitionPresets.ColorShift" />
+"""
+    };
+
+    private ComponentDemoDefinition DisabledStateDemo => new()
+    {
+        Demo = RenderDisabledState(),
+        Code = """
+<BUIButton Text="With disabled transition"
+           Disabled="true"
+           Transitions="BUITransitionPresets.DisabledState" />
+
+<BUIButton Text="Custom disabled"
+           Disabled="true"
+           Transitions="@(BUITransitionPresets.Create()
+               .OnDisabled().Fade(0.4f)
+               .And()
+               .OnDisabled().Blur("1px")
+               .Build())" />
+"""
+    };
+
+    private ComponentDemoDefinition CustomBuilderDemo => new()
+    {
+        Demo = RenderCustomBuilder(),
+        Code = """
+@code {
+    private BUITransitions CustomTransition => BUITransitionPresets.Create()
+        .OnHover().Scale(1.08f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(250);
+            options.Easing = easing => easing.CubicBezier()
+                .WithControlPoints(0.34, 1.56, 0.64, 1).Build();
+        })
+        .And()
+        .OnHover().Shadow("0 15px 35px rgba(0,0,0,0.25)")
+        .And()
+        .OnHover().Glow("rgba(99, 102, 241, 0.5)")
+        .And()
+        .OnActive().Scale(0.96f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(80);
+        })
+        .And()
+        .OnFocus().Shadow("0 0 0 4px rgba(99, 102, 241, 0.3)")
+        .Build();
+}
+
+<BUIButton Text="Fully Custom" Transitions="CustomTransition" />
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicPresets() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Scale" Transitions="BUITransitionPresets.HoverScale" />
+            <BUIButton Text="Shadow" Transitions="BUITransitionPresets.HoverShadow" />
+            <BUIButton Text="Lift" Transitions="BUITransitionPresets.HoverLift" />
+            <BUIButton Text="Glow" Transitions="BUITransitionPresets.HoverGlow" />
+            <BUIButton Text="Fade" Transitions="BUITransitionPresets.HoverFade" />
+        </div>
+    };
+
+    private RenderFragment RenderScale() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Scale 1.05"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.05f)
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Scale 1.15"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.15f)
+                                                                                       .Build())" />
+
+    <BUIButton Text="Scale down 0.95"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(0.95f)
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Subtle"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Shadow("0 2px 4px rgba(0,0,0,0.1)")
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Medium"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Shadow("0 4px 12px rgba(0,0,0,0.2)")
+                                                                                       .Build())" />
+
+    <BUIButton Text="Dramatic"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Shadow("0 10px 30px rgba(0,0,0,0.3)")
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderLift() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Lift" Transitions="BUITransitionPresets.HoverLift" />
+
+            <BUIButton Text="Custom Lift"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Translate("0", "-8px")
+                                                                                                                       .And()
+                                                                                                                       .OnHover().Shadow("0 12px 24px rgba(0,0,0,0.2)")
+                                                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderGlow() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Blue glow"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Glow("rgba(59, 130, 246, 0.5)")
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Gold glow"
+               BackgroundColor="BUIColor.Gold.Default"
+               Color="BUIColor.Black.Default"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Glow("rgba(255, 215, 0, 0.6)")
+                                                                                       .Build())" />
+
+    <BUIButton Text="Purple glow"
+               BackgroundColor="BUIColor.Purple.Default"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Glow("rgba(139, 92, 246, 0.6)")
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderFade() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Fade 0.7"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Fade(0.7f)
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Fade 0.5"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Fade(0.5f)
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderRotate() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Wiggle" Transitions="BUITransitionPresets.Wiggle" />
+
+            <BUIButton Text="Rotate 5°"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Rotate("5deg")
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Rotate -5°"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Rotate("-5deg")
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderBlur() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Blur on hover"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Blur("2px")
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Backdrop blur"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().BackdropBlur("8px")
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderMultipleTriggers() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Interactive (custom)"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.05f)
+                                                                                                                       .And()
+                                                                                                                       .OnFocus().Shadow("0 0 0 3px rgba(59, 130, 246, 0.4)")
+                                                                                                                       .And()
+                                                                                                                       .OnActive().Scale(0.95f)
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Interactive (preset)"
+               Transitions="BUITransitionPresets.Interactive" />
+</div>
+    };
+
+    private RenderFragment RenderCombinedEffects() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Scale + Shadow + Glow"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.05f)
+                                                                                                                       .And()
+                                                                                                                       .OnHover().Shadow("0 8px 20px rgba(0,0,0,0.2)")
+                                                                                                                       .And()
+                                                                                                                       .OnHover().Glow("rgba(59, 130, 246, 0.4)")
+                                                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderCustomDuration() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Fast (100ms)"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.1f, o => o.Duration = TimeSpan.FromMilliseconds(100))
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Normal (300ms)"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o => o.Duration = TimeSpan.FromMilliseconds(300))
+                                                                                       .Build())" />
+
+    <BUIButton Text="Slow (600ms)"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o => o.Duration = TimeSpan.FromMilliseconds(600))
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderCustomEasing() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Linear"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.1f, o => o.Easing = e => e.Linear())
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Ease In"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o => o.Easing = e => e.EaseIn())
+                                                                                       .Build())" />
+
+    <BUIButton Text="Ease Out"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o => o.Easing = e => e.EaseOut())
+                                                                                       .Build())" />
+
+    <BUIButton Text="Ease In Out"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o => o.Easing = e => e.EaseInOut())
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderMaterialEasing() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Material Standard"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.1f, o =>
+                                                                                                                       {
+                                                                                                                           o.Duration = TimeSpan.FromMilliseconds(300);
+                                                                                                                           o.Easing = e => e.CubicBezier().MaterialStandard();
+                                                                                                                       })
+                                                                                                                       .Build())" />
+
+    <BUIButton Text="Material Accelerate"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o =>
+                                                                                       {
+                                                                                           o.Duration = TimeSpan.FromMilliseconds(300);
+                                                                                           o.Easing = e => e.CubicBezier().MaterialAccelerate();
+                                                                                       })
+                                                                                       .Build())" />
+
+    <BUIButton Text="Material Decelerate"
+               Transitions="@(BUITransitionPresets.Create()
+                                                                                       .OnHover().Scale(1.1f, o =>
+                                                                                       {
+                                                                                           o.Duration = TimeSpan.FromMilliseconds(300);
+                                                                                           o.Easing = e => e.CubicBezier().MaterialDecelerate();
+                                                                                       })
+                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderElasticBounce() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Elastic" Transitions="BUITransitionPresets.ElasticScale" />
+
+            <BUIButton Text="Bounce" Transitions="BUITransitionPresets.BounceIn" />
+
+            <BUIButton Text="Back Out"
+                       Transitions="@(BUITransitionPresets.Create()
+                                                                                                                       .OnHover().Scale(1.1f, o =>
+                                                                                                                       {
+                                                                                                                           o.Duration = TimeSpan.FromMilliseconds(400);
+                                                                                                                           o.Easing = e => e.CubicBezier().BackOut();
+                                                                                                                       })
+                                                                                                                       .Build())" />
+</div>
+    };
+
+    private RenderFragment RenderPremiumPresets() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Premium Button" Transitions="BUITransitionPresets.PremiumButton" />
+            <BUIButton Text="Material Button" Transitions="BUITransitionPresets.MaterialButton" />
+            <BUIButton Text="Card Hover" Transitions="BUITransitionPresets.CardHover" />
+            <BUIButton Text="Perspective" Transitions="BUITransitionPresets.Perspective" />
+        </div>
+    };
+
+    private RenderFragment RenderModernEffects() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Glassmorphism" Transitions="BUITransitionPresets.GlassMorphism" />
+            <BUIButton Text="Modern Glass" Transitions="BUITransitionPresets.ModernGlass" />
+            <BUIButton Text="Neumorphism" Transitions="BUITransitionPresets.Neumorphism" />
+            <BUIButton Text="Color Shift" Transitions="BUITransitionPresets.ColorShift" />
+        </div>
+    };
+    private RenderFragment RenderDisabledState() => __builder =>
+{
+    <div class="demo-row">
+        <BUIButton Text="With disabled transition"
+                   Disabled="true"
+                   Transitions="BUITransitionPresets.DisabledState" />
+
+        <BUIButton Text="Custom disabled"
+                   Disabled="true"
+                   Transitions="@(BUITransitionPresets.Create()
+                                                                                                                      .OnDisabled().Fade(0.4f)
+                                                                                                                      .And()
+                                                                                                                      .OnDisabled().Blur("1px")
+                                                                                                                      .Build())" />
+</div>
+};
+
+    private BUITransitions CustomTransition => BUITransitionPresets.Create()
+        .OnHover().Scale(1.08f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(250);
+            options.Easing = easing => easing.CubicBezier()
+                .WithControlPoints(0.34, 1.56, 0.64, 1).Build();
+        })
+        .And()
+        .OnHover().Shadow("0 15px 35px rgba(0,0,0,0.25)")
+        .And()
+        .OnHover().Glow("rgba(99, 102, 241, 0.5)")
+        .And()
+        .OnActive().Scale(0.96f, options =>
+        {
+            options.Duration = TimeSpan.FromMilliseconds(80);
+        })
+        .And()
+        .OnFocus().Shadow("0 0 0 4px rgba(99, 102, 241, 0.3)")
         .Build();
 
-    private string materialEffectsCode = @"<BUIButton Text=""Material Button"" Transitions=""@BUITransitionPresets.MaterialButton"" />
-<BUIButton Text=""Card Hover"" Transitions=""@BUITransitionPresets.CardHover"" />";
+    private RenderFragment RenderCustomBuilder() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Fully Custom"
+                       BackgroundColor="BUIColor.Indigo.Default"
+                       Transitions="CustomTransition" />
+        </div>
+    };
 
-    private string customTransitionCode = @"private BUITransitions _customTransition = BUITransitionPresets.Create()
-    .OnHover()
-        .Scale(1.1f, options => {
-            options.Duration = TimeSpan.FromMilliseconds(400);
-            options.Easing = easing => easing.CubicBezier().MaterialStandard();
-        })
-        .Shadow(""0 10px 20px rgba(139, 92, 246, 0.3)"")
-    .Build();
+    /* ===================== PROPERTIES ===================== */
 
-<BUIButton Text=""Custom Effect"" Transitions=""@_customTransition"" />";
+    private List<PropertyDefinition> PresetProperties = new()
+{
+    new("HoverScale", "BUITransitions", "-", "Scale up on hover"),
+    new("HoverShadow", "BUITransitions", "-", "Add shadow on hover"),
+    new("HoverLift", "BUITransitions", "-", "Lift effect (translate + shadow)"),
+    new("HoverGlow", "BUITransitions", "-", "Glow effect on hover"),
+    new("HoverFade", "BUITransitions", "-", "Fade opacity on hover"),
+    new("Interactive", "BUITransitions", "-", "Hover + Focus + Active states"),
+    new("PremiumButton", "BUITransitions", "-", "Scale + Shadow + Glow + Active"),
+    new("MaterialButton", "BUITransitions", "-", "Material Design button"),
+    new("CardHover", "BUITransitions", "-", "Card lift effect"),
+    new("ElasticScale", "BUITransitions", "-", "Elastic easing scale"),
+    new("BounceIn", "BUITransitions", "-", "Bounce easing scale"),
+    new("GlassMorphism", "BUITransitions", "-", "Backdrop blur + shadow"),
+    new("Neumorphism", "BUITransitions", "-", "Neumorphic shadow"),
+    new("DisabledState", "BUITransitions", "-", "Fade + blur for disabled"),
+    new("FocusRing", "BUITransitions", "-", "Focus ring shadow"),
+    new("Wiggle", "BUITransitions", "-", "Slight rotation wiggle"),
+    new("Perspective", "BUITransitions", "-", "3D rotate + scale"),
+};
 
-    private string combinedEffectsCode = @"<BUIButton Text=""Interactive"" Transitions=""@BUITransitionPresets.Interactive"" />
-<BUIButton Text=""Premium"" Transitions=""@BUITransitionPresets.PremiumButton"" />";
+    private List<PropertyDefinition> BuilderMethods = new()
+{
+    new("OnHover()", "TriggerTransitionBuilder", "-", "Start hover transition"),
+    new("OnFocus()", "TriggerTransitionBuilder", "-", "Start focus transition"),
+    new("OnActive()", "TriggerTransitionBuilder", "-", "Start active transition"),
+    new("OnDisabled()", "TriggerTransitionBuilder", "-", "Start disabled transition"),
+    new("Scale(float)", "TriggerTransitionBuilder", "1.05", "Scale transform"),
+    new("Shadow(string)", "TriggerTransitionBuilder", "-", "Box shadow"),
+    new("Glow(string)", "TriggerTransitionBuilder", "-", "Glow effect"),
+    new("Fade(float)", "TriggerTransitionBuilder", "0.7", "Opacity change"),
+    new("Translate(x, y)", "TriggerTransitionBuilder", "-", "Translate transform"),
+    new("Rotate(string)", "TriggerTransitionBuilder", "5deg", "Rotate transform"),
+    new("Blur(string)", "TriggerTransitionBuilder", "2px", "Blur filter"),
+    new("BackdropBlur(string)", "TriggerTransitionBuilder", "8px", "Backdrop blur"),
+    new("Lift()", "TriggerTransitionBuilder", "-", "Combined lift effect"),
+    new("And()", "BUITransitionsBuilder", "-", "Chain another transition"),
+    new("Build()", "BUITransitions", "-", "Build final transitions"),
+};
+
+    private List<PropertyDefinition> EasingPresets = new()
+{
+    new("Linear()", "EasingBuilder", "-", "Linear timing"),
+    new("Ease()", "EasingBuilder", "-", "Default ease"),
+    new("EaseIn()", "EasingBuilder", "-", "Ease in"),
+    new("EaseOut()", "EasingBuilder", "-", "Ease out"),
+    new("EaseInOut()", "EasingBuilder", "-", "Ease in and out"),
+    new("MaterialStandard()", "CubicBezierBuilder", "-", "Material standard curve"),
+    new("MaterialAccelerate()", "CubicBezierBuilder", "-", "Material accelerate"),
+    new("MaterialDecelerate()", "CubicBezierBuilder", "-", "Material decelerate"),
+    new("Elastic()", "CubicBezierBuilder", "-", "Elastic overshoot"),
+    new("Bounce()", "CubicBezierBuilder", "-", "Bounce effect"),
+    new("BackOut()", "CubicBezierBuilder", "-", "Back out overshoot"),
+    new("WithControlPoints()", "CubicBezierBuilder", "-", "Custom cubic-bezier"),
+};
 }

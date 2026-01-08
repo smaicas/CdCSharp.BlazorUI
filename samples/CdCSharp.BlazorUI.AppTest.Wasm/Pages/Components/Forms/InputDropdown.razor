@@ -1,206 +1,109 @@
 ﻿@page "/components/forms/input-dropdown"
+
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components.Forms
 @using CdCSharp.BlazorUI.Components.Forms.Dropdown
 @using CdCSharp.BlazorUI.Core.Search
 
 <PageTitle>Dropdown - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
-    <h1>Dropdown</h1>
+    <h1>BUIInputDropdown</h1>
+
     <p class="doc-intro">
-        The BUIInputDropdown component is a flexible dropdown selector with support for single and multiple selection,
-        search filtering, keyboard navigation, and intelligent positioning.
+        <strong>BUIInputDropdown</strong> is a flexible dropdown selector with support for single and multiple selection,
+        search filtering, keyboard navigation, custom templates, and intelligent positioning.
     </p>
 
-    <div class="doc-section">
-        <h2>Basic Usage</h2>
-        <ComponentDemo Code="@basicUsageCode">
-            <Demo>
-                <BUIInputDropdown @bind-Value="selectedBasic" Placeholder="Select an option">
-                    <DropdownOption Value="@("option1")" Text="Option 1" />
-                    <DropdownOption Value="@("option2")" Text="Option 2" />
-                    <DropdownOption Value="@("option3")" Text="Option 3" />
-                    <DropdownOption Value="@("option4")" Text="Option 4" />
-                    <DropdownOption Value="@("option5")" Text="Option 5" />
-                </BUIInputDropdown>
-                <p class="demo-result">Selected: @(selectedBasic ?? "None")</p>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- BASIC USAGE -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BasicUsageDemo" />
+        <p class="demo-result">Selected: <strong>@(SelectedBasic ?? "None")</strong></p>
+    </section>
 
-    <div class="doc-section">
-        <h2>With Objects</h2>
-        <ComponentDemo Code="@objectsCode">
-            <Demo>
-                <BUIInputDropdown @bind-Value="selectedPerson" Placeholder="Select a person" Label="Person">
-                    @foreach (Person person in people)
-                    {
-                        <DropdownOption Value="person" Text="@person.Name" />
-                    }
-                </BUIInputDropdown>
-                <p class="demo-result">Selected: @(selectedPerson?.Name ?? "None")</p>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- WITH LABEL AND HELPER -->
+    <section class="doc-section">
+        <h2>Label and helper text</h2>
+        <ComponentDemo Definition="@LabelHelperDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>With Custom Template</h2>
-        <ComponentDemo Code="@templateCode">
-            <Demo>
-                <BUIInputDropdown @bind-Value="selectedPersonTemplate" Placeholder="Select a person" Label="Person with details">
-                    @foreach (Person person in people)
-                    {
-                        <DropdownOption Value="person">
-                            <div class="person-item">
-                                <strong>@person.Name</strong>
-                                <span class="person-email">@person.Email</span>
-                            </div>
-                        </DropdownOption>
-                    }
-                </BUIInputDropdown>
-                <p class="demo-result">Selected: @(selectedPersonTemplate?.Name ?? "None")</p>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- WITH OBJECTS -->
+    <section class="doc-section">
+        <h2>With objects</h2>
+        <p>Bind to complex objects, not just strings:</p>
+        <ComponentDemo Definition="@ObjectsDemo" />
+        <p class="demo-result">Selected: <strong>@(SelectedPerson?.Name ?? "None")</strong></p>
+    </section>
 
-    <div class="doc-section">
-        <h2>Multiple Selection</h2>
-        <ComponentDemo Code="@multipleCode">
-            <Demo>
-                <BUIInputDropdown @bind-Value="selectedPeople" Placeholder="Select people" Label="Multiple selection">
-                    @foreach (Person person in people)
-                    {
-                        <DropdownOption Value="person" Text="@person.Name" />
-                    }
-                </BUIInputDropdown>
-                <p class="demo-result">Selected: @(string.Join(", ", selectedPeople?.Select(p => p.Name) ?? Array.Empty<string>()))</p>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- CUSTOM TEMPLATE -->
+    <section class="doc-section">
+        <h2>Custom template</h2>
+        <p>Use <code>ChildContent</code> inside DropdownOption for custom rendering:</p>
+        <ComponentDemo Definition="@CustomTemplateDemo" />
+        <p class="demo-result">Selected: <strong>@(SelectedPersonTemplate?.Name ?? "None")</strong></p>
+    </section>
 
-    <div class="doc-section">
+    <!-- MULTIPLE SELECTION -->
+    <section class="doc-section">
+        <h2>Multiple selection</h2>
+        <p>Use array or list type for multiple selection:</p>
+        <ComponentDemo Definition="@MultipleDemo" />
+        <p class="demo-result">Selected: <strong>@(string.Join(", ", SelectedPeople?.Select(p => p.Name) ?? Array.Empty<string>()))</strong></p>
+    </section>
+
+    <!-- SEARCHABLE -->
+    <section class="doc-section">
         <h2>Searchable</h2>
-        <ComponentDemo Code="@searchableCode">
-            <Demo>
-                <BUIInputDropdown @bind-Value="selectedCountry"
-                                  Placeholder="Search countries..."
-                                  Label="Country"
-                                  Searchable="true"
-                                  SearchMode="SearchMode.Smart">
-                    @foreach (Country country in countries)
-                    {
-                        <DropdownOption Value="country" Text="@country.Name" />
-                    }
-                </BUIInputDropdown>
-                <p class="demo-result">Selected: @(selectedCountry?.Name ?? "None")</p>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <p>Enable search with different modes: Smart, StartsWith, Contains, Fuzzy:</p>
+        <ComponentDemo Definition="@SearchableDemo" />
+        <p class="demo-result">Selected: <strong>@(SelectedCountry?.Name ?? "None")</strong></p>
+    </section>
 
-    <div class="doc-section">
+    <!-- SIZES -->
+    <section class="doc-section">
         <h2>Sizes</h2>
-        <ComponentDemo Code="@sizesCode">
-            <Demo>
-                <div class="demo-row">
-                    <BUIInputDropdown @bind-Value="selectedBasic8" Size="SizeEnum.Small" Placeholder="Small">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                        <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    </BUIInputDropdown>
-                    <BUIInputDropdown @bind-Value="selectedBasic9" Size="SizeEnum.Medium" Placeholder="Medium">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                        <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    </BUIInputDropdown>
-                    <BUIInputDropdown @bind-Value="selectedBasic10" Size="SizeEnum.Large" Placeholder="Large">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                        <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    </BUIInputDropdown>
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
 
-    <div class="doc-section">
+    <!-- PLACEMENT -->
+    <section class="doc-section">
         <h2>Placement</h2>
-        <ComponentDemo Code="@placementCode">
-            <Demo>
-                <div class="demo-row">
-                    <BUIInputDropdown @bind-Value="selectedBasic5" Placement="DropdownPlacement.Auto" Placeholder="Auto">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                        <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    </BUIInputDropdown>
-                    <BUIInputDropdown @bind-Value="selectedBasic6" Placement="DropdownPlacement.Top" Placeholder="Top">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                        <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    </BUIInputDropdown>
-                    <BUIInputDropdown @bind-Value="selectedBasic7" Placement="DropdownPlacement.Bottom" Placeholder="Bottom">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                        <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    </BUIInputDropdown>
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <p>Control menu position relative to trigger:</p>
+        <ComponentDemo Definition="@PlacementDemo" />
+    </section>
 
-    <div class="doc-section">
+    <!-- STATES -->
+    <section class="doc-section">
         <h2>States</h2>
-        <ComponentDemo Code="@statesCode">
-            <Demo>
-                <div class="demo-row">
-                    <BUIInputDropdown @bind-Value="selectedBasic3" Disabled="true" Placeholder="Disabled">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                    </BUIInputDropdown>
-                    <BUIInputDropdown @bind-Value="selectedBasic4" IsLoading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" Placeholder="Loading">
-                        <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                    </BUIInputDropdown>
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <ComponentDemo Definition="@StatesDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Disabled Options</h2>
-        <ComponentDemo Code="@disabledOptionsCode">
-            <Demo>
-                <BUIInputDropdown  @bind-Value="selectedWithDisabled" Placeholder="Select an option">
-                    <DropdownOption  Value="@("opt1")" Text="Available Option 1" />
-                    <DropdownOption  Value="@("opt2")" Text="Disabled Option" Disabled="true" />
-                    <DropdownOption  Value="@("opt3")" Text="Available Option 2" />
-                    <DropdownOption  Value="@("opt4")" Text="Another Disabled" Disabled="true" />
-                    <DropdownOption  Value="@("opt5")" Text="Available Option 3" />
-                </BUIInputDropdown>
-                <p class="demo-result">Selected: @(selectedWithDisabled ?? "None")</p>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- DISABLED OPTIONS -->
+    <section class="doc-section">
+        <h2>Disabled options</h2>
+        <ComponentDemo Definition="@DisabledOptionsDemo" />
+        <p class="demo-result">Selected: <strong>@(SelectedWithDisabled ?? "None")</strong></p>
+    </section>
 
-    <div class="doc-section">
-        <h2>With Label and Helper Text</h2>
-        <ComponentDemo Code="@labelHelperCode">
-            <Demo>
-                <BUIInputDropdown @bind-Value="selectedBasic2"
-                                  Label="Required Field"
-                                  HelperText="Please select one option"
-                                  Required="true"
-                                  Placeholder="Select...">
-                    <DropdownOption  Value="@("opt1")" Text="Option 1" />
-                    <DropdownOption  Value="@("opt2")" Text="Option 2" />
-                    <DropdownOption  Value="@("opt3")" Text="Option 3" />
-                </BUIInputDropdown>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- DENSITY -->
+    <section class="doc-section">
+        <h2>Density</h2>
+        <ComponentDemo Definition="@DensityDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Properties</h2>
-        <PropertyTable TItem="DropdownProperty" Items="@DropdownProperties">
-            <PropertyTemplate Context="prop">
-                <td><code>@prop.Name</code></td>
-                <td><code>@prop.Type</code></td>
-                <td><code>@prop.Default</code></td>
-                <td>@prop.Description</td>
-            </PropertyTemplate>
-        </PropertyTable>
-    </div>
+    <!-- PROPERTIES - BUIInputDropdown -->
+    <section class="doc-section">
+        <h2>Properties - BUIInputDropdown</h2>
+        <PropertyTable Properties="@DropdownProperties" />
+    </section>
+
+    <!-- PROPERTIES - DropdownOption -->
+    <section class="doc-section">
+        <h2>Properties - DropdownOption</h2>
+        <PropertyTable Properties="@OptionProperties" />
+    </section>
 </div>
 
 <style>
@@ -222,26 +125,34 @@
         border-radius: 4px;
         font-family: monospace;
     }
+
+    [data-theme="dark"] .demo-result {
+        background: rgba(255, 255, 255, 0.05);
+    }
 </style>
 
 @code {
-    private string? selectedBasic;
-    private string? selectedBasic2;
-    private string? selectedBasic3;
-    private string? selectedBasic4;
-    private string? selectedBasic5;
-    private string? selectedBasic6;
-    private string? selectedBasic7;
-    private string? selectedBasic8;
-    private string? selectedBasic9;
-    private string? selectedBasic10;
-    private Person? selectedPerson;
-    private Person? selectedPersonTemplate;
-    private Person[]? selectedPeople = Array.Empty<Person>();
-    private Country? selectedCountry;
-    private string? selectedWithDisabled;
+    private string? SelectedBasic;
+    private string? SelectedLabel;
+    private Person? SelectedPerson;
+    private Person? SelectedPersonTemplate;
+    private Person[]? SelectedPeople = Array.Empty<Person>();
+    private Country? SelectedCountry;
+    private string? SelectedWithDisabled;
 
-    private List<Person> people = new()
+    private string? _sizeSmall;
+    private string? _sizeMedium;
+    private string? _sizeLarge;
+    private string? _placementAuto;
+    private string? _placementTop;
+    private string? _placementBottom;
+    private string? _stateDisabled;
+    private string? _stateLoading;
+    private string? _densityComfortable;
+    private string? _densityStandard;
+    private string? _densityCompact;
+
+    private List<Person> People = new()
     {
         new Person(1, "Alice Johnson", "alice@example.com"),
         new Person(2, "Bob Smith", "bob@example.com"),
@@ -250,7 +161,7 @@
         new Person(5, "Edward Norton", "edward@example.com")
     };
 
-    private List<Country> countries = new()
+    private List<Country> Countries = new()
     {
         new Country("US", "United States"),
         new Country("GB", "United Kingdom"),
@@ -272,127 +183,396 @@
     public record Person(int Id, string Name, string Email);
     public record Country(string Code, string Name);
 
-    private string basicUsageCode = """
-        <BUIInputDropdown TValue="string" @bind-Value="selected" Placeholder="Select an option">
-            <DropdownOption TOption="string" Value="option1" Text="Option 1" />
-            <DropdownOption TOption="string" Value="option2" Text="Option 2" />
-            <DropdownOption TOption="string" Value="option3" Text="Option 3" />
-        </BUIInputDropdown>
-        """;
+    /* ===================== DEMOS ===================== */
 
-    private string objectsCode = """
-        <BUIInputDropdown TValue="Person" @bind-Value="selectedPerson" Placeholder="Select a person" Label="Person">
-            @foreach (Person person in people)
-            {
-                <DropdownOption TOption="Person" Value="person" Text="@person.Name" />
-            }
-        </BUIInputDropdown>
-        """;
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """
+<BUIInputDropdown @bind-Value="selected" Placeholder="Select an option">
+    <DropdownOption Value="@("option1")" Text="Option 1" />
+    <DropdownOption Value="@("option2")" Text="Option 2" />
+    <DropdownOption Value="@("option3")" Text="Option 3" />
+    <DropdownOption Value="@("option4")" Text="Option 4" />
+    <DropdownOption Value="@("option5")" Text="Option 5" />
+</BUIInputDropdown>
 
-    private string templateCode = """
-        <BUIInputDropdown TValue="Person" @bind-Value="selected" Placeholder="Select a person">
-            @foreach (Person person in people)
-            {
-                <DropdownOption TOption="Person" Value="person">
-                    <div class="person-item">
-                        <strong>@person.Name</strong>
-                        <span>@person.Email</span>
-                    </div>
-                </DropdownOption>
-            }
-        </BUIInputDropdown>
-        """;
+@code {
+    private string? selected;
+}
+"""
+    };
 
-    private string multipleCode = """
-        <BUIInputDropdown TValue="Person[]" @bind-Value="selectedPeople" Placeholder="Select people" Label="Multiple selection">
-            @foreach (Person person in people)
-            {
-                <DropdownOption TOption="Person" Value="person" Text="@person.Name" />
-            }
-        </BUIInputDropdown>
-        """;
+    private ComponentDemoDefinition LabelHelperDemo => new()
+    {
+        Demo = RenderLabelHelper(),
+        Code = """
+<BUIInputDropdown @bind-Value="selected"
+                  Label="Required Field"
+                  HelperText="Please select one option"
+                  Required="true"
+                  Placeholder="Select...">
+    <DropdownOption Value="@("opt1")" Text="Option 1" />
+    <DropdownOption Value="@("opt2")" Text="Option 2" />
+    <DropdownOption Value="@("opt3")" Text="Option 3" />
+</BUIInputDropdown>
+"""
+    };
 
-    private string searchableCode = """
-        <BUIInputDropdown TValue="Country"
-                          @bind-Value="selectedCountry"
-                          Placeholder="Search countries..."
-                          Searchable="true"
-                          SearchMode="SearchMode.Smart">
-            @foreach (Country country in countries)
-            {
-                <DropdownOption TOption="Country" Value="country" Text="@country.Name" />
-            }
-        </BUIInputDropdown>
-        """;
+    private ComponentDemoDefinition ObjectsDemo => new()
+    {
+        Demo = RenderObjects(),
+        Code = """
+<BUIInputDropdown @bind-Value="selectedPerson" Placeholder="Select a person" Label="Person">
+    @foreach (Person person in people)
+    {
+        <DropdownOption Value="person" Text="@person.Name" />
+    }
+</BUIInputDropdown>
 
-    private string sizesCode = """
-        <BUIInputDropdown TValue="string" Size="SizeEnum.Small" Placeholder="Small">
-            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
-        </BUIInputDropdown>
-        <BUIInputDropdown TValue="string" Size="SizeEnum.Medium" Placeholder="Medium">
-            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
-        </BUIInputDropdown>
-        <BUIInputDropdown TValue="string" Size="SizeEnum.Large" Placeholder="Large">
-            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
-        </BUIInputDropdown>
-        """;
+@code {
+    private Person? selectedPerson;
 
-    private string placementCode = """
-        <BUIInputDropdown TValue="string" Placement="DropdownPlacement.Auto" ... />
-        <BUIInputDropdown TValue="string" Placement="DropdownPlacement.Top" ... />
-        <BUIInputDropdown TValue="string" Placement="DropdownPlacement.Bottom" ... />
-        """;
+    public record Person(int Id, string Name, string Email);
+}
+"""
+    };
 
-    private string statesCode = """
-        <BUIInputDropdown TValue="string" Disabled="true" Placeholder="Disabled">
-            ...
-        </BUIInputDropdown>
-        <BUIInputDropdown TValue="string" IsLoading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner">
-            ...
-        </BUIInputDropdown>
-        """;
+    private ComponentDemoDefinition CustomTemplateDemo => new()
+    {
+        Demo = RenderCustomTemplate(),
+        Code = """
+<BUIInputDropdown @bind-Value="selectedPerson" Placeholder="Select a person" Label="Person with details">
+    @foreach (Person person in people)
+    {
+        <DropdownOption Value="person">
+            <div class="person-item">
+                <strong>@person.Name</strong>
+                <span class="person-email">@person.Email</span>
+            </div>
+        </DropdownOption>
+    }
+</BUIInputDropdown>
+"""
+    };
 
-    private string disabledOptionsCode = """
-        <BUIInputDropdown TValue="string" @bind-Value="selected" Placeholder="Select an option">
-            <DropdownOption TOption="string" Value="opt1" Text="Available Option 1" />
-            <DropdownOption TOption="string" Value="opt2" Text="Disabled Option" Disabled="true" />
-            <DropdownOption TOption="string" Value="opt3" Text="Available Option 2" />
-        </BUIInputDropdown>
-        """;
+    private ComponentDemoDefinition MultipleDemo => new()
+    {
+        Demo = RenderMultiple(),
+        Code = """
+<BUIInputDropdown @bind-Value="selectedPeople" Placeholder="Select people" Label="Multiple selection">
+    @foreach (Person person in people)
+    {
+        <DropdownOption Value="person" Text="@person.Name" />
+    }
+</BUIInputDropdown>
 
-    private string labelHelperCode = """
-        <BUIInputDropdown TValue="string"
+@code {
+    private Person[]? selectedPeople = Array.Empty<Person>();
+}
+"""
+    };
+
+    private ComponentDemoDefinition SearchableDemo => new()
+    {
+        Demo = RenderSearchable(),
+        Code = """
+<BUIInputDropdown @bind-Value="selectedCountry"
+                  Placeholder="Search countries..."
+                  Label="Country"
+                  Searchable="true"
+                  SearchMode="SearchMode.Smart">
+    @foreach (Country country in countries)
+    {
+        <DropdownOption Value="country" Text="@country.Name" />
+    }
+</BUIInputDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """
+<BUIInputDropdown @bind-Value="value" Size="SizeEnum.Small" Placeholder="Small">
+    <DropdownOption Value="@("opt1")" Text="Option 1" />
+    <DropdownOption Value="@("opt2")" Text="Option 2" />
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value" Size="SizeEnum.Medium" Placeholder="Medium">
+    <DropdownOption Value="@("opt1")" Text="Option 1" />
+    <DropdownOption Value="@("opt2")" Text="Option 2" />
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value" Size="SizeEnum.Large" Placeholder="Large">
+    <DropdownOption Value="@("opt1")" Text="Option 1" />
+    <DropdownOption Value="@("opt2")" Text="Option 2" />
+</BUIInputDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition PlacementDemo => new()
+    {
+        Demo = RenderPlacement(),
+        Code = """
+<BUIInputDropdown @bind-Value="value" Placement="DropdownPlacement.Auto" Placeholder="Auto">
+    ...
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value" Placement="DropdownPlacement.Top" Placeholder="Top">
+    ...
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value" Placement="DropdownPlacement.Bottom" Placeholder="Bottom">
+    ...
+</BUIInputDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition StatesDemo => new()
+    {
+        Demo = RenderStates(),
+        Code = """
+<BUIInputDropdown @bind-Value="value" Disabled="true" Placeholder="Disabled">
+    <DropdownOption Value="@("opt1")" Text="Option 1" />
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value"
+                  IsLoading="true"
+                  LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner"
+                  Placeholder="Loading">
+    <DropdownOption Value="@("opt1")" Text="Option 1" />
+</BUIInputDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition DisabledOptionsDemo => new()
+    {
+        Demo = RenderDisabledOptions(),
+        Code = """
+<BUIInputDropdown @bind-Value="selected" Placeholder="Select an option">
+    <DropdownOption Value="@("opt1")" Text="Available Option 1" />
+    <DropdownOption Value="@("opt2")" Text="Disabled Option" Disabled="true" />
+    <DropdownOption Value="@("opt3")" Text="Available Option 2" />
+    <DropdownOption Value="@("opt4")" Text="Another Disabled" Disabled="true" />
+    <DropdownOption Value="@("opt5")" Text="Available Option 3" />
+</BUIInputDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """
+<BUIInputDropdown @bind-Value="value" Density="DensityEnum.Comfortable" Placeholder="Comfortable">
+    ...
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value" Density="DensityEnum.Standard" Placeholder="Standard">
+    ...
+</BUIInputDropdown>
+
+<BUIInputDropdown @bind-Value="value" Density="DensityEnum.Compact" Placeholder="Compact">
+    ...
+</BUIInputDropdown>
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="SelectedBasic" Placeholder="Select an option">
+            <DropdownOption Value="@("option1")" Text="Option 1" />
+            <DropdownOption Value="@("option2")" Text="Option 2" />
+            <DropdownOption Value="@("option3")" Text="Option 3" />
+            <DropdownOption Value="@("option4")" Text="Option 4" />
+            <DropdownOption Value="@("option5")" Text="Option 5" />
+        </BUIInputDropdown>
+    };
+
+    private RenderFragment RenderLabelHelper() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="SelectedLabel"
                           Label="Required Field"
                           HelperText="Please select one option"
                           Required="true"
                           Placeholder="Select...">
-            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
-            <DropdownOption TOption="string" Value="opt2" Text="Option 2" />
+            <DropdownOption Value="@("opt1")" Text="Option 1" />
+            <DropdownOption Value="@("opt2")" Text="Option 2" />
+            <DropdownOption Value="@("opt3")" Text="Option 3" />
         </BUIInputDropdown>
-        """;
+    };
 
-    private record DropdownProperty(string Name, string Type, string Default, string Description);
-
-    private List<DropdownProperty> DropdownProperties = new()
+    private RenderFragment RenderObjects() => __builder =>
     {
-        new("ChildContent", "RenderFragment?", "null", "The dropdown options defined as DropdownOption components"),
+        <BUIInputDropdown @bind-Value="SelectedPerson" Placeholder="Select a person" Label="Person">
+            @foreach (Person person in People)
+            {
+                <DropdownOption Value="person" Text="@person.Name" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private RenderFragment RenderCustomTemplate() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="SelectedPersonTemplate" Placeholder="Select a person" Label="Person with details">
+            @foreach (Person person in People)
+            {
+                <DropdownOption Value="person">
+                    <div class="person-item">
+                        <strong>@person.Name</strong>
+                        <span class="person-email">@person.Email</span>
+                    </div>
+                </DropdownOption>
+            }
+        </BUIInputDropdown>
+    };
+
+    private RenderFragment RenderMultiple() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="SelectedPeople" Placeholder="Select people" Label="Multiple selection">
+            @foreach (Person person in People)
+            {
+                <DropdownOption Value="person" Text="@person.Name" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private RenderFragment RenderSearchable() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="SelectedCountry"
+                          Placeholder="Search countries..."
+                          Label="Country"
+                          Searchable="true"
+                          SearchMode="SearchMode.Smart">
+            @foreach (Country country in Countries)
+            {
+                <DropdownOption Value="country" Text="@country.Name" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIInputDropdown @bind-Value="_sizeSmall" Size="SizeEnum.Small" Placeholder="Small">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_sizeMedium" Size="SizeEnum.Medium" Placeholder="Medium">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_sizeLarge" Size="SizeEnum.Large" Placeholder="Large">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderPlacement() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIInputDropdown @bind-Value="_placementAuto" Placement="DropdownPlacement.Auto" Placeholder="Auto">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_placementTop" Placement="DropdownPlacement.Top" Placeholder="Top">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_placementBottom" Placement="DropdownPlacement.Bottom" Placeholder="Bottom">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderStates() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIInputDropdown @bind-Value="_stateDisabled" Disabled="true" Placeholder="Disabled">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_stateLoading"
+                              IsLoading="true"
+                              LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner"
+                              Placeholder="Loading">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+            </BUIInputDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderDisabledOptions() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="SelectedWithDisabled" Placeholder="Select an option">
+            <DropdownOption Value="@("opt1")" Text="Available Option 1" />
+            <DropdownOption Value="@("opt2")" Text="Disabled Option" Disabled="true" />
+            <DropdownOption Value="@("opt3")" Text="Available Option 2" />
+            <DropdownOption Value="@("opt4")" Text="Another Disabled" Disabled="true" />
+            <DropdownOption Value="@("opt5")" Text="Available Option 3" />
+        </BUIInputDropdown>
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIInputDropdown @bind-Value="_densityComfortable" Density="DensityEnum.Comfortable" Placeholder="Comfortable">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_densityStandard" Density="DensityEnum.Standard" Placeholder="Standard">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_densityCompact" Density="DensityEnum.Compact" Placeholder="Compact">
+                <DropdownOption Value="@("opt1")" Text="Option 1" />
+                <DropdownOption Value="@("opt2")" Text="Option 2" />
+            </BUIInputDropdown>
+        </div>
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> DropdownProperties = new()
+    {
+        new("Value", "TValue", "-", "Current selected value"),
+        new("ValueChanged", "EventCallback<TValue>", "-", "Value change callback"),
+        new("ChildContent", "RenderFragment?", "null", "DropdownOption elements"),
         new("Placeholder", "string?", "null", "Placeholder text when nothing is selected"),
         new("Label", "string?", "null", "Label text above the dropdown"),
         new("HelperText", "string?", "null", "Helper text below the dropdown"),
-        new("Searchable", "bool", "false", "Whether to show search input"),
+        new("Searchable", "bool", "false", "Enable search input"),
         new("SearchPlaceholder", "string", "Search...", "Placeholder for search input"),
-        new("SearchMode", "SearchMode", "Smart", "Search algorithm mode (Smart, StartsWith, Contains, Fuzzy)"),
-        new("Placement", "DropdownPlacement", "Auto", "Menu placement relative to trigger (Auto, Top, Bottom)"),
+        new("SearchMode", "SearchMode", "Smart", "Search algorithm (Smart, StartsWith, Contains, Fuzzy)"),
+        new("Placement", "DropdownPlacement", "Auto", "Menu placement (Auto, Top, Bottom, etc.)"),
         new("MaxVisibleItems", "int", "8", "Maximum visible items before scrolling"),
         new("ItemHeight", "int", "40", "Height of each item in pixels"),
         new("CloseOnSelect", "bool", "true", "Close menu after selection (single mode)"),
         new("ShowSelectAll", "bool", "true", "Show select/deselect all buttons (multiple mode)"),
         new("SelectAllText", "string", "Select All", "Text for select all button"),
         new("DeselectAllText", "string", "Deselect All", "Text for deselect all button"),
-        new("Size", "SizeEnum", "Medium", "Size of the dropdown"),
-        new("Disabled", "bool", "false", "Whether the dropdown is disabled"),
-        new("IsLoading", "bool", "false", "Whether to show loading state"),
-        new("FullWidth", "bool", "false", "Whether to take full width"),
-        new("Required", "bool", "false", "Whether the field is required")
+        new("Size", "SizeEnum", "Medium", "Dropdown size"),
+        new("Density", "DensityEnum", "Standard", "Spacing density"),
+        new("Disabled", "bool", "false", "Disable the dropdown"),
+        new("IsLoading", "bool", "false", "Show loading state"),
+        new("FullWidth", "bool", "false", "Take full width"),
+        new("Required", "bool", "false", "Mark as required"),
+    };
+
+    private List<PropertyDefinition> OptionProperties = new()
+    {
+        new("Value", "TOption", "-", "Option value"),
+        new("Text", "string?", "null", "Display text"),
+        new("Disabled", "bool", "false", "Disable this option"),
+        new("ChildContent", "RenderFragment?", "null", "Custom content"),
     };
 }

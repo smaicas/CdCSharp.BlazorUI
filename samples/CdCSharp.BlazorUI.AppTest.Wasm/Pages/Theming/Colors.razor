@@ -1,133 +1,682 @@
 ﻿@page "/theming/colors"
+
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using System.Reflection
+@using CdCSharp.BlazorUI.Components
 @using CdCSharp.BlazorUI.Core.Css
+@using System.Reflection
 
 <PageTitle>Colors - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
     <h1>Colors</h1>
+
     <p class="doc-intro">
-        The color system provides a comprehensive set of colors with automatic variants for lighter and darker shades.
-        Colors adapt to the current theme and support transparency.
+        <strong>CssColor</strong> is a comprehensive color system that supports multiple input formats
+        (HEX, RGB, RGBA, HSL), CSS variables, automatic contrast calculation, and color manipulation.
+        The <strong>BUIColor</strong> class provides a full palette of predefined colors with
+        Lighten/Darken variants.
     </p>
 
-    <div class="doc-section">
-        <h2>Theme Palette Colors</h2>
-        <p>These colors are defined by the current theme and change automatically when switching themes:</p>
+    <!-- CREATING COLORS -->
+    <section class="doc-section">
+        <h2>Creating colors</h2>
+        <p>CssColor accepts multiple input formats:</p>
+        <ComponentDemo Definition="@CreatingColorsDemo" />
+    </section>
+
+    <!-- HEX FORMATS -->
+    <section class="doc-section">
+        <h2>HEX formats</h2>
+        <p>Supports 3, 4, 6, and 8 character hex codes:</p>
+        <ComponentDemo Definition="@HexFormatsDemo" />
+    </section>
+
+    <!-- RGB/RGBA -->
+    <section class="doc-section">
+        <h2>RGB and RGBA</h2>
+        <ComponentDemo Definition="@RgbFormatsDemo" />
+    </section>
+
+    <!-- CSS VARIABLES -->
+    <section class="doc-section">
+        <h2>CSS variables</h2>
+        <p>Use theme-aware CSS variables that adapt to light/dark modes:</p>
+        <ComponentDemo Definition="@CssVariablesDemo" />
+    </section>
+
+    <!-- ALPHA MANIPULATION -->
+    <section class="doc-section">
+        <h2>Alpha manipulation</h2>
+        <p>Modify transparency using <code>SetAlpha()</code>:</p>
+        <ComponentDemo Definition="@AlphaDemo" />
+    </section>
+
+    <!-- LIGHTEN/DARKEN -->
+    <section class="doc-section">
+        <h2>Lighten and Darken</h2>
+        <p>Modify color luminosity:</p>
+        <ComponentDemo Definition="@LightenDarkenDemo" />
+    </section>
+
+    <!-- BEST CONTRAST -->
+    <section class="doc-section">
+        <h2>Automatic contrast</h2>
+        <p><code>GetBestContrast()</code> returns black or white based on WCAG luminance calculation:</p>
+        <ComponentDemo Definition="@ContrastDemo" />
+    </section>
+
+    <!-- THEME PALETTE -->
+    <section class="doc-section">
+        <h2>Theme palette</h2>
+        <p>Access theme colors via <code>BUIColor.Palette</code>. These adapt to the current theme:</p>
+        <ComponentDemo Definition="@PaletteDemo" />
 
         <div class="palette-grid">
-            @foreach (var paletteColor in UIColorPalette)
+            @foreach (KeyValuePair<string, CssColor> color in PaletteColors)
             {
-                <div class="palette-item">
-                    <h4>@paletteColor.Key</h4>
-                    <div class="palette-swatch" style="@($"background: {paletteColor.Value}; color: {paletteColor.Value.GetBestContrast()}")">
-                        @paletteColor.Key
-                    </div>
+                <div class="palette-swatch" style="background: @color.Value; color: @color.Value.GetBestContrast()">
+                    <span class="palette-name">@color.Key</span>
+                    <code>BUIColor.Palette.@color.Key</code>
                 </div>
             }
         </div>
-    </div>
+    </section>
 
-    <div class="doc-section">
-        <h2>UIColor Full Palette</h2>
-        <p>This section shows all predefined colors in <code>UIColor</code> with their Lighten/Darken variants.</p>
+    <!-- PREDEFINED COLORS -->
+    <section class="doc-section">
+        <h2>Predefined colors</h2>
+        <p>Access any color with variants via <code>BUIColor.[ColorName].[Variant]</code>:</p>
+        <ComponentDemo Definition="@PredefinedColorsDemo" />
+    </section>
 
-        <div class="palette-grid">
-            @foreach (var colorClass in UIColorColorClasses)
+    <!-- COLOR VARIANTS -->
+    <section class="doc-section">
+        <h2>Color variants</h2>
+        <p>Each color includes Default, Lighten1-3, and Darken1-3 variants:</p>
+
+        <div class="color-families">
+            @foreach (ColorFamily family in SelectedColorFamilies)
             {
-                <div class="palette-color-block">
-                    <h4>@colorClass.Name</h4>
+                <div class="color-family">
+                    <h4>@family.Name</h4>
                     <div class="color-variants">
-                        @foreach (var prop in colorClass.Properties)
+                        @foreach ((string Name, CssColor Value) variant in family.Variants)
                         {
-                            <div class="variant-item">
-                                <BUIButton Text="@prop.Name"
-                                          BackgroundColor="@(prop.Value)"
-                                          Color="@(prop.Value.GetBestContrast())" />
-                                <code>@($"UIColor.{colorClass.Name}.{prop.Name}")</code>
+                            <div class="color-variant"
+                                 style="background: @variant.Value; color: @variant.Value.GetBestContrast()">
+                                <span>@variant.Name</span>
                             </div>
                         }
                     </div>
                 </div>
             }
         </div>
-    </div>
+    </section>
 
-    <div class="doc-section">
-        <h2>Using Colors</h2>
+    <!-- OUTPUT FORMATS -->
+    <section class="doc-section">
+        <h2>Output formats</h2>
+        <p>Convert colors to different string formats:</p>
+        <ComponentDemo Definition="@OutputFormatsDemo" />
+    </section>
 
-        <ComponentDemo Code="@usingColorsCode">
-            <Demo>
-                <div class="demo-row">
-                    <BUIButton Text="Theme Primary" BackgroundColor="@(new CssColor("var(--palette-primary)", true))" TextColor="@(new CssColor("var(--palette-primary)", true).GetBestContrast())" />
-                    <BUIButton Text="UIColor Blue" BackgroundColor="@BUIColor.Blue.Default" TextColor="@BUIColor.Blue.Default.GetBestContrast()" />
-                    <BUIButton Text="Custom Color" BackgroundColor="@(new CssColor("#FF5722"))" TextColor="@(new CssColor("#FF5722").GetBestContrast())" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- FULL COLOR REFERENCE -->
+    <section class="doc-section">
+        <h2>Full color reference</h2>
+        <p>All available colors in BUIColor:</p>
 
-    <div class="doc-section">
-        <h2>Creating Custom Colors</h2>
+        <div class="color-reference">
+            @foreach (ColorFamily family in AllColorFamilies)
+            {
+                <details class="color-family-details">
+                    <summary>
+                        <span class="color-preview" style="background: @family.Variants.First(v => v.Name == "Default").Value"></span>
+                        @family.Name
+                    </summary>
+                    <div class="color-variants-list">
+                        @foreach ((string Name, CssColor Value) variant in family.Variants)
+                        {
+                            <div class="color-variant-item">
+                                <span class="color-swatch" style="background: @variant.Value"></span>
+                                <code>BUIColor.@family.Name.@variant.Name</code>
+                                <span class="color-value">@variant.Value.ToString(ColorOutputFormats.Hex)</span>
+                            </div>
+                        }
+                    </div>
+                </details>
+            }
+        </div>
+    </section>
 
-        <CodeBlock Code="@customColorsCode" Language="csharp" Title="Custom Colors" />
-    </div>
+    <!-- API REFERENCE -->
+    <section class="doc-section">
+        <h2>CssColor constructors</h2>
+        <PropertyTable Properties="@ConstructorProperties" />
+    </section>
+
+    <section class="doc-section">
+        <h2>CssColor methods</h2>
+        <PropertyTable Properties="@MethodProperties" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Output formats</h2>
+        <PropertyTable Properties="@FormatProperties" />
+    </section>
 </div>
 
+<style>
+    .palette-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .palette-swatch {
+        padding: 1rem;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .palette-name {
+        font-weight: 600;
+    }
+
+    .palette-swatch code {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .color-families {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .color-family h4 {
+        margin-bottom: 0.5rem;
+    }
+
+    .color-variants {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+
+    .color-variant {
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        min-width: 80px;
+        text-align: center;
+    }
+
+    .color-reference {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .color-family-details {
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+        .color-family-details summary {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+        }
+
+            .color-family-details summary:hover {
+                background: rgba(128, 128, 128, 0.1);
+            }
+
+    .color-preview {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+
+    .color-variants-list {
+        padding: 0.5rem 1rem 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .color-variant-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+    }
+
+    .color-swatch {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+
+    .color-variant-item code {
+        flex: 1;
+        font-size: 0.8rem;
+    }
+
+    .color-value {
+        font-size: 0.75rem;
+        opacity: 0.6;
+        font-family: monospace;
+    }
+</style>
+
 @code {
-    private string usingColorsCode = @"// Using theme palette colors
-<BUIButton Text=""Theme Primary"" BackgroundColor=""@(new CssColor(""var(--palette-primary)"", true))"" TextColor=""@(new CssColor(""var(--palette-primary)"", true).GetBestContrast())"" />
+    private record ColorFamily(string Name, List<(string Name, CssColor Value)> Variants);
 
-// Using UIColor constants
-<BUIButton Text=""UIColor Blue"" BackgroundColor=""@UIColor.Blue.Default"" TextColor=""@UIColor.Blue.Default.GetBestContrast()"" />
-
-// Using custom hex color
-<BUIButton Text=""Custom Color"" BackgroundColor=""@(new CssColor(""#FF5722""))"" TextColor=""@(new CssColor(""#FF5722"").GetBestContrast())"" />";
-
-    private string customColorsCode = @"// Create from hex
-CssColor customColor1 = new CssColor(""#FF5722"");
-
-// Create from RGB
-CssColor customColor2 = new CssColor(255, 87, 34);
-
-// Create from RGBA with transparency
-CssColor customColor3 = new CssColor(255, 87, 34, 0.5);
-
-// Use CSS variables
-CssColor themeColor = new CssColor(""var(--palette-primary)"", true);";
-
-    // Representa una clase de UIColor con sus propiedades CssColor
-    private record UIColorClass(string Name, List<(string Name, CssColor Value)> Properties);
-
-    private List<UIColorClass> UIColorColorClasses { get; set; } = new();
-    private Dictionary<string, CssColor> UIColorPalette { get; set; } = new();
+    private Dictionary<string, CssColor> PaletteColors = new();
+    private List<ColorFamily> AllColorFamilies = new();
+    private List<ColorFamily> SelectedColorFamilies = new();
 
     protected override void OnInitialized()
     {
-        // Obtener todas las clases internas públicas estáticas de UIColor
-        var innerTypes = typeof(BUIColor).GetNestedTypes(BindingFlags.Public | BindingFlags.Static);
+        LoadColors();
+    }
 
-        foreach (var type in innerTypes)
+    private void LoadColors()
+    {
+        Type[] innerTypes = typeof(BUIColor).GetNestedTypes(BindingFlags.Public | BindingFlags.Static);
+
+        foreach (Type type in innerTypes)
         {
-            // Para Palette, guardamos en un diccionario
             if (type.Name == "Palette")
             {
-                var paletteProps = type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                       .Where(p => p.PropertyType == typeof(CssColor))
-                                       .ToDictionary(p => p.Name, p => (CssColor)p.GetValue(null)!);
-
-                UIColorPalette = paletteProps;
+                PaletteColors = type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                    .Where(p => p.PropertyType == typeof(CssColor))
+                    .ToDictionary(p => p.Name, p => (CssColor)p.GetValue(null)!);
             }
             else
             {
-                var props = type.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                                .Where(p => p.PropertyType == typeof(CssColor))
-                                .Select(p => (p.Name, (CssColor)p.GetValue(null)!))
-                                .ToList();
+                List<(string, CssColor)> variants = type.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                    .Where(p => p.PropertyType == typeof(CssColor))
+                    .Select(p => (p.Name, (CssColor)p.GetValue(null)!))
+                    .ToList();
 
-                UIColorColorClasses.Add(new UIColorClass(type.Name, props));
+                AllColorFamilies.Add(new ColorFamily(type.Name, variants));
             }
         }
+
+        string[] selectedNames = { "Blue", "Red", "Green", "Purple", "Orange" };
+        SelectedColorFamilies = AllColorFamilies
+            .Where(f => selectedNames.Contains(f.Name))
+            .ToList();
     }
+
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition CreatingColorsDemo => new()
+    {
+        Demo = RenderCreatingColors(),
+        Code = """
+// From HEX
+CssColor hex = new CssColor("#3B82F6");
+
+// From RGB integers
+CssColor rgb = new CssColor(59, 130, 246);
+
+// From RGBA with alpha (0.0 - 1.0)
+CssColor rgba = new CssColor(59, 130, 246, 0.5);
+
+// From CSS variable
+CssColor cssVar = new CssColor("var(--palette-primary)", isCssVariable: true);
+
+// From HSL
+CssColor hsl = new CssColor(h: 217, s: 0.91, l: 0.60, a: 1.0);
+"""
+    };
+
+    private ComponentDemoDefinition HexFormatsDemo => new()
+    {
+        Demo = RenderHexFormats(),
+        Code = """
+<BUIButton Text="#RGB" BackgroundColor="@(new CssColor("#F00"))" />
+<BUIButton Text="#RGBA" BackgroundColor="@(new CssColor("#F008"))" />
+<BUIButton Text="#RRGGBB" BackgroundColor="@(new CssColor("#FF5722"))" />
+<BUIButton Text="#RRGGBBAA" BackgroundColor="@(new CssColor("#FF572280"))" />
+"""
+    };
+
+    private ComponentDemoDefinition RgbFormatsDemo => new()
+    {
+        Demo = RenderRgbFormats(),
+        Code = """
+// Integer RGB
+<BUIButton Text="RGB" BackgroundColor="@(new CssColor(76, 175, 80))" />
+
+// With double alpha (0.0 - 1.0)
+<BUIButton Text="RGBA 0.7" BackgroundColor="@(new CssColor(76, 175, 80, 0.7))" />
+
+// With integer alpha (0 - 255)
+<BUIButton Text="RGBA 128" BackgroundColor="@(new CssColor(76, 175, 80, 128))" />
+
+// From string
+<BUIButton Text="rgb()" BackgroundColor="@(new CssColor("rgb(76, 175, 80)"))" />
+<BUIButton Text="rgba()" BackgroundColor="@(new CssColor("rgba(76, 175, 80, 0.5)"))" />
+"""
+    };
+
+    private ComponentDemoDefinition CssVariablesDemo => new()
+    {
+        Demo = RenderCssVariables(),
+        Code = """
+// Theme-aware colors that change with light/dark mode
+<BUIButton Text="Primary"
+           BackgroundColor="@(new CssColor("var(--palette-primary)", true))" />
+
+<BUIButton Text="Secondary"
+           BackgroundColor="@(new CssColor("var(--palette-secondary)", true))" />
+
+// Or use BUIColor.Palette directly
+<BUIButton Text="Success" BackgroundColor="BUIColor.Palette.Success" />
+<BUIButton Text="Error" BackgroundColor="BUIColor.Palette.Error" />
+"""
+    };
+
+    private ComponentDemoDefinition AlphaDemo => new()
+    {
+        Demo = RenderAlpha(),
+        Code = """
+CssColor baseColor = BUIColor.Blue.Default;
+
+<BUIButton Text="100%" BackgroundColor="@baseColor" />
+<BUIButton Text="75%" BackgroundColor="@baseColor.SetAlpha(0.75)" />
+<BUIButton Text="50%" BackgroundColor="@baseColor.SetAlpha(0.5)" />
+<BUIButton Text="25%" BackgroundColor="@baseColor.SetAlpha(0.25)" />
+"""
+    };
+
+    private ComponentDemoDefinition LightenDarkenDemo => new()
+    {
+        Demo = RenderLightenDarken(),
+        Code = """
+CssColor baseColor = BUIColor.Blue.Default;
+
+// Darken
+<BUIButton Text="Darken 0.2" BackgroundColor="@baseColor.ColorDarken(0.2)" />
+<BUIButton Text="Darken 0.1" BackgroundColor="@baseColor.ColorDarken(0.1)" />
+
+// Original
+<BUIButton Text="Default" BackgroundColor="@baseColor" />
+
+// Lighten
+<BUIButton Text="Lighten 0.1" BackgroundColor="@baseColor.ColorLighten(0.1)" />
+<BUIButton Text="Lighten 0.2" BackgroundColor="@baseColor.ColorLighten(0.2)" />
+"""
+    };
+
+    private ComponentDemoDefinition ContrastDemo => new()
+    {
+        Demo = RenderContrast(),
+        Code = """
+// GetBestContrast() returns black or white for optimal readability
+CssColor yellow = BUIColor.Yellow.Default;
+CssColor navy = BUIColor.Navy.Default;
+
+<BUIButton Text="Yellow (dark text)"
+           BackgroundColor="@yellow"
+           Color="@yellow.GetBestContrast()" />
+
+<BUIButton Text="Navy (light text)"
+           BackgroundColor="@navy"
+           Color="@navy.GetBestContrast()" />
+"""
+    };
+
+    private ComponentDemoDefinition PaletteDemo => new()
+    {
+        Demo = RenderPalette(),
+        Code = """
+// Theme palette colors adapt to light/dark mode
+<BUIButton Text="Primary" BackgroundColor="BUIColor.Palette.Primary"
+           Color="BUIColor.Palette.PrimaryContrast" />
+
+<BUIButton Text="Secondary" BackgroundColor="BUIColor.Palette.Secondary"
+           Color="BUIColor.Palette.SecondaryContrast" />
+
+<BUIButton Text="Success" BackgroundColor="BUIColor.Palette.Success"
+           Color="BUIColor.Palette.SuccessContrast" />
+
+<BUIButton Text="Error" BackgroundColor="BUIColor.Palette.Error"
+           Color="BUIColor.Palette.ErrorContrast" />
+"""
+    };
+
+    private ComponentDemoDefinition PredefinedColorsDemo => new()
+    {
+        Demo = RenderPredefinedColors(),
+        Code = """
+// Access colors via BUIColor.[ColorName].[Variant]
+<BUIButton Text="Blue" BackgroundColor="BUIColor.Blue.Default" />
+<BUIButton Text="Red Darken2" BackgroundColor="BUIColor.Red.Darken2" />
+<BUIButton Text="Green Lighten1" BackgroundColor="BUIColor.Green.Lighten1" />
+<BUIButton Text="Purple" BackgroundColor="BUIColor.Purple.Default" />
+<BUIButton Text="Orange Darken1" BackgroundColor="BUIColor.Orange.Darken1" />
+"""
+    };
+
+    private ComponentDemoDefinition OutputFormatsDemo => new()
+    {
+        Demo = RenderOutputFormats(),
+        Code = """
+CssColor color = new CssColor(59, 130, 246, 0.8);
+
+color.ToString(ColorOutputFormats.Hex);      // "#3b82f6"
+color.ToString(ColorOutputFormats.HexA);     // "#3b82f6cc"
+color.ToString(ColorOutputFormats.Rgb);      // "rgb(59,130,246)"
+color.ToString(ColorOutputFormats.Rgba);     // "rgba(59,130,246,0.8)"
+color.ToString(ColorOutputFormats.ColorElements); // "59,130,246"
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderCreatingColors() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="HEX" BackgroundColor="@(new CssColor("#3B82F6"))"
+                       Color="@(new CssColor("#3B82F6").GetBestContrast())" />
+            <BUIButton Text="RGB" BackgroundColor="@(new CssColor(59, 130, 246, 255))"
+                       Color="@(new CssColor(59, 130, 246, 255).GetBestContrast())" />
+            <BUIButton Text="RGBA" BackgroundColor="@(new CssColor(59, 130, 246, 0.7))"
+                       Color="@(new CssColor(59, 130, 246, 255).GetBestContrast())" />
+            <BUIButton Text="CSS Var" BackgroundColor="@(new CssColor("var(--palette-primary)", true))"
+                       Color="@(new CssColor("var(--palette-primarycontrast)", true))" />
+        </div>
+    };
+
+    private RenderFragment RenderHexFormats() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="#RGB" BackgroundColor="@(new CssColor("#F00"))"
+                       Color="@(new CssColor("#F00").GetBestContrast())" />
+            <BUIButton Text="#RGBA" BackgroundColor="@(new CssColor("#F008"))"
+                       Color="@(new CssColor("#F00").GetBestContrast())" />
+            <BUIButton Text="#RRGGBB" BackgroundColor="@(new CssColor("#FF5722"))"
+                       Color="@(new CssColor("#FF5722").GetBestContrast())" />
+            <BUIButton Text="#RRGGBBAA" BackgroundColor="@(new CssColor("#FF572280"))"
+                       Color="@(new CssColor("#FF5722").GetBestContrast())" />
+        </div>
+    };
+
+    private RenderFragment RenderRgbFormats() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="RGB int" BackgroundColor="@(new CssColor(76, 175, 80, 1))"
+                       Color="@(new CssColor(76, 175, 80, 1).GetBestContrast())" />
+            <BUIButton Text="RGBA 0.7" BackgroundColor="@(new CssColor(76, 175, 80, 0.7))"
+                       Color="@(new CssColor(76, 175, 80, 1).GetBestContrast())" />
+            <BUIButton Text="rgb()" BackgroundColor="@(new CssColor("rgb(76, 175, 80)"))"
+                       Color="@(new CssColor("rgb(76, 175, 80)").GetBestContrast())" />
+            <BUIButton Text="rgba()" BackgroundColor="@(new CssColor("rgba(76, 175, 80, 0.5)"))"
+                       Color="@(new CssColor("rgb(76, 175, 80)").GetBestContrast())" />
+        </div>
+    };
+
+    private RenderFragment RenderCssVariables() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Primary"
+                       BackgroundColor="@(new CssColor("var(--palette-primary)", true))"
+                       Color="@(new CssColor("var(--palette-primarycontrast)", true))" />
+            <BUIButton Text="Secondary"
+                       BackgroundColor="@(new CssColor("var(--palette-secondary)", true))"
+                       Color="@(new CssColor("var(--palette-secondarycontrast)", true))" />
+            <BUIButton Text="Success"
+                       BackgroundColor="BUIColor.Palette.Success"
+                       Color="BUIColor.Palette.SuccessContrast" />
+            <BUIButton Text="Error"
+                       BackgroundColor="BUIColor.Palette.Error"
+                       Color="BUIColor.Palette.ErrorContrast" />
+        </div>
+    };
+
+    private RenderFragment RenderAlpha() => __builder =>
+    {
+        CssColor baseColor = BUIColor.Blue.Default;
+        <div class="demo-row">
+            <BUIButton Text="100%" BackgroundColor="@baseColor"
+                       Color="@baseColor.GetBestContrast()" />
+            <BUIButton Text="75%" BackgroundColor="@baseColor.SetAlpha(0.75)"
+                       Color="@baseColor.GetBestContrast()" />
+            <BUIButton Text="50%" BackgroundColor="@baseColor.SetAlpha(0.5)"
+                       Color="@baseColor.GetBestContrast()" />
+            <BUIButton Text="25%" BackgroundColor="@baseColor.SetAlpha(0.25)"
+                       Color="@baseColor.GetBestContrast()" />
+        </div>
+    };
+
+    private RenderFragment RenderLightenDarken() => __builder =>
+    {
+        CssColor baseColor = BUIColor.Blue.Default;
+        <div class="demo-row">
+            <BUIButton Text="Darken 0.2" BackgroundColor="@baseColor.ColorDarken(0.2)"
+                       Color="@baseColor.ColorDarken(0.2).GetBestContrast()" />
+            <BUIButton Text="Darken 0.1" BackgroundColor="@baseColor.ColorDarken(0.1)"
+                       Color="@baseColor.ColorDarken(0.1).GetBestContrast()" />
+            <BUIButton Text="Default" BackgroundColor="@baseColor"
+                       Color="@baseColor.GetBestContrast()" />
+            <BUIButton Text="Lighten 0.1" BackgroundColor="@baseColor.ColorLighten(0.1)"
+                       Color="@baseColor.ColorLighten(0.1).GetBestContrast()" />
+            <BUIButton Text="Lighten 0.2" BackgroundColor="@baseColor.ColorLighten(0.2)"
+                       Color="@baseColor.ColorLighten(0.2).GetBestContrast()" />
+        </div>
+    };
+
+    private RenderFragment RenderContrast() => __builder =>
+    {
+        CssColor yellow = BUIColor.Yellow.Default;
+        CssColor navy = BUIColor.Navy.Default;
+        CssColor lime = BUIColor.Lime.Default;
+        CssColor darkSlateGray = BUIColor.DarkSlateGray.Default;
+
+        <div class="demo-row">
+            <BUIButton Text="Yellow" BackgroundColor="@yellow"
+                       Color="@yellow.GetBestContrast()" />
+            <BUIButton Text="Navy" BackgroundColor="@navy"
+                       Color="@navy.GetBestContrast()" />
+            <BUIButton Text="Lime" BackgroundColor="@lime"
+                       Color="@lime.GetBestContrast()" />
+            <BUIButton Text="DarkSlateGray" BackgroundColor="@darkSlateGray"
+                       Color="@darkSlateGray.GetBestContrast()" />
+        </div>
+    };
+
+    private RenderFragment RenderPalette() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Primary" BackgroundColor="BUIColor.Palette.Primary"
+                       Color="BUIColor.Palette.PrimaryContrast" />
+            <BUIButton Text="Secondary" BackgroundColor="BUIColor.Palette.Secondary"
+                       Color="BUIColor.Palette.SecondaryContrast" />
+            <BUIButton Text="Success" BackgroundColor="BUIColor.Palette.Success"
+                       Color="BUIColor.Palette.SuccessContrast" />
+            <BUIButton Text="Warning" BackgroundColor="BUIColor.Palette.Warning"
+                       Color="BUIColor.Palette.WarningContrast" />
+            <BUIButton Text="Error" BackgroundColor="BUIColor.Palette.Error"
+                       Color="BUIColor.Palette.ErrorContrast" />
+        </div>
+    };
+
+    private RenderFragment RenderPredefinedColors() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Blue" BackgroundColor="BUIColor.Blue.Default"
+                       Color="BUIColor.Blue.Default.GetBestContrast()" />
+            <BUIButton Text="Red Darken2" BackgroundColor="BUIColor.Red.Darken2"
+                       Color="BUIColor.Red.Darken2.GetBestContrast()" />
+            <BUIButton Text="Green Lighten1" BackgroundColor="BUIColor.Green.Lighten1"
+                       Color="BUIColor.Green.Lighten1.GetBestContrast()" />
+            <BUIButton Text="Purple" BackgroundColor="BUIColor.Purple.Default"
+                       Color="BUIColor.Purple.Default.GetBestContrast()" />
+            <BUIButton Text="Orange Darken1" BackgroundColor="BUIColor.Orange.Darken1"
+                       Color="BUIColor.Orange.Darken1.GetBestContrast()" />
+        </div>
+    };
+
+    private CssColor _outputColor = new CssColor(59, 130, 246, 0.8);
+
+    private RenderFragment RenderOutputFormats() => __builder =>
+    {
+        <div class="demo-column" style="gap: 0.5rem; font-family: monospace;">
+            <div><strong>Hex:</strong> @_outputColor.ToString(ColorOutputFormats.Hex)</div>
+            <div><strong>HexA:</strong> @_outputColor.ToString(ColorOutputFormats.HexA)</div>
+            <div><strong>Rgb:</strong> @_outputColor.ToString(ColorOutputFormats.Rgb)</div>
+            <div><strong>Rgba:</strong> @_outputColor.ToString(ColorOutputFormats.Rgba)</div>
+            <div><strong>ColorElements:</strong> @_outputColor.ToString(ColorOutputFormats.ColorElements)</div>
+        </div>
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> ConstructorProperties = new()
+    {
+        new("CssColor(string)", "-", "-", "From HEX (#RGB, #RRGGBB, #RRGGBBAA) or rgb()/rgba()"),
+        new("CssColor(string, bool)", "-", "-", "From CSS variable when second param is true"),
+        new("CssColor(int r, int g, int b)", "-", "-", "From RGB integers (0-255)"),
+        new("CssColor(int r, int g, int b, double a)", "-", "-", "From RGBA with alpha (0.0-1.0)"),
+        new("CssColor(int r, int g, int b, int a)", "-", "-", "From RGBA with alpha (0-255)"),
+        new("CssColor(byte r, byte g, byte b, byte a)", "-", "-", "From RGBA bytes"),
+        new("CssColor(double h, double s, double l, double a)", "-", "-", "From HSLA values"),
+    };
+
+    private List<PropertyDefinition> MethodProperties = new()
+    {
+        new("SetAlpha(double)", "CssColor", "-", "Returns new color with specified alpha (0.0-1.0)"),
+        new("SetAlpha(int)", "CssColor", "-", "Returns new color with specified alpha (0-255)"),
+        new("ColorLighten(double)", "CssColor", "-", "Returns lighter color by amount"),
+        new("ColorDarken(double)", "CssColor", "-", "Returns darker color by amount"),
+        new("ChangeLightness(double)", "CssColor", "-", "Modify luminosity (+/-)"),
+        new("GetBestContrast()", "CssColor", "-", "Returns black or white for best readability"),
+        new("GetRelativeLuminance()", "double", "-", "Returns WCAG luminance (0-1)"),
+        new("ToString(ColorOutputFormats)", "string", "-", "Convert to specified format"),
+    };
+
+    private List<PropertyDefinition> FormatProperties = new()
+    {
+        new("Hex", "ColorOutputFormats", "-", "#rrggbb"),
+        new("HexA", "ColorOutputFormats", "-", "#rrggbbaa"),
+        new("Rgb", "ColorOutputFormats", "-", "rgb(r,g,b)"),
+        new("Rgba", "ColorOutputFormats", "-", "rgba(r,g,b,a)"),
+        new("ColorElements", "ColorOutputFormats", "-", "r,g,b"),
+    };
 }

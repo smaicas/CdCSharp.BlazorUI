@@ -1,109 +1,92 @@
 ﻿@page "/components/forms/input-datetime"
+
+@using System.ComponentModel.DataAnnotations
 @using CdCSharp.BlazorUI.Components.Forms
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-@using System.ComponentModel.DataAnnotations
 
 <PageTitle>InputDateTime - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
-    <h1>InputDateTime</h1>
+    <h1>BUIInputDateTime</h1>
 
     <p class="doc-intro">
-        <strong>BUIInputDateTime</strong> is a form input component that adapts automatically
-        to the bound value type. It supports <code>DateOnly</code>, <code>TimeOnly</code>,
-        <code>DateTime</code> and <code>DateTimeOffset</code>, including validation,
-        culture-aware formatting and picker dialogs.
+        <strong>BUIInputDateTime</strong> is a strongly-typed date and time input component.
+        The rendered UI, formatting and picker behavior are automatically determined
+        by the type of the bound value.
     </p>
 
-    <EditForm Model="@model">
-        <DataAnnotationsValidator />
+    <!-- BASIC -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
 
-        <!-- DateOnly -->
-        <div class="doc-section">
-            <h2>DateOnly</h2>
+    <!-- DATE ONLY -->
+    <section class="doc-section">
+        <h2>DateOnly</h2>
+        <ComponentDemo Definition="@DateOnlyDemo" />
+    </section>
 
-            <ComponentDemo Code="@dateOnlyCode">
-                <Demo>
-                    <BUIInputDateTime Label="DateOnly"
-                                      Required="true"
-                                      @bind-Value="model.DateOnly" />
-                </Demo>
-            </ComponentDemo>
-        </div>
+    <!-- TIME ONLY -->
+    <section class="doc-section">
+        <h2>TimeOnly</h2>
+        <ComponentDemo Definition="@TimeOnlyDemo" />
+    </section>
 
-        <!-- TimeOnly -->
-        <div class="doc-section">
-            <h2>TimeOnly</h2>
+    <!-- DATETIME -->
+    <section class="doc-section">
+        <h2>DateTime</h2>
+        <ComponentDemo Definition="@DateTimeDemo" />
+    </section>
 
-            <ComponentDemo Code="@timeOnlyCode">
-                <Demo>
-                    <BUIInputDateTime Label="TimeOnly"
-                                      Required="true"
-                                      @bind-Value="model.TimeOnly" />
-                </Demo>
-            </ComponentDemo>
-        </div>
+    <!-- DATETIME OFFSET -->
+    <section class="doc-section">
+        <h2>DateTimeOffset</h2>
+        <ComponentDemo Definition="@DateTimeOffsetDemo" />
+    </section>
 
-        <!-- DateTime -->
-        <div class="doc-section">
-            <h2>DateTime</h2>
+    <!-- SIZE -->
+    <section class="doc-section">
+        <h2>Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
 
-            <ComponentDemo Code="@dateTimeCode">
-                <Demo>
-                    <BUIInputDateTime Label="DateTime"
-                                      Required="true"
-                                      HelperText="Select date and time"
-                                      @bind-Value="model.DateTime" />
-                </Demo>
-            </ComponentDemo>
-        </div>
+    <!-- DENSITY -->
+    <section class="doc-section">
+        <h2>Density</h2>
+        <ComponentDemo Definition="@DensityDemo" />
+    </section>
 
-        <!-- DateTimeOffset -->
-        <div class="doc-section">
-            <h2>DateTimeOffset</h2>
+    <!-- READONLY / DISABLED -->
+    <section class="doc-section">
+        <h2>ReadOnly & Disabled</h2>
+        <ComponentDemo Definition="@StateDemo" />
+    </section>
 
-            <ComponentDemo Code="@dateTimeOffsetCode">
-                <Demo>
-                    <BUIInputDateTime Label="DateTimeOffset"
-                                      Required="true"
-                                      @bind-Value="model.DateTimeOffset" />
-                </Demo>
-            </ComponentDemo>
-        </div>
-    </EditForm>
-
-    <!-- Current values -->
-    <div class="doc-section">
-        <h2>Current Values</h2>
-
+    <!-- CURRENT VALUES -->
+    <section class="doc-section">
+        <h2>Current values</h2>
         <pre class="demo-output">
-DateOnly: @model.DateOnly
-TimeOnly: @model.TimeOnly
-DateTime: @model.DateTime
-DateTimeOffset: @model.DateTimeOffset
+DateOnly: @Model.DateOnly
+TimeOnly: @Model.TimeOnly
+DateTime: @Model.DateTime
+DateTimeOffset: @Model.DateTimeOffset
         </pre>
-    </div>
+    </section>
 
-    <!-- Properties -->
-    <div class="doc-section">
+    <!-- PROPERTIES -->
+    <section class="doc-section">
         <h2>Properties</h2>
-
-        <PropertyTable TItem="InputDateTimeProperty"
-                       Items="@Properties">
-            <PropertyTemplate Context="prop">
-                <td><code>@prop.Name</code></td>
-                <td><code>@prop.Type</code></td>
-                <td><code>@prop.Default</code></td>
-                <td>@prop.Description</td>
-            </PropertyTemplate>
-        </PropertyTable>
-    </div>
+        <PropertyTable Properties="@Properties" />
+    </section>
 </div>
 
 @code {
-    private DateTestModel model = new();
+    /* ===================== MODEL ===================== */
 
-    public class DateTestModel
+    private DemoModel Model = new();
+
+    private class DemoModel
     {
         [Required] public DateOnly? DateOnly { get; set; }
         [Required] public TimeOnly? TimeOnly { get; set; }
@@ -111,58 +94,216 @@ DateTimeOffset: @model.DateTimeOffset
         [Required] public DateTimeOffset? DateTimeOffset { get; set; }
     }
 
-    private string dateOnlyCode =
-@"<BUIInputDateTime Label=""DateOnly""
-                  Required
-                  @bind-Value=""model.DateOnly"" />";
+    /* ===================== DEMOS ===================== */
 
-    private string timeOnlyCode =
-@"<BUIInputDateTime Label=""TimeOnly""
-                  Required
-                  @bind-Value=""model.TimeOnly"" />";
-
-    private string dateTimeCode =
-@"<BUIInputDateTime Label=""DateTime""
-                  Required
-                  HelperText=""Select date and time""
-                  @bind-Value=""model.DateTime"" />";
-
-    private string dateTimeOffsetCode =
-@"<BUIInputDateTime Label=""DateTimeOffset""
-                  Required
-                  @bind-Value=""model.DateTimeOffset"" />";
-
-    private record InputDateTimeProperty(
-        string Name,
-        string Type,
-        string Default,
-        string Description
-    );
-
-    private List<InputDateTimeProperty> Properties = new()
+    private ComponentDemoDefinition BasicDemo => new()
     {
-        new("Value", "TValue", "null",
-            "Bound value. The behavior depends on TValue (DateOnly, TimeOnly, DateTime, DateTimeOffset)."),
+        Demo = RenderBasic(),
+        Code = """
+<EditForm Model="model">
+    <DataAnnotationsValidator />
 
-        new("ValueChanged", "EventCallback<TValue>", "-",
-            "Raised when the value changes."),
+    <BUIInputDateTime Label="Date"
+                      Required
+                      @bind-Value="model.DateOnly" />
+</EditForm>
+"""
+    };
 
-        new("Label", "string?", "null",
-            "Label displayed above the input."),
+    private ComponentDemoDefinition DateOnlyDemo => new()
+    {
+        Demo = RenderDateOnly(),
+        Code = """
+<BUIInputDateTime Label="DateOnly"
+                  Required
+                  @bind-Value="model.DateOnly" />
+"""
+    };
 
-        new("HelperText", "string?", "null",
-            "Helper text displayed below the input."),
+    private ComponentDemoDefinition TimeOnlyDemo => new()
+    {
+        Demo = RenderTimeOnly(),
+        Code = """
+<BUIInputDateTime Label="TimeOnly"
+                  Required
+                  @bind-Value="model.TimeOnly" />
+"""
+    };
 
-        new("Required", "bool", "false",
-            "Marks the field as required and shows validation errors."),
+    private ComponentDemoDefinition DateTimeDemo => new()
+    {
+        Demo = RenderDateTime(),
+        Code = """
+<BUIInputDateTime Label="DateTime"
+                  HelperText="Select date and time"
+                  Required
+                  @bind-Value="model.DateTime" />
+"""
+    };
 
-        new("ReadOnly", "bool", "false",
-            "Prevents user interaction while keeping the value visible."),
+    private ComponentDemoDefinition DateTimeOffsetDemo => new()
+    {
+        Demo = RenderDateTimeOffset(),
+        Code = """
+<BUIInputDateTime Label="DateTimeOffset"
+                  Required
+                  @bind-Value="model.DateTimeOffset" />
+"""
+    };
 
-        new("Disabled", "bool", "false",
-            "Disables the input entirely."),
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """
+<BUIInputDateTime Label="Small"
+                  Size="SizeEnum.Small"
+                  @bind-Value="model.DateOnly" />
 
-        new("Variant", "Variant?", "Default",
-            "Visual variant of the input component.")
+<BUIInputDateTime Label="Medium"
+                  Size="SizeEnum.Medium"
+                  @bind-Value="model.DateOnly" />
+
+<BUIInputDateTime Label="Large"
+                  Size="SizeEnum.Large"
+                  @bind-Value="model.DateOnly" />
+"""
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """
+<BUIInputDateTime Label="Comfortable"
+                  Density="DensityEnum.Comfortable"
+                  @bind-Value="model.DateOnly" />
+
+<BUIInputDateTime Label="Standard"
+                  Density="DensityEnum.Standard"
+                  @bind-Value="model.DateOnly" />
+
+<BUIInputDateTime Label="Compact"
+                  Density="DensityEnum.Compact"
+                  @bind-Value="model.DateOnly" />
+"""
+    };
+
+    private ComponentDemoDefinition StateDemo => new()
+    {
+        Demo = RenderStates(),
+        Code = """
+<BUIInputDateTime Label="ReadOnly"
+                  ReadOnly
+                  @bind-Value="model.DateOnly" />
+
+<BUIInputDateTime Label="Disabled"
+                  Disabled
+                  @bind-Value="model.DateOnly" />
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <EditForm Model="Model">
+            <DataAnnotationsValidator />
+            <BUIInputDateTime Label="Date"
+                              Required
+                              @bind-Value="Model.DateOnly" />
+        </EditForm>
+        ;
+    };
+
+    private RenderFragment RenderDateOnly() => __builder =>
+    {
+        <BUIInputDateTime Label="DateOnly"
+                          Required
+                          @bind-Value="Model.DateOnly" />
+        ;
+    };
+
+    private RenderFragment RenderTimeOnly() => __builder =>
+    {
+        <BUIInputDateTime Label="TimeOnly"
+                          Required
+                          @bind-Value="Model.TimeOnly" />
+        ;
+    };
+
+    private RenderFragment RenderDateTime() => __builder =>
+    {
+        <BUIInputDateTime Label="DateTime"
+                          HelperText="Select date and time"
+                          Required
+                          @bind-Value="Model.DateTime" />
+        ;
+    };
+
+    private RenderFragment RenderDateTimeOffset() => __builder =>
+    {
+        <BUIInputDateTime Label="DateTimeOffset"
+                          Required
+                          @bind-Value="Model.DateTimeOffset" />
+        ;
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputDateTime Label="Small"
+                              Size="SizeEnum.Small"
+                              @bind-Value="Model.DateOnly" />
+            <BUIInputDateTime Label="Medium"
+                              Size="SizeEnum.Medium"
+                              @bind-Value="Model.DateOnly" />
+            <BUIInputDateTime Label="Large"
+                              Size="SizeEnum.Large"
+                              @bind-Value="Model.DateOnly" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputDateTime Label="Comfortable"
+                              Density="DensityEnum.Comfortable"
+                              @bind-Value="Model.DateOnly" />
+            <BUIInputDateTime Label="Standard"
+                              Density="DensityEnum.Standard"
+                              @bind-Value="Model.DateOnly" />
+            <BUIInputDateTime Label="Compact"
+                              Density="DensityEnum.Compact"
+                              @bind-Value="Model.DateOnly" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderStates() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputDateTime Label="ReadOnly"
+                              ReadOnly
+                              @bind-Value="Model.DateOnly" />
+            <BUIInputDateTime Label="Disabled"
+                              Disabled
+                              @bind-Value="Model.DateOnly" />
+        </div>
+        ;
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> Properties = new()
+    {
+        new("Value", "TValue", "null", "Bound value. Determines input behavior."),
+        new("ValueChanged", "EventCallback<TValue>", "-", "Raised when the value changes"),
+        new("Label", "string?", "null", "Input label"),
+        new("HelperText", "string?", "null", "Helper text below the input"),
+        new("Required", "bool", "false", "Marks the field as required"),
+        new("ReadOnly", "bool", "false", "Makes the input read-only"),
+        new("Disabled", "bool", "false", "Disables the input"),
+        new("Size", "SizeEnum", "Medium", "Input size"),
+        new("Density", "DensityEnum", "Standard", "Input density"),
     };
 }

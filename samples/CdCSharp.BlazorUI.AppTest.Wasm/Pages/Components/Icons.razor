@@ -1,157 +1,263 @@
 ﻿@page "/components/icons"
+
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Css
 
 <PageTitle>Icons - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
-    <h1>Icons</h1>
+    <h1>BUISvgIcon</h1>
+
     <p class="doc-intro">
-        The BUISvgIcon component provides a flexible way to display SVG icons with customizable size and color.
+        <strong>BUISvgIcon</strong> provides a flexible way to render SVG icons with
+        configurable size, color, accessibility attributes and interaction support.
     </p>
 
-    <div class="doc-section">
-        <h2>Basic Usage</h2>
-        <ComponentDemo Code="@basicIconCode">
-            <Demo>
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite" />
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- BASIC -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
 
-    <div class="doc-section">
+    <!-- SIZES -->
+    <section class="doc-section">
         <h2>Sizes</h2>
-        <ComponentDemo Code="@sizesCode">
-            <Demo>
-                <div class="demo-row">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
 
-    <div class="doc-section">
+    <!-- COLORS -->
+    <section class="doc-section">
         <h2>Colors</h2>
-        <ComponentDemo Code="@colorsCode">
-            <Demo>
-                <div class="demo-row">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_check" Color="@BUIColor.Green.Default" />
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_warning" Color="@BUIColor.Orange.Default" />
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_error" Color="@BUIColor.Red.Default" />
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info" Color="@BUIColor.Blue.Default" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Icon Examples</h2>
-        <div class="icon-grid">
-            @foreach (var icon in GetSampleIcons())
-            {
-                <div class="icon-item">
-                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
-                    <code>@icon.Name</code>
-                </div>
-            }
-        </div>
-    </div>
+    <!-- TITLE / ACCESSIBILITY -->
+    <section class="doc-section">
+        <h2>Accessibility (Title)</h2>
+        <ComponentDemo Definition="@TitleDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Icon Examples</h2>
-        <div class="icon-grid">
-            @foreach (var icon in GetSampleIcons())
-            {
-                <div class="icon-item">
-                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
-                    <code>@icon.Name</code>
-                </div>
-            }
-        </div>
-    </div>
+    <!-- CLICK -->
+    <section class="doc-section">
+        <h2>Clickable icons</h2>
+        <ComponentDemo Definition="@ClickDemo" />
+        <p>Clicks: @Clicks</p>
+    </section>
 
-    <div class="doc-section">
-        <h2>Brand Icons</h2>
-        <div class="icon-grid">
-            @foreach (var icon in GetBrandIcons())
-            {
-                <div class="icon-item">
-                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
-                    <code>@icon.Name</code>
-                </div>
-            }
-        </div>
-    </div>
+    <!-- VIEWBOX -->
+    <section class="doc-section">
+        <h2>Custom ViewBox</h2>
+        <ComponentDemo Definition="@ViewBoxDemo" />
+    </section>
 
-    <div class="doc-section">
+    <!-- MATERIAL ICONS -->
+    <section class="doc-section">
+        <h2>Material icon examples</h2>
+        <ComponentDemo Definition="@MaterialIconsDemo" />
+    </section>
+
+    <!-- BRAND ICONS -->
+    <section class="doc-section">
+        <h2>Brand icons</h2>
+        <ComponentDemo Definition="@BrandIconsDemo" />
+    </section>
+
+    <!-- PROPERTIES -->
+    <section class="doc-section">
         <h2>Properties</h2>
-        <PropertyTable TItem="IconProperty" Items="@IconProperties">
-            <PropertyTemplate Context="prop">
-                <td><code>@prop.Name</code></td>
-                <td><code>@prop.Type</code></td>
-                <td><code>@prop.Default</code></td>
-                <td>@prop.Description</td>
-            </PropertyTemplate>
-        </PropertyTable>
-    </div>
+        <PropertyTable Properties="@Properties" />
+    </section>
 </div>
 
 @code {
-    private string basicIconCode = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_favorite"" />";
+    private int Clicks;
 
-    private string sizesCode = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Small"" />
-<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Medium"" />
-<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_star"" Size=""SizeEnum.Large"" />";
+    /* ===================== DEMOS ===================== */
 
-    private string colorsCode = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_check"" Color=""@UIColor.Green.Default"" />
-<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_warning"" Color=""@UIColor.Orange.Default"" />
-<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_error"" Color=""@UIColor.Red.Default"" />
-<BUISvgIcon Icon=""@BUIIcons.MaterialIconsRound.i_info"" Color=""@UIColor.Blue.Default"" />";
-
-    private record IconProperty(string Name, string Type, string Default, string Description);
-
-    private List<IconProperty> IconProperties = new()
+    private ComponentDemoDefinition BasicDemo => new()
     {
-        new("Icon", "string", "required", "SVG content of the icon"),
-        new("Size", "SizeEnum", "Medium", "Size of the icon (Small, Medium, Large)"),
-        new("Color", "CssColor?", "null", "Color of the icon"),
-        new("Title", "string?", "null", "Accessibility title for the icon"),
-        new("ViewBox", "string", "0 0 24 24", "SVG viewBox attribute"),
-        new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click event handler"),
+        Demo = RenderBasic(),
+        Code = """
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite" />
+"""
     };
 
-    private record IconExample(string Name, string Value);
-
-    private List<IconExample> GetSampleIcons()
+    private ComponentDemoDefinition SizesDemo => new()
     {
-        return new List<IconExample>
-        {
-            new("Home", BUIIcons.MaterialIconsRound.i_home),
-            new("Settings", BUIIcons.MaterialIconsRound.i_settings),
-            new("Search", BUIIcons.MaterialIconsRound.i_search),
-            new("Favorite", BUIIcons.MaterialIconsRound.i_favorite),
-            new("Star", BUIIcons.MaterialIconsRound.i_star),
-            new("Check", BUIIcons.MaterialIconsRound.i_check),
-            new("Close", BUIIcons.MaterialIconsRound.i_close),
-            new("Edit", BUIIcons.MaterialIconsRound.i_edit),
-            new("Delete", BUIIcons.MaterialIconsRound.i_delete),
-            new("Save", BUIIcons.MaterialIconsRound.i_save),
-            new("Download", BUIIcons.MaterialIconsRound.i_download),
-            new("Upload", BUIIcons.MaterialIconsRound.i_upload),
-        };
-    }
+        Demo = RenderSizes(),
+        Code = """
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
+"""
+    };
 
-    private List<IconExample> GetBrandIcons()
+    private ComponentDemoDefinition ColorsDemo => new()
     {
-        return new List<IconExample>
-        {
-            new("Gmail", BUIIcons.Brands.Gmail),
-            new("GitHub", BUIIcons.Brands.GitHub),
-            new("Twitter", BUIIcons.Brands.Twitter),
-            new("Facebook", BUIIcons.Brands.Facebook),
-            new("LinkedIn", BUIIcons.Brands.LinkedIn),
-            new("YouTube", BUIIcons.Brands.YouTube),
-        };
-    }
+        Demo = RenderColors(),
+        Code = """
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_check" Color="BUIColor.Green.Default" />
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_warning" Color="BUIColor.Orange.Default" />
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_error" Color="BUIColor.Red.Default" />
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info" Color="BUIColor.Blue.Default" />
+"""
+    };
+
+    private ComponentDemoDefinition TitleDemo => new()
+    {
+        Demo = RenderTitle(),
+        Code = """
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info"
+            Title="Information icon" />
+"""
+    };
+
+    private ComponentDemoDefinition ClickDemo => new()
+    {
+        Demo = RenderClick(),
+        Code = """
+<BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite"
+            Color="BUIColor.Red.Default"
+            OnClick="@OnIconClick" />
+"""
+    };
+
+    private ComponentDemoDefinition ViewBoxDemo => new()
+    {
+        Demo = RenderViewBox(),
+        Code = """
+<BUISvgIcon Icon="@CustomSvg"
+            ViewBox="0 0 48 48" />
+"""
+    };
+
+    private ComponentDemoDefinition MaterialIconsDemo => new()
+    {
+        Demo = RenderMaterialIcons(),
+        Code = "// See rendered example"
+    };
+
+    private ComponentDemoDefinition BrandIconsDemo => new()
+    {
+        Demo = RenderBrandIcons(),
+        Code = "// See rendered example"
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite" />
+        ;
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Small" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Medium" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_star" Size="SizeEnum.Large" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <div class="demo-row">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_check" Color="BUIColor.Green.Default" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_warning" Color="BUIColor.Orange.Default" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_error" Color="BUIColor.Red.Default" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info" Color="BUIColor.Blue.Default" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderTitle() => __builder =>
+    {
+        <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_info"
+                    Title="Information icon" />
+        ;
+    };
+
+    private RenderFragment RenderClick() => __builder =>
+    {
+        <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_favorite"
+                    Color="BUIColor.Red.Default"
+                    OnClick="@OnIconClick" />
+        ;
+    };
+
+    private RenderFragment RenderViewBox() => __builder =>
+    {
+        <BUISvgIcon Icon="@CustomSvg"
+                    ViewBox="0 0 48 48" />
+        ;
+    };
+
+    private RenderFragment RenderMaterialIcons() => __builder =>
+    {
+        <div class="icon-grid">
+            @foreach (var icon in MaterialIcons)
+            {
+                <div class="icon-item">
+                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <code>@icon.Name</code>
+                </div>
+            }
+        </div>
+;
+    };
+
+    private RenderFragment RenderBrandIcons() => __builder =>
+    {
+        <div class="icon-grid">
+            @foreach (var icon in BrandIcons)
+            {
+                <div class="icon-item">
+                    <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                    <code>@icon.Name</code>
+                </div>
+            }
+        </div>
+;
+    };
+
+    /* ===================== DATA ===================== */
+
+    private void OnIconClick() => Clicks++;
+
+    private const string CustomSvg =
+        "<circle cx='24' cy='24' r='20' />";
+
+    private record IconItem(string Name, string Value);
+
+    private List<IconItem> MaterialIcons = new()
+    {
+        new("Home", BUIIcons.MaterialIconsRound.i_home),
+        new("Settings", BUIIcons.MaterialIconsRound.i_settings),
+        new("Search", BUIIcons.MaterialIconsRound.i_search),
+        new("Favorite", BUIIcons.MaterialIconsRound.i_favorite),
+        new("Star", BUIIcons.MaterialIconsRound.i_star),
+    };
+
+    private List<IconItem> BrandIcons = new()
+    {
+        new("GitHub", BUIIcons.Brands.GitHub),
+        new("Twitter", BUIIcons.Brands.Twitter),
+        new("LinkedIn", BUIIcons.Brands.LinkedIn),
+        new("YouTube", BUIIcons.Brands.YouTube),
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> Properties = new()
+    {
+        new("Icon", "string", "required", "SVG content of the icon"),
+        new("Size", "SizeEnum", "Medium", "Icon size"),
+        new("Color", "CssColor?", "null", "Icon color"),
+        new("Title", "string?", "null", "Accessibility title"),
+        new("ViewBox", "string", "0 0 24 24", "SVG viewBox"),
+        new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click handler"),
+    };
 }

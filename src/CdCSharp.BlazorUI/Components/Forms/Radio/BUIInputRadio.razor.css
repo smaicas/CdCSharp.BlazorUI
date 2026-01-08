@@ -1,7 +1,8 @@
 ﻿bui-component[data-bui-component="input-radio"] {
+    display: flex;
+    flex-direction: column;
+    gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
     --bui-radio-scale: 1;
-    --bui-radio-box-size: calc(20px * var(--bui-radio-scale));
-    --bui-radio-dot-size: calc(10px * var(--bui-radio-scale));
     --bui-radio-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
 
@@ -13,6 +14,19 @@
         --bui-radio-scale: 1.25;
     }
 
+    /* Group layout */
+    bui-component[data-bui-component="input-radio"] .bui-radio__group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--bui-radio-gap);
+    }
+
+    bui-component[data-bui-component="input-radio"][data-bui-orientation="horizontal"] .bui-radio__group {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: calc(var(--bui-radio-gap) * 2);
+    }
+
     /* Hidden native input */
     bui-component[data-bui-component="input-radio"] .bui-radio__input {
         position: absolute;
@@ -22,42 +36,31 @@
         pointer-events: none;
     }
 
-    /* Radio box */
+    /* Option */
+    bui-component[data-bui-component="input-radio"] .bui-radio__option {
+        display: flex;
+        align-items: center;
+        gap: var(--bui-radio-gap);
+        cursor: pointer;
+    }
+
+    bui-component[data-bui-component="input-radio"] .bui-radio__option--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Radio box (icon container) */
     bui-component[data-bui-component="input-radio"] .bui-radio__box {
-        width: var(--bui-radio-box-size);
-        height: var(--bui-radio-box-size);
-        border: 2px solid var(--palette-backgroundcontrast);
-        border-radius: 50%;
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        color: var(--bui-color, var(--palette-primary));
         transition: all 0.2s ease;
-        cursor: pointer;
-        opacity: 0.6;
+        flex-shrink: 0;
     }
-
-    /* Radio dot */
-    bui-component[data-bui-component="input-radio"] .bui-radio__dot {
-        width: var(--bui-radio-dot-size);
-        height: var(--bui-radio-dot-size);
-        background-color: var(--bui-color, var(--palette-primary));
-        border-radius: 50%;
-        transform: scale(0);
-        transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
-    }
-
-    /* Checked state */
-    bui-component[data-bui-component="input-radio"] .bui-radio__input:checked + .bui-radio__box {
-        border-color: var(--bui-color, var(--palette-primary));
-        opacity: 1;
-    }
-
-        bui-component[data-bui-component="input-radio"] .bui-radio__input:checked + .bui-radio__box .bui-radio__dot {
-            transform: scale(1);
-        }
 
     /* Hover state */
-    bui-component[data-bui-component="input-radio"] .bui-input__container:hover .bui-radio__box:not(:has(+ .bui-radio__input:disabled)) {
+    bui-component[data-bui-component="input-radio"] .bui-radio__option:not(.bui-radio__option--disabled):hover .bui-radio__box {
         opacity: 0.8;
         transform: scale(1.05);
     }
@@ -66,41 +69,48 @@
     bui-component[data-bui-component="input-radio"] .bui-radio__input:focus-visible + .bui-radio__box {
         outline: 2px solid var(--palette-primary);
         outline-offset: 2px;
-    }
-
-    /* Disabled state */
-    bui-component[data-bui-component="input-radio"] .bui-radio__input:disabled + .bui-radio__box {
-        cursor: not-allowed;
-        opacity: 0.4;
-    }
-
-    /* Radio option */
-    bui-component[data-bui-component="input-radio"] .bui-radio-option {
-        display: flex;
-        align-items: center;
-        gap: var(--bui-radio-gap);
-    }
-
-    /* Radio group layouts */
-    bui-component[data-bui-component="input-radio"] .bui-radio-group--vertical {
-        display: flex;
-        flex-direction: column;
-        gap: var(--bui-radio-gap);
-    }
-
-    bui-component[data-bui-component="input-radio"] .bui-radio-group--inline {
-        display: flex;
-        flex-wrap: wrap;
-        gap: calc(var(--bui-radio-gap) * 2);
+        border-radius: 50%;
     }
 
     /* Label */
     bui-component[data-bui-component="input-radio"] .bui-radio__label {
-        cursor: pointer;
         user-select: none;
+        cursor: inherit;
     }
 
-    bui-component[data-bui-component="input-radio"] .bui-radio__input:disabled ~ .bui-radio__label {
-        cursor: not-allowed;
-        opacity: 0.6;
+    /* Clear button */
+    bui-component[data-bui-component="input-radio"] .bui-radio__clear {
+        align-self: flex-start;
+        padding: calc(0.25rem * var(--bui-density-spacing-multiplier, 1)) calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
+        border: 1px solid rgba(0, 0, 0, 0.23);
+        border-radius: 4px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.75rem;
+        opacity: 0.7;
+        transition: all 0.15s ease;
     }
+
+        bui-component[data-bui-component="input-radio"] .bui-radio__clear:hover {
+            opacity: 1;
+            border-color: var(--palette-error);
+            color: var(--palette-error);
+        }
+
+[data-theme="dark"] bui-component[data-bui-component="input-radio"] .bui-radio__clear {
+    border-color: rgba(255, 255, 255, 0.23);
+}
+
+    [data-theme="dark"] bui-component[data-bui-component="input-radio"] .bui-radio__clear:hover {
+        border-color: var(--palette-error);
+    }
+
+/* Error state */
+bui-component[data-bui-component="input-radio"][data-bui-error="true"] .bui-radio__box {
+    color: var(--palette-error);
+}
+
+/* Disabled state */
+bui-component[data-bui-component="input-radio"][data-bui-disabled="true"] .bui-radio__group {
+    pointer-events: none;
+}

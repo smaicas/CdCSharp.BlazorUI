@@ -1,4 +1,5 @@
 ﻿@page "/features/borders"
+
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 
@@ -6,146 +7,191 @@
 
 <div class="doc-page">
     <h1>Borders</h1>
+
     <p class="doc-intro">
         The border system provides a flexible way to add borders to components with support for
         different styles, widths, colors, and corner radius.
     </p>
 
-    <div class="doc-section">
-        <h2>Border Presets</h2>
-        <p>Use predefined border styles for common scenarios:</p>
+    <!-- PRESETS -->
+    <section class="doc-section">
+        <h2>Border presets</h2>
+        <ComponentDemo Definition="@BorderPresetsDemo" />
+    </section>
 
-        <ComponentDemo Code="@borderPresetsCode">
-            <Demo>
-                <div class="border-examples">
-                    <BUIButton Text="Default" Border="@BUIBorderPresets.Default" />
-                    <BUIButton Text="Subtle" Border="@BUIBorderPresets.Subtle" />
-                    <BUIButton Text="Strong" Border="@BUIBorderPresets.Strong" />
-                    <BUIButton Text="Primary" Border="@BUIBorderPresets.Primary" />
-                    <BUIButton Text="Error" Border="@BUIBorderPresets.Error" />
-                    <BUIButton Text="Success" Border="@BUIBorderPresets.Success" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- RADIUS -->
+    <section class="doc-section">
+        <h2>Border radius</h2>
+        <ComponentDemo Definition="@BorderRadiusDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Border Radius</h2>
-        <p>Apply different corner radius styles:</p>
+    <!-- STYLES -->
+    <section class="doc-section">
+        <h2>Border styles</h2>
+        <ComponentDemo Definition="@BorderStylesDemo" />
+    </section>
 
-        <ComponentDemo Code="@borderRadiusCode">
-            <Demo>
-                <div class="border-examples">
-                    <BUIButton Text="Square" Border="@BUIBorderPresets.Default" />
-                    <BUIButton Text="Rounded" Border="@BUIBorderPresets.Rounded" />
-                    <BUIButton Text="Large Rounded" Border="@BUIBorderPresets.RoundedLarge" />
-                    <BUIButton Text="Pill" Border="@BUIBorderPresets.Pill" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
+    <!-- INDIVIDUAL -->
+    <section class="doc-section">
+        <h2>Individual borders</h2>
+        <ComponentDemo Definition="@IndividualBordersDemo" />
+    </section>
 
-    <div class="doc-section">
-        <h2>Border Styles</h2>
-        <p>Different border line styles:</p>
+    <!-- CUSTOM -->
+    <section class="doc-section">
+        <h2>Custom borders</h2>
+        <ComponentDemo Definition="@CustomBordersDemo" />
+    </section>
 
-        <ComponentDemo Code="@borderStylesCode">
-            <Demo>
-                <div class="border-examples">
-                    <BUIButton Text="Solid" Border="@BUIBorderPresets.Default" />
-                    <BUIButton Text="Dashed" Border="@BUIBorderPresets.Dashed" />
-                    <BUIButton Text="Dotted" Border="@BUIBorderPresets.Dotted" />
-                    <BUIButton Text="Double" Border="@BUIBorderPresets.Double" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
-        <h2>Individual Borders</h2>
-        <p>Apply borders to specific sides:</p>
-
-        <ComponentDemo Code="@individualBordersCode">
-            <Demo>
-                <div class="border-examples">
-                    <BUIButton Text="Top Only" BorderTop="@BUIBorderPresets.Primary" />
-                    <BUIButton Text="Bottom Only" BorderBottom="@BUIBorderPresets.Primary" />
-                    <BUIButton Text="Left & Right"
-                              BorderLeft="@BUIBorderPresets.Primary"
-                              BorderRight="@BUIBorderPresets.Primary" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
-        <h2>Custom Borders</h2>
-        <p>Create custom border styles:</p>
-
-        <ComponentDemo Code="@customBordersCode">
-            <Demo>
-                <div class="border-examples">
-                    <BUIButton Text="Custom Style" Border="@_customBorder" />
-                    <BUIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
-                </div>
-            </Demo>
-        </ComponentDemo>
-    </div>
-
-    <div class="doc-section">
-        <h2>BorderStyle Properties</h2>
-        <PropertyTable TItem="BorderProperty" Items="@BorderProperties">
-            <PropertyTemplate Context="prop">
-                <td><code>@prop.Name</code></td>
-                <td><code>@prop.Type</code></td>
-                <td>@prop.Description</td>
-            </PropertyTemplate>
-        </PropertyTable>
-    </div>
+    <!-- PROPERTIES -->
+    <section class="doc-section">
+        <h2>BorderStyle properties</h2>
+        <PropertyTable Properties="@Properties" />
+    </section>
 </div>
 
 @code {
-    private BorderStyle _customBorder = new("3px", BorderStyleType.Solid, BUIColor.Purple.Default);
-    private BorderStyle _customBorderWithRadius = new BorderStyle("2px", BorderStyleType.Solid, BUIColor.Blue.Default).WithRadius(16);
+    /* ===================== CUSTOM BORDERS ===================== */
 
-    private string borderPresetsCode = @"<BUIButton Text=""Default"" Border=""@BorderPresets.Default"" />
-<BUIButton Text=""Primary"" Border=""@BorderPresets.Primary"" />
-<BUIButton Text=""Error"" Border=""@BorderPresets.Error"" />
-<BUIButton Text=""Success"" Border=""@BorderPresets.Success"" />";
+    private BorderStyle _customBorder =
+        new("3px", BorderStyleType.Solid, BUIColor.Purple.Default);
 
-    private string borderRadiusCode = @"<BUIButton Text=""Square"" Border=""@BorderPresets.Default"" />
-<BUIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
-<BUIButton Text=""Large Rounded"" Border=""@BorderPresets.RoundedLarge"" />
-<BUIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
+    private BorderStyle _customBorderWithRadius =
+        new BorderStyle("2px", BorderStyleType.Solid, BUIColor.Blue.Default)
+            .WithRadius(16);
 
-    private string borderStylesCode = @"<BUIButton Text=""Solid"" Border=""@BorderPresets.Default"" />
-<BUIButton Text=""Dashed"" Border=""@BorderPresets.Dashed"" />
-<BUIButton Text=""Dotted"" Border=""@BorderPresets.Dotted"" />
-<BUIButton Text=""Double"" Border=""@BorderPresets.Double"" />";
+    /* ===================== DEMOS ===================== */
 
-    private string individualBordersCode = @"<BUIButton Text=""Top Only"" BorderTop=""@BorderPresets.Primary"" />
-<BUIButton Text=""Bottom Only"" BorderBottom=""@BorderPresets.Primary"" />
-<BUIButton Text=""Left & Right""
-         BorderLeft=""@BorderPresets.Primary""
-         BorderRight=""@BorderPresets.Primary"" />";
-
-    private string customBordersCode = @"// Create a custom border
-private BorderStyle _customBorder = new(""3px"", BorderStyleType.Solid, UIColor.Purple.Default);
-
-// Create a border with radius
-private BorderStyle _customBorderWithRadius = new BorderStyle(""2px"", BorderStyleType.Solid, UIColor.Blue.Default)
-    .WithRadius(16);
-
-<BUIButton Text=""Custom Style"" Border=""@_customBorder"" />
-<BUIButton Text=""Custom with Radius"" Border=""@_customBorderWithRadius"" />";
-
-    private record BorderProperty(string Name, string Type, string Description);
-
-    private List<BorderProperty> BorderProperties = new()
+    private ComponentDemoDefinition BorderPresetsDemo => new()
     {
-        new("Width", "string", "The width of the border (e.g., '1px', '2px')"),
-        new("Style", "BorderStyleType", "The style of the border line (Solid, Dashed, Dotted, etc.)"),
-        new("Color", "CssColor", "The color of the border"),
-        new("Radius", "int?", "Optional corner radius in pixels"),
+        Demo = RenderBorderPresets(),
+        Code = """
+<BUIButton Text="Default" Border="@BUIBorderPresets.Default" />
+<BUIButton Text="Subtle" Border="@BUIBorderPresets.Subtle" />
+<BUIButton Text="Strong" Border="@BUIBorderPresets.Strong" />
+<BUIButton Text="Primary" Border="@BUIBorderPresets.Primary" />
+<BUIButton Text="Error" Border="@BUIBorderPresets.Error" />
+<BUIButton Text="Success" Border="@BUIBorderPresets.Success" />
+"""
+    };
+
+    private ComponentDemoDefinition BorderRadiusDemo => new()
+    {
+        Demo = RenderBorderRadius(),
+        Code = """
+<BUIButton Text="Square" Border="@BUIBorderPresets.Default" />
+<BUIButton Text="Rounded" Border="@BUIBorderPresets.Rounded" />
+<BUIButton Text="Large Rounded" Border="@BUIBorderPresets.RoundedLarge" />
+<BUIButton Text="Pill" Border="@BUIBorderPresets.Pill" />
+"""
+    };
+
+    private ComponentDemoDefinition BorderStylesDemo => new()
+    {
+        Demo = RenderBorderStyles(),
+        Code = """
+<BUIButton Text="Solid" Border="@BUIBorderPresets.Default" />
+<BUIButton Text="Dashed" Border="@BUIBorderPresets.Dashed" />
+<BUIButton Text="Dotted" Border="@BUIBorderPresets.Dotted" />
+<BUIButton Text="Double" Border="@BUIBorderPresets.Double" />
+"""
+    };
+
+    private ComponentDemoDefinition IndividualBordersDemo => new()
+    {
+        Demo = RenderIndividualBorders(),
+        Code = """
+<BUIButton Text="Top Only" BorderTop="@BUIBorderPresets.Primary" />
+<BUIButton Text="Bottom Only" BorderBottom="@BUIBorderPresets.Primary" />
+<BUIButton Text="Left & Right"
+           BorderLeft="@BUIBorderPresets.Primary"
+           BorderRight="@BUIBorderPresets.Primary" />
+"""
+    };
+
+    private ComponentDemoDefinition CustomBordersDemo => new()
+    {
+        Demo = RenderCustomBorders(),
+        Code = """
+// Custom border
+private BorderStyle _customBorder =
+    new("3px", BorderStyleType.Solid, BUIColor.Purple.Default);
+
+// Custom border with radius
+private BorderStyle _customBorderWithRadius =
+    new BorderStyle("2px", BorderStyleType.Solid, BUIColor.Blue.Default)
+        .WithRadius(16);
+
+<BUIButton Text="Custom Style" Border="@_customBorder" />
+<BUIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBorderPresets() => __builder =>
+    {
+        <div class="border-examples">
+            <BUIButton Text="Default" Border="@BUIBorderPresets.Default" />
+            <BUIButton Text="Subtle" Border="@BUIBorderPresets.Subtle" />
+            <BUIButton Text="Strong" Border="@BUIBorderPresets.Strong" />
+            <BUIButton Text="Primary" Border="@BUIBorderPresets.Primary" />
+            <BUIButton Text="Error" Border="@BUIBorderPresets.Error" />
+            <BUIButton Text="Success" Border="@BUIBorderPresets.Success" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderBorderRadius() => __builder =>
+    {
+        <div class="border-examples">
+            <BUIButton Text="Square" Border="@BUIBorderPresets.Default" />
+            <BUIButton Text="Rounded" Border="@BUIBorderPresets.Rounded" />
+            <BUIButton Text="Large Rounded" Border="@BUIBorderPresets.RoundedLarge" />
+            <BUIButton Text="Pill" Border="@BUIBorderPresets.Pill" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderBorderStyles() => __builder =>
+    {
+        <div class="border-examples">
+            <BUIButton Text="Solid" Border="@BUIBorderPresets.Default" />
+            <BUIButton Text="Dashed" Border="@BUIBorderPresets.Dashed" />
+            <BUIButton Text="Dotted" Border="@BUIBorderPresets.Dotted" />
+            <BUIButton Text="Double" Border="@BUIBorderPresets.Double" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderIndividualBorders() => __builder =>
+    {
+        <div class="border-examples">
+            <BUIButton Text="Top Only" BorderTop="@BUIBorderPresets.Primary" />
+            <BUIButton Text="Bottom Only" BorderBottom="@BUIBorderPresets.Primary" />
+            <BUIButton Text="Left & Right"
+                       BorderLeft="@BUIBorderPresets.Primary"
+                       BorderRight="@BUIBorderPresets.Primary" />
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderCustomBorders() => __builder =>
+    {
+        <div class="border-examples">
+            <BUIButton Text="Custom Style" Border="@_customBorder" />
+            <BUIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
+        </div>
+        ;
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> Properties = new()
+    {
+        new("Width", "string", "-", "Border width (e.g. 1px, 2px)"),
+        new("Style", "BorderStyleType", "-", "Line style (Solid, Dashed, Dotted, etc.)"),
+        new("Color", "CssColor", "-", "Border color"),
+        new("Radius", "int?", "null", "Corner radius in pixels"),
     };
 }
