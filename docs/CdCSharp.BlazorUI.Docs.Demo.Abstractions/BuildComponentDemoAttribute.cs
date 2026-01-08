@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Docs.Demo.Abstractions;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 public sealed class BuildComponentDemoAttribute : Attribute

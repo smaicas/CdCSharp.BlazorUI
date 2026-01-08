@@ -1,4 +1,5 @@
-﻿@using CdCSharp.BlazorUI.SyntaxHighlight
+﻿@using CdCSharp.BlazorUI.Docs.Demo.Abstractions
+@using CdCSharp.BlazorUI.SyntaxHighlight
 
 <div class="bui-component-demo">
     <div class="bui-component-demo__preview">
@@ -8,12 +9,13 @@
     @if (!string.IsNullOrWhiteSpace(Definition.Code))
     {
         <BUICodeBlock Code="@Definition.Code"
-                      Language="@Definition.Language"
-                      Title="@Definition.CodeTitle" />
+                      Language="@Language" />
     }
 </div>
 
 @code {
     [Parameter, EditorRequired]
     public ComponentDemoDefinition Definition { get; set; } = default!;
+    [Parameter]
+    public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.Razor;
 }

@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Docs
+﻿@using CdCSharp.BlazorUI.Docs.Demo.Abstractions
 
 <div class="property-table-wrapper">
     <table class="property-table">
@@ -15,9 +15,16 @@
             {
                 <tr>
                     <td><code>@prop.Name</code></td>
-                    <td><code>@prop.Type</code></td>
-                    <td><code>@prop.Default</code></td>
-                    <td>@prop.Description</td>
+                    <td><code>@prop.Type.Name</code></td>
+                    <td><code>@(prop.DefaultValue?.ToString() ?? "null")</code></td>
+                    <td>
+                        @{
+                            string description = "-";
+                            if (Descriptions != null && Descriptions.TryGetValue(prop.Name, out var desc))
+                                description = desc;
+                        }
+                        @description
+                    </td>
                 </tr>
             }
         </tbody>
@@ -26,5 +33,11 @@
 
 @code {
     [Parameter, EditorRequired]
-    public IEnumerable<PropertyDefinition> Properties { get; set; } = [];
+    public IEnumerable<ParameterDefinition> Properties { get; set; } = Array.Empty<ParameterDefinition>();
+
+    /// <summary>
+    /// Diccionario opcional que permite mapear nombres de parámetros a descripciones.
+    /// </summary>
+    [Parameter]
+    public IDictionary<string, string>? Descriptions { get; set; }
 }

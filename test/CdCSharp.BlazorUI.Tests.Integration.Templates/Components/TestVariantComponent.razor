@@ -36,4 +36,13 @@
             </div>
         </bui-component>
     };
+
+    public RenderFragment RenderAAlternative() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes">
+            <div @onclick="OnClick">
+                <span>Alt: @Text</span>
+            </div>
+        </bui-component>
+    };
 }

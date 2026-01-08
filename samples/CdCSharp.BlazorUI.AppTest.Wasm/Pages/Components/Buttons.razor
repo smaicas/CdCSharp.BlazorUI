@@ -2,370 +2,53 @@
 
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
 @using CdCSharp.BlazorUI.Components
-@using CdCSharp.BlazorUI.Docs
 @using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.AppTest.Wasm.Pages.Components
+@using Microsoft.AspNetCore.Components
 
 <PageTitle>Buttons - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
-    <h1>BUIButton</h1>
+    <h1>@BUIButtonDoc.Definition.Name</h1>
 
     <p class="doc-intro">
-        <strong>BUIButton</strong> is a highly customizable button component supporting
+        <strong>@BUIButtonDoc.Definition.Name</strong> is a highly customizable button component supporting
         icons, loading states, ripple effects, elevation, transitions, colors,
         borders, density, sizes and more.
     </p>
 
-    <!-- BASIC -->
-    <section class="doc-section">
-        <h2>Basic usage</h2>
-        <ComponentDemo Definition="@BasicUsageDemo" />
-        <p>Clicks: @Clicks</p>
-    </section>
+    @* Iterar automáticamente sobre los demos generados *@
+    @foreach (var demo in BUIButtonDoc.Definition.Demos)
+    {
+        <section class="doc-section">
+            <h2>@demo.Code.Split('\n')[0] ...</h2> @* opcional: tomar la primera línea del código como título *@
+            <ComponentDemo Definition="demo" />
+        </section>
+    }
 
-    <!-- SIZES -->
-    <section class="doc-section">
-        <h2>Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <!-- DENSITY -->
-    <section class="doc-section">
-        <h2>Density</h2>
-        <ComponentDemo Definition="@DensityDemo" />
-    </section>
-
-    <!-- ICONS -->
-    <section class="doc-section">
-        <h2>Icons</h2>
-        <ComponentDemo Definition="@IconsDemo" />
-    </section>
-
-    <!-- ICON ONLY -->
-    <section class="doc-section">
-        <h2>Icon only</h2>
-        <ComponentDemo Definition="@IconOnlyDemo" />
-    </section>
-
-    <!-- LOADING -->
-    <section class="doc-section">
-        <h2>Loading states</h2>
-        <ComponentDemo Definition="@LoadingDemo" />
-    </section>
-
-    <!-- DISABLED -->
-    <section class="doc-section">
-        <h2>Disabled</h2>
-        <ComponentDemo Definition="@DisabledDemo" />
-    </section>
-
-    <!-- FULL WIDTH -->
-    <section class="doc-section">
-        <h2>Full width</h2>
-        <ComponentDemo Definition="@FullWidthDemo" />
-    </section>
-
-    <!-- ELEVATION -->
-    <section class="doc-section">
-        <h2>Elevation</h2>
-        <ComponentDemo Definition="@ElevationDemo" />
-    </section>
-
-    <!-- COLORS -->
-    <section class="doc-section">
-        <h2>Colors</h2>
-        <ComponentDemo Definition="@ColorsDemo" />
-    </section>
-
-    <!-- RIPPLE -->
-    <section class="doc-section">
-        <h2>Ripple</h2>
-        <ComponentDemo Definition="@RippleDemo" />
-    </section>
-
-    <!-- TRANSITIONS -->
-    <section class="doc-section">
-        <h2>Transitions</h2>
-        <ComponentDemo Definition="@TransitionsDemo" />
-    </section>
-
-    <!-- PROPERTIES -->
+    @* Mostrar propiedades automáticamente *@
     <section class="doc-section">
         <h2>Properties</h2>
-        <PropertyTable Properties="@Properties" />
+        <PropertyTable Properties="BUIButtonDoc.Definition.Parameters"
+                       Descriptions="@(new Dictionary<string, string>()
+                                                  {
+                                              { " Text", "Button text" },
+                                              { "LeadingIcon" , "Icon before text" },
+                                              { "TrailingIcon" , "Icon after text" },
+                                              { "Disabled" , "Disable the button" },
+                                              { "Size" , "Button size" },
+                                              { "Density" , "Button density" },
+                                              { "FullWidth" , "Takes full width" },
+                                              { "IsLoading" , "Loading state" },
+                                              { "LoadingIndicatorVariant" , "Loading indicator type" },
+                                              { "Elevation" , "Elevation level" },
+                                              { "ElevationColor" , "Elevation shadow color" },
+                                              { "DisableRipple" , "Disable ripple effect" },
+                                              { "RippleColor" , "Ripple color" },
+                                              { "RippleDuration" , "Ripple duration (ms)" },
+                                              { "Border" , "Border style" },
+                                              { "BackgroundColor" , "Background color" },
+                                              { "Color" , "Text and icon color" }
+                                              })" />
     </section>
 </div>
-
-@code {
-    private int Clicks;
-
-    /* ===================== DEMOS ===================== */
-
-    private ComponentDemoDefinition BasicUsageDemo => new()
-    {
-        Demo = RenderBasicUsage(),
-        Code = """
-<BUIButton Text="Click me"
-           OnClick="@OnClick" />
-"""
-    };
-
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        Demo = RenderSizes(),
-        Code = """
-<BUIButton Text="Small" Size="SizeEnum.Small" />
-<BUIButton Text="Medium" Size="SizeEnum.Medium" />
-<BUIButton Text="Large" Size="SizeEnum.Large" />
-"""
-    };
-
-    private ComponentDemoDefinition DensityDemo => new()
-    {
-        Demo = RenderDensity(),
-        Code = """
-<BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" />
-<BUIButton Text="Standard" Density="DensityEnum.Standard" />
-<BUIButton Text="Compact" Density="DensityEnum.Compact" />
-"""
-    };
-
-    private ComponentDemoDefinition IconsDemo => new()
-    {
-        Demo = RenderIcons(),
-        Code = """
-<BUIButton Text="Save" LeadingIcon="i_save" />
-<BUIButton Text="Next" TrailingIcon="i_chevron_right" />
-"""
-    };
-
-    private ComponentDemoDefinition IconOnlyDemo => new()
-    {
-        Demo = RenderIconOnly(),
-        Code = """
-<BUIButton LeadingIcon="i_favorite" />
-"""
-    };
-
-    private ComponentDemoDefinition LoadingDemo => new()
-    {
-        Demo = RenderLoading(),
-        Code = """
-<BUIButton Text="Spinner"
-           IsLoading
-           LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
-
-<BUIButton Text="Dots"
-           IsLoading
-           LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" />
-"""
-    };
-
-    private ComponentDemoDefinition DisabledDemo => new()
-    {
-        Demo = RenderDisabled(),
-        Code = """
-<BUIButton Text="Disabled" Disabled />
-"""
-    };
-
-    private ComponentDemoDefinition FullWidthDemo => new()
-    {
-        Demo = RenderFullWidth(),
-        Code = """
-<BUIButton Text="Full width button" FullWidth />
-"""
-    };
-
-    private ComponentDemoDefinition ElevationDemo => new()
-    {
-        Demo = RenderElevation(),
-        Code = """
-<BUIButton Text="0" Elevation="0" />
-<BUIButton Text="6" Elevation="6" />
-<BUIButton Text="12" Elevation="12" />
-"""
-    };
-
-    private ComponentDemoDefinition ColorsDemo => new()
-    {
-        Demo = RenderColors(),
-        Code = """
-<BUIButton Text="Primary"
-           BackgroundColor="BUIColor.Palette.Primary"
-           Color="BUIColor.Palette.PrimaryContrast" />
-
-<BUIButton Text="Success"
-           BackgroundColor="BUIColor.Palette.Success"
-           Color="BUIColor.Palette.SuccessContrast" />
-
-<BUIButton Text="Custom"
-           BackgroundColor="BUIColor.BlueViolet.Lighten1"
-           Color="BUIColor.White.Default" />
-"""
-    };
-
-    private ComponentDemoDefinition RippleDemo => new()
-    {
-        Demo = RenderRipple(),
-        Code = """
-<BUIButton RippleColor="BUIColor.Aquamarine.Default"
-           RippleDuration="600" />
-
-<BUIButton DisableRipple />
-"""
-    };
-
-    private ComponentDemoDefinition TransitionsDemo => new()
-    {
-        Demo = RenderTransitions(),
-        Code = """
-<BUIButton Transitions="BUITransitionPresets.HoverLift" />
-<BUIButton Transitions="BUITransitionPresets.PremiumButton" />
-"""
-    };
-
-    /* ===================== RENDER FRAGMENTS ===================== */
-
-    private RenderFragment RenderBasicUsage() => __builder =>
-    {
-        <BUIButton Text="Click me"
-                   OnClick="@(() => Clicks++)" />;
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Small" Size="SizeEnum.Small" />
-            <BUIButton Text="Medium" Size="SizeEnum.Medium" />
-            <BUIButton Text="Large" Size="SizeEnum.Large" />
-        </div>;
-    };
-
-    private RenderFragment RenderDensity() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" />
-            <BUIButton Text="Standard" Density="DensityEnum.Standard" />
-            <BUIButton Text="Compact" Density="DensityEnum.Compact" />
-        </div>;
-    };
-
-    private RenderFragment RenderIcons() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Save"
-                       LeadingIcon="@BUIIcons.MaterialIconsRound.i_save" />
-
-            <BUIButton Text="Next"
-                       TrailingIcon="@BUIIcons.MaterialIconsRound.i_chevron_right" />
-        </div>;
-    };
-
-    private RenderFragment RenderIconOnly() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton LeadingIcon="@BUIIcons.MaterialIconsRound.i_favorite" />
-        </div>;
-    };
-
-    private RenderFragment RenderLoading() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Spinner"
-                       IsLoading
-                       LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
-
-            <BUIButton Text="Dots"
-                       IsLoading
-                       LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" />
-        </div>;
-    };
-
-    private RenderFragment RenderDisabled() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Disabled" Disabled />
-        </div>;
-    };
-
-    private RenderFragment RenderFullWidth() => __builder =>
-    {
-        <BUIButton Text="Full width button" FullWidth />;
-    };
-
-    private RenderFragment RenderElevation() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="0" Elevation="0" />
-            <BUIButton Text="6" Elevation="6" />
-            <BUIButton Text="12" Elevation="12"
-                       ElevationColor="BUIColor.Palette.Shadow" />
-        </div>;
-    };
-
-    private RenderFragment RenderColors() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Primary"
-                       BackgroundColor="BUIColor.Palette.Primary"
-                       Color="BUIColor.Palette.PrimaryContrast" />
-
-            <BUIButton Text="Success"
-                       BackgroundColor="BUIColor.Palette.Success"
-                       Color="BUIColor.Palette.SuccessContrast" />
-
-            <BUIButton Text="Custom"
-                       BackgroundColor="BUIColor.BlueViolet.Lighten1"
-                       Color="BUIColor.White.Default" />
-        </div>;
-    };
-
-    private RenderFragment RenderRipple() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Custom ripple"
-                       RippleColor="BUIColor.Aquamarine.Default"
-                       RippleDuration="600" />
-
-            <BUIButton Text="No ripple"
-                       DisableRipple />
-        </div>;
-    };
-
-    private RenderFragment RenderTransitions() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Lift"
-                       Transitions="BUITransitionPresets.HoverLift" />
-
-            <BUIButton Text="Premium"
-                       Transitions="BUITransitionPresets.PremiumButton" />
-        </div>;
-    };
-
-    /* ===================== PROPERTIES ===================== */
-
-    private List<PropertyDefinition> Properties = new()
-    {
-        new("Text", "string?", "null", "Button text"),
-        new("LeadingIcon", "string?", "null", "Icon before text"),
-        new("TrailingIcon", "string?", "null", "Icon after text"),
-        new("Disabled", "bool", "false", "Disable the button"),
-        new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click event"),
-        new("Size", "SizeEnum", "Medium", "Button size"),
-        new("Density", "DensityEnum", "Standard", "Button density"),
-        new("FullWidth", "bool", "false", "Takes full width"),
-        new("IsLoading", "bool", "false", "Loading state"),
-        new("LoadingIndicatorVariant", "BUILoadingIndicatorVariant?", "null", "Loading indicator"),
-        new("Elevation", "int?", "null", "Elevation level"),
-        new("ElevationColor", "CssColor?", "null", "Elevation shadow color"),
-        new("DisableRipple", "bool", "false", "Disable ripple effect"),
-        new("RippleColor", "CssColor?", "null", "Ripple color"),
-        new("RippleDuration", "int?", "null", "Ripple duration (ms)"),
-        new("Border", "BorderStyle?", "null", "Border style"),
-        new("Transitions", "BUITransitions?", "null", "Visual transitions"),
-        new("BackgroundColor", "CssColor?", "Primary", "Background color"),
-        new("Color", "CssColor?", "PrimaryContrast", "Text and icon color"),
-    };
-}
