@@ -1,79 +1,78 @@
-using CdCSharp.BlazorUI.SyntaxHighlight.Engines;
+﻿using CdCSharp.BlazorUI.SyntaxHighlight.Builder;
 using CdCSharp.BlazorUI.SyntaxHighlight.Languages;
-using CdCSharp.BlazorUI.SyntaxHighlight.Patterns;
+using CdCSharp.BlazorUI.SyntaxHighlight.Rendering;
+using CdCSharp.BlazorUI.SyntaxHighlight.Tokens;
 
 namespace CdCSharp.BlazorUI.SyntaxHighlight;
 
-/// <summary>
-/// Represents the Highlighter class.
-/// </summary>
-public class Highlighter
+public sealed class Highlighter
 {
-    /// <summary>
-    /// Initializes a new instance of the Highlighter class with the specified engine.
-    /// </summary>
-    /// <param name="engine">
-    /// The engine used for highlighting.
-    /// </param>
-    public Highlighter(IEngine engine) => Engine = engine;
+    private readonly HtmlRenderer _renderer;
+    private readonly Dictionary<string, LanguageDefinition> _languages;
 
-    /// <summary>
-    /// Gets or sets the engine associated with this object.
-    /// </summary>
-    public IEngine Engine { get; set; }
+    public Highlighter() : this(HtmlRenderOptions.Default) { }
 
-    /// <summary>
-    /// Highlights the input text based on the specified definition.
-    /// </summary>
-    /// <param name="definitionName">
-    /// The name of the definition to use for highlighting.
-    /// </param>
-    /// <param name="input">
-    /// The input text to be highlighted.
-    /// </param>
-    /// <returns>
-    /// The highlighted text if a valid definition is found; otherwise, returns the original input text.
-    /// </returns>
-    public string Highlight(string? definitionName, string input)
+    public Highlighter(HtmlRenderOptions options)
     {
-        ArgumentNullException.ThrowIfNull(definitionName, nameof(definitionName));
-
-        Definition? definition = GetDefinition(definitionName);
-
-        return definition == null
-            ? throw new ArgumentException("Parameter does not match any language definition", nameof(definitionName))
-            : Engine.Highlight(definition, input);
+        _renderer = new HtmlRenderer();
+        Options = options;
+        _languages = new Dictionary<string, LanguageDefinition>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["csharp"] = CSharpLanguage.Instance,
+            ["cs"] = CSharpLanguage.Instance,
+            ["c#"] = CSharpLanguage.Instance,
+            ["razor"] = RazorLanguage.Instance,
+            ["blazor"] = RazorLanguage.Instance,
+            ["cshtml"] = RazorLanguage.Instance,
+            ["typescript"] = TypeScriptLanguage.Instance,
+            ["ts"] = TypeScriptLanguage.Instance,
+            ["css"] = CssLanguage.Instance,
+        };
     }
 
-    private Definition? GetDefinition(string definitionName)
+    public HtmlRenderOptions Options { get; set; }
+
+    public string Highlight(string language, string code)
     {
-        return definitionName.ToLower() switch
+        if (string.IsNullOrEmpty(code))
+            return string.Empty;
+
+        LanguageDefinition definition = GetLanguage(language);
+        IReadOnlyList<Token> tokens = definition.Tokenize(code);
+        return _renderer.Render(tokens, Options);
+    }
+
+    public IReadOnlyList<Token> Tokenize(string language, string code)
+    {
+        if (string.IsNullOrEmpty(code))
+            return [];
+
+        LanguageDefinition definition = GetLanguage(language);
+        return definition.Tokenize(code);
+    }
+
+    public void RegisterLanguage(string name, LanguageDefinition definition)
+    {
+        _languages[name] = definition;
+    }
+
+    public void RegisterLanguage(string[] aliases, LanguageDefinition definition)
+    {
+        foreach (string alias in aliases)
         {
-            "aspx" => Definitions.AspxDefinition,
-            "c" => Definitions.CDefinition,
-            "cobol" => Definitions.CobolDefinition,
-            "c++" or "cplusplus" => Definitions.CPlusPlusDefinition,
-            "csharp" or "c#" => Definitions.CSharpDefinition,
-            "eiffel" => Definitions.EiffelDefinition,
-            "fortran" => Definitions.FortranDefinition,
-            "haskell" => Definitions.HaskellDefinition,
-            "html" => Definitions.HtmlDefinition,
-            "java" => Definitions.JavaDefinition,
-            "javascript" or "js" => Definitions.JavaScriptDefinition,
-            "mercury" => Definitions.MercuryDefinition,
-            "msil" => Definitions.MsilDefinition,
-            "pascal" => Definitions.PascalDefinition,
-            "perl" => Definitions.PerlDefinition,
-            "php" => Definitions.PhpDefinition,
-            "python" or "py" => Definitions.PythonDefinition,
-            "ruby" => Definitions.RubyDefinition,
-            "sql" => Definitions.SqlDefinition,
-            "vbnet" or "visualbasicnet" => Definitions.VBNETDefinition,
-            "vbscript" or "visualbasicscript" => Definitions.VBScriptDefinition,
-            "vb" or "visualbasic" => Definitions.VisualBasicDefinition,
-            "xml" => Definitions.XmlDefinition,
-            "razor" or "blazor" or "cshtml" => Definitions.RazorDefinition,
-            _ => Definitions.CSharpDefinition,
-        };
+            _languages[alias] = definition;
+        }
+    }
+
+    public bool HasLanguage(string name) => _languages.ContainsKey(name);
+
+    public IEnumerable<string> GetRegisteredLanguages() => _languages.Keys.Distinct();
+
+    private LanguageDefinition GetLanguage(string name)
+    {
+        if (_languages.TryGetValue(name, out LanguageDefinition? definition))
+            return definition;
+
+        throw new ArgumentException($"Language '{name}' is not registered. Available: {string.Join(", ", GetRegisteredLanguages())}", nameof(name));
     }
 }

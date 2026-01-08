@@ -187,20 +187,24 @@ public class BUIInputComponentBaseTests
                             || !cut.Find("input").HasAttribute("data-bui-error"));
     }
 
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Skip_JS_Behavior_When_Loading(BlazorScenario scenario)
-    {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
-        TestModel model = new();
-        ctx.Services.AddSingleton(_jsInterop);
+    // Should_Skip_JS_Behavior_When_Loading ?
+    // Thought about it, but decided to leave it attached even when loading or it could never be attached again.
+    // The loading state is usually transient, and detaching JS behaviors could lead to inconsistent states
 
-        ctx.Render<BUIInputComponentBase_TestStub>(p => p
-            .Add(c => c.ValueExpression, () => model.Value)
-            .Add(c => c.IsLoading, true));
+    //[Theory]
+    //[MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    //public async Task Should_Skip_JS_Behavior_When_Loading(BlazorScenario scenario)
+    //{
+    //    await using BlazorTestContextBase ctx = scenario.CreateContext();
+    //    TestModel model = new();
+    //    ctx.Services.AddSingleton(_jsInterop);
 
-        await _jsInterop.DidNotReceive().AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>());
-    }
+    //    ctx.Render<BUIInputComponentBase_TestStub>(p => p
+    //        .Add(c => c.ValueExpression, () => model.Value)
+    //        .Add(c => c.IsLoading, true));
+
+    //    await _jsInterop.DidNotReceive().AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>());
+    //}
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]

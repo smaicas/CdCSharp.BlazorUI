@@ -46,7 +46,7 @@
     [Parameter] public BorderStyle? BorderLeft { get; set; }
 
     private ElementReference _elementRef;
-    public ElementReference GetRootElement() => _elementRef;
+    public ElementReference GetRippleContainer() => _elementRef;
 
     protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
     {

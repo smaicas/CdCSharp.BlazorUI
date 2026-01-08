@@ -1,10 +1,4 @@
-﻿.bui-code-block {
-    border: 1px solid var(--palette-backgroundcontrast);
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-
-.bui-code-block__header {
+﻿.bui-code-block__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,10 +17,4 @@
     font-size: 0.75rem;
     padding: 0.25rem 0.75rem;
     cursor: pointer;
-}
-
-.bui-code-block__pre {
-    margin: 0;
-    padding: 1rem;
-    overflow-x: auto;
 }

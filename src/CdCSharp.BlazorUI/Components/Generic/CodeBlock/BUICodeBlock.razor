@@ -1,6 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.SyntaxHighlight
-@using CdCSharp.BlazorUI.SyntaxHighlight.Engines
 @namespace CdCSharp.BlazorUI.Components
 
 @inject IClipboardJsInterop Clipboard
@@ -18,9 +17,8 @@
         </button>
     </div>
 
-    <pre class="bui-code-block__pre">
-<code class="bui-code-block__code language-@Language">@HighlightedCode</code>
-    </pre>
+    @HighlightedCode
+
 </div>
 
 @code {
@@ -29,9 +27,30 @@
     [Parameter] public string? Title { get; set; }
 
     private bool _copied;
-    private Highlighter _highlighter = new Highlighter(new HtmlEngine());
+    private Highlighter _highlighter = new Highlighter();
     // Convertimos a MarkupString para que Blazor renderice los <span class="...">
-    private MarkupString HighlightedCode => (MarkupString)_highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
+    private MarkupString HighlightedCode
+    {
+        get
+        {
+            if (Code == null) return (MarkupString)string.Empty;
+
+            Console.WriteLine($"[SyntaxHighlight] Starting highlight for {Language}, code length: {Code?.Length ?? 0}");
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                var result = _highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
+                sw.Stop();
+                Console.WriteLine($"[SyntaxHighlight] Completed in {sw.ElapsedMilliseconds}ms");
+                return (MarkupString)result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SyntaxHighlight] Error: {ex.Message}");
+                return (MarkupString)System.Web.HttpUtility.HtmlEncode(NormalizeIndentation(Code));
+            }
+        }
+    }
 
     private async Task CopyAsync()
     {

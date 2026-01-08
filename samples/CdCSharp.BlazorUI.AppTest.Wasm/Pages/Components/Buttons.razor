@@ -127,35 +127,49 @@
 </div>
 
 @code {
-    private string basicUsageCode = @"<BUIButton Text=""Click Me"" OnClick=""@(() => Console.WriteLine(""Clicked!""))"" />";
+    private string basicUsageCode = """<BUIButton Text="Click Me" OnClick="@(() => Console.WriteLine("Clicked!"))" />""";
 
-    private string sizesCode = @"<BUIButton Text=""Small"" Size=""SizeEnum.Small"" />
-<BUIButton Text=""Medium"" Size=""SizeEnum.Medium"" />
-<BUIButton Text=""Large"" Size=""SizeEnum.Large"" />";
+    private string sizesCode = """
+    <BUIButton Text="Small" Size="SizeEnum.Small" />
+    <BUIButton Text="Medium" Size="SizeEnum.Medium" />
+    <BUIButton Text="Large" Size="SizeEnum.Large" />
+    """;
 
-    private string loadingCode = @"<BUIButton Text=""Loading Spinner""
-          IsLoading=""true""
-          LoadingIndicatorVariant=""UILoadingIndicatorVariant.Spinner"" />";
+    private string loadingCode = """
+    <BUIButton Text="Loading Spinner"
+               IsLoading="true"
+               LoadingIndicatorVariant="UILoadingIndicatorVariant.Spinner" />
+    """;
 
-    private string iconsCode = @"<BUIButton Text=""Save"" LeadingIcon=""@BUIIcons.MaterialIconsRound.i_save"" />
-<BUIButton Text=""Delete"" TrailingIcon=""@BUIIcons.MaterialIconsRound.i_delete"" />";
+    private string iconsCode = """
+    <BUIButton Text="Save" LeadingIcon="@BUIIcons.MaterialIconsRound.i_save" />
+    <BUIButton Text="Delete" TrailingIcon="@BUIIcons.MaterialIconsRound.i_delete" />
+    """;
 
-    private string elevationCode = @"<BUIButton Text=""No Elevation"" Elevation=""0"" />
-<BUIButton Text=""Low"" Elevation=""2"" />
-<BUIButton Text=""Medium"" Elevation=""4"" />
-<BUIButton Text=""High"" Elevation=""8"" />";
+    private string elevationCode = """
+    <BUIButton Text="No Elevation" Elevation="0" />
+    <BUIButton Text="Low" Elevation="2" />
+    <BUIButton Text="Medium" Elevation="4" />
+    <BUIButton Text="High" Elevation="8" />
+    """;
 
-    private string bordersCode = @"<BUIButton Text=""Default Border"" Border=""@BorderPresets.Default"" />
-<BUIButton Text=""Primary Border"" Border=""@BorderPresets.Primary"" />
-<BUIButton Text=""Rounded"" Border=""@BorderPresets.Rounded"" />
-<BUIButton Text=""Pill"" Border=""@BorderPresets.Pill"" />";
+    private string bordersCode = """
+    <BUIButton Text="Default Border" Border="@BorderPresets.Default" />
+    <BUIButton Text="Primary Border" Border="@BorderPresets.Primary" />
+    <BUIButton Text="Rounded" Border="@BorderPresets.Rounded" />
+    <BUIButton Text="Pill" Border="@BorderPresets.Pill" />
+    """;
 
-    private string densityCode = @"<BUIButton Text=""Comfortable"" Density=""DensityEnum.Comfortable"" />
-<BUIButton Text=""Standard"" Density=""DensityEnum.Standard"" />
-<BUIButton Text=""Compact"" Density=""DensityEnum.Compact"" />";
+    private string densityCode = """
+    <BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" />
+    <BUIButton Text="Standard" Density="DensityEnum.Standard" />
+    <BUIButton Text="Compact" Density="DensityEnum.Compact" />
+    """;
 
-    private string transitionsCode = @"<BUIButton Text=""Hover Scale"" Transitions=""@BUITransitionPresets.HoverScale"" />
-<BUIButton Text=""Hover Lift"" Transitions=""@BUITransitionPresets.HoverLift"" />";
+    private string transitionsCode = """
+    <BUIButton Text="Hover Scale" Transitions="@BUITransitionPresets.HoverScale" />
+    <BUIButton Text="Hover Lift" Transitions="@BUITransitionPresets.HoverLift" />
+    """;
 
     private record ButtonProperty(string Name, string Type, string Default, string Description);
 

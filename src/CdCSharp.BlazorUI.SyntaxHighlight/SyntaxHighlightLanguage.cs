@@ -1,33 +1,24 @@
 ﻿namespace CdCSharp.BlazorUI.SyntaxHighlight;
 
-/// <summary>
-/// Specifies the language for syntax highlighting.
-/// </summary>
 public enum SyntaxHighlightLanguage
 {
-    None,
-    Aspx,
-    C,
-    Cobol,
-    CPlusPlus,
     CSharp,
-    Eiffel,
-    Fortran,
-    Haskell,
-    Html,
-    Java,
-    JavaScript,
-    Mercury,
-    Msil,
-    Pascal,
-    Perl,
-    Php,
-    Python,
     Razor,
-    Ruby,
-    Sql,
-    VBNET,
-    VBScript,
-    VisualBasic,
-    Xml
+    TypeScript,
+    Css
+}
+
+public static class SyntaxHighlightLanguageExtensions
+{
+    public static string ToLanguageIdentifier(this SyntaxHighlightLanguage language)
+    {
+        return language switch
+        {
+            SyntaxHighlightLanguage.CSharp => "csharp",
+            SyntaxHighlightLanguage.Razor => "razor",
+            SyntaxHighlightLanguage.TypeScript => "typescript",
+            SyntaxHighlightLanguage.Css => "css",
+            _ => throw new ArgumentOutOfRangeException(nameof(language))
+        };
+    }
 }

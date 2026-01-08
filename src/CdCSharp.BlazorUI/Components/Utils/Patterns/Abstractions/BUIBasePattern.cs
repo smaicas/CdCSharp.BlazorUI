@@ -8,11 +8,8 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     protected ElementReference _containerBox;
     protected PatternCallbacksRelay? _jsCallbacksRelay;
     protected PatternState _patternState = new();
-
-    private string? _text = null;
     private bool _isInitialized = false;
     private bool _suppressRender = false;
-    private int? _activeSpanIndex = null;
 
     [Parameter, EditorRequired]
     public string Format { get; set; } = string.Empty;
@@ -27,11 +24,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     protected IPatternJsInterop Js { get; set; } = default!;
 
     [Parameter]
-    public string? Text
-    {
-        get => _text;
-        set => _text = value;
-    }
+    public string? Text { get; set; } = null;
 
     protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
 
@@ -141,14 +134,11 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     public async Task OnSpanFocus(int index)
     {
         if (!IsValidIndex(index)) return;
-        _activeSpanIndex = index;
     }
 
     public async Task OnSpanBlur(int index)
     {
         if (!IsValidIndex(index)) return;
-
-        _activeSpanIndex = null;
 
         SpanState span = _patternState.Spans[index];
 
@@ -232,11 +222,11 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     {
         string? actualText = _patternState.IsComplete ? _patternState.GetActualText() : null;
 
-        if (_text != actualText)
+        if (Text != actualText)
         {
-            _text = actualText;
+            Text = actualText;
             _lastExternalText = actualText;  // Mantener sincronizado
-            await TextChanged.InvokeAsync(_text);
+            await TextChanged.InvokeAsync(Text);
         }
     }
 

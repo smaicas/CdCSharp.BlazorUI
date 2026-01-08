@@ -1,0 +1,65 @@
+﻿// Rules/ContextualRegexRule.cs
+using CdCSharp.BlazorUI.SyntaxHighlight.Tokens;
+using System.Text.RegularExpressions;
+
+namespace CdCSharp.BlazorUI.SyntaxHighlight.Rules;
+
+public sealed class ContextualRegexRule : ITokenRule
+{
+    private readonly TokenType _tokenType;
+    private readonly Regex _regex;
+    private readonly Func<string, int, bool> _contextPredicate;
+    private readonly bool _requireWordBoundary;
+
+    public int Priority { get; }
+
+    public ContextualRegexRule(
+        TokenType tokenType,
+        string pattern,
+        Func<string, int, bool> contextPredicate,
+        bool requireWordBoundary = false,
+        int priority = 0)
+    {
+        _tokenType = tokenType;
+        _contextPredicate = contextPredicate;
+        _requireWordBoundary = requireWordBoundary;
+        Priority = priority;
+
+        _regex = new Regex(
+            $"\\G({pattern})",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant,
+            TimeSpan.FromMilliseconds(100));
+    }
+
+    public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
+    {
+        if (!_contextPredicate(input, position))
+            return null;
+
+        if (_requireWordBoundary && position > 0 && IsWordChar(input[position - 1]))
+            return null;
+
+        try
+        {
+            Match match = _regex.Match(input, position);
+            if (!match.Success || match.Index != position)
+                return null;
+
+            if (_requireWordBoundary)
+            {
+                int endPos = position + match.Length;
+                if (endPos < input.Length && IsWordChar(input[endPos]))
+                    return null;
+            }
+
+            return new TokenMatch(_tokenType, position, match.Length);
+        }
+        catch (RegexMatchTimeoutException)
+        {
+            return null;
+        }
+    }
+
+    private static bool IsWordChar(char c) =>
+        char.IsLetterOrDigit(c) || c == '_';
+}

@@ -272,84 +272,104 @@
     public record Person(int Id, string Name, string Email);
     public record Country(string Code, string Name);
 
-    private string basicUsageCode = @"<BUIInputDropdown TValue=""string"" @bind-Value=""selected"" Placeholder=""Select an option"">
-    <DropdownOption TOption=""string"" Value=""option1"" Text=""Option 1"" />
-    <DropdownOption TOption=""string"" Value=""option2"" Text=""Option 2"" />
-    <DropdownOption TOption=""string"" Value=""option3"" Text=""Option 3"" />
-</BUIInputDropdown>";
+    private string basicUsageCode = """
+        <BUIInputDropdown TValue="string" @bind-Value="selected" Placeholder="Select an option">
+            <DropdownOption TOption="string" Value="option1" Text="Option 1" />
+            <DropdownOption TOption="string" Value="option2" Text="Option 2" />
+            <DropdownOption TOption="string" Value="option3" Text="Option 3" />
+        </BUIInputDropdown>
+        """;
 
-    private string objectsCode = @"<BUIInputDropdown TValue=""Person"" @bind-Value=""selectedPerson"" Placeholder=""Select a person"" Label=""Person"">
-    @foreach (Person person in people)
-    {
-        <DropdownOption TOption=""Person"" Value=""person"" Text=""@person.Name"" />
-    }
-</BUIInputDropdown>";
+    private string objectsCode = """
+        <BUIInputDropdown TValue="Person" @bind-Value="selectedPerson" Placeholder="Select a person" Label="Person">
+            @foreach (Person person in people)
+            {
+                <DropdownOption TOption="Person" Value="person" Text="@person.Name" />
+            }
+        </BUIInputDropdown>
+        """;
 
-    private string templateCode = @"<BUIInputDropdown TValue=""Person"" @bind-Value=""selected"" Placeholder=""Select a person"">
-    @foreach (Person person in people)
-    {
-        <DropdownOption TOption=""Person"" Value=""person"">
-            <div class=""person-item"">
-                <strong>@person.Name</strong>
-                <span>@person.Email</span>
-            </div>
-        </DropdownOption>
-    }
-</BUIInputDropdown>";
+    private string templateCode = """
+        <BUIInputDropdown TValue="Person" @bind-Value="selected" Placeholder="Select a person">
+            @foreach (Person person in people)
+            {
+                <DropdownOption TOption="Person" Value="person">
+                    <div class="person-item">
+                        <strong>@person.Name</strong>
+                        <span>@person.Email</span>
+                    </div>
+                </DropdownOption>
+            }
+        </BUIInputDropdown>
+        """;
 
-    private string multipleCode = @"<BUIInputDropdown TValue=""Person[]"" @bind-Value=""selectedPeople"" Placeholder=""Select people"" Label=""Multiple selection"">
-    @foreach (Person person in people)
-    {
-        <DropdownOption TOption=""Person"" Value=""person"" Text=""@person.Name"" />
-    }
-</BUIInputDropdown>";
+    private string multipleCode = """
+        <BUIInputDropdown TValue="Person[]" @bind-Value="selectedPeople" Placeholder="Select people" Label="Multiple selection">
+            @foreach (Person person in people)
+            {
+                <DropdownOption TOption="Person" Value="person" Text="@person.Name" />
+            }
+        </BUIInputDropdown>
+        """;
 
-    private string searchableCode = @"<BUIInputDropdown TValue=""Country""
-                  @bind-Value=""selectedCountry""
-                  Placeholder=""Search countries...""
-                  Searchable=""true""
-                  SearchMode=""SearchMode.Smart"">
-    @foreach (Country country in countries)
-    {
-        <DropdownOption TOption=""Country"" Value=""country"" Text=""@country.Name"" />
-    }
-</BUIInputDropdown>";
+    private string searchableCode = """
+        <BUIInputDropdown TValue="Country"
+                          @bind-Value="selectedCountry"
+                          Placeholder="Search countries..."
+                          Searchable="true"
+                          SearchMode="SearchMode.Smart">
+            @foreach (Country country in countries)
+            {
+                <DropdownOption TOption="Country" Value="country" Text="@country.Name" />
+            }
+        </BUIInputDropdown>
+        """;
 
-    private string sizesCode = @"<BUIInputDropdown TValue=""string"" Size=""SizeEnum.Small"" Placeholder=""Small"">
-    <DropdownOption TOption=""string"" Value=""opt1"" Text=""Option 1"" />
-</BUIInputDropdown>
-<BUIInputDropdown TValue=""string"" Size=""SizeEnum.Medium"" Placeholder=""Medium"">
-    <DropdownOption TOption=""string"" Value=""opt1"" Text=""Option 1"" />
-</BUIInputDropdown>
-<BUIInputDropdown TValue=""string"" Size=""SizeEnum.Large"" Placeholder=""Large"">
-    <DropdownOption TOption=""string"" Value=""opt1"" Text=""Option 1"" />
-</BUIInputDropdown>";
+    private string sizesCode = """
+        <BUIInputDropdown TValue="string" Size="SizeEnum.Small" Placeholder="Small">
+            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
+        </BUIInputDropdown>
+        <BUIInputDropdown TValue="string" Size="SizeEnum.Medium" Placeholder="Medium">
+            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
+        </BUIInputDropdown>
+        <BUIInputDropdown TValue="string" Size="SizeEnum.Large" Placeholder="Large">
+            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
+        </BUIInputDropdown>
+        """;
 
-    private string placementCode = @"<BUIInputDropdown TValue=""string"" Placement=""DropdownPlacement.Auto"" ... />
-<BUIInputDropdown TValue=""string"" Placement=""DropdownPlacement.Top"" ... />
-<BUIInputDropdown TValue=""string"" Placement=""DropdownPlacement.Bottom"" ... />";
+    private string placementCode = """
+        <BUIInputDropdown TValue="string" Placement="DropdownPlacement.Auto" ... />
+        <BUIInputDropdown TValue="string" Placement="DropdownPlacement.Top" ... />
+        <BUIInputDropdown TValue="string" Placement="DropdownPlacement.Bottom" ... />
+        """;
 
-    private string statesCode = @"<BUIInputDropdown TValue=""string"" Disabled=""true"" Placeholder=""Disabled"">
-    ...
-</BUIInputDropdown>
-<BUIInputDropdown TValue=""string"" IsLoading=""true"" LoadingIndicatorVariant=""BUILoadingIndicatorVariant.Spinner"">
-    ...
-</BUIInputDropdown>";
+    private string statesCode = """
+        <BUIInputDropdown TValue="string" Disabled="true" Placeholder="Disabled">
+            ...
+        </BUIInputDropdown>
+        <BUIInputDropdown TValue="string" IsLoading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner">
+            ...
+        </BUIInputDropdown>
+        """;
 
-    private string disabledOptionsCode = @"<BUIInputDropdown TValue=""string"" @bind-Value=""selected"" Placeholder=""Select an option"">
-    <DropdownOption TOption=""string"" Value=""opt1"" Text=""Available Option 1"" />
-    <DropdownOption TOption=""string"" Value=""opt2"" Text=""Disabled Option"" Disabled=""true"" />
-    <DropdownOption TOption=""string"" Value=""opt3"" Text=""Available Option 2"" />
-</BUIInputDropdown>";
+    private string disabledOptionsCode = """
+        <BUIInputDropdown TValue="string" @bind-Value="selected" Placeholder="Select an option">
+            <DropdownOption TOption="string" Value="opt1" Text="Available Option 1" />
+            <DropdownOption TOption="string" Value="opt2" Text="Disabled Option" Disabled="true" />
+            <DropdownOption TOption="string" Value="opt3" Text="Available Option 2" />
+        </BUIInputDropdown>
+        """;
 
-    private string labelHelperCode = @"<BUIInputDropdown TValue=""string""
-                  Label=""Required Field""
-                  HelperText=""Please select one option""
-                  Required=""true""
-                  Placeholder=""Select..."">
-    <DropdownOption TOption=""string"" Value=""opt1"" Text=""Option 1"" />
-    <DropdownOption TOption=""string"" Value=""opt2"" Text=""Option 2"" />
-</BUIInputDropdown>";
+    private string labelHelperCode = """
+        <BUIInputDropdown TValue="string"
+                          Label="Required Field"
+                          HelperText="Please select one option"
+                          Required="true"
+                          Placeholder="Select...">
+            <DropdownOption TOption="string" Value="opt1" Text="Option 1" />
+            <DropdownOption TOption="string" Value="opt2" Text="Option 2" />
+        </BUIInputDropdown>
+        """;
 
     private record DropdownProperty(string Name, string Type, string Default, string Description);
 
