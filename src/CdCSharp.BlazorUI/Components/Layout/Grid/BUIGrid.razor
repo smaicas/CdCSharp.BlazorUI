@@ -1,0 +1,146 @@
+﻿@using CdCSharp.BlazorUI.Components.Layout.Grid
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using System.Text
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIComponentBase
+@implements IHasDensity
+
+<bui-component @attributes="ComputedAttributes">
+    <div class="bui-grid">
+        @ChildContent
+    </div>
+</bui-component>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public int Columns { get; set; } = 12;
+
+    [Parameter] public string? Gap { get; set; }
+    [Parameter] public string? GapXs { get; set; }
+    [Parameter] public string? GapSm { get; set; }
+    [Parameter] public string? GapMd { get; set; }
+    [Parameter] public string? GapLg { get; set; }
+    [Parameter] public string? GapXl { get; set; }
+    [Parameter] public string? RowGap { get; set; }
+    [Parameter] public string? ColumnGap { get; set; }
+
+    [Parameter] public GridDirection Direction { get; set; } = GridDirection.Row;
+    [Parameter] public GridDirection? DirectionXs { get; set; }
+    [Parameter] public GridDirection? DirectionSm { get; set; }
+    [Parameter] public GridDirection? DirectionMd { get; set; }
+    [Parameter] public GridDirection? DirectionLg { get; set; }
+    [Parameter] public GridDirection? DirectionXl { get; set; }
+
+    [Parameter] public GridJustifyContent JustifyContent { get; set; } = GridJustifyContent.Start;
+    [Parameter] public GridAlignItems AlignItems { get; set; } = GridAlignItems.Stretch;
+    [Parameter] public GridWrap Wrap { get; set; } = GridWrap.Wrap;
+
+    [Parameter] public string? P { get; set; }
+    [Parameter] public string? Pt { get; set; }
+    [Parameter] public string? Pr { get; set; }
+    [Parameter] public string? Pb { get; set; }
+    [Parameter] public string? Pl { get; set; }
+    [Parameter] public string? Px { get; set; }
+    [Parameter] public string? Py { get; set; }
+
+    [Parameter] public string? M { get; set; }
+    [Parameter] public string? Mt { get; set; }
+    [Parameter] public string? Mr { get; set; }
+    [Parameter] public string? Mb { get; set; }
+    [Parameter] public string? Ml { get; set; }
+    [Parameter] public string? Mx { get; set; }
+    [Parameter] public string? My { get; set; }
+
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-direction"] = ToKebabCase(Direction.ToString());
+        dataAttributes["data-bui-justify-content"] = ToKebabCase(JustifyContent.ToString());
+        dataAttributes["data-bui-align-items"] = ToKebabCase(AlignItems.ToString());
+        dataAttributes["data-bui-wrap"] = ToKebabCase(Wrap.ToString());
+
+        if (DirectionXs.HasValue)
+            dataAttributes["data-bui-direction-xs"] = ToKebabCase(DirectionXs.Value.ToString());
+        if (DirectionSm.HasValue)
+            dataAttributes["data-bui-direction-sm"] = ToKebabCase(DirectionSm.Value.ToString());
+        if (DirectionMd.HasValue)
+            dataAttributes["data-bui-direction-md"] = ToKebabCase(DirectionMd.Value.ToString());
+        if (DirectionLg.HasValue)
+            dataAttributes["data-bui-direction-lg"] = ToKebabCase(DirectionLg.Value.ToString());
+        if (DirectionXl.HasValue)
+            dataAttributes["data-bui-direction-xl"] = ToKebabCase(DirectionXl.Value.ToString());
+    }
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        cssVariables["--bui-grid-columns"] = Columns.ToString();
+
+        string baseGap = Gap ?? "1rem";
+        cssVariables["--bui-grid-gap"] = $"calc({baseGap} * var(--bui-density-spacing-multiplier, 1))";
+
+        if (RowGap != null)
+            cssVariables["--bui-grid-row-gap"] = $"calc({RowGap} * var(--bui-density-spacing-multiplier, 1))";
+        if (ColumnGap != null)
+            cssVariables["--bui-grid-column-gap"] = $"calc({ColumnGap} * var(--bui-density-spacing-multiplier, 1))";
+
+        if (GapXs != null) cssVariables["--bui-grid-gap-xs"] = $"calc({GapXs} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapSm != null) cssVariables["--bui-grid-gap-sm"] = $"calc({GapSm} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapMd != null) cssVariables["--bui-grid-gap-md"] = $"calc({GapMd} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapLg != null) cssVariables["--bui-grid-gap-lg"] = $"calc({GapLg} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapXl != null) cssVariables["--bui-grid-gap-xl"] = $"calc({GapXl} * var(--bui-density-spacing-multiplier, 1))";
+
+        AddSpacingVariables(cssVariables, "padding", P, Pt, Pr, Pb, Pl, Px, Py);
+        AddSpacingVariables(cssVariables, "margin", M, Mt, Mr, Mb, Ml, Mx, My);
+    }
+
+    private void AddSpacingVariables(Dictionary<string, string> cssVariables, string property,
+        string? all, string? top, string? right, string? bottom, string? left, string? horizontal, string? vertical)
+    {
+        if (all != null)
+        {
+            cssVariables[$"--bui-grid-{property}"] = $"calc({all} * var(--bui-density-spacing-multiplier, 1))";
+            return;
+        }
+
+        if (vertical != null)
+        {
+            cssVariables[$"--bui-grid-{property}-top"] = $"calc({vertical} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({vertical} * var(--bui-density-spacing-multiplier, 1))";
+        }
+        if (horizontal != null)
+        {
+            cssVariables[$"--bui-grid-{property}-left"] = $"calc({horizontal} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"--bui-grid-{property}-right"] = $"calc({horizontal} * var(--bui-density-spacing-multiplier, 1))";
+        }
+
+        if (top != null) cssVariables[$"--bui-grid-{property}-top"] = $"calc({top} * var(--bui-density-spacing-multiplier, 1))";
+        if (right != null) cssVariables[$"--bui-grid-{property}-right"] = $"calc({right} * var(--bui-density-spacing-multiplier, 1))";
+        if (bottom != null) cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({bottom} * var(--bui-density-spacing-multiplier, 1))";
+        if (left != null) cssVariables[$"--bui-grid-{property}-left"] = $"calc({left} * var(--bui-density-spacing-multiplier, 1))";
+    }
+
+    private static string ToKebabCase(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < value.Length; i++)
+        {
+            char c = value[i];
+            if (i > 0 && char.IsUpper(c))
+            {
+                builder.Append('-');
+                builder.Append(char.ToLowerInvariant(c));
+            }
+            else
+            {
+                builder.Append(char.ToLowerInvariant(c));
+            }
+        }
+        return builder.ToString();
+    }
+}

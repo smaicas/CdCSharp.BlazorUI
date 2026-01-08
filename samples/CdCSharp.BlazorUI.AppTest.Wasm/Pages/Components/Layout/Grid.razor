@@ -1,0 +1,781 @@
+﻿@page "/components/grid"
+
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Components.Layout.Grid
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Css
+
+<PageTitle>Grid - CdCSharp.BlazorUI</PageTitle>
+
+<style>
+    .bui-grid-item {
+        background-color: var(--palette-surface);
+        border: 1px solid var(--palette-secondary);
+        border-radius: 4px;
+        text-align: center;
+        font-weight: 500;
+    }
+</style>
+
+<div class="doc-page">
+    <h1>BUIGrid System</h1>
+
+    <p class="doc-intro">
+        <strong>BUIGrid</strong> is a flexible, responsive grid system based on flexbox.
+        It includes three components: <code>BUIGridContainer</code>, <code>BUIGrid</code>, and <code>BUIGridItem</code>.
+        Supports 12-column layout, responsive breakpoints, gap control, and density.
+    </p>
+
+    <!-- BASIC GRID -->
+    <section class="doc-section">
+        <h2>Basic Grid</h2>
+        <ComponentDemo Definition="@BasicGridDemo" />
+    </section>
+
+    <!-- CONTAINER -->
+    <section class="doc-section">
+        <h2>Grid Container</h2>
+        <ComponentDemo Definition="@ContainerDemo" />
+    </section>
+
+    <!-- RESPONSIVE COLUMNS -->
+    <section class="doc-section">
+        <h2>Responsive Columns</h2>
+        <ComponentDemo Definition="@ResponsiveDemo" />
+    </section>
+
+    <!-- GAP CONTROL -->
+    <section class="doc-section">
+        <h2>Gap Control</h2>
+        <ComponentDemo Definition="@GapDemo" />
+    </section>
+
+    <!-- RESPONSIVE GAP -->
+    <section class="doc-section">
+        <h2>Responsive Gap</h2>
+        <ComponentDemo Definition="@ResponsiveGapDemo" />
+    </section>
+
+    <!-- DIRECTION -->
+    <section class="doc-section">
+        <h2>Direction</h2>
+        <ComponentDemo Definition="@DirectionDemo" />
+    </section>
+
+    <!-- RESPONSIVE DIRECTION -->
+    <section class="doc-section">
+        <h2>Responsive Direction</h2>
+        <ComponentDemo Definition="@ResponsiveDirectionDemo" />
+    </section>
+
+    <!-- JUSTIFY & ALIGN -->
+    <section class="doc-section">
+        <h2>Justify Content & Align Items</h2>
+        <ComponentDemo Definition="@JustifyAlignDemo" />
+    </section>
+
+    <!-- OFFSET -->
+    <section class="doc-section">
+        <h2>Offset</h2>
+        <ComponentDemo Definition="@OffsetDemo" />
+    </section>
+
+    <!-- ORDER -->
+    <section class="doc-section">
+        <h2>Order</h2>
+        <ComponentDemo Definition="@OrderDemo" />
+    </section>
+
+    <!-- AUTO LAYOUT -->
+    <section class="doc-section">
+        <h2>Auto Layout</h2>
+        <ComponentDemo Definition="@AutoLayoutDemo" />
+    </section>
+
+    <!-- HIDE/SHOW -->
+    <section class="doc-section">
+        <h2>Responsive Visibility</h2>
+        <ComponentDemo Definition="@VisibilityDemo" />
+    </section>
+
+    <!-- DENSITY -->
+    <section class="doc-section">
+        <h2>Density</h2>
+        <ComponentDemo Definition="@DensityDemo" />
+    </section>
+
+    <!-- SPACING -->
+    <section class="doc-section">
+        <h2>Spacing (Padding & Margin)</h2>
+        <ComponentDemo Definition="@SpacingDemo" />
+    </section>
+
+    <!-- NESTED GRIDS -->
+    <section class="doc-section">
+        <h2>Nested Grids</h2>
+        <ComponentDemo Definition="@NestedDemo" />
+    </section>
+
+    <!-- PROPERTIES - CONTAINER -->
+    <section class="doc-section">
+        <h2>BUIGridContainer Properties</h2>
+        <PropertyTable Properties="@ContainerProperties" />
+    </section>
+
+    <!-- PROPERTIES - GRID -->
+    <section class="doc-section">
+        <h2>BUIGrid Properties</h2>
+        <PropertyTable Properties="@GridProperties" />
+    </section>
+
+    <!-- PROPERTIES - GRID ITEM -->
+    <section class="doc-section">
+        <h2>BUIGridItem Properties</h2>
+        <PropertyTable Properties="@GridItemProperties" />
+    </section>
+</div>
+
+@code {
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition BasicGridDemo => new()
+    {
+        Demo = RenderBasicGrid(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Xs="12" Md="6">
+        <div class="grid-demo-box">Item 1</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Md="6">
+        <div class="grid-demo-box">Item 2</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Md="4">
+        <div class="grid-demo-box">Item 3</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Md="4">
+        <div class="grid-demo-box">Item 4</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Md="4">
+        <div class="grid-demo-box">Item 5</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition ContainerDemo => new()
+    {
+        Demo = RenderContainer(),
+        Code = """
+<!-- Fixed Container (default) -->
+<BUIGridContainer>
+    <BUIGrid>
+        <BUIGridItem Xs="12">
+            <div class="grid-demo-box">Fixed container</div>
+        </BUIGridItem>
+    </BUIGrid>
+</BUIGridContainer>
+
+<!-- Fluid Container -->
+<BUIGridContainer Fluid>
+    <BUIGrid>
+        <BUIGridItem Xs="12">
+            <div class="grid-demo-box">Fluid container</div>
+        </BUIGridItem>
+    </BUIGrid>
+</BUIGridContainer>
+"""
+    };
+
+    private ComponentDemoDefinition ResponsiveDemo => new()
+    {
+        Demo = RenderResponsive(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+        <div class="grid-demo-box">Responsive</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+        <div class="grid-demo-box">Responsive</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+        <div class="grid-demo-box">Responsive</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+        <div class="grid-demo-box">Responsive</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition GapDemo => new()
+    {
+        Demo = RenderGap(),
+        Code = """
+<!-- No gap -->
+<BUIGrid Gap="0">
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+</BUIGrid>
+
+<!-- Custom gap -->
+<BUIGrid Gap="2rem">
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+</BUIGrid>
+
+<!-- Row/Column gap -->
+<BUIGrid RowGap="0.5rem" ColumnGap="2rem">
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition ResponsiveGapDemo => new()
+    {
+        Demo = RenderResponsiveGap(),
+        Code = """
+<BUIGrid GapXs="0.5rem" GapMd="1.5rem" GapLg="3rem">
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition DirectionDemo => new()
+    {
+        Demo = RenderDirection(),
+        Code = """
+<!-- Row -->
+<BUIGrid Direction="GridDirection.Row">
+    <BUIGridItem Auto><div class="grid-demo-box">1</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">2</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">3</div></BUIGridItem>
+</BUIGrid>
+
+<!-- Column -->
+<BUIGrid Direction="GridDirection.Column">
+    <BUIGridItem Auto><div class="grid-demo-box">1</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">2</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">3</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition ResponsiveDirectionDemo => new()
+    {
+        Demo = RenderResponsiveDirection(),
+        Code = """
+<BUIGrid DirectionXs="GridDirection.Column"
+         DirectionMd="GridDirection.Row">
+    <BUIGridItem Auto><div class="grid-demo-box">1</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">2</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">3</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition JustifyAlignDemo => new()
+    {
+        Demo = RenderJustifyAlign(),
+        Code = """
+<!-- Space Between -->
+<BUIGrid JustifyContent="GridJustifyContent.SpaceBetween">
+    <BUIGridItem Xs="3"><div class="grid-demo-box">Item</div></BUIGridItem>
+    <BUIGridItem Xs="3"><div class="grid-demo-box">Item</div></BUIGridItem>
+</BUIGrid>
+
+<!-- Center -->
+<BUIGrid JustifyContent="GridJustifyContent.Center"
+         AlignItems="GridAlignItems.Center"
+         style="min-height: 100px;">
+    <BUIGridItem Xs="4"><div class="grid-demo-box">Centered</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition OffsetDemo => new()
+    {
+        Demo = RenderOffset(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Xs="6" Offset="3">
+        <div class="grid-demo-box">Offset 3 columns</div>
+    </BUIGridItem>
+</BUIGrid>
+
+<BUIGrid>
+    <BUIGridItem Xs="4" OffsetXs="0" OffsetMd="4">
+        <div class="grid-demo-box">Responsive offset</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition OrderDemo => new()
+    {
+        Demo = RenderOrder(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Xs="4" Order="3">
+        <div class="grid-demo-box">First in markup (Order 3)</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="4" Order="1">
+        <div class="grid-demo-box">Second in markup (Order 1)</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="4" Order="2">
+        <div class="grid-demo-box">Third in markup (Order 2)</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition AutoLayoutDemo => new()
+    {
+        Demo = RenderAutoLayout(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Auto><div class="grid-demo-box">Auto</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">Auto</div></BUIGridItem>
+    <BUIGridItem Auto><div class="grid-demo-box">Auto</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition VisibilityDemo => new()
+    {
+        Demo = RenderVisibility(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Xs="12" HideMd>
+        <div class="grid-demo-box">Hidden on MD and above</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" ShowMd>
+        <div class="grid-demo-box">Shown only on MD</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """
+<BUIGrid Density="DensityEnum.Comfortable">
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Comfortable</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Comfortable</div></BUIGridItem>
+</BUIGrid>
+
+<BUIGrid Density="DensityEnum.Compact">
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Compact</div></BUIGridItem>
+    <BUIGridItem Xs="6"><div class="grid-demo-box">Compact</div></BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition SpacingDemo => new()
+    {
+        Demo = RenderSpacing(),
+        Code = """
+<!-- Grid padding -->
+<BUIGrid P="2rem" style="background: #f0f0f0;">
+    <BUIGridItem Xs="12"><div class="grid-demo-box">Padded grid</div></BUIGridItem>
+</BUIGrid>
+
+<!-- Item padding -->
+<BUIGrid>
+    <BUIGridItem Xs="6" P="1.5rem">
+        <div class="grid-demo-box">Padded item</div>
+    </BUIGridItem>
+    <BUIGridItem Xs="6" M="1rem">
+        <div class="grid-demo-box">Item with margin</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    private ComponentDemoDefinition NestedDemo => new()
+    {
+        Demo = RenderNested(),
+        Code = """
+<BUIGrid>
+    <BUIGridItem Xs="12" Md="6">
+        <div class="grid-demo-box" style="padding: 1rem;">
+            <BUIGrid Gap="0.5rem">
+                <BUIGridItem Xs="6">
+                    <div class="grid-demo-box-nested">Nested 1</div>
+                </BUIGridItem>
+                <BUIGridItem Xs="6">
+                    <div class="grid-demo-box-nested">Nested 2</div>
+                </BUIGridItem>
+            </BUIGrid>
+        </div>
+    </BUIGridItem>
+    <BUIGridItem Xs="12" Md="6">
+        <div class="grid-demo-box">Regular item</div>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicGrid() => __builder =>
+    {
+        <BUIGrid>
+            <BUIGridItem Xs="12" Md="6">
+                <div class="grid-demo-box">Item 1</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <div class="grid-demo-box">Item 2</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <div class="grid-demo-box">Item 3</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <div class="grid-demo-box">Item 4</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <div class="grid-demo-box">Item 5</div>
+            </BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderContainer() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4 style="margin-bottom: 0.5rem;">Fixed Container</h4>
+            <BUIGridContainer>
+                <BUIGrid>
+                    <BUIGridItem Xs="12">
+                        <div class="grid-demo-box">Fixed container (max-width responsive)</div>
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridContainer>
+        </div>
+
+        <div>
+            <h4 style="margin-bottom: 0.5rem;">Fluid Container</h4>
+            <BUIGridContainer Fluid>
+                <BUIGrid>
+                    <BUIGridItem Xs="12">
+                        <div class="grid-demo-box">Fluid container (100% width)</div>
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridContainer>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderResponsive() => __builder =>
+    {
+        <BUIGrid>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+                <div class="grid-demo-box">XS=12 SM=6 MD=4 LG=3</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+                <div class="grid-demo-box">XS=12 SM=6 MD=4 LG=3</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+                <div class="grid-demo-box">XS=12 SM=6 MD=4 LG=3</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">
+                <div class="grid-demo-box">XS=12 SM=6 MD=4 LG=3</div>
+            </BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderGap() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4>No Gap</h4>
+            <BUIGrid Gap="0">
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h4>Custom Gap (2rem)</h4>
+            <BUIGrid Gap="2rem">
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div>
+            <h4>Row/Column Gap (Row: 0.5rem, Column: 2rem)</h4>
+            <BUIGrid RowGap="0.5rem" ColumnGap="2rem">
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderResponsiveGap() => __builder =>
+    {
+        <p style="margin-bottom: 1rem; color: #666;">
+            <em>Resize window: XS=0.5rem, MD=1.5rem, LG=3rem</em>
+        </p>
+        <BUIGrid GapXs="0.5rem" GapMd="1.5rem" GapLg="3rem">
+            <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderDirection() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4>Row Direction</h4>
+            <BUIGrid Direction="GridDirection.Row">
+                <BUIGridItem Auto><div class="grid-demo-box">1</div></BUIGridItem>
+                <BUIGridItem Auto><div class="grid-demo-box">2</div></BUIGridItem>
+                <BUIGridItem Auto><div class="grid-demo-box">3</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div>
+            <h4>Column Direction</h4>
+            <BUIGrid Direction="GridDirection.Column">
+                <BUIGridItem Auto><div class="grid-demo-box">1</div></BUIGridItem>
+                <BUIGridItem Auto><div class="grid-demo-box">2</div></BUIGridItem>
+                <BUIGridItem Auto><div class="grid-demo-box">3</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderResponsiveDirection() => __builder =>
+    {
+        <p style="margin-bottom: 1rem; color: #666;">
+            <em>Column on mobile (XS), Row on MD and above</em>
+        </p>
+        <BUIGrid DirectionXs="GridDirection.Column" DirectionMd="GridDirection.Row">
+            <BUIGridItem Auto><div class="grid-demo-box">1</div></BUIGridItem>
+            <BUIGridItem Auto><div class="grid-demo-box">2</div></BUIGridItem>
+            <BUIGridItem Auto><div class="grid-demo-box">3</div></BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderJustifyAlign() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4>Space Between</h4>
+            <BUIGrid JustifyContent="GridJustifyContent.SpaceBetween">
+                <BUIGridItem Xs="3"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="3"><div class="grid-demo-box">Item</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div>
+            <h4>Center (both axes)</h4>
+            <BUIGrid JustifyContent="GridJustifyContent.Center"
+                     AlignItems="GridAlignItems.Center"
+                     style="min-height: 100px; background: #f8f8f8;">
+                <BUIGridItem Xs="4"><div class="grid-demo-box">Centered</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderOffset() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4>Fixed Offset (3 columns)</h4>
+            <BUIGrid>
+                <BUIGridItem Xs="6" Offset="3">
+                    <div class="grid-demo-box">Offset 3 columns</div>
+                </BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div>
+            <h4>Responsive Offset (0 on XS, 4 on MD)</h4>
+            <BUIGrid>
+                <BUIGridItem Xs="4" OffsetXs="0" OffsetMd="4">
+                    <div class="grid-demo-box">Responsive offset</div>
+                </BUIGridItem>
+            </BUIGrid>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderOrder() => __builder =>
+    {
+        <BUIGrid>
+            <BUIGridItem Xs="4" Order="3">
+                <div class="grid-demo-box">First in markup<br />(Order 3)</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="4" Order="1">
+                <div class="grid-demo-box">Second in markup<br />(Order 1)</div>
+            </BUIGridItem>
+            <BUIGridItem Xs="4" Order="2">
+                <div class="grid-demo-box">Third in markup<br />(Order 2)</div>
+            </BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderAutoLayout() => __builder =>
+    {
+        <BUIGrid>
+            <BUIGridItem Auto><div class="grid-demo-box">Auto width</div></BUIGridItem>
+            <BUIGridItem Auto><div class="grid-demo-box">Auto width</div></BUIGridItem>
+            <BUIGridItem Auto><div class="grid-demo-box">Auto width</div></BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderVisibility() => __builder =>
+    {
+        <BUIGrid>
+            <BUIGridItem Xs="12" HideMd>
+                <div class="grid-demo-box" style="background: #ffebee;">
+                    Hidden on MD and above (visible on XS/SM only)
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" ShowMd>
+                <div class="grid-demo-box" style="background: #e8f5e9;">
+                    Shown only on MD breakpoint
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4>Comfortable (1.5x spacing)</h4>
+            <BUIGrid Density="DensityEnum.Comfortable">
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div>
+            <h4>Compact (0.75x spacing)</h4>
+            <BUIGrid Density="DensityEnum.Compact">
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+                <BUIGridItem Xs="6"><div class="grid-demo-box">Item</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderSpacing() => __builder =>
+    {
+        <div style="margin-bottom: 2rem;">
+            <h4>Grid Padding</h4>
+            <BUIGrid P="2rem" style="background: #f0f0f0; border: 2px dashed #999;">
+                <BUIGridItem Xs="12"><div class="grid-demo-box">Padded grid</div></BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <div>
+            <h4>Item Padding & Margin</h4>
+            <BUIGrid>
+                <BUIGridItem Xs="6" P="1.5rem" style="background: #e3f2fd;">
+                    <div class="grid-demo-box">Padded item (1.5rem)</div>
+                </BUIGridItem>
+                <BUIGridItem Xs="6" M="1rem" style="background: #fff3e0;">
+                    <div class="grid-demo-box">Item with margin (1rem)</div>
+                </BUIGridItem>
+            </BUIGrid>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderNested() => __builder =>
+    {
+        <BUIGrid>
+            <BUIGridItem Xs="12" Md="6">
+                <div class="grid-demo-box" style="padding: 1rem; background: #e8eaf6;">
+                    <p style="margin: 0 0 0.5rem 0;"><strong>Nested Grid:</strong></p>
+                    <BUIGrid Gap="0.5rem">
+                        <BUIGridItem Xs="6">
+                            <div class="grid-demo-box-nested">Nested 1</div>
+                        </BUIGridItem>
+                        <BUIGridItem Xs="6">
+                            <div class="grid-demo-box-nested">Nested 2</div>
+                        </BUIGridItem>
+                    </BUIGrid>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <div class="grid-demo-box">Regular item</div>
+            </BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> ContainerProperties = new()
+{
+new("Type", "GridContainerType", "Fixed", "Container type (Fixed/Fluid)"),
+new("Fluid", "bool", "false", "Shorthand for Type=Fluid"),
+new("MaxWidthSm", "string?", "600px", "Max width at SM breakpoint"),
+new("MaxWidthMd", "string?", "960px", "Max width at MD breakpoint"),
+new("MaxWidthLg", "string?", "1280px", "Max width at LG breakpoint"),
+new("MaxWidthXl", "string?", "1920px", "Max width at XL breakpoint"),
+new("DisablePadding", "bool", "false", "Removes container padding"),
+new("Density", "DensityEnum", "Standard", "Density level"),
+};
+
+    private List<PropertyDefinition> GridProperties = new()
+{
+    new("Columns", "int", "12", "Number of columns in grid"),
+    new("Gap", "string?", "1rem", "Gap between items"),
+    new("GapXs", "string?", "null", "Gap at XS breakpoint"),
+    new("GapSm", "string?", "null", "Gap at SM breakpoint"),
+    new("GapMd", "string?", "null", "Gap at MD breakpoint"),
+    new("GapLg", "string?", "null", "Gap at LG breakpoint"),
+    new("GapXl", "string?", "null", "Gap at XL breakpoint"),
+    new("RowGap", "string?", "null", "Gap between rows"),
+    new("ColumnGap", "string?", "null", "Gap between columns"),
+    new("Direction", "GridDirection", "Row", "Flex direction"),
+    new("DirectionXs", "GridDirection?", "null", "Direction at XS breakpoint"),
+    new("DirectionSm", "GridDirection?", "null", "Direction at SM breakpoint"),
+    new("DirectionMd", "GridDirection?", "null", "Direction at MD breakpoint"),
+    new("DirectionLg", "GridDirection?", "null", "Direction at LG breakpoint"),
+    new("DirectionXl", "GridDirection?", "null", "Direction at XL breakpoint"),
+    new("JustifyContent", "GridJustifyContent", "Start", "Justify content alignment"),
+    new("AlignItems", "GridAlignItems", "Stretch", "Align items alignment"),
+    new("Wrap", "GridWrap", "Wrap", "Flex wrap behavior"),
+    new("P/Pt/Pr/Pb/Pl/Px/Py", "string?", "null", "Padding (all/top/right/bottom/left/horizontal/vertical)"),
+    new("M/Mt/Mr/Mb/Ml/Mx/My", "string?", "null", "Margin (all/top/right/bottom/left/horizontal/vertical)"),
+    new("Density", "DensityEnum", "Standard", "Density level"),
+};
+
+    private List<PropertyDefinition> GridItemProperties = new()
+{
+    new("Xs", "int?", "null", "Columns on XS (<600px)"),
+    new("Sm", "int?", "null", "Columns on SM (≥600px)"),
+    new("Md", "int?", "null", "Columns on MD (≥960px)"),
+    new("Lg", "int?", "null", "Columns on LG (≥1280px)"),
+    new("Xl", "int?", "null", "Columns on XL (≥1920px)"),
+    new("Auto", "bool", "false", "Auto-width layout (equal flex)"),
+    new("Order", "int?", "null", "Flexbox order"),
+    new("OrderXs/Sm/Md/Lg/Xl", "int?", "null", "Responsive flexbox order"),
+    new("AlignSelf", "GridAlignSelf?", "null", "Individual align-self override"),
+    new("Offset", "int?", "null", "Column offset (margin-left)"),
+    new("OffsetXs/Sm/Md/Lg/Xl", "int?", "null", "Responsive offset"),
+    new("HideXs/Sm/Md/Lg/Xl", "bool", "false", "Hide at specific breakpoint"),
+    new("ShowXs/Sm/Md/Lg/Xl", "bool", "false", "Show only at specific breakpoint"),
+    new("P/Pt/Pr/Pb/Pl/Px/Py", "string?", "null", "Padding"),
+    new("M/Mt/Mr/Mb/Ml/Mx/My", "string?", "null", "Margin"),
+};
+}

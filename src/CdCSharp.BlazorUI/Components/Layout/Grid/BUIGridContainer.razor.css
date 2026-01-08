@@ -1,0 +1,77 @@
+﻿/* BUIGridContainer.razor.css */
+
+/* Base component container */
+bui-component[data-bui-component="grid-container"] {
+    display: block;
+    width: 100%;
+}
+
+    /* Grid container base styles */
+    bui-component[data-bui-component="grid-container"] .bui-grid-container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        box-sizing: border-box;
+    }
+
+    /* ========================================
+   PADDING CONFIGURATION
+   ======================================== */
+
+    /* Default padding (applies when DisablePadding is false) */
+    bui-component[data-bui-component="grid-container"]:not([data-bui-disable-padding="true"]) .bui-grid-container {
+        padding-left: calc(1rem * var(--bui-density-spacing-multiplier, 1));
+        padding-right: calc(1rem * var(--bui-density-spacing-multiplier, 1));
+    }
+
+    /* Disabled padding (explicit no padding) */
+    bui-component[data-bui-component="grid-container"][data-bui-disable-padding="true"] .bui-grid-container {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* ========================================
+   FIXED CONTAINER (Responsive Max-Widths)
+   ======================================== */
+
+    /* Mobile-first: 100% width by default */
+    bui-component[data-bui-component="grid-container"][data-bui-type="fixed"] .bui-grid-container {
+        max-width: 100%;
+    }
+
+/* SM - Small tablets and large phones (≥600px) */
+@media (min-width: 600px) {
+    bui-component[data-bui-component="grid-container"][data-bui-type="fixed"] .bui-grid-container {
+        max-width: var(--bui-container-max-width-sm, 600px);
+    }
+}
+
+/* MD - Tablets and small desktops (≥960px) */
+@media (min-width: 960px) {
+    bui-component[data-bui-component="grid-container"][data-bui-type="fixed"] .bui-grid-container {
+        max-width: var(--bui-container-max-width-md, 960px);
+    }
+}
+
+/* LG - Desktops (≥1280px) */
+@media (min-width: 1280px) {
+    bui-component[data-bui-component="grid-container"][data-bui-type="fixed"] .bui-grid-container {
+        max-width: var(--bui-container-max-width-lg, 1280px);
+    }
+}
+
+/* XL - Large desktops (≥1920px) */
+@media (min-width: 1920px) {
+    bui-component[data-bui-component="grid-container"][data-bui-type="fixed"] .bui-grid-container {
+        max-width: var(--bui-container-max-width-xl, 1920px);
+    }
+}
+
+/* ========================================
+   FLUID CONTAINER (Full Width)
+   ======================================== */
+
+/* Fluid container has no max-width constraint */
+bui-component[data-bui-component="grid-container"][data-bui-type="fluid"] .bui-grid-container {
+    max-width: 100%;
+}

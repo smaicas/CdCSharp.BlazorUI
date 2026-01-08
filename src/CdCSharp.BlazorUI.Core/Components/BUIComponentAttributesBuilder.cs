@@ -14,13 +14,18 @@ internal sealed class BUIComponentAttributesBuilder
     private string? _originalUserStyles;
     public Dictionary<string, object> ComputedAttributes { get; private set; } = [];
 
-    public void BuildStyles(ComponentBase component, IReadOnlyDictionary<string, object>? additionalAttributes)
+    public void BuildStyles(
+        ComponentBase component,
+        IReadOnlyDictionary<string, object>? additionalAttributes)
     {
         ComputedAttributes = additionalAttributes != null
             ? new Dictionary<string, object>(additionalAttributes)
             : [];
 
-        _originalUserStyles = ComputedAttributes.TryGetValue("style", out object? style) ? style?.ToString() : null;
+        _originalUserStyles = ComputedAttributes.TryGetValue("style", out object? style)
+            ? style?.ToString()
+            : null;
+
         Dictionary<string, string> cssVariables = [];
 
         // Nombre del componente
@@ -49,6 +54,18 @@ internal sealed class BUIComponentAttributesBuilder
         BuildBackgroundColor(component, cssVariables);
         BuildBorder(component, cssVariables);
         BuildTransitions(component, cssVariables);
+
+        // ===== COMPONENT-SPECIFIC DATA ATTRIBUTES =====
+        if (component is BUIComponentBase buiComponent)
+        {
+            buiComponent.BuildComponentDataAttributes(ComputedAttributes);
+        }
+
+        // ===== COMPONENT-SPECIFIC CSS VARIABLES =====
+        if (component is BUIComponentBase buiComponentForVars)
+        {
+            buiComponentForVars.BuildComponentCssVariables(cssVariables);
+        }
 
         BuildInlineStyles(cssVariables);
     }
