@@ -1,15 +1,22 @@
 ﻿/* BUIGridItem.razor.css */
 
+/*
+ * Width formula with gap compensation:
+ * width = (100% - (columns - 1) * gap) / columns * span + (span - 1) * gap
+ * 
+ * Simplified: width = calc((100% + gap) / columns * span - gap)
+ * This works because each "slot" includes its share of gap, then we subtract one gap.
+ */
+
 /* BASE STYLES */
 bui-component[data-bui-component="grid-item"] {
     display: block;
     flex: 0 0 auto;
     box-sizing: border-box;
     min-width: 0;
-    padding: calc(var(--bui-grid-row-gap, var(--bui-grid-gap, 1rem)) / 2) calc(var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem)) / 2);
     order: var(--bui-grid-item-order, 0);
-    width: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-span, var(--bui-grid-columns, 12)));
-    margin-left: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset, 0));
+    width: calc( (100% + var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-span, var(--bui-grid-columns, 12)) - var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem)) );
+    margin-left: calc( (100% + var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset, 0) );
 }
 
     bui-component[data-bui-component="grid-item"] .bui-grid-item {
@@ -59,13 +66,12 @@ bui-component[data-bui-component="grid-item"] {
         width: auto;
     }
 
-/* RESPONSIVE - XS (max-width: 599px) */
+/* RESPONSIVE - XS */
 @media (max-width: 599px) {
     bui-component[data-bui-component="grid-item"] {
-        padding: calc(var(--bui-grid-gap-xs, var(--bui-grid-gap, 1rem)) / 2);
-        width: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12))));
+        width: calc( (100% + var(--bui-grid-gap-xs, var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem)))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12))) - var(--bui-grid-gap-xs, var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem))) );
         order: var(--bui-grid-item-order-xs, var(--bui-grid-item-order, 0));
-        margin-left: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0)));
+        margin-left: calc( (100% + var(--bui-grid-gap-xs, var(--bui-grid-column-gap, var(--bui-grid-gap, 1rem)))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0)) );
     }
 
         bui-component[data-bui-component="grid-item"][data-bui-hide-xs="true"] {
@@ -73,13 +79,12 @@ bui-component[data-bui-component="grid-item"] {
         }
 }
 
-/* RESPONSIVE - SM (min-width: 600px) */
+/* RESPONSIVE - SM */
 @media (min-width: 600px) {
     bui-component[data-bui-component="grid-item"] {
-        padding: calc(var(--bui-grid-gap-sm, var(--bui-grid-gap, 1rem)) / 2);
-        width: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12)))));
+        width: calc( (100% + var(--bui-grid-gap-sm, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12)))) - var(--bui-grid-gap-sm, var(--bui-grid-gap, 1rem)) );
         order: var(--bui-grid-item-order-sm, var(--bui-grid-item-order-xs, var(--bui-grid-item-order, 0)));
-        margin-left: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0))));
+        margin-left: calc( (100% + var(--bui-grid-gap-sm, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0))) );
     }
 }
 
@@ -89,13 +94,12 @@ bui-component[data-bui-component="grid-item"] {
     }
 }
 
-/* RESPONSIVE - MD (min-width: 960px) */
+/* RESPONSIVE - MD */
 @media (min-width: 960px) {
     bui-component[data-bui-component="grid-item"] {
-        padding: calc(var(--bui-grid-gap-md, var(--bui-grid-gap, 1rem)) / 2);
-        width: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-md, var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12))))));
+        width: calc( (100% + var(--bui-grid-gap-md, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-md, var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12))))) - var(--bui-grid-gap-md, var(--bui-grid-gap, 1rem)) );
         order: var(--bui-grid-item-order-md, var(--bui-grid-item-order-sm, var(--bui-grid-item-order-xs, var(--bui-grid-item-order, 0))));
-        margin-left: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-md, var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0)))));
+        margin-left: calc( (100% + var(--bui-grid-gap-md, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-md, var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0)))) );
     }
 }
 
@@ -105,13 +109,12 @@ bui-component[data-bui-component="grid-item"] {
     }
 }
 
-/* RESPONSIVE - LG (min-width: 1280px) */
+/* RESPONSIVE - LG */
 @media (min-width: 1280px) {
     bui-component[data-bui-component="grid-item"] {
-        padding: calc(var(--bui-grid-gap-lg, var(--bui-grid-gap, 1rem)) / 2);
-        width: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-lg, var(--bui-grid-item-md, var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12)))))));
+        width: calc( (100% + var(--bui-grid-gap-lg, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-lg, var(--bui-grid-item-md, var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12)))))) - var(--bui-grid-gap-lg, var(--bui-grid-gap, 1rem)) );
         order: var(--bui-grid-item-order-lg, var(--bui-grid-item-order-md, var(--bui-grid-item-order-sm, var(--bui-grid-item-order-xs, var(--bui-grid-item-order, 0)))));
-        margin-left: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-lg, var(--bui-grid-item-offset-md, var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0))))));
+        margin-left: calc( (100% + var(--bui-grid-gap-lg, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-lg, var(--bui-grid-item-offset-md, var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0))))) );
     }
 }
 
@@ -121,13 +124,12 @@ bui-component[data-bui-component="grid-item"] {
     }
 }
 
-/* RESPONSIVE - XL (min-width: 1920px) */
+/* RESPONSIVE - XL */
 @media (min-width: 1920px) {
     bui-component[data-bui-component="grid-item"] {
-        padding: calc(var(--bui-grid-gap-xl, var(--bui-grid-gap, 1rem)) / 2);
-        width: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-xl, var(--bui-grid-item-lg, var(--bui-grid-item-md, var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12))))))));
+        width: calc( (100% + var(--bui-grid-gap-xl, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-xl, var(--bui-grid-item-lg, var(--bui-grid-item-md, var(--bui-grid-item-sm, var(--bui-grid-item-xs, var(--bui-grid-item-span, var(--bui-grid-columns, 12))))))) - var(--bui-grid-gap-xl, var(--bui-grid-gap, 1rem)) );
         order: var(--bui-grid-item-order-xl, var(--bui-grid-item-order-lg, var(--bui-grid-item-order-md, var(--bui-grid-item-order-sm, var(--bui-grid-item-order-xs, var(--bui-grid-item-order, 0))))));
-        margin-left: calc(100% / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-xl, var(--bui-grid-item-offset-lg, var(--bui-grid-item-offset-md, var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0)))))));
+        margin-left: calc( (100% + var(--bui-grid-gap-xl, var(--bui-grid-gap, 1rem))) / var(--bui-grid-columns, 12) * var(--bui-grid-item-offset-xl, var(--bui-grid-item-offset-lg, var(--bui-grid-item-offset-md, var(--bui-grid-item-offset-sm, var(--bui-grid-item-offset-xs, var(--bui-grid-item-offset, 0)))))) );
     }
 
         bui-component[data-bui-component="grid-item"][data-bui-hide-xl="true"] {

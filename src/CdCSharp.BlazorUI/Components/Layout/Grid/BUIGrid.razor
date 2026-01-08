@@ -78,22 +78,35 @@
     {
         cssVariables["--bui-grid-columns"] = Columns.ToString();
 
-        string baseGap = Gap ?? "1rem";
+        string baseGap = NormalizeGapValue(Gap ?? "1rem");
         cssVariables["--bui-grid-gap"] = $"calc({baseGap} * var(--bui-density-spacing-multiplier, 1))";
 
         if (RowGap != null)
-            cssVariables["--bui-grid-row-gap"] = $"calc({RowGap} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables["--bui-grid-row-gap"] = $"calc({NormalizeGapValue(RowGap)} * var(--bui-density-spacing-multiplier, 1))";
         if (ColumnGap != null)
-            cssVariables["--bui-grid-column-gap"] = $"calc({ColumnGap} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables["--bui-grid-column-gap"] = $"calc({NormalizeGapValue(ColumnGap)} * var(--bui-density-spacing-multiplier, 1))";
 
-        if (GapXs != null) cssVariables["--bui-grid-gap-xs"] = $"calc({GapXs} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapSm != null) cssVariables["--bui-grid-gap-sm"] = $"calc({GapSm} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapMd != null) cssVariables["--bui-grid-gap-md"] = $"calc({GapMd} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapLg != null) cssVariables["--bui-grid-gap-lg"] = $"calc({GapLg} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapXl != null) cssVariables["--bui-grid-gap-xl"] = $"calc({GapXl} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapXs != null) cssVariables["--bui-grid-gap-xs"] = $"calc({NormalizeGapValue(GapXs)} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapSm != null) cssVariables["--bui-grid-gap-sm"] = $"calc({NormalizeGapValue(GapSm)} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapMd != null) cssVariables["--bui-grid-gap-md"] = $"calc({NormalizeGapValue(GapMd)} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapLg != null) cssVariables["--bui-grid-gap-lg"] = $"calc({NormalizeGapValue(GapLg)} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapXl != null) cssVariables["--bui-grid-gap-xl"] = $"calc({NormalizeGapValue(GapXl)} * var(--bui-density-spacing-multiplier, 1))";
 
         AddSpacingVariables(cssVariables, "padding", P, Pt, Pr, Pb, Pl, Px, Py);
         AddSpacingVariables(cssVariables, "margin", M, Mt, Mr, Mb, Ml, Mx, My);
+    }
+
+    private static string NormalizeGapValue(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return "0px";
+
+        string trimmed = value.Trim();
+
+        if (trimmed == "0")
+            return "0px";
+
+        return trimmed;
     }
 
     private void AddSpacingVariables(Dictionary<string, string> cssVariables, string property,
