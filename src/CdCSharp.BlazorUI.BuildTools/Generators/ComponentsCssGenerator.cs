@@ -62,10 +62,7 @@ public class ComponentsCssGenerator : IAssetGenerator
 }}
 
 .{FeatureDefinitions.CssClasses.InputLoading} {{
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
+    display: inline-flex;
 }}
 
 .{FeatureDefinitions.CssClasses.InputValidation} {{
@@ -97,7 +94,6 @@ public class ComponentsCssGenerator : IAssetGenerator
         sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Large}\"] {{");
         sb.AppendLine("    font-size: 1.125rem;");
         sb.AppendLine("}");
-
         sb.AppendLine(@"
 /* Density Classes */");
 
@@ -245,6 +241,14 @@ public class ComponentsCssGenerator : IAssetGenerator
     {
         StringBuilder sb = new();
 
+        // Base elevation variable setup
+        sb.AppendLine($@"
+/* Elevation shadow color - uses custom color or falls back to theme shadow */
+{FeatureDefinitions.Tags.Component} {{
+    {FeatureDefinitions.CssVariables.ElevationShadowColor}: var(--palette-shadow, rgba(0, 0, 0, 1));
+}}
+");
+
         for (int i = 0; i <= 24; i++)
         {
             if (i == 0)
@@ -274,23 +278,24 @@ public class ComponentsCssGenerator : IAssetGenerator
     {
         if (elevation == 0) return ("none", "", "");
 
-        const double umbraOpacity = 0.2;
-        const double penumbraOpacity = 0.14;
-        const double ambientOpacity = 0.12;
+        // Use CSS color-mix or rgba with variable for dynamic shadow color
+        // We use the CSS variable with opacity applied via color-mix
+        string shadowColor = $"var({FeatureDefinitions.CssVariables.ElevationShadowColor})";
 
         double umbraOffset = Math.Round(elevation * 0.5, 1);
         double umbraBlur = elevation;
         double penumbraOffset = elevation;
         double penumbraBlur = elevation * 2;
 
+        // Using color-mix to apply opacity to the shadow color variable
         string umbra = FormattableString.Invariant(
-            $"0px {umbraOffset}px {umbraBlur}px rgba(0,0,0,{umbraOpacity})");
+            $"0px {umbraOffset}px {umbraBlur}px color-mix(in srgb, {shadowColor} 20%, transparent)");
 
         string penumbra = FormattableString.Invariant(
-            $"0px {penumbraOffset}px {penumbraBlur}px rgba(0,0,0,{penumbraOpacity})");
+            $"0px {penumbraOffset}px {penumbraBlur}px color-mix(in srgb, {shadowColor} 14%, transparent)");
 
         string ambient = FormattableString.Invariant(
-            $"0px 1px 3px rgba(0,0,0,{ambientOpacity})");
+            $"0px 1px 3px color-mix(in srgb, {shadowColor} 12%, transparent)");
 
         return (umbra, penumbra, ambient);
     }

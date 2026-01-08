@@ -1,52 +1,61 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Forms
-@using System.Globalization
+﻿@using System.Globalization
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 
-<div class="timepicker">
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@inherits BUIComponentBase
+@implements IHasSize
+@implements IHasDensity
+
+<bui-component @attributes="ComputedAttributes">
     <button type="button"
-            class="timepicker-format-btn"
+            class="bui-timepicker__format-btn"
             @onclick="ToggleFormat">
         @(Format == "24" ? "24h" : "12h")
     </button>
 
-    <div class="timepicker-spinners">
-        <div class="timepicker-spinner">
-            <button type="button" class="timepicker-spin-btn" @onclick="IncrementHour">▲</button>
+    <div class="bui-timepicker__spinners">
+        <div class="bui-timepicker__spinner">
+            <button type="button" class="bui-timepicker__spin-btn" @onclick="IncrementHour">▲</button>
             <input type="text"
-                   class="timepicker-input"
+                   class="bui-timepicker__input"
                    value="@DisplayHour.ToString("00")"
                    @onchange="OnHourInput"
                    @onfocus="OnInputFocus"
                    maxlength="2" />
-            <button type="button" class="timepicker-spin-btn" @onclick="DecrementHour">▼</button>
+            <button type="button" class="bui-timepicker__spin-btn" @onclick="DecrementHour">▼</button>
         </div>
 
-        <span class="timepicker-separator">:</span>
+        <span class="bui-timepicker__separator">:</span>
 
-        <div class="timepicker-spinner">
-            <button type="button" class="timepicker-spin-btn" @onclick="IncrementMinute">▲</button>
+        <div class="bui-timepicker__spinner">
+            <button type="button" class="bui-timepicker__spin-btn" @onclick="IncrementMinute">▲</button>
             <input type="text"
-                   class="timepicker-input"
+                   class="bui-timepicker__input"
                    value="@Minute.ToString("00")"
                    @onchange="OnMinuteInput"
                    @onfocus="OnInputFocus"
                    maxlength="2" />
-            <button type="button" class="timepicker-spin-btn" @onclick="DecrementMinute">▼</button>
+            <button type="button" class="bui-timepicker__spin-btn" @onclick="DecrementMinute">▼</button>
         </div>
     </div>
 
     @if (Format == "12")
     {
         <button type="button"
-                class="timepicker-ampm-btn"
+                class="bui-timepicker__ampm-btn"
                 @onclick="ToggleAmPm">
             @AmPm
         </button>
     }
-</div>
+</bui-component>
 
 @code {
     [Parameter] public TimeOnly? Value { get; set; }
     [Parameter] public EventCallback<TimeOnly?> ValueChanged { get; set; }
+
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     private int Hour;
     private int Minute;
@@ -65,6 +74,7 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern.Contains("tt")
             ? "12"
             : "24";
@@ -72,6 +82,8 @@
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
+
         if (Value.HasValue)
         {
             Hour = Value.Value.Hour;
@@ -86,9 +98,7 @@
         await ValueChanged.InvokeAsync(t);
     }
 
-    private void OnInputFocus(FocusEventArgs e)
-    {
-    }
+    private void OnInputFocus(FocusEventArgs e) { }
 
     private void OnHourInput(ChangeEventArgs e)
     {
@@ -180,117 +190,3 @@
         _ = UpdateValue();
     }
 }
-
-<style>
-    .timepicker {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        font-family: system-ui, -apple-system, sans-serif;
-        user-select: none;
-    }
-
-    .timepicker-format-btn {
-        padding: 0.5rem 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background: #f8f8f8;
-        cursor: pointer;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #666;
-        transition: all 0.15s ease;
-    }
-
-        .timepicker-format-btn:hover {
-            background: #f0f0f0;
-            border-color: #ccc;
-        }
-
-    .timepicker-spinners {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .timepicker-spinner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.25rem;
-    }
-
-    .timepicker-spin-btn {
-        width: 40px;
-        height: 28px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        background: #fff;
-        cursor: pointer;
-        font-size: 0.75rem;
-        color: #666;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s ease;
-    }
-
-        .timepicker-spin-btn:hover {
-            background: #f0f0f0;
-            border-color: #ccc;
-        }
-
-        .timepicker-spin-btn:active {
-            background: #e0e0e0;
-        }
-
-    .timepicker-input {
-        width: 48px;
-        font-size: 1.5rem;
-        font-weight: 600;
-        font-variant-numeric: tabular-nums;
-        text-align: center;
-        padding: 0.25rem;
-        border: 1px solid transparent;
-        border-radius: 4px;
-        background: transparent;
-        transition: all 0.15s ease;
-    }
-
-        .timepicker-input:hover {
-            border-color: #ddd;
-        }
-
-        .timepicker-input:focus {
-            outline: none;
-            border-color: #0078ff;
-            background: #fff;
-        }
-
-    .timepicker-separator {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #333;
-        padding-bottom: 0.25rem;
-    }
-
-    .timepicker-ampm-btn {
-        padding: 0.75rem 1rem;
-        border: 1px solid #0078ff;
-        border-radius: 6px;
-        background: #0078ff;
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: 600;
-        color: #fff;
-        transition: all 0.15s ease;
-    }
-
-        .timepicker-ampm-btn:hover {
-            background: #0066dd;
-        }
-
-        .timepicker-ampm-btn:active {
-            background: #0055cc;
-        }
-</style>

@@ -1,4 +1,5 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
+﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 
 namespace CdCSharp.BlazorUI.Core.Themes;
@@ -33,5 +34,7 @@ public class LightTheme : BUIThemePaletteBase
 
         Secondary = new CssColor("#8B5CF6");
         SecondaryContrast = new CssColor("#FFFFFF");
+
+        Shadow = BUIColor.Black.Default;
     }
 }

@@ -1,10 +1,15 @@
 ﻿@using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.SyntaxHighlight
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+
 @namespace CdCSharp.BlazorUI.Components
+
+@inherits BUIComponentBase
+@implements IHasSize
 
 @inject IClipboardJsInterop Clipboard
 
-<div class="bui-code-block">
+<bui-component @attributes="ComputedAttributes">
     <div class="bui-code-block__header">
         <span class="bui-code-block__title">
             @(Title ?? Language.ToString().ToUpperInvariant())
@@ -17,36 +22,34 @@
         </button>
     </div>
 
-    @HighlightedCode
-
-</div>
+    <div class="bui-code-block__content">
+        @HighlightedCode
+    </div>
+</bui-component>
 
 @code {
     [Parameter, EditorRequired] public string Code { get; set; } = string.Empty;
     [Parameter] public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.CSharp;
     [Parameter] public string? Title { get; set; }
 
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
     private bool _copied;
     private Highlighter _highlighter = new Highlighter();
-    // Convertimos a MarkupString para que Blazor renderice los <span class="...">
+
     private MarkupString HighlightedCode
     {
         get
         {
             if (Code == null) return (MarkupString)string.Empty;
 
-            Console.WriteLine($"[SyntaxHighlight] Starting highlight for {Language}, code length: {Code?.Length ?? 0}");
-            var sw = System.Diagnostics.Stopwatch.StartNew();
             try
             {
-                var result = _highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
-                sw.Stop();
-                Console.WriteLine($"[SyntaxHighlight] Completed in {sw.ElapsedMilliseconds}ms");
+                string result = _highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
                 return (MarkupString)result;
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"[SyntaxHighlight] Error: {ex.Message}");
                 return (MarkupString)System.Web.HttpUtility.HtmlEncode(NormalizeIndentation(Code));
             }
         }
@@ -54,7 +57,6 @@
 
     private async Task CopyAsync()
     {
-        // Al copiar, usamos el código normalizado pero SIN etiquetas HTML
         await Clipboard.CopyTextAsync(NormalizeIndentation(Code));
         _copied = true;
 
@@ -67,9 +69,9 @@
     {
         if (string.IsNullOrWhiteSpace(code)) return string.Empty;
 
-        var lines = code.Split('\n');
+        string[] lines = code.Split('\n');
 
-        var minIndent = lines
+        int minIndent = lines
             .Where(l => !string.IsNullOrWhiteSpace(l))
             .Select(l => l.TakeWhile(char.IsWhiteSpace).Count())
             .DefaultIfEmpty(0)

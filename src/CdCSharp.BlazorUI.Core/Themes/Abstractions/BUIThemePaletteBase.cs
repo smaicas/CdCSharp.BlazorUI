@@ -1,4 +1,5 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
+﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Css;
 using System.Reflection;
 
 namespace CdCSharp.BlazorUI.Core.Theming.Abstractions;
@@ -38,6 +39,8 @@ public abstract class BUIThemePaletteBase
     // Base colors for contrast calculations
     public CssColor Black { get; set; } = new("#010101");
     public CssColor White { get; set; } = new("#e9e9e9");
+
+    public virtual CssColor Shadow { get; set; } = BUIColor.White.Default;
 
     /// <summary>
     /// Gets theme-specific CSS variables (e.g., --dark-background, --light-background)

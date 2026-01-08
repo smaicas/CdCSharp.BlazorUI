@@ -1,4 +1,4 @@
-﻿@typeparam TItem
+﻿@using CdCSharp.BlazorUI.Docs
 
 <div class="property-table-wrapper">
     <table class="property-table">
@@ -11,10 +11,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Items)
+            @foreach (var prop in Properties)
             {
                 <tr>
-                    @PropertyTemplate(item)
+                    <td><code>@prop.Name</code></td>
+                    <td><code>@prop.Type</code></td>
+                    <td><code>@prop.Default</code></td>
+                    <td>@prop.Description</td>
                 </tr>
             }
         </tbody>
@@ -22,43 +25,6 @@
 </div>
 
 @code {
-    [Parameter] public IEnumerable<TItem> Items { get; set; } = Enumerable.Empty<TItem>();
-    [Parameter] public RenderFragment<TItem> PropertyTemplate { get; set; } = default!;
+    [Parameter, EditorRequired]
+    public IEnumerable<PropertyDefinition> Properties { get; set; } = [];
 }
-
-<style>
-    .property-table-wrapper {
-        overflow-x: auto;
-        margin: 1rem 0;
-    }
-
-    .property-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.875rem;
-    }
-
-        .property-table th {
-            text-align: left;
-            padding: 0.75rem;
-            border-bottom: 2px solid var(--palette-backgroundcontrast);
-            font-weight: 600;
-        }
-
-        .property-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--palette-backgroundcontrast);
-        }
-
-        .property-table tbody tr:hover {
-            background: var(--palette-surface);
-        }
-
-        .property-table code {
-            background: var(--palette-surface);
-            padding: 0.125rem 0.25rem;
-            border-radius: 0.25rem;
-            font-size: 0.813rem;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-        }
-</style>

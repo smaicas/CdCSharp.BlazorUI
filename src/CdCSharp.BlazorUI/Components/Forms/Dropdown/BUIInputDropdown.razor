@@ -3,6 +3,7 @@
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Core.Search
 @using System.Collections
 
@@ -185,6 +186,7 @@
 
     // IHasElevation
     [Parameter] public int? Elevation { get; set; }
+    [Parameter] public CssColor? ElevationColor { get; set; }
 
     // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }

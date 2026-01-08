@@ -15,24 +15,18 @@
 @code {
     private string _inputId = $"bui-switch-{Guid.NewGuid():N}";
 
-    // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
-
-
-    // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     [Parameter] public string? Label { get; set; }
 
-    // Iconos opcionales On/Off (ej: ☀️ / 🌙)
     [Parameter] public string? IconInactive { get; set; }
     [Parameter] public string? IconActive { get; set; }
-    // Track colors
+
     [Parameter] public CssColor? TrackColorInactive { get; set; }
     [Parameter] public CssColor? TrackColorActive { get; set; }
 
-    // Siempre Variant Default
     public override BUIInputCheckboxVariant DefaultVariant => BUIInputCheckboxVariant.Default;
 
     protected override IReadOnlyDictionary<BUIInputCheckboxVariant, Func<BUIInputSwitch, RenderFragment>> BuiltInTemplates { get; } =
@@ -46,7 +40,7 @@
     protected override bool TryParseValueFromString(string? value, out bool result, out string validationErrorMessage)
     {
         validationErrorMessage = string.Empty;
-        if (bool.TryParse(value, out var boolResult))
+        if (bool.TryParse(value, out bool boolResult))
         {
             result = boolResult;
             return true;
@@ -59,9 +53,20 @@
 
     private RenderFragment RenderSwitch() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes"
-                       data-bui-checked="@IsChecked"
-                       style="@GetDynamicStyles()">
+        Dictionary<string, object> attrs = new(ComputedAttributes)
+        {
+            ["data-bui-checked"] = IsChecked.ToString().ToLowerInvariant()
+        };
+
+        if (!string.IsNullOrEmpty(GetDynamicStyles()))
+        {
+            string existingStyle = attrs.TryGetValue("style", out object? s) ? s?.ToString() ?? "" : "";
+            attrs["style"] = string.IsNullOrEmpty(existingStyle)
+                ? GetDynamicStyles()
+                : $"{existingStyle}; {GetDynamicStyles()}";
+        }
+
+        <bui-component @attributes="attrs">
             <div class="bui-input__container" @onclick="HandleClick">
                 <input type="checkbox"
                        id="@_inputId"
@@ -76,13 +81,13 @@
                         @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
                         {
                             <span class="bui-switch__icon">
-                                @if (IsChecked && !string.IsNullOrWhiteSpace(IconInactive))
-                                {
-                                    @IconInactive
-                                }
-                                else if (!IsChecked && !string.IsNullOrWhiteSpace(IconActive))
+                                @if (IsChecked && !string.IsNullOrWhiteSpace(IconActive))
                                 {
                                     @IconActive
+                                }
+                                else if (!IsChecked && !string.IsNullOrWhiteSpace(IconInactive))
+                                {
+                                    @IconInactive
                                 }
                             </span>
                         }
@@ -106,12 +111,12 @@
 
     private string GetDynamicStyles()
     {
-        var styles = new List<string>();
+        List<string> styles = new();
         if (TrackColorInactive != null)
             styles.Add($"--bui-input-switch-track-bg: {TrackColorInactive}");
         if (TrackColorActive != null)
             styles.Add($"--bui-input-switch-track-bg-checked: {TrackColorActive}");
 
-        return styles.Any() ? string.Join(";", styles) : string.Empty;
+        return styles.Count > 0 ? string.Join(";", styles) : string.Empty;
     }
 }

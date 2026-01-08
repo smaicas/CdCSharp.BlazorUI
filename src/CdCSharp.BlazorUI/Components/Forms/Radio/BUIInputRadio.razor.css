@@ -5,11 +5,11 @@
     --bui-radio-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
 
-    &[data-bui-size="small"] {
+    bui-component[data-bui-component="input-radio"][data-bui-size="small"] {
         --bui-radio-scale: 0.75;
     }
 
-    &[data-bui-size="large"] {
+    bui-component[data-bui-component="input-radio"][data-bui-size="large"] {
         --bui-radio-scale: 1.25;
     }
 

@@ -4,6 +4,22 @@
     justify-content: center;
 }
 
+    /* Size modifiers */
+    bui-component[data-bui-component="loading-indicator"][data-bui-size="small"] {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    bui-component[data-bui-component="loading-indicator"][data-bui-size="medium"] {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    bui-component[data-bui-component="loading-indicator"][data-bui-size="large"] {
+        width: 2rem;
+        height: 2rem;
+    }
+
 /* Spinner Variant */
 bui-component[data-bui-variant="spinner"] .bui-loading-spinner {
     width: 100%;
@@ -145,20 +161,4 @@ bui-component[data-bui-variant="pulse"] .bui-loading-pulse {
         transform: scale(1);
         opacity: 0;
     }
-}
-
-/* Size modifiers - specific to loading indicator */
-bui-component[data-bui-component="loading-indicator"][data-bui-size="small"] {
-    width: 1rem;
-    height: 1rem;
-}
-
-bui-component[data-bui-component="loading-indicator"][data-bui-size="medium"] {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-bui-component[data-bui-component="loading-indicator"][data-bui-size="large"] {
-    width: 2rem;
-    height: 2rem;
 }

@@ -1,48 +1,59 @@
 ﻿@using System.Globalization
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+
 @namespace CdCSharp.BlazorUI.Components.Forms
 
-<div class="datepicker">
-    <div class="datepicker-nav">
-        <div class="datepicker-nav-year">
-            <button type="button" class="datepicker-btn" @onclick="PrevYear">«</button>
-            <span class="datepicker-year">@CurrentMonth.Year</span>
-            <button type="button" class="datepicker-btn" @onclick="NextYear">»</button>
+@inherits BUIComponentBase
+@implements IHasSize
+@implements IHasDensity
+
+<bui-component @attributes="ComputedAttributes">
+    <div class="bui-datepicker__nav">
+        <div class="bui-datepicker__nav-year">
+            <button type="button" class="bui-datepicker__btn" @onclick="PrevYear">«</button>
+            <span class="bui-datepicker__year">@CurrentMonth.Year</span>
+            <button type="button" class="bui-datepicker__btn" @onclick="NextYear">»</button>
         </div>
-        <div class="datepicker-nav-month">
-            <button type="button" class="datepicker-btn" @onclick="PrevMonth">‹</button>
-            <span class="datepicker-month">@CurrentMonth.ToString("MMMM", CultureInfo.CurrentCulture)</span>
-            <button type="button" class="datepicker-btn" @onclick="NextMonth">›</button>
+        <div class="bui-datepicker__nav-month">
+            <button type="button" class="bui-datepicker__btn" @onclick="PrevMonth">‹</button>
+            <span class="bui-datepicker__month">@CurrentMonth.ToString("MMMM", CultureInfo.CurrentCulture)</span>
+            <button type="button" class="bui-datepicker__btn" @onclick="NextMonth">›</button>
         </div>
     </div>
 
-    <div class="datepicker-weekdays">
+    <div class="bui-datepicker__weekdays">
         @foreach (string d in WeekDays)
         {
             <span>@d</span>
         }
     </div>
 
-    <div class="datepicker-days">
+    <div class="bui-datepicker__days">
         @foreach (DayCell day in Days)
         {
             <button type="button"
-                    class="datepicker-day @(day.IsSelected ? "selected" : "") @(day.IsToday ? "today" : "") @(!day.IsCurrentMonth ? "other-month" : "")"
+                    class="bui-datepicker__day @(day.IsSelected ? "bui-datepicker__day--selected" : "") @(day.IsToday ? "bui-datepicker__day--today" : "") @(!day.IsCurrentMonth ? "bui-datepicker__day--other-month" : "")"
                     @onclick="() => SelectDate(day.Date)">
                 @day.Date.Day
             </button>
         }
     </div>
-</div>
+</bui-component>
 
 @code {
     [Parameter] public DateOnly? Value { get; set; }
     [Parameter] public EventCallback<DateOnly?> ValueChanged { get; set; }
+
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     private DateTime CurrentMonth = DateTime.Today;
     private DateOnly SelectedDate = DateOnly.FromDateTime(DateTime.Today);
 
     protected override void OnParametersSet()
     {
+        base.OnParametersSet();
+
         if (Value.HasValue)
         {
             SelectedDate = Value.Value;
@@ -93,110 +104,3 @@
         public bool IsToday { get; set; }
     }
 }
-
-<style>
-    .datepicker {
-        font-family: system-ui, -apple-system, sans-serif;
-        user-select: none;
-    }
-
-    .datepicker-nav {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .datepicker-nav-year,
-    .datepicker-nav-month {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .datepicker-year,
-    .datepicker-month {
-        font-weight: 600;
-        font-size: 1rem;
-        min-width: 120px;
-        text-align: center;
-    }
-
-    .datepicker-btn {
-        width: 32px;
-        height: 32px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        background: #fff;
-        cursor: pointer;
-        font-size: 1rem;
-        color: #333;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s ease;
-    }
-
-        .datepicker-btn:hover {
-            background: #f0f0f0;
-            border-color: #ccc;
-        }
-
-        .datepicker-btn:active {
-            background: #e0e0e0;
-        }
-
-    .datepicker-weekdays {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 2px;
-        margin-bottom: 0.5rem;
-    }
-
-        .datepicker-weekdays span {
-            text-align: center;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #666;
-            padding: 0.25rem;
-        }
-
-    .datepicker-days {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 2px;
-    }
-
-    .datepicker-day {
-        width: 36px;
-        height: 36px;
-        border: none;
-        border-radius: 50%;
-        background: transparent;
-        cursor: pointer;
-        font-size: 0.875rem;
-        color: #333;
-        transition: all 0.15s ease;
-    }
-
-        .datepicker-day:hover:not(.selected) {
-            background: #f0f0f0;
-        }
-
-        .datepicker-day.other-month {
-            color: #ccc;
-        }
-
-        .datepicker-day.today {
-            box-shadow: inset 0 0 0 1px #0078ff;
-        }
-
-        .datepicker-day.selected {
-            background: #0078ff;
-            color: #fff;
-        }
-
-            .datepicker-day.selected.today {
-                box-shadow: none;
-            }
-</style>

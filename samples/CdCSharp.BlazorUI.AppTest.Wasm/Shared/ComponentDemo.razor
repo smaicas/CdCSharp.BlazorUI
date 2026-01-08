@@ -1,20 +1,19 @@
 ﻿@using CdCSharp.BlazorUI.SyntaxHighlight
+
 <div class="bui-component-demo">
     <div class="bui-component-demo__preview">
-        @Demo
+        @Definition.Demo
     </div>
 
-    @if (!string.IsNullOrWhiteSpace(Code))
+    @if (!string.IsNullOrWhiteSpace(Definition.Code))
     {
-        <BUICodeBlock Code="@Code"
-                   Language="@Language"
-                   Title="@CodeTitle" />
+        <BUICodeBlock Code="@Definition.Code"
+                      Language="@Definition.Language"
+                      Title="@Definition.CodeTitle" />
     }
 </div>
 
 @code {
-    [Parameter, EditorRequired] public RenderFragment Demo { get; set; } = default!;
-    [Parameter] public string? Code { get; set; }
-    [Parameter] public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.Razor;
-    [Parameter] public string? CodeTitle { get; set; }
+    [Parameter, EditorRequired]
+    public ComponentDemoDefinition Definition { get; set; } = default!;
 }

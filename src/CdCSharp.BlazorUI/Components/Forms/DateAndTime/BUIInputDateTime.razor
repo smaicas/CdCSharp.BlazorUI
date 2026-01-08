@@ -1,5 +1,6 @@
 ﻿@using System.Globalization
 @using CdCSharp.BlazorUI.Components.Utils
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 
 @namespace CdCSharp.BlazorUI.Components.Forms
@@ -7,8 +8,10 @@
 @typeparam TValue
 @inherits BUIInputComponentBase<TValue>
 @implements IHasReadOnly
+@implements IHasSize
+@implements IHasDensity
 
-<div class="bui-input-datetime">
+<bui-component @attributes="ComputedAttributes">
     @if (!string.IsNullOrWhiteSpace(Label))
     {
         <label class="bui-input-datetime__label" @onclick="HandleLabelClick">
@@ -58,25 +61,29 @@
     {
         <div class="bui-input-datetime__helper">@HelperText</div>
     }
-</div>
 
-@if (IsOpen)
-{
-    <div class="picker-overlay" @onclick="HandleOverlayClick" @onclick:stopPropagation="true">
-        <div class="picker-modal" @onclick:stopPropagation="true">
-            @if (ShowDate)
-            {
-                <BUIDatePicker Value="DateValue"
-                               ValueChanged="OnDateChanged" />
-            }
-            @if (ShowTime)
-            {
-                <BUITimePicker Value="TimeValue"
-                               ValueChanged="OnTimeChanged" />
-            }
+    @if (IsOpen)
+    {
+        <div class="picker-overlay" @onclick="HandleOverlayClick" @onclick:stopPropagation="true">
+            <div class="picker-modal" @onclick:stopPropagation="true">
+                @if (ShowDate)
+                {
+                    <BUIDatePicker Value="DateValue"
+                                   ValueChanged="OnDateChanged"
+                                   Size="Size"
+                                   Density="Density" />
+                }
+                @if (ShowTime)
+                {
+                    <BUITimePicker Value="TimeValue"
+                                   ValueChanged="OnTimeChanged"
+                                   Size="Size"
+                                   Density="Density" />
+                }
+            </div>
         </div>
-    </div>
-}
+    }
+</bui-component>
 
 @code {
     private bool IsOpen;
@@ -90,6 +97,8 @@
 
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 

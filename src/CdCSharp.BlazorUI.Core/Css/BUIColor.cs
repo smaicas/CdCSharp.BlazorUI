@@ -57,5 +57,14 @@ public static partial class BUIColor
 
         public static CssColor InfoContrast =>
             new("var(--palette-infocontrast)", true);
+
+        public static CssColor Black =>
+            new("var(--palette-black)", true);
+
+        public static CssColor White =>
+            new("var(--palette-white)", true);
+
+        public static CssColor Shadow =>
+            new("var(--palette-shadow)", true);
     }
 }

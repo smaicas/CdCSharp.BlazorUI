@@ -80,6 +80,9 @@ public static class FeatureDefinitions
 
         // Layout
         public const string DensitySpacingMultiplier = "--bui-density-spacing-multiplier";
+
+        // Elevation
+        public const string ElevationShadowColor = "--bui-elevation-shadow-color";
     }
 
     /// <summary>

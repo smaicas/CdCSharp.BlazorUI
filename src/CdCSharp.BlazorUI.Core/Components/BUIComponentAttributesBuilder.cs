@@ -38,7 +38,7 @@ internal sealed class BUIComponentAttributesBuilder
         BuildSize(component);
         BuildDensity(component);
         BuildFullWidth(component);
-        BuildElevation(component);
+        BuildElevation(component, cssVariables);
         BuildLoading(component);
         BuildError(component);
         BuildDisabled(component);
@@ -72,10 +72,18 @@ internal sealed class BUIComponentAttributesBuilder
             ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = fullWidth.FullWidth.ToString().ToLowerInvariant();
     }
 
-    private void BuildElevation(ComponentBase component)
+    private void BuildElevation(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasElevation elevation)
+        {
             ComputedAttributes[FeatureDefinitions.DataAttributes.Elevation] = elevation.Elevation?.ToString() ?? "0";
+
+            if (elevation.ElevationColor != null)
+            {
+                cssVariables[FeatureDefinitions.CssVariables.ElevationShadowColor] =
+                    elevation.ElevationColor.ToString(ColorOutputFormats.Rgba);
+            }
+        }
     }
 
     private void BuildLoading(ComponentBase component)
