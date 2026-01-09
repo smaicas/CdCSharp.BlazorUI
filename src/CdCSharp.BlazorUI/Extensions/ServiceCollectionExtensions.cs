@@ -1,8 +1,10 @@
 ﻿using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript;
+using CdCSharp.BlazorUI.Components.Forms.Color.JsInterop;
 using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
 using CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop;
 using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
 using CdCSharp.BlazorUI.Components.Utils;
+using CdCSharp.BlazorUI.Components.Utils.Draggable.JsInterop;
 using CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
 using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
@@ -28,6 +30,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDropdownJsInterop, DropdownJsInterop>();
         services.AddScoped<IClipboardJsInterop, ClipboardJsInterop>();
         services.AddScoped<ITextAreaJsInterop, TextAreaJsInterop>();
+        services.AddScoped<IDraggableJsInterop, DraggableJsInterop>();
+        services.AddScoped<IColorPickerJsInterop, ColorPickerJsInterop>();
 
         return services;
     }

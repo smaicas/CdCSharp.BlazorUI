@@ -36,9 +36,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Components\Forms\Color\" />
 	  <Folder Include="Types\Dropdown\" />
 	  <Folder Include="Types\Clipboard\" />
+	  <Folder Include="Types\Draggable\" />
+	  <Folder Include="Types\ColorPicker\" />
 	  <Folder Include="Types\TextArea\" />
 	</ItemGroup>
 

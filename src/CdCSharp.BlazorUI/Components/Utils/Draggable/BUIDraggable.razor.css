@@ -1,0 +1,17 @@
+﻿bui-component[data-bui-component="draggable"] {
+    display: contents;
+}
+
+    bui-component[data-bui-component="draggable"] .bui-draggable {
+        cursor: grab;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+        bui-component[data-bui-component="draggable"] .bui-draggable:active {
+            cursor: grabbing;
+        }
+
+    bui-component[data-bui-component="draggable"][data-bui-disabled="true"] .bui-draggable {
+        cursor: not-allowed;
+    }

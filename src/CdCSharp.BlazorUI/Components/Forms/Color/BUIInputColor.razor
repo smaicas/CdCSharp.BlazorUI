@@ -1,0 +1,174 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@inherits BUIInputComponentBase<CssColor>
+@implements IHasSize
+@implements IHasDensity
+
+<bui-component @attributes="ComputedAttributes">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="bui-input__label">
+            @Label
+            @if (Required)
+            {
+                <span class="bui-input__required">*</span>
+            }
+        </label>
+    }
+
+    <div class="bui-input-color__container">
+        <button type="button"
+                class="bui-input-color__trigger"
+                @onclick="TogglePicker"
+                disabled="@IsDisabled">
+            <div class="bui-input-color__preview-wrapper">
+                <div class="bui-input-color__chess">
+                    <div class="bui-input-color__preview"
+                         style="background-color: @(CurrentValue?.ToString(ColorOutputFormats.Rgba) ?? "transparent");">
+                    </div>
+                </div>
+            </div>
+            <span class="bui-input-color__value">
+                @(CurrentValue?.ToString(GetDisplayFormat()) ?? Placeholder)
+            </span>
+        </button>
+
+        @if (Clearable && CurrentValue != null && !IsDisabled)
+        {
+            <button type="button"
+                    class="bui-input-color__clear"
+                    @onclick="Clear"
+                    @onclick:stopPropagation="true">
+                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
+            </button>
+        }
+    </div>
+
+    @if (_isOpen)
+    {
+        @if (DisplayMode == ColorPickerDisplayMode.Modal)
+        {
+            <div class="bui-input-color__overlay" @onclick="ClosePicker"></div>
+            <div class="bui-input-color__modal" @onclick:stopPropagation="true">
+                <BUIColorPicker @bind-Value="CurrentValue"
+                                OutputFormat="OutputFormat"
+                                SelectionWidth="SelectionWidth"
+                                SelectionHeight="SelectionHeight"
+                                Size="Size"
+                                ShowActions="true"
+                                RevertText="@RevertText"
+                                OnRevert="HandleRevert" />
+            </div>
+        }
+        else
+        {
+            <div class="bui-input-color__dropdown-overlay" @onclick="ClosePicker"></div>
+            <div class="bui-input-color__dropdown" @onclick:stopPropagation="true">
+                <BUIColorPicker @bind-Value="CurrentValue"
+                                OutputFormat="OutputFormat"
+                                SelectionWidth="SelectionWidth"
+                                SelectionHeight="SelectionHeight"
+                                Size="Size"
+                                ShowActions="true"
+                                RevertText="@RevertText"
+                                OnRevert="HandleRevert" />
+            </div>
+        }
+    }
+
+    @if (IsError && EditContext != null && ValueExpression != null)
+    {
+        <div class="bui-input__validation">
+            <ValidationMessage For="ValueExpression" />
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(HelperText))
+    {
+        <div class="bui-input__helper-text">
+            @HelperText
+        </div>
+    }
+</bui-component>
+
+@code {
+    private bool _isOpen;
+    private CssColor? _colorBeforeOpen;
+
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public string? Placeholder { get; set; } = "Select color...";
+    [Parameter] public bool Clearable { get; set; }
+    [Parameter] public ColorPickerDisplayMode DisplayMode { get; set; } = ColorPickerDisplayMode.Dropdown;
+    [Parameter] public ColorPickerOutputFormat OutputFormat { get; set; } = ColorPickerOutputFormat.Hex;
+    [Parameter] public string RevertText { get; set; } = "Revert";
+    [Parameter] public int SelectionWidth { get; set; } = 200;
+    [Parameter] public int SelectionHeight { get; set; } = 150;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    private void TogglePicker()
+    {
+        if (IsDisabled) return;
+
+        if (!_isOpen)
+        {
+            _colorBeforeOpen = CurrentValue;
+        }
+        _isOpen = !_isOpen;
+    }
+
+    private void ClosePicker()
+    {
+        _isOpen = false;
+    }
+
+    private void HandleRevert()
+    {
+        CurrentValue = _colorBeforeOpen;
+    }
+
+    private void Clear()
+    {
+        CurrentValue = null!;
+        _colorBeforeOpen = null;
+    }
+
+    private ColorOutputFormats GetDisplayFormat()
+    {
+        return OutputFormat switch
+        {
+            ColorPickerOutputFormat.Rgb => ColorOutputFormats.Rgba,
+            ColorPickerOutputFormat.Hsv => ColorOutputFormats.Rgba,
+            ColorPickerOutputFormat.Hex => ColorOutputFormats.HexA,
+            _ => ColorOutputFormats.HexA
+        };
+    }
+
+    protected override bool TryParseValueFromString(string? value, out CssColor result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            result = null!;
+            return true;
+        }
+
+        try
+        {
+            result = new CssColor(value);
+            return true;
+        }
+        catch
+        {
+            result = null!;
+            validationErrorMessage = $"'{value}' is not a valid color.";
+            return false;
+        }
+    }
+}

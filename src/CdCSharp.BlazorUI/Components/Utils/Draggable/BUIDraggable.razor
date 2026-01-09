@@ -1,0 +1,67 @@
+﻿@using CdCSharp.BlazorUI.Components.Utils.Draggable.JsInterop
+
+@namespace CdCSharp.BlazorUI.Components
+
+@inherits BUIComponentBase
+@implements IDraggableJsCallback
+@implements IAsyncDisposable
+
+<bui-component @attributes="ComputedAttributes">
+    <div @ref="_elementRef"
+         class="bui-draggable"
+         @onmousedown="HandleMouseDown"
+         @onmousedown:preventDefault="PreventDefault">
+        @ChildContent
+    </div>
+</bui-component>
+
+@code {
+    private readonly string _componentId = $"bui-draggable-{Guid.NewGuid():N}";
+    private ElementReference _elementRef;
+    private DraggableCallbacksRelay? _callbacksRelay;
+    private bool _isDragging;
+
+    [Inject] private IDraggableJsInterop JsInterop { get; set; } = default!;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback<DragEventArgs> OnDragStart { get; set; }
+    [Parameter] public EventCallback<DragEventArgs> OnDrag { get; set; }
+    [Parameter] public EventCallback<DragEventArgs> OnDragEnd { get; set; }
+    [Parameter] public bool PreventDefault { get; set; } = true;
+    [Parameter] public bool Disabled { get; set; }
+
+    private async Task HandleMouseDown(MouseEventArgs e)
+    {
+        if (Disabled) return;
+
+        _isDragging = true;
+        _callbacksRelay ??= new DraggableCallbacksRelay(this);
+
+        await JsInterop.StartDragAsync(_elementRef, _callbacksRelay.DotNetReference, _componentId);
+        await OnDragStart.InvokeAsync(new DragEventArgs { ClientX = e.ClientX, ClientY = e.ClientY });
+    }
+
+    async Task IDraggableJsCallback.OnMouseMove(double clientX, double clientY)
+    {
+        if (!_isDragging) return;
+        await OnDrag.InvokeAsync(new DragEventArgs { ClientX = clientX, ClientY = clientY });
+    }
+
+    async Task IDraggableJsCallback.OnMouseUp(double clientX, double clientY)
+    {
+        if (!_isDragging) return;
+
+        _isDragging = false;
+        await JsInterop.StopDragAsync(_componentId);
+        await OnDragEnd.InvokeAsync(new DragEventArgs { ClientX = clientX, ClientY = clientY });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_isDragging)
+        {
+            await JsInterop.StopDragAsync(_componentId);
+        }
+        _callbacksRelay?.Dispose();
+    }
+}
