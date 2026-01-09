@@ -1,4 +1,7 @@
-﻿@using System.Globalization
+﻿@* === Forms/DateAndTime/BUIInputDateTime.razor === *@
+
+@using System.Globalization
+@using CdCSharp.BlazorUI.Components.Layout
 @using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
@@ -36,7 +39,7 @@
                     @onclick="Clear"
                     @onclick:preventDefault="true"
                     @onclick:stopPropagation="true">
-                ✕
+                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
             </button>
         }
 
@@ -46,7 +49,7 @@
                 @onclick:preventDefault="true"
                 @onclick:stopPropagation="true"
                 disabled="@IsReadOnly">
-            📅
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
         </button>
     </div>
 
@@ -62,10 +65,15 @@
         <div class="bui-input-datetime__helper">@HelperText</div>
     }
 
-    @if (IsOpen)
-    {
-        <div class="picker-overlay" @onclick="HandleOverlayClick" @onclick:stopPropagation="true">
-            <div class="picker-modal" @onclick:stopPropagation="true">
+    <BUIDialog @bind-Open="_isPickerOpen"
+               Title="@GetPickerTitle()"
+               Closable="true"
+               CloseOnOverlayClick="true"
+               CloseOnEscape="true"
+               MinWidth="auto"
+               MaxWidth="fit-content">
+        <Content>
+            <div class="bui-input-datetime__picker-content">
                 @if (ShowDate)
                 {
                     <BUIDatePicker Value="DateValue"
@@ -81,16 +89,28 @@
                                    Density="Density" />
                 }
             </div>
-        </div>
-    }
+        </Content>
+        <Footer>
+            <BUIButton Text="Cancel"
+                       OnClick="() => _isPickerOpen = false"
+                       Variant="BUIButtonVariant.Default" />
+            <BUIButton Text="Apply"
+                       OnClick="ApplyPickerValue"
+                       BackgroundColor="BUIColor.Palette.Primary"
+                       Color="BUIColor.Palette.PrimaryContrast" />
+        </Footer>
+    </BUIDialog>
 </bui-component>
 
 @code {
-    private bool IsOpen;
+    private bool _isPickerOpen;
     private bool ShowDate;
     private bool ShowTime;
     private TValue? _initialValue;
     private BUIDateTimePattern? _patternRef;
+
+    private DateOnly _tempDateValue;
+    private TimeOnly _tempTimeValue;
 
     private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly TimeValue { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
@@ -170,7 +190,10 @@
             TimeValue = TimeOnly.FromDateTime(DateTime.Now);
         }
 
-        IsOpen = true;
+        _tempDateValue = DateValue;
+        _tempTimeValue = TimeValue;
+
+        _isPickerOpen = true;
     }
 
     private void Clear()
@@ -191,27 +214,30 @@
         }
     }
 
-    private void HandleOverlayClick()
-    {
-        IsOpen = false;
-    }
-
-    private async Task OnDateChanged(DateOnly? value)
+    private Task OnDateChanged(DateOnly? value)
     {
         if (value.HasValue)
         {
-            DateValue = value.Value;
-            await UpdateCurrentValue();
+            _tempDateValue = value.Value;
         }
+        return Task.CompletedTask;
     }
 
-    private async Task OnTimeChanged(TimeOnly? value)
+    private Task OnTimeChanged(TimeOnly? value)
     {
         if (value.HasValue)
         {
-            TimeValue = value.Value;
-            await UpdateCurrentValue();
+            _tempTimeValue = value.Value;
         }
+        return Task.CompletedTask;
+    }
+
+    private async Task ApplyPickerValue()
+    {
+        DateValue = _tempDateValue;
+        TimeValue = _tempTimeValue;
+        await UpdateCurrentValue();
+        _isPickerOpen = false;
     }
 
     private async Task UpdateCurrentValue()
@@ -229,6 +255,13 @@
 
         CurrentValue = (TValue?)newValue;
         await Task.CompletedTask;
+    }
+
+    private string GetPickerTitle()
+    {
+        if (ShowDate && ShowTime) return "Select Date & Time";
+        if (ShowDate) return "Select Date";
+        return "Select Time";
     }
 
     protected override string? FormatValueAsString(TValue? value)
@@ -310,7 +343,7 @@
         }
         catch (FormatException)
         {
-            validationErrorMessage = $"El valor '{value}' no coincide con el formato esperado ({Format}).";
+            validationErrorMessage = $"The value '{value}' does not match the expected format ({Format}).";
             return false;
         }
     }

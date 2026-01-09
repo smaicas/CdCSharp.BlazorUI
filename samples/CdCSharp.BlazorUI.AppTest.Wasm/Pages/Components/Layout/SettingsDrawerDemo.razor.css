@@ -1,0 +1,37 @@
+﻿/* === Shared/SettingsDrawerDemo.razor.css === */
+
+.settings-drawer-demo {
+    padding: 1rem;
+}
+
+    .settings-drawer-demo h3 {
+        margin: 0 0 1.5rem 0;
+        font-size: 1.25rem;
+    }
+
+.settings-drawer-demo__section {
+    margin-bottom: 1.5rem;
+}
+
+    .settings-drawer-demo__section h4 {
+        margin: 0 0 0.75rem 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .settings-drawer-demo__section > :not(h4) {
+        margin-bottom: 0.5rem;
+    }
+
+.settings-drawer-demo__actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .settings-drawer-demo__actions {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}

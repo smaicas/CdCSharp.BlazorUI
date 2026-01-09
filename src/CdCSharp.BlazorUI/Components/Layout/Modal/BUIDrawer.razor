@@ -1,0 +1,165 @@
+﻿@using CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIComponentBase
+@implements IModalJsCallback
+@implements IAsyncDisposable
+
+@inject IModalJsInterop JsInterop
+
+@if (Open)
+{
+    <div class="bui-drawer-standalone-host" @ref="_overlayRef">
+        <div class="bui-drawer-overlay @(_isClosing ? "bui-drawer-overlay--closing" : "")">
+        </div>
+
+        <div class="bui-drawer bui-drawer--@Position.ToString().ToLowerInvariant() @(_isClosing ? "bui-drawer--closing" : "")"
+             @ref="_drawerRef"
+             role="dialog"
+             aria-modal="true"
+             style="@GetDrawerStyle()">
+
+            @if (Header != null || Closable)
+            {
+                <div class="bui-drawer__header">
+                    @if (Header != null)
+                    {
+                        @Header
+                    }
+
+                    @if (Closable)
+                    {
+                        <button type="button"
+                                class="bui-drawer__close"
+                                @onclick="HandleCloseClick"
+                                aria-label="Close">
+                            <BUISvgIcon Icon="@BUIIcons.UI.Close" />
+                        </button>
+                    }
+                </div>
+            }
+
+            <div class="bui-drawer__content">
+                @ChildContent
+            </div>
+
+            @if (Footer != null)
+            {
+                <div class="bui-drawer__footer">
+                    @Footer
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private readonly string _drawerId = $"drawer-{Guid.NewGuid():N}";
+    private ElementReference _overlayRef;
+    private ElementReference _drawerRef;
+    private ModalCallbacksRelay? _callbacksRelay;
+    private bool _jsInitialized;
+    private bool _isClosing;
+
+    [Parameter] public bool Open { get; set; }
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
+    [Parameter] public RenderFragment? Header { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+
+    [Parameter] public DrawerPosition Position { get; set; } = DrawerPosition.Right;
+    [Parameter] public string Size { get; set; } = "300px";
+
+    [Parameter] public bool Closable { get; set; } = true;
+    [Parameter] public bool CloseOnOverlayClick { get; set; } = true;
+    [Parameter] public bool CloseOnEscape { get; set; } = true;
+
+    [Parameter] public BUITransitions? Transitions { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (Open && !_jsInitialized)
+        {
+            _callbacksRelay ??= new ModalCallbacksRelay(this);
+
+            await JsInterop.InitializeAsync(
+                _overlayRef,
+                _callbacksRelay.DotNetReference,
+                _drawerId,
+                CloseOnEscape,
+                CloseOnOverlayClick);
+
+            await JsInterop.TrapFocusAsync(_drawerRef);
+
+            _jsInitialized = true;
+        }
+        else if (!Open && _jsInitialized)
+        {
+            await CleanupJsAsync();
+        }
+    }
+
+    private string GetDrawerStyle()
+    {
+        return Position switch
+        {
+            DrawerPosition.Left or DrawerPosition.Right => $"width: {Size}",
+            DrawerPosition.Top or DrawerPosition.Bottom => $"height: {Size}",
+            _ => string.Empty
+        };
+    }
+
+    private async Task HandleCloseClick()
+    {
+        await CloseAsync();
+    }
+
+    private async Task CloseAsync()
+    {
+        _isClosing = true;
+        StateHasChanged();
+
+        await Task.Delay(200);
+
+        _isClosing = false;
+        Open = false;
+        await OpenChanged.InvokeAsync(false);
+    }
+
+    async Task IModalJsCallback.OnEscapePressed()
+    {
+        if (CloseOnEscape)
+        {
+            await CloseAsync();
+        }
+    }
+
+    async Task IModalJsCallback.OnOverlayClick()
+    {
+        if (CloseOnOverlayClick)
+        {
+            await CloseAsync();
+        }
+    }
+
+    private async Task CleanupJsAsync()
+    {
+        if (_jsInitialized)
+        {
+            await JsInterop.ReleaseFocusAsync();
+            await JsInterop.DisposeAsync(_drawerId);
+            _jsInitialized = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await CleanupJsAsync();
+        _callbacksRelay?.Dispose();
+    }
+}

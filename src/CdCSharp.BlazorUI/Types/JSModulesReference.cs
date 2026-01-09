@@ -10,4 +10,5 @@ public static class JSModulesReference
     public const string TextArea = "./_content/CdCSharp.BlazorUI/js/Types/TextArea/TextAreaInterop.min.js";
     public const string Draggable = "./_content/CdCSharp.BlazorUI/js/Types/Draggable/DraggableInterop.min.js";
     public const string ColorPicker = "./_content/CdCSharp.BlazorUI/js/Types/ColorPicker/ColorPickerInterop.min.js";
+    public const string Modal = "./_content/CdCSharp.BlazorUI/js/Types/Modal/ModalInterop.min.js";
 }

@@ -1,0 +1,107 @@
+﻿@* === Modal/BUIModalContainer.razor === *@
+
+@using CdCSharp.BlazorUI.Components.Layout.Modal
+@using Microsoft.AspNetCore.Components.Rendering
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+<div class="bui-modal-container @GetVisibilityClass() @GetAnimationClass()"
+     data-bui-modal-type="@Modal.Type.ToString().ToLowerInvariant()">
+
+    @if (Modal.Type == ModalType.Dialog)
+    {
+        <div class="bui-modal-dialog-wrapper" style="@GetDialogStyle()">
+            @RenderComponent()
+        </div>
+    }
+    else
+    {
+        <div class="bui-modal-drawer-wrapper @GetDrawerPositionClass()" style="@GetDrawerStyle()">
+            @RenderComponent()
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public ModalState Modal { get; set; } = default!;
+
+    private string GetVisibilityClass() =>
+        Modal.IsVisible ? "bui-modal-container--visible" : "bui-modal-container--hidden";
+
+    private string GetAnimationClass()
+    {
+        if (Modal.IsAnimatingOut)
+            return "bui-modal-container--closing";
+
+        return "bui-modal-container--opening";
+    }
+
+    private string GetDialogStyle()
+    {
+        if (Modal.Options is not DialogOptions options)
+            return string.Empty;
+
+        List<string> styles = [];
+
+        if (options.FullScreen)
+        {
+            styles.Add("width: 100vw");
+            styles.Add("height: 100vh");
+            styles.Add("max-width: 100vw");
+            styles.Add("max-height: 100vh");
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(options.MinWidth))
+                styles.Add($"min-width: {options.MinWidth}");
+            if (!string.IsNullOrEmpty(options.MaxWidth))
+                styles.Add($"max-width: {options.MaxWidth}");
+            if (!string.IsNullOrEmpty(options.MinHeight))
+                styles.Add($"min-height: {options.MinHeight}");
+            if (!string.IsNullOrEmpty(options.MaxHeight))
+                styles.Add($"max-height: {options.MaxHeight}");
+        }
+
+        return string.Join("; ", styles);
+    }
+
+    private string GetDrawerPositionClass()
+    {
+        if (Modal.Options is not DrawerOptions options)
+            return string.Empty;
+
+        return $"bui-modal-drawer--{options.Position.ToString().ToLowerInvariant()}";
+    }
+
+    private string GetDrawerStyle()
+    {
+        if (Modal.Options is not DrawerOptions options)
+            return string.Empty;
+
+        return options.Position switch
+        {
+            DrawerPosition.Left or DrawerPosition.Right => $"width: {options.Size}",
+            DrawerPosition.Top or DrawerPosition.Bottom => $"height: {options.Size}",
+            _ => string.Empty
+        };
+    }
+
+    private RenderFragment RenderComponent() => builder =>
+    {
+        builder.OpenComponent(0, Modal.ComponentType);
+
+        builder.AddAttribute(1, "ModalRef", Modal.Reference);
+
+        if (Modal.Parameters != null)
+        {
+            int seq = 2;
+            foreach (KeyValuePair<string, object?> param in Modal.Parameters)
+            {
+                builder.AddAttribute(seq++, param.Key, param.Value);
+            }
+        }
+
+        builder.CloseComponent();
+    };
+}

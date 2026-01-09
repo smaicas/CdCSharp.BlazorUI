@@ -2,6 +2,9 @@
 using CdCSharp.BlazorUI.Components.Forms.Color.JsInterop;
 using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
 using CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop;
+using CdCSharp.BlazorUI.Components.Layout;
+using CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop;
+using CdCSharp.BlazorUI.Components.Layout.Modal.Services;
 using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
 using CdCSharp.BlazorUI.Components.Utils;
 using CdCSharp.BlazorUI.Components.Utils.Draggable.JsInterop;
@@ -32,6 +35,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITextAreaJsInterop, TextAreaJsInterop>();
         services.AddScoped<IDraggableJsInterop, DraggableJsInterop>();
         services.AddScoped<IColorPickerJsInterop, ColorPickerJsInterop>();
+
+        // Modal
+        services.AddScoped<IModalService, ModalService>();
+        services.AddScoped<IModalJsInterop, ModalJsInterop>();
 
         return services;
     }

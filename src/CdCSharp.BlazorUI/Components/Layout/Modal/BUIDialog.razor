@@ -1,0 +1,195 @@
+﻿@* === Modal/Dialog/BUIDialog.razor === *@
+
+@using CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIComponentBase
+@implements IModalJsCallback
+@implements IAsyncDisposable
+
+@inject IModalJsInterop JsInterop
+
+@if (Open)
+{
+    <div class="bui-dialog-standalone-host" @ref="_overlayRef">
+        <div class="bui-dialog-overlay @(_isClosing ? "bui-dialog-overlay--closing" : "")">
+        </div>
+
+        <div class="bui-dialog @(_isClosing ? "bui-dialog--closing" : "")"
+             @ref="_dialogRef"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="@_titleId"
+             style="@GetDialogStyle()">
+            @if (Header != null || !string.IsNullOrEmpty(Title) || Closable)
+            {
+                <div class="bui-dialog__header">
+                    @if (Header != null)
+                    {
+                        @Header
+                    }
+                    else if (!string.IsNullOrEmpty(Title))
+                    {
+                        <h2 id="@_titleId" class="bui-dialog__title">@Title</h2>
+                    }
+
+                    @if (Closable)
+                    {
+                        <button type="button"
+                                class="bui-dialog__close"
+                                @onclick="HandleCloseClick"
+                                aria-label="Close">
+                            <BUISvgIcon Icon="@BUIIcons.UI.Close" />
+                        </button>
+                    }
+                </div>
+            }
+
+            @if (Content != null)
+            {
+                <div class="bui-dialog__content">
+                    @Content
+                </div>
+            }
+
+            @if (Footer != null)
+            {
+                <div class="bui-dialog__footer">
+                    @Footer
+                </div>
+            }
+        </div>
+    </div>
+
+}
+@code {
+    private readonly string _dialogId = $"dialog-{Guid.NewGuid():N}";
+    private readonly string _titleId = $"dialog-title-{Guid.NewGuid():N}";
+    private ElementReference _overlayRef;
+    private ElementReference _dialogRef;
+    private ModalCallbacksRelay? _callbacksRelay;
+    private bool _jsInitialized;
+    private bool _isClosing;
+    [Parameter] public bool Open { get; set; }
+    [Parameter] public EventCallback<bool> OpenChanged { get; set; }
+
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public RenderFragment? Header { get; set; }
+    [Parameter] public RenderFragment? Content { get; set; }
+    [Parameter] public RenderFragment? Footer { get; set; }
+
+    [Parameter] public bool Closable { get; set; } = true;
+    [Parameter] public bool CloseOnOverlayClick { get; set; } = true;
+    [Parameter] public bool CloseOnEscape { get; set; } = true;
+
+    [Parameter] public string? MinWidth { get; set; } = "300px";
+    [Parameter] public string? MaxWidth { get; set; } = "90vw";
+    [Parameter] public string? MinHeight { get; set; }
+    [Parameter] public string? MaxHeight { get; set; } = "90vh";
+    [Parameter] public bool FullScreen { get; set; }
+
+    [Parameter] public BUITransitions? Transitions { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (Open && !_jsInitialized)
+        {
+            _callbacksRelay ??= new ModalCallbacksRelay(this);
+
+            await JsInterop.InitializeAsync(
+                _overlayRef,
+                _callbacksRelay.DotNetReference,
+                _dialogId,
+                CloseOnEscape,
+                CloseOnOverlayClick);
+
+            await JsInterop.TrapFocusAsync(_dialogRef);
+
+            _jsInitialized = true;
+        }
+        else if (!Open && _jsInitialized)
+        {
+            await CleanupJsAsync();
+        }
+    }
+
+    private string GetDialogStyle()
+    {
+        List<string> styles = [];
+
+        if (FullScreen)
+        {
+            styles.Add("width: 100vw");
+            styles.Add("height: 100vh");
+            styles.Add("max-width: 100vw");
+            styles.Add("max-height: 100vh");
+            styles.Add("border-radius: 0");
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(MinWidth))
+                styles.Add($"min-width: {MinWidth}");
+            if (!string.IsNullOrEmpty(MaxWidth))
+                styles.Add($"max-width: {MaxWidth}");
+            if (!string.IsNullOrEmpty(MinHeight))
+                styles.Add($"min-height: {MinHeight}");
+            if (!string.IsNullOrEmpty(MaxHeight))
+                styles.Add($"max-height: {MaxHeight}");
+        }
+
+        return string.Join("; ", styles);
+    }
+
+    private async Task HandleCloseClick()
+    {
+        await CloseAsync();
+    }
+
+    private async Task CloseAsync()
+    {
+        _isClosing = true;
+        StateHasChanged();
+
+        await Task.Delay(150);
+
+        _isClosing = false;
+        Open = false;
+        await OpenChanged.InvokeAsync(false);
+    }
+
+    async Task IModalJsCallback.OnEscapePressed()
+    {
+        if (CloseOnEscape)
+        {
+            await CloseAsync();
+        }
+    }
+
+    async Task IModalJsCallback.OnOverlayClick()
+    {
+        if (CloseOnOverlayClick)
+        {
+            await CloseAsync();
+        }
+    }
+
+    private async Task CleanupJsAsync()
+    {
+        if (_jsInitialized)
+        {
+            await JsInterop.ReleaseFocusAsync();
+            await JsInterop.DisposeAsync(_dialogId);
+            _jsInitialized = false;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await CleanupJsAsync();
+        _callbacksRelay?.Dispose();
+    }
+}

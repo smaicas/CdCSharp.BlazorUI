@@ -1,0 +1,225 @@
+﻿/* === Modal/Drawer/BUIDrawer.razor.css === */
+
+.bui-drawer-standalone-host {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+}
+
+.bui-drawer-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    animation: bui-drawer-overlay-in 200ms ease-out forwards;
+}
+
+.bui-drawer-overlay--closing {
+    animation: bui-drawer-overlay-out 200ms ease-in forwards;
+}
+
+.bui-drawer {
+    position: absolute;
+    background: var(--palette-surface);
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.bui-drawer--left {
+    left: 0;
+    top: 0;
+    bottom: 0;
+    animation: bui-drawer-left-in 250ms ease-out forwards;
+}
+
+    .bui-drawer--left.bui-drawer--closing {
+        animation: bui-drawer-left-out 200ms ease-in forwards;
+    }
+
+.bui-drawer--right {
+    right: 0;
+    top: 0;
+    bottom: 0;
+    animation: bui-drawer-right-in 250ms ease-out forwards;
+}
+
+    .bui-drawer--right.bui-drawer--closing {
+        animation: bui-drawer-right-out 200ms ease-in forwards;
+    }
+
+.bui-drawer--top {
+    top: 0;
+    left: 0;
+    right: 0;
+    animation: bui-drawer-top-in 250ms ease-out forwards;
+}
+
+    .bui-drawer--top.bui-drawer--closing {
+        animation: bui-drawer-top-out 200ms ease-in forwards;
+    }
+
+.bui-drawer--bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    animation: bui-drawer-bottom-in 250ms ease-out forwards;
+}
+
+    .bui-drawer--bottom.bui-drawer--closing {
+        animation: bui-drawer-bottom-out 200ms ease-in forwards;
+    }
+
+.bui-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .bui-drawer__header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.bui-drawer__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: all 150ms ease;
+    margin-left: auto;
+}
+
+    .bui-drawer__close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+[data-theme="dark"] .bui-drawer__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.bui-drawer__content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+}
+
+.bui-drawer__footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .bui-drawer__footer {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes bui-drawer-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bui-drawer-overlay-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes bui-drawer-left-in {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes bui-drawer-left-out {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes bui-drawer-right-in {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes bui-drawer-right-out {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes bui-drawer-top-in {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-drawer-top-out {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes bui-drawer-bottom-in {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-drawer-bottom-out {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(100%);
+    }
+}

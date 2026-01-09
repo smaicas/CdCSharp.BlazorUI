@@ -40,6 +40,7 @@
 	  <Folder Include="Types\Clipboard\" />
 	  <Folder Include="Types\Draggable\" />
 	  <Folder Include="Types\ColorPicker\" />
+	  <Folder Include="Types\Modal\" />
 	  <Folder Include="Types\TextArea\" />
 	</ItemGroup>
 

@@ -1,4 +1,6 @@
-﻿bui-component[data-bui-component="input-color"] {
+﻿/* === Forms/Color/BUIInputColor.razor.css === */
+
+bui-component[data-bui-component="input-color"] {
     display: inline-flex;
     flex-direction: column;
     gap: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
@@ -107,26 +109,6 @@ bui-component[data-bui-component="input-color"] .bui-input-color__dropdown {
     left: 0;
     margin-top: 4px;
     z-index: 1000;
-}
-
-/* Modal */
-bui-component[data-bui-component="input-color"] .bui-input-color__overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(4px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-bui-component[data-bui-component="input-color"] .bui-input-color__modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 10000;
 }
 
 /* Size variations */

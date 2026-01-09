@@ -1,0 +1,143 @@
+﻿/* === Modal/Dialog/BUIDialog.razor.css === */
+
+.bui-dialog-standalone-host {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bui-dialog-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    animation: bui-dialog-overlay-in 200ms ease-out forwards;
+}
+
+.bui-dialog-overlay--closing {
+    animation: bui-dialog-overlay-out 150ms ease-in forwards;
+}
+
+.bui-dialog {
+    position: relative;
+    background: var(--palette-surface);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: bui-dialog-in 200ms ease-out forwards;
+}
+
+.bui-dialog--closing {
+    animation: bui-dialog-out 150ms ease-in forwards;
+}
+
+.bui-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .bui-dialog__header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.bui-dialog__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.bui-dialog__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: all 150ms ease;
+}
+
+    .bui-dialog__close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+[data-theme="dark"] .bui-dialog__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.bui-dialog__content {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.bui-dialog__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .bui-dialog__footer {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes bui-dialog-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bui-dialog-overlay-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes bui-dialog-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bui-dialog-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}

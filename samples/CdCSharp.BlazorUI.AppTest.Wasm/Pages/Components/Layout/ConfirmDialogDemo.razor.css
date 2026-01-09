@@ -1,0 +1,16 @@
+﻿/* === Shared/ConfirmDialogDemo.razor.css === */
+
+.confirm-dialog-demo {
+    padding: 1rem;
+}
+
+.confirm-dialog-demo__message {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.confirm-dialog-demo__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}

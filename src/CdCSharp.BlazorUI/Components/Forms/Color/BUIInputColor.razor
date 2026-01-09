@@ -1,4 +1,7 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+﻿@* === Forms/Color/BUIInputColor.razor === *@
+
+@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Css
 
@@ -52,17 +55,24 @@
     {
         @if (DisplayMode == ColorPickerDisplayMode.Modal)
         {
-            <div class="bui-input-color__overlay" @onclick="ClosePicker"></div>
-            <div class="bui-input-color__modal" @onclick:stopPropagation="true">
-                <BUIColorPicker @bind-Value="CurrentValue"
-                                OutputFormat="OutputFormat"
-                                SelectionWidth="SelectionWidth"
-                                SelectionHeight="SelectionHeight"
-                                Size="Size"
-                                ShowActions="true"
-                                RevertText="@RevertText"
-                                OnRevert="HandleRevert" />
-            </div>
+            <BUIDialog @bind-Open="_isOpen"
+                       Title="Select Color"
+                       Closable="true"
+                       CloseOnOverlayClick="true"
+                       CloseOnEscape="true"
+                       MinWidth="auto"
+                       MaxWidth="fit-content">
+                <Content>
+                    <BUIColorPicker @bind-Value="CurrentValue"
+                                    OutputFormat="OutputFormat"
+                                    SelectionWidth="SelectionWidth"
+                                    SelectionHeight="SelectionHeight"
+                                    Size="Size"
+                                    ShowActions="true"
+                                    RevertText="@RevertText"
+                                    OnRevert="HandleRevert" />
+                </Content>
+            </BUIDialog>
         }
         else
         {

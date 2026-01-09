@@ -1,0 +1,221 @@
+﻿/* === Modal/BUIModalContainer.razor.css === */
+
+.bui-modal-container {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.bui-modal-container--visible {
+    z-index: 1;
+}
+
+.bui-modal-container--hidden {
+    z-index: 0;
+    visibility: hidden;
+}
+
+/* Dialog wrapper */
+.bui-modal-dialog-wrapper {
+    background: var(--palette-surface);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.bui-modal-container--opening .bui-modal-dialog-wrapper {
+    animation: bui-dialog-in 200ms ease-out forwards;
+}
+
+.bui-modal-container--closing .bui-modal-dialog-wrapper {
+    animation: bui-dialog-out 150ms ease-in forwards;
+}
+
+@keyframes bui-dialog-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bui-dialog-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+/* Drawer wrapper */
+.bui-modal-drawer-wrapper {
+    position: fixed;
+    background: var(--palette-surface);
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+    pointer-events: auto;
+    overflow: auto;
+}
+
+.bui-modal-drawer--left {
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.bui-modal-drawer--right {
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.bui-modal-drawer--top {
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.bui-modal-drawer--bottom {
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Drawer animations */
+.bui-modal-container--opening .bui-modal-drawer--left {
+    animation: bui-drawer-left-in 250ms ease-out forwards;
+}
+
+.bui-modal-container--closing .bui-modal-drawer--left {
+    animation: bui-drawer-left-out 200ms ease-in forwards;
+}
+
+.bui-modal-container--opening .bui-modal-drawer--right {
+    animation: bui-drawer-right-in 250ms ease-out forwards;
+}
+
+.bui-modal-container--closing .bui-modal-drawer--right {
+    animation: bui-drawer-right-out 200ms ease-in forwards;
+}
+
+.bui-modal-container--opening .bui-modal-drawer--top {
+    animation: bui-drawer-top-in 250ms ease-out forwards;
+}
+
+.bui-modal-container--closing .bui-modal-drawer--top {
+    animation: bui-drawer-top-out 200ms ease-in forwards;
+}
+
+.bui-modal-container--opening .bui-modal-drawer--bottom {
+    animation: bui-drawer-bottom-in 250ms ease-out forwards;
+}
+
+.bui-modal-container--closing .bui-modal-drawer--bottom {
+    animation: bui-drawer-bottom-out 200ms ease-in forwards;
+}
+
+@keyframes bui-drawer-left-in {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes bui-drawer-left-out {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes bui-drawer-right-in {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes bui-drawer-right-out {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes bui-drawer-top-in {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-drawer-top-out {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes bui-drawer-bottom-in {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-drawer-bottom-out {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(100%);
+    }
+}
+
+/* Hidden state transitions */
+.bui-modal-container--hidden .bui-modal-dialog-wrapper {
+    transform: scale(0.9);
+    opacity: 0.3;
+    filter: blur(2px);
+    transition: all 200ms ease;
+}
+
+.bui-modal-container--hidden .bui-modal-drawer-wrapper {
+    opacity: 0.3;
+    filter: blur(2px);
+    transition: all 200ms ease;
+}

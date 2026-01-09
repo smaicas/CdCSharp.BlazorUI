@@ -19,7 +19,9 @@
 
         <main class="doc-content">
             <div class="doc-content__wrapper">
-                @Body
+                @{
+                    base.BuildRenderTree(__builder);
+                }
             </div>
         </main>
     </div>
