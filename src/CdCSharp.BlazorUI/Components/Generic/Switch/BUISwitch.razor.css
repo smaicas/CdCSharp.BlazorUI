@@ -28,7 +28,7 @@
         height: var(--bui-switch-track-height);
         padding: 0.25rem;
         border-radius: 2rem;
-        background: var(--bui-input-switch-track-bg, #808080);
+        background: var(--bui-switch-track-bg, var(--palette-background, #808080));
         position: relative;
         display: flex;
         align-items: center;
@@ -40,7 +40,7 @@
 
     bui-component[data-bui-component="switch"][data-bui-checked="true"]
     .bui-switch__track {
-        background: var(--bui-input-switch-track-bg-checked, var(--palette-primary));
+        background: var(--bui-switch-track-bg-checked, var(--palette-background, #808080));
     }
 
     /* ===== Thumb ===== */
@@ -48,7 +48,8 @@
     bui-component[data-bui-component="switch"] .bui-switch__thumb {
         width: var(--bui-switch-thumb-size);
         height: var(--bui-switch-thumb-size);
-        background: white;
+        color: var(--palette-primarycontrast);
+        background-color: var(--palette-primary);
         border-radius: 50%;
         display: flex;
         align-items: center;

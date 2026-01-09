@@ -2,6 +2,7 @@
 
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -22,11 +23,15 @@
         <div class="bui-switch__thumb">
             @if (IsChecked && IconOption2 != null)
             {
-                <span class="bui-switch__icon">@IconOption2</span>
+                <span class="bui-switch__icon">
+                    <BUISvgIcon Icon="@IconOption2" />
+                </span>
             }
             else if (!IsChecked && IconOption1 != null)
             {
-                <span class="bui-switch__icon">@IconOption1</span>
+                <span class="bui-switch__icon">
+                    <BUISvgIcon Icon="@IconOption1" />
+                </span>
             }
         </div>
     </div>
@@ -60,6 +65,8 @@
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? IconOption1 { get; set; }
     [Parameter] public string? IconOption2 { get; set; }
+    [Parameter] public CssColor? TrackColorInactive { get; set; }
+    [Parameter] public CssColor? TrackColorActive { get; set; }
 
     protected bool IsChecked =>
         EqualityComparer<TValue>.Default.Equals(Value, Option2);
@@ -76,6 +83,15 @@
 
         Value = newValue;
         await ValueChanged.InvokeAsync(newValue);
+    }
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        if (TrackColorInactive != null)
+            cssVariables["--bui-switch-track-bg"] = TrackColorInactive.ToString(ColorOutputFormats.Rgba);
+        if (TrackColorActive != null)
+            cssVariables["--bui-switch-track-bg-checked"] = TrackColorActive.ToString(ColorOutputFormats.Rgba);
+
     }
 }
 

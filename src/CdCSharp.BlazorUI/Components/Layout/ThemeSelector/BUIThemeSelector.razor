@@ -58,25 +58,14 @@
 
     private RenderFragment RenderSunMoon() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <BUIInputSwitch></BUIInputSwitch>
-
-            <button @onclick="ToggleLightDark"
-                    aria-label="@($"Switch to {GetOppositeTheme()} mode")">
-                <span class="bui-theme-switch__sun-moon-container">
-                    <span class="bui-theme-switch__icon-wrapper">
-                        @if (_currentTheme == "light")
-                        {
-                            <span class="bui-theme-switch__sun">☀️</span>
-                        }
-                        else
-                        {
-                            <span class="bui-theme-switch__moon">🌙</span>
-                        }
-                    </span>
-                </span>
-            </button>
-        </bui-component>
+        <BUISwitch TValue="string"
+                   @attributes="ComputedAttributes"
+                   Option1="@("light")"
+                   Option2="@("dark")"
+                   IconOption1="@BUIIcons.MaterialIconsTwoTone.i_light_mode"
+                   IconOption2="@BUIIcons.MaterialIconsTwoTone.i_dark_mode"
+                   Value="_currentTheme"
+                   ValueChanged="OnSunMoonSwitchChanged" />
     };
 
     private async Task SwitchTheme()
@@ -101,10 +90,14 @@
         StateHasChanged();
     }
 
-    private async Task ToggleLightDark()
+    private async Task OnSunMoonSwitchChanged(string requestedTheme)
     {
-        // For SunMoon variant, always toggle between light and dark
+        // Evita doble toggle si por algún motivo llega el mismo valor
+        if (requestedTheme == _currentTheme)
+            return;
+
         string[] themes = { "light", "dark" };
+
         string newTheme = await ThemeInterop.ToggleThemeAsync(themes);
         _currentTheme = newTheme;
 
