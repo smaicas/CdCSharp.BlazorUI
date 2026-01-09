@@ -82,11 +82,18 @@
         <pre class="demo-output">@(string.IsNullOrEmpty(Model.Comment) ? "(empty)" : Model.Comment)</pre>
     </section>
 
+    <!-- FULL WIDTH -->
+    <section class="doc-section">
+        <h2>Full Width</h2>
+        <ComponentDemo Definition="@FullWidthDemo" />
+    </section>
+
     <!-- PROPERTIES -->
     <section class="doc-section">
         <h2>Properties</h2>
         <PropertyTable Properties="@Properties" />
     </section>
+
 </div>
 
 @code {
@@ -270,61 +277,61 @@
     private RenderFragment RenderBasic() => __builder =>
     {
         <BUIInputTextArea Label="Comments"
-                     Placeholder="Enter your comments here..."
-                     @bind-Value="Model.Comment" />
+                          Placeholder="Enter your comments here..."
+                          @bind-Value="Model.Comment" />
     };
 
     private RenderFragment RenderVariants() => __builder =>
     {
         <div class="demo-column">
             <BUIInputTextArea Label="Outlined"
-                         Variant="BUIInputTextAreaVariant.Outlined"
-                         Placeholder="Outlined variant..."
-                         @bind-Value="Model.Comment" />
+                              Variant="BUIInputTextAreaVariant.Outlined"
+                              Placeholder="Outlined variant..."
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Filled"
-                         Variant="BUIInputTextAreaVariant.Filled"
-                         Placeholder="Filled variant..."
-                         @bind-Value="Model.Comment" />
+                              Variant="BUIInputTextAreaVariant.Filled"
+                              Placeholder="Filled variant..."
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Standard"
-                         Variant="BUIInputTextAreaVariant.Standard"
-                         Placeholder="Standard variant..."
-                         @bind-Value="Model.Comment" />
+                              Variant="BUIInputTextAreaVariant.Standard"
+                              Placeholder="Standard variant..."
+                              @bind-Value="Model.Comment" />
         </div>
     };
 
     private RenderFragment RenderAutoResize() => __builder =>
     {
         <BUIInputTextArea Label="Auto-resize enabled"
-                     Placeholder="Start typing and watch it grow..."
-                     AutoResize="true"
-                     Resize="TextAreaResize.None"
-                     @bind-Value="Model.Comment" />
+                          Placeholder="Start typing and watch it grow..."
+                          AutoResize="true"
+                          Resize="TextAreaResize.None"
+                          @bind-Value="Model.Comment" />
     };
 
     private RenderFragment RenderResizeModes() => __builder =>
     {
         <div class="demo-column">
             <BUIInputTextArea Label="None"
-                         Resize="TextAreaResize.None"
-                         HelperText="User cannot resize"
-                         @bind-Value="Model.Comment" />
+                              Resize="TextAreaResize.None"
+                              HelperText="User cannot resize"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Vertical"
-                         Resize="TextAreaResize.Vertical"
-                         HelperText="Resize vertically only"
-                         @bind-Value="Model.Comment" />
+                              Resize="TextAreaResize.Vertical"
+                              HelperText="Resize vertically only"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Horizontal"
-                         Resize="TextAreaResize.Horizontal"
-                         HelperText="Resize horizontally only"
-                         @bind-Value="Model.Comment" />
+                              Resize="TextAreaResize.Horizontal"
+                              HelperText="Resize horizontally only"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Both"
-                         Resize="TextAreaResize.Both"
-                         HelperText="Resize in both directions"
-                         @bind-Value="Model.Comment" />
+                              Resize="TextAreaResize.Both"
+                              HelperText="Resize in both directions"
+                              @bind-Value="Model.Comment" />
         </div>
     };
 
@@ -332,16 +339,16 @@
     {
         <div class="demo-column">
             <BUIInputTextArea Label="Small"
-                         Size="SizeEnum.Small"
-                         @bind-Value="Model.Comment" />
+                              Size="SizeEnum.Small"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Medium"
-                         Size="SizeEnum.Medium"
-                         @bind-Value="Model.Comment" />
+                              Size="SizeEnum.Medium"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Large"
-                         Size="SizeEnum.Large"
-                         @bind-Value="Model.Comment" />
+                              Size="SizeEnum.Large"
+                              @bind-Value="Model.Comment" />
         </div>
     };
 
@@ -349,16 +356,16 @@
     {
         <div class="demo-column">
             <BUIInputTextArea Label="Comfortable"
-                         Density="DensityEnum.Comfortable"
-                         @bind-Value="Model.Comment" />
+                              Density="DensityEnum.Comfortable"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Standard"
-                         Density="DensityEnum.Standard"
-                         @bind-Value="Model.Comment" />
+                              Density="DensityEnum.Standard"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Compact"
-                         Density="DensityEnum.Compact"
-                         @bind-Value="Model.Comment" />
+                              Density="DensityEnum.Compact"
+                              @bind-Value="Model.Comment" />
         </div>
     };
 
@@ -366,37 +373,37 @@
     {
         <div class="demo-column">
             <BUIInputTextArea Label="3 rows"
-                         Rows="3"
-                         @bind-Value="Model.Comment" />
+                              Rows="3"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="6 rows"
-                         Rows="6"
-                         @bind-Value="Model.Comment" />
+                              Rows="6"
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="10 rows"
-                         Rows="10"
-                         @bind-Value="Model.Comment" />
+                              Rows="10"
+                              @bind-Value="Model.Comment" />
         </div>
     };
 
     private RenderFragment RenderMaxLength() => __builder =>
     {
         <BUIInputTextArea Label="Max 100 characters"
-                     MaxLength="100"
-                     HelperText="@($"{Model.Comment?.Length ?? 0}/100 characters")"
-                     @bind-Value="Model.Comment" />
+                          MaxLength="100"
+                          HelperText="@($"{Model.Comment?.Length ?? 0}/100 characters")"
+                          @bind-Value="Model.Comment" />
     };
 
     private RenderFragment RenderStates() => __builder =>
     {
         <div class="demo-column">
             <BUIInputTextArea Label="ReadOnly"
-                         ReadOnly
-                         @bind-Value="Model.Comment" />
+                              ReadOnly
+                              @bind-Value="Model.Comment" />
 
             <BUIInputTextArea Label="Disabled"
-                         Disabled
-                         @bind-Value="Model.Comment" />
+                              Disabled
+                              @bind-Value="Model.Comment" />
         </div>
     };
 
@@ -406,10 +413,39 @@
             <DataAnnotationsValidator />
 
             <BUIInputTextArea Label="Validated comment"
-                         HelperText="Between 10 and 500 characters"
-                         Required
-                         @bind-Value="Model.ValidatedComment" />
+                              HelperText="Between 10 and 500 characters"
+                              Required
+                              @bind-Value="Model.ValidatedComment" />
         </EditForm>
+    };
+
+    private ComponentDemoDefinition FullWidthDemo => new()
+    {
+        Demo = RenderFullWidth(),
+        Code = """
+<BUIInputTextArea Label="Default width"
+             Placeholder="Normal width textarea..."
+             @bind-Value="model.Comment" />
+
+<BUIInputTextArea Label="Full width"
+             FullWidth="true"
+             Placeholder="This textarea spans the full container width..."
+             @bind-Value="model.Comment" />
+"""
+    };
+
+    private RenderFragment RenderFullWidth() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputTextArea Label="Default width"
+                              Placeholder="Normal width textarea..."
+                              @bind-Value="Model.Comment" />
+
+            <BUIInputTextArea Label="Full width"
+                              FullWidth="true"
+                              Placeholder="This textarea spans the full container width..."
+                              @bind-Value="Model.Comment" />
+        </div>
     };
 
     /* ===================== PROPERTIES ===================== */

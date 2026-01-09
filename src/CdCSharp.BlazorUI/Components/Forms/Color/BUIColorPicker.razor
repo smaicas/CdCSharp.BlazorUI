@@ -10,8 +10,8 @@
 @implements IAsyncDisposable
 
 <bui-component @attributes="ComputedAttributes">
-    <div class="bui-colorpicker">
-        <!-- Selection Box (Saturation/Value) -->
+    <!-- Selection Box (Saturation/Value) -->
+    <div class="bui-colorpicker__selection-wrapper">
         <BUIDraggable OnDrag="HandleSelectionDrag" OnDragEnd="HandleSelectionDrag">
             <div @ref="_selectionRef"
                  class="bui-colorpicker__selection"
@@ -26,7 +26,10 @@
                 </div>
             </div>
         </BUIDraggable>
+    </div>
 
+    <!-- Sliders -->
+    <div class="bui-colorpicker__sliders">
         <!-- Hue Slider -->
         <div class="bui-colorpicker__slider">
             <input type="range"
@@ -37,108 +40,114 @@
         </div>
 
         <!-- Alpha Slider -->
-        <div class="bui-colorpicker__slider">
-            <div class="bui-colorpicker__alpha-track">
-                <input type="range"
-                       class="bui-colorpicker__alpha-input"
-                       style="background: linear-gradient(to right, transparent, @GetOpaqueColor());"
-                       min="0" max="255" step="1"
-                       value="@_alpha"
-                       @oninput="HandleAlphaChange" />
+        <div class="bui-colorpicker__alpha-slider">
+            <div class="bui-colorpicker__alpha-chess"></div>
+            <div class="bui-colorpicker__alpha-gradient"
+                 style="background: linear-gradient(to right, transparent, @GetOpaqueColor());"></div>
+            <input type="range"
+                   class="bui-colorpicker__alpha-input"
+                   min="0" max="255" step="1"
+                   value="@_alpha"
+                   @oninput="HandleAlphaChange" />
+        </div>
+    </div>
+
+    <!-- Color Inputs -->
+    <div class="bui-colorpicker__inputs">
+        @switch (OutputFormat)
+        {
+            case ColorPickerOutputFormat.Hsv:
+                <div class="bui-colorpicker__input-group">
+                    <input type="number" min="0" max="360" step="1"
+                           value="@_hsvColor.Hue"
+                           @onchange="e => SetHue(e)" />
+                    <span>H</span>
+                </div>
+                <div class="bui-colorpicker__input-group">
+                    <input type="number" min="0" max="100" step="1"
+                           value="@((int)(_hsvColor.Saturation * 100))"
+                           @onchange="e => SetSaturation(e)" />
+                    <span>S</span>
+                </div>
+                <div class="bui-colorpicker__input-group">
+                    <input type="number" min="0" max="100" step="1"
+                           value="@((int)(_hsvColor.Value * 100))"
+                           @onchange="e => SetValue(e)" />
+                    <span>V</span>
+                </div>
+                <div class="bui-colorpicker__input-group bui-colorpicker__input-group--alpha">
+                    <input type="number" min="0" max="255" step="1"
+                           value="@_alpha"
+                           @onchange="e => SetAlpha(e)" />
+                    <span>A</span>
+                </div>
+                break;
+
+            case ColorPickerOutputFormat.Hex:
+                <div class="bui-colorpicker__input-group bui-colorpicker__input-group--hex">
+                    <input type="text"
+                           value="@GetCurrentColor().ToString(ColorOutputFormats.HexA)"
+                           @onchange="e => SetHex(e)" />
+                    <span>HEX</span>
+                </div>
+                break;
+
+            default:
+                <div class="bui-colorpicker__input-group">
+                    <input type="number" min="0" max="255" step="1"
+                           value="@GetCurrentColor().R"
+                           @onchange="e => SetRgb(e, 0)" />
+                    <span>R</span>
+                </div>
+                <div class="bui-colorpicker__input-group">
+                    <input type="number" min="0" max="255" step="1"
+                           value="@GetCurrentColor().G"
+                           @onchange="e => SetRgb(e, 1)" />
+                    <span>G</span>
+                </div>
+                <div class="bui-colorpicker__input-group">
+                    <input type="number" min="0" max="255" step="1"
+                           value="@GetCurrentColor().B"
+                           @onchange="e => SetRgb(e, 2)" />
+                    <span>B</span>
+                </div>
+                <div class="bui-colorpicker__input-group bui-colorpicker__input-group--alpha">
+                    <input type="number" min="0" max="255" step="1"
+                           value="@_alpha"
+                           @onchange="e => SetAlpha(e)" />
+                    <span>A</span>
+                </div>
+                break;
+        }
+
+        <button type="button"
+                class="bui-colorpicker__format-btn"
+                @onclick="CycleFormat"
+                title="Change format">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_swap_vert" Size="SizeEnum.Small" />
+        </button>
+    </div>
+
+    <!-- Preview -->
+    <div class="bui-colorpicker__preview">
+        <div class="bui-colorpicker__preview-chess">
+            <div class="bui-colorpicker__preview-color"
+                 style="background-color: @GetCurrentColor().ToString(ColorOutputFormats.Rgba);">
             </div>
         </div>
+    </div>
 
-        <!-- Color Inputs -->
-        <div class="bui-colorpicker__inputs">
-            @switch (OutputFormat)
-            {
-                case ColorPickerOutputFormat.Hsv:
-                    <div class="bui-colorpicker__input-group">
-                        <input type="number" min="0" max="360" step="1"
-                               value="@_hsvColor.Hue"
-                               @onchange="e => SetHue(e)" />
-                        <span>H</span>
-                    </div>
-                    <div class="bui-colorpicker__input-group">
-                        <input type="number" min="0" max="100" step="1"
-                               value="@((int)(_hsvColor.Saturation * 100))"
-                               @onchange="e => SetSaturation(e)" />
-                        <span>S</span>
-                    </div>
-                    <div class="bui-colorpicker__input-group">
-                        <input type="number" min="0" max="100" step="1"
-                               value="@((int)(_hsvColor.Value * 100))"
-                               @onchange="e => SetValue(e)" />
-                        <span>V</span>
-                    </div>
-                    break;
-
-                case ColorPickerOutputFormat.Hex:
-                    <div class="bui-colorpicker__input-group bui-colorpicker__input-group--hex">
-                        <input type="text"
-                               value="@GetCurrentColor().ToString(ColorOutputFormats.HexA)"
-                               @onchange="e => SetHex(e)" />
-                        <span>HEX</span>
-                    </div>
-                    break;
-
-                default:
-                    <div class="bui-colorpicker__input-group">
-                        <input type="number" min="0" max="255" step="1"
-                               value="@GetCurrentColor().R"
-                               @onchange="e => SetRgb(e, 0)" />
-                        <span>R</span>
-                    </div>
-                    <div class="bui-colorpicker__input-group">
-                        <input type="number" min="0" max="255" step="1"
-                               value="@GetCurrentColor().G"
-                               @onchange="e => SetRgb(e, 1)" />
-                        <span>G</span>
-                    </div>
-                    <div class="bui-colorpicker__input-group">
-                        <input type="number" min="0" max="255" step="1"
-                               value="@GetCurrentColor().B"
-                               @onchange="e => SetRgb(e, 2)" />
-                        <span>B</span>
-                    </div>
-                    break;
-            }
-
-            <div class="bui-colorpicker__input-group">
-                <input type="number" min="0" max="255" step="1"
-                       value="@_alpha"
-                       @onchange="e => SetAlpha(e)" />
-                <span>A</span>
-            </div>
-
+    <!-- Actions -->
+    @if (ShowActions)
+    {
+        <div class="bui-colorpicker__actions">
             <button type="button"
-                    class="bui-colorpicker__format-btn"
-                    @onclick="CycleFormat">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_swap_vert" Size="SizeEnum.Small" />
+                    class="bui-colorpicker__action bui-colorpicker__action--revert"
+                    @onclick="HandleRevert">
+                @RevertText
             </button>
         </div>
-
-        <!-- Preview -->
-        <div class="bui-colorpicker__preview">
-            <div class="bui-colorpicker__preview-chess">
-                <div class="bui-colorpicker__preview-color"
-                     style="background-color: @GetCurrentColor().ToString(ColorOutputFormats.Rgba);">
-                </div>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        @if (ShowActions)
-        {
-            <div class="bui-colorpicker__actions">
-                <button type="button"
-                        class="bui-colorpicker__action bui-colorpicker__action--revert"
-                        @onclick="HandleRevert">
-                    @RevertText
-                </button>
-            </div>
-        }
-    </div>
+    }
 </bui-component>
 
 @code {
@@ -163,6 +172,7 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+
         if (Value != null && !_isInitialized)
         {
             _hsvColor = HsvColor.FromCssColor(Value);
@@ -174,6 +184,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender && Value != null)
         {
             await UpdateHandlerPosition();

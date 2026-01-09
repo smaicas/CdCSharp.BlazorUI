@@ -1,5 +1,5 @@
 ﻿bui-component[data-bui-component="input-color"] {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     gap: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
     position: relative;
