@@ -1,23 +1,59 @@
-﻿@* === Modal/BUIModalContainer.razor === *@
-
-@using CdCSharp.BlazorUI.Components.Layout.Modal
-@using Microsoft.AspNetCore.Components.Rendering
-
-@namespace CdCSharp.BlazorUI.Components.Layout
+﻿@namespace CdCSharp.BlazorUI.Components.Layout
 
 <div class="bui-modal-container @GetVisibilityClass() @GetAnimationClass()"
-     data-bui-modal-type="@Modal.Type.ToString().ToLowerInvariant()">
+     data-bui-modal-type="@Modal.Type.ToString().ToLowerInvariant()"
+     @onclick:stopPropagation="true">
 
     @if (Modal.Type == ModalType.Dialog)
     {
-        <div class="bui-modal-dialog-wrapper" style="@GetDialogStyle()">
-            @RenderComponent()
+        <div class="bui-modal-dialog" style="@GetDialogStyle()">
+            @if (Modal.Options is DialogOptions { Title: not null } dialogOpts)
+            {
+                <div class="bui-modal-dialog__header">
+                    <h2 class="bui-modal-dialog__title">@dialogOpts.Title</h2>
+                    @if (Modal.Options.Closable)
+                    {
+                        <button type="button"
+                                class="bui-modal__close"
+                                @onclick="HandleClose">
+                            <BUISvgIcon Icon="@BUIIcons.UI.Close" />
+                        </button>
+                    }
+                </div>
+            }
+            else if (Modal.Options.Closable)
+            {
+                <div class="bui-modal-dialog__header bui-modal-dialog__header--close-only">
+                    <button type="button"
+                            class="bui-modal__close"
+                            @onclick="HandleClose">
+                        <BUISvgIcon Icon="@BUIIcons.UI.Close" />
+                    </button>
+                </div>
+            }
+
+            <div class="bui-modal-dialog__content">
+                @RenderComponent()
+            </div>
         </div>
     }
     else
     {
-        <div class="bui-modal-drawer-wrapper @GetDrawerPositionClass()" style="@GetDrawerStyle()">
-            @RenderComponent()
+        <div class="bui-modal-drawer @GetDrawerPositionClass()" style="@GetDrawerStyle()">
+            @if (Modal.Options.Closable)
+            {
+                <div class="bui-modal-drawer__header">
+                    <button type="button"
+                            class="bui-modal__close"
+                            @onclick="HandleClose">
+                        <BUISvgIcon Icon="@BUIIcons.UI.Close" />
+                    </button>
+                </div>
+            }
+
+            <div class="bui-modal-drawer__content">
+                @RenderComponent()
+            </div>
         </div>
     }
 </div>
@@ -29,13 +65,8 @@
     private string GetVisibilityClass() =>
         Modal.IsVisible ? "bui-modal-container--visible" : "bui-modal-container--hidden";
 
-    private string GetAnimationClass()
-    {
-        if (Modal.IsAnimatingOut)
-            return "bui-modal-container--closing";
-
-        return "bui-modal-container--opening";
-    }
+    private string GetAnimationClass() =>
+        Modal.IsAnimatingOut ? "bui-modal-container--closing" : "bui-modal-container--opening";
 
     private string GetDialogStyle()
     {
@@ -50,6 +81,7 @@
             styles.Add("height: 100vh");
             styles.Add("max-width: 100vw");
             styles.Add("max-height: 100vh");
+            styles.Add("border-radius: 0");
         }
         else
         {
@@ -87,10 +119,14 @@
         };
     }
 
+    private async Task HandleClose()
+    {
+        await Modal.Reference.CloseAsync();
+    }
+
     private RenderFragment RenderComponent() => builder =>
     {
         builder.OpenComponent(0, Modal.ComponentType);
-
         builder.AddAttribute(1, "ModalRef", Modal.Reference);
 
         if (Modal.Parameters != null)

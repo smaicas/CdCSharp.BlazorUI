@@ -1,13 +1,10 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions;
-
-namespace CdCSharp.BlazorUI.Components.Layout;
+﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
 public abstract class ModalOptionsBase
 {
     public bool Closable { get; set; } = true;
     public bool CloseOnOverlayClick { get; set; } = true;
     public bool CloseOnEscape { get; set; } = true;
-    public BUITransitions? Transitions { get; set; }
     public string? CssClass { get; set; }
 }
 
@@ -24,7 +21,7 @@ public class DialogOptions : ModalOptionsBase
 public class DrawerOptions : ModalOptionsBase
 {
     public DrawerPosition Position { get; set; } = DrawerPosition.Right;
-    public string? Size { get; set; } = "300px";
+    public string Size { get; set; } = "300px";
 }
 
 public enum DrawerPosition

@@ -1,6 +1,4 @@
-﻿/* === Modal/BUIModalContainer.razor.css === */
-
-.bui-modal-container {
+﻿.bui-modal-container {
     position: absolute;
     display: flex;
     align-items: center;
@@ -17,8 +15,8 @@
     visibility: hidden;
 }
 
-/* Dialog wrapper */
-.bui-modal-dialog-wrapper {
+/* Dialog */
+.bui-modal-dialog {
     background: var(--palette-surface);
     border-radius: 8px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -28,45 +26,79 @@
     flex-direction: column;
 }
 
-.bui-modal-container--opening .bui-modal-dialog-wrapper {
+.bui-modal-container--opening .bui-modal-dialog {
     animation: bui-dialog-in 200ms ease-out forwards;
 }
 
-.bui-modal-container--closing .bui-modal-dialog-wrapper {
+.bui-modal-container--closing .bui-modal-dialog {
     animation: bui-dialog-out 150ms ease-in forwards;
 }
 
-@keyframes bui-dialog-in {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+.bui-modal-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-@keyframes bui-dialog-out {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-    to {
-        opacity: 0;
-        transform: scale(0.95);
-    }
+[data-theme="dark"] .bui-modal-dialog__header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Drawer wrapper */
-.bui-modal-drawer-wrapper {
+.bui-modal-dialog__header--close-only {
+    justify-content: flex-end;
+    padding: 0.5rem;
+    border-bottom: none;
+}
+
+.bui-modal-dialog__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.bui-modal-dialog__content {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+/* Close button */
+.bui-modal__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: all 150ms ease;
+}
+
+    .bui-modal__close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+[data-theme="dark"] .bui-modal__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Drawer */
+.bui-modal-drawer {
     position: fixed;
     background: var(--palette-surface);
     box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
     pointer-events: auto;
-    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .bui-modal-drawer--left {
@@ -91,6 +123,18 @@
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.bui-modal-drawer__header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0.5rem;
+}
+
+.bui-modal-drawer__content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
 }
 
 /* Drawer animations */
@@ -124,6 +168,40 @@
 
 .bui-modal-container--closing .bui-modal-drawer--bottom {
     animation: bui-drawer-bottom-out 200ms ease-in forwards;
+}
+
+/* Hidden state */
+.bui-modal-container--hidden .bui-modal-dialog,
+.bui-modal-container--hidden .bui-modal-drawer {
+    transform: scale(0.95);
+    opacity: 0.3;
+    filter: blur(2px);
+    transition: all 200ms ease;
+}
+
+/* Keyframes */
+@keyframes bui-dialog-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes bui-dialog-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
 }
 
 @keyframes bui-drawer-left-in {
@@ -204,18 +282,4 @@
     to {
         transform: translateY(100%);
     }
-}
-
-/* Hidden state transitions */
-.bui-modal-container--hidden .bui-modal-dialog-wrapper {
-    transform: scale(0.9);
-    opacity: 0.3;
-    filter: blur(2px);
-    transition: all 200ms ease;
-}
-
-.bui-modal-container--hidden .bui-modal-drawer-wrapper {
-    opacity: 0.3;
-    filter: blur(2px);
-    transition: all 200ms ease;
 }

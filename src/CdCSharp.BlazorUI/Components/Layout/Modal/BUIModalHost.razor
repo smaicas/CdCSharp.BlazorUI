@@ -1,10 +1,8 @@
-﻿@* === Modal/BUIModalHost.razor === *@
-
+﻿@using CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop
+@using CdCSharp.BlazorUI.Components.Layout.Modal.Services
 
 @namespace CdCSharp.BlazorUI.Components.Layout
-@using CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop
 
-@implements IModalJsCallback
 @implements IAsyncDisposable
 
 @inject IModalService ModalService
@@ -12,10 +10,12 @@
 
 @if (_modals.Count > 0)
 {
-    <div class="bui-modal-host" data-bui-modal-count="@_modals.Count">
+    <div class="bui-modal-host"
+         @onkeydown="HandleKeyDown"
+         tabindex="-1"
+         @ref="_hostRef">
         
-        <div class="bui-modal-overlay @GetOverlayClass())"
-             @ref="_overlayRef"
+        <div class="bui-modal-overlay @(_isClosing ? "bui-modal-overlay--closing" : "")"
              @onclick="HandleOverlayClick">
         </div>
 
@@ -27,68 +27,61 @@
 }
 
 @code {
-    private readonly string _hostId = $"modal-host-{Guid.NewGuid():N}";
-    private ElementReference _overlayRef;
-    private ModalCallbacksRelay? _callbacksRelay;
+    private ElementReference _hostRef;
     private List<ModalState> _modals = [];
     private bool _jsInitialized;
+    private bool _isClosing;
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-
         ModalService.OnChange += HandleModalChange;
     }
 
-    private void HandleModalChange()
+    private async void HandleModalChange()
     {
+        List<ModalState> previous = _modals;
         _modals = ModalService.ActiveModals.ToList();
-        InvokeAsync(StateHasChanged);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
+        _isClosing = _modals.Any(m => m.IsAnimatingOut);
 
         if (_modals.Count > 0 && !_jsInitialized)
         {
-            _callbacksRelay ??= new ModalCallbacksRelay(this);
-            
-            ModalState current = GetCurrentModal();
-            
-            await JsInterop.InitializeAsync(
-                _overlayRef,
-                _callbacksRelay.DotNetReference,
-                _hostId,
-                current.Options.CloseOnEscape,
-                current.Options.CloseOnOverlayClick);
-            
+            await JsInterop.LockScrollAsync();
             _jsInitialized = true;
         }
         else if (_modals.Count == 0 && _jsInitialized)
         {
-            await JsInterop.DisposeAsync(_hostId);
+            await JsInterop.UnlockScrollAsync();
             _jsInitialized = false;
         }
-        else if (_jsInitialized && _modals.Count > 0)
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_modals.Count > 0)
         {
-            ModalState current = GetCurrentModal();
-            await JsInterop.UpdateOptionsAsync(
-                _hostId,
-                current.Options.CloseOnEscape,
-                current.Options.CloseOnOverlayClick);
+            ModalState? current = _modals.LastOrDefault(m => m.IsVisible && !m.IsAnimatingOut);
+            if (current != null)
+            {
+                _hostRef.FocusAsync();
+            }
         }
     }
 
-    private string GetOverlayClass()
+    private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        bool isClosing = _modals.Any(m => m.IsAnimatingOut);
-        return isClosing ? "bui-modal-overlay--closing" : "";
+        if (e.Key == "Escape")
+        {
+            ModalState? current = _modals.LastOrDefault(m => m.IsVisible && !m.IsAnimatingOut);
+            if (current?.Options.CloseOnEscape == true)
+            {
+                await current.Reference.CloseAsync();
+            }
+        }
     }
 
-    private ModalState GetCurrentModal() => _modals.Last(m => m.IsVisible);
-
-    private async Task HandleOverlayClick(MouseEventArgs e)
+    private async Task HandleOverlayClick()
     {
         ModalState? current = _modals.LastOrDefault(m => m.IsVisible && !m.IsAnimatingOut);
         if (current?.Options.CloseOnOverlayClick == true)
@@ -97,29 +90,13 @@
         }
     }
 
-    async Task IModalJsCallback.OnEscapePressed()
-    {
-        ModalState? current = _modals.LastOrDefault(m => m.IsVisible && !m.IsAnimatingOut);
-        if (current?.Options.CloseOnEscape == true)
-        {
-            await current.Reference.CloseAsync();
-        }
-    }
-
-    async Task IModalJsCallback.OnOverlayClick()
-    {
-        await HandleOverlayClick(new MouseEventArgs());
-    }
-
     public async ValueTask DisposeAsync()
     {
         ModalService.OnChange -= HandleModalChange;
         
         if (_jsInitialized)
         {
-            await JsInterop.DisposeAsync(_hostId);
+            await JsInterop.UnlockScrollAsync();
         }
-        
-        _callbacksRelay?.Dispose();
     }
 }

@@ -7,20 +7,8 @@ namespace CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop;
 
 public interface IModalJsInterop
 {
-    ValueTask InitializeAsync(
-        ElementReference overlayElement,
-        DotNetObjectReference<ModalCallbacksRelay> dotnetReference,
-        string hostId,
-        bool closeOnEscape,
-        bool closeOnOverlayClick);
-
-    ValueTask UpdateOptionsAsync(
-        string hostId,
-        bool closeOnEscape,
-        bool closeOnOverlayClick);
-
-    ValueTask DisposeAsync(string hostId);
-
+    ValueTask LockScrollAsync();
+    ValueTask UnlockScrollAsync();
     ValueTask TrapFocusAsync(ElementReference element);
     ValueTask ReleaseFocusAsync();
 }
@@ -32,53 +20,24 @@ public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
     {
     }
 
-    public async ValueTask InitializeAsync(
-        ElementReference overlayElement,
-        DotNetObjectReference<ModalCallbacksRelay> dotnetReference,
-        string hostId,
-        bool closeOnEscape,
-        bool closeOnOverlayClick)
+    public async ValueTask LockScrollAsync()
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
-
-        await module.InvokeVoidAsync(
-            "initialize",
-            overlayElement,
-            dotnetReference,
-            hostId,
-            closeOnEscape,
-            closeOnOverlayClick);
+        await module.InvokeVoidAsync("lockScroll");
     }
 
-    public async ValueTask UpdateOptionsAsync(
-        string hostId,
-        bool closeOnEscape,
-        bool closeOnOverlayClick)
+    public async ValueTask UnlockScrollAsync()
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
-
-        await module.InvokeVoidAsync(
-            "updateOptions",
-            hostId,
-            closeOnEscape,
-            closeOnOverlayClick);
-    }
-
-    public async ValueTask DisposeAsync(string hostId)
-    {
-        await IsModuleTaskLoaded.Task;
-        IJSObjectReference module = await ModuleTask.Value;
-
-        await module.InvokeVoidAsync("dispose", hostId);
+        await module.InvokeVoidAsync("unlockScroll");
     }
 
     public async ValueTask TrapFocusAsync(ElementReference element)
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
-
         await module.InvokeVoidAsync("trapFocus", element);
     }
 
@@ -86,7 +45,6 @@ public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
-
         await module.InvokeVoidAsync("releaseFocus");
     }
 }

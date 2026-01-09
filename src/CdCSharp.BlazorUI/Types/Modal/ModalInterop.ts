@@ -1,30 +1,18 @@
 // === wwwroot/ts/modal.ts ===
 
-interface ModalInstance {
-    dotnetRef: any;
-    closeOnEscape: boolean;
-    closeOnOverlayClick: boolean;
-    overlayElement: HTMLElement;
-    keyDownHandler: (e: KeyboardEvent) => void;
-    overlayClickHandler: (e: MouseEvent) => void;
-}
-
 interface FocusTrapState {
     previousActiveElement: HTMLElement | null;
-    trapElement: HTMLElement | null;
     firstFocusable: HTMLElement | null;
     lastFocusable: HTMLElement | null;
-    tabHandler: (e: KeyboardEvent) => void;
+    tabHandler: ((e: KeyboardEvent) => void) | null;
 }
 
-const instances = new Map<string, ModalInstance>();
-
+let scrollLockCount = 0;
 let focusTrapState: FocusTrapState = {
     previousActiveElement: null,
-    trapElement: null,
     firstFocusable: null,
     lastFocusable: null,
-    tabHandler: () => { }
+    tabHandler: null
 };
 
 const FOCUSABLE_SELECTORS = [
@@ -36,79 +24,25 @@ const FOCUSABLE_SELECTORS = [
     '[tabindex]:not([tabindex="-1"])'
 ].join(', ');
 
-export function initialize(
-    overlayElement: HTMLElement,
-    dotnetRef: any,
-    hostId: string,
-    closeOnEscape: boolean,
-    closeOnOverlayClick: boolean
-): void {
-    if (instances.has(hostId)) {
-        return;
-    }
-
-    const keyDownHandler = (e: KeyboardEvent): void => {
-        const instance = instances.get(hostId);
-        if (e.key === 'Escape' && instance?.closeOnEscape) {
-            dotnetRef.invokeMethodAsync('OnEscapePressed');
-        }
-    };
-
-    const overlayClickHandler = (e: MouseEvent): void => {
-        const instance = instances.get(hostId);
-        if (e.target === overlayElement && instance?.closeOnOverlayClick) {
-            dotnetRef.invokeMethodAsync('OnOverlayClick');
-        }
-    };
-
-    const instance: ModalInstance = {
-        dotnetRef,
-        closeOnEscape,
-        closeOnOverlayClick,
-        overlayElement,
-        keyDownHandler,
-        overlayClickHandler
-    };
-
-    document.addEventListener('keydown', keyDownHandler);
-    overlayElement.addEventListener('click', overlayClickHandler);
-
-    document.body.style.overflow = 'hidden';
-
-    instances.set(hostId, instance);
-}
-
-export function updateOptions(
-    hostId: string,
-    closeOnEscape: boolean,
-    closeOnOverlayClick: boolean
-): void {
-    const instance = instances.get(hostId);
-    if (instance) {
-        instance.closeOnEscape = closeOnEscape;
-        instance.closeOnOverlayClick = closeOnOverlayClick;
+export function lockScroll(): void {
+    scrollLockCount++;
+    if (scrollLockCount === 1) {
+        document.body.style.overflow = 'hidden';
     }
 }
 
-export function dispose(hostId: string): void {
-    const instance = instances.get(hostId);
-    if (!instance) {
-        return;
-    }
-
-    document.removeEventListener('keydown', instance.keyDownHandler);
-    instance.overlayElement.removeEventListener('click', instance.overlayClickHandler);
-
-    instances.delete(hostId);
-
-    if (instances.size === 0) {
+export function unlockScroll(): void {
+    scrollLockCount--;
+    if (scrollLockCount <= 0) {
+        scrollLockCount = 0;
         document.body.style.overflow = '';
     }
 }
 
 export function trapFocus(element: HTMLElement): void {
+    releaseFocus();
+
     focusTrapState.previousActiveElement = document.activeElement as HTMLElement;
-    focusTrapState.trapElement = element;
 
     const focusables = element.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS);
 
@@ -122,13 +56,9 @@ export function trapFocus(element: HTMLElement): void {
     focusTrapState.lastFocusable = focusables[focusables.length - 1];
 
     focusTrapState.tabHandler = (e: KeyboardEvent): void => {
-        if (e.key !== 'Tab') {
-            return;
-        }
+        if (e.key !== 'Tab') return;
 
-        if (!focusTrapState.firstFocusable || !focusTrapState.lastFocusable) {
-            return;
-        }
+        if (!focusTrapState.firstFocusable || !focusTrapState.lastFocusable) return;
 
         if (e.shiftKey) {
             if (document.activeElement === focusTrapState.firstFocusable) {
@@ -144,12 +74,13 @@ export function trapFocus(element: HTMLElement): void {
     };
 
     document.addEventListener('keydown', focusTrapState.tabHandler);
-
     focusTrapState.firstFocusable.focus();
 }
 
 export function releaseFocus(): void {
-    document.removeEventListener('keydown', focusTrapState.tabHandler);
+    if (focusTrapState.tabHandler) {
+        document.removeEventListener('keydown', focusTrapState.tabHandler);
+    }
 
     if (focusTrapState.previousActiveElement) {
         focusTrapState.previousActiveElement.focus();
@@ -157,9 +88,8 @@ export function releaseFocus(): void {
 
     focusTrapState = {
         previousActiveElement: null,
-        trapElement: null,
         firstFocusable: null,
         lastFocusable: null,
-        tabHandler: () => { }
+        tabHandler: null
     };
 }

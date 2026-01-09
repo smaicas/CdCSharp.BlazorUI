@@ -1,9 +1,8 @@
-﻿/* === Modal/Drawer/BUIDrawer.razor.css === */
-
-.bui-drawer-standalone-host {
+﻿.bui-drawer-host {
     position: fixed;
     inset: 0;
     z-index: 9999;
+    outline: none;
 }
 
 .bui-drawer-overlay {
@@ -83,6 +82,10 @@
     border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
+.bui-drawer__header-content {
+    flex: 1;
+}
+
 .bui-drawer__close {
     display: flex;
     align-items: center;
@@ -97,7 +100,6 @@
     color: inherit;
     opacity: 0.6;
     transition: all 150ms ease;
-    margin-left: auto;
 }
 
     .bui-drawer__close:hover {

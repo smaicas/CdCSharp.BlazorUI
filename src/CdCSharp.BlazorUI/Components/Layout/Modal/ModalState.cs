@@ -1,4 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Components.Layout;
+﻿using CdCSharp.BlazorUI.Components.Layout.Modal;
+
+namespace CdCSharp.BlazorUI.Components.Layout;
 
 public enum ModalType
 {

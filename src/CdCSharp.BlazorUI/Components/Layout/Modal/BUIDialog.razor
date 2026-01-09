@@ -1,28 +1,32 @@
 ﻿@* === Modal/Dialog/BUIDialog.razor === *@
 
 @using CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions
 
 @namespace CdCSharp.BlazorUI.Components.Layout
 
 @inherits BUIComponentBase
-@implements IModalJsCallback
 @implements IAsyncDisposable
 
 @inject IModalJsInterop JsInterop
 
 @if (Open)
 {
-    <div class="bui-dialog-standalone-host" @ref="_overlayRef">
-        <div class="bui-dialog-overlay @(_isClosing ? "bui-dialog-overlay--closing" : "")">
+    <div class="bui-dialog-host"
+         @onkeydown="HandleKeyDown"
+         tabindex="-1"
+         @ref="_hostRef">
+        <div class="bui-dialog-overlay @(_isClosing ? "bui-dialog-overlay--closing" : "")"
+             @onclick="HandleOverlayClick">
         </div>
 
         <div class="bui-dialog @(_isClosing ? "bui-dialog--closing" : "")"
              @ref="_dialogRef"
+             @onclick:stopPropagation="true"
              role="dialog"
              aria-modal="true"
              aria-labelledby="@_titleId"
              style="@GetDialogStyle()">
+
             @if (Header != null || !string.IsNullOrEmpty(Title) || Closable)
             {
                 <div class="bui-dialog__header">
@@ -39,8 +43,7 @@
                     {
                         <button type="button"
                                 class="bui-dialog__close"
-                                @onclick="HandleCloseClick"
-                                aria-label="Close">
+                                @onclick="CloseAsync">
                             <BUISvgIcon Icon="@BUIIcons.UI.Close" />
                         </button>
                     }
@@ -62,16 +65,15 @@
             }
         </div>
     </div>
-
 }
+
 @code {
-    private readonly string _dialogId = $"dialog-{Guid.NewGuid():N}";
     private readonly string _titleId = $"dialog-title-{Guid.NewGuid():N}";
-    private ElementReference _overlayRef;
+    private ElementReference _hostRef;
     private ElementReference _dialogRef;
-    private ModalCallbacksRelay? _callbacksRelay;
     private bool _jsInitialized;
     private bool _isClosing;
+
     [Parameter] public bool Open { get; set; }
     [Parameter] public EventCallback<bool> OpenChanged { get; set; }
 
@@ -90,30 +92,18 @@
     [Parameter] public string? MaxHeight { get; set; } = "90vh";
     [Parameter] public bool FullScreen { get; set; }
 
-    [Parameter] public BUITransitions? Transitions { get; set; }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnAfterRenderAsync(firstRender);
-
         if (Open && !_jsInitialized)
         {
-            _callbacksRelay ??= new ModalCallbacksRelay(this);
-
-            await JsInterop.InitializeAsync(
-                _overlayRef,
-                _callbacksRelay.DotNetReference,
-                _dialogId,
-                CloseOnEscape,
-                CloseOnOverlayClick);
-
+            await JsInterop.LockScrollAsync();
             await JsInterop.TrapFocusAsync(_dialogRef);
-
+            await _hostRef.FocusAsync();
             _jsInitialized = true;
         }
         else if (!Open && _jsInitialized)
         {
-            await CleanupJsAsync();
+            await CleanupAsync();
         }
     }
 
@@ -144,9 +134,20 @@
         return string.Join("; ", styles);
     }
 
-    private async Task HandleCloseClick()
+    private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        await CloseAsync();
+        if (e.Key == "Escape" && CloseOnEscape)
+        {
+            await CloseAsync();
+        }
+    }
+
+    private async Task HandleOverlayClick()
+    {
+        if (CloseOnOverlayClick)
+        {
+            await CloseAsync();
+        }
     }
 
     private async Task CloseAsync()
@@ -161,35 +162,18 @@
         await OpenChanged.InvokeAsync(false);
     }
 
-    async Task IModalJsCallback.OnEscapePressed()
-    {
-        if (CloseOnEscape)
-        {
-            await CloseAsync();
-        }
-    }
-
-    async Task IModalJsCallback.OnOverlayClick()
-    {
-        if (CloseOnOverlayClick)
-        {
-            await CloseAsync();
-        }
-    }
-
-    private async Task CleanupJsAsync()
+    private async Task CleanupAsync()
     {
         if (_jsInitialized)
         {
             await JsInterop.ReleaseFocusAsync();
-            await JsInterop.DisposeAsync(_dialogId);
+            await JsInterop.UnlockScrollAsync();
             _jsInitialized = false;
         }
     }
 
     public async ValueTask DisposeAsync()
     {
-        await CleanupJsAsync();
-        _callbacksRelay?.Dispose();
+        await CleanupAsync();
     }
 }

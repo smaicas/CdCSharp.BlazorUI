@@ -1,5 +1,34 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Layout.Modal.Services;
 
+public interface IModalService
+{
+    IReadOnlyList<ModalState> ActiveModals { get; }
+    event Action? OnChange;
+
+    Task<TResult?> ShowDialogAsync<TComponent, TResult>(
+        object? parameters = null,
+        DialogOptions? options = null)
+        where TComponent : IModalContent;
+
+    Task ShowDialogAsync<TComponent>(
+        object? parameters = null,
+        DialogOptions? options = null)
+        where TComponent : IModalContent;
+
+    Task<TResult?> ShowDrawerAsync<TComponent, TResult>(
+        object? parameters = null,
+        DrawerOptions? options = null)
+        where TComponent : IModalContent;
+
+    Task ShowDrawerAsync<TComponent>(
+        object? parameters = null,
+        DrawerOptions? options = null)
+        where TComponent : IModalContent;
+
+    Task CloseAsync();
+    Task CloseAllAsync();
+}
+
 public class ModalService : IModalService
 {
     private readonly List<ModalState> _modals = [];
@@ -83,7 +112,6 @@ public class ModalService : IModalService
         where TComponent : IModalContent
     {
         string id = $"modal-{Guid.NewGuid():N}";
-
         ModalReference reference = new(id, OnModalClose);
 
         Dictionary<string, object?>? paramDict = null;
@@ -109,7 +137,7 @@ public class ModalService : IModalService
     {
         HideCurrentModal();
         _modals.Add(state);
-        NotifyChange();
+        OnChange?.Invoke();
         return Task.CompletedTask;
     }
 
@@ -117,7 +145,7 @@ public class ModalService : IModalService
     {
         HideCurrentModal();
         _modals.Add(state);
-        NotifyChange();
+        OnChange?.Invoke();
 
         try
         {
@@ -149,13 +177,13 @@ public class ModalService : IModalService
     private async Task CloseModalAsync(ModalState state)
     {
         state.IsAnimatingOut = true;
-        NotifyChange();
+        OnChange?.Invoke();
 
         await Task.Delay(200);
 
         _modals.Remove(state);
         ShowPreviousModal();
-        NotifyChange();
+        OnChange?.Invoke();
     }
 
     private void OnModalClose(ModalReference reference)
@@ -165,10 +193,5 @@ public class ModalService : IModalService
         {
             _ = CloseModalAsync(state);
         }
-    }
-
-    private void NotifyChange()
-    {
-        OnChange?.Invoke();
     }
 }

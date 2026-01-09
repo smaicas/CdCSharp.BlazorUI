@@ -1,12 +1,11 @@
-﻿/* === Modal/BUIModalHost.razor.css === */
-
-.bui-modal-host {
+﻿.bui-modal-host {
     position: fixed;
     inset: 0;
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
+    outline: none;
 }
 
 .bui-modal-overlay {
@@ -18,7 +17,7 @@
 }
 
 .bui-modal-overlay--closing {
-    animation: bui-modal-overlay-out 200ms ease-in forwards;
+    animation: bui-modal-overlay-out 150ms ease-in forwards;
 }
 
 @keyframes bui-modal-overlay-in {
