@@ -1,4 +1,5 @@
-﻿@using CdCSharp.BlazorUI.Components.Layout.ThemeSelector
+﻿@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Components.Layout.ThemeSelector
 
 @namespace CdCSharp.BlazorUI.Components.Layout
 
@@ -58,6 +59,8 @@
     private RenderFragment RenderSunMoon() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes">
+            <BUIInputSwitch></BUIInputSwitch>
+
             <button @onclick="ToggleLightDark"
                     aria-label="@($"Switch to {GetOppositeTheme()} mode")">
                 <span class="bui-theme-switch__sun-moon-container">

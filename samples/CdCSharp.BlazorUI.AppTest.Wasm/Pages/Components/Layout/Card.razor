@@ -1,0 +1,550 @@
+﻿@page "/components/card"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<!-- BASIC CARD -->
+<section class="doc-section">
+    <h2>Basic Card</h2>
+    <ComponentDemo Definition="@BasicCardDemo" />
+</section>
+
+<!-- CUSTOM HEADER -->
+<section class="doc-section">
+    <h2>Custom Header</h2>
+    <ComponentDemo Definition="@CustomHeaderCardDemo" />
+</section>
+
+<!-- WITH IMAGE -->
+<section class="doc-section">
+    <h2>With Image</h2>
+    <ComponentDemo Definition="@ImageCardDemo" />
+</section>
+
+<!-- CLICKABLE -->
+<section class="doc-section">
+    <h2>Clickable</h2>
+    <ComponentDemo Definition="@ClickableCardDemo" />
+</section>
+
+<!-- Outlined Variant -->
+<section class="doc-section">
+    <h2>Outlined Variant</h2>
+    <ComponentDemo Definition="@OutlineCardDemo" />
+</section>
+
+<!-- Flat Variant -->
+<section class="doc-section">
+    <h2>Flat Variant</h2>
+    <ComponentDemo Definition="@FlatCardDemo" />
+</section>
+
+<!-- Actions Alignment -->
+<section class="doc-section">
+    <h2>Actions Alignment</h2>
+    <ComponentDemo Definition="@ActionsAlignmentCardDemo" />
+</section>
+
+<!-- Media Position - After Header -->
+<section class="doc-section">
+    <h2>Media Position - After Header</h2>
+    <ComponentDemo Definition="@MediaAfterHeaderCardDemo" />
+</section>
+
+<!-- Media Position - Before Actions -->
+<section class="doc-section">
+    <h2>Media Position - Before Actions</h2>
+    <ComponentDemo Definition="@MediaBeforeActionsCardDemo" />
+</section>
+
+<!-- Compact Density -->
+<section class="doc-section">
+    <h2>Compact Density</h2>
+    <ComponentDemo Definition="@CompactCardDemo" />
+</section>
+
+<!-- Comfortable Density -->
+<section class="doc-section">
+    <h2>Comfortable Density</h2>
+    <ComponentDemo Definition="@ComfortableCardDemo" />
+</section>
+
+<!-- Custom Background Color -->
+<section class="doc-section">
+    <h2>Custom Background Color</h2>
+    <ComponentDemo Definition="@BackgroundCardDemo" />
+</section>
+
+<!-- Custom Elevation -->
+<section class="doc-section">
+    <h2>Custom Elevation</h2>
+    <ComponentDemo Definition="@ElevationCardDemo" />
+</section>
+
+<!-- Card Grid Layout -->
+<section class="doc-section">
+    <h2>Card Grid Layout</h2>
+    <ComponentDemo Definition="@WithGridCardDemo" />
+</section>
+
+@code {
+    private ComponentDemoDefinition BasicCardDemo => new()
+    {
+        Demo = RenderBasicCard(),
+        Code = """
+<BUICard Title="Card Title"
+         Subtitle="Card subtitle">
+    <ChildContent>
+        <p>This is the main content of the card. It can contain any content you want.</p>
+    </ChildContent>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderBasicCard() => __builder =>
+    {
+        <BUICard Title="Card Title"
+                 Subtitle="Card subtitle">
+            <ChildContent>
+                <p>This is the main content of the card. It can contain any content you want.</p>
+            </ChildContent>
+        </BUICard>
+        ;
+    };
+    private ComponentDemoDefinition CustomHeaderCardDemo => new()
+    {
+        Demo = RenderCustomHeaderCard(),
+        Code = """
+<BUICard>
+    <Header>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_verified_user" />
+            <div>
+                <h3>Custom Header</h3>
+                <p>With custom layout</p>
+            </div>
+        </div>
+    </Header>
+    <ChildContent>
+        <p>Card content goes here.</p>
+    </ChildContent>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderCustomHeaderCard() => __builder =>
+    {
+        <BUICard Title="Beautiful Landscape"
+                 Subtitle="Nature photography"
+                 MediaHeight="300px">
+            <Media>
+                <img src="https://picsum.photos/800/300" alt="Random landscape" />
+            </Media>
+            <ChildContent>
+                <p>A stunning view of nature captured in perfect lighting conditions.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Share" Variant="BUIButtonVariant.Default" />
+                <BUIButton Text="Learn More" Variant="BUIButtonVariant.Default" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+    private ComponentDemoDefinition ImageCardDemo => new()
+    {
+        Demo = RenderImageCard(),
+        Code = """
+<BUICard Title="Beautiful Landscape"
+         Subtitle="Nature photography"
+         MediaHeight="300px">
+    <Media>
+        <img src="https://picsum.photos/800/300" alt="Random landscape" />
+    </Media>
+    <ChildContent>
+        <p>A stunning view of nature captured in perfect lighting conditions.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Share" Variant="BUIButtonVariant.Default" />
+        <BUIButton Text="Learn More" Variant="BUIButtonVariant.Default" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderImageCard() => __builder =>
+    {
+        <BUICard>
+            <Header>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_verified_user" />
+                    <div>
+                        <h3>Custom Header</h3>
+                        <p>With custom layout</p>
+                    </div>
+                </div>
+            </Header>
+            <ChildContent>
+                <p>Card content goes here.</p>
+            </ChildContent>
+        </BUICard>
+        ;
+    };
+    private ComponentDemoDefinition ClickableCardDemo => new()
+    {
+        Demo = RenderClickableCard(),
+        Code = """
+<BUICard Title="Click Me"
+         Subtitle="This card is interactive"
+         Clickable="true"
+         OnClick="HandleCardClick">
+    <ChildContent>
+        <p>Click anywhere on this card to trigger an action.</p>
+    </ChildContent>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderClickableCard() => __builder =>
+    {
+        <BUICard Title="Click Me"
+                 Subtitle="This card is interactive"
+                 Clickable="true"
+                 OnClick="HandleCardClick">
+            <ChildContent>
+                <p>Click anywhere on this card to trigger an action.</p>
+            </ChildContent>
+        </BUICard>
+        ;
+    };
+
+    private void HandleCardClick()
+    {
+        // Handle card click event
+    }
+
+    private ComponentDemoDefinition OutlineCardDemo => new()
+    {
+        Demo = RenderOutlineCard(),
+        Code = """
+<BUICard Title="Outlined Card"
+         Variant="BUICardVariant.Outlined">
+    <ChildContent>
+        <p>This card uses the outlined variant style.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Action" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderOutlineCard() => __builder =>
+    {
+        <BUICard Title="Outlined Card"
+                 Variant="BUICardVariant.Outlined">
+            <ChildContent>
+                <p>This card uses the outlined variant style.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Action" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition FlatCardDemo => new()
+    {
+        Demo = RenderFlatCard(),
+        Code = """
+<BUICard Title="Flat Card"
+         Variant="BUICardVariant.Flat">
+    <ChildContent>
+        <p>This card has no elevation or border.</p>
+    </ChildContent>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderFlatCard() => __builder =>
+    {
+        <BUICard Title="Flat Card"
+                 Variant="BUICardVariant.Flat">
+            <ChildContent>
+                <p>This card has no elevation or border.</p>
+            </ChildContent>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition ActionsAlignmentCardDemo => new()
+    {
+        Demo = RenderActionsAlignmentCard(),
+        Code = """
+<BUICard Title="Centered Actions"
+         ActionsAlignment="CardActionsAlignment.Center"
+         OutlinedActions="true">
+    <ChildContent>
+        <p>The actions in this card are centered.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Cancel" />
+        <BUIButton Text="Confirm" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderActionsAlignmentCard() => __builder =>
+    {
+        <BUICard Title="Centered Actions"
+                 ActionsAlignment="CardActionsAlignment.Center"
+                 OutlinedActions="true">
+            <ChildContent>
+                <p>The actions in this card are centered.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Cancel" />
+                <BUIButton Text="Confirm" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition MediaAfterHeaderCardDemo => new()
+    {
+        Demo = RenderMediaAfterHeaderCard(),
+        Code = """
+<BUICard Title="Media After Header"
+         Subtitle="Image below the title"
+         MediaPosition="CardMediaPosition.AfterHeader"
+         MediaHeight="200px">
+    <Media>
+        <img src="https://picsum.photos/800/200" alt="Sample" />
+    </Media>
+    <ChildContent>
+        <p>The media is positioned after the header section.</p>
+    </ChildContent>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderMediaAfterHeaderCard() => __builder =>
+    {
+        <BUICard Title="Media After Header"
+                 Subtitle="Image below the title"
+                 MediaPosition="CardMediaPosition.AfterHeader"
+                 MediaHeight="200px">
+            <Media>
+                <img src="https://picsum.photos/800/200" alt="Sample" />
+            </Media>
+            <ChildContent>
+                <p>The media is positioned after the header section.</p>
+            </ChildContent>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition MediaBeforeActionsCardDemo => new()
+    {
+        Demo = RenderMediaBeforeActionsCard(),
+        Code = """
+<BUICard Title="Media Before Actions"
+         MediaPosition="CardMediaPosition.BeforeActions"
+         MediaHeight="200px">
+    <Media>
+        <img src="https://picsum.photos/800/200?random=2" alt="Sample" />
+    </Media>
+    <ChildContent>
+        <p>Content goes here.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Action" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderMediaBeforeActionsCard() => __builder =>
+    {
+        <BUICard Title="Media Before Actions"
+                 MediaPosition="CardMediaPosition.BeforeActions"
+                 MediaHeight="200px">
+            <Media>
+                <img src="https://picsum.photos/800/200?random=2" alt="Sample" />
+            </Media>
+            <ChildContent>
+                <p>Content goes here.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Action" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition CompactCardDemo => new()
+    {
+        Demo = RenderCompactCard(),
+        Code = """
+<BUICard Title="Compact Card"
+         Subtitle="Less spacing"
+         Density="DensityEnum.Compact">
+    <ChildContent>
+        <p>This card uses compact spacing for a denser layout.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Action" Size="SizeEnum.Small" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderCompactCard() => __builder =>
+    {
+        <BUICard Title="Compact Card"
+                 Subtitle="Less spacing"
+                 Density="DensityEnum.Compact">
+            <ChildContent>
+                <p>This card uses compact spacing for a denser layout.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Action" Size="SizeEnum.Small" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition ComfortableCardDemo => new()
+    {
+        Demo = RenderComfortableCard(),
+        Code = """
+<BUICard Title="Comfortable Card"
+         Subtitle="More spacing"
+         Density="DensityEnum.Comfortable">
+    <ChildContent>
+        <p>This card uses comfortable spacing for a more relaxed layout.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Action" Size="SizeEnum.Large" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderComfortableCard() => __builder =>
+    {
+        <BUICard Title="Comfortable Card"
+                 Subtitle="More spacing"
+                 Density="DensityEnum.Comfortable">
+            <ChildContent>
+                <p>This card uses comfortable spacing for a more relaxed layout.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Action" Size="SizeEnum.Large" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition BackgroundCardDemo => new()
+    {
+        Demo = RenderBackgroundCard(),
+        Code = """
+<BUICard Title="Custom Colors"
+         BackgroundColor="@BUIColor.Palette.Primary"
+         Color="@BUIColor.Palette.PrimaryContrast">
+    <ChildContent>
+        <p>This card has a custom background color.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text="Action"
+                   BackgroundColor="@BUIColor.Palette.PrimaryContrast"
+                   Color="@BUIColor.Palette.Primary" />
+    </Actions>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderBackgroundCard() => __builder =>
+    {
+        <BUICard Title="Custom Colors"
+                 BackgroundColor="@BUIColor.Palette.Primary"
+                 Color="@BUIColor.Palette.PrimaryContrast">
+            <ChildContent>
+                <p>This card has a custom background color.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Action"
+                           BackgroundColor="@BUIColor.Palette.PrimaryContrast"
+                           Color="@BUIColor.Palette.Primary" />
+            </Actions>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition ElevationCardDemo => new()
+    {
+        Demo = RenderElevationCard(),
+        Code = """
+<BUICard Title="High Elevation"
+         Elevation="8">
+    <ChildContent>
+        <p>This card has increased elevation for more prominence.</p>
+    </ChildContent>
+</BUICard>
+"""
+    };
+    private RenderFragment RenderElevationCard() => __builder =>
+    {
+        <BUICard Title="High Elevation"
+                 Elevation="8">
+            <ChildContent>
+                <p>This card has increased elevation for more prominence.</p>
+            </ChildContent>
+        </BUICard>
+        ;
+    };
+
+    private ComponentDemoDefinition WithGridCardDemo => new()
+    {
+        Demo = RenderWithGridCard(),
+        Code = """
+<BUIGrid Columns="12" Gap="1rem">
+    <BUIGridItem Span="4" Md="6" Xs="12">
+        <BUICard Title="Card 1">
+            <ChildContent>
+                <p>First card in grid</p>
+            </ChildContent>
+        </BUICard>
+    </BUIGridItem>
+    <BUIGridItem Span="4" Md="6" Xs="12">
+        <BUICard Title="Card 2">
+            <ChildContent>
+                <p>Second card in grid</p>
+            </ChildContent>
+        </BUICard>
+    </BUIGridItem>
+    <BUIGridItem Span="4" Md="6" Xs="12">
+        <BUICard Title="Card 3">
+            <ChildContent>
+                <p>Third card in grid</p>
+            </ChildContent>
+        </BUICard>
+    </BUIGridItem>
+</BUIGrid>
+"""
+    };
+    private RenderFragment RenderWithGridCard() => __builder =>
+    {
+        <BUIGrid Columns="12" Gap="1rem">
+            <BUIGridItem Span="4" Md="6" Xs="12">
+                <BUICard Title="Card 1">
+                    <ChildContent>
+                        <p>First card in grid</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Span="4" Md="6" Xs="12">
+                <BUICard Title="Card 2">
+                    <ChildContent>
+                        <p>Second card in grid</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Span="4" Md="6" Xs="12">
+                <BUICard Title="Card 3">
+                    <ChildContent>
+                        <p>Third card in grid</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+        ;
+    };
+}

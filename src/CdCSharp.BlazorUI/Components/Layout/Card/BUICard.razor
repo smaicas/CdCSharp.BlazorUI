@@ -1,5 +1,4 @@
-﻿// Components/Layout/Card/BUICard.razor
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript
 @using CdCSharp.BlazorUI.Core.Css
 
@@ -7,10 +6,10 @@
 
 @inherits BUIVariantComponentBase<BUICard, BUICardVariant>
 @implements IHasElevation
+@implements IHasDensity
 @implements IHasBorder
-@implements IHasBackgroundColor
-@implements IHasFullWidth
 @implements IHasRipple
+@implements IHasBackgroundColor
 
 @{
     base.BuildRenderTree(__builder);
@@ -19,84 +18,161 @@
 @code {
     private ElementReference _cardElement;
 
-    // Content parameters
-    [Parameter] public RenderFragment? ChildContent { get; set; }
+    /* ========= Content Parameters ========= */
+
     [Parameter] public RenderFragment? Header { get; set; }
     [Parameter] public RenderFragment? Media { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public RenderFragment? Actions { get; set; }
 
-    // IHasElevation
-    [Parameter] public int? Elevation { get; set; } = 1;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Subtitle { get; set; }
+
+    /* ========= Behavior Parameters ========= */
+
+    [Parameter] public bool Clickable { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    [Parameter] public string? MediaHeight { get; set; }
+    [Parameter] public CardMediaPosition MediaPosition { get; set; } = CardMediaPosition.Top;
+
+    [Parameter] public bool OutlinedActions { get; set; }
+    [Parameter] public CardActionsAlignment ActionsAlignment { get; set; } = CardActionsAlignment.End;
+
+    /* ========= IHasElevation ========= */
+
+    [Parameter] public int? Elevation { get; set; }
     [Parameter] public CssColor? ElevationColor { get; set; }
 
-    // IHasBorder
+    /* ========= IHasDensity ========= */
+
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    /* ========= IHasBorder ========= */
+
     [Parameter] public BorderStyle? Border { get; set; }
     [Parameter] public BorderStyle? BorderTop { get; set; }
     [Parameter] public BorderStyle? BorderRight { get; set; }
     [Parameter] public BorderStyle? BorderBottom { get; set; }
     [Parameter] public BorderStyle? BorderLeft { get; set; }
 
-    // IHasBackgroundColor
-    [Parameter] public CssColor? BackgroundColor { get; set; }
+    /* ========= IHasRipple ========= */
 
-    // IHasFullWidth
-    [Parameter] public bool FullWidth { get; set; }
-
-    // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public CssColor? RippleColor { get; set; }
     [Parameter] public int? RippleDuration { get; set; }
 
-    // Card specific
-    [Parameter] public bool Clickable { get; set; }
-    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+    public ElementReference GetRippleContainer() => _cardElement;
 
-    public override BUICardVariant DefaultVariant => BUICardVariant.Default;
+    /* ========= IHasBackgroundColor ========= */
 
-    protected override IReadOnlyDictionary<BUICardVariant, Func<BUICard, RenderFragment>> BuiltInTemplates { get; } =
-        new Dictionary<BUICardVariant, Func<BUICard, RenderFragment>>
-        {
-            [BUICardVariant.Default] = c => c.RenderDefault(),
-            [BUICardVariant.Outlined] = c => c.RenderOutlined(),
-            [BUICardVariant.Flat] = c => c.RenderFlat()
-        };
+    [Parameter] public CssColor? BackgroundColor { get; set; }
 
-    private RenderFragment RenderDefault() => __builder =>
+    /* ========= Variant ========= */
+
+    public override BUICardVariant DefaultVariant => BUICardVariant.Elevated;
+
+    protected override Dictionary<BUICardVariant, Func<BUICard, RenderFragment>> BuiltInTemplates { get; } = new()
     {
-        <bui-component @attributes="ComputedAttributes">
+        [BUICardVariant.Elevated] = c => c.RenderCard(),
+        [BUICardVariant.Outlined] = c => c.RenderCard(),
+        [BUICardVariant.Flat] = c => c.RenderCard(),
+    };
+
+    /* ========= Render Methods ========= */
+
+    private RenderFragment RenderCard() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes"
+                       data-bui-clickable="@Clickable.ToString().ToLowerInvariant()"
+                       data-bui-media-position="@MediaPosition.ToString().ToLowerInvariant()">
+
             <div @ref="_cardElement"
-                 class="bui-card @(Clickable ? "bui-card--clickable" : "")"
+                 class="bui-card"
                  @onclick="HandleClick">
-                @if (Media != null)
+
+                @if (MediaPosition == CardMediaPosition.Top)
                 {
-                    <div class="bui-card__media">
-                        @Media
-                    </div>
+                    @RenderMedia()
                 }
+
                 @if (Header != null)
                 {
                     <div class="bui-card__header">
                         @Header
                     </div>
                 }
+                else if (!string.IsNullOrWhiteSpace(Title) || !string.IsNullOrWhiteSpace(Subtitle))
+                {
+                    <div class="bui-card__header">
+                        @if (!string.IsNullOrWhiteSpace(Title))
+                        {
+                            <h3 class="bui-card__title">@Title</h3>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Subtitle))
+                        {
+                            <p class="bui-card__subtitle">@Subtitle</p>
+                        }
+                    </div>
+                }
+
+                @if (MediaPosition == CardMediaPosition.AfterHeader)
+                {
+                    @RenderMedia()
+                }
+
                 @if (ChildContent != null)
                 {
                     <div class="bui-card__content">
                         @ChildContent
                     </div>
                 }
+
+                @if (MediaPosition == CardMediaPosition.BeforeActions)
+                {
+                    @RenderMedia()
+                }
+
                 @if (Actions != null)
                 {
-                    <div class="bui-card__actions">
+                    <div class="bui-card__actions @GetActionsClass()">
                         @Actions
                     </div>
+                }
+
+                @if (MediaPosition == CardMediaPosition.Bottom)
+                {
+                    @RenderMedia()
                 }
             </div>
         </bui-component>
     };
 
-    private RenderFragment RenderOutlined() => RenderDefault();
-    private RenderFragment RenderFlat() => RenderDefault();
+    private RenderFragment RenderMedia() => __builder =>
+    {
+        @if (Media != null)
+        {
+            <div class="bui-card__media">
+                @Media
+            </div>
+        }
+    };
+
+    /* ========= Helper Methods ========= */
+
+    private string GetActionsClass()
+    {
+        List<string> classes = new();
+
+        if (OutlinedActions)
+        {
+            classes.Add("bui-card__actions--outlined");
+        }
+
+        classes.Add($"bui-card__actions--{ActionsAlignment.ToString().ToLowerInvariant()}");
+
+        return string.Join(" ", classes);
+    }
 
     private async Task HandleClick(MouseEventArgs args)
     {
@@ -106,5 +182,13 @@
         }
     }
 
-    public ElementReference GetRippleContainer() => _cardElement;
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        base.BuildComponentCssVariables(cssVariables);
+
+        if (MediaHeight != null)
+        {
+            cssVariables["--bui-card-media-height"] = MediaHeight;
+        }
+    }
 }

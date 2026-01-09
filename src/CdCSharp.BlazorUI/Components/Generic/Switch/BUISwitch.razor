@@ -1,0 +1,81 @@
+﻿@typeparam TValue
+
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@inherits BUIComponentBase
+@implements IHasSize
+@implements IHasDensity
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+<bui-component @attributes="ComputedAttributes"
+               data-bui-checked="@IsChecked.ToString().ToLowerInvariant()"
+               data-bui-disabled="@IsDisabled.ToString().ToLowerInvariant()"
+               @onclick="HandleClick">
+
+    <div class="bui-switch__track">
+        <div class="bui-switch__thumb">
+            @if (IsChecked && IconOption2 != null)
+            {
+                <span class="bui-switch__icon">@IconOption2</span>
+            }
+            else if (!IsChecked && IconOption1 != null)
+            {
+                <span class="bui-switch__icon">@IconOption1</span>
+            }
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <span class="bui-switch__label">@Label</span>
+    }
+</bui-component>
+
+@code {
+    /* ===== Design ===== */
+
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    /* ===== State ===== */
+
+    [Parameter] public bool IsDisabled { get; set; }
+
+    /* ===== Switch behavior ===== */
+
+    [Parameter] public TValue? Value { get; set; }
+    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
+
+    [Parameter, EditorRequired] public TValue Option1 { get; set; } = default!;
+    [Parameter, EditorRequired] public TValue Option2 { get; set; } = default!;
+
+    /* ===== Content ===== */
+
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? IconOption1 { get; set; }
+    [Parameter] public string? IconOption2 { get; set; }
+
+    protected bool IsChecked =>
+        EqualityComparer<TValue>.Default.Equals(Value, Option2);
+
+    private async Task HandleClick(MouseEventArgs e)
+    {
+        if (IsDisabled)
+            return;
+
+        TValue newValue =
+            EqualityComparer<TValue>.Default.Equals(Value, Option1)
+                ? Option2
+                : Option1;
+
+        Value = newValue;
+        await ValueChanged.InvokeAsync(newValue);
+    }
+}
+
