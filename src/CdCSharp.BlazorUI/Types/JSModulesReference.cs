@@ -7,4 +7,5 @@ public static class JSModulesReference
     public const string TextPattern = "./_content/CdCSharp.BlazorUI/js/Types/Pattern/PatternInterop.min.js";
     public const string Dropdown = "./_content/CdCSharp.BlazorUI/js/Types/Dropdown/DropdownInterop.min.js";
     public const string Clipboard = "./_content/CdCSharp.BlazorUI/js/Types/Clipboard/ClipboardInterop.min.js";
+    public const string TextArea = "./_content/CdCSharp.BlazorUI/js/Types/TextArea/TextAreaInterop.min.js";
 }

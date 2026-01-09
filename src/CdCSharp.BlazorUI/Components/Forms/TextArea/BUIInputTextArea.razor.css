@@ -1,0 +1,237 @@
+﻿bui-component[data-bui-component="text-area"] {
+    display: flex;
+    flex-direction: column;
+    gap: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
+    --bui-textarea-padding-y: 0.5rem;
+    --bui-textarea-padding-x: 0.75rem;
+    --bui-textarea-min-height: 5rem;
+}
+
+    /* Base textarea styles */
+    bui-component[data-bui-component="text-area"] textarea {
+        width: 100%;
+        min-height: var(--bui-textarea-min-height);
+        font-family: inherit;
+        font-size: inherit;
+        line-height: 1.5;
+        color: inherit;
+        background-color: transparent;
+        transition: all 200ms ease-in-out;
+        padding: calc(var(--bui-textarea-padding-y) * var(--bui-density-spacing-multiplier, 1)) calc(var(--bui-textarea-padding-x) * var(--bui-density-spacing-multiplier, 1));
+        box-sizing: border-box;
+    }
+
+    /* Size variations */
+    bui-component[data-bui-component="text-area"][data-bui-size="small"] {
+        --bui-textarea-padding-y: 0.375rem;
+        --bui-textarea-padding-x: 0.5rem;
+        --bui-textarea-min-height: 4rem;
+    }
+
+        bui-component[data-bui-component="text-area"][data-bui-size="small"] textarea {
+            font-size: 0.875rem;
+        }
+
+    bui-component[data-bui-component="text-area"][data-bui-size="large"] {
+        --bui-textarea-padding-y: 0.625rem;
+        --bui-textarea-padding-x: 1rem;
+        --bui-textarea-min-height: 6rem;
+    }
+
+        bui-component[data-bui-component="text-area"][data-bui-size="large"] textarea {
+            font-size: 1.125rem;
+        }
+
+    /* Resize behavior */
+    bui-component[data-bui-component="text-area"] textarea[data-resize="none"] {
+        resize: none;
+    }
+
+    bui-component[data-bui-component="text-area"] textarea[data-resize="vertical"] {
+        resize: vertical;
+    }
+
+    bui-component[data-bui-component="text-area"] textarea[data-resize="horizontal"] {
+        resize: horizontal;
+    }
+
+    bui-component[data-bui-component="text-area"] textarea[data-resize="both"] {
+        resize: both;
+    }
+
+    /* Variant: Outlined */
+    bui-component[data-bui-component="text-area"][data-bui-variant="outlined"] textarea {
+        border: 1px solid rgba(0, 0, 0, 0.23);
+        border-radius: 4px;
+    }
+
+        bui-component[data-bui-component="text-area"][data-bui-variant="outlined"] textarea:hover:not(:disabled):not(:read-only) {
+            border-color: var(--palette-backgroundcontrast);
+        }
+
+        bui-component[data-bui-component="text-area"][data-bui-variant="outlined"] textarea:focus {
+            outline: none;
+            border-color: var(--palette-primary);
+            box-shadow: 0 0 0 1px var(--palette-primary);
+        }
+
+    /* Variant: Filled */
+    bui-component[data-bui-component="text-area"][data-bui-variant="filled"] textarea {
+        background-color: rgba(0, 0, 0, 0.06);
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border: none;
+        border-bottom: 2px solid transparent;
+    }
+
+        bui-component[data-bui-component="text-area"][data-bui-variant="filled"] textarea:hover:not(:disabled):not(:read-only) {
+            background-color: rgba(0, 0, 0, 0.09);
+        }
+
+        bui-component[data-bui-component="text-area"][data-bui-variant="filled"] textarea:focus {
+            outline: none;
+            border-bottom-color: var(--palette-primary);
+            background-color: rgba(0, 0, 0, 0.09);
+        }
+
+    /* Variant: Standard */
+    bui-component[data-bui-component="text-area"][data-bui-variant="standard"] textarea {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+        border-radius: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+        bui-component[data-bui-component="text-area"][data-bui-variant="standard"] textarea:hover:not(:disabled):not(:read-only) {
+            border-bottom-color: var(--palette-backgroundcontrast);
+        }
+
+        bui-component[data-bui-component="text-area"][data-bui-variant="standard"] textarea:focus {
+            outline: none;
+            border-bottom-color: var(--palette-primary);
+            border-bottom-width: 2px;
+        }
+
+    /* Label */
+    bui-component[data-bui-component="text-area"] .bui-textarea__label {
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    bui-component[data-bui-component="text-area"] .bui-textarea__required {
+        color: var(--palette-error);
+        margin-left: 0.25rem;
+    }
+
+    /* Container for loading indicator */
+    bui-component[data-bui-component="text-area"] .bui-textarea__container {
+        position: relative;
+    }
+
+    bui-component[data-bui-component="text-area"] .bui-textarea__loading {
+        position: absolute;
+        top: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
+        right: calc(0.75rem * var(--bui-density-spacing-multiplier, 1));
+        pointer-events: none;
+    }
+
+    /* Validation message */
+    bui-component[data-bui-component="text-area"] .bui-textarea__validation {
+        color: var(--palette-error);
+        font-size: 0.75rem;
+        margin-top: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
+    }
+
+    /* Helper text */
+    bui-component[data-bui-component="text-area"] .bui-textarea__helper-text {
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    /* Disabled state */
+    bui-component[data-bui-component="text-area"] textarea:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    /* Readonly state */
+    bui-component[data-bui-component="text-area"] textarea:read-only {
+        cursor: default;
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+
+[data-theme="dark"] bui-component[data-bui-component="text-area"] textarea:read-only {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Error state */
+bui-component[data-bui-component="text-area"][data-bui-error="true"] textarea {
+    border-color: var(--palette-error);
+}
+
+    bui-component[data-bui-component="text-area"][data-bui-error="true"] textarea:focus {
+        border-color: var(--palette-error);
+        box-shadow: 0 0 0 1px var(--palette-error);
+    }
+
+/* Full width */
+bui-component[data-bui-component="text-area"][data-bui-fullwidth="true"] {
+    width: 100%;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] bui-component[data-bui-component="text-area"][data-bui-variant="outlined"] textarea {
+    border-color: rgba(255, 255, 255, 0.23);
+}
+
+    [data-theme="dark"] bui-component[data-bui-component="text-area"][data-bui-variant="outlined"] textarea:hover:not(:disabled):not(:read-only) {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+[data-theme="dark"] bui-component[data-bui-component="text-area"][data-bui-variant="filled"] textarea {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+    [data-theme="dark"] bui-component[data-bui-component="text-area"][data-bui-variant="filled"] textarea:hover:not(:disabled):not(:read-only) {
+        background-color: rgba(255, 255, 255, 0.09);
+    }
+
+[data-theme="dark"] bui-component[data-bui-component="text-area"][data-bui-variant="standard"] textarea {
+    border-bottom-color: rgba(255, 255, 255, 0.42);
+}
+
+    [data-theme="dark"] bui-component[data-bui-component="text-area"][data-bui-variant="standard"] textarea:hover:not(:disabled):not(:read-only) {
+        border-bottom-color: rgba(255, 255, 255, 0.7);
+    }
+
+/* Custom scrollbar for textarea */
+bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+}
+
+bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+    bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+[data-theme="dark"] bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+    [data-theme="dark"] bui-component[data-bui-component="text-area"] textarea::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }

@@ -1,0 +1,198 @@
+﻿@using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript
+@using CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Components.Forms.TextArea
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@inherits BUIInputComponentBase<string, BUIInputTextArea, BUIInputTextAreaVariant>
+@implements IHasSize
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasDensity
+@implements IHasElevation
+@implements IHasBorder
+@implements IHasRipple
+@implements IAsyncDisposable
+
+@inject ITextAreaJsInterop TextAreaJs
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private ElementReference _textareaContainer;
+    private ElementReference _textarea;
+    private string _textareaId = $"bui-textarea-{Guid.NewGuid():N}";
+    private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
+    private bool _jsInitialized = false;
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasFullWidth
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasDensity
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasElevation
+    [Parameter] public int? Elevation { get; set; }
+    [Parameter] public CssColor? ElevationColor { get; set; }
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
+
+    // IHasRipple
+    [Parameter] public bool DisableRipple { get; set; }
+    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public int? RippleDuration { get; set; }
+    public ElementReference GetRippleContainer() => _textareaContainer;
+
+    // TextArea specific parameters
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public int? Rows { get; set; } = 3;
+    [Parameter] public int? Cols { get; set; }
+    [Parameter] public int? MaxLength { get; set; }
+    [Parameter] public bool AutoResize { get; set; } = false;
+    [Parameter] public TextAreaResize Resize { get; set; } = TextAreaResize.Vertical;
+    [Parameter] public bool UpdateOnInput { get; set; }
+    [Parameter] public EventCallback<string> OnInput { get; set; }
+
+    /* ========= Variant ========= */
+
+    public override BUIInputTextAreaVariant DefaultVariant => BUIInputTextAreaVariant.Outlined;
+
+    protected override IReadOnlyDictionary<BUIInputTextAreaVariant, Func<BUIInputTextArea, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputTextAreaVariant, Func<BUIInputTextArea, RenderFragment>>
+        {
+            [BUIInputTextAreaVariant.Outlined] = t => t.RenderTextArea(),
+            [BUIInputTextAreaVariant.Filled] = t => t.RenderTextArea(),
+            [BUIInputTextAreaVariant.Standard] = t => t.RenderTextArea()
+        };
+
+    /* ========= Lifecycle ========= */
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender && AutoResize)
+        {
+            await TextAreaJs.InitializeAutoResizeAsync(_textarea, _textareaId);
+            _jsInitialized = true;
+        }
+    }
+
+    /* ========= Render Methods ========= */
+
+    private RenderFragment RenderTextArea() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes">
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label for="@_textareaId" class="bui-textarea__label">
+                    @Label
+                    @if (Required)
+                    {
+                        <span class="bui-textarea__required">*</span>
+                    }
+                </label>
+            }
+
+            <div class="bui-textarea__container" @ref="_textareaContainer">
+                <textarea @ref="_textarea"
+                          id="@_textareaId"
+                          value="@CurrentValue"
+                          @onchange="HandleChange"
+                          @oninput="HandleInput"
+                          aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+                          aria-describedby="@_helperTextId"
+                          aria-invalid="@IsError.ToString().ToLower()"
+                          aria-required="@Required.ToString().ToLower()"
+                          placeholder="@Placeholder"
+                          rows="@Rows"
+                          cols="@Cols"
+                          maxlength="@MaxLength"
+                          disabled="@IsDisabled"
+                          readonly="@ReadOnly"
+                          required="@Required"
+                          data-resize="@Resize.ToString().ToLowerInvariant()"></textarea>
+
+                @if (IsLoading && LoadingIndicatorVariant != null)
+                {
+                    <div class="bui-textarea__loading">
+                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                    </div>
+                }
+            </div>
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-textarea__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div id="@_helperTextId" class="bui-textarea__helper-text">
+                    @HelperText
+                </div>
+            }
+        </bui-component>
+    };
+
+    /* ========= Event Handlers ========= */
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        CurrentValueAsString = e.Value?.ToString() ?? string.Empty;
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        if (UpdateOnInput)
+        {
+            CurrentValueAsString = e.Value?.ToString() ?? string.Empty;
+        }
+
+        if (OnInput.HasDelegate)
+        {
+            await OnInput.InvokeAsync(e.Value?.ToString() ?? string.Empty);
+        }
+    }
+
+    protected override bool TryParseValueFromString(string? value, out string? result, out string validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = string.Empty;
+        return true;
+    }
+
+    /* ========= Disposal ========= */
+
+    public override async ValueTask DisposeAsync()
+    {
+        if (_jsInitialized)
+        {
+            await TextAreaJs.DisposeAutoResizeAsync(_textareaId);
+        }
+        await base.DisposeAsync();
+    }
+}
