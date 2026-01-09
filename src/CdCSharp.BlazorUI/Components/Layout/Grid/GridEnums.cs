@@ -1,11 +1,5 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Layout.Grid;
 
-public enum GridContainerType
-{
-    Fixed,
-    Fluid
-}
-
 public enum GridDirection
 {
     Row,

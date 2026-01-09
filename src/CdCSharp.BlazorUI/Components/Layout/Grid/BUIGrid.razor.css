@@ -2,12 +2,27 @@
 
 bui-component[data-bui-component="grid"] {
     display: block;
+    width: 100%;
     margin: var(--bui-grid-margin, 0);
     margin-top: var(--bui-grid-margin-top, var(--bui-grid-margin, 0));
     margin-right: var(--bui-grid-margin-right, var(--bui-grid-margin, 0));
     margin-bottom: var(--bui-grid-margin-bottom, var(--bui-grid-margin, 0));
     margin-left: var(--bui-grid-margin-left, var(--bui-grid-margin, 0));
 }
+
+    /* CONTAINED MODE (MaxWidth specified) */
+    bui-component[data-bui-component="grid"][data-bui-contained="true"] {
+        max-width: var(--bui-grid-max-width, 100%);
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: calc(1rem * var(--bui-density-spacing-multiplier, 1));
+        padding-right: calc(1rem * var(--bui-density-spacing-multiplier, 1));
+    }
+
+        bui-component[data-bui-component="grid"][data-bui-contained="true"][data-bui-disable-padding="true"] {
+            padding-left: 0;
+            padding-right: 0;
+        }
 
     bui-component[data-bui-component="grid"] .bui-grid {
         display: flex;

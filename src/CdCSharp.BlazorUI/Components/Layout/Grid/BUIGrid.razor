@@ -1,6 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Components.Layout.Grid
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using System.Text
 
 @namespace CdCSharp.BlazorUI.Components.Layout
 
@@ -16,6 +15,9 @@
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public int Columns { get; set; } = 12;
+
+    [Parameter] public string? MaxWidth { get; set; }
+    [Parameter] public bool DisablePadding { get; set; }
 
     [Parameter] public string? Gap { get; set; }
     [Parameter] public string? GapXs { get; set; }
@@ -62,6 +64,12 @@
         dataAttributes["data-bui-align-items"] = ToKebabCase(AlignItems.ToString());
         dataAttributes["data-bui-wrap"] = ToKebabCase(Wrap.ToString());
 
+        if (MaxWidth != null)
+            dataAttributes["data-bui-contained"] = "true";
+
+        if (DisablePadding)
+            dataAttributes["data-bui-disable-padding"] = "true";
+
         if (DirectionXs.HasValue)
             dataAttributes["data-bui-direction-xs"] = ToKebabCase(DirectionXs.Value.ToString());
         if (DirectionSm.HasValue)
@@ -77,6 +85,9 @@
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
         cssVariables["--bui-grid-columns"] = Columns.ToString();
+
+        if (MaxWidth != null)
+            cssVariables["--bui-grid-max-width"] = MaxWidth;
 
         string baseGap = NormalizeGapValue(Gap ?? "1rem");
         cssVariables["--bui-grid-gap"] = $"calc({baseGap} * var(--bui-density-spacing-multiplier, 1))";
@@ -94,19 +105,6 @@
 
         AddSpacingVariables(cssVariables, "padding", P, Pt, Pr, Pb, Pl, Px, Py);
         AddSpacingVariables(cssVariables, "margin", M, Mt, Mr, Mb, Ml, Mx, My);
-    }
-
-    private static string NormalizeGapValue(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return "0px";
-
-        string trimmed = value.Trim();
-
-        if (trimmed == "0")
-            return "0px";
-
-        return trimmed;
     }
 
     private void AddSpacingVariables(Dictionary<string, string> cssVariables, string property,
@@ -135,25 +133,19 @@
         if (left != null) cssVariables[$"--bui-grid-{property}-left"] = $"calc({left} * var(--bui-density-spacing-multiplier, 1))";
     }
 
-    private static string ToKebabCase(string value)
+    private static string NormalizeGapValue(string value)
     {
-        if (string.IsNullOrEmpty(value))
-            return value;
+        if (string.IsNullOrWhiteSpace(value))
+            return "0px";
 
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < value.Length; i++)
-        {
-            char c = value[i];
-            if (i > 0 && char.IsUpper(c))
-            {
-                builder.Append('-');
-                builder.Append(char.ToLowerInvariant(c));
-            }
-            else
-            {
-                builder.Append(char.ToLowerInvariant(c));
-            }
-        }
-        return builder.ToString();
+        string trimmed = value.Trim();
+
+        if (trimmed == "0")
+            return "0px";
+
+        return trimmed;
     }
+
+    private static string ToKebabCase(string value) =>
+        string.Concat(value.Select((c, i) => i > 0 && char.IsUpper(c) ? $"-{char.ToLower(c)}" : char.ToLower(c).ToString()));
 }

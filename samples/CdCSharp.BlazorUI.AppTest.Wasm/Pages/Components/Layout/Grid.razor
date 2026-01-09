@@ -167,23 +167,21 @@
     {
         Demo = RenderContainer(),
         Code = """
-<!-- Fixed Container (default) -->
-<BUIGridContainer>
-    <BUIGrid>
-        <BUIGridItem Xs="12">
-            <div class="grid-demo-box">Fixed container</div>
-        </BUIGridItem>
-    </BUIGrid>
-</BUIGridContainer>
+<BUIGrid>
+    <BUIGridItem Xs="6">...</BUIGridItem>
+    <BUIGridItem Xs="6">...</BUIGridItem>
+</BUIGrid>
 
-<!-- Fluid Container -->
-<BUIGridContainer Fluid>
-    <BUIGrid>
-        <BUIGridItem Xs="12">
-            <div class="grid-demo-box">Fluid container</div>
-        </BUIGridItem>
-    </BUIGrid>
-</BUIGridContainer>
+<!-- Con contenedor (ancho máximo centrado) -->
+<BUIGrid MaxWidth="1200px">
+    <BUIGridItem Xs="6">...</BUIGridItem>
+    <BUIGridItem Xs="6">...</BUIGridItem>
+</BUIGrid>
+
+<!-- Contenedor sin padding lateral -->
+<BUIGrid MaxWidth="960px" DisablePadding="true">
+    <BUIGridItem Xs="12">...</BUIGridItem>
+</BUIGrid>
 """
     };
 
@@ -447,27 +445,21 @@
 
     private RenderFragment RenderContainer() => __builder =>
     {
-        <div style="margin-bottom: 2rem;">
-            <h4 style="margin-bottom: 0.5rem;">Fixed Container</h4>
-            <BUIGridContainer>
-                <BUIGrid>
-                    <BUIGridItem Xs="12">
-                        <div class="grid-demo-box">Fixed container (max-width responsive)</div>
-                    </BUIGridItem>
-                </BUIGrid>
-            </BUIGridContainer>
-        </div>
+        <BUIGrid>
+            <BUIGridItem Xs="6">...</BUIGridItem>
+            <BUIGridItem Xs="6">...</BUIGridItem>
+        </BUIGrid>
 
-        <div>
-            <h4 style="margin-bottom: 0.5rem;">Fluid Container</h4>
-            <BUIGridContainer Fluid>
-                <BUIGrid>
-                    <BUIGridItem Xs="12">
-                        <div class="grid-demo-box">Fluid container (100% width)</div>
-                    </BUIGridItem>
-                </BUIGrid>
-            </BUIGridContainer>
-        </div>
+        <!-- Con contenedor (ancho máximo centrado) -->
+        <BUIGrid MaxWidth="1200px">
+            <BUIGridItem Xs="6">...</BUIGridItem>
+            <BUIGridItem Xs="6">...</BUIGridItem>
+        </BUIGrid>
+
+        <!-- Contenedor sin padding lateral -->
+        <BUIGrid MaxWidth="960px" DisablePadding="true">
+            <BUIGridItem Xs="12">...</BUIGridItem>
+        </BUIGrid>
         ;
     };
 
