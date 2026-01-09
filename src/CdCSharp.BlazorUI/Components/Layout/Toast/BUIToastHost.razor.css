@@ -1,0 +1,76 @@
+﻿/* === Feedback/Toast/BUIToastHost.razor.css === */
+
+bui-component[data-bui-component="toast-host"] {
+    position: fixed;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+    pointer-events: none;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+    /* Top positions */
+    bui-component[data-bui-component="toast-host"][data-bui-position="top-left"] {
+        top: 0;
+        left: 0;
+        align-items: flex-start;
+    }
+
+    bui-component[data-bui-component="toast-host"][data-bui-position="top-center"] {
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        align-items: center;
+    }
+
+    bui-component[data-bui-component="toast-host"][data-bui-position="top-right"] {
+        top: 0;
+        right: 0;
+        align-items: flex-end;
+    }
+
+    /* Bottom positions */
+    bui-component[data-bui-component="toast-host"][data-bui-position="bottom-left"] {
+        bottom: 0;
+        left: 0;
+        align-items: flex-start;
+        flex-direction: column-reverse;
+    }
+
+    bui-component[data-bui-component="toast-host"][data-bui-position="bottom-center"] {
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        align-items: center;
+        flex-direction: column-reverse;
+    }
+
+    bui-component[data-bui-component="toast-host"][data-bui-position="bottom-right"] {
+        bottom: 0;
+        right: 0;
+        align-items: flex-end;
+        flex-direction: column-reverse;
+    }
+
+/* Responsive */
+@media (max-width: 480px) {
+    bui-component[data-bui-component="toast-host"] {
+        padding: 0.5rem;
+    }
+
+        bui-component[data-bui-component="toast-host"][data-bui-position="top-center"],
+        bui-component[data-bui-component="toast-host"][data-bui-position="bottom-center"] {
+            left: 0;
+            right: 0;
+            transform: none;
+            align-items: stretch;
+        }
+
+        bui-component[data-bui-component="toast-host"] bui-component[data-bui-component="toast"] {
+            max-width: none;
+            min-width: 0;
+        }
+}

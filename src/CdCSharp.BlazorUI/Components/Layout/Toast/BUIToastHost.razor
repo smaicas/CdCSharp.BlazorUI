@@ -1,0 +1,92 @@
+﻿@using CdCSharp.BlazorUI.Components.Layout.Toast.Services
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIComponentBase
+@implements IDisposable
+
+@inject IToastService ToastService
+
+<CascadingValue Value="_toastService" IsFixed="true">
+    @foreach (ToastPosition position in Enum.GetValues<ToastPosition>())
+    {
+        IEnumerable<ToastState> toastsInPosition = GetToastsForPosition(position);
+        @if (toastsInPosition.Any())
+        {
+            <bui-component data-bui-component="toast-host"
+                           data-bui-position="@GetPositionValue(position)">
+                @foreach (ToastState toast in toastsInPosition)
+                {
+                    <BUIToast @key="toast.Id"
+                              State="toast"
+                              OnCloseAnimationComplete="HandleAnimationComplete" />
+                }
+            </bui-component>
+        }
+    }
+</CascadingValue>
+
+@code {
+    private ToastService? _toastService;
+    private List<ToastState> _allToasts = [];
+
+    [Parameter]
+    public int MaxVisiblePerPosition { get; set; } = 5;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _toastService = ToastService as ToastService;
+        ToastService.OnChange += HandleToastChange;
+    }
+
+    private void HandleToastChange()
+    {
+        _allToasts = ToastService.ActiveToasts.ToList();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private IEnumerable<ToastState> GetToastsForPosition(ToastPosition position)
+    {
+        IEnumerable<ToastState> toasts = _allToasts.Where(t => t.Options.Position == position);
+
+        bool isBottomPosition = position is ToastPosition.BottomLeft
+            or ToastPosition.BottomCenter
+            or ToastPosition.BottomRight;
+
+        IEnumerable<ToastState> ordered = isBottomPosition
+            ? toasts.OrderByDescending(t => t.CreatedAt)
+            : toasts.OrderBy(t => t.CreatedAt);
+
+        List<ToastState> visible = ordered
+            .Where(t => !t.IsClosing)
+            .Take(MaxVisiblePerPosition)
+            .ToList();
+
+        IEnumerable<ToastState> closing = ordered.Where(t => t.IsClosing);
+
+        return visible.Concat(closing);
+    }
+
+    private async Task HandleAnimationComplete(Guid toastId)
+    {
+        _toastService?.Remove(toastId);
+    }
+
+    private string GetPositionValue(ToastPosition position) => position switch
+    {
+        ToastPosition.TopLeft => "top-left",
+        ToastPosition.TopCenter => "top-center",
+        ToastPosition.TopRight => "top-right",
+        ToastPosition.BottomLeft => "bottom-left",
+        ToastPosition.BottomCenter => "bottom-center",
+        ToastPosition.BottomRight => "bottom-right",
+        _ => "top-right"
+    };
+
+    public void Dispose()
+    {
+        ToastService.OnChange -= HandleToastChange;
+    }
+}

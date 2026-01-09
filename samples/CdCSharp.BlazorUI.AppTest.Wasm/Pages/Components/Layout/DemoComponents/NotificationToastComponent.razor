@@ -1,0 +1,40 @@
+﻿@namespace CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+    <div style="flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; background: var(--palette-primary); display: flex; align-items: center; justify-content: center; color: var(--palette-primary-contrast);">
+        @if (Icon == "mail")
+        {
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+            </svg>
+        }
+        else if (Icon == "check")
+        {
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+            </svg>
+        }
+        else if (Icon == "info")
+        {
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+            </svg>
+        }
+        else
+        {
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+            </svg>
+        }
+    </div>
+    <div style="flex: 1; min-width: 0;">
+        <strong style="display: block; margin-bottom: 0.25rem;">@Title</strong>
+        <span style="font-size: 0.875rem; opacity: 0.8; word-wrap: break-word;">@Message</span>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = string.Empty;
+    [Parameter] public string Message { get; set; } = string.Empty;
+    [Parameter] public string Icon { get; set; } = "check";
+}

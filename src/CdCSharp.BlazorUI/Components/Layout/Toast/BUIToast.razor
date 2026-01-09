@@ -1,0 +1,162 @@
+﻿@using CdCSharp.BlazorUI.Components.Layout.Toast.Services
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIVariantComponentBase<BUIToast, BUIToastVariant>
+@implements IDisposable
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private System.Timers.Timer? _progressTimer;
+
+    [Parameter, EditorRequired]
+    public ToastState State { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<Guid> OnCloseAnimationComplete { get; set; }
+
+    [CascadingParameter]
+    private ToastService? ToastService { get; set; }
+
+    public override BUIToastVariant DefaultVariant => BUIToastVariant.Default;
+
+    protected override Dictionary<BUIToastVariant, Func<BUIToast, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [BUIToastVariant.Default] = t => t.RenderDefault()
+    };
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-position"] = GetPositionValue();
+        dataAttributes["data-bui-animation"] = GetAnimationValue();
+        dataAttributes["data-bui-closing"] = State.IsClosing.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-paused"] = State.IsPaused.ToString().ToLowerInvariant();
+    }
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        cssVariables["--bui-toast-animation-duration"] = $"{State.Options.Animation.Duration.TotalMilliseconds}ms";
+        cssVariables["--bui-toast-animation-easing"] = State.Options.Animation.Easing;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (State.Options.AutoDismiss)
+        {
+            _progressTimer = new System.Timers.Timer(50);
+            _progressTimer.Elapsed += (_, _) => InvokeAsync(StateHasChanged);
+            _progressTimer.Start();
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (State.IsClosing)
+        {
+            _progressTimer?.Stop();
+            await Task.Delay((int)State.Options.Animation.Duration.TotalMilliseconds);
+            await OnCloseAnimationComplete.InvokeAsync(State.Id);
+        }
+    }
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes"
+                       @onmouseenter="HandleMouseEnter"
+                       @onmouseleave="HandleMouseLeave"
+                       @onclick="HandleClick">
+
+            <div class="bui-toast__content">
+                @State.Content
+            </div>
+
+            @if (State.Options.Closable)
+            {
+                <button class="bui-toast__close"
+                        @onclick="HandleClose"
+                        @onclick:stopPropagation="true"
+                        aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            }
+
+            @if (State.Options.AutoDismiss)
+            {
+                <div class="bui-toast__progress">
+                    <div class="bui-toast__progress-bar" style="@GetProgressStyle()"></div>
+                </div>
+            }
+        </bui-component>
+    };
+
+    private string GetPositionValue() => State.Options.Position switch
+    {
+        ToastPosition.TopLeft => "top-left",
+        ToastPosition.TopCenter => "top-center",
+        ToastPosition.TopRight => "top-right",
+        ToastPosition.BottomLeft => "bottom-left",
+        ToastPosition.BottomCenter => "bottom-center",
+        ToastPosition.BottomRight => "bottom-right",
+        _ => "top-right"
+    };
+
+    private string GetAnimationValue() => State.Options.Animation.Type switch
+    {
+        ToastAnimationType.Fade => "fade",
+        ToastAnimationType.Slide => "slide",
+        ToastAnimationType.SlideAndFade => "slide-fade",
+        _ => "none"
+    };
+
+    private string GetProgressStyle()
+    {
+        if (!State.Options.AutoDismiss) return "width: 0%";
+
+        double progress = State.ProgressPercentage;
+        return $"width: {100 - progress:F1}%";
+    }
+
+    private void HandleMouseEnter()
+    {
+        if (State.Options.AutoDismiss && !State.IsClosing)
+        {
+            ToastService?.Pause(State.Id);
+            _progressTimer?.Stop();
+        }
+    }
+
+    private void HandleMouseLeave()
+    {
+        if (State.Options.AutoDismiss && !State.IsClosing)
+        {
+            ToastService?.Resume(State.Id);
+            _progressTimer?.Start();
+        }
+    }
+
+    private void HandleClick()
+    {
+        State.Options.OnClick?.Invoke();
+    }
+
+    private void HandleClose()
+    {
+        ToastService?.Close(State.Id);
+    }
+
+    public void Dispose()
+    {
+        _progressTimer?.Stop();
+        _progressTimer?.Dispose();
+    }
+}

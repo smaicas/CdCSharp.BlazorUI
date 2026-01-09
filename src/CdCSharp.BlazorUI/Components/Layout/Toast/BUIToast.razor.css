@@ -1,0 +1,270 @@
+﻿/* === Feedback/Toast/BUIToast.razor.css === */
+
+bui-component[data-bui-component="toast"] {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    padding-bottom: 1.25rem;
+    background: var(--palette-surface);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    pointer-events: auto;
+    cursor: default;
+    max-width: 400px;
+    min-width: 280px;
+}
+
+[data-theme="dark"] bui-component[data-bui-component="toast"] {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Content */
+bui-component[data-bui-component="toast"] .bui-toast__content {
+    flex: 1;
+    min-width: 0;
+    word-wrap: break-word;
+}
+
+/* Close button */
+bui-component[data-bui-component="toast"] .bui-toast__close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    opacity: 0.5;
+    cursor: pointer;
+    transition: opacity 150ms ease, background-color 150ms ease;
+}
+
+    bui-component[data-bui-component="toast"] .bui-toast__close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.05);
+    }
+
+[data-theme="dark"] bui-component[data-bui-component="toast"] .bui-toast__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Progress bar */
+bui-component[data-bui-component="toast"] .bui-toast__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] bui-component[data-bui-component="toast"] .bui-toast__progress {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+bui-component[data-bui-component="toast"] .bui-toast__progress-bar {
+    height: 100%;
+    background: var(--palette-primary);
+    transition: width 50ms linear;
+}
+
+bui-component[data-bui-component="toast"][data-bui-paused="true"] .bui-toast__progress-bar {
+    transition: none;
+}
+
+/* ========== Animation: None ========== */
+bui-component[data-bui-component="toast"][data-bui-animation="none"] {
+    animation: none;
+}
+
+    bui-component[data-bui-component="toast"][data-bui-animation="none"][data-bui-closing="true"] {
+        display: none;
+    }
+
+/* ========== Animation: Fade ========== */
+bui-component[data-bui-component="toast"][data-bui-animation="fade"] {
+    animation: bui-toast-fade-in var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-out) forwards;
+}
+
+    bui-component[data-bui-component="toast"][data-bui-animation="fade"][data-bui-closing="true"] {
+        animation: bui-toast-fade-out var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-in) forwards;
+    }
+
+/* ========== Animation: Slide - Top positions ========== */
+bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="top-left"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="top-center"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="top-right"] {
+    animation: bui-toast-slide-in-top var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-out) forwards;
+}
+
+    bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="top-left"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="top-center"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="top-right"][data-bui-closing="true"] {
+        animation: bui-toast-slide-out-top var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-in) forwards;
+    }
+
+/* ========== Animation: Slide - Bottom positions ========== */
+bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="bottom-left"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="bottom-center"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="bottom-right"] {
+    animation: bui-toast-slide-in-bottom var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-out) forwards;
+}
+
+    bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="bottom-left"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="bottom-center"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide"][data-bui-position="bottom-right"][data-bui-closing="true"] {
+        animation: bui-toast-slide-out-bottom var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-in) forwards;
+    }
+
+/* ========== Animation: SlideAndFade - Top positions ========== */
+bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="top-left"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="top-center"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="top-right"] {
+    animation: bui-toast-slide-fade-in-top var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-out) forwards;
+}
+
+    bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="top-left"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="top-center"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="top-right"][data-bui-closing="true"] {
+        animation: bui-toast-slide-fade-out-top var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-in) forwards;
+    }
+
+/* ========== Animation: SlideAndFade - Bottom positions ========== */
+bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="bottom-left"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="bottom-center"],
+bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="bottom-right"] {
+    animation: bui-toast-slide-fade-in-bottom var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-out) forwards;
+}
+
+    bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="bottom-left"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="bottom-center"][data-bui-closing="true"],
+    bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-bui-position="bottom-right"][data-bui-closing="true"] {
+        animation: bui-toast-slide-fade-out-bottom var(--bui-toast-animation-duration, 300ms) var(--bui-toast-animation-easing, ease-in) forwards;
+    }
+
+/* ========== Keyframes ========== */
+@keyframes bui-toast-fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes bui-toast-fade-out {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes bui-toast-slide-in-top {
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-toast-slide-out-top {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes bui-toast-slide-in-bottom {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-toast-slide-out-bottom {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(100%);
+    }
+}
+
+@keyframes bui-toast-slide-fade-in-top {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-toast-slide-fade-out-top {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes bui-toast-slide-fade-in-bottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bui-toast-slide-fade-out-bottom {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* ========== Reduced motion ========== */
+@media (prefers-reduced-motion: reduce) {
+    bui-component[data-bui-component="toast"] {
+        animation: none !important;
+    }
+
+        bui-component[data-bui-component="toast"][data-bui-closing="true"] {
+            opacity: 0;
+        }
+}
