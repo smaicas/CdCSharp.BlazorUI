@@ -1,0 +1,36 @@
+﻿@using CdCSharp.BlazorUI.Sites.Core
+@using CdCSharp.BlazorUI.Sites.Renderer.Rendering
+@using CdCSharp.BlazorUI.Sites.Renderer.Routing
+@inject NavigationManager Nav
+
+@if (_page is not null)
+{
+    <PageRenderer Page="_page" />
+}
+else
+{
+    <p>404 - Page not found</p>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public SiteDefinition Site { get; set; } = default!;
+
+    private SiteRouter? _router;
+    private PageDefinition? _page;
+
+    protected override void OnInitialized()
+    {
+        _router = new SiteRouter(Site);
+        ResolvePage();
+        Nav.LocationChanged += (_, _) => ResolvePage();
+    }
+
+    private void ResolvePage()
+    {
+        var path = Nav.ToBaseRelativePath(Nav.Uri);
+        path = "/" + path.Trim('/');
+        _page = _router!.Resolve(path);
+        StateHasChanged();
+    }
+}

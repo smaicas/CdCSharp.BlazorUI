@@ -1,0 +1,8 @@
+﻿@using CdCSharp.BlazorUI.Sites.Core
+
+<NodeRenderer Node="Page.Root" />
+
+@code {
+    [Parameter, EditorRequired]
+    public PageDefinition Page { get; set; } = default!;
+}

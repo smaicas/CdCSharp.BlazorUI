@@ -1,0 +1,25 @@
+﻿@using CdCSharp.BlazorUI.Sites.Core
+@using CdCSharp.BlazorUI.Sites.Renderer.Registry
+@inject IBlazorComponentRegistry Registry
+
+@if (Node is LayoutNode layout)
+{
+    foreach (var child in layout.Children)
+    {
+        <NodeRenderer Node="child" />
+    }
+}
+else if (Node is ComponentNode component)
+{
+    <DynamicComponent
+        Type="@Registry.ResolveType(component.ComponentKey)"
+        Parameters="@MapParameters(component)" />
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public UiNode Node { get; set; } = default!;
+
+    private Dictionary<string, object?> MapParameters(ComponentNode node)
+        => node.Props.ToDictionary(p => p.Key, p => p.Value.Value);
+}
