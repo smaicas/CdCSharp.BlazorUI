@@ -1,0 +1,342 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using Microsoft.AspNetCore.Components.Routing
+
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIComponentBase
+@implements ITreeMenuContext
+@implements IHasSize
+@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+<bui-component @attributes="@ComputedAttributes">
+    <CascadingValue Value="@((ITreeMenuContext)this)" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+
+    @if (_itemsBuilt)
+    {
+        <nav class="bui-tree-menu__nav" role="menubar" aria-orientation="@Orientation.ToString().ToLowerInvariant()">
+            @foreach (TreeMenuItemState item in _rootItems)
+            {
+                @RenderItem(item, 0)
+            }
+        </nav>
+    }
+</bui-component>
+
+@code {
+    private readonly Dictionary<string, TreeMenuItemState> _itemMap = [];
+    private readonly List<TreeMenuItemRegistration> _pendingRegistrations = [];
+    private readonly HashSet<string> _expandedKeys = [];
+    private List<TreeMenuItemState> _rootItems = [];
+    private bool _itemsBuilt;
+    private string _currentUri = string.Empty;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public TreeMenuOrientation Orientation { get; set; } = TreeMenuOrientation.Vertical;
+    [Parameter] public TreeMenuTrigger Trigger { get; set; } = TreeMenuTrigger.Click;
+    [Parameter] public TreeMenuExpandMode ExpandMode { get; set; } = TreeMenuExpandMode.Inline;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool Collapsible { get; set; } = true;
+    [Parameter] public EventCallback<string> OnNavigate { get; set; }
+
+    TreeMenuOrientation ITreeMenuContext.Orientation => Orientation;
+    TreeMenuTrigger ITreeMenuContext.Trigger => Trigger;
+    TreeMenuExpandMode ITreeMenuContext.ExpandMode => ExpandMode;
+    SizeEnum ITreeMenuContext.Size => Size;
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-orientation"] = Orientation.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-trigger"] = Trigger.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-expand-mode"] = ExpandMode.ToString().ToLowerInvariant();
+    }
+
+    protected override void OnInitialized()
+    {
+        _currentUri = NavigationManager.Uri;
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender && !_itemsBuilt)
+        {
+            BuildItems();
+            _itemsBuilt = true;
+            StateHasChanged();
+        }
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUri = e.Location;
+
+        if (ExpandMode == TreeMenuExpandMode.Flyout)
+        {
+            _expandedKeys.Clear();
+        }
+
+        StateHasChanged();
+    }
+
+    void ITreeMenuContext.RegisterItem(TreeMenuItemRegistration registration)
+    {
+        _pendingRegistrations.Add(registration);
+    }
+
+    private void BuildItems()
+    {
+        _itemMap.Clear();
+        _rootItems.Clear();
+
+        Dictionary<string, List<TreeMenuItemRegistration>> childrenByParent = [];
+
+        foreach (TreeMenuItemRegistration reg in _pendingRegistrations)
+        {
+            string parentKey = reg.ParentKey ?? string.Empty;
+            if (!childrenByParent.ContainsKey(parentKey))
+            {
+                childrenByParent[parentKey] = [];
+            }
+            childrenByParent[parentKey].Add(reg);
+        }
+
+        if (childrenByParent.TryGetValue(string.Empty, out List<TreeMenuItemRegistration>? roots))
+        {
+            foreach (TreeMenuItemRegistration reg in roots)
+            {
+                TreeMenuItemState item = BuildItemFromRegistration(reg, null, 0, childrenByParent);
+                _rootItems.Add(item);
+            }
+        }
+
+        _pendingRegistrations.Clear();
+    }
+
+    private TreeMenuItemState BuildItemFromRegistration(
+        TreeMenuItemRegistration reg,
+        TreeMenuItemState? parent,
+        int depth,
+        Dictionary<string, List<TreeMenuItemRegistration>> childrenByParent)
+    {
+        TreeMenuItemState item = new()
+        {
+            Key = reg.Key,
+            Text = reg.Text,
+            Icon = reg.Icon,
+            Href = reg.Href,
+            Target = reg.Target,
+            Match = reg.Match,
+            Disabled = reg.Disabled,
+            Depth = depth,
+            Parent = parent,
+            CustomContent = reg.NodeContent,
+            OnClick = reg.OnClick
+        };
+
+        _itemMap[reg.Key] = item;
+
+        if (reg.InitiallyExpanded)
+        {
+            _expandedKeys.Add(reg.Key);
+        }
+
+        if (childrenByParent.TryGetValue(reg.Key, out List<TreeMenuItemRegistration>? children))
+        {
+            foreach (TreeMenuItemRegistration childReg in children)
+            {
+                TreeMenuItemState childItem = BuildItemFromRegistration(childReg, item, depth + 1, childrenByParent);
+                item.ChildrenInternal.Add(childItem);
+            }
+        }
+
+        return item;
+    }
+
+    private RenderFragment RenderItem(TreeMenuItemState item, int depth) => __builder =>
+    {
+        bool isExpanded = IsExpanded(item.Key);
+        bool isActive = IsActive(item.Href);
+        bool hasChildren = item.HasChildren;
+        bool isFlyout = ExpandMode == TreeMenuExpandMode.Flyout;
+        bool isHoverTrigger = Trigger == TreeMenuTrigger.Hover;
+
+        <div class="bui-tree-menu__item @(item.Disabled ? "bui-tree-menu__item--disabled" : "") @(isActive ? "bui-tree-menu__item--active" : "") @(isExpanded ? "bui-tree-menu__item--expanded" : "")"
+             role="none"
+             data-depth="@depth"
+             @onmouseenter="@(isHoverTrigger && hasChildren ? () => ExpandAsync(item.Key) : null)"
+             @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? () => CollapseAsync(item.Key) : null)">
+
+            @if (!string.IsNullOrEmpty(item.Href) && !hasChildren)
+            {
+                <a class="bui-tree-menu__link"
+                   href="@item.Href"
+                   target="@item.Target"
+                   role="menuitem"
+                   aria-disabled="@item.Disabled.ToString().ToLowerInvariant()"
+                   @onclick="() => HandleItemClickAsync(item)"
+                   @onclick:preventDefault="@item.Disabled">
+                    @RenderItemContent(item, hasChildren, isExpanded)
+                </a>
+            }
+            else
+            {
+                <button type="button"
+                        class="bui-tree-menu__button"
+                        role="menuitem"
+                        aria-haspopup="@(hasChildren ? "true" : null)"
+                        aria-expanded="@(hasChildren? isExpanded.ToString().ToLowerInvariant() : null)"
+                        aria-disabled="@item.Disabled.ToString().ToLowerInvariant()"
+                        disabled="@item.Disabled"
+                        @onclick="() => HandleItemClickAsync(item)">
+                    @RenderItemContent(item, hasChildren, isExpanded)
+                </button>
+            }
+
+            @if (hasChildren && isExpanded)
+            {
+                <div class="bui-tree-menu__submenu @(isFlyout ? "bui-tree-menu__submenu--flyout" : "bui-tree-menu__submenu--inline")"
+                     role="menu">
+                    @foreach (TreeMenuItemState child in item.ChildrenInternal)
+                    {
+                        @RenderItem(child, depth + 1)
+                    }
+                </div>
+            }
+        </div>
+    };
+
+    private RenderFragment RenderItemContent(TreeMenuItemState item, bool hasChildren, bool isExpanded) => __builder =>
+    {
+        @if (item.CustomContent != null)
+        {
+            @item.CustomContent
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(item.Icon))
+            {
+                <BUISvgIcon Icon="@item.Icon" Size="Size" class="bui-tree-menu__icon" />
+            }
+            <span class="bui-tree-menu__text">@item.Text</span>
+        }
+
+        @if (hasChildren)
+        {
+            <span class="bui-tree-menu__arrow @(isExpanded ? "bui-tree-menu__arrow--expanded" : "")">
+                <BUISvgIcon Icon="@GetExpandIcon()" Size="Size" />
+            </span>
+        }
+    };
+
+    private string GetExpandIcon()
+    {
+        if (Orientation == TreeMenuOrientation.Horizontal && ExpandMode == TreeMenuExpandMode.Flyout)
+        {
+            return BUIIcons.UI.ChevronDown;
+        }
+        return BUIIcons.UI.ChevronRight;
+    }
+
+    private async Task HandleItemClickAsync(TreeMenuItemState item)
+    {
+        if (item.Disabled) return;
+
+        if (item.OnClick.HasDelegate)
+        {
+            await item.OnClick.InvokeAsync();
+        }
+
+        if (item.HasChildren)
+        {
+            await ToggleAsync(item.Key);
+        }
+        else if (!string.IsNullOrEmpty(item.Href))
+        {
+            if (OnNavigate.HasDelegate)
+            {
+                await OnNavigate.InvokeAsync(item.Href);
+            }
+
+            if (ExpandMode == TreeMenuExpandMode.Flyout)
+            {
+                await CollapseAllAsync();
+            }
+        }
+    }
+
+    public bool IsExpanded(string key) => _expandedKeys.Contains(key);
+
+    public bool IsActive(string? href)
+    {
+        if (string.IsNullOrEmpty(href)) return false;
+
+        string currentPath = NavigationManager.ToBaseRelativePath(_currentUri);
+        string targetPath = NavigationManager.ToBaseRelativePath(NavigationManager.ToAbsoluteUri(href).AbsoluteUri);
+
+        if (string.IsNullOrEmpty(currentPath)) currentPath = "/";
+        if (string.IsNullOrEmpty(targetPath)) targetPath = "/";
+
+        TreeMenuItemState? item = _itemMap.Values.FirstOrDefault(i => i.Href == href);
+        NavLinkMatch match = item?.Match ?? NavLinkMatch.Prefix;
+
+        if (match == NavLinkMatch.All)
+        {
+            return string.Equals(currentPath, targetPath, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return currentPath.StartsWith(targetPath, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public async Task ToggleAsync(string key)
+    {
+        if (IsExpanded(key))
+        {
+            await CollapseAsync(key);
+        }
+        else
+        {
+            await ExpandAsync(key);
+        }
+    }
+
+    public Task ExpandAsync(string key)
+    {
+        if (!Collapsible && _expandedKeys.Count > 0 && ExpandMode == TreeMenuExpandMode.Inline)
+        {
+            _expandedKeys.Clear();
+        }
+
+        _expandedKeys.Add(key);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    public Task CollapseAsync(string key)
+    {
+        _expandedKeys.Remove(key);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    public Task CollapseAllAsync()
+    {
+        _expandedKeys.Clear();
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

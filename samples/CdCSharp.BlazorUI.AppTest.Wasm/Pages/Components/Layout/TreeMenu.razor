@@ -1,0 +1,163 @@
+﻿@page "/components/tree-menu"
+@using CdCSharp.BlazorUI.Components
+
+<h2>BUITreeMenu - Vertical Sidebar (Inline)</h2>
+
+<div style="width: 280px; border: 1px solid #ccc; padding: 0.5rem;">
+    <BUITreeMenu Orientation="TreeMenuOrientation.Vertical"
+                 ExpandMode="TreeMenuExpandMode.Inline"
+                 Trigger="TreeMenuTrigger.Click">
+        
+        <BUITreeMenuItem Href="/" Text="Dashboard" Icon="@BUIIcons.MaterialIconsOutlined.i_home" Match="NavLinkMatch.All" />
+        
+        <BUITreeMenuItem Text="Products" Icon="@BUIIcons.MaterialIconsOutlined.i_propane">
+            <BUITreeMenuItem Href="/products" Text="All Products" />
+            <BUITreeMenuItem Href="/products/new" Text="Add Product" />
+            <BUITreeMenuItem Text="Categories">
+                <BUITreeMenuItem Href="/products/categories/electronics" Text="Electronics" />
+                <BUITreeMenuItem Href="/products/categories/clothing" Text="Clothing" />
+            </BUITreeMenuItem>
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Text="Orders" Icon="@BUIIcons.MaterialIconsOutlined.i_shop">
+            <BUITreeMenuItem Href="/orders" Text="All Orders" />
+            <BUITreeMenuItem Href="/orders/pending" Text="Pending" />
+            <BUITreeMenuItem Href="/orders/completed" Text="Completed" />
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Href="/customers" Text="Customers" Icon="@BUIIcons.MaterialIconsOutlined.i_person" />
+        
+        <BUITreeMenuItem Href="/settings" Text="Settings" Icon="@BUIIcons.MaterialIconsOutlined.i_settings" Disabled="true" />
+    </BUITreeMenu>
+</div>
+
+<hr />
+
+<h2>BUITreeMenu - Vertical Sidebar (Flyout)</h2>
+
+<div style="width: 280px; border: 1px solid #ccc; padding: 0.5rem;">
+    <BUITreeMenu Orientation="TreeMenuOrientation.Vertical"
+                 ExpandMode="TreeMenuExpandMode.Flyout"
+                 Trigger="TreeMenuTrigger.Hover">
+        
+        <BUITreeMenuItem Href="/" Text="Home" Icon="@BUIIcons.MaterialIconsOutlined.i_home" />
+        
+        <BUITreeMenuItem Text="Services" Icon="@BUIIcons.MaterialIconsOutlined.i_cases">
+            <BUITreeMenuItem Href="/services/consulting" Text="Consulting" />
+            <BUITreeMenuItem Href="/services/development" Text="Development" />
+            <BUITreeMenuItem Text="Support">
+                <BUITreeMenuItem Href="/services/support/basic" Text="Basic Plan" />
+                <BUITreeMenuItem Href="/services/support/premium" Text="Premium Plan" />
+            </BUITreeMenuItem>
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Href="/about" Text="About" Icon="@BUIIcons.MaterialIconsOutlined.i_info" />
+    </BUITreeMenu>
+</div>
+
+<hr />
+
+<h2>BUITreeMenu - Horizontal Navbar (Flyout)</h2>
+
+<div style="border: 1px solid #ccc; padding: 0.5rem; background: #f5f5f5;">
+    <BUITreeMenu Orientation="TreeMenuOrientation.Horizontal"
+                 ExpandMode="TreeMenuExpandMode.Flyout"
+                 Trigger="TreeMenuTrigger.Hover">
+        
+        <BUITreeMenuItem Href="/" Text="Home" />
+        
+        <BUITreeMenuItem Text="Products">
+            <BUITreeMenuItem Href="/products/software" Text="Software" />
+            <BUITreeMenuItem Href="/products/hardware" Text="Hardware" />
+            <BUITreeMenuItem Text="Services">
+                <BUITreeMenuItem Href="/products/services/cloud" Text="Cloud" />
+                <BUITreeMenuItem Href="/products/services/onprem" Text="On-Premise" />
+            </BUITreeMenuItem>
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Text="Company">
+            <BUITreeMenuItem Href="/company/about" Text="About Us" />
+            <BUITreeMenuItem Href="/company/team" Text="Our Team" />
+            <BUITreeMenuItem Href="/company/careers" Text="Careers" />
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Href="/contact" Text="Contact" />
+    </BUITreeMenu>
+</div>
+
+<hr />
+
+<h2>BUITreeMenu - Custom Content</h2>
+
+<div style="width: 280px; border: 1px solid #ccc; padding: 0.5rem;">
+    <BUITreeMenu Orientation="TreeMenuOrientation.Vertical"
+                 ExpandMode="TreeMenuExpandMode.Inline"
+                 Size="SizeEnum.Small">
+        
+        <BUITreeMenuItem Href="/profile">
+            <NodeContent>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #1976d2; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                        JD
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">John Doe</div>
+                        <div style="font-size: 0.75rem; opacity: 0.6;">Administrator</div>
+                    </div>
+                </div>
+            </NodeContent>
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Text="Notifications" Icon="@BUIIcons.MaterialIconsOutlined.i_doorbell">
+            <NodeContent>
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_doorbell" Size="SizeEnum.Small" />
+                <span style="flex: 1;">Notifications</span>
+                <span style="background: #e53935; color: white; padding: 0.125rem 0.5rem; border-radius: 10px; font-size: 0.75rem;">3</span>
+            </NodeContent>
+        </BUITreeMenuItem>
+        
+        <BUITreeMenuItem Href="/logout" Text="Logout" Icon="@BUIIcons.MaterialIconsOutlined.i_logout" />
+    </BUITreeMenu>
+</div>
+
+<hr />
+
+<h2>BUITreeMenu - With Click Handler</h2>
+
+<div style="width: 280px; border: 1px solid #ccc; padding: 0.5rem;">
+    <BUITreeMenu Orientation="TreeMenuOrientation.Vertical"
+                 OnNavigate="@HandleNavigate">
+        
+        <BUITreeMenuItem Text="Actions" Icon="@BUIIcons.MaterialIconsOutlined.i_pending_actions">
+            <BUITreeMenuItem Text="Export Data" OnClick="@HandleExport" />
+            <BUITreeMenuItem Text="Import Data" OnClick="@HandleImport" />
+            <BUITreeMenuItem Text="Clear Cache" OnClick="@HandleClearCache" />
+        </BUITreeMenuItem>
+    </BUITreeMenu>
+</div>
+
+<p>Last action: @_lastAction</p>
+
+@code {
+    private string _lastAction = "None";
+
+    private void HandleNavigate(string href)
+    {
+        _lastAction = $"Navigated to: {href}";
+    }
+
+    private void HandleExport()
+    {
+        _lastAction = "Export clicked";
+    }
+
+    private void HandleImport()
+    {
+        _lastAction = "Import clicked";
+    }
+
+    private void HandleClearCache()
+    {
+        _lastAction = "Clear cache clicked";
+    }
+}

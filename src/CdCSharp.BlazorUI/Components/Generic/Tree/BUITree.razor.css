@@ -1,0 +1,234 @@
+﻿bui-component[data-bui-component="tree"] {
+    --bui-tree-indent: 1.5rem;
+    --bui-tree-node-height: 2rem;
+    --bui-tree-node-gap: 0.25rem;
+    --bui-tree-line-color: rgba(0, 0, 0, 0.15);
+    --bui-tree-hover-bg: rgba(0, 0, 0, 0.04);
+    --bui-tree-active-bg: rgba(0, 0, 0, 0.08);
+    --bui-tree-border-radius: 4px;
+    --bui-tree-transition-duration: 200ms;
+    display: block;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] bui-component[data-bui-component="tree"] {
+    --bui-tree-line-color: rgba(255, 255, 255, 0.15);
+    --bui-tree-hover-bg: rgba(255, 255, 255, 0.08);
+    --bui-tree-active-bg: rgba(255, 255, 255, 0.12);
+}
+
+/* Size variations */
+bui-component[data-bui-component="tree"][data-bui-size="small"] {
+    --bui-tree-indent: 1.25rem;
+    --bui-tree-node-height: 1.5rem;
+    --bui-tree-node-gap: 0.125rem;
+    font-size: 0.875rem;
+}
+
+bui-component[data-bui-component="tree"][data-bui-size="medium"] {
+    --bui-tree-indent: 1.5rem;
+    --bui-tree-node-height: 2rem;
+    --bui-tree-node-gap: 0.25rem;
+    font-size: 1rem;
+}
+
+bui-component[data-bui-component="tree"][data-bui-size="large"] {
+    --bui-tree-indent: 2rem;
+    --bui-tree-node-height: 2.5rem;
+    --bui-tree-node-gap: 0.375rem;
+    font-size: 1.125rem;
+}
+
+/* Nodes container */
+bui-component[data-bui-component="tree"] .bui-tree__nodes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bui-tree-node-gap);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Single node */
+bui-component[data-bui-component="tree"] .bui-tree__node {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Node content row */
+bui-component[data-bui-component="tree"] .bui-tree__node-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--bui-tree-node-height);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--bui-tree-border-radius);
+    cursor: pointer;
+    transition: background-color var(--bui-tree-transition-duration) ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+    bui-component[data-bui-component="tree"] .bui-tree__node-content:hover {
+        background-color: var(--bui-tree-hover-bg);
+    }
+
+    bui-component[data-bui-component="tree"] .bui-tree__node-content:active {
+        background-color: var(--bui-tree-active-bg);
+    }
+
+/* Disabled node */
+bui-component[data-bui-component="tree"] .bui-tree__node--disabled .bui-tree__node-content {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Expander button */
+bui-component[data-bui-component="tree"] .bui-tree__expander {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    flex-shrink: 0;
+    transition: transform var(--bui-tree-transition-duration) ease, background-color var(--bui-tree-transition-duration) ease, opacity var(--bui-tree-transition-duration) ease;
+}
+
+    bui-component[data-bui-component="tree"] .bui-tree__expander:hover:not(:disabled) {
+        background-color: var(--bui-tree-hover-bg);
+        opacity: 1;
+    }
+
+    bui-component[data-bui-component="tree"] .bui-tree__expander:disabled {
+        cursor: not-allowed;
+        opacity: 0.3;
+    }
+
+/* Expander placeholder for leaf nodes */
+bui-component[data-bui-component="tree"] .bui-tree__expander-placeholder {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Node label container */
+bui-component[data-bui-component="tree"] .bui-tree__node-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Node icon */
+bui-component[data-bui-component="tree"] .bui-tree__node-icon {
+    flex-shrink: 0;
+    opacity: 0.8;
+}
+
+/* Node text */
+bui-component[data-bui-component="tree"] .bui-tree__node-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Children container */
+bui-component[data-bui-component="tree"] .bui-tree__children {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bui-tree-node-gap);
+    padding-left: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Animated children */
+bui-component[data-bui-component="tree"] .bui-tree__children--animated {
+    animation: bui-tree-expand var(--bui-tree-transition-duration) ease-out;
+}
+
+@keyframes bui-tree-expand {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Show lines variant */
+bui-component[data-bui-component="tree"][data-bui-show-lines="true"] .bui-tree__node {
+    position: relative;
+}
+
+    bui-component[data-bui-component="tree"][data-bui-show-lines="true"] .bui-tree__node::before {
+        content: "";
+        position: absolute;
+        left: calc(var(--bui-tree-indent) * var(--depth, 0) + 0.75rem);
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background-color: var(--bui-tree-line-color);
+    }
+
+    bui-component[data-bui-component="tree"][data-bui-show-lines="true"] .bui-tree__node:last-child::before {
+        height: var(--bui-tree-node-height);
+    }
+
+bui-component[data-bui-component="tree"][data-bui-show-lines="true"] .bui-tree__node-content::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--bui-tree-indent) * var(--depth, 0) + 0.75rem);
+    top: 50%;
+    width: 0.5rem;
+    height: 1px;
+    background-color: var(--bui-tree-line-color);
+}
+
+/* Focus styles for accessibility */
+bui-component[data-bui-component="tree"] .bui-tree__node-content:focus-visible {
+    outline: 2px solid var(--palette-primary, #1976d2);
+    outline-offset: 2px;
+}
+
+bui-component[data-bui-component="tree"] .bui-tree__expander:focus-visible {
+    outline: 2px solid var(--palette-primary, #1976d2);
+    outline-offset: 1px;
+}
+
+/* Density variations */
+bui-component[data-bui-component="tree"][data-bui-density="compact"] {
+    --bui-tree-node-height: 1.5rem;
+    --bui-tree-node-gap: 0;
+}
+
+    bui-component[data-bui-component="tree"][data-bui-density="compact"] .bui-tree__node-content {
+        padding: 0.125rem 0.5rem;
+    }
+
+bui-component[data-bui-component="tree"][data-bui-density="comfortable"] {
+    --bui-tree-node-height: 2.5rem;
+    --bui-tree-node-gap: 0.5rem;
+}
+
+    bui-component[data-bui-component="tree"][data-bui-density="comfortable"] .bui-tree__node-content {
+        padding: 0.5rem 0.75rem;
+    }
