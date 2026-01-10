@@ -1,0 +1,576 @@
+﻿@page "/components/tree-selector"
+
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Css
+
+<PageTitle>Tree Selector - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>BUITreeSelector</h1>
+
+    <p class="doc-intro">
+        <strong>BUITreeSelector</strong> is a hierarchical selection component supporting
+        single and multiple selection modes, declarative and data-bound modes,
+        lazy loading, checkboxes, and two-way binding.
+    </p>
+
+    <!-- BASIC DECLARATIVE -->
+    <section class="doc-section">
+        <h2>Basic declarative usage</h2>
+        <ComponentDemo Definition="@BasicDeclarativeDemo" />
+    </section>
+
+    <!-- SINGLE SELECTION -->
+    <section class="doc-section">
+        <h2>Single selection with binding</h2>
+        <ComponentDemo Definition="@SingleSelectionDemo" />
+        <p>Selected: @(string.Join(", ", _singleSelected))</p>
+    </section>
+
+    <!-- MULTIPLE SELECTION -->
+    <section class="doc-section">
+        <h2>Multiple selection</h2>
+        <ComponentDemo Definition="@MultipleSelectionDemo" />
+        <p>Selected: @(string.Join(", ", _multipleSelected))</p>
+    </section>
+
+    <!-- DATA BOUND -->
+    <section class="doc-section">
+        <h2>Data-bound mode</h2>
+        <ComponentDemo Definition="@DataBoundDemo" />
+    </section>
+
+    <!-- WITHOUT CHECKBOXES -->
+    <section class="doc-section">
+        <h2>Without checkboxes</h2>
+        <ComponentDemo Definition="@NoCheckboxesDemo" />
+    </section>
+
+    <!-- SIZES -->
+    <section class="doc-section">
+        <h2>Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <!-- CUSTOM ICONS -->
+    <section class="doc-section">
+        <h2>Custom expand icons</h2>
+        <ComponentDemo Definition="@CustomIconsDemo" />
+    </section>
+
+    <!-- DISABLED ITEMS -->
+    <section class="doc-section">
+        <h2>Disabled items</h2>
+        <ComponentDemo Definition="@DisabledDemo" />
+    </section>
+
+    <!-- CUSTOM CONTENT -->
+    <section class="doc-section">
+        <h2>Custom node content</h2>
+        <ComponentDemo Definition="@CustomContentDemo" />
+    </section>
+
+    <!-- LAZY LOADING -->
+    <section class="doc-section">
+        <h2>Lazy loading</h2>
+        <ComponentDemo Definition="@LazyLoadingDemo" />
+    </section>
+
+    <!-- EXPAND ALL -->
+    <section class="doc-section">
+        <h2>Expand all</h2>
+        <ComponentDemo Definition="@ExpandAllDemo" />
+    </section>
+
+    <!-- PROPERTIES -->
+    <section class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable Properties="@Properties" />
+    </section>
+
+    <!-- ITEM PROPERTIES -->
+    <section class="doc-section">
+        <h2>BUITreeSelectorItem Properties</h2>
+        <PropertyTable Properties="@ItemProperties" />
+    </section>
+
+    <!-- METHODS -->
+    <section class="doc-section">
+        <h2>Public Methods</h2>
+        <PropertyTable Properties="@Methods" />
+    </section>
+</div>BUIIcons.MaterialIconsOutlined
+
+@code {
+    private HashSet<string> _singleSelected = [];
+    private HashSet<string> _multipleSelected = [];
+
+    public class Category
+    {
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string? Icon { get; set; }
+        public int Count { get; set; }
+        public List<Category>? Children { get; set; }
+    }
+
+    private List<Category> Categories =>
+    [
+        new() {
+            Id = "electronics",
+            Name = "Electronics",
+            Icon = BUIIcons.MaterialIconsOutlined.i_computer,
+            Count = 150,
+            Children = [
+                new() { Id = "phones", Name = "Phones", Count = 45 },
+                new() { Id = "laptops", Name = "Laptops", Count = 32 },
+                new() {
+                    Id = "accessories",
+                    Name = "Accessories",
+                    Count = 73,
+                    Children = [
+                        new() { Id = "cables", Name = "Cables", Count = 28 },
+                        new() { Id = "cases", Name = "Cases", Count = 45 }
+                    ]
+                }
+            ]
+        },
+        new() {
+            Id = "clothing",
+            Name = "Clothing",
+            Icon = BUIIcons.MaterialIconsOutlined.i_shield,
+            Count = 89,
+            Children = [
+                new() { Id = "mens", Name = "Men's", Count = 42 },
+                new() { Id = "womens", Name = "Women's", Count = 47 }
+            ]
+        }
+    ];
+
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition BasicDeclarativeDemo => new()
+    {
+        Demo = RenderBasicDeclarative(),
+        Code = """
+<BUITreeSelector TItem="object">
+    <BUITreeSelectorItem Text="Documents" Icon="@BUIIcons.MaterialIconsOutlined.Folder">
+        <ChildContent>
+            <BUITreeSelectorItem Text="Work" />
+            <BUITreeSelectorItem Text="Personal" />
+        </ChildContent>
+    </BUITreeSelectorItem>
+    <BUITreeSelectorItem Text="Pictures" Icon="@BUIIcons.MaterialIconsOutlined.Image" />
+    <BUITreeSelectorItem Text="Music" Icon="@BUIIcons.MaterialIconsOutlined.Music" />
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition SingleSelectionDemo => new()
+    {
+        Demo = RenderSingleSelection(),
+        Code = """
+<BUITreeSelector TItem="object"
+                 SelectionMode="TreeSelectionMode.Single"
+                 @bind-SelectedKeys="_selectedKeys">
+    <BUITreeSelectorItem Key="opt1" Text="Option 1" />
+    <BUITreeSelectorItem Key="opt2" Text="Option 2" />
+    <BUITreeSelectorItem Key="opt3" Text="Option 3" />
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition MultipleSelectionDemo => new()
+    {
+        Demo = RenderMultipleSelection(),
+        Code = """
+<BUITreeSelector TItem="object"
+                 SelectionMode="TreeSelectionMode.Multiple"
+                 @bind-SelectedKeys="_selectedKeys">
+    <BUITreeSelectorItem Key="a" Text="Item A" />
+    <BUITreeSelectorItem Key="b" Text="Item B" />
+    <BUITreeSelectorItem Key="c" Text="Item C">
+        <ChildContent>
+            <BUITreeSelectorItem Key="c1" Text="Item C.1" />
+            <BUITreeSelectorItem Key="c2" Text="Item C.2" />
+        </ChildContent>
+    </BUITreeSelectorItem>
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition DataBoundDemo => new()
+    {
+        Demo = RenderDataBound(),
+        Code = """
+<BUITreeSelector TItem="Category"
+                 Items="@Categories"
+                 KeySelector="@(x => x.Id)"
+                 ChildrenSelector="@(x => x.Children)"
+                 SelectionMode="TreeSelectionMode.Multiple">
+    <NodeTemplate Context="node">
+        @if (!string.IsNullOrEmpty(node.Item?.Icon))
+        {
+            <BUISvgIcon Icon="@node.Item.Icon" />
+        }
+        <span>@node.Item?.Name</span>
+        <span class="count">(@node.Item?.Count)</span>
+    </NodeTemplate>
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition NoCheckboxesDemo => new()
+    {
+        Demo = RenderNoCheckboxes(),
+        Code = """
+<BUITreeSelector TItem="object"
+                 ShowCheckboxes="false"
+                 SelectionMode="TreeSelectionMode.Single">
+    <BUITreeSelectorItem Text="Click to select" />
+    <BUITreeSelectorItem Text="Another option" />
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """
+<BUITreeSelector TItem="object" Size="SizeEnum.Small">...</BUITreeSelector>
+<BUITreeSelector TItem="object" Size="SizeEnum.Medium">...</BUITreeSelector>
+<BUITreeSelector TItem="object" Size="SizeEnum.Large">...</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition CustomIconsDemo => new()
+    {
+        Demo = RenderCustomIcons(),
+        Code = """
+<BUITreeSelector TItem="object"
+                 ExpandIcon="@BUIIcons.MaterialIconsOutlined.Plus"
+                 CollapseIcon="@BUIIcons.MaterialIconsOutlined.Minus">
+    ...
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """
+<BUITreeSelector TItem="object">
+    <BUITreeSelectorItem Text="Enabled" />
+    <BUITreeSelectorItem Text="Disabled" Disabled />
+    <BUITreeSelectorItem Text="Also enabled" />
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition CustomContentDemo => new()
+    {
+        Demo = RenderCustomContent(),
+        Code = """
+<BUITreeSelector TItem="object">
+    <BUITreeSelectorItem Key="premium">
+        <NodeContent>
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.Star" />
+            <strong>Premium Plan</strong>
+            <span class="badge">$99/mo</span>
+        </NodeContent>
+    </BUITreeSelectorItem>
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition LazyLoadingDemo => new()
+    {
+        Demo = RenderLazyLoading(),
+        Code = """
+<BUITreeSelector TItem="Category"
+                 Items="@LazyCategories"
+                 KeySelector="@(x => x.Id)"
+                 ChildrenSelector="@(x => x.Children)"
+                 HasChildrenSelector="@(_ => true)"
+                 OnLoadChildren="@LoadChildrenAsync">
+    <NodeTemplate Context="node">
+        <span>@node.Item?.Name</span>
+    </NodeTemplate>
+</BUITreeSelector>
+"""
+    };
+
+    private ComponentDemoDefinition ExpandAllDemo => new()
+    {
+        Demo = RenderExpandAll(),
+        Code = """
+<BUITreeSelector TItem="object" ExpandAll>
+    <BUITreeSelectorItem Text="Parent 1">
+        <ChildContent>
+            <BUITreeSelectorItem Text="Child 1.1" />
+            <BUITreeSelectorItem Text="Child 1.2" />
+        </ChildContent>
+    </BUITreeSelectorItem>
+</BUITreeSelector>
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicDeclarative() => __builder =>
+    {
+        <BUITreeSelector TItem="object">
+            <BUITreeSelectorItem Text="Documents" Icon="@BUIIcons.MaterialIconsOutlined.i_folder">
+                <ChildContent>
+                    <BUITreeSelectorItem Text="Work" />
+                    <BUITreeSelectorItem Text="Personal" />
+                </ChildContent>
+            </BUITreeSelectorItem>
+            <BUITreeSelectorItem Text="Pictures" Icon="@BUIIcons.MaterialIconsOutlined.i_image" />
+            <BUITreeSelectorItem Text="Music" Icon="@BUIIcons.MaterialIconsOutlined.i_music_note" />
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderSingleSelection() => __builder =>
+    {
+        <BUITreeSelector TItem="object"
+                         SelectionMode="TreeSelectionMode.Single"
+                         @bind-SelectedKeys="_singleSelected">
+            <BUITreeSelectorItem Key="opt1" Text="Option 1" />
+            <BUITreeSelectorItem Key="opt2" Text="Option 2" />
+            <BUITreeSelectorItem Key="opt3" Text="Option 3" />
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderMultipleSelection() => __builder =>
+    {
+        <BUITreeSelector TItem="object"
+                         SelectionMode="TreeSelectionMode.Multiple"
+                         @bind-SelectedKeys="_multipleSelected">
+            <BUITreeSelectorItem Key="a" Text="Item A" />
+            <BUITreeSelectorItem Key="b" Text="Item B" />
+            <BUITreeSelectorItem Key="c" Text="Item C" InitiallyExpanded>
+                <ChildContent>
+                    <BUITreeSelectorItem Key="c1" Text="Item C.1" />
+                    <BUITreeSelectorItem Key="c2" Text="Item C.2" />
+                </ChildContent>
+            </BUITreeSelectorItem>
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderDataBound() => __builder =>
+    {
+        <BUITreeSelector TItem="Category"
+                         Items="@Categories"
+                         KeySelector="@(x => x.Id)"
+                         ChildrenSelector="@(x => x.Children)"
+                         SelectionMode="TreeSelectionMode.Multiple"
+                         ExpandAll>
+            <NodeTemplate Context="node">
+                @if (!string.IsNullOrEmpty(node.Item?.Icon))
+                {
+                    <BUISvgIcon Icon="@node.Item.Icon" Size="SizeEnum.Small" />
+                }
+                <span>@node.Item?.Name</span>
+                <span style="opacity: 0.6; margin-left: auto;">(@node.Item?.Count)</span>
+            </NodeTemplate>
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderNoCheckboxes() => __builder =>
+    {
+        <BUITreeSelector TItem="object"
+                         ShowCheckboxes="false"
+                         SelectionMode="TreeSelectionMode.Single">
+            <BUITreeSelectorItem Key="click1" Text="Click to select" />
+            <BUITreeSelectorItem Key="click2" Text="Another option" />
+            <BUITreeSelectorItem Key="click3" Text="Third choice" />
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row" style="align-items: flex-start; gap: 2rem;">
+            <div>
+                <h4>Small</h4>
+                <BUITreeSelector TItem="object" Size="SizeEnum.Small">
+                    <BUITreeSelectorItem Text="Item 1" />
+                    <BUITreeSelectorItem Text="Item 2" />
+                </BUITreeSelector>
+            </div>
+            <div>
+                <h4>Medium</h4>
+                <BUITreeSelector TItem="object" Size="SizeEnum.Medium">
+                    <BUITreeSelectorItem Text="Item 1" />
+                    <BUITreeSelectorItem Text="Item 2" />
+                </BUITreeSelector>
+            </div>
+            <div>
+                <h4>Large</h4>
+                <BUITreeSelector TItem="object" Size="SizeEnum.Large">
+                    <BUITreeSelectorItem Text="Item 1" />
+                    <BUITreeSelectorItem Text="Item 2" />
+                </BUITreeSelector>
+            </div>
+        </div>;
+    };
+
+    private RenderFragment RenderCustomIcons() => __builder =>
+    {
+        <BUITreeSelector TItem="object"
+                         ExpandIcon="@BUIIcons.MaterialIconsOutlined.i_1k_plus"
+                         CollapseIcon="@BUIIcons.MaterialIconsOutlined.i_minimize">
+            <BUITreeSelectorItem Text="Folder" InitiallyExpanded>
+                <ChildContent>
+                    <BUITreeSelectorItem Text="Subfolder 1" />
+                    <BUITreeSelectorItem Text="Subfolder 2" />
+                </ChildContent>
+            </BUITreeSelectorItem>
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUITreeSelector TItem="object" SelectionMode="TreeSelectionMode.Multiple">
+            <BUITreeSelectorItem Key="en" Text="Enabled item" />
+            <BUITreeSelectorItem Key="dis" Text="Disabled item" Disabled />
+            <BUITreeSelectorItem Key="en2" Text="Also enabled" />
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderCustomContent() => __builder =>
+    {
+        <BUITreeSelector TItem="object" SelectionMode="TreeSelectionMode.Single">
+            <BUITreeSelectorItem Key="basic">
+                <NodeContent>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Basic Plan</span>
+                        <span style="opacity: 0.6;">Free</span>
+                    </div>
+                </NodeContent>
+            </BUITreeSelectorItem>
+            <BUITreeSelectorItem Key="premium">
+                <NodeContent>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+                        <strong style="color: var(--palette-primary);">Premium Plan</strong>
+                        <span style="background: var(--palette-warning); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">$99/mo</span>
+                    </div>
+                </NodeContent>
+            </BUITreeSelectorItem>
+            <BUITreeSelectorItem Key="enterprise">
+                <NodeContent>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_build" Size="SizeEnum.Small" />
+                        <span>Enterprise</span>
+                        <span style="opacity: 0.6;">Contact us</span>
+                    </div>
+                </NodeContent>
+            </BUITreeSelectorItem>
+        </BUITreeSelector>;
+    };
+
+    private List<Category> LazyCategories =>
+    [
+        new() { Id = "cat1", Name = "Category 1", Children = [] },
+        new() { Id = "cat2", Name = "Category 2", Children = [] }
+    ];
+
+    private async Task<IEnumerable<Category>> LoadChildrenAsync(Category parent)
+    {
+        await Task.Delay(1000);
+        return
+        [
+            new() { Id = $"{parent.Id}_sub1", Name = $"{parent.Name} - Sub 1" },
+            new() { Id = $"{parent.Id}_sub2", Name = $"{parent.Name} - Sub 2" }
+        ];
+    }
+
+    private RenderFragment RenderLazyLoading() => __builder =>
+    {
+        <BUITreeSelector TItem="Category"
+                         Items="@LazyCategories"
+                         KeySelector="@(x => x.Id)"
+                         ChildrenSelector="@(x => x.Children)"
+                         HasChildrenSelector="@(_ => true)"
+                         OnLoadChildren="@LoadChildrenAsync"
+                         SelectionMode="TreeSelectionMode.Multiple">
+            <NodeTemplate Context="node">
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_folder" Size="SizeEnum.Small" />
+                <span>@node.Item?.Name</span>
+            </NodeTemplate>
+        </BUITreeSelector>;
+    };
+
+    private RenderFragment RenderExpandAll() => __builder =>
+    {
+        <BUITreeSelector TItem="object" ExpandAll>
+            <BUITreeSelectorItem Text="Parent 1">
+                <ChildContent>
+                    <BUITreeSelectorItem Text="Child 1.1" />
+                    <BUITreeSelectorItem Text="Child 1.2">
+                        <ChildContent>
+                            <BUITreeSelectorItem Text="Grandchild 1.2.1" />
+                        </ChildContent>
+                    </BUITreeSelectorItem>
+                </ChildContent>
+            </BUITreeSelectorItem>
+            <BUITreeSelectorItem Text="Parent 2">
+                <ChildContent>
+                    <BUITreeSelectorItem Text="Child 2.1" />
+                </ChildContent>
+            </BUITreeSelectorItem>
+        </BUITreeSelector>;
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> Properties =
+    [
+        new("ChildContent", "RenderFragment?", "null", "Declarative items"),
+        new("Items", "IEnumerable<TItem>?", "null", "Data source for data-bound mode"),
+        new("KeySelector", "Func<TItem, string>?", "null", "Selector for unique key"),
+        new("ChildrenSelector", "Func<TItem, IEnumerable<TItem>?>?", "null", "Selector for children"),
+        new("HasChildrenSelector", "Func<TItem, bool>?", "null", "Check if has children"),
+        new("OnLoadChildren", "Func<TItem, Task<IEnumerable<TItem>>>?", "null", "Lazy load children"),
+        new("NodeTemplate", "RenderFragment<TreeSelectionNode<TItem>>?", "null", "Custom node template"),
+        new("SelectedKeys", "HashSet<string>?", "null", "Currently selected keys"),
+        new("SelectedKeysChanged", "EventCallback<HashSet<string>>", "-", "Selection changed event"),
+        new("ExpandedKeys", "HashSet<string>?", "null", "Currently expanded keys"),
+        new("ExpandedKeysChanged", "EventCallback<HashSet<string>>", "-", "Expanded changed event"),
+        new("ExpandAll", "bool", "false", "Expand all nodes initially"),
+        new("SelectionMode", "TreeSelectionMode", "Single", "Single or Multiple selection"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("ShowCheckboxes", "bool", "true", "Show selection checkboxes"),
+        new("AnimateExpand", "bool", "true", "Animate expand/collapse"),
+        new("ExpandIcon", "string", "ChevronRight", "Expand icon"),
+        new("CollapseIcon", "string", "ChevronDown", "Collapse icon"),
+        new("OnNodeClick", "EventCallback<TreeNodeEventArgs>", "-", "Node click event"),
+        new("OnNodeExpand", "EventCallback<TreeNodeEventArgs>", "-", "Node expand event"),
+        new("OnNodeCollapse", "EventCallback<TreeNodeEventArgs>", "-", "Node collapse event")
+    ];
+
+    private List<PropertyDefinition> ItemProperties =
+    [
+        new("Key", "string?", "auto", "Unique identifier"),
+        new("Text", "string?", "null", "Display text"),
+        new("Icon", "string?", "null", "Icon path"),
+        new("Disabled", "bool", "false", "Disable the item"),
+        new("InitiallyExpanded", "bool", "false", "Start expanded"),
+        new("Data", "object?", "null", "Custom data"),
+        new("NodeContent", "RenderFragment?", "null", "Custom content"),
+        new("ChildContent", "RenderFragment?", "null", "Child items")
+    ];
+
+    private List<PropertyDefinition> Methods =
+    [
+        new("ExpandAllNodes()", "void", "-", "Expand all tree nodes"),
+        new("CollapseAllNodes()", "void", "-", "Collapse all tree nodes"),
+        new("SelectAll()", "void", "-", "Select all nodes (multiple mode)"),
+        new("ClearSelection()", "void", "-", "Clear all selections"),
+        new("GetNode(key)", "TreeSelectionNode<TItem>?", "-", "Get node by key"),
+        new("GetSelectedNodes()", "IReadOnlyCollection", "-", "Get all selected nodes"),
+        new("InvalidateCache(key?)", "void", "-", "Invalidate lazy load cache")
+    ];
+}

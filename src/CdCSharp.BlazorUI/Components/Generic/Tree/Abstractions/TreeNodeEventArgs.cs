@@ -1,10 +1,10 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public sealed class TreeNodeEventArgs<TItem> : EventArgs
+public sealed class TreeNodeEventArgs<TNode> : EventArgs
+    where TNode : ITreeNode
 {
-    public required ITreeNode<TItem> Node { get; init; }
+    public required TNode Node { get; init; }
     public required string Key { get; init; }
-    public TItem? Item { get; init; }
     public int Depth { get; init; }
     public bool IsExpanded { get; init; }
 }

@@ -1,0 +1,33 @@
+﻿@namespace CdCSharp.BlazorUI.Components
+@using Microsoft.AspNetCore.Components.Routing
+@inherits BUITreeNodeBase<TreeMenuNodeRegistration>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public string? Href { get; set; }
+    [Parameter] public string? Target { get; set; }
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    protected override string GenerateDefaultKey()
+        => Href ?? $"menu-item-{Guid.NewGuid():N}";
+
+    protected override TreeMenuNodeRegistration CreateRegistration() => new()
+    {
+        Key = ResolvedKey,
+        Text = Text,
+        Icon = Icon,
+        IsDisabled = Disabled,
+        InitiallyExpanded = InitiallyExpanded,
+        Data = Data,
+        NodeContent = NodeContent,
+        ParentKey = ParentNodeKey,
+        Href = Href,
+        Target = Target,
+        Match = Match,
+        OnClick = OnClick
+    };
+}

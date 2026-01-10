@@ -23,7 +23,6 @@
     --bui-menu-flyout-border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Size variations */
 bui-component[data-bui-component="tree-menu"][data-bui-size="small"] {
     --bui-menu-item-height: 2rem;
     --bui-menu-item-padding-x: 0.75rem;
@@ -40,7 +39,6 @@ bui-component[data-bui-component="tree-menu"][data-bui-size="large"] {
     font-size: 1.125rem;
 }
 
-/* Nav container */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__nav {
     display: flex;
     flex-direction: column;
@@ -50,13 +48,11 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__nav {
     list-style: none;
 }
 
-/* Horizontal orientation */
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"] .bui-tree-menu__nav {
     flex-direction: row;
     align-items: center;
 }
 
-/* Menu item container */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item {
     position: relative;
     display: flex;
@@ -67,7 +63,6 @@ bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"]
     flex-direction: column;
 }
 
-/* Link and button base styles */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__link,
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__button {
     display: flex;
@@ -92,14 +87,12 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__button {
         background: var(--bui-menu-hover-bg);
     }
 
-/* Active state */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--active > .bui-tree-menu__link,
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--active > .bui-tree-menu__button {
     background: var(--bui-menu-active-bg);
     color: var(--bui-menu-active-color);
 }
 
-/* Disabled state */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--disabled > .bui-tree-menu__link,
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--disabled > .bui-tree-menu__button {
     opacity: 0.5;
@@ -107,13 +100,11 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--disabled > .
     pointer-events: none;
 }
 
-/* Icon */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__icon {
     flex-shrink: 0;
     opacity: 0.8;
 }
 
-/* Text */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__text {
     flex: 1;
     overflow: hidden;
@@ -121,7 +112,6 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__text {
     white-space: nowrap;
 }
 
-/* Arrow */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__arrow {
     display: flex;
     align-items: center;
@@ -136,14 +126,10 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__arrow--expanded {
     transform: rotate(90deg);
 }
 
-/* Horizontal arrow rotation */
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"] .bui-tree-menu__arrow--expanded {
     transform: rotate(180deg);
 }
 
-/* ========== SUBMENU STYLES ========== */
-
-/* Inline submenu */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--inline {
     display: flex;
     flex-direction: column;
@@ -165,7 +151,6 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--inline {
     }
 }
 
-/* Flyout submenu */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout {
     position: absolute;
     min-width: 200px;
@@ -189,29 +174,24 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout {
     }
 }
 
-/* Vertical flyout positioning */
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="vertical"][data-bui-expand-mode="flyout"] .bui-tree-menu__submenu--flyout {
     left: 100%;
     top: 0;
     margin-left: 4px;
 }
 
-/* Horizontal flyout positioning - first level */
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"][data-bui-expand-mode="flyout"] > .bui-tree-menu__nav > .bui-tree-menu__item > .bui-tree-menu__submenu--flyout {
     left: 0;
     top: 100%;
     margin-top: 4px;
 }
 
-/* Horizontal flyout positioning - nested levels */
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"][data-bui-expand-mode="flyout"] .bui-tree-menu__submenu--flyout .bui-tree-menu__submenu--flyout {
     left: 100%;
     top: 0;
     margin-left: 4px;
     margin-top: 0;
 }
-
-/* ========== DEPTH-BASED INDENTATION FOR INLINE ========== */
 
 bui-component[data-bui-component="tree-menu"][data-bui-expand-mode="inline"] .bui-tree-menu__item[data-depth="1"] > .bui-tree-menu__link,
 bui-component[data-bui-component="tree-menu"][data-bui-expand-mode="inline"] .bui-tree-menu__item[data-depth="1"] > .bui-tree-menu__button {
@@ -228,22 +208,17 @@ bui-component[data-bui-component="tree-menu"][data-bui-expand-mode="inline"] .bu
     padding-left: calc(var(--bui-menu-item-padding-x) + var(--bui-menu-indent) * 3);
 }
 
-/* ========== FOCUS STYLES ========== */
-
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__link:focus-visible,
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__button:focus-visible {
     outline: 2px solid var(--palette-primary, #1976d2);
     outline-offset: -2px;
 }
 
-/* ========== HORIZONTAL SPECIFIC ========== */
-
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"] .bui-tree-menu__link,
 bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"] .bui-tree-menu__button {
     white-space: nowrap;
 }
 
-/* Remove indentation in flyout submenus */
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout .bui-tree-menu__link,
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout .bui-tree-menu__button {
     padding-left: var(--bui-menu-item-padding-x) !important;

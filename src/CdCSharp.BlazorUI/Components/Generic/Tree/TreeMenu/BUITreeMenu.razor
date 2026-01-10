@@ -1,0 +1,455 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using Microsoft.AspNetCore.Components.Routing
+
+@namespace CdCSharp.BlazorUI.Components
+
+@typeparam TItem
+@inherits BUIComponentBase
+@implements IHasSize
+@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+<bui-component @attributes="@ComputedAttributes">
+    @if (_isDeclarativeMode)
+    {
+        <CascadingValue Value="@((ITreeNodeRegistry<TreeMenuNodeRegistration>)_registry)" Name="TreeNodeRegistry">
+            @ChildContent
+        </CascadingValue>
+    }
+
+    @if (_structureBuilt)
+    {
+        <nav class="bui-tree-menu__nav" role="menubar" aria-orientation="@Orientation.ToString().ToLowerInvariant()">
+            @foreach (TreeMenuNode<TItem> node in _tree.RootNodes)
+            {
+                @RenderNode(node)
+            }
+        </nav>
+    }
+</bui-component>
+
+@code {
+    private readonly TreeNodeRegistry<TreeMenuNodeRegistration> _registry = new();
+    private TreeStructure<TreeMenuNode<TItem>, TItem> _tree = null!;
+    private bool _isDeclarativeMode;
+    private bool _structureBuilt;
+    private string _currentUri = string.Empty;
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] public Func<TItem, string>? KeySelector { get; set; }
+    [Parameter] public Func<TItem, IEnumerable<TItem>?>? ChildrenSelector { get; set; }
+    [Parameter] public Func<TItem, bool>? HasChildrenSelector { get; set; }
+    [Parameter] public Func<TItem, Task<IEnumerable<TItem>>>? OnLoadChildren { get; set; }
+    [Parameter] public RenderFragment<TreeMenuNode<TItem>>? NodeTemplate { get; set; }
+    [Parameter] public TreeNodeCache<TItem>? Cache { get; set; }
+
+    [Parameter] public HashSet<string>? ExpandedKeys { get; set; }
+    [Parameter] public EventCallback<HashSet<string>> ExpandedKeysChanged { get; set; }
+    [Parameter] public bool ExpandAll { get; set; }
+
+    [Parameter] public TreeMenuOrientation Orientation { get; set; } = TreeMenuOrientation.Vertical;
+    [Parameter] public TreeMenuTrigger Trigger { get; set; } = TreeMenuTrigger.Click;
+    [Parameter] public TreeMenuExpandMode ExpandMode { get; set; } = TreeMenuExpandMode.Inline;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool Collapsible { get; set; } = true;
+
+    [Parameter] public EventCallback<TreeNodeEventArgs<TreeMenuNode<TItem>>> OnNodeClick { get; set; }
+    [Parameter] public EventCallback<string> OnNavigate { get; set; }
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-orientation"] = Orientation.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-trigger"] = Trigger.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-expand-mode"] = ExpandMode.ToString().ToLowerInvariant();
+    }
+
+    protected override void OnInitialized()
+    {
+        _tree = new TreeStructure<TreeMenuNode<TItem>, TItem>(CreateNodeFromContext);
+        _currentUri = NavigationManager.Uri;
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _isDeclarativeMode = ChildContent != null && Items == null;
+
+        Console.WriteLine($"OnParametersSet - ChildContent: {ChildContent != null}, Items: {Items != null}, _isDeclarativeMode: {_isDeclarativeMode}");
+
+        if (ExpandedKeys != null)
+        {
+            _tree.SetExpandedKeys(ExpandedKeys);
+        }
+
+        if (!_isDeclarativeMode && Items != null)
+        {
+            _tree.BuildFromItems(Items, KeySelector, ChildrenSelector, HasChildrenSelector, ExpandAll);
+            _structureBuilt = true;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        Console.WriteLine($"OnAfterRender - firstRender: {firstRender}, _isDeclarativeMode: {_isDeclarativeMode}, _structureBuilt: {_structureBuilt}");
+
+        if (firstRender && _isDeclarativeMode && !_structureBuilt)
+        {
+            Console.WriteLine("Entrando a BuildFromDeclarativeRegistrations");
+            BuildFromDeclarativeRegistrations();
+            _structureBuilt = true;
+            StateHasChanged();
+        }
+    }
+
+    private TreeMenuNode<TItem> CreateNodeFromContext(TreeNodeBuildContext<TItem> context)
+    {
+        return new TreeMenuNode<TItem>
+        {
+            Key = context.Key,
+            Item = context.Item,
+            Text = context.Text,
+            Icon = context.Icon,
+            IsDisabled = context.IsDisabled,
+            Depth = context.Depth,
+            ParentNode = context.Parent as TreeMenuNode<TItem>,
+            CustomContent = context.CustomContent,
+            AdditionalData = context.AdditionalData,
+            Navigation = new NavigationInfo(),
+            OnClick = default
+        };
+    }
+
+    private TreeMenuNode<TItem> CreateNodeFromRegistration(TreeMenuNodeRegistration reg, TreeMenuNode<TItem>? parent, int depth, bool hasChildren)
+    {
+        return new TreeMenuNode<TItem>
+        {
+            Key = reg.Key,
+            Item = default,
+            Text = reg.Text,
+            Icon = reg.Icon,
+            IsDisabled = reg.IsDisabled,
+            Depth = depth,
+            ParentNode = parent,
+            CustomContent = reg.NodeContent,
+            AdditionalData = reg.Data,
+            Navigation = new NavigationInfo
+            {
+                Href = reg.Href,
+                Target = reg.Target,
+                Match = reg.Match
+            },
+            OnClick = reg.OnClick
+        };
+    }
+
+    private void BuildFromDeclarativeRegistrations()
+    {
+        IReadOnlyList<TreeMenuNodeRegistration> registrations = _registry.GetRegistrations();
+        Console.WriteLine($"[BUITreeMenu] registrations.Count: {registrations.Count}");
+
+        _registry.Clear();
+
+        // Construir el diccionario manualmente
+        Dictionary<string, List<TreeMenuNodeRegistration>> childrenByParent = new();
+
+        foreach (TreeMenuNodeRegistration reg in registrations)
+        {
+            string parentKey = reg.ParentKey ?? string.Empty;
+            Console.WriteLine($"  - Key: {reg.Key}, ParentKey: '{parentKey}' (original was null: {reg.ParentKey == null})");
+
+            if (!childrenByParent.ContainsKey(parentKey))
+            {
+                childrenByParent[parentKey] = new List<TreeMenuNodeRegistration>();
+            }
+            childrenByParent[parentKey].Add(reg);
+        }
+
+        Console.WriteLine($"[BUITreeMenu] childrenByParent.Count: {childrenByParent.Count}");
+        foreach (string key in childrenByParent.Keys)
+        {
+            Console.WriteLine($"  - Key: '{key}' (length={key.Length}), Count: {childrenByParent[key].Count}");
+        }
+
+        if (childrenByParent.TryGetValue(string.Empty, out List<TreeMenuNodeRegistration>? roots))
+        {
+            Console.WriteLine($"[BUITreeMenu] roots found: {roots.Count}");
+            foreach (TreeMenuNodeRegistration reg in roots)
+            {
+                TreeMenuNode<TItem> node = BuildNodeFromRegistration(reg, null, 0, childrenByParent);
+                _tree.RootNodes.Add(node);
+            }
+        }
+        else
+        {
+            Console.WriteLine("[BUITreeMenu] NO roots found with empty ParentKey!");
+        }
+
+        Console.WriteLine($"[BUITreeMenu] _tree.RootNodes.Count: {_tree.RootNodes.Count}");
+    }
+
+    private TreeMenuNode<TItem> BuildNodeFromRegistration(
+        TreeMenuNodeRegistration reg,
+        TreeMenuNode<TItem>? parent,
+        int depth,
+        Dictionary<string, List<TreeMenuNodeRegistration>> childrenByParent)
+    {
+        bool hasChildren = childrenByParent.ContainsKey(reg.Key);
+        TreeMenuNode<TItem> node = CreateNodeFromRegistration(reg, parent, depth, hasChildren);
+        node.HasChildrenFlag = hasChildren;
+
+        if (reg.InitiallyExpanded || ExpandAll)
+        {
+            _tree.Expand(node.Key);
+        }
+
+        if (childrenByParent.TryGetValue(reg.Key, out List<TreeMenuNodeRegistration>? children))
+        {
+            foreach (TreeMenuNodeRegistration childReg in children)
+            {
+                TreeMenuNode<TItem> childNode = BuildNodeFromRegistration(childReg, node, depth + 1, childrenByParent);
+                node.ChildrenInternal.Add(childNode);
+            }
+        }
+
+        return node;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUri = e.Location;
+
+        if (ExpandMode == TreeMenuExpandMode.Flyout)
+        {
+            _tree.CollapseAll();
+        }
+
+        StateHasChanged();
+    }
+
+    private RenderFragment RenderNode(TreeMenuNode<TItem> node) => __builder =>
+    {
+        bool isExpanded = _tree.IsExpanded(node.Key);
+        bool isLoading = _tree.IsLoading(node.Key);
+        bool isActive = IsActive(node.Navigation.Href);
+        bool hasChildren = node.HasChildren;
+        bool isFlyout = ExpandMode == TreeMenuExpandMode.Flyout;
+        bool isHoverTrigger = Trigger == TreeMenuTrigger.Hover;
+
+        <div class="bui-tree-menu__item @(node.IsDisabled ? "bui-tree-menu__item--disabled" : "") @(isActive ? "bui-tree-menu__item--active" : "") @(isExpanded ? "bui-tree-menu__item--expanded" : "")"
+             role="none"
+             data-depth="@node.Depth"
+             @onmouseenter="@(isHoverTrigger && hasChildren ? () => HandleExpandAsync(node.Key) : null)"
+             @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? () => HandleCollapseAsync(node.Key) : null)">
+
+            @if (node.Navigation.HasNavigation && !hasChildren)
+            {
+                <a class="bui-tree-menu__link"
+                   href="@node.Navigation.Href"
+                   target="@node.Navigation.Target"
+                   role="menuitem"
+                   aria-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
+                   @onclick="() => HandleItemClickAsync(node)"
+                   @onclick:preventDefault="@node.IsDisabled">
+                    @RenderItemContent(node, hasChildren, isExpanded, isLoading)
+                </a>
+            }
+            else
+            {
+                <button type="button"
+                        class="bui-tree-menu__button"
+                        role="menuitem"
+                        aria-haspopup="@(hasChildren ? "true" : null)"
+                        aria-expanded="@(hasChildren? isExpanded.ToString().ToLowerInvariant() : null)"
+                        aria-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
+                        disabled="@node.IsDisabled"
+                        @onclick="() => HandleItemClickAsync(node)">
+                    @RenderItemContent(node, hasChildren, isExpanded, isLoading)
+                </button>
+            }
+
+            @if (hasChildren && isExpanded)
+            {
+                <div class="bui-tree-menu__submenu @(isFlyout ? "bui-tree-menu__submenu--flyout" : "bui-tree-menu__submenu--inline")"
+                     role="menu">
+                    @foreach (TreeMenuNode<TItem> child in node.ChildrenInternal)
+                    {
+                        @RenderNode(child)
+                    }
+                </div>
+            }
+        </div>
+    };
+
+    private RenderFragment RenderItemContent(TreeMenuNode<TItem> node, bool hasChildren, bool isExpanded, bool isLoading) => __builder =>
+    {
+        @if (_isDeclarativeMode && node.CustomContent != null)
+        {
+            @node.CustomContent
+        }
+        else if (!_isDeclarativeMode && NodeTemplate != null)
+        {
+            @NodeTemplate(node)
+        }
+        else
+        {
+            @if (!string.IsNullOrEmpty(node.Icon))
+            {
+                <BUISvgIcon Icon="@node.Icon" Size="Size" class="bui-tree-menu__icon" />
+            }
+            <span class="bui-tree-menu__text">@(node.Text ?? node.Item?.ToString() ?? node.Key)</span>
+        }
+
+        @if (hasChildren)
+        {
+            <span class="bui-tree-menu__arrow @(isExpanded ? "bui-tree-menu__arrow--expanded" : "")">
+                @if (isLoading)
+                {
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="Size" />
+                }
+                else
+                {
+                    <BUISvgIcon Icon="@GetExpandIcon()" Size="Size" />
+                }
+            </span>
+        }
+    };
+
+    private string GetExpandIcon()
+    {
+        if (Orientation == TreeMenuOrientation.Horizontal && ExpandMode == TreeMenuExpandMode.Flyout)
+            return BUIIcons.UI.ChevronDown;
+        return BUIIcons.UI.ChevronRight;
+    }
+
+    private async Task HandleItemClickAsync(TreeMenuNode<TItem> node)
+    {
+        if (node.IsDisabled) return;
+
+        if (node.OnClick.HasDelegate)
+        {
+            await node.OnClick.InvokeAsync();
+        }
+
+        await OnNodeClick.InvokeAsync(new TreeNodeEventArgs<TreeMenuNode<TItem>>
+        {
+            Node = node,
+            Key = node.Key,
+            Depth = node.Depth,
+            IsExpanded = _tree.IsExpanded(node.Key)
+        });
+
+        if (node.HasChildren)
+        {
+            await ToggleExpandAsync(node.Key);
+        }
+        else if (node.Navigation.HasNavigation)
+        {
+            if (OnNavigate.HasDelegate)
+            {
+                await OnNavigate.InvokeAsync(node.Navigation.Href);
+            }
+
+            if (ExpandMode == TreeMenuExpandMode.Flyout)
+            {
+                _tree.CollapseAll();
+                StateHasChanged();
+            }
+        }
+    }
+
+    private async Task ToggleExpandAsync(string key)
+    {
+        if (_tree.IsExpanded(key))
+        {
+            await HandleCollapseAsync(key);
+        }
+        else
+        {
+            await HandleExpandAsync(key);
+        }
+    }
+
+    private async Task HandleExpandAsync(string key)
+    {
+        if (!Collapsible)
+        {
+            _tree.CollapseAll();
+        }
+
+        if (OnLoadChildren != null)
+        {
+            await _tree.LoadChildrenAsync(key, OnLoadChildren, KeySelector, ChildrenSelector, HasChildrenSelector, StateHasChanged);
+        }
+
+        _tree.Expand(key);
+        await NotifyExpandedKeysChangedAsync();
+        StateHasChanged();
+    }
+
+    private async Task HandleCollapseAsync(string key)
+    {
+        _tree.Collapse(key);
+        await NotifyExpandedKeysChangedAsync();
+        StateHasChanged();
+    }
+
+    private bool IsActive(string? href)
+    {
+        if (string.IsNullOrEmpty(href)) return false;
+
+        string currentPath = NavigationManager.ToBaseRelativePath(_currentUri);
+        string targetPath = NavigationManager.ToBaseRelativePath(NavigationManager.ToAbsoluteUri(href).AbsoluteUri);
+
+        if (string.IsNullOrEmpty(currentPath)) currentPath = "/";
+        if (string.IsNullOrEmpty(targetPath)) targetPath = "/";
+
+        TreeMenuNode<TItem>? node = _tree.NodeMap.Values.FirstOrDefault(n => n.Navigation.Href == href);
+        NavLinkMatch match = node?.Navigation.Match ?? NavLinkMatch.Prefix;
+
+        if (match == NavLinkMatch.All)
+            return string.Equals(currentPath, targetPath, StringComparison.OrdinalIgnoreCase);
+
+        return currentPath.StartsWith(targetPath, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task NotifyExpandedKeysChangedAsync()
+    {
+        if (ExpandedKeysChanged.HasDelegate)
+        {
+            await ExpandedKeysChanged.InvokeAsync(new HashSet<string>(_tree.ExpandedKeys));
+        }
+    }
+
+    public void ExpandAllNodes()
+    {
+        _tree.ExpandAll();
+        StateHasChanged();
+    }
+
+    public void CollapseAllNodes()
+    {
+        _tree.CollapseAll();
+        StateHasChanged();
+    }
+
+    public void InvalidateCache(string? key = null) => _tree.InvalidateCache(key);
+
+    public TreeMenuNode<TItem>? GetNode(string key) => _tree.GetNode(key);
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
