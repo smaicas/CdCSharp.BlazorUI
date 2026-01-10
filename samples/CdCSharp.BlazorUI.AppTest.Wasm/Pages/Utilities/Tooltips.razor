@@ -1,0 +1,428 @@
+﻿@page "/utilities/tooltips"
+
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Css
+
+<PageTitle>Tooltips - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>BUITooltip</h1>
+
+    <p class="doc-intro">
+        <strong>BUITooltip</strong> displays contextual information when hovering or focusing
+        on an element. Supports rich content, multiple placements, configurable delays,
+        and interactive tooltips.
+    </p>
+
+    <!-- BASIC -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BasicUsageDemo" />
+    </section>
+
+    <!-- PLACEMENTS -->
+    <section class="doc-section">
+        <h2>Placements</h2>
+        <ComponentDemo Definition="@PlacementsDemo" />
+    </section>
+
+    <!-- RICH CONTENT -->
+    <section class="doc-section">
+        <h2>Rich content</h2>
+        <ComponentDemo Definition="@RichContentDemo" />
+    </section>
+
+    <!-- TRIGGERS -->
+    <section class="doc-section">
+        <h2>Triggers</h2>
+        <ComponentDemo Definition="@TriggersDemo" />
+    </section>
+
+    <!-- DELAYS -->
+    <section class="doc-section">
+        <h2>Delays</h2>
+        <ComponentDemo Definition="@DelaysDemo" />
+    </section>
+
+    <!-- INTERACTIVE -->
+    <section class="doc-section">
+        <h2>Interactive</h2>
+        <ComponentDemo Definition="@InteractiveDemo" />
+    </section>
+
+    <!-- ARROW -->
+    <section class="doc-section">
+        <h2>Arrow</h2>
+        <ComponentDemo Definition="@ArrowDemo" />
+    </section>
+
+    <!-- MAX WIDTH -->
+    <section class="doc-section">
+        <h2>Max width</h2>
+        <ComponentDemo Definition="@MaxWidthDemo" />
+    </section>
+
+    <!-- PERMANENT -->
+    <section class="doc-section">
+        <h2>Permanent</h2>
+        <ComponentDemo Definition="@PermanentDemo" />
+    </section>
+
+    <!-- PROPERTIES -->
+    <section class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable Properties="@Properties" />
+    </section>
+
+</div>
+
+@code {
+
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """
+<BUITooltip Text="This is a tooltip">
+    <BUIButton Text="Hover me" />
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition PlacementsDemo => new()
+    {
+        Demo = RenderPlacements(),
+        Code = """
+<BUITooltip Text="Top" Placement="TooltipPlacement.Top">
+    <BUIButton Text="Top" />
+</BUITooltip>
+
+<BUITooltip Text="Bottom" Placement="TooltipPlacement.Bottom">
+    <BUIButton Text="Bottom" />
+</BUITooltip>
+
+<BUITooltip Text="Left" Placement="TooltipPlacement.Left">
+    <BUIButton Text="Left" />
+</BUITooltip>
+
+<BUITooltip Text="Right" Placement="TooltipPlacement.Right">
+    <BUIButton Text="Right" />
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition RichContentDemo => new()
+    {
+        Demo = RenderRichContent(),
+        Code = """
+<BUITooltip>
+    <TooltipContent>
+        <div>
+            <strong>Rich tooltip</strong>
+            <p style="margin: 0.5rem 0 0 0;">
+                With <em>formatted</em> content
+            </p>
+        </div>
+    </TooltipContent>
+    <ChildContent>
+        <BUIButton Text="Rich content" />
+    </ChildContent>
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition TriggersDemo => new()
+    {
+        Demo = RenderTriggers(),
+        Code = """
+<BUITooltip Text="Hover trigger" Trigger="TooltipTrigger.Hover">
+    <BUIButton Text="Hover" />
+</BUITooltip>
+
+<BUITooltip Text="Focus trigger" Trigger="TooltipTrigger.Focus">
+    <BUIButton Text="Focus (tab)" />
+</BUITooltip>
+
+<BUITooltip Text="Both triggers" Trigger="TooltipTrigger.HoverAndFocus">
+    <BUIButton Text="Hover or Focus" />
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition DelaysDemo => new()
+    {
+        Demo = RenderDelays(),
+        Code = """
+<BUITooltip Text="Instant" ShowDelay="0">
+    <BUIButton Text="No delay" />
+</BUITooltip>
+
+<BUITooltip Text="Slow" ShowDelay="500" HideDelay="300">
+    <BUIButton Text="500ms delay" />
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition InteractiveDemo => new()
+    {
+        Demo = RenderInteractive(),
+        Code = """
+<BUITooltip Interactive="true">
+    <TooltipContent>
+        <div>
+            Click the link:
+            <a href="https://github.com" target="_blank">GitHub</a>
+        </div>
+    </TooltipContent>
+    <ChildContent>
+        <BUIButton Text="Interactive tooltip" />
+    </ChildContent>
+</BUITooltip>
+
+<BUITooltip Text="Non-interactive" Interactive="false">
+    <BUIButton Text="Non-interactive" />
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition ArrowDemo => new()
+    {
+        Demo = RenderArrow(),
+        Code = """
+<BUITooltip Text="With arrow" Arrow="true">
+    <BUIButton Text="With arrow" />
+</BUITooltip>
+
+<BUITooltip Text="Without arrow" Arrow="false">
+    <BUIButton Text="No arrow" />
+</BUITooltip>
+"""
+    };
+
+    private ComponentDemoDefinition MaxWidthDemo => new()
+    {
+        Demo = RenderMaxWidth(),
+        Code = """
+<BUITooltip MaxWidth="150"
+            Text="This is a long tooltip text that will wrap to multiple lines">
+    <BUIButton Text="Narrow tooltip" />
+</BUITooltip>
+
+<BUITooltip MaxWidth="400"
+            Text="This tooltip has more space available for content">
+    <BUIButton Text="Wide tooltip" />
+</BUITooltip>
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUITooltip Text="This is a tooltip">
+            <BUIButton Text="Hover me" />
+        </BUITooltip>
+        ;
+    };
+
+    private RenderFragment RenderPlacements() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="Top" Placement="TooltipPlacement.Top">
+                <BUIButton Text="Top" />
+            </BUITooltip>
+
+            <BUITooltip Text="Bottom" Placement="TooltipPlacement.Bottom">
+                <BUIButton Text="Bottom" />
+            </BUITooltip>
+
+            <BUITooltip Text="Left" Placement="TooltipPlacement.Left">
+                <BUIButton Text="Left" />
+            </BUITooltip>
+
+            <BUITooltip Text="Right" Placement="TooltipPlacement.Right">
+                <BUIButton Text="Right" />
+            </BUITooltip>
+        </div>
+        <div class="demo-row" style="margin-top: 1rem;">
+            <BUITooltip Text="Top Start" Placement="TooltipPlacement.TopStart">
+                <BUIButton Text="TopStart" />
+            </BUITooltip>
+
+            <BUITooltip Text="Top End" Placement="TooltipPlacement.TopEnd">
+                <BUIButton Text="TopEnd" />
+            </BUITooltip>
+
+            <BUITooltip Text="Bottom Start" Placement="TooltipPlacement.BottomStart">
+                <BUIButton Text="BottomStart" />
+            </BUITooltip>
+
+            <BUITooltip Text="Bottom End" Placement="TooltipPlacement.BottomEnd">
+                <BUIButton Text="BottomEnd" />
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderRichContent() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip>
+                <TooltipContent>
+                    <div>
+                        <strong>Rich tooltip</strong>
+                        <p style="margin: 0.5rem 0 0 0;">
+                            With <em>formatted</em> content
+                        </p>
+                    </div>
+                </TooltipContent>
+                <ChildContent>
+                    <BUIButton Text="Rich content" />
+                </ChildContent>
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderTriggers() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="Hover trigger" Trigger="TooltipTrigger.Hover">
+                <BUIButton Text="Hover" />
+            </BUITooltip>
+
+            <BUITooltip Text="Focus trigger" Trigger="TooltipTrigger.Focus">
+                <BUIButton Text="Focus (tab)" />
+            </BUITooltip>
+
+            <BUITooltip Text="Both triggers" Trigger="TooltipTrigger.HoverAndFocus">
+                <BUIButton Text="Hover or Focus" />
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderDelays() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="Instant" ShowDelay="0">
+                <BUIButton Text="No delay" />
+            </BUITooltip>
+
+            <BUITooltip Text="Slow" ShowDelay="500" HideDelay="300">
+                <BUIButton Text="500ms delay" />
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderInteractive() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Interactive="true">
+                <TooltipContent>
+                    <div>
+                        Click the link:
+                        <a href="https://github.com" target="_blank">GitHub</a>
+                    </div>
+                </TooltipContent>
+                <ChildContent>
+                    <BUIButton Text="Interactive tooltip" />
+                </ChildContent>
+            </BUITooltip>
+
+            <BUITooltip Text="Non-interactive" Interactive="false">
+                <BUIButton Text="Non-interactive" />
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderArrow() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="With arrow" Arrow="true">
+                <BUIButton Text="With arrow" />
+            </BUITooltip>
+
+            <BUITooltip Text="Without arrow" Arrow="false">
+                <BUIButton Text="No arrow" />
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private RenderFragment RenderMaxWidth() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip MaxWidth="150"
+                        Text="This is a long tooltip text that will wrap to multiple lines">
+                <BUIButton Text="Narrow tooltip" />
+            </BUITooltip>
+
+            <BUITooltip MaxWidth="400"
+                        Text="This tooltip has more space available for content">
+                <BUIButton Text="Wide tooltip" />
+            </BUITooltip>
+        </div>
+        ;
+    };
+
+    private ComponentDemoDefinition PermanentDemo => new()
+    {
+        Demo = RenderPermanent(),
+        Code = """
+<BUITooltip Text="This tooltip stays visible until closed"
+            Trigger="TooltipTrigger.Permanent"
+            Placement="TooltipPlacement.Right">
+    <TooltipContent>
+        <strong>This is a permanent tooltip. It remains visible until closed.</strong>
+        <p style="margin: 0.5rem 0 0 0; background:red;color:white;">
+            With <em>formatted</em> content
+        </p>
+    </TooltipContent>
+    <ChildContent>
+        <BUIButton Text="Permanent tooltip" />
+    </ChildContent>
+</BUITooltip>
+"""
+    };
+
+    private RenderFragment RenderPermanent() => __builder =>
+    {
+        <BUITooltip Text="This tooltip stays visible until closed"
+                    Trigger="TooltipTrigger.Permanent"
+                    Placement="TooltipPlacement.Right">
+            <TooltipContent>
+                <strong>This is a permanent tooltip. It remains visible until closed.</strong>
+                <p style="margin: 0.5rem 0 0 0; background:red;color:white;">
+                    With <em>formatted</em> content
+                </p>
+            </TooltipContent>
+            <ChildContent>
+                <BUIButton Text="Permanent tooltip" />
+            </ChildContent>
+        </BUITooltip>
+        ;
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> Properties =
+    [
+        new("Text", "string?", "null", "Simple text content for the tooltip"),
+        new("TooltipContent", "RenderFragment?", "null", "Rich content for the tooltip"),
+        new("ChildContent", "RenderFragment?", "null", "The element that triggers the tooltip"),
+        new("Placement", "TooltipPlacement", "Top", "Tooltip position relative to trigger"),
+        new("Trigger", "TooltipTrigger", "Hover", "How the tooltip is triggered (Hover, Focus, HoverAndFocus, Permanent)"),
+        new("ShowDelay", "int", "200", "Delay before showing (ms)"),
+        new("HideDelay", "int", "150", "Delay before hiding (ms)"),
+        new("Arrow", "bool", "true", "Show arrow pointing to trigger"),
+        new("Interactive", "bool", "true", "Allow hovering over tooltip"),
+        new("MaxWidth", "int?", "null", "Maximum width in pixels (default 300)"),
+        new("Offset", "int", "8", "Distance from trigger element (px)")
+    ];
+}
