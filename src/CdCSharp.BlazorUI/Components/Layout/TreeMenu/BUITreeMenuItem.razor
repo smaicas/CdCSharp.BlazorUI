@@ -1,0 +1,24 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Components.Layout.TreeMenu
+@using CdCSharp.BlazorUI.Core.Components.Tree
+@using Microsoft.AspNetCore.Components.Routing
+
+@inherits TreeNodeComponentBase
+
+@code {
+    [Parameter] public string? Href { get; set; }
+    [Parameter] public string? Target { get; set; }
+    [Parameter] public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    protected override string GenerateKey()
+        => Key ?? Href ?? $"menu-item-{Guid.NewGuid():N}";
+
+    protected override object? GetAdditionalData() => new TreeMenuItem
+    {
+        Href = Href,
+        Target = Target,
+        Match = Match,
+        OnClick = OnClick
+    };
+}

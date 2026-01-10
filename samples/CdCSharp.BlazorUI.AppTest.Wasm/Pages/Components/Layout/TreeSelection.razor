@@ -1,0 +1,287 @@
+﻿@page "/components/tree-selection"
+@using CdCSharp.BlazorUI.Components
+
+<h2>BUITreeSelection - Single Selection (Declarative)</h2>
+
+<div style="width: 400px; border: 1px solid #ccc; padding: 1rem;">
+    <BUITreeSelection TItem="object"
+                      SelectionMode="TreeSelectionMode.Single"
+                      SelectedKeys="@_singleSelectedKeys"
+                      SelectedKeysChanged="@(keys => _singleSelectedKeys = keys)"
+                      ShowCheckboxes="false"
+                      Size="SizeEnum.Medium">
+        
+        <BUITreeNode Key="root" Text="Root Folder" Icon="@BUIIcons.MaterialIconsOutlined.i_folder">
+            <ChildNodes>
+                <BUITreeNode Key="documents" Text="Documents" Icon="@BUIIcons.MaterialIconsOutlined.i_folder">
+                    <ChildNodes>
+                        <BUITreeNode Key="doc1" Text="Report.pdf" Icon="@BUIIcons.MaterialIconsOutlined.i_article" />
+                        <BUITreeNode Key="doc2" Text="Presentation.pptx" Icon="@BUIIcons.MaterialIconsOutlined.i_article" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="images" Text="Images" Icon="@BUIIcons.MaterialIconsOutlined.i_folder">
+                    <ChildNodes>
+                        <BUITreeNode Key="img1" Text="Photo1.jpg" Icon="@BUIIcons.MaterialIconsOutlined.i_image" />
+                        <BUITreeNode Key="img2" Text="Photo2.jpg" Icon="@BUIIcons.MaterialIconsOutlined.i_image" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="readme" Text="README.md" Icon="@BUIIcons.MaterialIconsOutlined.i_article" />
+            </ChildNodes>
+        </BUITreeNode>
+    </BUITreeSelection>
+    
+    <p style="margin-top: 1rem;">
+        <strong>Selected:</strong> @string.Join(", ", _singleSelectedKeys)
+    </p>
+</div>
+
+<hr />
+
+<h2>BUITreeSelection - Multiple Selection with Checkboxes (Declarative)</h2>
+
+<div style="width: 400px; border: 1px solid #ccc; padding: 1rem;">
+    <BUITreeSelection TItem="object"
+                      SelectionMode="TreeSelectionMode.Multiple"
+                      SelectedKeys="@_multipleSelectedKeys"
+                      SelectedKeysChanged="@(keys => _multipleSelectedKeys = keys)"
+                      ShowCheckboxes="true"
+                      Size="SizeEnum.Medium">
+        
+        <BUITreeNode Key="languages" Text="Programming Languages" Icon="@BUIIcons.MaterialIconsOutlined.i_code" InitiallyExpanded="true">
+            <ChildNodes>
+                <BUITreeNode Key="web" Text="Web Development" Icon="@BUIIcons.MaterialIconsOutlined.i_web">
+                    <ChildNodes>
+                        <BUITreeNode Key="js" Text="JavaScript" />
+                        <BUITreeNode Key="ts" Text="TypeScript" />
+                        <BUITreeNode Key="html" Text="HTML" />
+                        <BUITreeNode Key="css" Text="CSS" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="backend" Text="Backend" Icon="@BUIIcons.MaterialIconsOutlined.i_storage">
+                    <ChildNodes>
+                        <BUITreeNode Key="csharp" Text="C#" />
+                        <BUITreeNode Key="python" Text="Python" />
+                        <BUITreeNode Key="java" Text="Java" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="sql" Text="SQL" Icon="@BUIIcons.MaterialIconsOutlined.i_storage" />
+            </ChildNodes>
+        </BUITreeNode>
+    </BUITreeSelection>
+    
+    <p style="margin-top: 1rem;">
+        <strong>Selected (@_multipleSelectedKeys.Count):</strong> @string.Join(", ", _multipleSelectedKeys)
+    </p>
+</div>
+
+<hr />
+
+<h2>BUITreeSelection - Data-Bound (Categories)</h2>
+
+<div style="width: 400px; border: 1px solid #ccc; padding: 1rem;">
+    <BUITreeSelection TItem="CategoryModel"
+                      Items="@_categories"
+                      KeySelector="@(c => c.Id)"
+                      ChildrenSelector="@(c => c.Children)"
+                      SelectionMode="TreeSelectionMode.Multiple"
+                      SelectedKeys="@_categorySelectedKeys"
+                      SelectedKeysChanged="@(keys => _categorySelectedKeys = keys)"
+                      ShowCheckboxes="true"
+                      Size="SizeEnum.Medium">
+        <NodeTemplate Context="ctx">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_category" Size="SizeEnum.Small" />
+            <span>@ctx.Node.Item!.Name</span>
+            <small style="opacity: 0.6; margin-left: auto;">(@ctx.Node.Item.ProductCount products)</small>
+        </NodeTemplate>
+    </BUITreeSelection>
+    
+    <p style="margin-top: 1rem;">
+        <strong>Selected Categories:</strong> 
+        @string.Join(", ", _categorySelectedKeys.Select(k => _categories.SelectMany(GetAllCategories).FirstOrDefault(c => c.Id == k)?.Name ?? k))
+    </p>
+</div>
+
+<hr />
+
+<h2>BUITreeSelection - Compact Density</h2>
+
+<div style="width: 400px; border: 1px solid #ccc; padding: 1rem;">
+    <BUITreeSelection TItem="object"
+                      SelectionMode="TreeSelectionMode.Multiple"
+                      SelectedKeys="@_compactSelectedKeys"
+                      SelectedKeysChanged="@(keys => _compactSelectedKeys = keys)"
+                      Size="SizeEnum.Small"
+                      Density="DensityEnum.Compact">
+        
+        <BUITreeNode Key="settings" Text="Settings" Icon="@BUIIcons.MaterialIconsOutlined.i_settings">
+            <ChildNodes>
+                <BUITreeNode Key="general" Text="General">
+                    <ChildNodes>
+                        <BUITreeNode Key="lang" Text="Language" />
+                        <BUITreeNode Key="theme" Text="Theme" />
+                        <BUITreeNode Key="timezone" Text="Timezone" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="privacy" Text="Privacy">
+                    <ChildNodes>
+                        <BUITreeNode Key="cookies" Text="Cookies" />
+                        <BUITreeNode Key="tracking" Text="Tracking" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="notifications" Text="Notifications" />
+            </ChildNodes>
+        </BUITreeNode>
+    </BUITreeSelection>
+    
+    <p style="margin-top: 1rem;">
+        <strong>Selected:</strong> @string.Join(", ", _compactSelectedKeys)
+    </p>
+</div>
+
+<hr />
+
+<h2>BUITreeSelection - With Selection Event</h2>
+
+<div style="width: 400px; border: 1px solid #ccc; padding: 1rem;">
+    <BUITreeSelection TItem="object"
+                      SelectionMode="TreeSelectionMode.Multiple"
+                      OnSelectionChanged="@HandleSelectionChanged">
+        
+        <BUITreeNode Key="team" Text="Team Members" Icon="@BUIIcons.MaterialIconsOutlined.i_group">
+            <ChildNodes>
+                <BUITreeNode Key="dev" Text="Developers">
+                    <ChildNodes>
+                        <BUITreeNode Key="dev1" Text="Alice Johnson" />
+                        <BUITreeNode Key="dev2" Text="Bob Smith" />
+                        <BUITreeNode Key="dev3" Text="Carol White" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="design" Text="Designers">
+                    <ChildNodes>
+                        <BUITreeNode Key="des1" Text="David Brown" />
+                        <BUITreeNode Key="des2" Text="Emma Davis" />
+                    </ChildNodes>
+                </BUITreeNode>
+            </ChildNodes>
+        </BUITreeNode>
+    </BUITreeSelection>
+    
+    <div style="margin-top: 1rem; padding: 0.5rem; background: #f5f5f5; border-radius: 4px;">
+        <strong>Last Event:</strong>
+        <div>@_lastEvent</div>
+    </div>
+</div>
+
+<hr />
+
+<h2>BUITreeSelection - Disabled Nodes</h2>
+
+<div style="width: 400px; border: 1px solid #ccc; padding: 1rem;">
+    <BUITreeSelection TItem="object"
+                      SelectionMode="TreeSelectionMode.Multiple"
+                      SelectedKeys="@_disabledDemoKeys"
+                      SelectedKeysChanged="@(keys => _disabledDemoKeys = keys)">
+        
+        <BUITreeNode Key="features" Text="Features" Icon="@BUIIcons.MaterialIconsOutlined.i_star">
+            <ChildNodes>
+                <BUITreeNode Key="basic" Text="Basic Plan">
+                    <ChildNodes>
+                        <BUITreeNode Key="f1" Text="Feature 1" />
+                        <BUITreeNode Key="f2" Text="Feature 2" />
+                    </ChildNodes>
+                </BUITreeNode>
+                <BUITreeNode Key="premium" Text="Premium Plan (Coming Soon)" Disabled="true">
+                    <ChildNodes>
+                        <BUITreeNode Key="f3" Text="Advanced Analytics" Disabled="true" />
+                        <BUITreeNode Key="f4" Text="Priority Support" Disabled="true" />
+                    </ChildNodes>
+                </BUITreeNode>
+            </ChildNodes>
+        </BUITreeNode>
+    </BUITreeSelection>
+    
+    <p style="margin-top: 1rem;">
+        <strong>Selected:</strong> @string.Join(", ", _disabledDemoKeys)
+    </p>
+</div>
+
+@code {
+    // Single selection
+    private HashSet<string> _singleSelectedKeys = [];
+
+    // Multiple selection
+    private HashSet<string> _multipleSelectedKeys = new() { "js", "csharp" };
+
+    // Compact
+    private HashSet<string> _compactSelectedKeys = [];
+
+    // Disabled demo
+    private HashSet<string> _disabledDemoKeys = [];
+
+    // Data-bound categories
+    private HashSet<string> _categorySelectedKeys = [];
+    private List<CategoryModel> _categories = new()
+    {
+        new CategoryModel
+        {
+            Id = "electronics",
+            Name = "Electronics",
+            ProductCount = 150,
+            Children = new List<CategoryModel>
+            {
+                new() { Id = "phones", Name = "Phones", ProductCount = 45 },
+                new() { Id = "laptops", Name = "Laptops", ProductCount = 32 },
+                new() { Id = "tablets", Name = "Tablets", ProductCount = 23 }
+            }
+        },
+        new CategoryModel
+        {
+            Id = "clothing",
+            Name = "Clothing",
+            ProductCount = 200,
+            Children = new List<CategoryModel>
+            {
+                new() { Id = "mens", Name = "Men's", ProductCount = 80 },
+                new() { Id = "womens", Name = "Women's", ProductCount = 95 },
+                new() { Id = "kids", Name = "Kids", ProductCount = 25 }
+            }
+        },
+        new CategoryModel
+        {
+            Id = "books",
+            Name = "Books",
+            ProductCount = 75
+        }
+    };
+
+    // Event demo
+    private string _lastEvent = "None";
+
+    private void HandleSelectionChanged(TreeSelectionChangedEventArgs<object> args)
+    {
+        _lastEvent = $"Changed node: {args.ChangedNode.Key}, Total selected: {args.SelectedKeys.Count}";
+    }
+
+    private IEnumerable<CategoryModel> GetAllCategories(CategoryModel category)
+    {
+        yield return category;
+        if (category.Children != null)
+        {
+            foreach (var child in category.Children)
+            {
+                foreach (var descendant in GetAllCategories(child))
+                {
+                    yield return descendant;
+                }
+            }
+        }
+    }
+
+    public class CategoryModel
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public int ProductCount { get; set; }
+        public List<CategoryModel>? Children { get; set; }
+    }
+}

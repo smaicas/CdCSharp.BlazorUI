@@ -228,6 +228,11 @@ bui-component[data-bui-component="tree-menu"][data-bui-expand-mode="inline"] .bu
     padding-left: calc(var(--bui-menu-item-padding-x) + var(--bui-menu-indent) * 3);
 }
 
+bui-component[data-bui-component="tree-menu"][data-bui-expand-mode="inline"] .bui-tree-menu__item[data-depth="4"] > .bui-tree-menu__link,
+bui-component[data-bui-component="tree-menu"][data-bui-expand-mode="inline"] .bui-tree-menu__item[data-depth="4"] > .bui-tree-menu__button {
+    padding-left: calc(var(--bui-menu-item-padding-x) + var(--bui-menu-indent) * 4);
+}
+
 /* ========== FOCUS STYLES ========== */
 
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__link:focus-visible,

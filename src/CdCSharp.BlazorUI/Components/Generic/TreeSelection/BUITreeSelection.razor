@@ -1,0 +1,272 @@
+﻿@namespace CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Components.Tree
+@typeparam TItem
+@inherits TreeComponentBase<TItem>
+@implements IHasSize
+@implements IHasDensity
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+<bui-component @attributes="@ComputedAttributes">
+    @if (IsDeclarativeMode)
+    {
+        <CascadingValue Value="@((ITreeRegistry)Engine)" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    }
+
+    @if (DeclarativeNodesBuilt || !IsDeclarativeMode)
+    {
+        <div class="bui-tree-selection__container" role="tree" aria-multiselectable="@IsMultipleMode.ToString().ToLowerInvariant()">
+            @foreach (var node in Engine.RootNodes)
+            {
+                @RenderNode(node)
+            }
+        </div>
+    }
+</bui-component>
+
+@code {
+    private readonly HashSet<string> _selectedKeys = [];
+
+    [Parameter] public HashSet<string>? SelectedKeys { get; set; }
+    [Parameter] public EventCallback<HashSet<string>> SelectedKeysChanged { get; set; }
+    [Parameter] public TreeSelectionMode SelectionMode { get; set; } = TreeSelectionMode.Single;
+    [Parameter] public bool ShowCheckboxes { get; set; } = true;
+    [Parameter] public bool ShowExpandIcons { get; set; } = true;
+    [Parameter] public string ExpandIcon { get; set; } = BUIIcons.UI.ChevronRight;
+    [Parameter] public string CollapseIcon { get; set; } = BUIIcons.UI.ChevronDown;
+    [Parameter] public RenderFragment<TreeSelectionNodeContext<TItem>>? NodeTemplate { get; set; }
+    [Parameter] public EventCallback<TreeSelectionChangedEventArgs<TItem>> OnSelectionChanged { get; set; }
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    private bool IsMultipleMode => SelectionMode == TreeSelectionMode.Multiple;
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-selection-mode"] = SelectionMode.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-show-checkboxes"] = ShowCheckboxes.ToString().ToLowerInvariant();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // Sync selected keys from parameter
+        if (SelectedKeys != null)
+        {
+            _selectedKeys.Clear();
+            foreach (var key in SelectedKeys)
+            {
+                _selectedKeys.Add(key);
+            }
+        }
+    }
+
+    protected override RenderFragment RenderNode(TreeNodeState<TItem> node) => __builder =>
+    {
+        var isExpanded = Engine.IsExpanded(node.Key);
+        var isLoading = Engine.IsLoading(node.Key);
+        var isSelected = _selectedKeys.Contains(node.Key);
+
+        <div class="bui-tree-selection__node @GetNodeClasses(node, isSelected)"
+             role="treeitem"
+             aria-expanded="@(node.HasChildren? isExpanded.ToString().ToLowerInvariant() : null)"
+             aria-selected="@isSelected.ToString().ToLowerInvariant()"
+             aria-disabled="@node.Disabled.ToString().ToLowerInvariant()"
+             data-depth="@node.Depth"
+             data-key="@node.Key">
+
+            <div class="bui-tree-selection__node-content"
+                 style="padding-left: calc(@(node.Depth) * var(--bui-tree-indent, 1.5rem))"
+                 @onclick="() => HandleNodeInteractionAsync(node)"
+                 @onclick:stopPropagation="true">
+                @* Expander button *@
+                @if (node.HasChildren && ShowExpandIcons)
+                {
+                    <button type="button"
+                            class="bui-tree-selection__expander @(isExpanded ? "bui-tree-selection__expander--expanded" : "")"
+                            @onclick="() => Engine.ToggleAsync(node.Key)"
+                            @onclick:stopPropagation="true"
+                            disabled="@node.Disabled"
+                            aria-label="@(isExpanded ? "Collapse" : "Expand")">
+                        @if (isLoading)
+                        {
+                            <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="Size" />
+                        }
+                        else
+                        {
+                            <BUISvgIcon Icon="@(isExpanded? CollapseIcon : ExpandIcon)" Size="Size" />
+                        }
+                    </button>
+                }
+                else if (node.HasChildren)
+                {
+                    <span class="bui-tree-selection__expander-placeholder"></span>
+                }
+                else
+                {
+                    <span class="bui-tree-selection__expander-placeholder"></span>
+                }
+
+                @* Checkbox *@
+                @if (ShowCheckboxes)
+                {
+                    <input type="@(IsMultipleMode ? "checkbox" : "radio")"
+                           class="bui-tree-selection__checkbox"
+                           checked="@isSelected"
+                           disabled="@node.Disabled"
+                           @onchange="() => HandleSelectionChangeAsync(node)"
+                           @onclick:stopPropagation="true" />
+                }
+
+                @* Node label *@
+                <div class="bui-tree-selection__node-label">
+                    @if (NodeTemplate != null)
+                    {
+                        @NodeTemplate(new TreeSelectionNodeContext<TItem>
+                        {
+                            Node = node,
+                        IsSelected = isSelected,
+                        IsExpanded = isExpanded,
+                        IsLoading = isLoading
+                        })
+                        }
+                    else
+                    {
+                        @RenderDefaultContent(node)
+                    }
+                </div>
+            </div>
+
+            @* Children *@
+            @if (node.HasChildren && isExpanded)
+            {
+                <div class="bui-tree-selection__children" role="group">
+                    @foreach (var child in node.ChildrenInternal)
+                    {
+                        @RenderNode(child)
+                    }
+                </div>
+            }
+        </div>
+    };
+
+    private RenderFragment RenderDefaultContent(TreeNodeState<TItem> node) => __builder =>
+{
+    @if (!string.IsNullOrEmpty(node.Icon))
+    {
+        <BUISvgIcon Icon="@node.Icon" Size="Size" class="bui-tree-selection__node-icon" />
+    }
+    <span class="bui-tree-selection__node-text">@(node.Text ?? node.Item?.ToString() ?? node.Key)</span>
+};
+    protected override async Task HandleNodeInteractionAsync(TreeNodeState<TItem> node)
+    {
+        if (node.Disabled) return;
+        await HandleSelectionChangeAsync(node);
+    }
+
+    private async Task HandleSelectionChangeAsync(TreeNodeState<TItem> node)
+    {
+        if (node.Disabled) return;
+        var previousSelection = new HashSet<string>(_selectedKeys);
+
+        if (SelectionMode == TreeSelectionMode.Single)
+        {
+            _selectedKeys.Clear();
+            _selectedKeys.Add(node.Key);
+        }
+        else // Multiple
+        {
+            if (_selectedKeys.Contains(node.Key))
+            {
+                _selectedKeys.Remove(node.Key);
+            }
+            else
+            {
+                _selectedKeys.Add(node.Key);
+            }
+        }
+
+        // Notify parent
+        if (SelectedKeysChanged.HasDelegate)
+        {
+            await SelectedKeysChanged.InvokeAsync(new HashSet<string>(_selectedKeys));
+        }
+
+        // Fire selection changed event
+        if (OnSelectionChanged.HasDelegate)
+        {
+            var selectedNodes = _selectedKeys
+                .Select(k => Engine.GetNode(k))
+                .Where(n => n != null)
+                .Cast<TreeNodeState<TItem>>()
+                .ToList();
+
+            await OnSelectionChanged.InvokeAsync(new TreeSelectionChangedEventArgs<TItem>
+            {
+                SelectedKeys = new HashSet<string>(_selectedKeys),
+                SelectedNodes = selectedNodes,
+                PreviousKeys = previousSelection,
+                ChangedNode = node
+            });
+        }
+
+        StateHasChanged();
+    }
+    private string GetNodeClasses(TreeNodeState<TItem> node, bool isSelected)
+    {
+        var classes = new List<string>();
+        if (node.Disabled)
+            classes.Add("bui-tree-selection__node--disabled");
+
+        if (isSelected)
+            classes.Add("bui-tree-selection__node--selected");
+
+        return string.Join(" ", classes);
+    }
+    // ===== PUBLIC API =====
+    public IReadOnlySet<string> GetSelectedKeys() => _selectedKeys;
+    public IReadOnlyList<TreeNodeState<TItem>> GetSelectedNodes()
+    {
+        return _selectedKeys
+        .Select(k => Engine.GetNode(k))
+        .Where(n => n != null)
+        .Cast<TreeNodeState<TItem>>()
+        .ToList();
+    }
+    public void SelectNode(string key)
+    {
+        if (SelectionMode == TreeSelectionMode.Single)
+        {
+            _selectedKeys.Clear();
+        }
+
+        _selectedKeys.Add(key);
+        StateHasChanged();
+    }
+    public void DeselectNode(string key)
+    {
+        _selectedKeys.Remove(key);
+        StateHasChanged();
+    }
+    public void ClearSelection()
+    {
+        _selectedKeys.Clear();
+        StateHasChanged();
+    }
+    public void SelectAll()
+    {
+        if (SelectionMode != TreeSelectionMode.Multiple) return;
+        foreach (var node in Engine.NodeMap.Values.Where(n => !n.Disabled))
+        {
+            _selectedKeys.Add(node.Key);
+        }
+
+        StateHasChanged();
+    }
+}
