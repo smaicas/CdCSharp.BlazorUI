@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Layout.Grid;
+﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
 public enum GridDirection
 {

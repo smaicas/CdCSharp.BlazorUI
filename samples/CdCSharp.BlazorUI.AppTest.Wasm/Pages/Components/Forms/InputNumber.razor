@@ -1,0 +1,868 @@
+﻿@page "/components/forms/input-number"
+@using System.Globalization
+
+<PageTitle>Input Number Examples</PageTitle>
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <h1>BUIInputNumber Examples</h1>
+
+    <!-- Basic Usage -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Basic Usage</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_basicInt"
+                                Label="Integer Input"
+                                Placeholder="Enter a number"
+                                HelperText="Basic integer input" />
+                <p>Value: @_basicInt</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_basicDecimal"
+                                Label="Decimal Input"
+                                Placeholder="Enter a decimal"
+                                DecimalPlaces="2"
+                                HelperText="Decimal with 2 places" />
+                <p>Value: @_basicDecimal</p>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Variants -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Variants</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_variantValue"
+                                Variant="BUIInputNumberVariant.Outlined"
+                                Label="Outlined" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_variantValue"
+                                Variant="BUIInputNumberVariant.Filled"
+                                Label="Filled" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_variantValue"
+                                Variant="BUIInputNumberVariant.Standard"
+                                Label="Standard" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Sizes -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Sizes</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_sizeValue"
+                                Size="SizeEnum.Small"
+                                Label="Small" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_sizeValue"
+                                Size="SizeEnum.Medium"
+                                Label="Medium (Default)" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_sizeValue"
+                                Size="SizeEnum.Large"
+                                Label="Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Min/Max & Step -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Min/Max & Step</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_rangeValue"
+                                Label="Range (0-100)"
+                                Min="0"
+                                Max="100"
+                                Step="5"
+                                HelperText="Step: 5, Min: 0, Max: 100" />
+                <p>Value: @_rangeValue</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_stepValue"
+                                Label="Decimal Steps"
+                                Min="0m"
+                                Max="1m"
+                                Step="0.1m"
+                                DecimalPlaces="2"
+                                HelperText="Step: 0.1, Range: 0-1" />
+                <p>Value: @_stepValue</p>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Prefix & Suffix -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Prefix & Suffix (Text & Icons)</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_priceValue"
+                                Label="Price (Text)"
+                                PrefixText="$"
+                                DecimalPlaces="2"
+                                Min="0m"
+                                HelperText="Currency input" />
+                <p>Value: @_priceValue</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_priceValue2"
+                                Label="Price (Icon)"
+                                PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_attach_money"
+                                DecimalPlaces="2"
+                                Min="0m"
+                                HelperText="Currency with icon" />
+                <p>Value: @_priceValue2</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_priceValue3"
+                                Label="Price (Both)"
+                                PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_attach_money"
+                                PrefixText="USD"
+                                DecimalPlaces="2"
+                                Min="0m"
+                                HelperText="Icon + Text" />
+                <p>Value: @_priceValue3</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_percentValue"
+                                Label="Percentage"
+                                SuffixText="%"
+                                Min="0"
+                                Max="100"
+                                HelperText="Percentage input" />
+                <p>Value: @_percentValue</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_weightValue"
+                                Label="Weight"
+                                SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_fitness_center"
+                                DecimalPlaces="1"
+                                Step="0.5m"
+                                HelperText="Weight with icon" />
+                <p>Value: @_weightValue</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_tempValue"
+                                Label="Temperature"
+                                SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_thermostat"
+                                SuffixText="°C"
+                                DecimalPlaces="1"
+                                HelperText="Icon + Text suffix" />
+                <p>Value: @_tempValue</p>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Formatting -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Number Formatting & Culture</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_formattedValue"
+                                Label="US Format (en-US)"
+                                UseThousandsSeparator="true"
+                                Culture="@_usCulture"
+                                DecimalPlaces="2"
+                                Min="0"
+                                Max="1000000"
+                                Step="1000"
+                                HelperText="Format: 1,234.56" />
+                <p>Value: @_formattedValue - Culture: {_usCulture.Name}</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_germanValue"
+                                Label="German Format (de-DE)"
+                                UseThousandsSeparator="true"
+                                Culture="@_germanCulture"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1.234,56" />
+                <p>Value: @_germanValue - Culture: {_germanCulture.Name}</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_spanishValue"
+                                Label="Spanish Format (es-ES)"
+                                UseThousandsSeparator="true"
+                                Culture="@_spanishCulture"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1.234,56" />
+                <p>Value: @_spanishValue - Culture: {_spanishCulture.Name}</p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_frenchValue"
+                                Label="French Format (fr-FR)"
+                                UseThousandsSeparator="true"
+                                Culture="@_frenchCulture"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1 234,56" />
+                <p>Value: @_frenchValue - Culture: {_frenchCulture.Name}</p>
+            </BUIGridItem>
+        </BUIGrid>
+
+        <div style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+            <h4>Try typing naturally!</h4>
+            <p>• Focus on any input and type numbers using your culture's format</p>
+            <p>• The decimal separator will match the culture (. or ,)</p>
+            <p>• Thousand separators are added on blur for readability</p>
+            <p>• The input allows fluid editing without interrupting your typing</p>
+        </div>
+    </section>
+
+    <!-- Button Placement -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Button Placement</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_buttonValue"
+                                Label="Buttons on Right (Default)"
+                                ButtonPlacement="StepButtonPlacement.Right" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_buttonValue"
+                                Label="Buttons on Left"
+                                ButtonPlacement="StepButtonPlacement.Left" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Advanced Features -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Advanced Features</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_mouseWheelValue"
+                                Label="Mouse Wheel Enabled"
+                                EnableMouseWheel="true"
+                                HelperText="Scroll to increment/decrement" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_accelerationValue"
+                                Label="With Acceleration"
+                                EnableAcceleration="true"
+                                AccelerationDelay="300"
+                                HelperText="Hold button for acceleration" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_noButtonsValue"
+                                Label="No Buttons"
+                                ShowStepButtons="false"
+                                HelperText="Keyboard arrows only" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- States -->
+    <section style="margin-bottom: 3rem;">
+        <h2>States</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_stateValue"
+                                Label="Disabled"
+                                Disabled="true" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_stateValue"
+                                Label="Read Only"
+                                ReadOnly="true" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_stateValue"
+                                Label="Required"
+                                Required="true" />
+            </BUIGridItem>
+        </BUIGrid>
+
+        <BUIGrid Gap="1rem" style="margin-top: 1rem;">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_loadingValue"
+                                Label="Loading"
+                                IsLoading="true"
+                                LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Callbacks -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Callbacks</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12">
+                <BUIInputNumber @bind-Value="_callbackValue"
+                                Label="With Callbacks"
+                                OnIncrement="@(async (int? v) => await HandleIncrement(v))"
+                                OnDecrement="@(async (int? v) => await HandleDecrement(v))"
+                                HelperText="Check console for callbacks" />
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <p><strong>Last Action:</strong> @_lastAction</p>
+                    <p><strong>Current Value:</strong> @_callbackValue</p>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Different Types -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Different Numeric Types</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_intValue"
+                                Label="Int32" />
+                <small>Type: int (@_intValue?.GetType().Name)</small>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_longValue"
+                                Label="Int64 (Long)" />
+                <small>Type: long (@_longValue?.GetType().Name)</small>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_floatValue"
+                                Label="Float"
+                                DecimalPlaces="3" />
+                <small>Type: float (@_floatValue?.GetType().Name)</small>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_doubleValue"
+                                Label="Double"
+                                DecimalPlaces="4" />
+                <small>Type: double (@_doubleValue?.GetType().Name)</small>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_decimalValue"
+                                Label="Decimal"
+                                DecimalPlaces="2" />
+                <small>Type: decimal (@_decimalValue?.GetType().Name)</small>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_nullableInt"
+                                Label="Nullable Int"
+                                Placeholder="null" />
+                <small>Type: int? (Value: @(_nullableInt?.ToString() ?? "null"))</small>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Real-world Examples -->
+    <section style="margin-bottom: 3rem;">
+        <h2>Real-world Examples</h2>
+
+        <h3 style="margin-top: 2rem;">Shopping Cart</h3>
+        <div style="padding: 1rem; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px;">
+            <BUIGrid Gap="1rem" AlignItems="GridAlignItems.Center">
+                <BUIGridItem Xs="12" Md="3">
+                    <strong>Product Name</strong>
+                </BUIGridItem>
+                <BUIGridItem Xs="12" Md="3">
+                    <BUIInputNumber @bind-Value="_quantity"
+                                    Label="Quantity"
+                                    Min="1"
+                                    Max="99"
+                                    Size="SizeEnum.Small" />
+                </BUIGridItem>
+                <BUIGridItem Xs="12" Md="3">
+                    <BUIInputNumber @bind-Value="_unitPrice"
+                                    Label="Unit Price"
+                                    PrefixText="$"
+                                    DecimalPlaces="2"
+                                    ReadOnly="true"
+                                    Size="SizeEnum.Small" />
+                </BUIGridItem>
+                <BUIGridItem Xs="12" Md="3">
+                    <strong>Total: $@(((_quantity ?? 0) * (_unitPrice ?? 0)).ToString("F2"))</strong>
+                </BUIGridItem>
+            </BUIGrid>
+        </div>
+
+        <h3 style="margin-top: 2rem;">Temperature Converter</h3>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_celsius"
+                                Label="Celsius"
+                                SuffixText="°C"
+                                DecimalPlaces="1"
+                                Step="0.5m"
+                                OnIncrement="@((decimal? _) => UpdateFahrenheit())"
+                                OnDecrement="@((decimal? _) => UpdateFahrenheit())" />
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_fahrenheit"
+                                Label="Fahrenheit"
+                                SuffixText="°F"
+                                DecimalPlaces="1"
+                                ReadOnly="true" />
+            </BUIGridItem>
+        </BUIGrid>
+
+        <h3 style="margin-top: 2rem;">Tip Calculator</h3>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_billAmount"
+                                Label="Bill Amount"
+                                PrefixText="$"
+                                DecimalPlaces="2"
+                                Min="0m"
+                                OnIncrement="@((decimal? _) => CalculateTip())"
+                                OnDecrement="@((decimal? _) => CalculateTip())" />
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_tipPercent"
+                                Label="Tip %"
+                                SuffixText="%"
+                                Min="0"
+                                Max="100"
+                                OnIncrement="@((int? _) => CalculateTip())"
+                                OnDecrement="@((int? _) => CalculateTip())" />
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_tipAmount"
+                                Label="Tip Amount"
+                                PrefixText="$"
+                                DecimalPlaces="2"
+                                ReadOnly="true" />
+            </BUIGridItem>
+        </BUIGrid>
+        <div style="margin-top: 1rem; padding: 1rem; background: var(--palette-primary); color: var(--palette-primarycontrast); border-radius: 4px;">
+            <h4 style="margin: 0;">Total: $@_totalWithTip.ToString("F2")</h4>
+        </div>
+    </section>
+</div>
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <h1>BUIInputNumber - Fluid Editing Demonstration</h1>
+
+    <div style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--palette-primary); border-radius: 4px;">
+        <h3 style="margin-top: 0;">✅ Problemas Corregidos</h3>
+        <ul style="margin-bottom: 0;">
+            <li><strong>Restricción de caracteres:</strong> Solo acepta números, separadores válidos según cultura y signo negativo</li>
+            <li><strong>Soporte de cultura:</strong> Usa CultureInfo.CurrentCulture por defecto, configurable con parámetro Culture</li>
+            <li><strong>Edición fluida:</strong> Permite escribir naturalmente sin interferir con el cursor</li>
+            <li><strong>Prefix/Suffix con iconos:</strong> Soporta PrefixText, PrefixIcon, SuffixText, SuffixIcon</li>
+        </ul>
+    </div>
+
+    <!-- Test 1: Fluid Editing -->
+    <section style="margin-bottom: 3rem;">
+        <h2>1. Edición Fluida con Decimales</h2>
+        <p>Intenta escribir: <code>123.456</code></p>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_fluidTest1"
+                                Label="3 Decimal Places"
+                                DecimalPlaces="3"
+                                UseThousandsSeparator="true"
+                                Culture="@_usCulture"
+                                HelperText="Focus, type '123.456', then blur to see formatting" />
+                <div style="margin-top: 0.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px; font-family: monospace;">
+                    <div><strong>Estado:</strong></div>
+                    <div>Value: {@_fluidTest1}</div>
+                    <div>Formatted: {@(_fluidTest1?.ToString("N3", _usCulture.NumberFormat) ?? "null")}</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_fluidTest2"
+                                Label="German Format (3 Decimals)"
+                                DecimalPlaces="3"
+                                UseThousandsSeparator="true"
+                                Culture="@_germanCulture"
+                                HelperText="Type '123,456' (comma as decimal separator)" />
+                <div style="margin-top: 0.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px; font-family: monospace;">
+                    <div><strong>Estado:</strong></div>
+                    <div>Value: {@_fluidTest2}</div>
+                    <div>Formatted: {@(_fluidTest2?.ToString("N3", _germanCulture.NumberFormat) ?? "null")}</div>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 2: Character Restriction -->
+    <section style="margin-bottom: 3rem;">
+        <h2>2. Restricción de Caracteres</h2>
+        <p>Intenta escribir letras o caracteres especiales - solo aceptará números válidos</p>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_restrictTest1"
+                                Label="Only Numbers Allowed"
+                                DecimalPlaces="2"
+                                HelperText="Try typing: abc123def456.78xyz" />
+                <p style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    Result will be: 123456.78
+                </p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_restrictTest2"
+                                Label="Negative Numbers"
+                                AllowNegative="true"
+                                DecimalPlaces="2"
+                                HelperText="Can type '-' at the beginning" />
+                <p style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    Value: @_restrictTest2
+                </p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_restrictTest3"
+                                Label="No Negative Numbers"
+                                AllowNegative="false"
+                                DecimalPlaces="2"
+                                HelperText="'-' sign is blocked" />
+                <p style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    Value: @_restrictTest3
+                </p>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 3: Culture-Specific Formatting -->
+    <section style="margin-bottom: 3rem;">
+        <h2>3. Formatos Específicos por Cultura</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest1"
+                                Label="English (US) - en-US"
+                                Culture="@_usCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1,234.56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>.</strong> (period)</div>
+                    <div>Thousands: <strong>,</strong> (comma)</div>
+                    <div>Example: 1,234.56</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest2"
+                                Label="German - de-DE"
+                                Culture="@_germanCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1.234,56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>,</strong> (comma)</div>
+                    <div>Thousands: <strong>.</strong> (period)</div>
+                    <div>Example: 1.234,56</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest3"
+                                Label="Spanish - es-ES"
+                                Culture="@_spanishCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1.234,56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>,</strong> (comma)</div>
+                    <div>Thousands: <strong>.</strong> (period)</div>
+                    <div>Example: 1.234,56</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest4"
+                                Label="French - fr-FR"
+                                Culture="@_frenchCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1 234,56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>,</strong> (comma)</div>
+                    <div>Thousands: <strong> </strong> (space)</div>
+                    <div>Example: 1 234,56</div>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 4: Icons in Prefix/Suffix -->
+    <section style="margin-bottom: 3rem;">
+        <h2>4. Iconos en Prefix/Suffix</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest1"
+                                Label="Icon Only (Prefix)"
+                                PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_attach_money"
+                                DecimalPlaces="2" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest2"
+                                Label="Text Only (Prefix)"
+                                PrefixText="USD" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest3"
+                                Label="Icon + Text (Prefix)"
+                                PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_attach_money"
+                                PrefixText="USD"
+                                DecimalPlaces="2" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest4"
+                                Label="Icon Only (Suffix)"
+                                SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_percent"
+                                DecimalPlaces="0" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest5"
+                                Label="Text Only (Suffix)"
+                                SuffixText="kg"
+                                DecimalPlaces="1" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest6"
+                                Label="Icon + Text (Suffix)"
+                                SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_thermostat"
+                                SuffixText="°C"
+                                DecimalPlaces="1" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 5: Focus/Blur Behavior -->
+    <section style="margin-bottom: 3rem;">
+        <h2>5. Comportamiento Focus/Blur</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12">
+                <BUIInputNumber @bind-Value="_focusTest"
+                                Label="Focus/Blur Test"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                Culture="@_usCulture"
+                                HelperText="Focus to edit, blur to format" />
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <h4>Observa el comportamiento:</h4>
+                    <ol>
+                        <li><strong>Sin foco (blur):</strong> Muestra el valor formateado con separadores de miles (ej: 1,234.56)</li>
+                        <li><strong>Con foco (focus):</strong> Remueve separadores de miles para facilitar edición (ej: 1234.56)</li>
+                        <li><strong>Durante edición:</strong> Permite escribir naturalmente sin interferir</li>
+                        <li><strong>Al perder foco (blur):</strong> Valida, clampea y formatea el valor final</li>
+                    </ol>
+                    <p style="margin-top: 1rem;"><strong>Current Value:</strong> @_focusTest</p>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Summary -->
+    <section style="margin-bottom: 3rem; padding: 1.5rem; background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; border-radius: 4px;">
+        <h2 style="margin-top: 0;">✅ Resumen de Mejoras</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <h4>1. Restricción de Caracteres</h4>
+                <ul>
+                    <li>Solo acepta dígitos (0-9)</li>
+                    <li>Separador decimal según cultura</li>
+                    <li>Separador de miles según cultura (opcional)</li>
+                    <li>Signo negativo (si AllowNegative=true)</li>
+                    <li>Bloquea letras y caracteres inválidos</li>
+                </ul>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <h4>2. Soporte de Cultura</h4>
+                <ul>
+                    <li>Usa CultureInfo.CurrentCulture por defecto</li>
+                    <li>Configurable con parámetro Culture</li>
+                    <li>Separadores según NumberFormat de la cultura</li>
+                    <li>Formatos validados: en-US, de-DE, es-ES, fr-FR, etc.</li>
+                </ul>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <h4>3. Edición Fluida</h4>
+                <ul>
+                    <li>No interrumpe al usuario mientras escribe</li>
+                    <li>Cursor permanece en posición correcta</li>
+                    <li>Validación y formato solo al perder foco</li>
+                    <li>Permite escribir parte entera → separador → decimales</li>
+                    <li>No añade ceros automáticos durante edición</li>
+                </ul>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <h4>4. Prefix/Suffix Mejorado</h4>
+                <ul>
+                    <li>PrefixText: texto antes del input</li>
+                    <li>PrefixIcon: icono BUISvgIcon antes del input</li>
+                    <li>SuffixText: texto después del input</li>
+                    <li>SuffixIcon: icono BUISvgIcon después del input</li>
+                    <li>Soporta combinaciones: icon + text</li>
+                </ul>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+</div>
+
+@code {
+    // Basic
+    private int? _basicInt = 42;
+    private decimal? _basicDecimal = 3.14m;
+
+    // Variants
+    private int? _variantValue = 100;
+
+    // Sizes
+    private int? _sizeValue = 50;
+
+    // Range
+    private int? _rangeValue = 50;
+    private decimal? _stepValue = 0.5m;
+
+    // Prefix/Suffix
+    private decimal? _priceValue = 99.99m;
+    private decimal? _priceValue2 = 149.99m;
+    private decimal? _priceValue3 = 249.99m;
+    private int? _percentValue = 75;
+    private decimal? _weightValue = 68.5m;
+    private decimal? _tempValue = 22.5m;
+
+    // Formatting
+    private decimal? _formattedValue = 123456.78m;
+    private decimal? _germanValue = 1234.56m;
+    private decimal? _spanishValue = 5678.90m;
+    private decimal? _frenchValue = 9876.54m;
+
+    private readonly CultureInfo _usCulture = new("en-US");
+    private readonly CultureInfo _germanCulture = new("de-DE");
+    private readonly CultureInfo _spanishCulture = new("es-ES");
+    private readonly CultureInfo _frenchCulture = new("fr-FR");
+
+    // Buttons
+    private int? _buttonValue = 10;
+
+    // Advanced
+    private int? _mouseWheelValue = 0;
+    private int? _accelerationValue = 0;
+    private int? _noButtonsValue = 0;
+
+    // States
+    private int? _stateValue = 100;
+    private int? _loadingValue = 50;
+
+    // Callbacks
+    private int? _callbackValue = 0;
+    private string _lastAction = "None";
+
+    // Types
+    private int? _intValue = 42;
+    private long? _longValue = 1234567890L;
+    private float? _floatValue = 3.14159f;
+    private double? _doubleValue = 2.71828;
+    private decimal? _decimalValue = 123.45m;
+    private int? _nullableInt = null;
+
+    // Shopping Cart
+    private int? _quantity = 1;
+    private decimal? _unitPrice = 19.99m;
+
+    // Temperature
+    private decimal? _celsius = 20m;
+    private decimal? _fahrenheit = 68m;
+
+    // Tip Calculator
+    private decimal? _billAmount = 50m;
+    private int? _tipPercent = 20;
+    private decimal? _tipAmount = 10m;
+    private decimal _totalWithTip = 60m;
+
+    private Task HandleIncrement(int? value)
+    {
+        _lastAction = $"Incremented to {value}";
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private Task HandleDecrement(int? value)
+    {
+        _lastAction = $"Decremented to {value}";
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private void UpdateFahrenheit()
+    {
+        if (_celsius.HasValue)
+        {
+            _fahrenheit = (_celsius * 9 / 5) + 32;
+        }
+    }
+
+    private void CalculateTip()
+    {
+        if (_billAmount.HasValue && _tipPercent.HasValue)
+        {
+            _tipAmount = _billAmount * _tipPercent / 100;
+            _totalWithTip = (_billAmount ?? 0) + (_tipAmount ?? 0);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        UpdateFahrenheit();
+        CalculateTip();
+    }
+
+    // Fluid Editing Tests
+
+    // Test 1: Fluid editing
+    private decimal? _fluidTest1 = 123.456m;
+    private decimal? _fluidTest2 = 123.456m;
+
+    // Test 2: Character restriction
+    private decimal? _restrictTest1 = null;
+    private decimal? _restrictTest2 = -50.00m;
+    private decimal? _restrictTest3 = 50.00m;
+
+    // Test 3: Culture formatting
+    private decimal? _cultureTest1 = 1234.56m;
+    private decimal? _cultureTest2 = 1234.56m;
+    private decimal? _cultureTest3 = 1234.56m;
+    private decimal? _cultureTest4 = 1234.56m;
+
+    // Test 4: Icons
+    private decimal? _iconTest1 = 99.99m;
+    private decimal? _iconTest2 = 149.99m;
+    private decimal? _iconTest3 = 199.99m;
+    private decimal? _iconTest4 = 75m;
+    private decimal? _iconTest5 = 68.5m;
+    private decimal? _iconTest6 = 22.5m;
+
+    // Test 5: Focus/Blur
+    private decimal? _focusTest = 1234.56m;
+}

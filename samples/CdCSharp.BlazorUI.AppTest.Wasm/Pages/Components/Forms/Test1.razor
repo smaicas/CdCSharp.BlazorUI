@@ -1,11 +1,311 @@
-﻿@page "/Test1"
+﻿@page "/examples/input-number-fluid"
+@using System.Globalization
 
-<BUIInputRadio @bind-Value="_option">
-    <RadioOption Value="@("Option1")">Option1</RadioOption>
-    <RadioOption Value="@("Option2")">Option2</RadioOption>
-    <RadioOption Value="@("Option3")">Option3</RadioOption>
-</BUIInputRadio>
+<PageTitle>Input Number - Fluid Editing Demo</PageTitle>
+
+<div style="padding: 2rem; max-width: 1200px; margin: 0 auto;">
+    <h1>BUIInputNumber - Fluid Editing Demonstration</h1>
+
+    <div style="margin-bottom: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--palette-primary); border-radius: 4px;">
+        <h3 style="margin-top: 0;">✅ Problemas Corregidos</h3>
+        <ul style="margin-bottom: 0;">
+            <li><strong>Restricción de caracteres:</strong> Solo acepta números, separadores válidos según cultura y signo negativo</li>
+            <li><strong>Soporte de cultura:</strong> Usa CultureInfo.CurrentCulture por defecto, configurable con parámetro Culture</li>
+            <li><strong>Edición fluida:</strong> Permite escribir naturalmente sin interferir con el cursor</li>
+            <li><strong>Prefix/Suffix con iconos:</strong> Soporta PrefixText, PrefixIcon, SuffixText, SuffixIcon</li>
+        </ul>
+    </div>
+
+    <!-- Test 1: Fluid Editing -->
+    <section style="margin-bottom: 3rem;">
+        <h2>1. Edición Fluida con Decimales</h2>
+        <p>Intenta escribir: <code>123.456</code></p>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_fluidTest1"
+                                Label="3 Decimal Places"
+                                DecimalPlaces="3"
+                                UseThousandsSeparator="true"
+                                Culture="@_usCulture"
+                                HelperText="Focus, type '123.456', then blur to see formatting" />
+                <div style="margin-top: 0.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px; font-family: monospace;">
+                    <div><strong>Estado:</strong></div>
+                    <div>Value: {@_fluidTest1}</div>
+                    <div>Formatted: {@(_fluidTest1?.ToString("N3", _usCulture.NumberFormat) ?? "null")}</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_fluidTest2"
+                                Label="German Format (3 Decimals)"
+                                DecimalPlaces="3"
+                                UseThousandsSeparator="true"
+                                Culture="@_germanCulture"
+                                HelperText="Type '123,456' (comma as decimal separator)" />
+                <div style="margin-top: 0.5rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px; font-family: monospace;">
+                    <div><strong>Estado:</strong></div>
+                    <div>Value: {@_fluidTest2}</div>
+                    <div>Formatted: {@(_fluidTest2?.ToString("N3", _germanCulture.NumberFormat) ?? "null")}</div>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 2: Character Restriction -->
+    <section style="margin-bottom: 3rem;">
+        <h2>2. Restricción de Caracteres</h2>
+        <p>Intenta escribir letras o caracteres especiales - solo aceptará números válidos</p>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_restrictTest1"
+                                Label="Only Numbers Allowed"
+                                DecimalPlaces="2"
+                                HelperText="Try typing: abc123def456.78xyz" />
+                <p style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    Result will be: 123456.78
+                </p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_restrictTest2"
+                                Label="Negative Numbers"
+                                AllowNegative="true"
+                                DecimalPlaces="2"
+                                HelperText="Can type '-' at the beginning" />
+                <p style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    Value: @_restrictTest2
+                </p>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_restrictTest3"
+                                Label="No Negative Numbers"
+                                AllowNegative="false"
+                                DecimalPlaces="2"
+                                HelperText="'-' sign is blocked" />
+                <p style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    Value: @_restrictTest3
+                </p>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 3: Culture-Specific Formatting -->
+    <section style="margin-bottom: 3rem;">
+        <h2>3. Formatos Específicos por Cultura</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest1"
+                                Label="English (US) - en-US"
+                                Culture="@_usCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1,234.56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>.</strong> (period)</div>
+                    <div>Thousands: <strong>,</strong> (comma)</div>
+                    <div>Example: 1,234.56</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest2"
+                                Label="German - de-DE"
+                                Culture="@_germanCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1.234,56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>,</strong> (comma)</div>
+                    <div>Thousands: <strong>.</strong> (period)</div>
+                    <div>Example: 1.234,56</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest3"
+                                Label="Spanish - es-ES"
+                                Culture="@_spanishCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1.234,56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>,</strong> (comma)</div>
+                    <div>Thousands: <strong>.</strong> (period)</div>
+                    <div>Example: 1.234,56</div>
+                </div>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <BUIInputNumber @bind-Value="_cultureTest4"
+                                Label="French - fr-FR"
+                                Culture="@_frenchCulture"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                HelperText="Format: 1 234,56" />
+                <div style="font-family: monospace; padding: 0.5rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <div>Decimal: <strong>,</strong> (comma)</div>
+                    <div>Thousands: <strong> </strong> (space)</div>
+                    <div>Example: 1 234,56</div>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 4: Icons in Prefix/Suffix -->
+    <section style="margin-bottom: 3rem;">
+        <h2>4. Iconos en Prefix/Suffix</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest1"
+                                Label="Icon Only (Prefix)"
+                                PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_attach_money"
+                                DecimalPlaces="2" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest2"
+                                Label="Text Only (Prefix)"
+                                PrefixText="USD" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest3"
+                                Label="Icon + Text (Prefix)"
+                                PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_attach_money"
+                                PrefixText="USD"
+                                DecimalPlaces="2" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest4"
+                                Label="Icon Only (Suffix)"
+                                SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_percent"
+                                DecimalPlaces="0" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest5"
+                                Label="Text Only (Suffix)"
+                                SuffixText="kg"
+                                DecimalPlaces="1" />
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="4">
+                <BUIInputNumber @bind-Value="_iconTest6"
+                                Label="Icon + Text (Suffix)"
+                                SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_thermostat"
+                                SuffixText="°C"
+                                DecimalPlaces="1" />
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Test 5: Focus/Blur Behavior -->
+    <section style="margin-bottom: 3rem;">
+        <h2>5. Comportamiento Focus/Blur</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12">
+                <BUIInputNumber @bind-Value="_focusTest"
+                                Label="Focus/Blur Test"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2"
+                                Culture="@_usCulture"
+                                HelperText="Focus to edit, blur to format" />
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.05); border-radius: 4px;">
+                    <h4>Observa el comportamiento:</h4>
+                    <ol>
+                        <li><strong>Sin foco (blur):</strong> Muestra el valor formateado con separadores de miles (ej: 1,234.56)</li>
+                        <li><strong>Con foco (focus):</strong> Remueve separadores de miles para facilitar edición (ej: 1234.56)</li>
+                        <li><strong>Durante edición:</strong> Permite escribir naturalmente sin interferir</li>
+                        <li><strong>Al perder foco (blur):</strong> Valida, clampea y formatea el valor final</li>
+                    </ol>
+                    <p style="margin-top: 1rem;"><strong>Current Value:</strong> @_focusTest</p>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+
+    <!-- Summary -->
+    <section style="margin-bottom: 3rem; padding: 1.5rem; background: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; border-radius: 4px;">
+        <h2 style="margin-top: 0;">✅ Resumen de Mejoras</h2>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <h4>1. Restricción de Caracteres</h4>
+                <ul>
+                    <li>Solo acepta dígitos (0-9)</li>
+                    <li>Separador decimal según cultura</li>
+                    <li>Separador de miles según cultura (opcional)</li>
+                    <li>Signo negativo (si AllowNegative=true)</li>
+                    <li>Bloquea letras y caracteres inválidos</li>
+                </ul>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <h4>2. Soporte de Cultura</h4>
+                <ul>
+                    <li>Usa CultureInfo.CurrentCulture por defecto</li>
+                    <li>Configurable con parámetro Culture</li>
+                    <li>Separadores según NumberFormat de la cultura</li>
+                    <li>Formatos validados: en-US, de-DE, es-ES, fr-FR, etc.</li>
+                </ul>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <h4>3. Edición Fluida</h4>
+                <ul>
+                    <li>No interrumpe al usuario mientras escribe</li>
+                    <li>Cursor permanece en posición correcta</li>
+                    <li>Validación y formato solo al perder foco</li>
+                    <li>Permite escribir parte entera → separador → decimales</li>
+                    <li>No añade ceros automáticos durante edición</li>
+                </ul>
+            </BUIGridItem>
+
+            <BUIGridItem Xs="12" Md="6">
+                <h4>4. Prefix/Suffix Mejorado</h4>
+                <ul>
+                    <li>PrefixText: texto antes del input</li>
+                    <li>PrefixIcon: icono BUISvgIcon antes del input</li>
+                    <li>SuffixText: texto después del input</li>
+                    <li>SuffixIcon: icono BUISvgIcon después del input</li>
+                    <li>Soporta combinaciones: icon + text</li>
+                </ul>
+            </BUIGridItem>
+        </BUIGrid>
+    </section>
+</div>
 
 @code {
-    private string _option = "Option1";
+    // Culturas
+    private readonly CultureInfo _usCulture = new("en-US");
+    private readonly CultureInfo _germanCulture = new("de-DE");
+    private readonly CultureInfo _spanishCulture = new("es-ES");
+    private readonly CultureInfo _frenchCulture = new("fr-FR");
+
+    // Test 1: Fluid editing
+    private decimal? _fluidTest1 = 123.456m;
+    private decimal? _fluidTest2 = 123.456m;
+
+    // Test 2: Character restriction
+    private decimal? _restrictTest1 = null;
+    private decimal? _restrictTest2 = -50.00m;
+    private decimal? _restrictTest3 = 50.00m;
+
+    // Test 3: Culture formatting
+    private decimal? _cultureTest1 = 1234.56m;
+    private decimal? _cultureTest2 = 1234.56m;
+    private decimal? _cultureTest3 = 1234.56m;
+    private decimal? _cultureTest4 = 1234.56m;
+
+    // Test 4: Icons
+    private decimal? _iconTest1 = 99.99m;
+    private decimal? _iconTest2 = 149.99m;
+    private decimal? _iconTest3 = 199.99m;
+    private decimal? _iconTest4 = 75m;
+    private decimal? _iconTest5 = 68.5m;
+    private decimal? _iconTest6 = 22.5m;
+
+    // Test 5: Focus/Blur
+    private decimal? _focusTest = 1234.56m;
 }
