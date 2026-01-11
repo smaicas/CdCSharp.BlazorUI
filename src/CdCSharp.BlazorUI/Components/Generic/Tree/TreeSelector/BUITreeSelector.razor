@@ -155,8 +155,6 @@
         IReadOnlyList<TreeSelectionNodeRegistration> registrations = _registry.GetRegistrations();
         _registry.Clear();
 
-        Console.WriteLine($"registrations.Count: {registrations.Count}");
-
         Dictionary<string, List<TreeSelectionNodeRegistration>> childrenByParent = registrations
             .GroupBy(r => r.ParentKey ?? string.Empty)
             .ToDictionary(g => g.Key, g => g.ToList());
@@ -169,8 +167,6 @@
                 _tree.RootNodes.Add(node);
             }
         }
-
-        Console.WriteLine($"_tree.RootNodes.Count: {_tree.RootNodes.Count}");
     }
 
     private TreeSelectionNode<TItem> BuildNodeFromRegistration(

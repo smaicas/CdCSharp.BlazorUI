@@ -32,14 +32,11 @@ public abstract class BUITreeNodeBase<TRegistration> : ComponentBase
 
     protected override void OnParametersSet()
     {
-        Console.WriteLine($"BUITreeNodeBase.OnParametersSet - Key: {ResolvedKey}, Registry: {Registry != null}, _registered: {_registered}");
-
         if (Registry != null && !_registered)
         {
             TRegistration registration = CreateRegistration();
             Registry.Register(registration);
             _registered = true;
-            Console.WriteLine($"Registrado: {ResolvedKey}");
         }
     }
 
