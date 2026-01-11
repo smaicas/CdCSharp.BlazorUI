@@ -44,12 +44,10 @@
 		<MSBuild Projects="$(BuildToolsProject)"
 				 Targets="Build"
 				 Properties="Configuration=$(Configuration)"
-				 Condition="!Exists('(BuildToolsExe)′)AND !Exists(′(BuildToolsExe)') AND !Exists('(BuildToolsExe)′) AND !Exists(′(BuildToolsDll)')" />
-
+				 Condition="!Exists('$(BuildToolsExe)') AND !Exists('$(BuildToolsDll)')" />
 	</Target>
 	<!-- Clean target -->
 	<Target Name="CleanBlazorUIAssets" BeforeTargets="Clean">
-		<!-- Clean generated files -->
 		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" />
 		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
 		<!-- Clean output -->
