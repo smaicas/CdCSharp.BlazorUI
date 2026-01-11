@@ -1,11 +1,12 @@
-﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+﻿@* File: Components/Forms/Dropdown/BUIInputDropdown.razor *@
+@using CdCSharp.BlazorUI.Components.Forms.Dropdown
 @using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Core.Search
-@using System.Collections
+@using CdCSharp.BlazorUI.Core.Utilities
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -71,7 +72,7 @@
             <div class="bui-dropdown__menu"
                  @ref="_menuElement"
                  role="listbox"
-                 aria-multiselectable="@_isMultiple">
+                 aria-multiselectable="@_typeResolver.IsMultiple">
 
                 @if (Searchable)
                 {
@@ -85,7 +86,7 @@
                     </div>
                 }
 
-                @if (_isMultiple && ShowSelectAll && _options.Count > 0)
+                @if (_typeResolver.IsMultiple && ShowSelectAll && _options.Count > 0)
                 {
                     <div class="bui-dropdown__select-all">
                         <button type="button"
@@ -115,7 +116,7 @@
                              @onclick="() => SelectOptionAsync(option)"
                              @onclick:stopPropagation="true">
 
-                            @if (_isMultiple)
+                            @if (_typeResolver.IsMultiple)
                             {
                                 <span class="bui-dropdown__checkbox">
                                     <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
@@ -132,7 +133,7 @@
                     @if (GetFilteredOptions().Count == 0)
                     {
                         <div class="bui-dropdown__no-options">
-                            @(string.IsNullOrWhiteSpace(_searchText) ? "No options available" : "No results found")
+                            @(string.IsNullOrWhiteSpace(_searchText) ? NoOptionsText : NoResultsText)
                         </div>
                     }
                 </div>
@@ -157,9 +158,8 @@
 
 @code {
     private readonly string _componentId = $"bui-dropdown-{Guid.NewGuid():N}";
-    private readonly List<IDropdownOption> _options = new();
-    private readonly bool _isMultiple;
-    private readonly Type _elementType;
+    private readonly List<IDropdownOption> _options = [];
+    private readonly SelectionTypeResolver _typeResolver;
     private bool _isOpen;
     private string _searchText = string.Empty;
     private int _focusedIndex = -1;
@@ -219,29 +219,17 @@
     [Parameter] public string SelectAllText { get; set; } = "Select All";
     [Parameter] public string DeselectAllText { get; set; } = "Deselect All";
 
+    // Text
+    [Parameter] public string NoOptionsText { get; set; } = "No options available";
+    [Parameter] public string NoResultsText { get; set; } = "No results found";
+
     // IDropdownContainer
-    bool IDropdownContainer.IsMultiple => _isMultiple;
-    Type IDropdownContainer.ElementType => _elementType;
+    bool IDropdownContainer.IsMultiple => _typeResolver.IsMultiple;
+    Type IDropdownContainer.ElementType => _typeResolver.ElementType;
 
     public BUIInputDropdown()
     {
-        Type type = typeof(TValue);
-
-        if (type.IsArray)
-        {
-            _isMultiple = true;
-            _elementType = type.GetElementType()!;
-        }
-        else if (type.IsGenericType && typeof(IEnumerable).IsAssignableFrom(type) && type != typeof(string))
-        {
-            _isMultiple = true;
-            _elementType = type.GetGenericArguments()[0];
-        }
-        else
-        {
-            _isMultiple = false;
-            _elementType = type;
-        }
+        _typeResolver = new SelectionTypeResolver(typeof(TValue));
     }
 
     void IDropdownContainer.RegisterOption(IDropdownOption option)
@@ -319,54 +307,28 @@
     {
         if (CurrentValue == null) return string.Empty;
 
-        if (_isMultiple)
+        if (_typeResolver.IsMultiple)
         {
-            List<object> selectedValues = GetSelectedValuesAsObjects().ToList();
+            List<object> selectedValues = _typeResolver.ExtractValues(CurrentValue).ToList();
             if (selectedValues.Count == 0) return string.Empty;
 
             if (selectedValues.Count == 1)
             {
-                IDropdownOption? option = _options.FirstOrDefault(o => ValuesEqual(o.RawValue, selectedValues[0]));
+                IDropdownOption? option = _options.FirstOrDefault(o => _typeResolver.ValuesEqual(o.RawValue, selectedValues[0]));
                 return option?.DisplayText ?? selectedValues[0]?.ToString() ?? string.Empty;
             }
 
             return $"{selectedValues.Count} selected";
         }
 
-        IDropdownOption? selectedOption = _options.FirstOrDefault(o => ValuesEqual(o.RawValue, CurrentValue));
+        IDropdownOption? selectedOption = _options.FirstOrDefault(o => _typeResolver.ValuesEqual(o.RawValue, CurrentValue));
         return selectedOption?.DisplayText ?? CurrentValue?.ToString() ?? string.Empty;
-    }
-
-    private IEnumerable<object> GetSelectedValuesAsObjects()
-    {
-        if (CurrentValue == null) yield break;
-
-        if (_isMultiple && CurrentValue is IEnumerable enumerable and not string)
-        {
-            foreach (object item in enumerable)
-            {
-                yield return item;
-            }
-        }
-    }
-
-    private bool ValuesEqual(object? a, object? b)
-    {
-        if (a == null && b == null) return true;
-        if (a == null || b == null) return false;
-        return a.Equals(b);
     }
 
     private bool IsOptionSelected(IDropdownOption option)
     {
         if (CurrentValue == null) return false;
-
-        if (_isMultiple)
-        {
-            return GetSelectedValuesAsObjects().Any(v => ValuesEqual(v, option.RawValue));
-        }
-
-        return ValuesEqual(CurrentValue, option.RawValue);
+        return _typeResolver.ContainsValue(CurrentValue, option.RawValue);
     }
 
     private async Task ToggleDropdownAsync()
@@ -412,9 +374,9 @@
     {
         if (IsDisabled || option.IsDisabled) return;
 
-        if (!_isMultiple)
+        if (!_typeResolver.IsMultiple)
         {
-            CurrentValue = (TValue)option.RawValue!;
+            CurrentValue = _typeResolver.CreateValue<TValue>(option.RawValue != null ? [option.RawValue] : []);
 
             if (CloseOnSelect)
             {
@@ -423,76 +385,37 @@
         }
         else
         {
-            List<object> currentValues = GetSelectedValuesAsObjects().ToList();
+            List<object> currentValues = _typeResolver.ExtractValues(CurrentValue).ToList();
 
-            if (currentValues.Any(v => ValuesEqual(v, option.RawValue)))
+            if (currentValues.Any(v => _typeResolver.ValuesEqual(v, option.RawValue)))
             {
-                currentValues.RemoveAll(v => ValuesEqual(v, option.RawValue));
+                currentValues.RemoveAll(v => _typeResolver.ValuesEqual(v, option.RawValue));
             }
             else if (option.RawValue != null)
             {
                 currentValues.Add(option.RawValue);
             }
 
-            CurrentValue = CreateMultipleValue(currentValues);
+            CurrentValue = _typeResolver.CreateValue<TValue>(currentValues);
         }
     }
 
     private void SelectAll()
     {
-        if (!_isMultiple || IsDisabled) return;
+        if (!_typeResolver.IsMultiple || IsDisabled) return;
 
         List<object> allValues = GetFilteredOptions()
             .Where(o => !o.IsDisabled && o.RawValue != null)
             .Select(o => o.RawValue!)
             .ToList();
 
-        CurrentValue = CreateMultipleValue(allValues);
+        CurrentValue = _typeResolver.CreateValue<TValue>(allValues);
     }
 
     private void DeselectAll()
     {
-        if (!_isMultiple || IsDisabled) return;
-        CurrentValue = CreateMultipleValue(new List<object>());
-    }
-
-    private TValue CreateMultipleValue(List<object> values)
-    {
-        Type type = typeof(TValue);
-
-        if (type.IsArray)
-        {
-            Array array = Array.CreateInstance(_elementType, values.Count);
-            for (int i = 0; i < values.Count; i++)
-            {
-                array.SetValue(values[i], i);
-            }
-            return (TValue)(object)array;
-        }
-
-        if (type.IsGenericType)
-        {
-            Type genericDef = type.GetGenericTypeDefinition();
-
-            if (genericDef == typeof(List<>))
-            {
-                IList list = (IList)Activator.CreateInstance(type)!;
-                foreach (object value in values)
-                {
-                    list.Add(value);
-                }
-                return (TValue)list;
-            }
-
-            Array array = Array.CreateInstance(_elementType, values.Count);
-            for (int i = 0; i < values.Count; i++)
-            {
-                array.SetValue(values[i], i);
-            }
-            return (TValue)(object)array;
-        }
-
-        return default!;
+        if (!_typeResolver.IsMultiple || IsDisabled) return;
+        CurrentValue = _typeResolver.CreateValue<TValue>([]);
     }
 
     private void OnSearchInput(ChangeEventArgs e)

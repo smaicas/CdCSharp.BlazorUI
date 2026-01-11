@@ -1,0 +1,278 @@
+﻿@* @* File: Pages/Components/Forms/InputTreeDropdownPage.razor *@
+@page "/components/forms/input-tree-dropdown"
+
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+@using CdCSharp.BlazorUI.Core.Search
+
+<PageTitle>Tree Dropdown - CdCSharp.BlazorUI</PageTitle>
+
+<div class="doc-page">
+    <h1>BUIInputTreeDropdown</h1>
+
+    <p class="doc-intro">
+        <strong>BUIInputTreeDropdown</strong> is a hierarchical dropdown selector that displays items in a tree structure.
+        It supports single and multiple selection, search filtering, lazy loading, keyboard navigation, and both declarative and data-bound modes.
+    </p>
+
+    <!-- BASIC USAGE (DECLARATIVE) -->
+    <section class="doc-section">
+        <h2>Basic usage (Declarative)</h2>
+        <p>Define tree structure directly in markup:</p>
+        <ComponentDemo Definition="@BasicDeclarativeDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedBasicDeclarative ?? "None")</strong></p>
+    </section>
+
+    <!-- BASIC USAGE (DATA BINDING) -->
+    <section class="doc-section">
+        <h2>Basic usage (Data binding)</h2>
+        <p>Bind to hierarchical data using selectors:</p>
+        <ComponentDemo Definition="@BasicBindingDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedCategory?.Name ?? "None")</strong></p>
+    </section>
+
+    <!-- WITH LABEL AND HELPER -->
+    <section class="doc-section">
+        <h2>Label and helper text</h2>
+        <ComponentDemo Definition="@LabelHelperDemo" />
+    </section>
+</div>
+
+@code {
+    // Basic declarative
+    private string? _selectedBasicDeclarative;
+
+    // Basic binding
+    private Category? _selectedCategory;
+
+    // Label helper
+    private string? _selectedLabelHelper;
+
+    // Multiple declarative
+    private string[]? _selectedMultipleDeclarative = [];
+
+    // Multiple binding
+    private Category[]? _selectedMultipleCategories = [];
+
+    // Searchable
+    private Category? _selectedSearchable;
+
+    // Custom content declarative
+    private string? _selectedCustomDeclarative;
+
+    // Node template
+    private Category? _selectedNodeTemplate;
+
+    // Initially expanded
+    private string? _selectedInitiallyExpanded;
+
+    // Expand to selection
+    private string? _selectedExpandToSelection = "laptops";
+
+    // Disabled options
+    private string? _selectedWithDisabled;
+
+    // Sizes
+    private string? _sizeSmall;
+    private string? _sizeMedium;
+    private string? _sizeLarge;
+
+    // Placement
+    private string? _placementAuto;
+    private string? _placementTop;
+    private string? _placementBottom;
+
+    // States
+    private string? _stateDisabled;
+    private string? _stateLoading;
+
+    // Lazy loading
+    private LazyCategory? _selectedLazyLoading;
+
+    // Sample data
+    private List<Category> Categories = new()
+    {
+        new Category("electronics", "Electronics", null, new List<Category>
+        {
+            new Category("phones", "Phones", "electronics", new List<Category>
+            {
+                new Category("smartphones", "Smartphones", "phones", null, 150),
+                new Category("feature-phones", "Feature Phones", "phones", null, 25)
+            }, 175),
+            new Category("computers", "Computers", "electronics", new List<Category>
+            {
+                new Category("laptops", "Laptops", "computers", null, 89),
+                new Category("desktops", "Desktops", "computers", null, 45),
+                new Category("tablets", "Tablets", "computers", null, 62)
+            }, 196)
+        }, 371),
+        new Category("clothing", "Clothing", null, new List<Category>
+        {
+            new Category("mens", "Men's", "clothing", new List<Category>
+            {
+                new Category("mens-shirts", "Shirts", "mens", null, 120),
+                new Category("mens-pants", "Pants", "mens", null, 85)
+            }, 205),
+            new Category("womens", "Women's", "clothing", new List<Category>
+            {
+                new Category("womens-dresses", "Dresses", "womens", null, 95),
+                new Category("womens-tops", "Tops", "womens", null, 110)
+            }, 205)
+        }, 410),
+        new Category("home", "Home & Garden", null, new List<Category>
+        {
+            new Category("furniture", "Furniture", "home", null, 78),
+            new Category("decor", "Decor", "home", null, 156)
+        }, 234)
+    };
+
+    private List<LazyCategory> LazyCategories = new()
+    {
+        new LazyCategory("root1", "Category A", true),
+        new LazyCategory("root2", "Category B", true),
+        new LazyCategory("root3", "Category C (no children)", false)
+    };
+
+    public record Category(string Id, string Name, string? ParentId, List<Category>? Children, int ItemCount = 0);
+    public record LazyCategory(string Id, string Name, bool HasChildren);
+
+    private async Task<IEnumerable<LazyCategory>> LoadLazyChildren(LazyCategory parent)
+    {
+        await Task.Delay(800); // Simulate network delay
+
+        return parent.Id switch
+        {
+            "root1" => new List<LazyCategory>
+            {
+                new LazyCategory("a1", "Sub A-1", true),
+                new LazyCategory("a2", "Sub A-2", false),
+                new LazyCategory("a3", "Sub A-3", false)
+            },
+            "root2" => new List<LazyCategory>
+            {
+                new LazyCategory("b1", "Sub B-1", false),
+                new LazyCategory("b2", "Sub B-2", true)
+            },
+            "a1" => new List<LazyCategory>
+            {
+                new LazyCategory("a1-1", "Deep A-1-1", false),
+                new LazyCategory("a1-2", "Deep A-1-2", false)
+            },
+            "b2" => new List<LazyCategory>
+            {
+                new LazyCategory("b2-1", "Deep B-2-1", false)
+            },
+            _ => Enumerable.Empty<LazyCategory>()
+        };
+    }
+
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition BasicDeclarativeDemo => new()
+    {
+        Demo = RenderBasicDeclarative(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="selected" Placeholder="Select category">
+    <BUITreeDropdownItem TValue="string" Value="electronics" Text="Electronics">
+        <BUITreeDropdownItem TValue="string" Value="phones" Text="Phones" />
+        <BUITreeDropdownItem TValue="string" Value="computers" Text="Computers">
+            <BUITreeDropdownItem TValue="string" Value="laptops" Text="Laptops" />
+            <BUITreeDropdownItem TValue="string" Value="desktops" Text="Desktops" />
+        </BUITreeDropdownItem>
+    </BUITreeDropdownItem>
+    <BUITreeDropdownItem TValue="string" Value="clothing" Text="Clothing">
+        <BUITreeDropdownItem TValue="string" Value="mens" Text="Men's" />
+        <BUITreeDropdownItem TValue="string" Value="womens" Text="Women's" />
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+
+@code {
+    private string? selected;
+}
+"""
+    };
+
+    private ComponentDemoDefinition BasicBindingDemo => new()
+    {
+        Demo = RenderBasicBinding(),
+        Code = """
+<BUIInputTreeDropdown TValue="Category"
+                      Items="categories"
+                      KeySelector="c => c.Id"
+                      TextSelector="c => c.Name"
+                      ChildrenSelector="c => c.Children"
+                      @bind-Value="selectedCategory"
+                      Placeholder="Select category" />
+
+@code {
+    private Category? selectedCategory;
+
+    public record Category(string Id, string Name, string? ParentId, List<Category>? Children);
+}
+"""
+    };
+
+    private ComponentDemoDefinition LabelHelperDemo => new()
+    {
+        Demo = RenderLabelHelper(),
+        Code = """
+<BUIInputTreeDropdown TValue="string"
+                      @bind-Value="selected"
+                      Label="Category"
+                      HelperText="Select a product category"
+                      Required="true"
+                      Placeholder="Select...">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+    <BUITreeDropdownItem TValue="string" Value="opt2" Text="Option 2" />
+    <BUITreeDropdownItem TValue="string" Value="opt3" Text="Option 3" />
+</BUIInputTreeDropdown>
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicDeclarative() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string" @bind-Value="_selectedBasicDeclarative" Placeholder="Select category">
+            <BUITreeDropdownItem TValue="string" Value="@("electronics")" Text="Electronics">
+                <BUITreeDropdownItem TValue="string" Value="@("phones")" Text="Phones" />
+                <BUITreeDropdownItem TValue="string" Value="@("computers")" Text="Computers">
+                    <BUITreeDropdownItem TValue="string" Value="@("laptops")" Text="Laptops" />
+                    <BUITreeDropdownItem TValue="string" Value="@("desktops")" Text="Desktops" />
+                </BUITreeDropdownItem>
+            </BUITreeDropdownItem>
+            <BUITreeDropdownItem TValue="string" Value="@("clothing")" Text="Clothing">
+                <BUITreeDropdownItem TValue="string" Value="@("mens")" Text="Men's" />
+                <BUITreeDropdownItem TValue="string" Value="@("womens")" Text="Women's" />
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderBasicBinding() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="Category"
+                              Items="Categories"
+                              KeySelector="c => c.Id"
+                              TextSelector="c => c.Name"
+                              ChildrenSelector="c => c.Children"
+                              @bind-Value="_selectedCategory"
+                              Placeholder="Select category" />
+    };
+
+    private RenderFragment RenderLabelHelper() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string"
+                              @bind-Value="_selectedLabelHelper"
+                              Label="Category"
+                              HelperText="Select a product category"
+                              Required="true"
+                              Placeholder="Select...">
+            <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+            <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            <BUITreeDropdownItem TValue="string" Value="@("opt3")" Text="Option 3" />
+        </BUIInputTreeDropdown>
+    };
+
+}
