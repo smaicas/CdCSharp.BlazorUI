@@ -1,5 +1,6 @@
 ﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Utilities
 @using Microsoft.AspNetCore.Components.Routing
 
 @namespace CdCSharp.BlazorUI.Components
@@ -25,6 +26,11 @@
 
     @if (_structureBuilt)
     {
+        @if (_isOpen && ExpandMode == TreeMenuExpandMode.Flyout)
+        {
+            <div class="bui-tree-menu__overlay" @onclick="CloseAllMenus" @onclick:stopPropagation="true"></div>
+        }
+
         <nav class="bui-tree-menu__nav" role="menubar" aria-orientation="@Orientation.ToString().ToLowerInvariant()">
             @foreach (TreeMenuNode<TItem> node in _tree.RootNodes)
             {
@@ -36,9 +42,11 @@
 
 @code {
     private readonly TreeNodeRegistry<TreeMenuNodeRegistration> _registry = new();
+    private readonly DelayedActionHandler _hoverDelayHandler = new();
     private TreeStructure<TreeMenuNode<TItem>, TItem> _tree = null!;
     private bool _isDeclarativeMode;
     private bool _structureBuilt;
+    private bool _isOpen;
     private string _currentUri = string.Empty;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
@@ -60,6 +68,9 @@
     [Parameter] public TreeMenuExpandMode ExpandMode { get; set; } = TreeMenuExpandMode.Inline;
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public bool Collapsible { get; set; } = true;
+
+    [Parameter] public int HoverOpenDelay { get; set; } = 150;
+    [Parameter] public int HoverCloseDelay { get; set; } = 300;
 
     [Parameter] public EventCallback<TreeNodeEventArgs<TreeMenuNode<TItem>>> OnNodeClick { get; set; }
     [Parameter] public EventCallback<string> OnNavigate { get; set; }
@@ -84,8 +95,6 @@
 
         _isDeclarativeMode = ChildContent != null && Items == null;
 
-        Console.WriteLine($"OnParametersSet - ChildContent: {ChildContent != null}, Items: {Items != null}, _isDeclarativeMode: {_isDeclarativeMode}");
-
         if (ExpandedKeys != null)
         {
             _tree.SetExpandedKeys(ExpandedKeys);
@@ -102,11 +111,8 @@
     {
         base.OnAfterRender(firstRender);
 
-        Console.WriteLine($"OnAfterRender - firstRender: {firstRender}, _isDeclarativeMode: {_isDeclarativeMode}, _structureBuilt: {_structureBuilt}");
-
         if (firstRender && _isDeclarativeMode && !_structureBuilt)
         {
-            Console.WriteLine("Entrando a BuildFromDeclarativeRegistrations");
             BuildFromDeclarativeRegistrations();
             _structureBuilt = true;
             StateHasChanged();
@@ -157,17 +163,13 @@
     private void BuildFromDeclarativeRegistrations()
     {
         IReadOnlyList<TreeMenuNodeRegistration> registrations = _registry.GetRegistrations();
-        Console.WriteLine($"[BUITreeMenu] registrations.Count: {registrations.Count}");
-
         _registry.Clear();
 
-        // Construir el diccionario manualmente
         Dictionary<string, List<TreeMenuNodeRegistration>> childrenByParent = new();
 
         foreach (TreeMenuNodeRegistration reg in registrations)
         {
             string parentKey = reg.ParentKey ?? string.Empty;
-            Console.WriteLine($"  - Key: {reg.Key}, ParentKey: '{parentKey}' (original was null: {reg.ParentKey == null})");
 
             if (!childrenByParent.ContainsKey(parentKey))
             {
@@ -176,27 +178,14 @@
             childrenByParent[parentKey].Add(reg);
         }
 
-        Console.WriteLine($"[BUITreeMenu] childrenByParent.Count: {childrenByParent.Count}");
-        foreach (string key in childrenByParent.Keys)
-        {
-            Console.WriteLine($"  - Key: '{key}' (length={key.Length}), Count: {childrenByParent[key].Count}");
-        }
-
         if (childrenByParent.TryGetValue(string.Empty, out List<TreeMenuNodeRegistration>? roots))
         {
-            Console.WriteLine($"[BUITreeMenu] roots found: {roots.Count}");
             foreach (TreeMenuNodeRegistration reg in roots)
             {
                 TreeMenuNode<TItem> node = BuildNodeFromRegistration(reg, null, 0, childrenByParent);
                 _tree.RootNodes.Add(node);
             }
         }
-        else
-        {
-            Console.WriteLine("[BUITreeMenu] NO roots found with empty ParentKey!");
-        }
-
-        Console.WriteLine($"[BUITreeMenu] _tree.RootNodes.Count: {_tree.RootNodes.Count}");
     }
 
     private TreeMenuNode<TItem> BuildNodeFromRegistration(
@@ -208,6 +197,8 @@
         bool hasChildren = childrenByParent.ContainsKey(reg.Key);
         TreeMenuNode<TItem> node = CreateNodeFromRegistration(reg, parent, depth, hasChildren);
         node.HasChildrenFlag = hasChildren;
+
+        _tree.RegisterNode(node);
 
         if (reg.InitiallyExpanded || ExpandAll)
         {
@@ -232,7 +223,7 @@
 
         if (ExpandMode == TreeMenuExpandMode.Flyout)
         {
-            _tree.CollapseAll();
+            CloseAllMenus();
         }
 
         StateHasChanged();
@@ -250,8 +241,8 @@
         <div class="bui-tree-menu__item @(node.IsDisabled ? "bui-tree-menu__item--disabled" : "") @(isActive ? "bui-tree-menu__item--active" : "") @(isExpanded ? "bui-tree-menu__item--expanded" : "")"
              role="none"
              data-depth="@node.Depth"
-             @onmouseenter="@(isHoverTrigger && hasChildren ? () => HandleExpandAsync(node.Key) : null)"
-             @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? () => HandleCollapseAsync(node.Key) : null)">
+             @onmouseenter="@(isHoverTrigger && hasChildren ? () => HandleHoverEnter(node.Key) : null)"
+             @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? () => HandleHoverLeave(node.Key) : null)">
 
             @if (node.Navigation.HasNavigation && !hasChildren)
             {
@@ -282,7 +273,9 @@
             @if (hasChildren && isExpanded)
             {
                 <div class="bui-tree-menu__submenu @(isFlyout ? "bui-tree-menu__submenu--flyout" : "bui-tree-menu__submenu--inline")"
-                     role="menu">
+                     role="menu"
+                     @onmouseenter="@(isHoverTrigger? HandleHoverEnterSubmenu : null)"
+                     @onmouseleave="@(isHoverTrigger && isFlyout ? () => HandleHoverLeave(node.Key) : null)">
                     @foreach (TreeMenuNode<TItem> child in node.ChildrenInternal)
                     {
                         @RenderNode(child)
@@ -363,8 +356,7 @@
 
             if (ExpandMode == TreeMenuExpandMode.Flyout)
             {
-                _tree.CollapseAll();
-                StateHasChanged();
+                CloseAllMenus();
             }
         }
     }
@@ -383,7 +375,14 @@
 
     private async Task HandleExpandAsync(string key)
     {
-        if (!Collapsible)
+        TreeMenuNode<TItem>? node = _tree.GetNode(key);
+        if (node == null) return;
+
+        if (ExpandMode == TreeMenuExpandMode.Flyout)
+        {
+            CollapseSiblingsOf(node);
+        }
+        else if (!Collapsible)
         {
             _tree.CollapseAll();
         }
@@ -394,6 +393,7 @@
         }
 
         _tree.Expand(key);
+        _isOpen = true;
         await NotifyExpandedKeysChangedAsync();
         StateHasChanged();
     }
@@ -401,8 +401,89 @@
     private async Task HandleCollapseAsync(string key)
     {
         _tree.Collapse(key);
+
+        if (!_tree.ExpandedKeys.Any())
+        {
+            _isOpen = false;
+        }
+
         await NotifyExpandedKeysChangedAsync();
         StateHasChanged();
+    }
+
+    private void CollapseSiblingsOf(TreeMenuNode<TItem> node)
+    {
+        IEnumerable<TreeMenuNode<TItem>> siblings = node.ParentNode != null
+            ? node.ParentNode.ChildrenInternal
+            : _tree.RootNodes;
+
+        foreach (TreeMenuNode<TItem> sibling in siblings)
+        {
+            if (sibling.Key != node.Key)
+            {
+                CollapseNodeAndDescendants(sibling);
+            }
+        }
+    }
+
+    private void CollapseNodeAndDescendants(TreeMenuNode<TItem> node)
+    {
+        _tree.Collapse(node.Key);
+        foreach (TreeMenuNode<TItem> child in node.ChildrenInternal)
+        {
+            CollapseNodeAndDescendants(child);
+        }
+    }
+
+    private void CloseAllMenus()
+    {
+        _hoverDelayHandler.Cancel();
+        _tree.CollapseAll();
+        _isOpen = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleHoverEnter(string key)
+    {
+        if (Trigger != TreeMenuTrigger.Hover) return;
+
+        TreeMenuNode<TItem>? node = _tree.GetNode(key);
+        if (node == null || !node.HasChildren) return;
+
+        _hoverDelayHandler.Cancel();
+        await _hoverDelayHandler.ExecuteWithDelayAsync(async () =>
+        {
+            await HandleExpandAsync(key);
+        }, TimeSpan.FromMilliseconds(HoverOpenDelay));
+    }
+
+    private async Task HandleHoverLeave(string key)
+    {
+        if (Trigger != TreeMenuTrigger.Hover) return;
+        if (ExpandMode != TreeMenuExpandMode.Flyout) return;
+
+        await _hoverDelayHandler.ExecuteWithDelayAsync(async () =>
+        {
+            TreeMenuNode<TItem>? node = _tree.GetNode(key);
+            if (node != null)
+            {
+                CollapseNodeAndDescendants(node);
+            }
+
+            if (!_tree.ExpandedKeys.Any())
+            {
+                _isOpen = false;
+            }
+
+            StateHasChanged();
+            await Task.CompletedTask;
+        }, TimeSpan.FromMilliseconds(HoverCloseDelay));
+    }
+
+    private void HandleHoverEnterSubmenu()
+    {
+        if (Trigger != TreeMenuTrigger.Hover) return;
+        _hoverDelayHandler.Cancel();
     }
 
     private bool IsActive(string? href)
@@ -441,6 +522,7 @@
     public void CollapseAllNodes()
     {
         _tree.CollapseAll();
+        _isOpen = false;
         StateHasChanged();
     }
 
@@ -451,5 +533,6 @@
     public void Dispose()
     {
         NavigationManager.LocationChanged -= OnLocationChanged;
+        _hoverDelayHandler.Dispose();
     }
 }

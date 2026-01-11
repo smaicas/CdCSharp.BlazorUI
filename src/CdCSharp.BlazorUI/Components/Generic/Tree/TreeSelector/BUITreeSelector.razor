@@ -313,10 +313,7 @@
             IsExpanded = _tree.IsExpanded(node.Key)
         });
 
-        if (!ShowCheckboxes)
-        {
-            await ToggleSelectionAsync(node.Key);
-        }
+        await ToggleSelectionAsync(node.Key);
     }
 
     private async Task ToggleExpandAsync(TreeSelectionNode<TItem> node)

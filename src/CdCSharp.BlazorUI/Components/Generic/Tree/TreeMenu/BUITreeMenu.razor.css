@@ -223,3 +223,18 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout .b
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout .bui-tree-menu__button {
     padding-left: var(--bui-menu-item-padding-x) !important;
 }
+
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+}
+
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__nav {
+    position: relative;
+    z-index: 1000;
+}
+
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--flyout {
+    z-index: 1001;
+}
