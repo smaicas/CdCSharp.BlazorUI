@@ -1,0 +1,173 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components
+
+@inherits BUIVariantComponentBase<BUIBadge, BUIBadgeVariant>
+@implements IHasSize
+@implements IHasColor
+@implements IHasBackgroundColor
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Text { get; set; }
+    [Parameter] public string? Icon { get; set; }
+
+    // Badge-specific
+    [Parameter] public bool Pill { get; set; }
+    [Parameter] public bool Rounded { get; set; }
+    [Parameter] public string? MaxContent { get; set; }
+    [Parameter] public bool Dot { get; set; }
+
+    // Notification badge (on another element)
+    [Parameter] public RenderFragment? AnchorContent { get; set; }
+    [Parameter] public BadgePosition? BadgePosition { get; set; }
+    [Parameter] public string? BadgeContent { get; set; }
+    [Parameter] public int? Count { get; set; }
+    [Parameter] public int? MaxCount { get; set; }
+    [Parameter] public bool ShowZero { get; set; }
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    public override BUIBadgeVariant DefaultVariant => BUIBadgeVariant.Filled;
+
+    protected override Dictionary<BUIBadgeVariant, Func<BUIBadge, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [BUIBadgeVariant.Filled] = b => b.RenderBadge(),
+        [BUIBadgeVariant.Outlined] = b => b.RenderBadge(),
+        [BUIBadgeVariant.Soft] = b => b.RenderBadge(),
+        [BUIBadgeVariant.Dot] = b => b.RenderDotBadge(),
+    };
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        if (Pill)
+            dataAttributes["data-bui-pill"] = "true";
+
+        if (Rounded)
+            dataAttributes["data-bui-rounded"] = "true";
+
+        if (Dot || Variant == BUIBadgeVariant.Dot)
+            dataAttributes["data-bui-dot"] = "true";
+
+        if (AnchorContent != null)
+        {
+            dataAttributes["data-bui-anchor"] = "true";
+            if (BadgePosition.HasValue)
+                dataAttributes["data-bui-badge-position"] = BadgePosition.Value.ToString().ToLowerInvariant();
+        }
+    }
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        if (MaxContent != null)
+            cssVariables["--bui-badge-max-content"] = MaxContent;
+    }
+
+    private RenderFragment RenderBadge() => __builder =>
+    {
+        @if (AnchorContent != null)
+        {
+            <bui-component @attributes="ComputedAttributes">
+                <div class="bui-badge__anchor">
+                    @AnchorContent
+
+                    @if (ShouldShowNotificationBadge())
+                    {
+                        <span class="bui-badge__notification">
+                            @GetNotificationContent()
+                        </span>
+                    }
+                </div>
+            </bui-component>
+        }
+        else
+        {
+            <bui-component @attributes="ComputedAttributes">
+                <span class="bui-badge">
+                    @if (!string.IsNullOrEmpty(Icon))
+                    {
+                        <BUISvgIcon Icon="@Icon" Size="Size" class="bui-badge__icon" />
+                    }
+
+                    @if (ChildContent != null)
+                    {
+                        @ChildContent
+                    }
+                    else if (!string.IsNullOrEmpty(Text))
+                    {
+                        <span class="bui-badge__text">@Text</span>
+                    }
+                </span>
+            </bui-component>
+        }
+    };
+
+    private RenderFragment RenderDotBadge() => __builder =>
+    {
+        @if (AnchorContent != null)
+        {
+            <bui-component @attributes="ComputedAttributes">
+                <div class="bui-badge__anchor">
+                    @AnchorContent
+                    <span class="bui-badge__dot"></span>
+                </div>
+            </bui-component>
+        }
+        else
+        {
+            <bui-component @attributes="ComputedAttributes">
+                <span class="bui-badge bui-badge--dot-inline">
+                    <span class="bui-badge__dot"></span>
+                    @if (ChildContent != null)
+                    {
+                        @ChildContent
+                    }
+                    else if (!string.IsNullOrEmpty(Text))
+                    {
+                        <span class="bui-badge__text">@Text</span>
+                    }
+                </span>
+            </bui-component>
+        }
+    };
+
+    private bool ShouldShowNotificationBadge()
+    {
+        if (!string.IsNullOrEmpty(BadgeContent))
+            return true;
+
+        if (Count.HasValue)
+            return ShowZero || Count.Value > 0;
+
+        return false;
+    }
+
+    private string GetNotificationContent()
+    {
+        if (!string.IsNullOrEmpty(BadgeContent))
+            return BadgeContent;
+
+        if (Count.HasValue)
+        {
+            if (MaxCount.HasValue && Count.Value > MaxCount.Value)
+                return $"{MaxCount.Value}+";
+
+            return Count.Value.ToString();
+        }
+
+        return string.Empty;
+    }
+}

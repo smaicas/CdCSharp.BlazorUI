@@ -1,0 +1,26 @@
+﻿@namespace CdCSharp.BlazorUI.Components
+@typeparam TItem
+@inherits BUIDataGridColumnBase<TItem>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    protected override DataGridColumnRegistration<TItem> CreateRegistration() => new()
+    {
+        Header = Header,
+        ValueSelector = null,
+        Template = Template,
+        Format = null,
+        Align = Align,
+        Width = Width,
+        HeaderClass = HeaderClass,
+        CellClass = CellClass,
+        Visible = Visible,
+        Sortable = Sortable,
+        Filterable = Filterable,
+        CustomComparer = null,
+        CustomFilter = null
+    };
+}

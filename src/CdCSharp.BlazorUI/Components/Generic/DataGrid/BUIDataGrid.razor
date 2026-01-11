@@ -1,0 +1,700 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+@namespace CdCSharp.BlazorUI.Components
+
+@typeparam TItem
+@inherits BUIComponentBase
+@implements IHasDensity
+
+<CascadingValue Value="@((IDataGridColumnRegistry<TItem>)_columnRegistry)" Name="DataGridColumnRegistry">
+    @Columns
+</CascadingValue>
+
+<bui-component @attributes="ComputedAttributes">
+    @if (_columnsBuilt)
+    {
+        <!-- Toolbar -->
+        @if (Filterable || ShowPageSizeSelector)
+        {
+            <div class="bui-datagrid__toolbar">
+                @if (Filterable)
+                {
+                    <div class="bui-datagrid__filter">
+                        <input type="text"
+                               class="bui-datagrid__filter-input"
+                               placeholder="@FilterPlaceholder"
+                               value="@_state.FilterText"
+                               @oninput="HandleFilterChange" />
+                        @if (!string.IsNullOrEmpty(_state.FilterText))
+                        {
+                            <button type="button"
+                                    class="bui-datagrid__filter-clear"
+                                    @onclick="ClearFilter"
+                                    aria-label="Clear filter">
+                                <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_close" Size="SizeEnum.Small" />
+                            </button>
+                        }
+                    </div>
+                }
+
+                <div class="bui-datagrid__toolbar-spacer"></div>
+
+                @if (SelectionMode == SelectionMode.Multiple && _state.SelectedItems.Count > 0)
+                {
+                    <div class="bui-datagrid__selection-info">
+                        @_state.SelectedItems.Count selected
+                        <button type="button"
+                                class="bui-datagrid__clear-selection"
+                                @onclick="ClearSelection">
+                            Clear
+                        </button>
+                    </div>
+                }
+
+                @if (ShowPageSizeSelector && PageSize.HasValue)
+                {
+                    <div class="bui-datagrid__page-size">
+                        <label>
+                            Rows per page:
+                            <select class="bui-datagrid__page-size-select" 
+                                    value="@_state.PageSize" 
+                                    @onchange="HandlePageSizeChange">
+                                @foreach (int size in PageSizeOptions)
+                                {
+                                    <option value="@size">@size</option>
+                                }
+                            </select>
+                        </label>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Table -->
+        <div class="bui-datagrid__table-container" style="@GetContainerStyle()">
+            <table class="bui-datagrid__table" role="table">
+                @if (!string.IsNullOrEmpty(Caption))
+                {
+                    <caption>@Caption</caption>
+                }
+
+                <thead class="bui-datagrid__header">
+                    <tr role="row">
+                        @if (SelectionMode != SelectionMode.None)
+                        {
+                            <th class="bui-datagrid__select-cell" role="columnheader">
+                                @if (SelectionMode == SelectionMode.Multiple)
+                                {
+                                    <input type="checkbox"
+                                           class="bui-datagrid__checkbox"
+                                           checked="@IsAllSelected()"
+                                           @onchange="HandleSelectAll"
+                                           aria-label="Select all rows" />
+                                }
+                            </th>
+                        }
+
+                        @foreach (var col in _columns.Where(c => c.Visible))
+                        {
+                            <th class="bui-datagrid__header-cell @GetAlignClass(col.Align) @col.HeaderClass @(col.Sortable ? "bui-datagrid__header-cell--sortable" : "")"
+                                style="@(col.Width != null ? $"width: {col.Width}" : null)"
+                                role="columnheader"
+                                @onclick="() => col.Sortable ? HandleSort(col) : Task.CompletedTask">
+                                <div class="bui-datagrid__header-content">
+                                    <span>@col.Header</span>
+                                    @if (col.Sortable)
+                                    {
+                                        <span class="bui-datagrid__sort-icon">
+                                            @if (IsSortedBy(col))
+                                            {
+                                                <BUISvgIcon Icon="@GetSortIcon()" Size="SizeEnum.Small" />
+                                            }
+                                            else
+                                            {
+                                                <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_arrow_upward" Size="SizeEnum.Small" />
+                                            }
+                                        </span>
+                                    }
+                                </div>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody class="bui-datagrid__body">
+                    @if (_processedItems.Any())
+                    {
+                        @if (EnableVirtualization && PageSize == null)
+                        {
+                            <Virtualize Items="_processedItems" Context="item">
+                                @RenderRow(item)
+                            </Virtualize>
+                        }
+                        else
+                        {
+                            @foreach (var item in _processedItems)
+                            {
+                                @RenderRow(item)
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr class="bui-datagrid__empty-row">
+                            <td colspan="@(_columns.Count + (SelectionMode != SelectionMode.None ? 1 : 0))" 
+                                class="bui-datagrid__empty-cell">
+                                @if (EmptyContent != null)
+                                {
+                                    @EmptyContent
+                                }
+                                else
+                                {
+                                    <div class="bui-datagrid__empty-state">
+                                        <span class="bui-datagrid__empty-icon">📋</span>
+                                        <p class="bui-datagrid__empty-text">No data available</p>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+                @if (FooterTemplate != null)
+                {
+                    <tfoot class="bui-datagrid__footer">
+                        @FooterTemplate
+                    </tfoot>
+                }
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (PageSize.HasValue && _filteredItems.Any())
+        {
+            <div class="bui-datagrid__pagination">
+                <div class="bui-datagrid__pagination-info">
+                    Showing @_paginationStart to @_paginationEnd of @_filteredItems.Count
+                </div>
+
+                <div class="bui-datagrid__pagination-controls">
+                    <button type="button"
+                            class="bui-datagrid__page-button"
+                            disabled="@(_state.CurrentPage == 1)"
+                            @onclick="() => ChangePage(_state.CurrentPage - 1)"
+                            aria-label="Previous page">
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
+                    </button>
+
+                    @foreach (int page in GetVisiblePages())
+                    {
+                        <button type="button"
+                                class="bui-datagrid__page-button @(_state.CurrentPage == page ? "bui-datagrid__page-button--active" : "")"
+                                @onclick="() => ChangePage(page)">
+                        </button>
+                    }
+
+                    <button type="button"
+                            class="bui-datagrid__page-button"
+                            disabled="@(_state.CurrentPage == _totalPages)"
+                            @onclick="() => ChangePage(_state.CurrentPage + 1)"
+                            aria-label="Next page">
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</bui-component>
+
+@code {
+    private readonly DataGridColumnRegistry<TItem> _columnRegistry = new();
+    private readonly DataGridState<TItem> _state = new();
+    private List<DataGridColumnRegistration<TItem>> _columns = [];
+    private List<TItem> _filteredItems = [];
+    private List<TItem> _processedItems = [];
+    private bool _columnsBuilt;
+    private int _totalPages;
+    private int _paginationStart;
+    private int _paginationEnd;
+
+    [Parameter] public RenderFragment? Columns { get; set; }
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+
+    // Variant & Styling (inherited from BUITable)
+    [Parameter] public BUITableVariant? Variant { get; set; }
+    [Parameter] public BUITableVariant? VariantXs { get; set; }
+    [Parameter] public BUITableVariant? VariantSm { get; set; }
+    [Parameter] public BUITableVariant? VariantMd { get; set; }
+    [Parameter] public BUITableVariant? VariantLg { get; set; }
+    [Parameter] public BUITableVariant? VariantXl { get; set; }
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public bool Hoverable { get; set; } = true;
+
+    // Selection
+    [Parameter] public SelectionMode SelectionMode { get; set; } = SelectionMode.None;
+    [Parameter] public HashSet<TItem>? SelectedItems { get; set; }
+    [Parameter] public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
+
+    // Sorting
+    [Parameter] public bool Sortable { get; set; }
+    [Parameter] public string? DefaultSortColumn { get; set; }
+    [Parameter] public SortDirection? DefaultSortDirection { get; set; }
+
+    // Filtering
+    [Parameter] public bool Filterable { get; set; }
+    [Parameter] public string FilterPlaceholder { get; set; } = "Search...";
+    [Parameter] public Func<TItem, string, bool>? CustomFilter { get; set; }
+
+    // Pagination
+    [Parameter] public int? PageSize { get; set; }
+    [Parameter] public bool ShowPageSizeSelector { get; set; } = true;
+    [Parameter] public int[] PageSizeOptions { get; set; } = [10, 20, 50, 100];
+
+    // Virtualization
+    [Parameter] public bool EnableVirtualization { get; set; }
+
+    // Customization
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
+    [Parameter] public RenderFragment? EmptyContent { get; set; }
+    [Parameter] public RenderFragment<TItem>? RowTemplate { get; set; }
+
+    // Events
+    [Parameter] public EventCallback<TItem> OnRowClick { get; set; }
+    [Parameter] public EventCallback<DataGridSortEventArgs> OnSort { get; set; }
+    [Parameter] public EventCallback<DataGridFilterEventArgs> OnFilter { get; set; }
+    [Parameter] public EventCallback<DataGridPageChangeEventArgs> OnPageChange { get; set; }
+
+    // Accessibility
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public string? Caption { get; set; }
+
+    [Parameter] public string Height { get; set; } = "400px";
+    [Parameter] public bool FixedHeader { get; set; }
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-selection-mode"] = SelectionMode.ToString().ToLowerInvariant();
+        
+        if (Hoverable)
+            dataAttributes["data-bui-hoverable"] = "true";
+
+        if (VariantXs != null)
+            dataAttributes["data-bui-variant-xs"] = VariantXs.Name.ToLowerInvariant();
+        if (VariantSm != null)
+            dataAttributes["data-bui-variant-sm"] = VariantSm.Name.ToLowerInvariant();
+        if (VariantMd != null)
+            dataAttributes["data-bui-variant-md"] = VariantMd.Name.ToLowerInvariant();
+        if (VariantLg != null)
+            dataAttributes["data-bui-variant-lg"] = VariantLg.Name.ToLowerInvariant();
+        if (VariantXl != null)
+            dataAttributes["data-bui-variant-xl"] = VariantXl.Name.ToLowerInvariant();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (PageSize.HasValue)
+        {
+            _state.PageSize = PageSize.Value;
+        }
+
+        if (!string.IsNullOrEmpty(DefaultSortColumn))
+        {
+            _state.SortColumn = DefaultSortColumn;
+            _state.SortDirection = DefaultSortDirection ?? SortDirection.Ascending;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (SelectedItems != null)
+        {
+            _state.ClearSelection();
+            foreach (var item in SelectedItems)
+            {
+                _state.SelectItem(item, SelectionMode.Multiple);
+            }
+        }
+
+        ProcessData();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender && Columns != null && !_columnsBuilt)
+        {
+            _columns = _columnRegistry.GetColumns().ToList();
+            _columnRegistry.Clear();
+            _columnsBuilt = true;
+            ProcessData();
+            StateHasChanged();
+        }
+    }
+
+    private void ProcessData()
+    {
+        if (!_columnsBuilt || Items == null)
+        {
+            _filteredItems = [];
+            _processedItems = [];
+            return;
+        }
+
+        // Step 1: Filter
+        _filteredItems = ApplyFilter(Items).ToList();
+
+        // Step 2: Sort
+        var sorted = ApplySort(_filteredItems);
+
+        // Step 3: Paginate
+        _processedItems = ApplyPagination(sorted).ToList();
+
+        CalculatePaginationInfo();
+    }
+
+    private IEnumerable<TItem> ApplyFilter(IEnumerable<TItem> items)
+    {
+        if (string.IsNullOrWhiteSpace(_state.FilterText))
+            return items;
+
+        return items.Where(item =>
+        {
+            if (CustomFilter != null)
+                return CustomFilter(item, _state.FilterText);
+
+            foreach (var col in _columns.Where(c => c.Filterable && c.ValueSelector != null))
+            {
+                var value = col.ValueSelector(item);
+                if (value?.ToString()?.Contains(_state.FilterText, StringComparison.OrdinalIgnoreCase) == true)
+                    return true;
+
+                if (col.CustomFilter != null && col.CustomFilter(item, _state.FilterText))
+                    return true;
+            }
+
+            return false;
+        });
+    }
+
+    private IEnumerable<TItem> ApplySort(IEnumerable<TItem> items)
+    {
+        if (_state.SortDirection == SortDirection.None || string.IsNullOrEmpty(_state.SortColumn))
+            return items;
+
+        var column = _columns.FirstOrDefault(c => c.Header == _state.SortColumn);
+        if (column?.ValueSelector == null)
+            return items;
+
+        var sorted = _state.SortDirection == SortDirection.Ascending
+            ? items.OrderBy(item => column.ValueSelector(item))
+            : items.OrderByDescending(item => column.ValueSelector(item));
+
+        return sorted;
+    }
+
+    private IEnumerable<TItem> ApplyPagination(IEnumerable<TItem> items)
+    {
+        if (!PageSize.HasValue)
+            return items;
+
+        int skip = (_state.CurrentPage - 1) * _state.PageSize;
+        return items.Skip(skip).Take(_state.PageSize);
+    }
+
+    private void CalculatePaginationInfo()
+    {
+        if (!PageSize.HasValue || !_filteredItems.Any())
+        {
+            _totalPages = 0;
+            _paginationStart = 0;
+            _paginationEnd = 0;
+            return;
+        }
+
+        _totalPages = (int)Math.Ceiling(_filteredItems.Count / (double)_state.PageSize);
+        
+        if (_state.CurrentPage > _totalPages)
+        {
+            _state.CurrentPage = _totalPages > 0 ? _totalPages : 1;
+        }
+
+        _paginationStart = (_state.CurrentPage - 1) * _state.PageSize + 1;
+        _paginationEnd = Math.Min(_state.CurrentPage * _state.PageSize, _filteredItems.Count);
+    }
+
+    private RenderFragment RenderRow(TItem item) => __builder =>
+    {
+        bool isSelected = _state.IsSelected(item);
+
+        <tr class="bui-datagrid__row @(isSelected ? "bui-datagrid__row--selected" : "") @(OnRowClick.HasDelegate ? "bui-datagrid__row--clickable" : "")"
+            role="row"
+            @onclick="() => HandleRowClick(item)">
+            
+            @if (SelectionMode != SelectionMode.None)
+            {
+                <td class="bui-datagrid__select-cell" role="cell" @onclick:stopPropagation="true">
+                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
+                           class="bui-datagrid__checkbox"
+                           checked="@isSelected"
+                           @onchange="() => HandleSelectRow(item)"
+                           aria-label="@($"Select row {item}")" />
+                </td>
+            }
+
+            @if (RowTemplate != null)
+            {
+                @RowTemplate(item)
+            }
+            else
+            {
+                @foreach (var col in _columns.Where(c => c.Visible))
+                {
+                    <td class="bui-datagrid__cell @GetAlignClass(col.Align) @col.CellClass" role="cell">
+                        @if (col.Template != null)
+                        {
+                            @col.Template(item)
+                        }
+                        else if (col.ValueSelector != null)
+                        {
+                            @FormatValue(col.ValueSelector(item), col.Format)
+                        }
+                    </td>
+                }
+            }
+        </tr>
+    };
+
+    private async Task HandleSort(DataGridColumnRegistration<TItem> column)
+    {
+        if (!column.Sortable || string.IsNullOrEmpty(column.Header))
+            return;
+
+        _state.ToggleSort(column.Header);
+        _state.ResetPagination();
+        ProcessData();
+
+        if (OnSort.HasDelegate)
+        {
+            await OnSort.InvokeAsync(new DataGridSortEventArgs
+            {
+                ColumnName = column.Header,
+                Direction = _state.SortDirection
+            });
+        }
+    }
+
+    private async Task HandleFilterChange(ChangeEventArgs e)
+    {
+        _state.FilterText = e.Value?.ToString() ?? string.Empty;
+        _state.ResetPagination();
+        ProcessData();
+
+        if (OnFilter.HasDelegate)
+        {
+            await OnFilter.InvokeAsync(new DataGridFilterEventArgs
+            {
+                FilterText = _state.FilterText
+            });
+        }
+    }
+
+    private void ClearFilter()
+    {
+        _state.FilterText = string.Empty;
+        _state.ResetPagination();
+        ProcessData();
+    }
+
+    private async Task HandleSelectRow(TItem item)
+    {
+        _state.SelectItem(item, SelectionMode);
+        await NotifySelectionChanged();
+    }
+
+    private async Task HandleSelectAll(ChangeEventArgs e)
+    {
+        if (e.Value is bool isChecked && isChecked)
+        {
+            _state.SelectAll(_processedItems);
+        }
+        else
+        {
+            _state.ClearSelection();
+        }
+
+        await NotifySelectionChanged();
+    }
+
+    private async Task ClearSelection()
+    {
+        _state.ClearSelection();
+        await NotifySelectionChanged();
+    }
+
+    private bool IsAllSelected()
+    {
+        return _processedItems.Any() && _processedItems.All(_state.IsSelected);
+    }
+
+    private async Task NotifySelectionChanged()
+    {
+        if (SelectedItemsChanged.HasDelegate)
+        {
+            await SelectedItemsChanged.InvokeAsync(new HashSet<TItem>(_state.SelectedItems));
+        }
+    }
+
+    private async Task HandleRowClick(TItem item)
+    {
+        if (OnRowClick.HasDelegate)
+        {
+            await OnRowClick.InvokeAsync(item);
+        }
+    }
+
+    private async Task ChangePage(int page)
+    {
+        if (page < 1 || page > _totalPages)
+            return;
+
+        _state.CurrentPage = page;
+        ProcessData();
+
+        if (OnPageChange.HasDelegate)
+        {
+            await OnPageChange.InvokeAsync(new DataGridPageChangeEventArgs
+            {
+                Page = page,
+                PageSize = _state.PageSize
+            });
+        }
+    }
+
+    private async Task HandlePageSizeChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int newSize))
+        {
+            _state.PageSize = newSize;
+            _state.ResetPagination();
+            ProcessData();
+
+            if (OnPageChange.HasDelegate)
+            {
+                await OnPageChange.InvokeAsync(new DataGridPageChangeEventArgs
+                {
+                    Page = _state.CurrentPage,
+                    PageSize = _state.PageSize
+                });
+            }
+        }
+    }
+
+    private IEnumerable<int> GetVisiblePages()
+    {
+        const int maxVisible = 7;
+        
+        if (_totalPages <= maxVisible)
+        {
+            return Enumerable.Range(1, _totalPages);
+        }
+
+        var pages = new List<int> { 1 };
+
+        int start = Math.Max(2, _state.CurrentPage - 2);
+        int end = Math.Min(_totalPages - 1, _state.CurrentPage + 2);
+
+        if (start > 2)
+            pages.Add(-1); // Ellipsis marker
+
+        for (int i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        if (end < _totalPages - 1)
+            pages.Add(-1); // Ellipsis marker
+
+        if (_totalPages > 1)
+            pages.Add(_totalPages);
+
+        return pages;
+    }
+
+    private bool IsSortedBy(DataGridColumnRegistration<TItem> column)
+    {
+        return _state.SortColumn == column.Header && _state.SortDirection != SortDirection.None;
+    }
+
+    private string GetSortIcon()
+    {
+        return _state.SortDirection == SortDirection.Ascending
+            ? BUIIcons.UI.ChevronUp
+            : BUIIcons.UI.ChevronDown;
+    }
+
+    private string GetAlignClass(TableColumnAlign align) => align switch
+    {
+        TableColumnAlign.Center => "bui-datagrid__cell--center",
+        TableColumnAlign.Right => "bui-datagrid__cell--right",
+        _ => ""
+    };
+
+    private string FormatValue(object? value, string? format)
+    {
+        if (value == null) return string.Empty;
+
+        if (!string.IsNullOrEmpty(format) && value is IFormattable formattable)
+        {
+            return formattable.ToString(format, null);
+        }
+
+        return value.ToString() ?? string.Empty;
+    }
+
+    // Public API methods
+    private string GetContainerStyle()
+    {
+        if (EnableVirtualization && !string.IsNullOrEmpty(Height))
+        {
+            return $"max-height: {Height}; overflow-y: auto;";
+        }
+        else if (FixedHeader && !string.IsNullOrEmpty(Height))
+        {
+            return $"max-height: {Height}; overflow-y: auto;";
+        }
+        return string.Empty;
+    }
+
+    public void SortBy(string columnName, SortDirection direction)
+    {
+        _state.SortColumn = columnName;
+        _state.SortDirection = direction;
+        ProcessData();
+        StateHasChanged();
+    }
+
+    public void Filter(string filterText)
+    {
+        _state.FilterText = filterText;
+        _state.ResetPagination();
+        ProcessData();
+        StateHasChanged();
+    }
+
+    public void GoToPage(int page)
+    {
+        if (page >= 1 && page <= _totalPages)
+        {
+            _state.CurrentPage = page;
+            ProcessData();
+            StateHasChanged();
+        }
+    }
+
+    public IReadOnlySet<TItem> GetSelectedItems() => _state.SelectedItems;
+}
