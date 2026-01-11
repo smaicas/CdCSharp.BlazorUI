@@ -11,7 +11,10 @@ public interface IVariantRegistry
         where TComponent : ComponentBase
         where TVariant : Variant;
 
-    RenderFragment? GetTemplate(Type componentType, Variant variant, ComponentBase component);
+    RenderFragment? GetTemplate(
+        Type componentType,
+        Variant variant,
+        ComponentBase component);
 }
 
 public interface IVariantRegistryInitializer
