@@ -16,6 +16,7 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
     private IJSObjectReference? _behaviorInstance;
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
     private FieldIdentifier _fieldIdentifier;
+    private EditContext? _previousEditContext;
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
@@ -49,14 +50,24 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
 
         _styleBuilder.BuildStyles(this, AdditionalAttributes);
 
-        // Update validation state
+        // Only re-subscribe if EditContext actually changed
         if (EditContext != null && ValueExpression != null)
         {
-            IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+            if (_previousEditContext != EditContext)
+            {
+                // Unsubscribe from old context
+                if (_previousEditContext != null)
+                {
+                    _previousEditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+                }
 
-            // Subscribe only once
-            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
-            EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+                // Subscribe to new context
+                EditContext.OnValidationStateChanged += HandleValidationStateChanged;
+                _previousEditContext = EditContext;
+            }
+
+            _fieldIdentifier = FieldIdentifier.Create(ValueExpression);
+            IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
         }
 
         base.OnParametersSet();
