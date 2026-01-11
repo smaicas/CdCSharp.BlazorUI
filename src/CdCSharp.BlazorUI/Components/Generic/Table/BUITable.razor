@@ -1,5 +1,6 @@
 ﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
 @namespace CdCSharp.BlazorUI.Components
 
@@ -7,41 +8,191 @@
 @inherits BUIVariantComponentBase<BUITable<TItem>, BUITableVariant>
 @implements IHasDensity
 
-@{
-    base.BuildRenderTree(__builder);
-}
+<CascadingValue Value="@((ITableColumnRegistry<TItem>)_columnRegistry)" Name="TableColumnRegistry">
+    @Columns
+</CascadingValue>
+
+<bui-component @attributes="ComputedAttributes" role="region" aria-label="@AriaLabel">
+    @if (_columnsBuilt)
+    {
+        <!-- Toolbar -->
+        @if (Filterable || (Pageable && ShowPageSizeSelector) || (SelectionMode == SelectionMode.Multiple && _state.SelectedItems.Count > 0))
+        {
+            <div class="bui-table__toolbar">
+                @if (Filterable)
+                {
+                    <div class="bui-table__filter">
+                        <input type="text"
+                               class="bui-table__filter-input"
+                               placeholder="@FilterPlaceholder"
+                               value="@_state.FilterText"
+                               @oninput="HandleFilterChange"
+                               aria-label="Filter table" />
+                        @if (!string.IsNullOrEmpty(_state.FilterText))
+                        {
+                            <button type="button"
+                                    class="bui-table__filter-clear"
+                                    @onclick="ClearFilter"
+                                    aria-label="Clear filter">
+                                ✕
+                            </button>
+                        }
+                    </div>
+                }
+
+                <div class="bui-table__toolbar-spacer"></div>
+
+                @if (SelectionMode == SelectionMode.Multiple && _state.SelectedItems.Count > 0)
+                {
+                    <div class="bui-table__selection-info">
+                        @_state.SelectedItems.Count selected
+                        <button type="button"
+                                class="bui-table__clear-selection"
+                                @onclick="ClearSelection">
+                            Clear
+                        </button>
+                    </div>
+                }
+
+                @if (Pageable && ShowPageSizeSelector)
+                {
+                    <div class="bui-table__page-size">
+                        <label>
+                            Rows per page:
+                            <select class="bui-table__page-size-select"
+                                    value="@_state.PageSize"
+                                    @onchange="HandlePageSizeChange">
+                                @foreach (int size in PageSizeOptions)
+                                {
+                                    <option value="@size">@size</option>
+                                }
+                            </select>
+                        </label>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- Table Container -->
+        <div class="bui-table__container" style="@GetContainerStyle()">
+            @if (CurrentVariant == BUITableVariant.Cards)
+            {
+                @RenderCards()
+            }
+            else
+            {
+                @RenderTable()
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (Pageable && _filteredItems.Any())
+        {
+            <div class="bui-table__pagination">
+                <div class="bui-table__pagination-info">
+                    Showing @_paginationStart to @_paginationEnd of @_filteredItems.Count
+                </div>
+
+                <div class="bui-table__pagination-controls">
+                    <button type="button"
+                            class="bui-table__page-button"
+                            disabled="@(_state.CurrentPage == 1)"
+                            @onclick="() => ChangePage(_state.CurrentPage - 1)"
+                            aria-label="Previous page">
+                        ‹
+                    </button>
+
+                    @foreach (int page in GetVisiblePages())
+                    {
+                        @if (page == -1)
+                        {
+                            <span class="bui-table__page-ellipsis">...</span>
+                        }
+                        else
+                        {
+                            <button type="button"
+                                    class="bui-table__page-button @(_state.CurrentPage == page ? "bui-table__page-button--active" : "")"
+                                    @onclick="() => ChangePage(page)">
+                            </button>
+                        }
+                    }
+
+                    <button type="button"
+                            class="bui-table__page-button"
+                            disabled="@(_state.CurrentPage == _totalPages)"
+                            @onclick="() => ChangePage(_state.CurrentPage + 1)"
+                            aria-label="Next page">
+                        ›
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</bui-component>
 
 @code {
     private readonly TableColumnRegistry<TItem> _columnRegistry = new();
+    private readonly TableState<TItem> _state = new();
     private List<TableColumnRegistration<TItem>> _columns = [];
+    private List<TItem> _filteredItems = [];
+    private List<TItem> _processedItems = [];
     private bool _columnsBuilt;
+    private int _totalPages;
+    private int _paginationStart;
+    private int _paginationEnd;
 
+    // === BASIC PARAMETERS ===
     [Parameter] public RenderFragment? Columns { get; set; }
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
 
-    // Responsive Variants
+    // === VARIANT & STYLING ===
     [Parameter] public BUITableVariant? VariantXs { get; set; }
     [Parameter] public BUITableVariant? VariantSm { get; set; }
     [Parameter] public BUITableVariant? VariantMd { get; set; }
     [Parameter] public BUITableVariant? VariantLg { get; set; }
     [Parameter] public BUITableVariant? VariantXl { get; set; }
-
-    // Styling
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
     [Parameter] public bool Hoverable { get; set; } = true;
     [Parameter] public bool FixedHeader { get; set; }
     [Parameter] public string? Height { get; set; }
 
-    // Customization
+    // === SELECTION ===
+    [Parameter] public SelectionMode SelectionMode { get; set; } = SelectionMode.None;
+    [Parameter] public HashSet<TItem>? SelectedItems { get; set; }
+    [Parameter] public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
+
+    // === SORTING ===
+    [Parameter] public bool Sortable { get; set; }
+    [Parameter] public string? DefaultSortColumn { get; set; }
+    [Parameter] public SortDirection? DefaultSortDirection { get; set; }
+
+    // === FILTERING ===
+    [Parameter] public bool Filterable { get; set; }
+    [Parameter] public string FilterPlaceholder { get; set; } = "Search...";
+    [Parameter] public Func<TItem, string, bool>? CustomFilter { get; set; }
+
+    // === PAGINATION ===
+    [Parameter] public bool Pageable { get; set; }
+    [Parameter] public int PageSize { get; set; } = 20;
+    [Parameter] public bool ShowPageSizeSelector { get; set; } = true;
+    [Parameter] public int[] PageSizeOptions { get; set; } = [10, 20, 50, 100];
+
+    // === VIRTUALIZATION ===
+    [Parameter] public bool EnableVirtualization { get; set; }
+
+    // === CUSTOMIZATION ===
     [Parameter] public RenderFragment? HeaderTemplate { get; set; }
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
     [Parameter] public RenderFragment? EmptyContent { get; set; }
     [Parameter] public RenderFragment<TItem>? RowTemplate { get; set; }
 
-    // Events
+    // === EVENTS ===
     [Parameter] public EventCallback<TItem> OnRowClick { get; set; }
+    [Parameter] public EventCallback<TableSortEventArgs> OnSort { get; set; }
+    [Parameter] public EventCallback<TableFilterEventArgs> OnFilter { get; set; }
+    [Parameter] public EventCallback<TablePageChangeEventArgs> OnPageChange { get; set; }
 
-    // Accessibility
+    // === ACCESSIBILITY ===
     [Parameter] public string? AriaLabel { get; set; }
     [Parameter] public string? Caption { get; set; }
 
@@ -55,13 +206,26 @@
         [BUITableVariant.Cards] = t => t.RenderCards(),
     };
 
+    private BUITableVariant CurrentVariant => GetCurrentVariant();
+
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
+        dataAttributes["data-bui-selection-mode"] = SelectionMode.ToString().ToLowerInvariant();
+
         if (Hoverable)
             dataAttributes["data-bui-hoverable"] = "true";
 
         if (FixedHeader)
             dataAttributes["data-bui-fixed-header"] = "true";
+
+        if (Filterable)
+            dataAttributes["data-bui-filterable"] = "true";
+
+        if (Sortable)
+            dataAttributes["data-bui-sortable"] = "true";
+
+        if (Pageable)
+            dataAttributes["data-bui-pageable"] = "true";
 
         // Responsive variants
         if (VariantXs != null)
@@ -82,6 +246,38 @@
             cssVariables["--bui-table-height"] = Height;
     }
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        if (Pageable)
+        {
+            _state.PageSize = PageSize;
+        }
+
+        if (!string.IsNullOrEmpty(DefaultSortColumn))
+        {
+            _state.SortColumn = DefaultSortColumn;
+            _state.SortDirection = DefaultSortDirection ?? SortDirection.Ascending;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (SelectedItems != null)
+        {
+            _state.ClearSelection();
+            foreach (var item in SelectedItems)
+            {
+                _state.SelectItem(item, SelectionMode.Multiple);
+            }
+        }
+
+        ProcessData();
+    }
+
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
@@ -91,27 +287,110 @@
             _columns = _columnRegistry.GetColumns().ToList();
             _columnRegistry.Clear();
             _columnsBuilt = true;
+            ProcessData();
             StateHasChanged();
         }
     }
 
-    private RenderFragment RenderTable() => __builder =>
+    private void ProcessData()
     {
-        <bui-component @attributes="ComputedAttributes" role="region" aria-label="@AriaLabel">
-            @if (FixedHeader && Height != null)
-            {
-                <div class="bui-table__scroll-container">
-                    @RenderTableElement()
-                </div>
-            }
-            else
-            {
-                @RenderTableElement()
-            }
-        </bui-component>
-    };
+        if (!_columnsBuilt || Items == null)
+        {
+            _filteredItems = [];
+            _processedItems = [];
+            return;
+        }
 
-    private RenderFragment RenderTableElement() => __builder =>
+        // Step 1: Filter
+        _filteredItems = ApplyFilter(Items).ToList();
+
+        // Step 2: Sort
+        var sorted = ApplySort(_filteredItems);
+
+        // Step 3: Paginate
+        _processedItems = ApplyPagination(sorted).ToList();
+
+        CalculatePaginationInfo();
+    }
+
+    private IEnumerable<TItem> ApplyFilter(IEnumerable<TItem> items)
+    {
+        if (!Filterable || string.IsNullOrWhiteSpace(_state.FilterText))
+            return items;
+
+        return items.Where(item =>
+        {
+            if (CustomFilter != null)
+                return CustomFilter(item, _state.FilterText);
+
+            foreach (var col in _columns.Where(c => c.Filterable && c.ValueSelector != null))
+            {
+                var value = col.ValueSelector(item);
+                if (value?.ToString()?.Contains(_state.FilterText, StringComparison.OrdinalIgnoreCase) == true)
+                    return true;
+
+                if (col.CustomFilter != null && col.CustomFilter(item, _state.FilterText))
+                    return true;
+            }
+
+            return false;
+        });
+    }
+
+    private IEnumerable<TItem> ApplySort(IEnumerable<TItem> items)
+    {
+        if (!Sortable || _state.SortDirection == SortDirection.None || string.IsNullOrEmpty(_state.SortColumn))
+            return items;
+
+        var column = _columns.FirstOrDefault(c => c.Header == _state.SortColumn);
+        if (column?.ValueSelector == null)
+            return items;
+
+        if (column.CustomComparer != null)
+        {
+            return _state.SortDirection == SortDirection.Ascending
+                ? items.OrderBy(item => item, Comparer<TItem>.Create(column.CustomComparer))
+                : items.OrderByDescending(item => item, Comparer<TItem>.Create(column.CustomComparer));
+        }
+
+        var sorted = _state.SortDirection == SortDirection.Ascending
+            ? items.OrderBy(item => column.ValueSelector(item))
+            : items.OrderByDescending(item => column.ValueSelector(item));
+
+        return sorted;
+    }
+
+    private IEnumerable<TItem> ApplyPagination(IEnumerable<TItem> items)
+    {
+        if (!Pageable)
+            return items;
+
+        int skip = (_state.CurrentPage - 1) * _state.PageSize;
+        return items.Skip(skip).Take(_state.PageSize);
+    }
+
+    private void CalculatePaginationInfo()
+    {
+        if (!Pageable || !_filteredItems.Any())
+        {
+            _totalPages = 0;
+            _paginationStart = 0;
+            _paginationEnd = 0;
+            return;
+        }
+
+        _totalPages = (int)Math.Ceiling(_filteredItems.Count / (double)_state.PageSize);
+
+        if (_state.CurrentPage > _totalPages)
+        {
+            _state.CurrentPage = _totalPages > 0 ? _totalPages : 1;
+        }
+
+        _paginationStart = (_state.CurrentPage - 1) * _state.PageSize + 1;
+        _paginationEnd = Math.Min(_state.CurrentPage * _state.PageSize, _filteredItems.Count);
+    }
+
+    private RenderFragment RenderTable() => __builder =>
     {
         <table class="bui-table" role="table">
             @if (!string.IsNullOrEmpty(Caption))
@@ -124,15 +403,40 @@
                 {
                     @HeaderTemplate
                 }
-                else if (_columnsBuilt)
+                else
                 {
                     <tr role="row">
+                        @if (SelectionMode != SelectionMode.None)
+                        {
+                            <th class="bui-table__select-cell" role="columnheader">
+                                @if (SelectionMode == SelectionMode.Multiple)
+                                {
+                                    <input type="checkbox"
+                                           class="bui-table__checkbox"
+                                           checked="@IsAllSelected()"
+                                           @onchange="HandleSelectAll"
+                                           aria-label="Select all rows" />
+                                }
+                            </th>
+                        }
+
                         @foreach (var col in _columns.Where(c => c.Visible))
                         {
-                            <th class="bui-table__header-cell @GetAlignClass(col.Align) @col.HeaderClass"
+                            <th class="bui-table__header-cell @GetAlignClass(col.Align) @col.HeaderClass @(col.Sortable && Sortable ? "bui-table__header-cell--sortable" : "")"
                                 style="@(col.Width != null ? $"width: {col.Width}" : null)"
-                                role="columnheader">
-                                @col.Header
+                                role="columnheader"
+                                tabindex="@(col.Sortable && Sortable ? 0 : -1)"
+                                @onclick="() => col.Sortable && Sortable ? HandleSort(col) : Task.CompletedTask"
+                                @onkeydown="@(e => col.Sortable && Sortable && (e.Key == "Enter" || e.Key == " ") ? HandleSort(col) : Task.CompletedTask)">
+                                <div class="bui-table__header-content">
+                                    <span>@col.Header</span>
+                                    @if (col.Sortable && Sortable && IsSortedBy(col))
+                                    {
+                                        <span class="bui-table__sort-icon" aria-label="@(_state.SortDirection == SortDirection.Ascending ? "Sorted ascending" : "Sorted descending")">
+                                            @(_state.SortDirection == SortDirection.Ascending ? "▲" : "▼")
+                                        </span>
+                                    }
+                                </div>
                             </th>
                         }
                     </tr>
@@ -140,28 +444,28 @@
             </thead>
 
             <tbody class="bui-table__body">
-                @if (Items?.Any() == true)
+                @if (_processedItems.Any())
                 {
-                    @foreach (var item in Items)
+                    @if (EnableVirtualization && !Pageable)
                     {
-                        @RenderRow(item)
+                        <Virtualize Items="_processedItems" Context="item">
+                            @RenderRow(item)
+                        </Virtualize>
+                    }
+                    else
+                    {
+                        @foreach (var item in _processedItems)
+                        {
+                            @RenderRow(item)
+                        }
                     }
                 }
                 else
                 {
                     <tr class="bui-table__empty-row">
-                        <td colspan="@_columns.Count" class="bui-table__empty-cell">
-                            @if (EmptyContent != null)
-                            {
-                                @EmptyContent
-                            }
-                            else
-                            {
-                                <div class="bui-table__empty-state">
-                                    <span class="bui-table__empty-icon">📋</span>
-                                    <p class="bui-table__empty-text">No data available</p>
-                                </div>
-                            }
+                        <td colspan="@(_columns.Count(c => c.Visible) + (SelectionMode != SelectionMode.None ? 1 : 0))"
+                            class="bui-table__empty-cell">
+                            @RenderEmptyState()
                         </td>
                     </tr>
                 }
@@ -178,14 +482,31 @@
 
     private RenderFragment RenderRow(TItem item) => __builder =>
     {
-        <tr class="bui-table__row @(OnRowClick.HasDelegate ? "bui-table__row--clickable" : "")"
+        bool isSelected = _state.IsSelected(item);
+
+        <tr class="bui-table__row @(isSelected ? "bui-table__row--selected" : "") @(OnRowClick.HasDelegate ? "bui-table__row--clickable" : "")"
             role="row"
-            @onclick="() => HandleRowClick(item)">
+            tabindex="@(OnRowClick.HasDelegate ? 0 : -1)"
+            @onclick="() => HandleRowClick(item)"
+            @onkeydown="@(e => OnRowClick.HasDelegate && (e.Key == "Enter" || e.Key == " ") ? HandleRowClick(item) : Task.CompletedTask)">
+
+            @if (SelectionMode != SelectionMode.None)
+            {
+                <td class="bui-table__select-cell" role="cell" @onclick:stopPropagation="true">
+                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
+                           name="@(SelectionMode == SelectionMode.Single ? "table-selection" : null)"
+                           class="bui-table__checkbox"
+                           checked="@isSelected"
+                           @onchange="() => HandleSelectRow(item)"
+                           aria-label="@($"Select row")" />
+                </td>
+            }
+
             @if (RowTemplate != null)
             {
                 @RowTemplate(item)
             }
-            else if (_columnsBuilt)
+            else
             {
                 @foreach (var col in _columns.Where(c => c.Visible))
                 {
@@ -206,42 +527,47 @@
 
     private RenderFragment RenderCards() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes" role="region" aria-label="@AriaLabel">
-            <div class="bui-table__cards">
-                @if (Items?.Any() == true)
+        <div class="bui-table__cards">
+            @if (_processedItems.Any())
+            {
+                @foreach (var item in _processedItems)
                 {
-                    @foreach (var item in Items)
-                    {
-                        @RenderCard(item)
-                    }
+                    @RenderCard(item)
                 }
-                else
-                {
-                    <div class="bui-table__empty-state">
-                        @if (EmptyContent != null)
-                        {
-                            @EmptyContent
-                        }
-                        else
-                        {
-                            <span class="bui-table__empty-icon">📋</span>
-                            <p class="bui-table__empty-text">No data available</p>
-                        }
-                    </div>
-                }
-            </div>
-        </bui-component>
+            }
+            else
+            {
+                @RenderEmptyState()
+            }
+        </div>
     };
 
     private RenderFragment RenderCard(TItem item) => __builder =>
     {
-        <div class="bui-table__card @(OnRowClick.HasDelegate ? "bui-table__card--clickable" : "")"
-             @onclick="() => HandleRowClick(item)">
+        bool isSelected = _state.IsSelected(item);
+
+        <div class="bui-table__card @(isSelected ? "bui-table__card--selected" : "") @(OnRowClick.HasDelegate ? "bui-table__card--clickable" : "")"
+             tabindex="@(OnRowClick.HasDelegate ? 0 : -1)"
+             @onclick="() => HandleRowClick(item)"
+             @onkeydown="@(e => OnRowClick.HasDelegate && (e.Key == "Enter" || e.Key == " ") ? HandleRowClick(item) : Task.CompletedTask)">
+
+            @if (SelectionMode != SelectionMode.None)
+            {
+                <div class="bui-table__card-selection" @onclick:stopPropagation="true">
+                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
+                           name="@(SelectionMode == SelectionMode.Single ? "table-selection" : null)"
+                           class="bui-table__checkbox"
+                           checked="@isSelected"
+                           @onchange="() => HandleSelectRow(item)"
+                           aria-label="@($"Select card")" />
+                </div>
+            }
+
             @if (RowTemplate != null)
             {
                 @RowTemplate(item)
             }
-            else if (_columnsBuilt)
+            else
             {
                 @foreach (var col in _columns.Where(c => c.Visible))
                 {
@@ -266,12 +592,184 @@
         </div>
     };
 
+    private RenderFragment RenderEmptyState() => __builder =>
+    {
+        @if (EmptyContent != null)
+        {
+            @EmptyContent
+        }
+        else
+        {
+            <div class="bui-table__empty-state">
+                <span class="bui-table__empty-icon">📋</span>
+                <p class="bui-table__empty-text">No data available</p>
+            </div>
+        }
+    };
+
+    // === EVENT HANDLERS ===
+
+    private async Task HandleSort(TableColumnRegistration<TItem> column)
+    {
+        if (!column.Sortable || !Sortable || string.IsNullOrEmpty(column.Header))
+            return;
+
+        _state.ToggleSort(column.Header);
+        _state.ResetPagination();
+        ProcessData();
+
+        if (OnSort.HasDelegate)
+        {
+            await OnSort.InvokeAsync(new TableSortEventArgs
+            {
+                ColumnName = column.Header,
+                Direction = _state.SortDirection
+            });
+        }
+    }
+
+    private async Task HandleFilterChange(ChangeEventArgs e)
+    {
+        _state.FilterText = e.Value?.ToString() ?? string.Empty;
+        _state.ResetPagination();
+        ProcessData();
+
+        if (OnFilter.HasDelegate)
+        {
+            await OnFilter.InvokeAsync(new TableFilterEventArgs
+            {
+                FilterText = _state.FilterText
+            });
+        }
+    }
+
+    private void ClearFilter()
+    {
+        _state.FilterText = string.Empty;
+        _state.ResetPagination();
+        ProcessData();
+    }
+
+    private async Task HandleSelectRow(TItem item)
+    {
+        _state.SelectItem(item, SelectionMode);
+        await NotifySelectionChanged();
+    }
+
+    private async Task HandleSelectAll(ChangeEventArgs e)
+    {
+        if (e.Value is bool isChecked && isChecked)
+        {
+            _state.SelectAll(_processedItems);
+        }
+        else
+        {
+            _state.ClearSelection();
+        }
+
+        await NotifySelectionChanged();
+    }
+
+    private async Task ClearSelection()
+    {
+        _state.ClearSelection();
+        await NotifySelectionChanged();
+    }
+
     private async Task HandleRowClick(TItem item)
     {
         if (OnRowClick.HasDelegate)
         {
             await OnRowClick.InvokeAsync(item);
         }
+    }
+
+    private async Task ChangePage(int page)
+    {
+        if (page < 1 || page > _totalPages)
+            return;
+
+        _state.CurrentPage = page;
+        ProcessData();
+
+        if (OnPageChange.HasDelegate)
+        {
+            await OnPageChange.InvokeAsync(new TablePageChangeEventArgs
+            {
+                Page = page,
+                PageSize = _state.PageSize
+            });
+        }
+    }
+
+    private async Task HandlePageSizeChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int newSize))
+        {
+            _state.PageSize = newSize;
+            _state.ResetPagination();
+            ProcessData();
+
+            if (OnPageChange.HasDelegate)
+            {
+                await OnPageChange.InvokeAsync(new TablePageChangeEventArgs
+                {
+                    Page = _state.CurrentPage,
+                    PageSize = _state.PageSize
+                });
+            }
+        }
+    }
+
+    // === HELPER METHODS ===
+
+    private bool IsAllSelected()
+    {
+        return _processedItems.Any() && _processedItems.All(_state.IsSelected);
+    }
+
+    private async Task NotifySelectionChanged()
+    {
+        if (SelectedItemsChanged.HasDelegate)
+        {
+            await SelectedItemsChanged.InvokeAsync(new HashSet<TItem>(_state.SelectedItems));
+        }
+    }
+
+    private IEnumerable<int> GetVisiblePages()
+    {
+        const int maxVisible = 7;
+
+        if (_totalPages <= maxVisible)
+        {
+            return Enumerable.Range(1, _totalPages);
+        }
+
+        var pages = new List<int> { 1 };
+
+        int start = Math.Max(2, _state.CurrentPage - 2);
+        int end = Math.Min(_totalPages - 1, _state.CurrentPage + 2);
+
+        if (start > 2)
+            pages.Add(-1); // Ellipsis marker
+
+        for (int i = start; i <= end; i++)
+        {
+            pages.Add(i);
+        }
+
+        if (end < _totalPages - 1)
+            pages.Add(-1); // Ellipsis marker
+
+        if (_totalPages > 1)
+            pages.Add(_totalPages);
+
+        return pages;
+    }
+
+    private bool IsSortedBy(TableColumnRegistration<TItem> column)
+    {
+        return _state.SortColumn == column.Header && _state.SortDirection != SortDirection.None;
     }
 
     private string GetAlignClass(TableColumnAlign align) => align switch
@@ -285,18 +783,73 @@
     {
         if (value == null) return string.Empty;
 
-        if (!string.IsNullOrEmpty(format))
+        if (!string.IsNullOrEmpty(format) && value is IFormattable formattable)
         {
-            if (value is IFormattable formattable)
-            {
-                return formattable.ToString(format, null);
-            }
+            return formattable.ToString(format, null);
         }
 
         return value.ToString() ?? string.Empty;
     }
-}
 
-<CascadingValue Value="@((ITableColumnRegistry<TItem>)_columnRegistry)" Name="TableColumnRegistry">
-    @Columns
-</CascadingValue>
+    private string GetContainerStyle()
+    {
+        if (EnableVirtualization && !Pageable && !string.IsNullOrEmpty(Height))
+        {
+            return $"max-height: {Height}; overflow-y: auto;";
+        }
+        else if (FixedHeader && !string.IsNullOrEmpty(Height))
+        {
+            return $"max-height: {Height}; overflow-y: auto;";
+        }
+        return string.Empty;
+    }
+
+    private BUITableVariant GetCurrentVariant()
+    {
+        // Responsive variant detection would happen here
+        // For now, return the base variant
+        return Variant ?? DefaultVariant;
+    }
+
+    // === PUBLIC API ===
+
+    public void SortBy(string columnName, SortDirection direction)
+    {
+        if (!Sortable) return;
+
+        _state.SortColumn = columnName;
+        _state.SortDirection = direction;
+        ProcessData();
+        StateHasChanged();
+    }
+
+    public void Filter(string filterText)
+    {
+        if (!Filterable) return;
+
+        _state.FilterText = filterText;
+        _state.ResetPagination();
+        ProcessData();
+        StateHasChanged();
+    }
+
+    public void GoToPage(int page)
+    {
+        if (!Pageable) return;
+
+        if (page >= 1 && page <= _totalPages)
+        {
+            _state.CurrentPage = page;
+            ProcessData();
+            StateHasChanged();
+        }
+    }
+
+    public void ClearSelectionProgrammatic()
+    {
+        _state.ClearSelection();
+        StateHasChanged();
+    }
+
+    public IReadOnlySet<TItem> GetSelectedItems() => _state.SelectedItems;
+}

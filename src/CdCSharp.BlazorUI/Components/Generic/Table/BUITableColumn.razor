@@ -1,6 +1,7 @@
 ﻿@namespace CdCSharp.BlazorUI.Components
 @typeparam TItem
-@inherits BUITableColumnBase<TItem>
+@typeparam TValue
+@inherits BUITableColumnBase<TItem, TValue>
 
 @{
     base.BuildRenderTree(__builder);
@@ -10,13 +11,17 @@
     protected override TableColumnRegistration<TItem> CreateRegistration() => new()
     {
         Header = Header,
-        ValueSelector = null, // Non-generic column has no value selector
+        ValueSelector = CompiledSelector,
         Template = Template,
-        Format = null,
+        Format = Format,
         Align = Align,
         Width = Width,
         HeaderClass = HeaderClass,
         CellClass = CellClass,
-        Visible = Visible
+        Visible = Visible,
+        Sortable = Sortable,
+        Filterable = Filterable,
+        CustomComparer = CustomComparer,
+        CustomFilter = CustomFilter
     };
 }

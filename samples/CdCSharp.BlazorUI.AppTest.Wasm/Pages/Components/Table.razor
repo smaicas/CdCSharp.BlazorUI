@@ -2,23 +2,23 @@
 
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
 @using CdCSharp.BlazorUI.Components
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Css
 
-<PageTitle>Table - CdCSharp.BlazorUI</PageTitle>
+<PageTitle>BUITable - CdCSharp.BlazorUI</PageTitle>
 
 <div class="doc-page">
     <h1>BUITable</h1>
 
     <p class="doc-intro">
-        <strong>BUITable</strong> is a simple, flexible table component for displaying data
-        with support for custom columns, templates, variants, density, and responsive layouts.
+        <strong>BUITable</strong> is a powerful and flexible data table component
+        supporting sorting, filtering, pagination, selection modes,
+        responsive variants, cards layout, virtualization and custom templates.
     </p>
 
-    <!-- BASIC USAGE -->
+    <!-- BASIC -->
     <section class="doc-section">
         <h2>Basic usage</h2>
-        <ComponentDemo Definition="@BasicUsageDemo" />
+        <ComponentDemo Definition="@BasicDemo" />
     </section>
 
     <!-- VARIANTS -->
@@ -33,104 +33,93 @@
         <ComponentDemo Definition="@DensityDemo" />
     </section>
 
-    <!-- ALIGNMENT -->
+    <!-- SORTING -->
     <section class="doc-section">
-        <h2>Column alignment</h2>
-        <ComponentDemo Definition="@AlignmentDemo" />
+        <h2>Sorting</h2>
+        <ComponentDemo Definition="@SortingDemo" />
     </section>
 
-    <!-- FORMATTING -->
+    <!-- FILTERING -->
     <section class="doc-section">
-        <h2>Value formatting</h2>
-        <ComponentDemo Definition="@FormattingDemo" />
+        <h2>Filtering</h2>
+        <ComponentDemo Definition="@FilteringDemo" />
     </section>
 
-    <!-- CUSTOM TEMPLATES -->
+    <!-- PAGINATION -->
     <section class="doc-section">
-        <h2>Custom templates</h2>
-        <ComponentDemo Definition="@CustomTemplatesDemo" />
+        <h2>Pagination</h2>
+        <ComponentDemo Definition="@PaginationDemo" />
     </section>
 
-    <!-- CLICKABLE ROWS -->
+    <!-- SELECTION -->
     <section class="doc-section">
-        <h2>Clickable rows</h2>
-        <ComponentDemo Definition="@ClickableRowsDemo" />
-        @if (_selectedProduct != null)
-        {
-            <p>Selected: <strong>@_selectedProduct.Name</strong></p>
-        }
-    </section>
-
-    <!-- EMPTY STATE -->
-    <section class="doc-section">
-        <h2>Empty state</h2>
-        <ComponentDemo Definition="@EmptyStateDemo" />
+        <h2>Selection</h2>
+        <ComponentDemo Definition="@SelectionDemo" />
+        <p>Selected: @_selected.Count</p>
     </section>
 
     <!-- FIXED HEADER -->
     <section class="doc-section">
-        <h2>Fixed header with scrolling</h2>
+        <h2>Fixed header</h2>
         <ComponentDemo Definition="@FixedHeaderDemo" />
     </section>
 
-    <!-- RESPONSIVE CARDS -->
+    <!-- VIRTUALIZATION -->
     <section class="doc-section">
-        <h2>Responsive cards (resize browser to see)</h2>
-        <ComponentDemo Definition="@ResponsiveCardsDemo" />
+        <h2>Virtualization</h2>
+        <ComponentDemo Definition="@VirtualizationDemo" />
+    </section>
+
+    <!-- ROW TEMPLATE -->
+    <section class="doc-section">
+        <h2>Custom row template</h2>
+        <ComponentDemo Definition="@RowTemplateDemo" />
+    </section>
+
+    <!-- EMPTY -->
+    <section class="doc-section">
+        <h2>Empty state</h2>
+        <ComponentDemo Definition="@EmptyDemo" />
     </section>
 
     <!-- PROPERTIES -->
     <section class="doc-section">
         <h2>Properties</h2>
-        <PropertyTable Properties="@TableProperties" />
-    </section>
-
-    <!-- COLUMN PROPERTIES -->
-    <section class="doc-section">
-        <h2>BUITableColumn Properties</h2>
-        <PropertyTable Properties="@ColumnProperties" />
+        <PropertyTable Properties="@Properties" />
     </section>
 </div>
 
 @code {
-    private Product? _selectedProduct;
-    private List<Product> _products = new();
-    private List<Product> _emptyProducts = new();
 
-    protected override void OnInitialized()
-    {
-        _products = new List<Product>
+    /* ===================== DATA ===================== */
+
+    private List<User> Users = Enumerable.Range(1, 50)
+        .Select(i => new User
         {
-            new() { Id = 1, Name = "Laptop Pro", Price = 1299.99m, Stock = 15, Category = "Electronics", InStock = true },
-            new() { Id = 2, Name = "Wireless Mouse", Price = 29.99m, Stock = 50, Category = "Accessories", InStock = true },
-            new() { Id = 3, Name = "Keyboard Mechanical", Price = 89.99m, Stock = 0, Category = "Accessories", InStock = false },
-            new() { Id = 4, Name = "Monitor 27\"", Price = 349.99m, Stock = 8, Category = "Electronics", InStock = true },
-            new() { Id = 5, Name = "USB-C Hub", Price = 49.99m, Stock = 25, Category = "Accessories", InStock = true },
-        };
-    }
+            Id = i,
+            Name = $"User {i}",
+            Role = i % 3 == 0 ? "Admin" : "User",
+            Age = 18 + (i % 30)
+        })
+        .ToList();
+
+    private List<User> EmptyUsers = [];
+
+    private HashSet<User> _selected = [];
 
     /* ===================== DEMOS ===================== */
 
-    private ComponentDemoDefinition BasicUsageDemo => new()
+    private ComponentDemoDefinition BasicDemo => new()
     {
-        Demo = RenderBasicUsage(),
+        Demo = RenderBasic(),
         Code = """
-<BUITable Items="products" TItem="Product">
-    <Columns>
-        <BUITableColumnTyped Property="p => p.Id" 
-                            TItem="Product" 
-                            TValue="int" 
-                            Header="#" 
-                            Width="80px" />
-        <BUITableColumnTyped Property="p => p.Name" 
-                            TItem="Product" 
-                            TValue="string" />
-        <BUITableColumnTyped Property="p => p.Price" 
-                            TItem="Product" 
-                            TValue="decimal" 
-                            Format="C2" 
-                            Align="Right" />
-    </Columns>
+<BUITable Items="Users">
+    <BUITableColumn TItem="User" TValue="int"
+                    Property="u => u.Id" />
+    <BUITableColumn TItem="User" TValue="string"
+                    Property="u => u.Name" />
+    <BUITableColumn TItem="User" TValue="string"
+                    Property="u => u.Role" />
 </BUITable>
 """
     };
@@ -139,20 +128,8 @@
     {
         Demo = RenderVariants(),
         Code = """
-<!-- Default -->
-<BUITable Items="products" TItem="Product" Variant="BUITableVariant.Default">
-    <Columns>...</Columns>
-</BUITable>
-
-<!-- Striped -->
-<BUITable Items="products" TItem="Product" Variant="BUITableVariant.Striped">
-    <Columns>...</Columns>
-</BUITable>
-
-<!-- Bordered -->
-<BUITable Items="products" TItem="Product" Variant="BUITableVariant.Bordered">
-    <Columns>...</Columns>
-</BUITable>
+<BUITable Items="Users" Variant="BUITableVariant.Striped" />
+<BUITable Items="Users" Variant="BUITableVariant.Bordered" />
 """
     };
 
@@ -160,128 +137,45 @@
     {
         Demo = RenderDensity(),
         Code = """
-<BUITable Items="products" TItem="Product" Density="DensityEnum.Compact">
-    <Columns>...</Columns>
-</BUITable>
+<BUITable Items="Users" Density="DensityEnum.Compact" />
+"""
+    };
 
-<BUITable Items="products" TItem="Product" Density="DensityEnum.Standard">
-    <Columns>...</Columns>
-</BUITable>
-
-<BUITable Items="products" TItem="Product" Density="DensityEnum.Comfortable">
-    <Columns>...</Columns>
+    private ComponentDemoDefinition SortingDemo => new()
+    {
+        Demo = RenderSorting(),
+        Code = """
+<BUITable Items="Users" Sortable>
+    <BUITableColumn Property="u => u.Id" Sortable />
+    <BUITableColumn Property="u => u.Name" Sortable />
 </BUITable>
 """
     };
 
-    private ComponentDemoDefinition AlignmentDemo => new()
+    private ComponentDemoDefinition FilteringDemo => new()
     {
-        Demo = RenderAlignment(),
+        Demo = RenderFiltering(),
         Code = """
-<BUITable Items="products" TItem="Product">
-    <Columns>
-        <BUITableColumnTyped Property="p => p.Id" 
-                            TItem="Product" 
-                            TValue="int" 
-                            Align="Left" />
-        <BUITableColumnTyped Property="p => p.Name" 
-                            TItem="Product" 
-                            TValue="string" 
-                            Align="Center" />
-        <BUITableColumnTyped Property="p => p.Price" 
-                            TItem="Product" 
-                            TValue="decimal" 
-                            Align="Right" />
-    </Columns>
-</BUITable>
+<BUITable Items="Users" Filterable />
 """
     };
 
-    private ComponentDemoDefinition FormattingDemo => new()
+    private ComponentDemoDefinition PaginationDemo => new()
     {
-        Demo = RenderFormatting(),
+        Demo = RenderPagination(),
         Code = """
-<BUITable Items="products" TItem="Product">
-    <Columns>
-        <BUITableColumnTyped Property="p => p.Price" 
-                            TItem="Product" 
-                            TValue="decimal" 
-                            Header="Price (Currency)" 
-                            Format="C2" />
-        <BUITableColumnTyped Property="p => p.Stock" 
-                            TItem="Product" 
-                            TValue="int" 
-                            Header="Stock (Padded)" 
-                            Format="D5" />
-    </Columns>
-</BUITable>
+<BUITable Items="Users" Pageable PageSize="10" />
 """
     };
 
-    private ComponentDemoDefinition CustomTemplatesDemo => new()
+    private ComponentDemoDefinition SelectionDemo => new()
     {
-        Demo = RenderCustomTemplates(),
+        Demo = RenderSelection(),
         Code = """
-<BUITable Items="products" TItem="Product">
-    <Columns>
-        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-        
-        <BUITableColumn TItem="Product" Header="Stock Status">
-            <Template Context="product">
-                <BUIBadge Color="@(product.InStock ? BUIColor.Palette.Success : BUIColor.Palette.Error)">
-                    @(product.InStock ? "In Stock" : "Out of Stock")
-                </BUIBadge>
-            </Template>
-        </BUITableColumn>
-        
-        <BUITableColumn TItem="Product" Header="Actions">
-            <Template Context="product">
-                <BUIButton Text="Edit" Size="SizeEnum.Small" />
-            </Template>
-        </BUITableColumn>
-    </Columns>
-</BUITable>
-"""
-    };
-
-    private ComponentDemoDefinition ClickableRowsDemo => new()
-    {
-        Demo = RenderClickableRows(),
-        Code = """
-<BUITable Items="products" 
-          TItem="Product" 
-          OnRowClick="HandleRowClick">
-    <Columns>...</Columns>
-</BUITable>
-
-@code {
-    private void HandleRowClick(Product product)
-    {
-        _selectedProduct = product;
-    }
-}
-"""
-    };
-
-    private ComponentDemoDefinition EmptyStateDemo => new()
-    {
-        Demo = RenderEmptyState(),
-        Code = """
-<!-- Default empty state -->
-<BUITable Items="emptyProducts" TItem="Product">
-    <Columns>...</Columns>
-</BUITable>
-
-<!-- Custom empty state -->
-<BUITable Items="emptyProducts" TItem="Product">
-    <Columns>...</Columns>
-    <EmptyContent>
-        <div style="text-align: center; padding: 2rem;">
-            <h3>No products found</h3>
-            <p>Try adding some products to your inventory.</p>
-        </div>
-    </EmptyContent>
-</BUITable>
+<BUITable Items="Users"
+          SelectionMode="SelectionMode.Multiple"
+          SelectedItems="@_selected"
+          SelectedItemsChanged="@OnSelectedChanged" />
 """
     };
 
@@ -289,290 +183,159 @@
     {
         Demo = RenderFixedHeader(),
         Code = """
-<BUITable Items="products" 
-          TItem="Product" 
-          FixedHeader 
-          Height="300px">
-    <Columns>...</Columns>
+<BUITable Items="Users"
+          FixedHeader
+          Height="300px" />
+"""
+    };
+
+    private ComponentDemoDefinition VirtualizationDemo => new()
+    {
+        Demo = RenderVirtualization(),
+        Code = """
+<BUITable Items="Users"
+          EnableVirtualization
+          Height="300px" />
+"""
+    };
+
+    private ComponentDemoDefinition RowTemplateDemo => new()
+    {
+        Demo = RenderRowTemplate(),
+        Code = """
+<BUITable Items="Users">
+    <BUITableColumn Header="User">
+        <Template Context="u">
+            <strong>@u.Name</strong>
+        </Template>
+    </BUITableColumn>
 </BUITable>
 """
     };
 
-    private ComponentDemoDefinition ResponsiveCardsDemo => new()
+    private ComponentDemoDefinition EmptyDemo => new()
     {
-        Demo = RenderResponsiveCards(),
+        Demo = RenderEmpty(),
         Code = """
-<BUITable Items="products" 
-          TItem="Product"
-          Variant="BUITableVariant.Default"
-          VariantXs="BUITableVariant.Cards">
-    <Columns>
-        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-        <BUITableColumnTyped Property="p => p.Category" TItem="Product" TValue="string" />
-    </Columns>
-</BUITable>
+<BUITable Items="EmptyUsers" />
 """
     };
 
     /* ===================== RENDER FRAGMENTS ===================== */
 
-    private RenderFragment RenderBasicUsage() => __builder =>
+    private RenderFragment RenderBasic() => __builder =>
     {
-        <BUITable Items="_products" TItem="Product">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Id" TItem="Product" TValue="int" Header="#" Width="80px" />
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" Align="TableColumnAlign.Right" />
-            </Columns>
-        </BUITable>
+        <BUITable Items="Users">
+            <BUITableColumn TItem="User" TValue="int" Property="u => u.Id" />
+            <BUITableColumn TItem="User" TValue="string" Property="u => u.Name" />
+            <BUITableColumn TItem="User" TValue="string" Property="u => u.Role" />
+        </BUITable>;
     };
 
     private RenderFragment RenderVariants() => __builder =>
     {
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
-            <div>
-                <h4>Default</h4>
-                <BUITable Items="_products.Take(3)" TItem="Product" Variant="BUITableVariant.Default">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                    </Columns>
-                </BUITable>
-            </div>
-
-            <div>
-                <h4>Striped</h4>
-                <BUITable Items="_products.Take(3)" TItem="Product" Variant="BUITableVariant.Striped">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                    </Columns>
-                </BUITable>
-            </div>
-
-            <div>
-                <h4>Bordered</h4>
-                <BUITable Items="_products.Take(3)" TItem="Product" Variant="BUITableVariant.Bordered">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                    </Columns>
-                </BUITable>
-            </div>
-        </div>
+        <div class="demo-column">
+            <BUITable Items="Users" Variant="BUITableVariant.Striped" />
+            <BUITable Items="Users" Variant="BUITableVariant.Bordered" />
+        </div>;
     };
 
     private RenderFragment RenderDensity() => __builder =>
     {
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
-            <div>
-                <h4>Compact</h4>
-                <BUITable Items="_products.Take(3)" TItem="Product" Density="DensityEnum.Compact">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                    </Columns>
-                </BUITable>
-            </div>
-
-            <div>
-                <h4>Standard</h4>
-                <BUITable Items="_products.Take(3)" TItem="Product" Density="DensityEnum.Standard">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                    </Columns>
-                </BUITable>
-            </div>
-
-            <div>
-                <h4>Comfortable</h4>
-                <BUITable Items="_products.Take(3)" TItem="Product" Density="DensityEnum.Comfortable">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                    </Columns>
-                </BUITable>
-            </div>
-        </div>
+        <BUITable Items="Users" Density="DensityEnum.Compact" />;
     };
 
-    private RenderFragment RenderAlignment() => __builder =>
+    private RenderFragment RenderSorting() => __builder =>
     {
-        <BUITable Items="_products.Take(3)" TItem="Product">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Id" TItem="Product" TValue="int" Header="Left" Align="TableColumnAlign.Left" />
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" Header="Center" Align="TableColumnAlign.Center" />
-                <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Header="Right" Align="TableColumnAlign.Right" Format="C2" />
-            </Columns>
-        </BUITable>
+        <BUITable Items="Users" Sortable>
+            <BUITableColumn TItem="User" TValue="int" Property="u => u.Id" Sortable />
+            <BUITableColumn TItem="User" TValue="string"  Property="u => u.Name" Sortable />
+            <BUITableColumn TItem="User" TValue="int" Property="u => u.Age" Sortable />
+        </BUITable>;
     };
 
-    private RenderFragment RenderFormatting() => __builder =>
+    private RenderFragment RenderFiltering() => __builder =>
     {
-        <BUITable Items="_products.Take(3)" TItem="Product">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Header="Price (Currency)" Format="C2" />
-                <BUITableColumnTyped Property="p => p.Stock" TItem="Product" TValue="int" Header="Stock (Padded)" Format="D5" />
-            </Columns>
-        </BUITable>
+        <BUITable Items="Users" Filterable />;
     };
 
-    private RenderFragment RenderCustomTemplates() => __builder =>
+    private RenderFragment RenderPagination() => __builder =>
     {
-        <BUITable Items="_products" TItem="Product">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                
-                <BUITableColumn TItem="Product" Header="Stock Status">
-                    <Template Context="product">
-                        <BUIBadge Color="@(product.InStock ? BUIColor.Palette.Success : BUIColor.Palette.Error)">
-                            @(product.InStock ? "In Stock" : "Out of Stock")
-                        </BUIBadge>
-                    </Template>
-                </BUITableColumn>
-                
-                <BUITableColumn TItem="Product" Header="Actions">
-                    <Template Context="product">
-                        <BUIButton Text="Edit" Size="SizeEnum.Small" />
-                    </Template>
-                </BUITableColumn>
-            </Columns>
-        </BUITable>
+        <BUITable Items="Users" Pageable PageSize="10" />;
     };
 
-    private RenderFragment RenderClickableRows() => __builder =>
+    private RenderFragment RenderSelection() => __builder =>
     {
-        <BUITable Items="_products" 
-                  TItem="Product" 
-                  Variant="BUITableVariant.Striped"
-                  OnRowClick="HandleRowClick">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                <BUITableColumnTyped Property="p => p.Category" TItem="Product" TValue="string" />
-            </Columns>
-        </BUITable>
-    };
-
-    private RenderFragment RenderEmptyState() => __builder =>
-    {
-        <div style="display: flex; flex-direction: column; gap: 2rem;">
-            <div>
-                <h4>Default empty state</h4>
-                <BUITable Items="_emptyProducts" TItem="Product">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" />
-                    </Columns>
-                </BUITable>
-            </div>
-
-            <div>
-                <h4>Custom empty state</h4>
-                <BUITable Items="_emptyProducts" TItem="Product">
-                    <Columns>
-                        <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                        <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" />
-                    </Columns>
-                    <EmptyContent>
-                        <div style="text-align: center; padding: 2rem;">
-                            <h3>No products found</h3>
-                            <p>Try adding some products to your inventory.</p>
-                        </div>
-                    </EmptyContent>
-                </BUITable>
-            </div>
-        </div>
+        <BUITable Items="Users"
+                  SelectionMode="SelectionMode.Multiple"
+                  SelectedItems="@_selected"
+                  SelectedItemsChanged="@((HashSet<User> items) => OnSelectedChanged(items))" />;
     };
 
     private RenderFragment RenderFixedHeader() => __builder =>
     {
-        <BUITable Items="_products.Concat(_products).Concat(_products)" 
-                  TItem="Product" 
-                  FixedHeader 
-                  Height="300px"
-                  Variant="BUITableVariant.Striped">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Id" TItem="Product" TValue="int" Header="#" Width="80px" />
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                <BUITableColumnTyped Property="p => p.Category" TItem="Product" TValue="string" />
-            </Columns>
-        </BUITable>
+        <BUITable Items="Users"
+                  FixedHeader
+                  Height="300px" />;
     };
 
-    private RenderFragment RenderResponsiveCards() => __builder =>
+    private RenderFragment RenderVirtualization() => __builder =>
     {
-        <BUITable Items="_products" 
-                  TItem="Product"
-                  Variant="BUITableVariant.Default"
-                  VariantXs="BUITableVariant.Cards">
-            <Columns>
-                <BUITableColumnTyped Property="p => p.Name" TItem="Product" TValue="string" />
-                <BUITableColumnTyped Property="p => p.Price" TItem="Product" TValue="decimal" Format="C2" />
-                <BUITableColumnTyped Property="p => p.Category" TItem="Product" TValue="string" />
-                <BUITableColumnTyped Property="p => p.Stock" TItem="Product" TValue="int" />
-            </Columns>
-        </BUITable>
+        <BUITable Items="Users"
+                  EnableVirtualization
+                  Height="300px" />;
     };
 
-    /* ===================== EVENT HANDLERS ===================== */
-
-    private void HandleRowClick(Product product)
+    private RenderFragment RenderRowTemplate() => __builder =>
     {
-        _selectedProduct = product;
+        <BUITable Items="Users">
+            <BUITableColumn Header="User" TItem="User" TValue="User">
+                <Template Context="u">
+                    <strong>@u.Name</strong> (@u.Role)
+                </Template>
+            </BUITableColumn>
+        </BUITable>;
+    };
+
+    private RenderFragment RenderEmpty() => __builder =>
+    {
+        <BUITable Items="EmptyUsers" />;
+    };
+
+    /* ===================== EVENTS ===================== */
+
+    private void OnSelectedChanged(HashSet<User> items)
+    {
+        _selected = items;
     }
 
     /* ===================== PROPERTIES ===================== */
 
-    private List<PropertyDefinition> TableProperties = new()
+    private List<PropertyDefinition> Properties = new()
     {
-        new("Items", "IEnumerable<TItem>?", "null", "Data items to display"),
-        new("Columns", "RenderFragment?", "null", "Column definitions"),
-        new("Variant", "BUITableVariant?", "Default", "Table variant (Default, Striped, Bordered, Cards)"),
-        new("VariantXs", "BUITableVariant?", "null", "Variant for XS screens"),
-        new("VariantSm", "BUITableVariant?", "null", "Variant for SM screens"),
-        new("VariantMd", "BUITableVariant?", "null", "Variant for MD screens"),
-        new("VariantLg", "BUITableVariant?", "null", "Variant for LG screens"),
-        new("VariantXl", "BUITableVariant?", "null", "Variant for XL screens"),
-        new("Density", "DensityEnum", "Standard", "Table density"),
-        new("Hoverable", "bool", "true", "Enable row hover effect"),
-        new("FixedHeader", "bool", "false", "Fix header when scrolling"),
-        new("Height", "string?", "null", "Table height (for fixed header)"),
-        new("HeaderTemplate", "RenderFragment?", "null", "Custom header template"),
-        new("FooterTemplate", "RenderFragment?", "null", "Custom footer template"),
-        new("EmptyContent", "RenderFragment?", "null", "Content for empty state"),
-        new("RowTemplate", "RenderFragment<TItem>?", "null", "Custom row template"),
-        new("OnRowClick", "EventCallback<TItem>", "-", "Row click event"),
-        new("AriaLabel", "string?", "null", "ARIA label for accessibility"),
-        new("Caption", "string?", "null", "Table caption"),
+        new("Items", "IEnumerable<TItem>", "-", "Items source"),
+        new("Variant", "BUITableVariant?", "Default", "Table visual variant"),
+        new("Density", "DensityEnum", "Standard", "Row density"),
+        new("Sortable", "bool", "false", "Enable sorting"),
+        new("Filterable", "bool", "false", "Enable filtering"),
+        new("Pageable", "bool", "false", "Enable pagination"),
+        new("PageSize", "int", "20", "Rows per page"),
+        new("SelectionMode", "SelectionMode", "None", "Row selection mode"),
+        new("FixedHeader", "bool", "false", "Sticky header"),
+        new("Height", "string?", "null", "Scrollable height"),
+        new("EnableVirtualization", "bool", "false", "Virtualize rows"),
+        new("HeaderTemplate", "RenderFragment?", "null", "Custom header"),
+        new("RowTemplate", "RenderFragment<TItem>?", "null", "Custom row"),
+        new("EmptyContent", "RenderFragment?", "null", "Empty content"),
     };
 
-    private List<PropertyDefinition> ColumnProperties = new()
-    {
-        new("Property", "Expression<Func<TItem, TValue>>?", "null", "Property selector (typed columns only)"),
-        new("Header", "string?", "null", "Column header text"),
-        new("Format", "string?", "null", "Value format string (typed columns only)"),
-        new("Align", "TableColumnAlign", "Left", "Column alignment (Left, Center, Right)"),
-        new("Width", "string?", "null", "Column width (e.g., '100px', '20%')"),
-        new("HeaderClass", "string?", "null", "CSS class for header cell"),
-        new("CellClass", "string?", "null", "CSS class for body cells"),
-        new("Visible", "bool", "true", "Column visibility"),
-        new("Template", "RenderFragment<TItem>?", "null", "Custom cell template"),
-    };
+    /* ===================== MODEL ===================== */
 
-    /* ===================== MODELS ===================== */
-
-    private class Product
+    private sealed class User
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
-        public string Category { get; set; } = string.Empty;
-        public bool InStock { get; set; }
+        public string Name { get; set; } = "";
+        public string Role { get; set; } = "";
+        public int Age { get; set; }
     }
 }
