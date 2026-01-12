@@ -1,4 +1,5 @@
 ﻿using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions;
@@ -40,6 +41,8 @@ internal sealed class BUIComponentAttributesBuilder
         }
 
         // ===== FEATURES =====
+        BuildFamilyAttributes(component);
+
         BuildSize(component);
         BuildDensity(component);
         BuildFullWidth(component);
@@ -215,6 +218,15 @@ internal sealed class BUIComponentAttributesBuilder
                 cssVariables[kv.Key] = kv.Value;
 
             ComputedAttributes[FeatureDefinitions.DataAttributes.Transitions] = transitions.Transitions.GetDataAttributeValue();
+        }
+    }
+
+    private void BuildFamilyAttributes(ComponentBase component)
+    {
+        // Input family - applies shared input styles
+        if (component is IInputFamilyComponent)
+        {
+            ComputedAttributes[FeatureDefinitions.DataAttributes.InputBase] = "true";
         }
     }
 

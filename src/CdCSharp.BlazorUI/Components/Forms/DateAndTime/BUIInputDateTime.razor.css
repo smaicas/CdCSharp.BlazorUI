@@ -1,4 +1,12 @@
-﻿/* === Forms/DateAndTime/BUIInputDateTime.razor.css === */
+﻿/* ============================================
+   BUIInputDateTime.razor.css (REFACTORED)
+   
+   NOTE: Unique component structure with pattern-based input
+   Does NOT use input-family because it uses custom BUIDateTimePattern
+   
+   KEPT: All styles (unique component, minimal duplication)
+   OPTIMIZATION: Use global CSS variables where possible
+   ============================================ */
 
 bui-component[data-bui-component="input-date-time"] {
     display: flex;
@@ -6,73 +14,68 @@ bui-component[data-bui-component="input-date-time"] {
     gap: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
 }
 
-    bui-component[data-bui-component="input-date-time"] .bui-input-datetime__label {
-        font-weight: 500;
-        cursor: pointer;
-    }
-
-    bui-component[data-bui-component="input-date-time"] .bui-input-datetime__wrapper {
-        display: flex;
-        align-items: center;
-        gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
-    }
-
     bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn {
         display: flex;
         align-items: center;
         justify-content: center;
         border-radius: 4px;
-        padding: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        padding: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
+        border: none;
         background: transparent;
         cursor: pointer;
-        transition: all 0.15s ease;
+        color: inherit;
+        opacity: 0.7;
+        transition: opacity 150ms ease, background-color 150ms ease;
     }
 
-[data-theme="dark"] bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn {
-    border-color: rgba(255, 255, 255, 0.2);
-}
+        bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:hover {
+            opacity: 1;
+            background-color: rgba(0, 0, 0, 0.05);
+        }
 
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:hover:not(:disabled) {
-    border-color: var(--palette-primary);
-}
-
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:focus {
-    outline: none;
-    border-color: var(--palette-primary);
-    box-shadow: 0 0 0 2px rgba(var(--palette-primary-rgb, 59, 130, 246), 0.3);
+[data-theme="dark"] bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:hover {
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn--clear {
-    padding: calc(0.4rem * var(--bui-density-spacing-multiplier, 1));
-    color: inherit;
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
-    bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn--clear:hover:not(:disabled) {
-        color: var(--palette-error);
-        border-color: var(--palette-error);
-        opacity: 1;
-    }
-
+/* Validation and helper text */
 bui-component[data-bui-component="input-date-time"] .bui-input-datetime__validation {
     color: var(--palette-error);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
 }
 
 bui-component[data-bui-component="input-date-time"] .bui-input-datetime__helper {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
     opacity: 0.7;
 }
-/* Picker content layout */
+
+/* Picker overlay */
+bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+}
+
+bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker {
+    position: absolute;
+    z-index: 1000;
+    background: var(--palette-surface);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 1rem;
+}
+
 bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker-content {
     display: flex;
     flex-direction: column;
     gap: calc(1rem * var(--bui-density-spacing-multiplier, 1));
 }
+
 /* Size variations */
 bui-component[data-bui-component="input-date-time"][data-bui-size="small"] .bui-input-datetime__label {
     font-size: 0.8rem;

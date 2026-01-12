@@ -72,12 +72,6 @@
         border-radius: 50%;
     }
 
-    /* Label */
-    bui-component[data-bui-component="input-radio"] .bui-radio__label {
-        user-select: none;
-        cursor: inherit;
-    }
-
     /* Clear button */
     bui-component[data-bui-component="input-radio"] .bui-radio__clear {
         align-self: flex-start;

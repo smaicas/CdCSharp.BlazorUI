@@ -1,4 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Css
 
@@ -7,6 +8,8 @@
 @inherits BUIInputComponentBase<bool, BUIInputSwitch, BUIInputCheckboxVariant>
 @implements IHasSize
 @implements IHasDensity
+
+@implements IInputFamilyComponent
 
 @{
     base.BuildRenderTree(__builder);
@@ -67,37 +70,39 @@
         }
 
         <bui-component @attributes="attrs">
-            <div class="bui-input__container" @onclick="HandleClick">
-                <input type="checkbox"
-                       id="@_inputId"
-                       aria-checked="@IsChecked"
-                       checked="@IsChecked"
-                       disabled="@IsDisabled"
-                       @onclick:preventDefault="true"
-                       class="bui-switch__input" />
+            <div class="bui-stack-row">
+                <div class="bui-input__container" @onclick="HandleClick">
+                    <input type="checkbox"
+                           id="@_inputId"
+                           aria-checked="@IsChecked"
+                           checked="@IsChecked"
+                           disabled="@IsDisabled"
+                           @onclick:preventDefault="true"
+                           class="bui-switch__input" />
 
-                <span class="bui-switch__track" aria-hidden="true">
-                    <span class="bui-switch__thumb">
-                        @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
-                        {
-                            <span class="bui-switch__icon">
-                                @if (IsChecked && !string.IsNullOrWhiteSpace(IconActive))
-                                {
-                                    @IconActive
-                                }
-                                else if (!IsChecked && !string.IsNullOrWhiteSpace(IconInactive))
-                                {
-                                    @IconInactive
-                                }
-                            </span>
-                        }
+                    <span class="bui-switch__track" aria-hidden="true">
+                        <span class="bui-switch__thumb">
+                            @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
+                            {
+                                <span class="bui-switch__icon">
+                                    @if (IsChecked && !string.IsNullOrWhiteSpace(IconActive))
+                                    {
+                                        @IconActive
+                                    }
+                                    else if (!IsChecked && !string.IsNullOrWhiteSpace(IconInactive))
+                                    {
+                                        @IconInactive
+                                    }
+                                </span>
+                            }
+                        </span>
                     </span>
-                </span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Label))
+                {
+                    <label for="@_inputId" class="bui-input__label">@Label</label>
+                }
             </div>
-            @if (!string.IsNullOrWhiteSpace(Label))
-            {
-                <label for="@_inputId" class="bui-switch__label">@Label</label>
-            }
         </bui-component>
     };
 

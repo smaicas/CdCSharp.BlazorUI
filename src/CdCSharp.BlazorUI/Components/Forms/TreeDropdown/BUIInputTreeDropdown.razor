@@ -1,7 +1,7 @@
-﻿@* File: Components/Forms/TreeDropdown/BUIInputTreeDropdown.razor *@
-@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown
 @using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
@@ -21,6 +21,8 @@
 @implements IHasBorder
 @implements IDropdownJsCallback
 
+@implements IInputFamilyComponent
+
 @{
     base.BuildRenderTree(__builder);
 }
@@ -35,124 +37,126 @@
         </CascadingValue>
     }
 
-    @if (!string.IsNullOrWhiteSpace(Label))
-    {
-        <label class="bui-input__label">
-            @Label
-            @if (Required)
-            {
-                <span class="bui-input__required">*</span>
-            }
-        </label>
-    }
-
-    @if (_structureBuilt)
-    {
-        <div class="bui-dropdown__container">
-            <button type="button"
-                    class="bui-dropdown__trigger"
-                    @ref="_triggerElement"
-                    @onclick="ToggleDropdownAsync"
-                    disabled="@(IsDisabled || IsLoading)"
-                    aria-expanded="@_isOpen"
-                    aria-haspopup="tree">
-
-                <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
-                    @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
-                </span>
-
-                <span class="bui-dropdown__arrow">
-                    <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
-                </span>
-
-                @if (IsLoading && LoadingIndicatorVariant != null)
+    <div class="bui-stack-column">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label class="bui-input__label">
+                @Label
+                @if (Required)
                 {
-                    <div class="bui-input__loading">
-                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                    </div>
+                    <span class="bui-input__required">*</span>
                 }
-            </button>
+            </label>
+        }
 
-            @if (_isOpen)
-            {
-                <div class="bui-dropdown__overlay" @onclick="CloseAsync" @onclick:stopPropagation="true"></div>
+        @if (_structureBuilt)
+        {
+            <div class="bui-dropdown__container">
+                <button type="button"
+                        class="bui-dropdown__trigger"
+                        @ref="_triggerElement"
+                        @onclick="ToggleDropdownAsync"
+                        disabled="@(IsDisabled || IsLoading)"
+                        aria-expanded="@_isOpen"
+                        aria-haspopup="tree">
 
-                <div class="bui-dropdown__menu bui-tree-dropdown__menu"
-                     @ref="_menuElement"
-                     role="tree"
-                     aria-multiselectable="@_typeResolver.IsMultiple">
+                    <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
+                        @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
+                    </span>
 
-                    @if (Searchable)
+                    <span class="bui-dropdown__arrow">
+                        <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
+                    </span>
+
+                    @if (IsLoading && LoadingIndicatorVariant != null)
                     {
-                        <div class="bui-dropdown__search">
-                            <input type="text"
-                                   class="bui-dropdown__search-input"
-                                   placeholder="@SearchPlaceholder"
-                                   value="@_searchText"
-                                   @oninput="OnSearchInput"
-                                   @onclick:stopPropagation="true" />
+                        <div class="bui-input__loading">
+                            <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
                         </div>
                     }
+                </button>
 
-                    @if (_typeResolver.IsMultiple && ShowSelectAll && _flatNodes.Count > 0)
-                    {
-                        <div class="bui-dropdown__select-all">
-                            <button type="button"
-                                    class="bui-dropdown__select-all-button"
-                                    @onclick="SelectAll"
-                                    @onclick:stopPropagation="true">
-                                @SelectAllText
-                            </button>
-                            <button type="button"
-                                    class="bui-dropdown__select-all-button"
-                                    @onclick="DeselectAll"
-                                    @onclick:stopPropagation="true">
-                                @DeselectAllText
-                            </button>
-                        </div>
-                    }
+                @if (_isOpen)
+                {
+                    <div class="bui-dropdown__overlay" @onclick="CloseAsync" @onclick:stopPropagation="true"></div>
 
-                    <div class="bui-dropdown__items bui-tree-dropdown__items" style="max-height: @(MaxHeight)px;">
-                        @if (string.IsNullOrWhiteSpace(_searchText))
-                        {
-                            @foreach (TreeDropdownNode<TValue> node in _rootNodes)
-                            {
-                                @RenderNode(node)
-                            }
-                        }
-                        else
-                        {
-                            @foreach (TreeDropdownNode<TValue> node in GetFilteredNodes())
-                            {
-                                @RenderFlatNode(node)
-                            }
-                        }
+                    <div class="bui-dropdown__menu bui-tree-dropdown__menu"
+                         @ref="_menuElement"
+                         role="tree"
+                         aria-multiselectable="@_typeResolver.IsMultiple">
 
-                        @if (GetVisibleNodeCount() == 0)
+                        @if (Searchable)
                         {
-                            <div class="bui-dropdown__no-options">
-                                @(string.IsNullOrWhiteSpace(_searchText) ? NoOptionsText : NoResultsText)
+                            <div class="bui-dropdown__search">
+                                <input type="text"
+                                       class="bui-dropdown__search-input"
+                                       placeholder="@SearchPlaceholder"
+                                       value="@_searchText"
+                                       @oninput="OnSearchInput"
+                                       @onclick:stopPropagation="true" />
                             </div>
                         }
+
+                        @if (_typeResolver.IsMultiple && ShowSelectAll && _flatNodes.Count > 0)
+                        {
+                            <div class="bui-dropdown__select-all">
+                                <button type="button"
+                                        class="bui-dropdown__select-all-button"
+                                        @onclick="SelectAll"
+                                        @onclick:stopPropagation="true">
+                                    @SelectAllText
+                                </button>
+                                <button type="button"
+                                        class="bui-dropdown__select-all-button"
+                                        @onclick="DeselectAll"
+                                        @onclick:stopPropagation="true">
+                                    @DeselectAllText
+                                </button>
+                            </div>
+                        }
+
+                        <div class="bui-dropdown__items bui-tree-dropdown__items" style="max-height: @(MaxHeight)px;">
+                            @if (string.IsNullOrWhiteSpace(_searchText))
+                            {
+                                @foreach (TreeDropdownNode<TValue> node in _rootNodes)
+                                {
+                                    @RenderNode(node)
+                                }
+                            }
+                            else
+                            {
+                                @foreach (TreeDropdownNode<TValue> node in GetFilteredNodes())
+                                {
+                                    @RenderFlatNode(node)
+                                }
+                            }
+
+                            @if (GetVisibleNodeCount() == 0)
+                            {
+                                <div class="bui-dropdown__no-options">
+                                    @(string.IsNullOrWhiteSpace(_searchText) ? NoOptionsText : NoResultsText)
+                                </div>
+                            }
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
-    }
+                }
+            </div>
+        }
 
-    @if (IsError && EditContext != null && ValueExpression != null)
-    {
-        <div class="bui-input__validation">
-            <ValidationMessage For="ValueExpression" />
-        </div>
-    }
+        @if (IsError && EditContext != null && ValueExpression != null)
+        {
+            <div class="bui-input__validation">
+                <ValidationMessage For="ValueExpression" />
+            </div>
+        }
 
-    @if (!string.IsNullOrWhiteSpace(HelperText))
-    {
-        <div class="bui-input__helper-text">
-            @HelperText
-        </div>
-    }
+        @if (!string.IsNullOrWhiteSpace(HelperText))
+        {
+            <div class="bui-input__helper-text">
+                @HelperText
+            </div>
+        }
+    </div>
 </bui-component>
 
 @code {

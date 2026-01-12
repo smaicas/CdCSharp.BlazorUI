@@ -2,6 +2,7 @@
 @using CdCSharp.BlazorUI.Components.Forms.Dropdown
 @using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
@@ -22,138 +23,143 @@
 @implements IDropdownJsCallback
 @implements IDropdownContainer
 
+@implements IInputFamilyComponent
+
 <CascadingValue Value="(IDropdownContainer)this" IsFixed="true">
     @ChildContent
 </CascadingValue>
 
 <bui-component @attributes="ComputedAttributes"
-               data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()">
+               data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()"
+               data-bui-input-dropdown-open="@_isOpen">
 
-    @if (!string.IsNullOrWhiteSpace(Label))
-    {
-        <label class="bui-input__label">
-            @Label
-            @if (Required)
-            {
-                <span class="bui-input__required">*</span>
-            }
-        </label>
-    }
-
-    <div class="bui-dropdown__container">
-        <button type="button"
-                class="bui-dropdown__trigger"
-                @ref="_triggerElement"
-                @onclick="ToggleDropdownAsync"
-                disabled="@(IsDisabled || IsLoading)"
-                aria-expanded="@_isOpen"
-                aria-haspopup="listbox">
-
-            <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
-                @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
-            </span>
-
-            <span class="bui-dropdown__arrow">
-                <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
-            </span>
-
-            @if (IsLoading && LoadingIndicatorVariant != null)
-            {
-                <div class="bui-input__loading">
-                    <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                </div>
-            }
-        </button>
-
-        @if (_isOpen)
+    <div class="bui-stack-column">
+        @if (!string.IsNullOrWhiteSpace(Label))
         {
-            <div class="bui-dropdown__overlay" @onclick="CloseAsync" @onclick:stopPropagation="true"></div>
-
-            <div class="bui-dropdown__menu"
-                 @ref="_menuElement"
-                 role="listbox"
-                 aria-multiselectable="@_typeResolver.IsMultiple">
-
-                @if (Searchable)
+            <label for="@_componentId" class="bui-input__label">
+                @Label
+                @if (Required)
                 {
-                    <div class="bui-dropdown__search">
-                        <input type="text"
-                               class="bui-dropdown__search-input"
-                               placeholder="@SearchPlaceholder"
-                               value="@_searchText"
-                               @oninput="OnSearchInput"
-                               @onclick:stopPropagation="true" />
+                    <span class="bui-input__required">*</span>
+                }
+            </label>
+        }
+
+        <div class="bui-input__wrapper">
+            <button id="@_componentId"
+                    type="button"
+                    class="bui-input__field"
+                    @ref="_triggerElement"
+                    @onclick="ToggleDropdownAsync"
+                    disabled="@(IsDisabled || IsLoading)"
+                    aria-expanded="@(_isOpen ? "true" : "false")"
+                    aria-haspopup="listbox">
+
+                <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
+                    @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
+                </span>
+
+                <span class="bui-dropdown__arrow">
+                    <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
+                </span>
+
+                @if (IsLoading && LoadingIndicatorVariant != null)
+                {
+                    <div class="bui-input__loading">
+                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
                     </div>
                 }
+            </button>
+            @if (_isOpen)
+            {
+                <div class="bui-dropdown__overlay" @onclick="CloseAsync" @onclick:stopPropagation="true"></div>
 
-                @if (_typeResolver.IsMultiple && ShowSelectAll && _options.Count > 0)
-                {
-                    <div class="bui-dropdown__select-all">
-                        <button type="button"
-                                class="bui-dropdown__select-all-button"
-                                @onclick="SelectAll"
-                                @onclick:stopPropagation="true">
-                            @SelectAllText
-                        </button>
-                        <button type="button"
-                                class="bui-dropdown__select-all-button"
-                                @onclick="DeselectAll"
-                                @onclick:stopPropagation="true">
-                            @DeselectAllText
-                        </button>
-                    </div>
-                }
+                <div class="bui-dropdown__menu"
+                     @ref="_menuElement"
+                     role="listbox"
+                     aria-multiselectable="@_typeResolver.IsMultiple">
 
-                <div class="bui-dropdown__items" style="max-height: @(MaxVisibleItems* ItemHeight)px;">
-                    @foreach (IDropdownOption option in GetFilteredOptions())
+                    @if (Searchable)
                     {
-                        bool isSelected = IsOptionSelected(option);
-                        bool isFocused = _focusedIndex >= 0 && GetFilteredOptions().ElementAtOrDefault(_focusedIndex) == option;
+                        <div class="bui-dropdown__search">
+                            <input type="text"
+                                   class="bui-dropdown__search-input"
+                                   placeholder="@SearchPlaceholder"
+                                   value="@_searchText"
+                                   @oninput="OnSearchInput"
+                                   @onclick:stopPropagation="true" />
+                        </div>
+                    }
 
-                        <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(isFocused ? "bui-dropdown__option--focused" : "") @(option.IsDisabled ? "bui-dropdown__option--disabled" : "")"
-                             role="option"
-                             aria-selected="@isSelected"
-                             @onclick="() => SelectOptionAsync(option)"
-                             @onclick:stopPropagation="true">
+                    @if (_typeResolver.IsMultiple && ShowSelectAll && _options.Count > 0)
+                    {
+                        <div class="bui-dropdown__select-all">
+                            <button type="button"
+                                    class="bui-dropdown__select-all-button"
+                                    @onclick="SelectAll"
+                                    @onclick:stopPropagation="true">
+                                @SelectAllText
+                            </button>
+                            <button type="button"
+                                    class="bui-dropdown__select-all-button"
+                                    @onclick="DeselectAll"
+                                    @onclick:stopPropagation="true">
+                                @DeselectAllText
+                            </button>
+                        </div>
+                    }
 
-                            @if (_typeResolver.IsMultiple)
-                            {
-                                <span class="bui-dropdown__checkbox">
-                                    <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
-                                                Size="@Size" />
+                    <div class="bui-dropdown__items" style="max-height: @(MaxVisibleItems* ItemHeight)px;">
+                        @foreach (IDropdownOption option in GetFilteredOptions())
+                        {
+                            bool isSelected = IsOptionSelected(option);
+                            bool isFocused = _focusedIndex >= 0 && GetFilteredOptions().ElementAtOrDefault(_focusedIndex) == option;
+
+                            <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(isFocused ? "bui-dropdown__option--focused" : "") @(option.IsDisabled ? "bui-dropdown__option--disabled" : "")"
+                                 role="option"
+                                 aria-selected="@isSelected"
+                                 @onclick="() => SelectOptionAsync(option)"
+                                 @onclick:stopPropagation="true">
+
+                                @if (_typeResolver.IsMultiple)
+                                {
+                                    <span class="bui-dropdown__checkbox">
+                                        <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
+                                                    Size="@Size" />
+                                    </span>
+                                }
+
+                                <span class="bui-dropdown__option-content">
+                                    @option.Content
                                 </span>
-                            }
+                            </div>
+                        }
 
-                            <span class="bui-dropdown__option-content">
-                                @option.Content
-                            </span>
-                        </div>
-                    }
-
-                    @if (GetFilteredOptions().Count == 0)
-                    {
-                        <div class="bui-dropdown__no-options">
-                            @(string.IsNullOrWhiteSpace(_searchText) ? NoOptionsText : NoResultsText)
-                        </div>
-                    }
+                        @if (GetFilteredOptions().Count == 0)
+                        {
+                            <div class="bui-dropdown__no-options">
+                                @(string.IsNullOrWhiteSpace(_searchText) ? NoOptionsText : NoResultsText)
+                            </div>
+                        }
+                    </div>
                 </div>
+            }
+        </div>
+
+        @if (IsError && EditContext != null && ValueExpression != null)
+        {
+            <div class="bui-input__validation">
+                <ValidationMessage For="ValueExpression" />
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(HelperText))
+        {
+            <div class="bui-input__helper-text">
+                @HelperText
             </div>
         }
     </div>
-
-    @if (IsError && EditContext != null && ValueExpression != null)
-    {
-        <div class="bui-input__validation">
-            <ValidationMessage For="ValueExpression" />
-        </div>
-    }
-
-    @if (!string.IsNullOrWhiteSpace(HelperText))
-    {
-        <div class="bui-input__helper-text">
-            @HelperText
-        </div>
-    }
 </bui-component>
 
 @code {

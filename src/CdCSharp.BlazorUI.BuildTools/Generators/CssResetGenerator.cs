@@ -42,9 +42,6 @@ public class CssResetGenerator : IAssetGenerator
             --bui-h5-size: 0.83em;
             --bui-h6-size: 0.67em;
             /* UI states */
-            --bui-focus-color: Highlight;
-            --bui-focus-width: 2px;
-            --bui-focus-offset: 2px;
             --bui-disabled-opacity: 0.5;
             --bui-placeholder-opacity: 0.6;
             /* Separators */
@@ -246,12 +243,6 @@ public class CssResetGenerator : IAssetGenerator
             cursor: pointer;
         }
 
-        /* Disabled state */
-        :where(button, input, select, textarea):disabled {
-            cursor: default;
-            opacity: var(--bui-disabled-opacity);
-        }
-
         /* Autofill (WebKit) */
         :where(input, textarea, select):-webkit-autofill {
             box-shadow: 0 0 0 1000px transparent inset !important;
@@ -272,8 +263,8 @@ public class CssResetGenerator : IAssetGenerator
         }
 
         :focus-visible {
-            outline: var(--bui-focus-width) solid var(--bui-focus-color);
-            outline-offset: var(--bui-focus-offset);
+            outline: none;
+            outline-offset: 0;
         }
 
         /* Touch interaction */

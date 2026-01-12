@@ -1,4 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Css
 @using Microsoft.AspNetCore.Components.Forms
@@ -16,6 +17,8 @@
 @implements IHasDensity
 @implements IHasElevation
 @implements IHasBorder
+
+@implements IInputFamilyComponent
 
 @{
     base.BuildRenderTree(__builder);
@@ -167,50 +170,52 @@
     private RenderFragment RenderSelect() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes" data-bui-multiple="@_isMultiple">
-            @if (!string.IsNullOrWhiteSpace(Label))
-            {
-                <label for="@_inputId" class="bui-input__label">
-                    @Label
-                    @if (Required)
-                    {
-                        <span class="bui-input__required">*</span>
-                    }
-                </label>
-            }
-
-            <div class="bui-select__container @(_isOpen ? "bui-select__container--open" : "")">
-                <div class="bui-select__trigger" @onclick="() => { if (!IsDisabled && !IsLoading) _isOpen = !_isOpen; }">
-                    <span class="bui-select__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-select__placeholder" : "")">
-                        @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
-                    </span>
-                    <span class="bui-select__arrow">
-                        <BUISvgIcon Icon="@(_isOpen? BUIIcons.MaterialIconsOutlined.i_arrow_drop_up : BUIIcons.MaterialIconsOutlined.i_arrow_drop_down)" Size="Size" />
-                    </span>
-                </div>
-
-                @if (_isOpen && Options != null)
+            <div class="bui-stack-column">
+                @if (!string.IsNullOrWhiteSpace(Label))
                 {
-                    <div class="bui-select__dropdown">
-                        @foreach (var option in Options)
+                    <label for="@_inputId" class="bui-input__label">
+                        @Label
+                        @if (Required)
                         {
-                            var isSelected = IsOptionSelected(option.Value);
-                            <div class="bui-select__option @(isSelected ? "bui-select__option--selected" : "")"
-                                 @onclick="() => HandleSelectOption(option.Value)">
-
-                                @if (_isMultiple)
-                                {
-                                    <BUISvgIcon Size="Size"
-                                                Icon="@(isSelected ? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
-                                                Class="bui-select__option-icon" />
-                                }
-
-                                <span class="bui-select__option-label">@option.Label</span>
-                            </div>
+                            <span class="bui-input__required">*</span>
                         }
-                    </div>
+                    </label>
                 }
+
+                <div class="bui-select__container @(_isOpen ? "bui-select__container--open" : "")">
+                    <div class="bui-select__trigger" @onclick="() => { if (!IsDisabled && !IsLoading) _isOpen = !_isOpen; }">
+                        <span class="bui-select__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-select__placeholder" : "")">
+                            @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
+                        </span>
+                        <span class="bui-select__arrow">
+                            <BUISvgIcon Icon="@(_isOpen? BUIIcons.MaterialIconsOutlined.i_arrow_drop_up : BUIIcons.MaterialIconsOutlined.i_arrow_drop_down)" Size="Size" />
+                        </span>
+                    </div>
+
+                    @if (_isOpen && Options != null)
+                    {
+                        <div class="bui-select__dropdown">
+                            @foreach (var option in Options)
+                            {
+                                var isSelected = IsOptionSelected(option.Value);
+                                <div class="bui-select__option @(isSelected ? "bui-select__option--selected" : "")"
+                                     @onclick="() => HandleSelectOption(option.Value)">
+
+                                    @if (_isMultiple)
+                                    {
+                                        <BUISvgIcon Size="Size"
+                                                    Icon="@(isSelected ? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
+                                                    Class="bui-select__option-icon" />
+                                    }
+
+                                    <span class="bui-select__option-label">@option.Label</span>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+                @* ... (HelperText y ValidationMessage) *@
             </div>
-            @* ... (HelperText y ValidationMessage) *@
         </bui-component>
     };
 

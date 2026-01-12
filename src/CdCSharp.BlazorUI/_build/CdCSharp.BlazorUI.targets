@@ -43,8 +43,7 @@
 
 		<MSBuild Projects="$(BuildToolsProject)"
 				 Targets="Build"
-				 Properties="Configuration=$(Configuration)"
-				 Condition="!Exists('$(BuildToolsExe)') AND !Exists('$(BuildToolsDll)')" />
+				 Properties="Configuration=$(Configuration)" />
 	</Target>
 	<!-- Clean target -->
 	<Target Name="CleanBlazorUIAssets" BeforeTargets="Clean">

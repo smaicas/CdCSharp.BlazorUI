@@ -1,6 +1,7 @@
 ﻿@using System.Globalization
 @using System.Text
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
@@ -16,6 +17,8 @@
 @implements IHasDensity
 @implements IHasElevation
 @implements IHasBorder
+
+@implements IInputFamilyComponent
 
 @{
     base.BuildRenderTree(__builder);
@@ -145,100 +148,102 @@
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-button-placement="@ButtonPlacement.ToString().ToLowerInvariant()">
-            @if (!string.IsNullOrWhiteSpace(Label))
-            {
-                <label for="@_inputId" class="bui-input__label">
-                    @Label
-                    @if (Required)
-                    {
-                        <span class="bui-input__required">*</span>
-                    }
-                </label>
-            }
-
-            <div class="bui-input-number__container">
-                @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Left)
+            <div class="bui-stack-column">
+                @if (!string.IsNullOrWhiteSpace(Label))
                 {
-                    @RenderStepButtons()
+                    <label for="@_inputId" class="bui-input__label">
+                        @Label
+                        @if (Required)
+                        {
+                            <span class="bui-input__required">*</span>
+                        }
+                    </label>
                 }
 
-                <div class="bui-input-number__input-wrapper">
-                    @if (!string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon))
+                <div class="bui-input-number__container">
+                    @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Left)
                     {
-                        <span class="bui-input-number__prefix">
-                            @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-                            {
-                                <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-                            }
-                            @if (!string.IsNullOrWhiteSpace(PrefixText))
-                            {
-                                <span>@PrefixText</span>
-                            }
-                        </span>
+                        @RenderStepButtons()
                     }
 
-                    <input @ref="_inputRef"
-                           type="text"
-                           inputmode="decimal"
-                           id="@_inputId"
-                           value="@_displayText"
-                           @oninput="HandleInput"
-                           @onkeydown="HandleKeyDown"
-                           @onkeydown:preventDefault="_preventKeyDown"
-                           @onwheel="HandleWheel"
-                           @onfocus="HandleFocus"
-                           @onblur="HandleBlur"
-                           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                           aria-describedby="@_helperTextId"
-                           aria-invalid="@IsError.ToString().ToLower()"
-                           aria-required="@Required.ToString().ToLower()"
-                           placeholder="@Placeholder"
-                           disabled="@IsDisabled"
-                           readonly="@ReadOnly"
-                           required="@Required"
-                           class="bui-input-number__input" />
+                    <div class="bui-input__wrapper">
+                        @if (!string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon))
+                        {
+                            <span class="bui-input-number__prefix">
+                                @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+                                {
+                                    <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
+                                }
+                                @if (!string.IsNullOrWhiteSpace(PrefixText))
+                                {
+                                    <span>@PrefixText</span>
+                                }
+                            </span>
+                        }
 
-                    @if (!string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon))
-                    {
-                        <span class="bui-input-number__suffix">
-                            @if (!string.IsNullOrWhiteSpace(SuffixText))
-                            {
-                                <span>@SuffixText</span>
-                            }
-                            @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-                            {
-                                <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-                            }
-                        </span>
-                    }
+                        <input @ref="_inputRef"
+                               type="text"
+                               inputmode="decimal"
+                               id="@_inputId"
+                               value="@_displayText"
+                               @oninput="HandleInput"
+                               @onkeydown="HandleKeyDown"
+                               @onkeydown:preventDefault="_preventKeyDown"
+                               @onwheel="HandleWheel"
+                               @onfocus="HandleFocus"
+                               @onblur="HandleBlur"
+                               aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+                               aria-describedby="@_helperTextId"
+                               aria-invalid="@IsError.ToString().ToLower()"
+                               aria-required="@Required.ToString().ToLower()"
+                               placeholder="@Placeholder"
+                               disabled="@IsDisabled"
+                               readonly="@ReadOnly"
+                               required="@Required" 
+                               class="bui-input__field"/>
 
-                    @if (IsLoading && LoadingIndicatorVariant != null)
+                        @if (!string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon))
+                        {
+                            <span class="bui-input-number__suffix">
+                                @if (!string.IsNullOrWhiteSpace(SuffixText))
+                                {
+                                    <span>@SuffixText</span>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+                                {
+                                    <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
+                                }
+                            </span>
+                        }
+
+                        @if (IsLoading && LoadingIndicatorVariant != null)
+                        {
+                            <div class="bui-input__loading">
+                                <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                            </div>
+                        }
+                    </div>
+
+                    @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Right)
                     {
-                        <div class="bui-input__loading">
-                            <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                        </div>
+                        @RenderStepButtons()
                     }
                 </div>
 
-                @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Right)
+                @if (IsError && EditContext != null && ValueExpression != null)
                 {
-                    @RenderStepButtons()
+                    <div class="bui-input__validation">
+                        <ValidationMessage For="ValueExpression" />
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(HelperText))
+                {
+                    <div id="@_helperTextId" class="bui-input__helper-text">
+                        @HelperText
+                    </div>
                 }
             </div>
-
-            @if (IsError && EditContext != null && ValueExpression != null)
-            {
-                <div class="bui-input__validation">
-                    <ValidationMessage For="ValueExpression" />
-                </div>
-            }
-
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div id="@_helperTextId" class="bui-input__helper-text">
-                    @HelperText
-                </div>
-            }
         </bui-component>
     };
 

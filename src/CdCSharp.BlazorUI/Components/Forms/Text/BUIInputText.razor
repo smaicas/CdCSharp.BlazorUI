@@ -1,5 +1,6 @@
 ﻿@using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
@@ -15,6 +16,8 @@
 @implements IHasElevation
 @implements IHasBorder
 @implements IHasRipple
+
+@implements IInputFamilyComponent
 
 @{
     base.BuildRenderTree(__builder);
@@ -98,53 +101,55 @@
 
     private RenderFragment RenderInputContent() => __builder =>
     {
-        @if (!string.IsNullOrWhiteSpace(Label))
-        {
-            <label for="@_inputId" class="bui-input__label">
-                @Label
-                @if (Required)
-                {
-                    <span class="ui-input__required">*</span>
-                }
-            </label>
-        }
-
-        <div class="bui-input__container" @ref="_inputContainer">
-            <input type="text"
-                   id="@_inputId"
-                   value="@CurrentValue"
-                   @onchange="HandleChange"
-                   @oninput="HandleInput"
-                   aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                   aria-describedby="@_helperTextId"
-                   aria-invalid="@IsError.ToString().ToLower()"
-                   aria-required="@Required.ToString().ToLower()"
-                   placeholder="@Placeholder"
-                   disabled="@IsDisabled"
-                   readonly="@ReadOnly"
-                   required="@Required" />
-
-            @if (IsLoading && LoadingIndicatorVariant != null)
+        <div class="bui-stack-column">
+            @if (!string.IsNullOrWhiteSpace(Label))
             {
-                <div class="bui-input__loading">
-                    <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                </div>
+                <label for="@_inputId" class="bui-input__label">
+                    @Label
+                    @if (Required)
+                    {
+                        <span class="ui-input__required">*</span>
+                    }
+                </label>
             }
 
-            @if (IsError && EditContext != null && ValueExpression != null)
+            <div class="bui-input__container" @ref="_inputContainer">
+                <input type="text"
+                       id="@_inputId"
+                       value="@CurrentValue"
+                       @onchange="HandleChange"
+                       @oninput="HandleInput"
+                       aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+                       aria-describedby="@_helperTextId"
+                       aria-invalid="@IsError.ToString().ToLower()"
+                       aria-required="@Required.ToString().ToLower()"
+                       placeholder="@Placeholder"
+                       disabled="@IsDisabled"
+                       readonly="@ReadOnly"
+                       required="@Required" />
+
+                @if (IsLoading && LoadingIndicatorVariant != null)
+                {
+                    <div class="bui-input__loading">
+                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                    </div>
+                }
+
+                @if (IsError && EditContext != null && ValueExpression != null)
+                {
+                    <div class="bui-input__validation">
+                        <ValidationMessage For="ValueExpression" />
+                    </div>
+                }
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
             {
-                <div class="bui-input__validation">
-                    <ValidationMessage For="ValueExpression" />
+                <div id="@_helperTextId" class="bui-input__helper-text">
+                    @HelperText
                 </div>
             }
         </div>
-
-        @if (!string.IsNullOrWhiteSpace(HelperText))
-        {
-            <div id="@_helperTextId" class="bui-input__helper-text">
-                @HelperText
-            </div>
-        }
     };
 
     /* ========= Event Handlers ========= */

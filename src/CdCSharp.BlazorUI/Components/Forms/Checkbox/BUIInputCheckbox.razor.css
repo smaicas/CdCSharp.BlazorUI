@@ -1,29 +1,25 @@
-﻿bui-component[data-bui-component="input-checkbox"] {
-    --bui-checkbox-scale: 1;
+﻿/* ============================================
+   BUIInputCheckbox.razor.css (REFACTORED)
+   
+   NOTE: This component does NOT use input-family
+   because it has unique visual structure (icon-based checkbox)
+   
+   REMOVED (now in common-classes.css):
+   - data-bui-size font-size adjustments (uses --bui-size-scale)
+   - data-bui-disabled base opacity (inherited)
+   
+   KEPT: All checkbox-specific styles (unique component)
+   ============================================ */
+
+bui-component[data-bui-component="input-checkbox"] {
+    --bui-checkbox-scale: var(--bui-size-scale, 1);
     --bui-checkbox-box-size: calc(20px * var(--bui-checkbox-scale));
     --bui-checkbox-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
 
-    bui-component[data-bui-component="input-checkbox"][data-bui-size="small"] {
-        --bui-checkbox-scale: 0.75;
-    }
-
-    bui-component[data-bui-component="input-checkbox"][data-bui-size="large"] {
-        --bui-checkbox-scale: 1.25;
-    }
-
     bui-component[data-bui-component="input-checkbox"] .bui-input__container {
         padding: calc(2px * var(--bui-density-spacing-multiplier, 1));
         cursor: pointer;
-    }
-
-    /* Hidden native input */
-    bui-component[data-bui-component="input-checkbox"] .bui-checkbox__input {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-        pointer-events: none;
     }
 
     /* Checkbox box */
@@ -45,16 +41,13 @@
     }
 
     /* Hover state */
-    bui-component[data-bui-component="input-checkbox"] .bui-input__container:hover .bui-checkbox__box {
+    bui-component[data-bui-component="input-checkbox"]:not([data-bui-disabled="true"]) .bui-input__container:hover .bui-checkbox__box {
         opacity: 0.8;
     }
 
-    /* Disabled state */
-    bui-component[data-bui-component="input-checkbox"][data-bui-disabled="true"] .bui-input__container {
-        cursor: not-allowed;
-        opacity: 0.5;
-    }
-
-    bui-component[data-bui-component="input-checkbox"][data-bui-disabled="true"] .bui-checkbox__label {
-        cursor: not-allowed;
+    /* Focus visible */
+    bui-component[data-bui-component="input-checkbox"] .bui-input__field:focus-visible + .bui-checkbox__box {
+        outline: 2px solid var(--palette-primary);
+        outline-offset: 2px;
+        border-radius: 2px;
     }

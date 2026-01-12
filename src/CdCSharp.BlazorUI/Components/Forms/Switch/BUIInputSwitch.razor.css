@@ -1,5 +1,17 @@
-﻿bui-component[data-bui-component="input-switch"] {
-    --bui-switch-scale: 1;
+﻿/* ============================================
+   BUIInputSwitch.razor.css (REFACTORED)
+   
+   NOTE: This component does NOT use input-family
+   because it has unique visual structure (track + thumb)
+   
+   REMOVED (now in common-classes.css):
+   - Base disabled opacity (inherited)
+   
+   OPTIMIZATION: Use --bui-size-scale from global
+   ============================================ */
+
+bui-component[data-bui-component="input-switch"] {
+    --bui-switch-scale: var(--bui-size-scale, 1);
     --bui-switch-track-width: calc(60px * var(--bui-switch-scale));
     --bui-switch-track-height: calc(32px * var(--bui-switch-scale));
     --bui-switch-thumb-size: calc(24px * var(--bui-switch-scale));
@@ -7,14 +19,6 @@
     --bui-switch-icon-size: calc(0.875rem * var(--bui-switch-scale));
     --bui-switch-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
-
-    bui-component[data-bui-component="input-switch"][data-bui-size="small"] {
-        --bui-switch-scale: 0.75;
-    }
-
-    bui-component[data-bui-component="input-switch"][data-bui-size="large"] {
-        --bui-switch-scale: 1.25;
-    }
 
     /* Hidden native input */
     bui-component[data-bui-component="input-switch"] .bui-switch__input {
@@ -75,7 +79,7 @@
     }
 
     /* Hover */
-    bui-component[data-bui-component="input-switch"] .bui-switch__track:hover .bui-switch__thumb {
+    bui-component[data-bui-component="input-switch"]:not([data-bui-disabled="true"]) .bui-switch__track:hover .bui-switch__thumb {
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
     }
 
@@ -85,10 +89,9 @@
         outline-offset: 2px;
     }
 
-    /* Disabled */
+    /* Disabled - track specific */
     bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] .bui-switch__track {
         cursor: not-allowed;
-        opacity: 0.5;
     }
 
     /* Label */

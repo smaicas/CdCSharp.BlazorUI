@@ -1,4 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Css
 
@@ -10,6 +11,8 @@
 @implements IHasSize
 @implements IHasColor
 @implements IHasDensity
+
+@implements IInputFamilyComponent
 
 @{
     base.BuildRenderTree(__builder);
@@ -115,16 +118,17 @@
     private RenderFragment RenderDefault() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes">
-            <div class="bui-input__container" @onclick="HandleClick">
+            <div class="bui-stack-row">
                 <input type="checkbox"
                        id="@_inputId"
                        checked="@IsChecked"
                        disabled="@IsDisabled"
                        @onclick:preventDefault="true"
                        aria-checked="@(IsIndeterminate ? "mixed" : IsChecked.ToString().ToLower())"
-                       class="bui-checkbox__input" />
+                       class="bui-input__field hidden" 
+                       @onclick="HandleClick" />
 
-                <span class="bui-checkbox__box" aria-hidden="true">
+                <span class="bui-checkbox__box" aria-hidden="true" @onclick="HandleClick">
                     @if (IsChecked)
                     {
                         <BUISvgIcon Icon="@GetCheckedIcon()" Size="Size" />
@@ -138,13 +142,14 @@
                         <BUISvgIcon Icon="@GetUncheckedIcon()" Size="Size" />
                     }
                 </span>
+
+                @if (!string.IsNullOrWhiteSpace(Label))
+                {
+                    <label for="@_inputId" class="bui-input__label">
+                        @Label
+                    </label>
+                }
             </div>
-            @if (!string.IsNullOrWhiteSpace(Label))
-            {
-                <label for="@_inputId" class="bui-checkbox__label">
-                    @Label
-                </label>
-            }
         </bui-component>
     };
 

@@ -35,6 +35,10 @@ public static class FeatureDefinitions
 
         // Behavior features
         public const string Ripple = "data-bui-ripple";
+
+        // Css families
+        public const string InputBase = "data-bui-input-base";
+        public const string DropdownBase = "data-bui-dropdown-base";
     }
 
     /// <summary>

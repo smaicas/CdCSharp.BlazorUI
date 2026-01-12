@@ -4,6 +4,7 @@
 @using CdCSharp.BlazorUI.Components.Layout
 @using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 
 @namespace CdCSharp.BlazorUI.Components.Forms
@@ -14,57 +15,61 @@
 @implements IHasSize
 @implements IHasDensity
 
+@implements IInputFamilyComponent
+
 <bui-component @attributes="ComputedAttributes">
-    @if (!string.IsNullOrWhiteSpace(Label))
-    {
-        <label class="bui-input-datetime__label" @onclick="HandleLabelClick">
-            @Label
-            @if (Required)
-            {
-                <span class="bui-input__required">*</span>
-            }
-        </label>
-    }
 
-    <div class="bui-input-datetime__wrapper">
-        <BUIDateTimePattern @ref="_patternRef"
-                            @bind-Text="@CurrentValueAsString"
-                            Format="@Format"
-                            Editable="@(!IsReadOnly)" />
-
-        @if (CanClear && !IsReadOnly)
+    <div class="bui-stack-column">
+        @if (!string.IsNullOrWhiteSpace(Label))
         {
-            <button type="button"
-                    class="bui-input-datetime__btn bui-input-datetime__btn--clear"
-                    @onclick="Clear"
-                    @onclick:preventDefault="true"
-                    @onclick:stopPropagation="true">
-                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
-            </button>
+            <label class="bui-input__label" @onclick="HandleLabelClick">
+                @Label
+                @if (Required)
+                {
+                    <span class="bui-input__required">*</span>
+                }
+            </label>
         }
 
-        <button type="button"
-                class="bui-input-datetime__btn"
-                @onclick="OpenPicker"
-                @onclick:preventDefault="true"
-                @onclick:stopPropagation="true"
-                disabled="@IsReadOnly">
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
-        </button>
-    </div>
+        <div class="bui-input__wrapper">
+            <BUIDateTimePattern @ref="_patternRef"
+                                @bind-Text="@CurrentValueAsString"
+                                Format="@Format"
+                                Editable="@(!IsReadOnly)" />
 
-    @if (EditContext != null && ValueExpression != null)
-    {
-        <div class="bui-input-datetime__validation">
-            <ValidationMessage For="ValueExpression" />
+            @if (CanClear && !IsReadOnly)
+            {
+                <button type="button"
+                        class="bui-input-datetime__btn bui-input-datetime__btn--clear"
+                        @onclick="Clear"
+                        @onclick:preventDefault="true"
+                        @onclick:stopPropagation="true">
+                    <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
+                </button>
+            }
+
+            <button type="button"
+                    class="bui-input-datetime__btn"
+                    @onclick="OpenPicker"
+                    @onclick:preventDefault="true"
+                    @onclick:stopPropagation="true"
+                    disabled="@IsReadOnly">
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
+            </button>
         </div>
-    }
 
-    @if (!string.IsNullOrWhiteSpace(HelperText))
-    {
-        <div class="bui-input-datetime__helper">@HelperText</div>
-    }
+        @if (EditContext != null && ValueExpression != null)
+        {
+            <div class="bui-input-datetime__validation">
+                <ValidationMessage For="ValueExpression" />
+            </div>
+        }
 
+        @if (!string.IsNullOrWhiteSpace(HelperText))
+        {
+            <div class="bui-input-datetime__helper">@HelperText</div>
+        }
+    </div>
     <BUIDialog @bind-Open="_isPickerOpen"
                Title="@GetPickerTitle()"
                Closable="true"

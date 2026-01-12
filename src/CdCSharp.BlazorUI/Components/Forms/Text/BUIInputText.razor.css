@@ -1,82 +1,21 @@
-﻿bui-component[data-bui-component="input-text"] {
-    display: flex;
-    flex-direction: column;
-    --bui-input-padding-y: 0.5rem;
-    --bui-input-padding-x: 0.75rem;
+﻿/* ============================================
+   BUIInputText.razor.css (REFACTORED)
+   
+   REMOVED (now in _input-family.css):
+   - display: flex; flex-direction: column
+   - Size variants (--bui-input-padding-y/x adjustments)
+   - Variant styles (outlined/filled/standard)
+   - Hover/focus states for variants
+   - Disabled/Error states
+   
+   REMAINING: Only component-specific mappings
+   ============================================ */
+
+/* Map the native input to use family styles */
+bui-component[data-bui-component="input-text"] input {
+    width: 100%;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1.5;
+    color: inherit;
 }
-
-    /* Base input styles */
-    bui-component[data-bui-component="input-text"] input {
-        width: 100%;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: 1.5;
-        color: inherit;
-        background-color: transparent;
-        transition: all 200ms ease-in-out;
-        padding: calc(var(--bui-input-padding-y) * var(--bui-density-spacing-multiplier, 1)) calc(var(--bui-input-padding-x) * var(--bui-density-spacing-multiplier, 1));
-    }
-
-    /* Size variations */
-    bui-component[data-bui-component="input-text"][data-bui-size="small"] {
-        --bui-input-padding-y: 0.375rem;
-        --bui-input-padding-x: 0.5rem;
-    }
-
-    bui-component[data-bui-component="input-text"][data-bui-size="large"] {
-        --bui-input-padding-y: 0.625rem;
-        --bui-input-padding-x: 1rem;
-    }
-
-    /* Variant: Outlined */
-    bui-component[data-bui-component="input-text"][data-bui-variant="outlined"] input {
-        border: 1px solid rgba(0, 0, 0, 0.23);
-        border-radius: 4px;
-    }
-
-        bui-component[data-bui-component="input-text"][data-bui-variant="outlined"] input:hover:not(:disabled) {
-            border-color: var(--palette-backgroundcontrast);
-        }
-
-        bui-component[data-bui-component="input-text"][data-bui-variant="outlined"] input:focus {
-            outline: none;
-            border-color: var(--palette-primary);
-            box-shadow: 0 0 0 1px var(--palette-primary);
-        }
-
-    /* Variant: Filled */
-    bui-component[data-bui-component="input-text"][data-bui-variant="filled"] input {
-        background-color: rgba(0, 0, 0, 0.06);
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-        border: none;
-        border-bottom: 2px solid transparent;
-    }
-
-        bui-component[data-bui-component="input-text"][data-bui-variant="filled"] input:hover:not(:disabled) {
-            background-color: rgba(0, 0, 0, 0.09);
-        }
-
-        bui-component[data-bui-component="input-text"][data-bui-variant="filled"] input:focus {
-            outline: none;
-            border-bottom-color: var(--palette-primary);
-        }
-
-    /* Variant: Standard */
-    bui-component[data-bui-component="input-text"][data-bui-variant="standard"] input {
-        border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.42);
-        border-radius: 0;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-        bui-component[data-bui-component="input-text"][data-bui-variant="standard"] input:hover:not(:disabled) {
-            border-bottom-color: var(--palette-backgroundcontrast);
-        }
-
-        bui-component[data-bui-component="input-text"][data-bui-variant="standard"] input:focus {
-            outline: none;
-            border-bottom-color: var(--palette-primary);
-            border-bottom-width: 2px;
-        }

@@ -1,5 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-using CdCSharp.BuildTools;
+﻿using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -11,228 +10,222 @@ namespace CdCSharp.BlazorUI.BuildTools.Generators;
 public class ComponentsCssGenerator : IAssetGenerator
 {
     public string Name => "Components CSS";
-
     public string FileName => "common-classes.css";
 
     public async Task<string> GetContent()
     {
         StringBuilder sb = new();
 
-        sb.AppendLine(@$"
+        sb.AppendLine("""
 /* ========================================
    Common Component Classes
    Auto-generated - Do not edit manually
    ======================================== */
 
-{FeatureDefinitions.Tags.Component} {{
+/* === BASE COMPONENT === */
+bui-component {
     display: inline-flex;
+    box-sizing: border-box;
+    
+    /* Base padding for density calculations */
+    --bui-padding-base: 0.5rem;
+    --bui-calculated-padding: calc(var(--bui-padding-y, --bui-padding-base) * var(--bui-density-spacing-multiplier, 1)) 
+             calc(var(--bui-padding-x, --bui-padding-base) * var(--bui-density-spacing-multiplier, 1));
+
+    /* Color variables with fallback */
+    background-color: var(--bui-background-color, inherit);
+    color: var(--bui-color, inherit);
+
+    /* Border system */
+    border-width: var(--bui-border-width, 0);
+    border-style: var(--bui-border-style, solid);
+    border-color: var(--bui-border-color, transparent);
+    border-radius: var(--bui-border-radius, 0);
+    
+    border-top-width: var(--bui-border-top-width, var(--bui-border-width, 0));
+    border-top-style: var(--bui-border-top-style, var(--bui-border-style, solid));
+    border-top-color: var(--bui-border-top-color, var(--bui-border-color, transparent));
+    
+    border-right-width: var(--bui-border-right-width, var(--bui-border-width, 0));
+    border-right-style: var(--bui-border-right-style, var(--bui-border-style, solid));
+    border-right-color: var(--bui-border-right-color, var(--bui-border-color, transparent));
+    
+    border-bottom-width: var(--bui-border-bottom-width, var(--bui-border-width, 0));
+    border-bottom-style: var(--bui-border-bottom-style, var(--bui-border-style, solid));
+    border-bottom-color: var(--bui-border-bottom-color, var(--bui-border-color, transparent));
+    
+    border-left-width: var(--bui-border-left-width, var(--bui-border-width, 0));
+    border-left-style: var(--bui-border-left-style, var(--bui-border-style, solid));
+    border-left-color: var(--bui-border-left-color, var(--bui-border-color, transparent));
+}
+
+/* === CONTAINERS === */
+
+bui-component .bui-stack-row{
+    display: inline-flex;
+    flex-direction: row;
     align-items: center;
     gap: calc(0.75rem * var(--bui-density-spacing-multiplier, 1));
     vertical-align: middle;
-    --bui-padding-base: 0.5rem; 
-    
-    /* Calculated padding to use by specific selectors */
-    --bui-calculated-padding: calc(var(--bui-padding-base) * var(--bui-density-spacing-multiplier, 1));
+    padding: var(--bui-calculated-padding, 0);
+}
 
-    /* Color variables with fallback to palette */");
-
-        sb.AppendLine($"    background-color: var({FeatureDefinitions.CssVariables.BackgroundColor}, inherit);");
-        sb.AppendLine($"    color: var({FeatureDefinitions.CssVariables.Color}, inherit);");
-        sb.AppendLine(@"}");
-        sb.AppendLine();
-
-        sb.AppendLine(@$"
-/* Component-specific BEM classes */
-.{FeatureDefinitions.CssClasses.InputLabel} {{
-    display: block;
-    margin-bottom: 0.25rem;
-    font-weight: 500;
-    color: inherit;
-}}
-
-.{FeatureDefinitions.CssClasses.InputRequired} {{
-    color: var(--palette-error);
-    margin-left: 0.125rem;
-}}
-
-.{FeatureDefinitions.CssClasses.InputContainer} {{
-    position: relative;
-    display: flex;
-    align-items: center;
-}}
-
-.{FeatureDefinitions.CssClasses.InputLoading} {{
+bui-component .bui-stack-column{
     display: inline-flex;
-}}
+    flex-direction: column;
+    align-items: center;
+    gap: calc(0.75rem * var(--bui-density-spacing-multiplier, 1));
+    vertical-align: middle;
+    padding: var(--bui-calculated-padding, 0);
+}
 
-.{FeatureDefinitions.CssClasses.InputValidation} {{
-    color: var(--palette-error);
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-}}
+/* === SIZE SYSTEM === */
+bui-component[data-bui-size="small"] {
+    --bui-size-scale: 0.875;
+    --bui-padding-scale: 0.75;
+    font-size: 0.875rem;
+}
 
-.{FeatureDefinitions.CssClasses.InputHelperText} {{
-    color: inherit;
-    opacity: 0.7;
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-}}
-");
+bui-component[data-bui-size="medium"] {
+    --bui-size-scale: 1;
+    --bui-padding-scale: 1;
+    font-size: 1rem;
+}
 
-        sb.AppendLine();
-        sb.AppendLine("/* Size Classes */");
-        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Small}\"] {{");
-        sb.AppendLine("    font-size: 0.875rem;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+bui-component[data-bui-size="large"] {
+    --bui-size-scale: 1.125;
+    --bui-padding-scale: 1.25;
+    font-size: 1.125rem;
+}
 
-        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Medium}\"] {{");
-        sb.AppendLine("    font-size: 1rem;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+/* === DENSITY SYSTEM === */
+bui-component[data-bui-density="compact"] {
+    --bui-density-spacing-multiplier: 0.5;
+}
 
-        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=\"{FeatureDefinitions.SizeValues.Large}\"] {{");
-        sb.AppendLine("    font-size: 1.125rem;");
-        sb.AppendLine("}");
-        sb.AppendLine(@"
-/* Density Classes */");
+bui-component[data-bui-density="standard"] {
+    --bui-density-spacing-multiplier: 1;
+}
 
-        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Comfortable}\"] {{");
-        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 1.5;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+bui-component[data-bui-density="comfortable"] {
+    --bui-density-spacing-multiplier: 1.5;
+}
 
-        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Standard}\"] {{");
-        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 1;");
-        sb.AppendLine("}");
-        sb.AppendLine();
+/* === UNIVERSAL STATES === */
 
-        sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Density}=\"{FeatureDefinitions.DensityValues.Compact}\"] {{");
-        sb.AppendLine($"    {FeatureDefinitions.CssVariables.DensitySpacingMultiplier}: 0.5;");
-        sb.AppendLine("}");
+/* Disabled */
+bui-component[data-bui-disabled="true"] {
+    cursor: not-allowed;
+    opacity: var(--bui-disabled-opacity, 0.6);
+    pointer-events: none;
+}
 
-        sb.AppendLine($@"
-/* Full Width */
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.FullWidth}=""true""] {{
-    width: 100%;
-}}
-
-/* Loading State */
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Loading}=""true""] {{
+/* Loading */
+bui-component[data-bui-loading="true"] {
     pointer-events: none;
     position: relative;
-}}
+}
 
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Loading}=""true""]::after {{
+bui-component[data-bui-loading="true"]::after {
     content: '';
     position: absolute;
     inset: 0;
     background-color: inherit;
     opacity: 0.3;
     pointer-events: none;
-}}
+}
 
-/* Elevation */");
+/* Full Width */
+bui-component[data-bui-fullwidth="true"] {
+    width: 100%;
+}
 
-        sb.Append(GenerateElevationClasses());
+/* Hidden */
 
-        sb.AppendLine($@"
-/* Ripple Effect */
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] {{
-    position: relative;
-    overflow: hidden;
-}}
-
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
+bui-component .hidden {
     position: absolute;
-    border-radius: 50%;
-    transform: scale(0);
-    animation: bui-ripple-animation var({FeatureDefinitions.CssVariables.RippleDuration}, 600ms) ease-out;
-    background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(255, 255, 255, 0.5));
+    opacity: 0;
+    width: 0;
+    height: 0;
     pointer-events: none;
-}}
+}
 
-[data-theme=""dark""] {FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
-    background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(255, 255, 255, 0.5));
-}}
-
-[data-theme=""light""] {FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Ripple}=""true""] .{FeatureDefinitions.CssClasses.Ripple} {{
-    background-color: var({FeatureDefinitions.CssVariables.RippleColor}, rgba(0, 0, 0, 0.5));
-}}
-
-/* Border styles using CSS variables */
-{FeatureDefinitions.Tags.Component} {{
-    border-width: var({FeatureDefinitions.CssVariables.BorderWidth}, 0);
-    border-style: var({FeatureDefinitions.CssVariables.BorderStyle}, solid);
-    border-color: var({FeatureDefinitions.CssVariables.BorderColor}, transparent);
-    border-radius: var({FeatureDefinitions.CssVariables.BorderRadius}, 0);
-    
-    /* Individual borders override */
-    border-top-width: var({FeatureDefinitions.CssVariables.BorderTopWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
-    border-top-style: var({FeatureDefinitions.CssVariables.BorderTopStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
-    border-top-color: var({FeatureDefinitions.CssVariables.BorderTopColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
-    
-    border-right-width: var({FeatureDefinitions.CssVariables.BorderRightWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
-    border-right-style: var({FeatureDefinitions.CssVariables.BorderRightStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
-    border-right-color: var({FeatureDefinitions.CssVariables.BorderRightColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
-    
-    border-bottom-width: var({FeatureDefinitions.CssVariables.BorderBottomWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
-    border-bottom-style: var({FeatureDefinitions.CssVariables.BorderBottomStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
-    border-bottom-color: var({FeatureDefinitions.CssVariables.BorderBottomColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
-    
-    border-left-width: var({FeatureDefinitions.CssVariables.BorderLeftWidth}, var({FeatureDefinitions.CssVariables.BorderWidth}, 0));
-    border-left-style: var({FeatureDefinitions.CssVariables.BorderLeftStyle}, var({FeatureDefinitions.CssVariables.BorderStyle}, solid));
-    border-left-color: var({FeatureDefinitions.CssVariables.BorderLeftColor}, var({FeatureDefinitions.CssVariables.BorderColor}, transparent));
-}}
-
-/* Generic SVG styles */
-{FeatureDefinitions.Tags.Component} svg {{
+/* === GENERIC SVG STYLES === */
+bui-component svg {
     fill: currentColor;
-}}
+}
 
-/* SVG sizing based on component size */
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Small}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+bui-component[data-bui-size="small"] svg:not([data-bui-component="svg-icon"] svg) {
     width: 1rem;
     height: 1rem;
-}}
+}
 
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Medium}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+bui-component[data-bui-size="medium"] svg:not([data-bui-component="svg-icon"] svg) {
     width: 1.25rem;
     height: 1.25rem;
-}}
+}
 
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Size}=""{FeatureDefinitions.SizeValues.Large}""] svg:not([{FeatureDefinitions.DataAttributes.Component}=""svg-icon""] svg) {{
+bui-component[data-bui-size="large"] svg:not([data-bui-component="svg-icon"] svg) {
     width: 1.5rem;
     height: 1.5rem;
-}}
+}
 
-/* Generic disabled states for form controls */
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Disabled}=""true""] input,
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Disabled}=""true""] textarea,
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Disabled}=""true""] select {{
-    cursor: not-allowed;
-    opacity: 0.6;
-}}
+/* === RIPPLE EFFECT === */
+bui-component[data-bui-ripple="true"] {
+    position: relative;
+    overflow: hidden;
+}
 
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] input,
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] textarea,
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.ReadOnly}=""true""] select {{
-    cursor: default;
-}}
+bui-component[data-bui-ripple="true"] .bui-ripple {
+    background-color: var(--bui-ripple-color, rgba(255, 255, 255, 0.5));
+}
 
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Error}=""true""] input,
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Error}=""true""] textarea,
-{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Error}=""true""] select {{
-    border-color: var(--palette-error);
-}}
+[data-theme="light"] bui-component[data-bui-ripple="true"] .bui-ripple {
+    background-color: var(--bui-ripple-color, rgba(0, 0, 0, 0.5));
+}
 
-@keyframes bui-ripple-animation {{
-    to {{
+@keyframes bui-ripple-animation {
+    to {
         transform: scale(4);
         opacity: 0;
-    }}
-}}
-");
+    }
+}
+
+/* === COMMON BEM CLASSES FOR INPUTS === */
+.bui-input__label {
+    cursor: pointer;
+    display: block;
+    font-weight: 500;
+    color: inherit;
+}
+
+.bui-input__required {
+    color: var(--palette-error);
+    margin-left: 0.125rem;
+}
+
+.bui-input__container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.bui-input__helper {
+    color: inherit;
+    opacity: 0.7;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.bui-input__validation {
+    color: var(--palette-error);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+""");
+
+        sb.AppendLine();
+        sb.Append(GenerateElevationClasses());
 
         return sb.ToString();
     }
@@ -240,35 +233,25 @@ public class ComponentsCssGenerator : IAssetGenerator
     private static string GenerateElevationClasses()
     {
         StringBuilder sb = new();
-
-        // Base elevation variable setup
-        sb.AppendLine($@"
-/* Elevation shadow color - uses custom color or falls back to theme shadow */
-{FeatureDefinitions.Tags.Component} {{
-    {FeatureDefinitions.CssVariables.ElevationShadowColor}: var(--palette-shadow, rgba(0, 0, 0, 1));
-}}
-");
+        sb.AppendLine("/* === ELEVATION SYSTEM === */");
 
         for (int i = 0; i <= 24; i++)
         {
             if (i == 0)
             {
-                sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
+                sb.AppendLine($"bui-component[data-bui-elevation=\"{i}\"] {{");
                 sb.AppendLine("    box-shadow: none;");
                 sb.AppendLine("}");
             }
             else
             {
                 (string umbra, string penumbra, string ambient) = GetElevationValues(i);
-                sb.AppendLine($"{FeatureDefinitions.Tags.Component}[{FeatureDefinitions.DataAttributes.Elevation}=\"{i}\"] {{");
+                sb.AppendLine($"bui-component[data-bui-elevation=\"{i}\"] {{");
                 sb.AppendLine($"    box-shadow: {umbra}, {penumbra}, {ambient};");
                 sb.AppendLine("}");
             }
 
-            if (i < 24)
-            {
-                sb.AppendLine();
-            }
+            if (i < 24) sb.AppendLine();
         }
 
         return sb.ToString();
@@ -278,16 +261,13 @@ public class ComponentsCssGenerator : IAssetGenerator
     {
         if (elevation == 0) return ("none", "", "");
 
-        // Use CSS color-mix or rgba with variable for dynamic shadow color
-        // We use the CSS variable with opacity applied via color-mix
-        string shadowColor = $"var({FeatureDefinitions.CssVariables.ElevationShadowColor})";
+        string shadowColor = "var(--bui-elevation-shadow-color, rgba(0, 0, 0, 1))";
 
         double umbraOffset = Math.Round(elevation * 0.5, 1);
         double umbraBlur = elevation;
         double penumbraOffset = elevation;
         double penumbraBlur = elevation * 2;
 
-        // Using color-mix to apply opacity to the shadow color variable
         string umbra = FormattableString.Invariant(
             $"0px {umbraOffset}px {umbraBlur}px color-mix(in srgb, {shadowColor} 20%, transparent)");
 
