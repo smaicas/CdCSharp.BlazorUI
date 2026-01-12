@@ -223,12 +223,12 @@
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
 
     // Variant & Styling (inherited from BUITable)
-    [Parameter] public BUITableVariant? Variant { get; set; }
-    [Parameter] public BUITableVariant? VariantXs { get; set; }
-    [Parameter] public BUITableVariant? VariantSm { get; set; }
-    [Parameter] public BUITableVariant? VariantMd { get; set; }
-    [Parameter] public BUITableVariant? VariantLg { get; set; }
-    [Parameter] public BUITableVariant? VariantXl { get; set; }
+    [Parameter] public TableVariant? Variant { get; set; }
+    [Parameter] public TableVariant? VariantXs { get; set; }
+    [Parameter] public TableVariant? VariantSm { get; set; }
+    [Parameter] public TableVariant? VariantMd { get; set; }
+    [Parameter] public TableVariant? VariantLg { get; set; }
+    [Parameter] public TableVariant? VariantXl { get; set; }
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
     [Parameter] public bool Hoverable { get; set; } = true;
 
@@ -280,16 +280,20 @@
         if (Hoverable)
             dataAttributes["data-bui-hoverable"] = "true";
 
-        if (VariantXs != null)
-            dataAttributes["data-bui-variant-xs"] = VariantXs.Name.ToLowerInvariant();
-        if (VariantSm != null)
-            dataAttributes["data-bui-variant-sm"] = VariantSm.Name.ToLowerInvariant();
-        if (VariantMd != null)
-            dataAttributes["data-bui-variant-md"] = VariantMd.Name.ToLowerInvariant();
-        if (VariantLg != null)
-            dataAttributes["data-bui-variant-lg"] = VariantLg.Name.ToLowerInvariant();
-        if (VariantXl != null)
-            dataAttributes["data-bui-variant-xl"] = VariantXl.Name.ToLowerInvariant();
+        if (VariantXs is not null)
+            dataAttributes["data-bui-variant-xs"] = VariantXs.Value.ToString().ToLowerInvariant();
+
+        if (VariantSm is not null)
+            dataAttributes["data-bui-variant-sm"] = VariantSm.Value.ToString().ToLowerInvariant();
+
+        if (VariantMd is not null)
+            dataAttributes["data-bui-variant-md"] = VariantMd.Value.ToString().ToLowerInvariant();
+
+        if (VariantLg is not null)
+            dataAttributes["data-bui-variant-lg"] = VariantLg.Value.ToString().ToLowerInvariant();
+
+        if (VariantXl is not null)
+            dataAttributes["data-bui-variant-xl"] = VariantXl.Value.ToString().ToLowerInvariant();
     }
 
     protected override void OnInitialized()
