@@ -4,6 +4,7 @@ using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State;
 using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions;
 using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+using CdCSharp.BlazorUI.Core.Components;
 using CdCSharp.BlazorUI.Core.Css;
 using Microsoft.AspNetCore.Components;
 using System.Text;
@@ -59,13 +60,13 @@ internal sealed class BUIComponentAttributesBuilder
         BuildTransitions(component, cssVariables);
 
         // ===== COMPONENT-SPECIFIC DATA ATTRIBUTES =====
-        if (component is BUIComponentBase buiComponent)
+        if (component is IBuiltComponent buiComponent)
         {
             buiComponent.BuildComponentDataAttributes(ComputedAttributes);
         }
 
         // ===== COMPONENT-SPECIFIC CSS VARIABLES =====
-        if (component is BUIComponentBase buiComponentForVars)
+        if (component is IBuiltComponent buiComponentForVars)
         {
             buiComponentForVars.BuildComponentCssVariables(cssVariables);
         }

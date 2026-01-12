@@ -1,35 +1,356 @@
 ﻿@page "/components/forms/input-text"
 
-<div style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 600px;">
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components.Forms
 
-    <h3>InputText - Tamaños</h3>
-    <BUIInputText @bind-Value="_value1" Label="Pequeño" Size="SizeEnum.Small" />
-    <BUIInputText @bind-Value="_value1" Label="Mediano" Size="SizeEnum.Medium" />
-    <BUIInputText @bind-Value="_value1" Label="Grande" Size="SizeEnum.Large" />
+<PageTitle>InputText - CdCSharp.BlazorUI</PageTitle>
 
-    <hr />
+<div class="doc-page">
+    <h1>BUIInputText</h1>
 
-    <h3>InputText - Variantes</h3>
-    <BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Outlined" Label="Outlined" Placeholder="Escribe algo..." />
-    <BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Filled" Label="Filled" Placeholder="Escribe algo..." />
-    <BUIInputText @bind-Value="_value1" Variant="BUIInputTextVariant.Standard" Label="Standard" Placeholder="Escribe algo..." />
+    <p class="doc-intro">
+        <strong>BUIInputText</strong> is a text input component with floating labels, multiple variants,
+        size options, and built-in validation support.
+    </p>
 
-    <hr />
+    <!-- BASIC USAGE -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BasicUsageDemo" />
+        <p class="demo-result">Value: <strong>"@_basicValue"</strong></p>
+    </section>
 
-    <h3>Estados y Feedback</h3>
-    <BUIInputText @bind-Value="_value1" Label="Con Texto de Ayuda" HelperText="Tu información está segura con nosotros." />
+    <!-- VARIANTS -->
+    <section class="doc-section">
+        <h2>Variants</h2>
+        <p>Three built-in variants with floating label animation:</p>
+        <ComponentDemo Definition="@VariantsDemo" />
+    </section>
 
-    <BUIInputText @bind-Value="_value1" Label="Estado de Carga"
-                  IsLoading="true"
-                  LoadingIndicatorVariant="BUILoadingIndicatorVariant.CircularProgress" />
+    <!-- SIZES -->
+    <section class="doc-section">
+        <h2>Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
 
-    <BUIInputText @bind-Value="_value1" Label="Deshabilitado" IsDisabled="true" Placeholder="No puedes editar esto" />
+    <!-- LABEL AND HELPER -->
+    <section class="doc-section">
+        <h2>Label and helper text</h2>
+        <ComponentDemo Definition="@LabelHelperDemo" />
+    </section>
 
-    <BUIInputText @bind-Value="_value1" Label="Actualización inmediata"
-                  UpdateOnInput="true"
-                  HelperText="@($"Valor actual: {_value1}")" />
+    <!-- PLACEHOLDER -->
+    <section class="doc-section">
+        <h2>With placeholder</h2>
+        <p>Placeholder is visible only when the label is floated (on focus or with value):</p>
+        <ComponentDemo Definition="@PlaceholderDemo" />
+    </section>
+
+    <!-- REQUIRED -->
+    <section class="doc-section">
+        <h2>Required field</h2>
+        <ComponentDemo Definition="@RequiredDemo" />
+    </section>
+
+    <!-- STATES -->
+    <section class="doc-section">
+        <h2>States</h2>
+        <ComponentDemo Definition="@StatesDemo" />
+    </section>
+
+    <!-- UPDATE ON INPUT -->
+    <section class="doc-section">
+        <h2>Update on input</h2>
+        <p>Use <code>UpdateOnInput="true"</code> to update the value on every keystroke instead of on blur:</p>
+        <ComponentDemo Definition="@UpdateOnInputDemo" />
+        <p class="demo-result">Current value: <strong>"@_realtimeValue"</strong></p>
+    </section>
+
+    <!-- DENSITY -->
+    <section class="doc-section">
+        <h2>Density</h2>
+        <ComponentDemo Definition="@DensityDemo" />
+    </section>
+
+    <!-- FULL WIDTH -->
+    <section class="doc-section">
+        <h2>Full width</h2>
+        <ComponentDemo Definition="@FullWidthDemo" />
+    </section>
+
+    <!-- PROPERTIES -->
+    <section class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable Properties="@InputTextProperties" />
+    </section>
 </div>
 
+<style>
+    .demo-result {
+        margin-top: 1rem;
+        padding: 0.5rem;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+        font-family: monospace;
+    }
+
+    [data-theme="dark"] .demo-result {
+        background: rgba(255, 255, 255, 0.05);
+    }
+</style>
+
 @code {
-    private string _value1 = string.Empty;
+    private string _basicValue = string.Empty;
+    private string _outlinedValue = string.Empty;
+    private string _filledValue = string.Empty;
+    private string _standardValue = string.Empty;
+    private string _smallValue = string.Empty;
+    private string _mediumValue = string.Empty;
+    private string _largeValue = string.Empty;
+    private string _helperValue = string.Empty;
+    private string _placeholderValue = string.Empty;
+    private string _requiredValue = string.Empty;
+    private string _disabledValue = "Cannot edit this";
+    private string _loadingValue = string.Empty;
+    private string _realtimeValue = string.Empty;
+    private string _comfortableValue = string.Empty;
+    private string _standardDensityValue = string.Empty;
+    private string _compactValue = string.Empty;
+    private string _fullWidthValue = string.Empty;
+
+    /* ===================== DEMOS ===================== */
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """
+<BUIInputText @bind-Value="value" Label="Name" />
+
+@code {
+    private string value = string.Empty;
+}
+"""
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Variant="BUIInputTextVariant.Outlined"
+              Label="Outlined" />
+
+<BUIInputText @bind-Value="value"
+              Variant="BUIInputTextVariant.Filled"
+              Label="Filled" />
+
+<BUIInputText @bind-Value="value"
+              Variant="BUIInputTextVariant.Standard"
+              Label="Standard" />
+"""
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """
+<BUIInputText @bind-Value="value" Size="SizeEnum.Small" Label="Small" />
+<BUIInputText @bind-Value="value" Size="SizeEnum.Medium" Label="Medium" />
+<BUIInputText @bind-Value="value" Size="SizeEnum.Large" Label="Large" />
+"""
+    };
+
+    private ComponentDemoDefinition LabelHelperDemo => new()
+    {
+        Demo = RenderLabelHelper(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Label="Email address"
+              HelperText="We'll never share your email with anyone else." />
+"""
+    };
+
+    private ComponentDemoDefinition PlaceholderDemo => new()
+    {
+        Demo = RenderPlaceholder(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Label="Search"
+              Placeholder="Type to search..." />
+"""
+    };
+
+    private ComponentDemoDefinition RequiredDemo => new()
+    {
+        Demo = RenderRequired(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Label="Username"
+              Required="true"
+              HelperText="This field is required" />
+"""
+    };
+
+    private ComponentDemoDefinition StatesDemo => new()
+    {
+        Demo = RenderStates(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Label="Disabled"
+              IsDisabled="true" />
+
+<BUIInputText @bind-Value="value"
+              Label="Loading"
+              IsLoading="true"
+              LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
+"""
+    };
+
+    private ComponentDemoDefinition UpdateOnInputDemo => new()
+    {
+        Demo = RenderUpdateOnInput(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Label="Real-time update"
+              UpdateOnInput="true"
+              HelperText="Updates on every keystroke" />
+"""
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """
+<BUIInputText @bind-Value="value" Density="DensityEnum.Comfortable" Label="Comfortable" />
+<BUIInputText @bind-Value="value" Density="DensityEnum.Standard" Label="Standard" />
+<BUIInputText @bind-Value="value" Density="DensityEnum.Compact" Label="Compact" />
+"""
+    };
+
+    private ComponentDemoDefinition FullWidthDemo => new()
+    {
+        Demo = RenderFullWidth(),
+        Code = """
+<BUIInputText @bind-Value="value"
+              Label="Full width input"
+              FullWidth="true" />
+"""
+    };
+
+    /* ===================== RENDER FRAGMENTS ===================== */
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputText @bind-Value="_basicValue" Label="Name" />
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputText @bind-Value="_outlinedValue"
+                          Variant="BUIInputTextVariant.Outlined"
+                          Label="Outlined" />
+
+            <BUIInputText @bind-Value="_filledValue"
+                          Variant="BUIInputTextVariant.Filled"
+                          Label="Filled" />
+
+            <BUIInputText @bind-Value="_standardValue"
+                          Variant="BUIInputTextVariant.Standard"
+                          Label="Standard" />
+        </div>
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" />
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" />
+        </div>
+    };
+
+    private RenderFragment RenderLabelHelper() => __builder =>
+    {
+        <BUIInputText @bind-Value="_helperValue"
+                      Label="Email address"
+                      HelperText="We'll never share your email with anyone else." />
+    };
+
+    private RenderFragment RenderPlaceholder() => __builder =>
+    {
+        <BUIInputText @bind-Value="_placeholderValue"
+                      Label="Search"
+                      Placeholder="Type to search..." />
+    };
+
+    private RenderFragment RenderRequired() => __builder =>
+    {
+        <BUIInputText @bind-Value="_requiredValue"
+                      Label="Username"
+                      Required="true"
+                      HelperText="This field is required" />
+    };
+
+    private RenderFragment RenderStates() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputText @bind-Value="_disabledValue"
+                          Label="Disabled"
+                          IsDisabled="true" />
+
+            <BUIInputText @bind-Value="_loadingValue"
+                          Label="Loading"
+                          IsLoading="true"
+                          LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner" />
+        </div>
+    };
+
+    private RenderFragment RenderUpdateOnInput() => __builder =>
+    {
+        <BUIInputText @bind-Value="_realtimeValue"
+                      Label="Real-time update"
+                      UpdateOnInput="true"
+                      HelperText="Updates on every keystroke" />
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <div class="demo-column">
+            <BUIInputText @bind-Value="_comfortableValue" Density="DensityEnum.Comfortable" Label="Comfortable" />
+            <BUIInputText @bind-Value="_standardDensityValue" Density="DensityEnum.Standard" Label="Standard" />
+            <BUIInputText @bind-Value="_compactValue" Density="DensityEnum.Compact" Label="Compact" />
+        </div>
+    };
+
+    private RenderFragment RenderFullWidth() => __builder =>
+    {
+        <BUIInputText @bind-Value="_fullWidthValue"
+                      Label="Full width input"
+                      FullWidth="true" />
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> InputTextProperties = new()
+    {
+        new("Value", "string", "-", "Current input value"),
+        new("ValueChanged", "EventCallback<string>", "-", "Value change callback"),
+        new("Variant", "BUIInputTextVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
+        new("Label", "string?", "null", "Floating label text"),
+        new("Placeholder", "string?", "null", "Placeholder text (visible when label is floated)"),
+        new("HelperText", "string?", "null", "Helper text below the input"),
+        new("Size", "SizeEnum", "Medium", "Input size (Small, Medium, Large)"),
+        new("Density", "DensityEnum", "Standard", "Spacing density (Compact, Standard, Comfortable)"),
+        new("UpdateOnInput", "bool", "false", "Update value on every keystroke instead of on blur"),
+        new("OnInput", "EventCallback<string>", "-", "Callback fired on every input event"),
+        new("Required", "bool", "false", "Mark field as required"),
+        new("IsDisabled", "bool", "false", "Disable the input"),
+        new("ReadOnly", "bool", "false", "Make the input read-only"),
+        new("IsLoading", "bool", "false", "Show loading indicator"),
+        new("LoadingIndicatorVariant", "BUILoadingIndicatorVariant?", "null", "Loading indicator style"),
+        new("FullWidth", "bool", "false", "Take full width of container"),
+        new("Elevation", "int?", "null", "Box shadow elevation (0-24)"),
+    };
 }

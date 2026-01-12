@@ -11,7 +11,7 @@ using Microsoft.JSInterop;
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 
 // Base class without variants
-public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable
+public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable, IBuiltComponent
 {
     private IJSObjectReference? _behaviorInstance;
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
@@ -129,6 +129,9 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
             await _behaviorInstance.DisposeAsync();
         }
     }
+
+    public virtual void BuildComponentCssVariables(Dictionary<string, string> cssVariables) { }
+    public virtual void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes) { }
 }
 
 // Base class with variants

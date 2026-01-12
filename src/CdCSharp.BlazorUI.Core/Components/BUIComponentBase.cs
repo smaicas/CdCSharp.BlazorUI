@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 
-public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable
+public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuiltComponent
 {
     private IJSObjectReference? _behaviorInstance;
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
