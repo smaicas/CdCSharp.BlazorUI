@@ -1,4 +1,4 @@
-﻿@* @* File: Pages/Components/Forms/InputTreeDropdownPage.razor *@
+﻿@* File: Pages/Components/Forms/InputTreeDropdownPage.razor *@
 @page "/components/forms/input-tree-dropdown"
 
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
@@ -38,6 +38,118 @@
         <h2>Label and helper text</h2>
         <ComponentDemo Definition="@LabelHelperDemo" />
     </section>
+
+    <!-- MULTIPLE SELECTION (DECLARATIVE) -->
+    <section class="doc-section">
+        <h2>Multiple selection (Declarative)</h2>
+        <p>Select multiple items with checkboxes:</p>
+        <ComponentDemo Definition="@MultipleDeclarativeDemo" />
+        <p class="demo-result">Selected: <strong>@string.Join(", ", _selectedMultipleDeclarative ?? Array.Empty<string>())</strong></p>
+    </section>
+
+    <!-- MULTIPLE SELECTION (DATA BINDING) -->
+    <section class="doc-section">
+        <h2>Multiple selection (Data binding)</h2>
+        <p>Multiple selection with data-bound items:</p>
+        <ComponentDemo Definition="@MultipleBindingDemo" />
+        <p class="demo-result">Selected: <strong>@string.Join(", ", _selectedMultipleCategories?.Select(c => c.Name) ?? Array.Empty<string>())</strong></p>
+    </section>
+
+    <!-- SEARCHABLE -->
+    <section class="doc-section">
+        <h2>Searchable</h2>
+        <p>Enable search to filter tree items:</p>
+        <ComponentDemo Definition="@SearchableDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedSearchable?.Name ?? "None")</strong></p>
+    </section>
+
+    <!-- CUSTOM CONTENT (DECLARATIVE) -->
+    <section class="doc-section">
+        <h2>Custom content (Declarative)</h2>
+        <p>Customize node content using ChildContent:</p>
+        <ComponentDemo Definition="@CustomContentDeclarativeDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedCustomDeclarative ?? "None")</strong></p>
+    </section>
+
+    <!-- NODE TEMPLATE (DATA BINDING) -->
+    <section class="doc-section">
+        <h2>Node template (Data binding)</h2>
+        <p>Use NodeTemplate to customize node rendering:</p>
+        <ComponentDemo Definition="@NodeTemplateDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedNodeTemplate?.Name ?? "None")</strong></p>
+    </section>
+
+    <!-- INITIALLY EXPANDED -->
+    <section class="doc-section">
+        <h2>Initially expanded nodes</h2>
+        <p>Expand nodes by default using InitiallyExpanded:</p>
+        <ComponentDemo Definition="@InitiallyExpandedDemo" />
+    </section>
+
+    <!-- EXPAND TO SELECTION -->
+    <section class="doc-section">
+        <h2>Expand to selection</h2>
+        <p>Automatically expand tree to show selected item:</p>
+        <ComponentDemo Definition="@ExpandToSelectionDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedExpandToSelection ?? "None")</strong></p>
+    </section>
+
+    <!-- DISABLED OPTIONS -->
+    <section class="doc-section">
+        <h2>Disabled options</h2>
+        <p>Disable specific tree nodes:</p>
+        <ComponentDemo Definition="@DisabledOptionsDemo" />
+    </section>
+
+    <!-- ICONS -->
+    <section class="doc-section">
+        <h2>With icons</h2>
+        <p>Add icons to tree nodes:</p>
+        <ComponentDemo Definition="@IconsDemo" />
+    </section>
+
+    <!-- LAZY LOADING -->
+    <section class="doc-section">
+        <h2>Lazy loading</h2>
+        <p>Load children on demand using OnLoadChildren:</p>
+        <ComponentDemo Definition="@LazyLoadingDemo" />
+        <p class="demo-result">Selected: <strong>@(_selectedLazyLoading?.Name ?? "None")</strong></p>
+    </section>
+
+    <!-- SIZES -->
+    <section class="doc-section">
+        <h2>Sizes</h2>
+        <p>Available sizes: Small, Medium (default), Large:</p>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <!-- VARIANTS -->
+    <section class="doc-section">
+        <h2>Variants</h2>
+        <p>Available variants: Outlined (default), Filled, Standard:</p>
+        <ComponentDemo Definition="@VariantsDemo" />
+    </section>
+
+    <!-- PLACEMENT -->
+    <section class="doc-section">
+        <h2>Placement</h2>
+        <p>Control menu placement: Auto (default), Top, Bottom:</p>
+        <ComponentDemo Definition="@PlacementDemo" />
+    </section>
+
+    <!-- STATES -->
+    <section class="doc-section">
+        <h2>States</h2>
+        <p>Component states: Disabled, Loading:</p>
+        <ComponentDemo Definition="@StatesDemo" />
+    </section>
+
+    <!-- FULL WIDTH -->
+    <section class="doc-section">
+        <h2>Full width</h2>
+        <p>Expand to fill container width:</p>
+        <ComponentDemo Definition="@FullWidthDemo" />
+    </section>
 </div>
 
 @code {
@@ -54,7 +166,7 @@
     private string[]? _selectedMultipleDeclarative = [];
 
     // Multiple binding
-    private Category[]? _selectedMultipleCategories = [];
+    private Category[] _selectedMultipleCategories = [];
 
     // Searchable
     private Category? _selectedSearchable;
@@ -74,10 +186,21 @@
     // Disabled options
     private string? _selectedWithDisabled;
 
+    // Icons
+    private string? _selectedWithIcons;
+
+    // Lazy loading
+    private LazyCategory? _selectedLazyLoading;
+
     // Sizes
     private string? _sizeSmall;
     private string? _sizeMedium;
     private string? _sizeLarge;
+
+    // Variants
+    private string? _variantOutlined;
+    private string? _variantFilled;
+    private string? _variantStandard;
 
     // Placement
     private string? _placementAuto;
@@ -88,11 +211,11 @@
     private string? _stateDisabled;
     private string? _stateLoading;
 
-    // Lazy loading
-    private LazyCategory? _selectedLazyLoading;
+    // Full width
+    private string? _fullWidth;
 
     // Sample data
-    private List<Category> Categories = new()
+    private Category[] Categories = new List<Category>
     {
         new Category("electronics", "Electronics", null, new List<Category>
         {
@@ -126,7 +249,7 @@
             new Category("furniture", "Furniture", "home", null, 78),
             new Category("decor", "Decor", "home", null, 156)
         }, 234)
-    };
+    }.ToArray();
 
     private List<LazyCategory> LazyCategories = new()
     {
@@ -140,7 +263,7 @@
 
     private async Task<IEnumerable<LazyCategory>> LoadLazyChildren(LazyCategory parent)
     {
-        await Task.Delay(800); // Simulate network delay
+        await Task.Delay(800);
 
         return parent.Id switch
         {
@@ -231,6 +354,294 @@
 """
     };
 
+    private ComponentDemoDefinition MultipleDeclarativeDemo => new()
+    {
+        Demo = RenderMultipleDeclarative(),
+        Code = """
+<BUIInputTreeDropdown TValue="string[]" @bind-Value="selected" Placeholder="Select categories">
+    <BUITreeDropdownItem TValue="string" Value="electronics" Text="Electronics">
+        <BUITreeDropdownItem TValue="string" Value="phones" Text="Phones" />
+        <BUITreeDropdownItem TValue="string" Value="computers" Text="Computers" />
+    </BUITreeDropdownItem>
+    <BUITreeDropdownItem TValue="string" Value="clothing" Text="Clothing">
+        <BUITreeDropdownItem TValue="string" Value="mens" Text="Men's" />
+        <BUITreeDropdownItem TValue="string" Value="womens" Text="Women's" />
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+
+@code {
+    private string[]? selected = [];
+}
+"""
+    };
+
+    private ComponentDemoDefinition MultipleBindingDemo => new()
+    {
+        Demo = RenderMultipleBinding(),
+        Code = """
+<BUIInputTreeDropdown TValue="Category[]"
+                      Items="categories"
+                      KeySelector="c => c.Id"
+                      TextSelector="c => c.Name"
+                      ChildrenSelector="c => c.Children"
+                      @bind-Value="selectedCategories"
+                      Placeholder="Select categories" />
+
+@code {
+    private Category[]? selectedCategories = [];
+}
+"""
+    };
+
+    private ComponentDemoDefinition SearchableDemo => new()
+    {
+        Demo = RenderSearchable(),
+        Code = """
+<BUIInputTreeDropdown TValue="Category"
+                      Items="categories"
+                      KeySelector="c => c.Id"
+                      TextSelector="c => c.Name"
+                      ChildrenSelector="c => c.Children"
+                      @bind-Value="selectedCategory"
+                      Searchable="true"
+                      SearchPlaceholder="Search categories..."
+                      Placeholder="Select category" />
+"""
+    };
+
+    private ComponentDemoDefinition CustomContentDeclarativeDemo => new()
+    {
+        Demo = RenderCustomContentDeclarative(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="selected" Placeholder="Select item">
+    <BUITreeDropdownItem TValue="string" Value="parent1" Text="Parent 1">
+        <ChildContent>
+            <BUISvgIcon Icon="@BUIIcons.UI.Folder" Size="SizeEnum.Small" />
+            <span style="font-weight: 600;">Parent 1</span>
+            <span style="opacity: 0.6; font-size: 0.875rem;">(3 items)</span>
+        </ChildContent>
+        <BUITreeDropdownItem TValue="string" Value="child1" Text="Child 1">
+            <ChildContent>
+                <BUISvgIcon Icon="@BUIIcons.UI.File" Size="SizeEnum.Small" />
+                <span>Child 1</span>
+            </ChildContent>
+        </BUITreeDropdownItem>
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition NodeTemplateDemo => new()
+    {
+        Demo = RenderNodeTemplate(),
+        Code = """
+<BUIInputTreeDropdown TValue="Category"
+                      Items="categories"
+                      KeySelector="c => c.Id"
+                      TextSelector="c => c.Name"
+                      ChildrenSelector="c => c.Children"
+                      @bind-Value="selectedCategory"
+                      Placeholder="Select category">
+    <NodeTemplate Context="node">
+        <span style="font-weight: 500;">@node.Text</span>
+        @if (node.Item?.ItemCount > 0)
+        {
+            <span style="opacity: 0.6; font-size: 0.875rem; margin-left: auto;">
+                (@node.Item.ItemCount items)
+            </span>
+        }
+    </NodeTemplate>
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition InitiallyExpandedDemo => new()
+    {
+        Demo = RenderInitiallyExpanded(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="selected" Placeholder="Select item">
+    <BUITreeDropdownItem TValue="string" Value="electronics" Text="Electronics" InitiallyExpanded="true">
+        <BUITreeDropdownItem TValue="string" Value="phones" Text="Phones" />
+        <BUITreeDropdownItem TValue="string" Value="computers" Text="Computers" InitiallyExpanded="true">
+            <BUITreeDropdownItem TValue="string" Value="laptops" Text="Laptops" />
+            <BUITreeDropdownItem TValue="string" Value="desktops" Text="Desktops" />
+        </BUITreeDropdownItem>
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition ExpandToSelectionDemo => new()
+    {
+        Demo = RenderExpandToSelection(),
+        Code = """
+<BUIInputTreeDropdown TValue="string"
+                      @bind-Value="selected"
+                      ExpandToSelection="true"
+                      Placeholder="Select item">
+    <BUITreeDropdownItem TValue="string" Value="electronics" Text="Electronics">
+        <BUITreeDropdownItem TValue="string" Value="computers" Text="Computers">
+            <BUITreeDropdownItem TValue="string" Value="laptops" Text="Laptops" />
+        </BUITreeDropdownItem>
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+
+@code {
+    // Pre-selected deep value
+    private string? selected = "laptops";
+}
+"""
+    };
+
+    private ComponentDemoDefinition DisabledOptionsDemo => new()
+    {
+        Demo = RenderDisabledOptions(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="selected" Placeholder="Select item">
+    <BUITreeDropdownItem TValue="string" Value="option1" Text="Option 1" />
+    <BUITreeDropdownItem TValue="string" Value="option2" Text="Option 2 (Disabled)" IsDisabled="true" />
+    <BUITreeDropdownItem TValue="string" Value="parent" Text="Parent">
+        <BUITreeDropdownItem TValue="string" Value="child1" Text="Child 1" />
+        <BUITreeDropdownItem TValue="string" Value="child2" Text="Child 2 (Disabled)" IsDisabled="true" />
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        Demo = RenderIcons(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="selected" Placeholder="Select item">
+    <BUITreeDropdownItem TValue="string" Value="electronics" Text="Electronics" Icon="@BUIIcons.UI.Folder">
+        <BUITreeDropdownItem TValue="string" Value="phones" Text="Phones" Icon="@BUIIcons.UI.Phone" />
+        <BUITreeDropdownItem TValue="string" Value="computers" Text="Computers" Icon="@BUIIcons.UI.Monitor" />
+    </BUITreeDropdownItem>
+    <BUITreeDropdownItem TValue="string" Value="clothing" Text="Clothing" Icon="@BUIIcons.UI.Folder">
+        <BUITreeDropdownItem TValue="string" Value="mens" Text="Men's" Icon="@BUIIcons.UI.User" />
+        <BUITreeDropdownItem TValue="string" Value="womens" Text="Women's" Icon="@BUIIcons.UI.User" />
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition LazyLoadingDemo => new()
+    {
+        Demo = RenderLazyLoading(),
+        Code = """
+<BUIInputTreeDropdown TValue="LazyCategory"
+                      Items="lazyCategories"
+                      KeySelector="c => c.Id"
+                      TextSelector="c => c.Name"
+                      HasChildrenSelector="c => c.HasChildren"
+                      OnLoadChildren="LoadLazyChildren"
+                      @bind-Value="selectedLazyCategory"
+                      Placeholder="Select category" />
+
+@code {
+    private LazyCategory? selectedLazyCategory;
+
+    public record LazyCategory(string Id, string Name, bool HasChildren);
+
+    private async Task<IEnumerable<LazyCategory>> LoadLazyChildren(LazyCategory parent)
+    {
+        await Task.Delay(800);
+
+        return parent.Id switch
+        {
+            "root1" => new[] { new LazyCategory("a1", "Sub A-1", false) },
+            _ => Enumerable.Empty<LazyCategory>()
+        };
+    }
+}
+"""
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="small" Size="SizeEnum.Small" Placeholder="Small">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string" @bind-Value="medium" Placeholder="Medium (default)">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string" @bind-Value="large" Size="SizeEnum.Large" Placeholder="Large">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="outlined" Placeholder="Outlined (default)">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string" @bind-Value="filled" Variant="InputVariantEnum.Filled" Placeholder="Filled">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string" @bind-Value="standard" Variant="InputVariantEnum.Standard" Placeholder="Standard">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition PlacementDemo => new()
+    {
+        Demo = RenderPlacement(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="auto" Placement="DropdownPlacement.Auto" Placeholder="Auto (default)">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string" @bind-Value="top" Placement="DropdownPlacement.Top" Placeholder="Top">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string" @bind-Value="bottom" Placement="DropdownPlacement.Bottom" Placeholder="Bottom">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition StatesDemo => new()
+    {
+        Demo = RenderStates(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="disabled" IsDisabled="true" Placeholder="Disabled">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+
+<BUIInputTreeDropdown TValue="string"
+                      @bind-Value="loading"
+                      IsLoading="true"
+                      LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner"
+                      Placeholder="Loading">
+    <BUITreeDropdownItem TValue="string" Value="opt1" Text="Option 1" />
+</BUIInputTreeDropdown>
+"""
+    };
+
+    private ComponentDemoDefinition FullWidthDemo => new()
+    {
+        Demo = RenderFullWidth(),
+        Code = """
+<BUIInputTreeDropdown TValue="string" @bind-Value="selected" FullWidth="true" Placeholder="Full width dropdown">
+    <BUITreeDropdownItem TValue="string" Value="electronics" Text="Electronics">
+        <BUITreeDropdownItem TValue="string" Value="phones" Text="Phones" />
+        <BUITreeDropdownItem TValue="string" Value="computers" Text="Computers" />
+    </BUITreeDropdownItem>
+</BUIInputTreeDropdown>
+"""
+    };
+
     /* ===================== RENDER FRAGMENTS ===================== */
 
     private RenderFragment RenderBasicDeclarative() => __builder =>
@@ -275,4 +686,254 @@
         </BUIInputTreeDropdown>
     };
 
+    private RenderFragment RenderMultipleDeclarative() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string[]" @bind-Value="_selectedMultipleDeclarative" Placeholder="Select categories">
+            <BUITreeDropdownItem TValue="string" Value="@("electronics")" Text="Electronics">
+                <BUITreeDropdownItem TValue="string" Value="@("phones")" Text="Phones" />
+                <BUITreeDropdownItem TValue="string" Value="@("computers")" Text="Computers" />
+            </BUITreeDropdownItem>
+            <BUITreeDropdownItem TValue="string" Value="@("clothing")" Text="Clothing">
+                <BUITreeDropdownItem TValue="string" Value="@("mens")" Text="Men's" />
+                <BUITreeDropdownItem TValue="string" Value="@("womens")" Text="Women's" />
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderMultipleBinding() => __builder =>
+{
+    <BUIInputTreeDropdown TValue="Category[]"
+                          Items="Categories"
+                          KeySelector="c => c.Id"
+                          TextSelector="c => c.Name"
+                          ChildrenSelector="c => c.Children"
+                          @bind-Value="_selectedMultipleCategories"
+                          Placeholder="Select categories" />
+};
+
+    private RenderFragment RenderSearchable() => __builder =>
+{
+    <BUIInputTreeDropdown TValue="Category"
+                          Items="Categories"
+                          KeySelector="c => c.Id"
+                          TextSelector="c => c.Name"
+                          ChildrenSelector="c => c.Children"
+                          @bind-Value="_selectedSearchable"
+                          Searchable="true"
+                          SearchPlaceholder="Search categories..."
+                          Placeholder="Select category" />
+};
+
+    private RenderFragment RenderCustomContentDeclarative() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string" @bind-Value="_selectedCustomDeclarative" Placeholder="Select item">
+            <BUITreeDropdownItem TValue="string" Value="@("parent1")" Text="Parent 1">
+                <ChildContent>
+                    <BUISvgIcon Icon="@BUIIcons.UI.Folder" Size="SizeEnum.Small" />
+                    <span style="font-weight: 600;">Parent 1</span>
+                    <span style="opacity: 0.6; font-size: 0.875rem;">(3 items)</span>
+                </ChildContent>
+                <NodeContent>
+                    <BUITreeDropdownItem TValue="string" Value="@("child1")" Text="Child 1">
+                        <ChildContent>
+                            <BUISvgIcon Icon="@BUIIcons.UI.File" Size="SizeEnum.Small" />
+                            <span>Child 1</span>
+                        </ChildContent>
+                    </BUITreeDropdownItem>
+                    <BUITreeDropdownItem TValue="string" Value="@("child2")" Text="Child 2">
+                        <ChildContent>
+                            <BUISvgIcon Icon="@BUIIcons.UI.File" Size="SizeEnum.Small" />
+                            <span>Child 2</span>
+                        </ChildContent>
+                    </BUITreeDropdownItem>
+                    <BUITreeDropdownItem TValue="string" Value="@("child3")" Text="Child 3">
+                        <ChildContent>
+                            <BUISvgIcon Icon="@BUIIcons.UI.File" Size="SizeEnum.Small" />
+                            <span>Child 3</span>
+                        </ChildContent>
+                    </BUITreeDropdownItem>
+                </NodeContent>
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderNodeTemplate() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="Category"
+                              Items="Categories"
+                              KeySelector="c => c.Id"
+                              TextSelector="c => c.Name"
+                              ChildrenSelector="c => c.Children"
+                              @bind-Value="_selectedNodeTemplate"
+                              Placeholder="Select category">
+            <NodeTemplate Context="node">
+                <span style="font-weight: 500;">@node.Text</span>
+                @if (node.Item?.ItemCount > 0)
+                {
+                    <span style="opacity: 0.6; font-size: 0.875rem; margin-left: auto;">
+                        (@node.Item.ItemCount items)
+                    </span>
+                }
+            </NodeTemplate>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderInitiallyExpanded() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string" @bind-Value="_selectedInitiallyExpanded" Placeholder="Select item">
+            <BUITreeDropdownItem TValue="string" Value="@("electronics")" Text="Electronics" InitiallyExpanded="true">
+                <BUITreeDropdownItem TValue="string" Value="@("phones")" Text="Phones" />
+                <BUITreeDropdownItem TValue="string" Value="@("computers")" Text="Computers" InitiallyExpanded="true">
+                    <BUITreeDropdownItem TValue="string" Value="@("laptops")" Text="Laptops" />
+                    <BUITreeDropdownItem TValue="string" Value="@("desktops")" Text="Desktops" />
+                </BUITreeDropdownItem>
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderExpandToSelection() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string"
+                              @bind-Value="_selectedExpandToSelection"
+                              ExpandToSelection="true"
+                              Placeholder="Select item">
+            <BUITreeDropdownItem TValue="string" Value="@("electronics")" Text="Electronics">
+                <BUITreeDropdownItem TValue="string" Value="@("computers")" Text="Computers">
+                    <BUITreeDropdownItem TValue="string" Value="@("laptops")" Text="Laptops" />
+                    <BUITreeDropdownItem TValue="string" Value="@("desktops")" Text="Desktops" />
+                </BUITreeDropdownItem>
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderDisabledOptions() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string" @bind-Value="_selectedWithDisabled" Placeholder="Select item">
+            <BUITreeDropdownItem TValue="string" Value="@("option1")" Text="Option 1" />
+            <BUITreeDropdownItem TValue="string" Value="@("option2")" Text="Option 2 (Disabled)" IsDisabled="true" />
+            <BUITreeDropdownItem TValue="string" Value="@("parent")" Text="Parent">
+                <BUITreeDropdownItem TValue="string" Value="@("child1")" Text="Child 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("child2")" Text="Child 2 (Disabled)" IsDisabled="true" />
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string" @bind-Value="_selectedWithIcons" Placeholder="Select item">
+            <BUITreeDropdownItem TValue="string" Value="@("electronics")" Text="Electronics" Icon="@BUIIcons.UI.Folder">
+                <BUITreeDropdownItem TValue="string" Value="@("phones")" Text="Phones" Icon="@BUIIcons.UI.Phone" />
+                <BUITreeDropdownItem TValue="string" Value="@("computers")" Text="Computers" Icon="@BUIIcons.UI.Monitor" />
+            </BUITreeDropdownItem>
+            <BUITreeDropdownItem TValue="string" Value="@("clothing")" Text="Clothing" Icon="@BUIIcons.UI.Folder">
+                <BUITreeDropdownItem TValue="string" Value="@("mens")" Text="Men's" Icon="@BUIIcons.UI.User" />
+                <BUITreeDropdownItem TValue="string" Value="@("womens")" Text="Women's" Icon="@BUIIcons.UI.User" />
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
+
+    private RenderFragment RenderLazyLoading() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="LazyCategory"
+                              Items="LazyCategories"
+                              KeySelector="c => c.Id"
+                              TextSelector="c => c.Name"
+                              HasChildrenSelector="c => c.HasChildren"
+                              OnLoadChildren="LoadLazyChildren"
+                              @bind-Value="_selectedLazyLoading"
+                              Placeholder="Select category" />
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_sizeSmall" Size="SizeEnum.Small" Placeholder="Small">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_sizeMedium" Placeholder="Medium (default)">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_sizeLarge" Size="SizeEnum.Large" Placeholder="Large">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_variantOutlined" Placeholder="Outlined (default)">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_variantFilled" Variant="InputVariantEnum.Filled" Placeholder="Filled">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_variantStandard" Variant="InputVariantEnum.Standard" Placeholder="Standard">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderPlacement() => __builder =>
+    {
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_placementAuto" Placement="DropdownPlacement.Auto" Placeholder="Auto (default)">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_placementTop" Placement="DropdownPlacement.Top" Placeholder="Top">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_placementBottom" Placement="DropdownPlacement.Bottom" Placeholder="Bottom">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderStates() => __builder =>
+    {
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <BUIInputTreeDropdown TValue="string" @bind-Value="_stateDisabled" IsDisabled="true" Placeholder="Disabled">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+
+            <BUIInputTreeDropdown TValue="string"
+                                  @bind-Value="_stateLoading"
+                                  IsLoading="true"
+                                  LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner"
+                                  Placeholder="Loading">
+                <BUITreeDropdownItem TValue="string" Value="@("opt1")" Text="Option 1" />
+                <BUITreeDropdownItem TValue="string" Value="@("opt2")" Text="Option 2" />
+            </BUIInputTreeDropdown>
+        </div>
+    };
+
+    private RenderFragment RenderFullWidth() => __builder =>
+    {
+        <BUIInputTreeDropdown TValue="string" @bind-Value="_fullWidth" FullWidth="true" Placeholder="Full width dropdown">
+            <BUITreeDropdownItem TValue="string" Value="@("electronics")" Text="Electronics">
+                <BUITreeDropdownItem TValue="string" Value="@("phones")" Text="Phones" />
+                <BUITreeDropdownItem TValue="string" Value="@("computers")" Text="Computers" />
+            </BUITreeDropdownItem>
+            <BUITreeDropdownItem TValue="string" Value="@("clothing")" Text="Clothing">
+                <BUITreeDropdownItem TValue="string" Value="@("mens")" Text="Men's" />
+                <BUITreeDropdownItem TValue="string" Value="@("womens")" Text="Women's" />
+            </BUITreeDropdownItem>
+        </BUIInputTreeDropdown>
+    };
 }

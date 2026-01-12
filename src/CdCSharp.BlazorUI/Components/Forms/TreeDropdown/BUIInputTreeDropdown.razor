@@ -1,4 +1,5 @@
-﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+﻿@* File: Components/Forms/TreeDropdown/BUIInputTreeDropdown.razor *@
+@using CdCSharp.BlazorUI.Components.Forms.Dropdown
 @using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
@@ -28,7 +29,8 @@
 }
 
 <bui-component @attributes="ComputedAttributes"
-               data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()">
+               data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()"
+               data-bui-input-dropdown-open="@_isOpen">
 
     @if (_isDeclarativeMode)
     {
@@ -40,7 +42,7 @@
     <div class="bui-stack-column">
         @if (!string.IsNullOrWhiteSpace(Label))
         {
-            <label class="bui-input__label">
+            <label for="@_componentId" class="bui-input__label">
                 @Label
                 @if (Required)
                 {
@@ -51,13 +53,14 @@
 
         @if (_structureBuilt)
         {
-            <div class="bui-dropdown__container">
-                <button type="button"
-                        class="bui-dropdown__trigger"
+            <div class="bui-input__wrapper">
+                <button id="@_componentId"
+                        type="button"
+                        class="bui-input__field"
                         @ref="_triggerElement"
                         @onclick="ToggleDropdownAsync"
                         disabled="@(IsDisabled || IsLoading)"
-                        aria-expanded="@_isOpen"
+                        aria-expanded="@(_isOpen ? "true" : "false")"
                         aria-haspopup="tree">
 
                     <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
@@ -529,8 +532,10 @@
              data-depth="@node.Depth"
              data-key="@node.Key">
 
-            <div class="bui-tree-dropdown__node-content"
+            <div class="bui-dropdown__option bui-tree-dropdown__node-content"
                  style="padding-left: calc(@(node.Depth) * var(--bui-tree-dropdown-indent, 1.25rem))"
+                 role="treeitem"
+                 aria-selected="@isSelected"
                  @onclick="() => HandleNodeClickAsync(node)"
                  @onclick:stopPropagation="true">
 
@@ -558,15 +563,13 @@
 
                 @if (_typeResolver.IsMultiple)
                 {
-                    <span class="bui-tree-dropdown__checkbox @(isSelected ? "bui-tree-dropdown__checkbox--checked" : "")">
-                        @if (isSelected)
-                        {
-                            <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="Size" />
-                        }
+                    <span class="bui-dropdown__checkbox">
+                        <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
+                                    Size="@Size" />
                     </span>
                 }
 
-                <div class="bui-tree-dropdown__node-label">
+                <span class="bui-dropdown__option-content bui-tree-dropdown__node-label">
                     @if (_isDeclarativeMode && node.CustomContent != null)
                     {
                         @node.CustomContent
@@ -583,12 +586,7 @@
                         }
                         <span class="bui-tree-dropdown__node-text">@node.Text</span>
                     }
-                </div>
-
-                @if (!_typeResolver.IsMultiple && isSelected)
-                {
-                    <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="Size" class="bui-tree-dropdown__check-icon" />
-                }
+                </span>
             </div>
 
             @if (node.HasChildren && isExpanded)
@@ -607,35 +605,28 @@
     {
         bool isSelected = IsNodeSelected(node);
 
-        <div class="bui-tree-dropdown__node bui-tree-dropdown__node--flat @(node.IsDisabled ? "bui-tree-dropdown__node--disabled" : "") @(isSelected ? "bui-tree-dropdown__node--selected" : "")"
+        <div class="bui-dropdown__option bui-tree-dropdown__node--flat @(node.IsDisabled ? "bui-dropdown__option--disabled" : "") @(isSelected ? "bui-dropdown__option--selected" : "")"
              data-key="@node.Key"
+             role="treeitem"
+             aria-selected="@isSelected"
              @onclick="() => HandleNodeClickAsync(node)"
              @onclick:stopPropagation="true">
 
-            <div class="bui-tree-dropdown__node-content">
-                @if (_typeResolver.IsMultiple)
-                {
-                    <span class="bui-tree-dropdown__checkbox @(isSelected ? "bui-tree-dropdown__checkbox--checked" : "")">
-                        @if (isSelected)
-                        {
-                            <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="Size" />
-                        }
-                    </span>
-                }
+            @if (_typeResolver.IsMultiple)
+            {
+                <span class="bui-dropdown__checkbox">
+                    <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
+                                Size="@Size" />
+                </span>
+            }
 
-                <div class="bui-tree-dropdown__node-label">
-                    @if (!string.IsNullOrEmpty(node.Icon))
-                    {
-                        <BUISvgIcon Icon="@node.Icon" Size="Size" class="bui-tree-dropdown__node-icon" />
-                    }
-                    <span class="bui-tree-dropdown__node-text">@GetNodePath(node)</span>
-                </div>
-
-                @if (!_typeResolver.IsMultiple && isSelected)
+            <span class="bui-dropdown__option-content bui-tree-dropdown__node-label">
+                @if (!string.IsNullOrEmpty(node.Icon))
                 {
-                    <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="Size" class="bui-tree-dropdown__check-icon" />
+                    <BUISvgIcon Icon="@node.Icon" Size="Size" class="bui-tree-dropdown__node-icon" />
                 }
-            </div>
+                <span class="bui-tree-dropdown__node-text">@GetNodePath(node)</span>
+            </span>
         </div>
     };
 
@@ -736,6 +727,7 @@
         }
         StateHasChanged();
     }
+
     private async Task LoadChildrenAsync(TreeDropdownNode<TValue> node)
     {
         if (OnLoadChildren == null || node.Item == null) return;
