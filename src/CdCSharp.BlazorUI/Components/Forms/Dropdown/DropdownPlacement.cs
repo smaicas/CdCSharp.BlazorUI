@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Forms.Dropdown;
+﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
 public enum DropdownPlacement
 {

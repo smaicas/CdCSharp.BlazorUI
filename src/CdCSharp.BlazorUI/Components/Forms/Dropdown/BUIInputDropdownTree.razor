@@ -1,0 +1,486 @@
+﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+@using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Components.Selection
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components.Forms
+
+@typeparam TItem
+@typeparam TValue
+
+@inherits BUIInputComponentBase<TValue, BUIInputDropdownTree<TItem, TValue>, BUIInputDropdownTreeVariant>
+@implements IHasSize
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasDensity
+@implements IHasElevation
+@implements IHasBorder
+@implements IDropdownJsCallback
+@implements IInputFamilyComponent
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private readonly string _componentId = $"bui-dropdown-tree-{Guid.NewGuid():N}";
+    private readonly SelectionTypeInfo _typeInfo;
+    private HashSet<string> _internalSelectedKeys = new();
+
+    private bool _isOpen;
+    private ElementReference _triggerElement;
+    private ElementReference _menuElement;
+    private DropdownCallbacksRelay? _callbacksRelay;
+    private bool _jsInitialized;
+    private DropdownPlacement _computedPlacement;
+    private BUITreeSelector<TItem>? _treeSelectorRef;
+
+    private readonly RenderFragment _defaultNoOptionsTemplate;
+
+    [Inject] private IDropdownJsInterop JsInterop { get; set; } = default!;
+
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool FullWidth { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public int? Elevation { get; set; }
+    [Parameter] public CssColor? ElevationColor { get; set; }
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public BorderStyle? BorderTop { get; set; }
+    [Parameter] public BorderStyle? BorderRight { get; set; }
+    [Parameter] public BorderStyle? BorderBottom { get; set; }
+    [Parameter] public BorderStyle? BorderLeft { get; set; }
+
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+
+    [Parameter] public DropdownPlacement Placement { get; set; } = DropdownPlacement.Auto;
+    [Parameter] public int MaxMenuHeight { get; set; } = 320;
+    [Parameter] public bool CloseOnSelect { get; set; } = true;
+
+    [Parameter, EditorRequired] public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] public Func<TItem, string>? KeySelector { get; set; }
+    [Parameter] public Func<TItem, IEnumerable<TItem>?>? ChildrenSelector { get; set; }
+    [Parameter] public Func<TItem, bool>? HasChildrenSelector { get; set; }
+    [Parameter] public Func<TItem, Task<IEnumerable<TItem>>>? OnLoadChildren { get; set; }
+    [Parameter] public RenderFragment<TreeSelectionNode<TItem>>? NodeTemplate { get; set; }
+    [Parameter] public Func<TItem, string>? DisplayTextSelector { get; set; }
+
+    [Parameter] public bool ShowCheckboxes { get; set; } = true;
+    [Parameter] public bool ExpandAll { get; set; }
+    [Parameter] public bool AnimateExpand { get; set; } = true;
+    [Parameter] public HashSet<string>? ExpandedKeys { get; set; }
+    [Parameter] public EventCallback<HashSet<string>> ExpandedKeysChanged { get; set; }
+
+    [Parameter] public TreeSelectionCascade SelectionCascade { get; set; } = TreeSelectionCascade.None;
+
+    [Parameter] public RenderFragment? NoOptionsTemplate { get; set; }
+
+    public bool IsMultiple => _typeInfo.IsMultiple;
+
+    public override BUIInputDropdownTreeVariant DefaultVariant => BUIInputDropdownTreeVariant.Outlined;
+
+    protected override IReadOnlyDictionary<BUIInputDropdownTreeVariant, Func<BUIInputDropdownTree<TItem, TValue>, RenderFragment>> BuiltInTemplates { get; } =
+       new Dictionary<BUIInputDropdownTreeVariant, Func<BUIInputDropdownTree<TItem, TValue>, RenderFragment>>
+       {
+           [BUIInputDropdownTreeVariant.Outlined] = i => i.RenderInput(),
+           [BUIInputDropdownTreeVariant.Filled] = i => i.RenderInput(),
+           [BUIInputDropdownTreeVariant.Standard] = i => i.RenderInput()
+       };
+
+    public BUIInputDropdownTree()
+    {
+        _typeInfo = new SelectionTypeInfo(typeof(TValue));
+
+        _defaultNoOptionsTemplate = builder =>
+        {
+            builder.AddContent(0, "No options available");
+        };
+    }
+
+    private RenderFragment RenderInput() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes"
+                       data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()"
+                       data-bui-input-dropdown-open="@_isOpen">
+
+            <div class="bui-stack-column">
+                @if (!string.IsNullOrWhiteSpace(Label))
+                {
+                    <label for="@_componentId" class="bui-input__label">
+                        @Label
+                        @if (Required)
+                        {
+                            <span class="bui-input__required">*</span>
+                        }
+                    </label>
+                }
+
+                <div class="bui-input__wrapper">
+                    <button id="@_componentId"
+                            type="button"
+                            class="bui-input__field"
+                            @ref="_triggerElement"
+                            @onclick="ToggleDropdownAsync"
+                            disabled="@(IsDisabled || IsLoading)"
+                            aria-expanded="@(_isOpen ? "true" : "false")"
+                            aria-haspopup="tree">
+
+                        <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
+                            @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
+                        </span>
+
+                        <span class="bui-dropdown__arrow">
+                            <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
+                        </span>
+
+                        @if (IsLoading && LoadingIndicatorVariant != null)
+                        {
+                            <div class="bui-input__loading">
+                                <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                            </div>
+                        }
+                    </button>
+
+                    @if (_isOpen)
+                    {
+                        <div class="bui-dropdown__overlay" @onclick="CloseAsync" @onclick:stopPropagation="true"></div>
+
+                        <div class="bui-dropdown__menu bui-dropdown__menu--tree"
+                             @ref="_menuElement"
+                             role="tree"
+                             style="max-height: @(MaxMenuHeight)px;">
+
+                            <BUITreeSelector TItem="TItem"
+                                             Items="@Items"
+                                             KeySelector="@KeySelector"
+                                             ChildrenSelector="@ChildrenSelector"
+                                             HasChildrenSelector="@HasChildrenSelector"
+                                             OnLoadChildren="@OnLoadChildren"
+                                             NodeTemplate="@NodeTemplate"
+                                             SelectedKeys="@_internalSelectedKeys"
+                                             SelectedKeysChanged="@OnTreeSelectionChangedAsync"
+                                             SelectionMode="@(IsMultiple ? TreeSelectionMode.Multiple : TreeSelectionMode.Single)"
+                                             Size="@Size"
+                                             ShowCheckboxes="@ShowCheckboxes"
+                                             ExpandAll="@ExpandAll"
+                                             ExpandedKeys="@ExpandedKeys"
+                                             ExpandedKeysChanged="@ExpandedKeysChanged"
+                                             AnimateExpand="@AnimateExpand"
+                                             @ref="_treeSelectorRef" />
+
+                            @if (Items == null || !Items.Any())
+                            {
+                                <div class="bui-dropdown__no-options">
+                                    @(NoOptionsTemplate ?? _defaultNoOptionsTemplate)
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @if (IsError && EditContext != null && ValueExpression != null)
+                {
+                    <div class="bui-input__validation">
+                        <ValidationMessage For="ValueExpression" />
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(HelperText))
+                {
+                    <div class="bui-input__helper-text">
+                        @HelperText
+                    </div>
+                }
+            </div>
+        </bui-component>
+    };
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        SyncSelectionFromValue();
+    }
+
+    private void SyncSelectionFromValue()
+    {
+        _internalSelectedKeys.Clear();
+
+        if (CurrentValue == null) return;
+
+        IEnumerable<object> values = _typeInfo.ExtractValues(CurrentValue);
+
+        foreach (object value in values)
+        {
+            string? key = FindKeyForValue(value);
+            if (key != null)
+                _internalSelectedKeys.Add(key);
+        }
+    }
+
+    private string? FindKeyForValue(object value)
+    {
+        if (Items == null || KeySelector == null) return null;
+
+        return FindKeyRecursive(Items, value);
+    }
+
+    private string? FindKeyRecursive(IEnumerable<TItem> items, object value)
+    {
+        foreach (TItem item in items)
+        {
+            if (Equals(item, value))
+                return KeySelector!(item);
+
+            if (ChildrenSelector != null)
+            {
+                IEnumerable<TItem>? children = ChildrenSelector(item);
+                if (children != null)
+                {
+                    string? found = FindKeyRecursive(children, value);
+                    if (found != null) return found;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private TItem? FindItemByKey(string key)
+    {
+        if (Items == null || KeySelector == null) return default;
+
+        return FindItemByKeyRecursive(Items, key);
+    }
+
+    private TItem? FindItemByKeyRecursive(IEnumerable<TItem> items, string key)
+    {
+        foreach (TItem item in items)
+        {
+            if (KeySelector!(item) == key)
+                return item;
+
+            if (ChildrenSelector != null)
+            {
+                IEnumerable<TItem>? children = ChildrenSelector(item);
+                if (children != null)
+                {
+                    TItem? found = FindItemByKeyRecursive(children, key);
+                    if (found != null) return found;
+                }
+            }
+        }
+
+        return default;
+    }
+
+    private string GetDisplayValue()
+    {
+        if (_internalSelectedKeys.Count == 0)
+            return string.Empty;
+
+        if (!IsMultiple || _internalSelectedKeys.Count == 1)
+        {
+            string key = _internalSelectedKeys.First();
+            TItem? item = FindItemByKey(key);
+
+            if (item != null)
+            {
+                if (DisplayTextSelector != null)
+                    return DisplayTextSelector(item);
+                return item.ToString() ?? key;
+            }
+
+            return key;
+        }
+
+        return $"{_internalSelectedKeys.Count} selected";
+    }
+
+    private async Task OnTreeSelectionChangedAsync(HashSet<string> selectedKeys)
+    {
+        HashSet<string> newKeys = ApplySelectionCascade(selectedKeys);
+        _internalSelectedKeys = newKeys;
+
+        List<object> selectedValues = new();
+        foreach (string key in _internalSelectedKeys)
+        {
+            TItem? item = FindItemByKey(key);
+            if (item != null)
+                selectedValues.Add(item);
+        }
+
+        CurrentValue = _typeInfo.CreateValue<TValue>(selectedValues);
+
+        if (!IsMultiple && CloseOnSelect && _internalSelectedKeys.Count > 0)
+        {
+            await CloseAsync();
+        }
+    }
+
+    private HashSet<string> ApplySelectionCascade(HashSet<string> selectedKeys)
+    {
+        if (SelectionCascade == TreeSelectionCascade.None)
+            return selectedKeys;
+
+        HashSet<string> result = new(selectedKeys);
+
+        foreach (string key in selectedKeys.ToList())
+        {
+            TreeSelectionNode<TItem>? node = _treeSelectorRef?.GetNode(key);
+            if (node == null) continue;
+
+            if (SelectionCascade == TreeSelectionCascade.Children || SelectionCascade == TreeSelectionCascade.Both)
+            {
+                AddDescendantKeys(node, result);
+            }
+
+            if (SelectionCascade == TreeSelectionCascade.Parents || SelectionCascade == TreeSelectionCascade.Both)
+            {
+                AddAncestorKeys(node, result);
+            }
+        }
+
+        return result;
+    }
+
+    private void AddDescendantKeys(TreeSelectionNode<TItem> node, HashSet<string> keys)
+    {
+        foreach (TreeSelectionNode<TItem> child in node.ChildrenInternal)
+        {
+            if (!child.IsDisabled)
+            {
+                keys.Add(child.Key);
+                AddDescendantKeys(child, keys);
+            }
+        }
+    }
+
+    private void AddAncestorKeys(TreeSelectionNode<TItem> node, HashSet<string> keys)
+    {
+        TreeSelectionNode<TItem>? parent = node.ParentNode;
+        while (parent != null)
+        {
+            if (!parent.IsDisabled)
+                keys.Add(parent.Key);
+            parent = parent.ParentNode;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (_isOpen && !_jsInitialized)
+        {
+            _callbacksRelay ??= new DropdownCallbacksRelay(this);
+            await JsInterop.InitializeAsync(_triggerElement, _menuElement, _callbacksRelay.DotNetReference, _componentId);
+            _jsInitialized = true;
+
+            if (Placement == DropdownPlacement.Auto)
+            {
+                await ComputePlacementAsync();
+            }
+        }
+    }
+
+    private async Task ComputePlacementAsync()
+    {
+        DropdownPosition position = await JsInterop.GetPositionAsync(_componentId);
+        double spaceBelow = position.ViewportHeight - position.TriggerTop - position.TriggerHeight;
+        double spaceAbove = position.TriggerTop;
+
+        _computedPlacement = spaceBelow >= MaxMenuHeight || spaceBelow >= spaceAbove
+            ? DropdownPlacement.Bottom
+            : DropdownPlacement.Top;
+
+        StateHasChanged();
+    }
+
+    private DropdownPlacement GetEffectivePlacement()
+        => Placement == DropdownPlacement.Auto ? _computedPlacement : Placement;
+
+    private async Task ToggleDropdownAsync()
+    {
+        if (IsDisabled || IsLoading) return;
+
+        if (_isOpen)
+            await CloseAsync();
+        else
+            await OpenAsync();
+    }
+
+    private Task OpenAsync()
+    {
+        _isOpen = true;
+        _computedPlacement = Placement == DropdownPlacement.Auto ? DropdownPlacement.Bottom : Placement;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task CloseAsync()
+    {
+        if (!_isOpen) return;
+
+        _isOpen = false;
+        _jsInitialized = false;
+
+        if (_callbacksRelay != null)
+        {
+            await JsInterop.DisposeAsync(_componentId);
+        }
+
+        StateHasChanged();
+    }
+
+    Task IDropdownJsCallback.OnClickOutside() => CloseAsync();
+
+    async Task IDropdownJsCallback.OnKeyDown(string key, bool shiftKey, bool ctrlKey)
+    {
+        switch (key)
+        {
+            case "Escape":
+            case "Tab":
+                await CloseAsync();
+                break;
+        }
+    }
+
+    async Task<DropdownPosition> IDropdownJsCallback.OnRequestPosition()
+        => await JsInterop.GetPositionAsync(_componentId);
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+        result = default!;
+        return true;
+    }
+
+    public void ExpandAllNodes() => _treeSelectorRef?.ExpandAllNodes();
+
+    public void CollapseAllNodes() => _treeSelectorRef?.CollapseAllNodes();
+
+    public void ClearSelection()
+    {
+        _internalSelectedKeys.Clear();
+        _treeSelectorRef?.ClearSelection();
+        CurrentValue = default!;
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        if (_jsInitialized)
+        {
+            await JsInterop.DisposeAsync(_componentId);
+        }
+
+        _callbacksRelay?.Dispose();
+        await base.DisposeAsync();
+    }
+}

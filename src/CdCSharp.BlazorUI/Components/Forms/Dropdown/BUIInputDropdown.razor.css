@@ -78,8 +78,8 @@
         overflow-y: auto;
         overflow-x: hidden;
         z-index: 1000;
-        width: min-content;
-        min-width: 100%;
+        min-width: max-content;
+        max-width: min(400px, 90vw);
     }
 
     /* Search */

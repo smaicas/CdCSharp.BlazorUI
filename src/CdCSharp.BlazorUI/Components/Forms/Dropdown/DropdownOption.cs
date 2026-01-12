@@ -1,10 +1,11 @@
 ﻿// File: Components/Forms/Dropdown/DropdownOption.cs
 using CdCSharp.BlazorUI.Components.Forms.Dropdown;
+using CdCSharp.BlazorUI.Core.Components.Selection;
 using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Forms;
 
-public class DropdownOption<TOption> : ComponentBase, IDropdownOption, IDisposable
+public class DropdownOption<TOption> : ComponentBase, ISelectionOption, IDisposable
 {
     [CascadingParameter] public IDropdownContainer? Container { get; set; }
 
@@ -13,11 +14,10 @@ public class DropdownOption<TOption> : ComponentBase, IDropdownOption, IDisposab
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    // IDropdownOption
-    object? IDropdownOption.RawValue => Value;
-    string IDropdownOption.DisplayText => Text ?? Value?.ToString() ?? string.Empty;
-    bool IDropdownOption.IsDisabled => Disabled;
-    RenderFragment? IDropdownOption.Content => ChildContent ?? (builder => builder.AddContent(0, Text ?? Value?.ToString()));
+    object? ISelectionOption.Value => Value;
+    string ISelectionOption.DisplayText => Text ?? Value?.ToString() ?? string.Empty;
+    bool ISelectionOption.IsDisabled => Disabled;
+    RenderFragment? ISelectionOption.Content => ChildContent ?? (builder => builder.AddContent(0, Text ?? Value?.ToString()));
 
     protected override void OnInitialized()
     {
