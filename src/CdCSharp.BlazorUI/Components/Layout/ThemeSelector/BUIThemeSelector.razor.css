@@ -34,7 +34,6 @@
 
     /* Default variant */
     bui-component[data-bui-component="theme-selector"][data-bui-variant="default"] button {
-        padding: calc(0.5rem * var(--bui-density-spacing-multiplier, 1)) calc(1rem * var(--bui-density-spacing-multiplier, 1));
         border-radius: 0.5rem;
         min-width: 120px;
         height: 40px;
@@ -48,7 +47,7 @@
     bui-component[data-bui-component="theme-selector"][data-bui-variant="default"] .bui-theme-switch__content {
         display: inline-flex;
         align-items: center;
-        gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
+        gap: var(--bui-density-gap);
         transition: opacity 0.3s ease, transform 0.3s ease;
     }
 

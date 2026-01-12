@@ -89,18 +89,18 @@
             cssVariables["--bui-grid-max-width"] = MaxWidth;
 
         string baseGap = NormalizeGapValue(Gap ?? "1rem");
-        cssVariables["--bui-grid-gap"] = $"calc({baseGap} * var(--bui-density-spacing-multiplier, 1))";
+        cssVariables["--bui-grid-gap"] = $"calc({baseGap} * var(--bui-density-gap, 1))";
 
         if (RowGap != null)
-            cssVariables["--bui-grid-row-gap"] = $"calc({NormalizeGapValue(RowGap)} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables["--bui-grid-row-gap"] = $"calc({NormalizeGapValue(RowGap)} * var(--bui-density-gap, 1))";
         if (ColumnGap != null)
-            cssVariables["--bui-grid-column-gap"] = $"calc({NormalizeGapValue(ColumnGap)} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables["--bui-grid-column-gap"] = $"calc({NormalizeGapValue(ColumnGap)} * var(--bui-density-gap, 1))";
 
-        if (GapXs != null) cssVariables["--bui-grid-gap-xs"] = $"calc({NormalizeGapValue(GapXs)} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapSm != null) cssVariables["--bui-grid-gap-sm"] = $"calc({NormalizeGapValue(GapSm)} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapMd != null) cssVariables["--bui-grid-gap-md"] = $"calc({NormalizeGapValue(GapMd)} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapLg != null) cssVariables["--bui-grid-gap-lg"] = $"calc({NormalizeGapValue(GapLg)} * var(--bui-density-spacing-multiplier, 1))";
-        if (GapXl != null) cssVariables["--bui-grid-gap-xl"] = $"calc({NormalizeGapValue(GapXl)} * var(--bui-density-spacing-multiplier, 1))";
+        if (GapXs != null) cssVariables["--bui-grid-gap-xs"] = $"calc({NormalizeGapValue(GapXs)} * var(--bui-density-gap, 1))";
+        if (GapSm != null) cssVariables["--bui-grid-gap-sm"] = $"calc({NormalizeGapValue(GapSm)} * var(--bui-density-gap, 1))";
+        if (GapMd != null) cssVariables["--bui-grid-gap-md"] = $"calc({NormalizeGapValue(GapMd)} * var(--bui-density-gap, 1))";
+        if (GapLg != null) cssVariables["--bui-grid-gap-lg"] = $"calc({NormalizeGapValue(GapLg)} * var(--bui-density-gap, 1))";
+        if (GapXl != null) cssVariables["--bui-grid-gap-xl"] = $"calc({NormalizeGapValue(GapXl)} * var(--bui-density-gap, 1))";
 
         AddSpacingVariables(cssVariables, "padding", P, Pt, Pr, Pb, Pl, Px, Py);
         AddSpacingVariables(cssVariables, "margin", M, Mt, Mr, Mb, Ml, Mx, My);
@@ -111,25 +111,25 @@
     {
         if (all != null)
         {
-            cssVariables[$"--bui-grid-{property}"] = $"calc({all} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"--bui-grid-{property}"] = $"calc({all} * var(--bui-density-gap, 1))";
             return;
         }
 
         if (vertical != null)
         {
-            cssVariables[$"--bui-grid-{property}-top"] = $"calc({vertical} * var(--bui-density-spacing-multiplier, 1))";
-            cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({vertical} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"--bui-grid-{property}-top"] = $"calc({vertical} * var(--bui-density-gap, 1))";
+            cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({vertical} * var(--bui-density-gap, 1))";
         }
         if (horizontal != null)
         {
-            cssVariables[$"--bui-grid-{property}-left"] = $"calc({horizontal} * var(--bui-density-spacing-multiplier, 1))";
-            cssVariables[$"--bui-grid-{property}-right"] = $"calc({horizontal} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"--bui-grid-{property}-left"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
+            cssVariables[$"--bui-grid-{property}-right"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
         }
 
-        if (top != null) cssVariables[$"--bui-grid-{property}-top"] = $"calc({top} * var(--bui-density-spacing-multiplier, 1))";
-        if (right != null) cssVariables[$"--bui-grid-{property}-right"] = $"calc({right} * var(--bui-density-spacing-multiplier, 1))";
-        if (bottom != null) cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({bottom} * var(--bui-density-spacing-multiplier, 1))";
-        if (left != null) cssVariables[$"--bui-grid-{property}-left"] = $"calc({left} * var(--bui-density-spacing-multiplier, 1))";
+        if (top != null) cssVariables[$"--bui-grid-{property}-top"] = $"calc({top} * var(--bui-density-gap, 1))";
+        if (right != null) cssVariables[$"--bui-grid-{property}-right"] = $"calc({right} * var(--bui-density-gap, 1))";
+        if (bottom != null) cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({bottom} * var(--bui-density-gap, 1))";
+        if (left != null) cssVariables[$"--bui-grid-{property}-left"] = $"calc({left} * var(--bui-density-gap, 1))";
     }
 
     private static string NormalizeGapValue(string value)

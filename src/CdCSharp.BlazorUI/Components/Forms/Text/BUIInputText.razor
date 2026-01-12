@@ -57,32 +57,18 @@
     protected override IReadOnlyDictionary<BUIInputTextVariant, Func<BUIInputText, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<BUIInputTextVariant, Func<BUIInputText, RenderFragment>>
         {
-            [BUIInputTextVariant.Outlined] = i => i.RenderOutlined(),
-            [BUIInputTextVariant.Filled] = i => i.RenderFilled(),
-            [BUIInputTextVariant.Standard] = i => i.RenderStandard()
+            [BUIInputTextVariant.Outlined] = i => i.RenderInput(),
+            [BUIInputTextVariant.Filled] = i => i.RenderInput(),
+            [BUIInputTextVariant.Standard] = i => i.RenderInput()
         };
 
-    private RenderFragment RenderOutlined() => __builder =>
+    private RenderFragment RenderInput() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
             <div class="bui-input__wrapper" @ref="_inputContainer">
-                @if (!string.IsNullOrWhiteSpace(Label))
-                {
-                    <fieldset class="bui-input__fieldset" aria-hidden="true">
-                        <legend class="bui-input__legend">
-                            <span>@Label@(Required ? " *" : "")</span>
-                        </legend>
-                    </fieldset>
 
-                    <label for="@_inputId" class="bui-input__label">
-                        @Label
-                        @if (Required)
-                        {
-                            <span class="bui-input__required">*</span>
-                        }
-                    </label>
-                }
+                <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
 
                 <input type="text"
                        id="@_inputId"
@@ -109,115 +95,20 @@
                 }
             </div>
 
-            @RenderValidationAndHelper()
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div id="@_helperTextId" class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
         </bui-component>
-    };
-
-    private RenderFragment RenderFilled() => __builder =>
-    {
-        <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
-            <div class="bui-input__wrapper" @ref="_inputContainer">
-                @if (!string.IsNullOrWhiteSpace(Label))
-                {
-                    <label for="@_inputId" class="bui-input__label">
-                        @Label
-                        @if (Required)
-                        {
-                            <span class="bui-input__required">*</span>
-                        }
-                    </label>
-                }
-
-                <input type="text"
-                       id="@_inputId"
-                       class="bui-input__field"
-                       value="@CurrentValue"
-                       @onchange="HandleChange"
-                       @oninput="HandleInput"
-                       @onfocus="HandleFocus"
-                       @onblur="HandleBlur"
-                       aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                       aria-describedby="@_helperTextId"
-                       aria-invalid="@IsError.ToString().ToLower()"
-                       aria-required="@Required.ToString().ToLower()"
-                       placeholder="@(IsFloated? Placeholder : null)"
-                       disabled="@IsDisabled"
-                       readonly="@ReadOnly"
-                       required="@Required" />
-
-                @if (IsLoading && LoadingIndicatorVariant != null)
-                {
-                    <div class="bui-input__loading">
-                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                    </div>
-                }
-            </div>
-
-            @RenderValidationAndHelper()
-        </bui-component>
-    };
-
-    private RenderFragment RenderStandard() => __builder =>
-    {
-        <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
-            <div class="bui-input__wrapper" @ref="_inputContainer">
-                @if (!string.IsNullOrWhiteSpace(Label))
-                {
-                    <label for="@_inputId" class="bui-input__label">
-                        @Label
-                        @if (Required)
-                        {
-                            <span class="bui-input__required">*</span>
-                        }
-                    </label>
-                }
-
-                <input type="text"
-                       id="@_inputId"
-                       class="bui-input__field"
-                       value="@CurrentValue"
-                       @onchange="HandleChange"
-                       @oninput="HandleInput"
-                       @onfocus="HandleFocus"
-                       @onblur="HandleBlur"
-                       aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                       aria-describedby="@_helperTextId"
-                       aria-invalid="@IsError.ToString().ToLower()"
-                       aria-required="@Required.ToString().ToLower()"
-                       placeholder="@(IsFloated? Placeholder : null)"
-                       disabled="@IsDisabled"
-                       readonly="@ReadOnly"
-                       required="@Required" />
-
-                @if (IsLoading && LoadingIndicatorVariant != null)
-                {
-                    <div class="bui-input__loading">
-                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                    </div>
-                }
-            </div>
-
-            @RenderValidationAndHelper()
-        </bui-component>
-    };
-
-    private RenderFragment RenderValidationAndHelper() => __builder =>
-    {
-        @if (IsError && EditContext != null && ValueExpression != null)
-        {
-            <div class="bui-input__validation">
-                <ValidationMessage For="ValueExpression" />
-            </div>
-        }
-
-        @if (!string.IsNullOrWhiteSpace(HelperText))
-        {
-            <div id="@_helperTextId" class="bui-input__helper-text">
-                @HelperText
-            </div>
-        }
     };
 
     private async Task HandleChange(ChangeEventArgs e)

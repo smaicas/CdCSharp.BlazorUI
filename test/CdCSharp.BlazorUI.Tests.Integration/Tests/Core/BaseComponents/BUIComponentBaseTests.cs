@@ -117,7 +117,7 @@ public class BUIComponentBaseTests
         );
 
         string? style = cut.Find("div").GetAttribute("style");
-        style.Should().Contain("--bui-color: rgba(255,0,0,1)");
+        style.Should().Contain("--bui-inline-color: rgba(255,0,0,1)");
         style.Should().Contain("--bui-bg-color: rgba(0,255,0,1)");
         style.Should().Contain("--bui-ripple-color: rgba(255,255,255,1)");
         style.Should().Contain("--bui-ripple-duration: 300ms");
@@ -187,7 +187,7 @@ public class BUIComponentBaseTests
         );
 
         string? style = cut.Find("div").GetAttribute("style");
-        style.Should().StartWith("--bui-color:");
+        style.Should().StartWith("--bui-inline-color:");
         style.Should().Contain("display: flex;");
     }
 
@@ -230,7 +230,7 @@ public class BUIComponentBaseTests
             .Add(c => c.AdditionalAttributes, null)
             .Add(c => c.Color, new CssColor("#000")));
 
-        cut.Find("div").GetAttribute("style").Should().Contain("--bui-color");
+        cut.Find("div").GetAttribute("style").Should().Contain("--bui-inline-color");
     }
 
     [Theory]

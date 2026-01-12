@@ -119,25 +119,25 @@
 
         if (all != null)
         {
-            cssVariables[prefix] = $"calc({all} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[prefix] = $"calc({all} * var(--bui-density-gap, 1))";
             return;
         }
 
         if (vertical != null)
         {
-            cssVariables[$"{prefix}-top"] = $"calc({vertical} * var(--bui-density-spacing-multiplier, 1))";
-            cssVariables[$"{prefix}-bottom"] = $"calc({vertical} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"{prefix}-top"] = $"calc({vertical} * var(--bui-density-gap, 1))";
+            cssVariables[$"{prefix}-bottom"] = $"calc({vertical} * var(--bui-density-gap, 1))";
         }
         if (horizontal != null)
         {
-            cssVariables[$"{prefix}-left"] = $"calc({horizontal} * var(--bui-density-spacing-multiplier, 1))";
-            cssVariables[$"{prefix}-right"] = $"calc({horizontal} * var(--bui-density-spacing-multiplier, 1))";
+            cssVariables[$"{prefix}-left"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
+            cssVariables[$"{prefix}-right"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
         }
 
-        if (top != null) cssVariables[$"{prefix}-top"] = $"calc({top} * var(--bui-density-spacing-multiplier, 1))";
-        if (right != null) cssVariables[$"{prefix}-right"] = $"calc({right} * var(--bui-density-spacing-multiplier, 1))";
-        if (bottom != null) cssVariables[$"{prefix}-bottom"] = $"calc({bottom} * var(--bui-density-spacing-multiplier, 1))";
-        if (left != null) cssVariables[$"{prefix}-left"] = $"calc({left} * var(--bui-density-spacing-multiplier, 1))";
+        if (top != null) cssVariables[$"{prefix}-top"] = $"calc({top} * var(--bui-density-gap, 1))";
+        if (right != null) cssVariables[$"{prefix}-right"] = $"calc({right} * var(--bui-density-gap, 1))";
+        if (bottom != null) cssVariables[$"{prefix}-bottom"] = $"calc({bottom} * var(--bui-density-gap, 1))";
+        if (left != null) cssVariables[$"{prefix}-left"] = $"calc({left} * var(--bui-density-gap, 1))";
     }
 
     private static string ToKebabCase(string value) =>

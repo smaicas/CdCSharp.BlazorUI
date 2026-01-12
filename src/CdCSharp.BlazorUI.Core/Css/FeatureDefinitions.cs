@@ -32,6 +32,7 @@ public static class FeatureDefinitions
         public const string ReadOnly = "data-bui-readonly";
         public const string Required = "data-bui-required";
         public const string Error = "data-bui-error";
+        public const string Floated = "data-bui-floated";
 
         // Behavior features
         public const string Ripple = "data-bui-ripple";
@@ -47,8 +48,16 @@ public static class FeatureDefinitions
     public static class CssVariables
     {
         // Colors
-        public const string BackgroundColor = "--bui-bg-color";
-        public const string Color = "--bui-color";
+        public const string BackgroundColor = "--bui-inline-background-color";
+        public const string Color = "--bui-inline-color";
+
+        // Size system
+        public const string FontSize = "--bui-font-size";
+        public const string FontSizeSmall = "--bui-font-size-small";
+        public const string IconSize = "--bui-icon-size";
+
+        // Density system
+        public const string DensityGap = "--bui-density-gap";
 
         // Ripple
         public const string RippleColor = "--bui-ripple-color";
@@ -82,11 +91,17 @@ public static class FeatureDefinitions
         public const string TransitionEasing = "--bui-transition-easing";
         public const string TransitionDelay = "--bui-transition-delay";
 
-        // Layout
-        public const string DensitySpacingMultiplier = "--bui-density-spacing-multiplier";
-
         // Elevation
         public const string ElevationShadowColor = "--bui-elevation-shadow-color";
+
+        // Input specific
+        public const string InputHeight = "--bui-input-height";
+        public const string InputPaddingX = "--bui-input-padding-x";
+        public const string InputPaddingY = "--bui-input-padding-y";
+        public const string InputBorderRadius = "--bui-input-border-radius";
+        public const string InputBorderColor = "--bui-input-border-color";
+        public const string LabelColor = "--bui-label-color";
+        public const string LabelFloatedScale = "--bui-label-floated-scale";
     }
 
     /// <summary>
@@ -101,8 +116,11 @@ public static class FeatureDefinitions
         public const string ButtonText = "bui-button__text";
 
         // Input parts
+        public const string InputWrapper = "bui-input__wrapper";
+        public const string InputField = "bui-input__field";
         public const string InputLabel = "bui-input__label";
-        public const string InputContainer = "bui-input__container";
+        public const string InputFieldset = "bui-input__fieldset";
+        public const string InputLegend = "bui-input__legend";
         public const string InputRequired = "bui-input__required";
         public const string InputLoading = "bui-input__loading";
         public const string InputValidation = "bui-input__validation";

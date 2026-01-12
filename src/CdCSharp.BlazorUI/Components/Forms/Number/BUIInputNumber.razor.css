@@ -17,14 +17,6 @@ bui-component[data-bui-component="input-number"] .bui-input-number__suffix {
     user-select: none;
 }
 
-bui-component[data-bui-component="input-number"] .bui-input-number__prefix {
-    padding-left: calc(var(--bui-input-number-padding-x) * var(--bui-density-spacing-multiplier, 1));
-}
-
-bui-component[data-bui-component="input-number"] .bui-input-number__suffix {
-    padding-right: calc(var(--bui-input-number-padding-x) * var(--bui-density-spacing-multiplier, 1));
-}
-
     /* Icon dentro de prefix/suffix */
     bui-component[data-bui-component="input-number"] .bui-input-number__prefix > bui-component[data-bui-component="svg-icon"],
     bui-component[data-bui-component="input-number"] .bui-input-number__suffix > bui-component[data-bui-component="svg-icon"] {
@@ -56,7 +48,7 @@ bui-component[data-bui-component="input-number"] .bui-input-number__step-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(var(--bui-input-number-button-width) * var(--bui-density-spacing-multiplier, 1));
+    width: var(--bui-input-number-button-width);
     height: 50%;
     padding: 0;
     border: none;

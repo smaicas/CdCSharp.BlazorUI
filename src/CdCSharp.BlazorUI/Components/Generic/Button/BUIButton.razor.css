@@ -1,17 +1,18 @@
 ﻿bui-component[data-bui-component="button"] button {
     display: inline-flex;
     align-items: center;
-    background-color: inherit;
-    color: inherit;
+    background-color: var(--bui-inline-background-color, var(--palette-primary));
+    color: var(--bui-inline-color, var(--palette-primarycontrast));
     border: none;
     cursor: pointer;
-    --bui-button-gap: 0.5rem;
-    --bui-button-padding-y: 0.5rem;
-    --bui-button-padding-x: 1rem;
-    --bui-button-min-height: 2.5rem;
-    gap: calc(var(--bui-button-gap) * var(--bui-density-spacing-multiplier, 1));
-    padding: calc(var(--bui-button-padding-y) * var(--bui-density-spacing-multiplier, 1)) calc(var(--bui-button-padding-x) * var(--bui-density-spacing-multiplier, 1));
-    min-height: calc(var(--bui-button-min-height) * var(--bui-density-spacing-multiplier, 1));
+    padding: var(--bui-button-padding-y) var(--bui-button-padding-x);
+    min-height: var(--bui-button-min-height);
+}
+
+/* Support ripple */
+bui-component[data-bui-component="button"] button {
+    position: relative;
+    overflow: hidden;
 }
 
 .bui-button__text {
@@ -21,10 +22,15 @@
 /* Icon only button */
 bui-component[data-bui-component="button"]:not(:has(.bui-button__text)) button {
     --bui-button-icon-only-padding: 0.5rem;
-    padding: calc(var(--bui-button-icon-only-padding) * var(--bui-density-spacing-multiplier, 1));
 }
 
 /* Size variations */
+bui-component[data-bui-component="button"][data-bui-size="medium"] {
+    --bui-button-padding-y: 0.5rem;
+    --bui-button-padding-x: 1rem;
+    --bui-button-min-height: 2.5rem;
+}
+
 bui-component[data-bui-component="button"][data-bui-size="small"] {
     --bui-button-padding-y: 0.375rem;
     --bui-button-padding-x: 0.75rem;

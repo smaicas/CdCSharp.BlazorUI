@@ -5,7 +5,6 @@ bui-component[data-bui-component="badge"] {
     --bui-badge-font-size: 0.75rem;
     --bui-badge-font-weight: 600;
     --bui-badge-border-radius: 4px;
-    --bui-badge-gap: 0.25rem;
     --bui-badge-bg: var(--palette-primary);
     --bui-badge-color: var(--palette-primarycontrast);
     --bui-badge-border-color: transparent;
@@ -18,7 +17,7 @@ bui-component[data-bui-component="badge"] {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: var(--bui-badge-gap);
+        gap: var(--bui-density-gap);
         padding: var(--bui-badge-padding-y) var(--bui-badge-padding-x);
         font-size: var(--bui-badge-font-size);
         font-weight: var(--bui-badge-font-weight);
@@ -36,14 +35,12 @@ bui-component[data-bui-component="badge"] {
         --bui-badge-padding-x: 0.375rem;
         --bui-badge-padding-y: 0.125rem;
         --bui-badge-font-size: 0.625rem;
-        --bui-badge-gap: 0.125rem;
     }
 
     bui-component[data-bui-component="badge"][data-bui-size="large"] {
         --bui-badge-padding-x: 0.75rem;
         --bui-badge-padding-y: 0.375rem;
         --bui-badge-font-size: 0.875rem;
-        --bui-badge-gap: 0.375rem;
     }
 
     /* Pill Shape */
@@ -232,27 +229,27 @@ bui-component[data-bui-component="badge"][data-bui-anchor="true"][data-bui-badge
 
 /* Color Customization */
 bui-component[data-bui-component="badge"] .bui-badge {
-    background-color: var(--bui-background-color, var(--bui-badge-bg));
-    color: var(--bui-color, var(--bui-badge-color));
+    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
+    color: var(--bui-inline-color, var(--bui-badge-color));
 }
 
 bui-component[data-bui-component="badge"][data-bui-variant="outlined"] .bui-badge {
     background-color: transparent;
-    color: var(--bui-color, var(--bui-background-color, var(--palette-primary)));
+    color: var(--bui-inline-color, var(--bui-inline-background-color, var(--palette-primary)));
     border-color: currentColor;
 }
 
 bui-component[data-bui-component="badge"][data-bui-variant="soft"] .bui-badge {
-    background-color: var(--bui-background-color, var(--bui-badge-bg));
-    color: var(--bui-color, var(--bui-badge-color));
+    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
+    color: var(--bui-inline-color, var(--bui-badge-color));
 }
 
 /* Notification Badge with Custom Colors */
 bui-component[data-bui-component="badge"] .bui-badge__notification {
-    background-color: var(--bui-background-color, var(--bui-badge-bg));
-    color: var(--bui-color, var(--bui-badge-color));
+    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
+    color: var(--bui-inline-color, var(--bui-badge-color));
 }
 
 bui-component[data-bui-component="badge"] .bui-badge__dot {
-    background-color: var(--bui-background-color, var(--bui-badge-bg));
+    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
 }

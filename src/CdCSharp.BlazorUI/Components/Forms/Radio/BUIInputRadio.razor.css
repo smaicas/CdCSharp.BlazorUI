@@ -1,9 +1,8 @@
 ﻿bui-component[data-bui-component="input-radio"] {
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
+    gap: var(--bui-density-gap);
     --bui-radio-scale: 1;
-    --bui-radio-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
 
     bui-component[data-bui-component="input-radio"][data-bui-size="small"] {
@@ -18,13 +17,13 @@
     bui-component[data-bui-component="input-radio"] .bui-radio__group {
         display: flex;
         flex-direction: column;
-        gap: var(--bui-radio-gap);
+        gap: var(--bui-density-gap);
     }
 
     bui-component[data-bui-component="input-radio"][data-bui-orientation="horizontal"] .bui-radio__group {
         flex-direction: row;
         flex-wrap: wrap;
-        gap: calc(var(--bui-radio-gap) * 2);
+        gap: var(--bui-density-gap);
     }
 
     /* Hidden native input */
@@ -40,7 +39,7 @@
     bui-component[data-bui-component="input-radio"] .bui-radio__option {
         display: flex;
         align-items: center;
-        gap: var(--bui-radio-gap);
+        gap: var(--bui-density-gap);
         cursor: pointer;
     }
 
@@ -54,7 +53,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: var(--bui-color, var(--palette-primary));
+        color: var(--bui-inline-color, var(--palette-primary));
         transition: all 0.2s ease;
         flex-shrink: 0;
     }
@@ -75,7 +74,6 @@
     /* Clear button */
     bui-component[data-bui-component="input-radio"] .bui-radio__clear {
         align-self: flex-start;
-        padding: calc(0.25rem * var(--bui-density-spacing-multiplier, 1)) calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
         border: 1px solid rgba(0, 0, 0, 0.23);
         border-radius: 4px;
         background: transparent;

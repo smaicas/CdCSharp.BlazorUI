@@ -13,8 +13,7 @@ bui-component[data-bui-component="color-picker"] {
     width: fit-content;
     background: var(--palette-surface);
     border-radius: 12px;
-    padding: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
-    gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
+    gap: var(--bui-density-gap);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
     min-width: 240px;
 }

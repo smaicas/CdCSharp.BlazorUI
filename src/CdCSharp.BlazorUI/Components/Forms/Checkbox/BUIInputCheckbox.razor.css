@@ -14,11 +14,9 @@
 bui-component[data-bui-component="input-checkbox"] {
     --bui-checkbox-scale: var(--bui-size-scale, 1);
     --bui-checkbox-box-size: calc(20px * var(--bui-checkbox-scale));
-    --bui-checkbox-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
 
     bui-component[data-bui-component="input-checkbox"] .bui-input__container {
-        padding: calc(2px * var(--bui-density-spacing-multiplier, 1));
         cursor: pointer;
     }
 
@@ -30,14 +28,13 @@ bui-component[data-bui-component="input-checkbox"] {
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
-        color: var(--bui-color, var(--palette-primary));
+        color: var(--bui-inline-color, var(--palette-primary));
     }
 
     /* Label */
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox__label {
         cursor: pointer;
         user-select: none;
-        margin-left: var(--bui-checkbox-gap);
     }
 
     /* Hover state */

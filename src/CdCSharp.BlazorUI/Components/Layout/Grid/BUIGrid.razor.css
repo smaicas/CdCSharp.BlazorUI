@@ -15,8 +15,6 @@ bui-component[data-bui-component="grid"] {
         max-width: var(--bui-grid-max-width, 100%);
         margin-left: auto;
         margin-right: auto;
-        padding-left: calc(1rem * var(--bui-density-spacing-multiplier, 1));
-        padding-right: calc(1rem * var(--bui-density-spacing-multiplier, 1));
     }
 
         bui-component[data-bui-component="grid"][data-bui-contained="true"][data-bui-disable-padding="true"] {

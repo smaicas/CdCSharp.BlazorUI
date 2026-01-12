@@ -17,7 +17,6 @@ bui-component[data-bui-component="input-switch"] {
     --bui-switch-thumb-size: calc(24px * var(--bui-switch-scale));
     --bui-switch-translate: calc(28px * var(--bui-switch-scale));
     --bui-switch-icon-size: calc(0.875rem * var(--bui-switch-scale));
-    --bui-switch-gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
 }
 
     /* Hidden native input */
@@ -96,7 +95,6 @@ bui-component[data-bui-component="input-switch"] {
 
     /* Label */
     bui-component[data-bui-component="input-switch"] .bui-switch__label {
-        margin-left: var(--bui-switch-gap);
         cursor: pointer;
         user-select: none;
     }

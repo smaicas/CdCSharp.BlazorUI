@@ -11,15 +11,14 @@
 bui-component[data-bui-component="input-color"] {
     display: inline-flex;
     flex-direction: column;
-    gap: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
+    gap: var(--bui-density-gap);
     position: relative;
 }
 
     bui-component[data-bui-component="input-color"] .bui-input-color__trigger {
         display: flex;
         align-items: center;
-        gap: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
-        padding: calc(0.5rem * var(--bui-density-spacing-multiplier, 1) * var(--bui-padding-scale, 1));
+        gap: var(--bui-density-gap);
         border: 1px solid var(--bui-input-border-color, rgba(0, 0, 0, 0.23));
         border-radius: 4px;
         background: transparent;

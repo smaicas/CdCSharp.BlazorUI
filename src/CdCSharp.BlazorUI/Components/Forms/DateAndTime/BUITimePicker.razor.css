@@ -1,7 +1,7 @@
 ﻿bui-component[data-bui-component="time-picker"] {
     display: flex;
     align-items: center;
-    gap: calc(1rem * var(--bui-density-spacing-multiplier, 1));
+    gap: var(--bui-density-gap, 1);
     user-select: none;
     --bui-timepicker-input-width: 48px;
     --bui-timepicker-input-font-size: 1.5rem;
@@ -22,7 +22,6 @@
 
     /* Format button */
     bui-component[data-bui-component="time-picker"] .bui-timepicker__format-btn {
-        padding: calc(0.5rem * var(--bui-density-spacing-multiplier, 1)) calc(0.75rem * var(--bui-density-spacing-multiplier, 1));
         border: 1px solid rgba(0, 0, 0, 0.12);
         border-radius: 6px;
         background: rgba(0, 0, 0, 0.02);
@@ -131,7 +130,6 @@ bui-component[data-bui-component="time-picker"] .bui-timepicker__separator {
 
 /* AM/PM button */
 bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn {
-    padding: calc(0.75rem * var(--bui-density-spacing-multiplier, 1)) calc(1rem * var(--bui-density-spacing-multiplier, 1));
     border: 1px solid var(--palette-primary);
     border-radius: 6px;
     background: var(--palette-primary);

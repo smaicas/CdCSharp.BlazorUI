@@ -64,10 +64,10 @@
     [Parameter] public BorderStyle? BorderLeft { get; set; }
 
     // IHasBackgroundColor
-    [Parameter] public CssColor? BackgroundColor { get; set; } = BUIColor.Palette.Primary;
+    [Parameter] public CssColor? BackgroundColor { get; set; }
 
     // IHasColor
-    [Parameter] public CssColor? Color { get; set; } = BUIColor.Palette.PrimaryContrast;
+    [Parameter] public CssColor? Color { get; set; }
 
     // IJsBehavior
     public ElementReference GetRippleContainer() => _buttonElement;

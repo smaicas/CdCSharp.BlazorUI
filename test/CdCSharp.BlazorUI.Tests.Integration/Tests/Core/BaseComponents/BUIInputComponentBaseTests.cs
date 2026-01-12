@@ -98,7 +98,7 @@ public class BUIInputComponentBaseTests
         );
 
         string? style = cut.Find("input").GetAttribute("style");
-        style.Should().Contain("--bui-color: rgba(0,0,255,1)");
+        style.Should().Contain("--bui-inline-color: rgba(0,0,255,1)");
         style.Should().Contain("--bui-border-width: 2px");
         style.Should().Contain("--bui-border-radius: 8px");
     }
@@ -120,7 +120,7 @@ public class BUIInputComponentBaseTests
 
         string? style = cut.Find("input").GetAttribute("style");
         style.Should().Contain("margin-top: 10px;");
-        style.Should().Contain("--bui-color: rgba(255,127,80,1)");
+        style.Should().Contain("--bui-inline-color: rgba(255,127,80,1)");
     }
 
     #endregion

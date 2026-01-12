@@ -210,7 +210,7 @@ public class BUIButtonStateTests
         // Assert
         IElement component = cut.Find("bui-component");
         string style = component.GetAttribute("style");
-        style.Should().Contain("--bui-color: rgba(0,255,0,1)");
+        style.Should().Contain("--bui-inline-color: rgba(0,255,0,1)");
         style.Should().Contain("--bui-bg-color: rgba(0,0,255,1)");
     }
 

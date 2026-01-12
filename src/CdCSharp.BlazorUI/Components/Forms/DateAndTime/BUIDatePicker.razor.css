@@ -3,25 +3,21 @@
     flex-direction: column;
     user-select: none;
     --bui-datepicker-day-size: 36px;
-    --bui-datepicker-gap: 0.5rem;
 }
 
     bui-component[data-bui-component="date-picker"][data-bui-size="small"] {
         --bui-datepicker-day-size: 28px;
-        --bui-datepicker-gap: 0.375rem;
     }
 
     bui-component[data-bui-component="date-picker"][data-bui-size="large"] {
         --bui-datepicker-day-size: 44px;
-        --bui-datepicker-gap: 0.625rem;
     }
 
     /* Navigation */
     bui-component[data-bui-component="date-picker"] .bui-datepicker__nav {
         display: flex;
         flex-direction: column;
-        gap: var(--bui-datepicker-gap);
-        margin-bottom: calc(var(--bui-datepicker-gap) * 2 * var(--bui-density-spacing-multiplier, 1));
+        gap: var(--bui-density-gap);
     }
 
     bui-component[data-bui-component="date-picker"] .bui-datepicker__nav-year,
@@ -74,14 +70,12 @@ bui-component[data-bui-component="date-picker"] .bui-datepicker__weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    margin-bottom: var(--bui-datepicker-gap);
 }
 
     bui-component[data-bui-component="date-picker"] .bui-datepicker__weekdays span {
         text-align: center;
         font-weight: 600;
         opacity: 0.7;
-        padding: calc(0.25rem * var(--bui-density-spacing-multiplier, 1));
     }
 
 /* Days grid */

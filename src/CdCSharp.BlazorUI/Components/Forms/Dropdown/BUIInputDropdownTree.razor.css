@@ -68,7 +68,6 @@
     }
 
     bui-component[data-bui-component="input-dropdown-tree"] .bui-dropdown__no-options {
-        padding: calc(1rem * var(--bui-density-spacing-multiplier, 1));
         text-align: center;
         opacity: 0.6;
     }

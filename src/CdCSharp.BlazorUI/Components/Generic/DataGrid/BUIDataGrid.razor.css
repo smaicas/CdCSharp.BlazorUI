@@ -20,18 +20,6 @@ bui-component[data-bui-component="data-grid"] {
     --bui-datagrid-toolbar-bg: rgba(255, 255, 255, 0.02);
 }
 
-/* Density */
-bui-component[data-bui-component="data-grid"][data-bui-density="compact"] {
-    --bui-datagrid-padding-x: calc(0.75rem * var(--bui-density-spacing-multiplier, 1));
-    --bui-datagrid-padding-y: calc(0.5rem * var(--bui-density-spacing-multiplier, 1));
-    font-size: 0.875rem;
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-density="comfortable"] {
-    --bui-datagrid-padding-x: calc(1.25rem * var(--bui-density-spacing-multiplier, 1));
-    --bui-datagrid-padding-y: calc(1rem * var(--bui-density-spacing-multiplier, 1));
-}
-
 /* Toolbar */
 bui-component[data-bui-component="data-grid"] .bui-datagrid__toolbar {
     display: flex;
