@@ -1,8 +1,11 @@
-﻿/* Container */
-bui-component[data-bui-component="input-number"] .bui-input-number__container {
+﻿bui-component[data-bui-component="input-number"] .bui-input-number__container {
     display: flex;
     align-items: stretch;
     position: relative;
+}
+bui-component[data-bui-component="input-number"] .bui-input__field {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
 }
 
 /* Prefix/Suffix */

@@ -29,6 +29,8 @@
     private string _inputId = $"bui-input-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
     private bool _isFocused;
+    private bool _keyboardFocus; // NEW: Track keyboard focus
+    private bool _mouseDownFlag;  // NEW: Track if mouse is being used
 
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public bool FullWidth { get; set; }
@@ -68,7 +70,8 @@
     private RenderFragment RenderInput() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
+                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
+                       data-keyboard-focus="@(_keyboardFocus.ToString().ToLowerInvariant())">
             <div class="bui-input__wrapper" @ref="_inputContainer">
 
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
@@ -81,6 +84,8 @@
                        @oninput="HandleInput"
                        @onfocus="HandleFocus"
                        @onblur="HandleBlur"
+                       @onmousedown="HandleMouseDown"
+                       @onkeydown="HandleKeyDown"
                        aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                        aria-describedby="@_helperTextId"
                        aria-invalid="@IsError.ToString().ToLower()"
@@ -132,14 +137,31 @@
         }
     }
 
+    private void HandleMouseDown(MouseEventArgs e)
+    {
+        // Mark that the next focus event is from a mouse interaction
+        _mouseDownFlag = true;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        // Mark that keyboard is being used
+        _mouseDownFlag = false;
+    }
+
     private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
+
+        // Only show keyboard focus ring if the focus wasn't triggered by mouse
+        _keyboardFocus = !_mouseDownFlag;
     }
 
     private void HandleBlur(FocusEventArgs e)
     {
         _isFocused = false;
+        _keyboardFocus = false;
+        _mouseDownFlag = false;
     }
 
     protected override bool TryParseValueFromString(string? value, out string? result, out string validationErrorMessage)

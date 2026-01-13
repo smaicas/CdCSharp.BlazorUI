@@ -26,10 +26,7 @@ public class InputFamilyGenerator : IAssetGenerator
         string inlineBg = FeatureDefinitions.InlineVariables.BackgroundColor;
         string inlineColor = FeatureDefinitions.InlineVariables.Color;
         string inlineBorder = FeatureDefinitions.InlineVariables.Border;
-        string inlineBorderTop = FeatureDefinitions.InlineVariables.BorderTop;
-        string inlineBorderRight = FeatureDefinitions.InlineVariables.BorderRight;
         string inlineBorderBottom = FeatureDefinitions.InlineVariables.BorderBottom;
-        string inlineBorderLeft = FeatureDefinitions.InlineVariables.BorderLeft;
         string inlineRadius = FeatureDefinitions.InlineVariables.BorderRadius;
 
         string wrapper = FeatureDefinitions.CssClasses.Input.Wrapper;
@@ -54,34 +51,32 @@ public class InputFamilyGenerator : IAssetGenerator
 bui-component[{{inputBase}}] {
     flex-direction: column;
     gap: 0.25rem;
-    
+
     --_input-h: calc(2.5rem * {{V(sizeMult, "1")}});
     --_input-px: calc(0.75rem * {{V(sizeMult, "1")}});
     --_input-py: calc(0.5rem * {{V(sizeMult, "1")}});
-    --_input-border-color: var(--palette-border, currentColor);
     --_input-radius: 4px;
     --_input-transition: 200ms ease;
+    --_input-scale: 0.85;
+
     --_input-label-color: var(--palette-surfacecontrast);
     --_input-focus-color: var(--palette-primary);
     --_input-error-color: var(--palette-error);
-    --_input-scale: 0.85;
-    
+
     --_wrapper-bg: transparent;
-    --_wrapper-border-block-start: none;
-    --_wrapper-border-inline-end: none;
     --_wrapper-border-block-end: none;
-    --_wrapper-border-inline-start: none;
     --_wrapper-radius: 0;
     --_wrapper-min-h: var(--_input-h);
-    
+
     --_field-pt: var(--_input-py);
     --_field-px: var(--_input-px);
-    
+
     --_fieldset-display: none;
     --_fieldset-bg: transparent;
-    
+
     --_label-inset-inline-start: var(--_input-px);
     --_label-floated-inset: var(--_input-px);
+    --_label-outline-offset: 0em;
 }
 
 /* === WRAPPER === */
@@ -92,12 +87,8 @@ bui-component[{{inputBase}}] .{{wrapper}} {
     align-items: center;
     min-height: var(--_wrapper-min-h);
     background: var(--_wrapper-bg);
-    border-block-start: {{V(inlineBorderTop, "var(--_wrapper-border-block-start)")}};
-    border-inline-end: {{V(inlineBorderRight, "var(--_wrapper-border-inline-end)")}};
     border-block-end: {{V(inlineBorderBottom, "var(--_wrapper-border-block-end)")}};
-    border-inline-start: {{V(inlineBorderLeft, "var(--_wrapper-border-inline-start)")}};
     border-radius: {{V(inlineRadius, "var(--_wrapper-radius)")}};
-    transition: var(--_input-transition);
 }
 
 /* === FIELD === */
@@ -142,6 +133,19 @@ bui-component[{{inputBase}}] .{{label}} {
     white-space: nowrap;
 }
 
+bui-component[{{inputBase}}][{{floated}}="true"] .{{label}} {
+    top: 0;
+    transform: translateY(0) scale(var(--_input-scale));
+}
+
+bui-component[{{inputBase}}]:focus-within .{{label}} {
+    color: var(--_input-focus-color);
+}
+
+bui-component[{{inputBase}}][{{error}}="true"] .{{label}} {
+    color: var(--_input-error-color);
+}
+
 bui-component[{{inputBase}}] .{{required}} {
     color: var(--_input-error-color);
     margin-inline-start: 0.125em;
@@ -171,6 +175,8 @@ bui-component[{{inputBase}}] .{{loading}} {
     transform: translateY(-50%);
 }
 
+/* === FIELDSET BASE === */
+
 bui-component[{{inputBase}}] .{{fieldset}} {
     display: var(--_fieldset-display);
 }
@@ -183,6 +189,7 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] {
     --_fieldset-display: block;
     --_fieldset-bg: {{V(inlineBg)}};
     --_label-floated-inset: calc(0.45em / {{V(sizeMult, "1")}});
+    --_label-outline-offset: calc(0.35em * {{V(sizeMult, "1")}});
 }
 
 bui-component[{{inputBase}}][{{variant}}="outlined"] .{{fieldset}} {
@@ -190,14 +197,14 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] .{{fieldset}} {
     inset: -0.35em 0 0 0;
     margin: 0;
     padding-inline: 0.5em;
-    padding-block: 0;
     background: var(--_fieldset-bg);
-    border: {{V(inlineBorder, "1px solid var(--_input-border-color)")}};
+    border: {{V(inlineBorder, "1px solid var(--palette-border)")}};
     border-radius: {{V(inlineRadius, "var(--_input-radius)")}};
-    overflow: hidden;
     pointer-events: none;
     transition: var(--_input-transition);
 }
+
+/* Legend mechanics (CRITICAL) */
 
 bui-component[{{inputBase}}][{{variant}}="outlined"] .{{legend}} {
     padding: 0;
@@ -205,50 +212,36 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] .{{legend}} {
     line-height: 1;
     visibility: hidden;
     max-width: 0.01px;
-    transition: max-width 50ms cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
+    transition: max-width 100ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 bui-component[{{inputBase}}][{{variant}}="outlined"] .{{legend}} span {
-    padding-inline: calc(0.35em * var(--_input-scale));
     display: inline-block;
+    padding-inline: calc(0.35em * var(--_input-scale));
     font-size: calc(1em * var(--_input-scale));
 }
 
 /* Outlined: floated */
+
 bui-component[{{inputBase}}][{{variant}}="outlined"][{{floated}}="true"] .{{label}} {
-    top: 0;
-    inset-inline-start: var(--_label-floated-inset);
-    padding-inline: calc(0.35em * {{V(sizeMult, "1")}});
+    inset-inline-start: calc(
+    var(--_label-floated-inset) + var(--_label-outline-offset));
     transform: translateY(-50%) scale(var(--_input-scale));
 }
 
 bui-component[{{inputBase}}][{{variant}}="outlined"][{{floated}}="true"] .{{legend}} {
     max-width: 100%;
-    transition: max-width 100ms cubic-bezier(0.4, 0, 0.2, 1) 50ms;
 }
 
-/* Outlined: hover */
-bui-component[{{inputBase}}][{{variant}}="outlined"] .{{wrapper}}:hover:not(:has(:disabled)) .{{fieldset}} {
-    border-color: {{V(inlineBorder, "var(--palette-surfacecontrast)")}};
+/* Outlined: focus & error */
+
+bui-component[{{inputBase}}][{{variant}}="outlined"]:focus-within .{{fieldset}} {
+    border: 2px solid var(--_input-focus-color);
 }
 
-/* Outlined: focus */
-bui-component[{{inputBase}}][{{variant}}="outlined"] .{{wrapper}}:focus-within .{{fieldset}} {
-    border: {{V(inlineBorder, "2px solid var(--_input-focus-color)")}};
-}
-
-bui-component[{{inputBase}}][{{variant}}="outlined"] .{{wrapper}}:focus-within .{{label}} {
-    color: var(--_input-focus-color);
-}
-
-/* Outlined: error */
 bui-component[{{inputBase}}][{{variant}}="outlined"][{{error}}="true"] .{{fieldset}} {
     border: {{V(inlineBorder, "2px solid var(--_input-error-color)")}};
-}
-
-bui-component[{{inputBase}}][{{variant}}="outlined"][{{error}}="true"] .{{label}} {
-    color: var(--_input-error-color);
 }
 
 /* ========================================
@@ -256,40 +249,20 @@ bui-component[{{inputBase}}][{{variant}}="outlined"][{{error}}="true"] .{{label}
    ======================================== */
 
 bui-component[{{inputBase}}][{{variant}}="filled"] {
-    --_wrapper-bg: {{V(inlineBg, V("--palette-surface"))}};
-    --_wrapper-border-block-end: 2px solid var(--_input-border-color);
+    --_wrapper-bg: {{V(inlineBg, "var(--palette-surface)")}};
+    --_wrapper-border-block-end: 2px solid var(--palette-border);
     --_wrapper-radius: 4px 4px 0 0;
     --_field-pt: calc(var(--_input-py) + 0.75em * {{V(sizeMult, "1")}});
-    --_label-inset-inline-start: var(--_input-px);
 }
 
-/* Filled: floated */
-bui-component[{{inputBase}}][{{variant}}="filled"][{{floated}}="true"] .{{label}} {
-    top: 0;
-    transform: translateY(0) scale(var(--_input-scale));
+/* Filled: focus & error */
+
+bui-component[{{inputBase}}][{{variant}}="filled"]:focus-within .{{wrapper}} {
+    border-block-end: 2px solid var(--_input-focus-color);
 }
 
-/* Filled: hover */
-bui-component[{{inputBase}}][{{variant}}="filled"] .{{wrapper}}:hover:not(:has(:disabled)) {
-    filter: brightness(1.1);
-}
-
-/* Filled: focus */
-bui-component[{{inputBase}}][{{variant}}="filled"] .{{wrapper}}:focus-within {
-    border-block-end-color: {{V(inlineBorder, "var(--_input-focus-color)")}};
-}
-
-bui-component[{{inputBase}}][{{variant}}="filled"] .{{wrapper}}:focus-within .{{label}} {
-    color: var(--_input-focus-color);
-}
-
-/* Filled: error */
 bui-component[{{inputBase}}][{{variant}}="filled"][{{error}}="true"] .{{wrapper}} {
-    border-block-end-color: {{V(inlineBorder, "var(--_input-error-color)")}};
-}
-
-bui-component[{{inputBase}}][{{variant}}="filled"][{{error}}="true"] .{{label}} {
-    color: var(--_input-error-color);
+    border-block-end-color: var(--_input-error-color);
 }
 
 /* ========================================
@@ -297,47 +270,41 @@ bui-component[{{inputBase}}][{{variant}}="filled"][{{error}}="true"] .{{label}} 
    ======================================== */
 
 bui-component[{{inputBase}}][{{variant}}="standard"] {
-    --_wrapper-bg: {{V(inlineBg, "transparent")}};
-    --_wrapper-border-block-end: 1px solid var(--_input-border-color);
+    --_wrapper-border-block-end: 1px solid var(--palette-border);
     --_wrapper-min-h: calc(var(--_input-h) - 0.5em);
+    --_wrapper-bg: {{V(inlineBg)}};
     --_field-pt: calc(var(--_input-py) + 0.75em * {{V(sizeMult, "1")}});
     --_field-px: 0;
     --_label-inset-inline-start: 0;
 }
 
-/* Standard: floated */
-bui-component[{{inputBase}}][{{variant}}="standard"][{{floated}}="true"] .{{label}} {
-    top: 0;
-    transform: translateY(0) scale(var(--_input-scale));
+/* Standard: focus & error */
+
+bui-component[{{inputBase}}][{{variant}}="standard"]:focus-within .{{wrapper}} {
+    border-block-end: 2px solid var(--_input-focus-color);
 }
 
-/* Standard: hover */
-bui-component[{{inputBase}}][{{variant}}="standard"] .{{wrapper}}:hover:not(:has(:disabled)) {
-    border-block-end-color: {{V(inlineBorder, "var(--palette-surfacecontrast)")}};
-}
-
-/* Standard: focus */
-bui-component[{{inputBase}}][{{variant}}="standard"] .{{wrapper}}:focus-within {
-    border-block-end: {{V(inlineBorderBottom, "2px solid var(--_input-focus-color)")}};
-}
-
-bui-component[{{inputBase}}][{{variant}}="standard"] .{{wrapper}}:focus-within .{{label}} {
-    color: var(--_input-focus-color);
-}
-
-/* Standard: error */
 bui-component[{{inputBase}}][{{variant}}="standard"][{{error}}="true"] .{{wrapper}} {
-    border-block-end-color: {{V(inlineBorder, "var(--_input-error-color)")}};
-}
-
-bui-component[{{inputBase}}][{{variant}}="standard"][{{error}}="true"] .{{label}} {
-    color: var(--_input-error-color);
+    border-block-end-color: var(--_input-error-color);
 }
 
 /* Standard: helper/validation sin padding */
+
 bui-component[{{inputBase}}][{{variant}}="standard"] .{{helper}},
 bui-component[{{inputBase}}][{{variant}}="standard"] .{{validation}} {
     padding-inline-start: 0;
+}
+
+/* Outline para Outlined variant - solo con teclado */
+bui-component[data-bui-input-base][data-bui-variant="outlined"][data-keyboard-focus="true"] .bui-input__fieldset {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}
+
+/* Outline para Filled y Standard variants - solo con teclado */
+bui-component[data-bui-input-base]:not([data-bui-variant="outlined"])[data-keyboard-focus="true"] .bui-input__wrapper {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
 }
 """;
     }

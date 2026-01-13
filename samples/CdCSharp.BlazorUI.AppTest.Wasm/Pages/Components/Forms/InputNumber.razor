@@ -202,15 +202,15 @@
         Demo = RenderVariants(),
         Code = """
 <BUIInputNumber @bind-Value="_variantValue"
-                Variant="BUIInputNumberVariant.Outlined"
+                Variant="BUIInputVariant.Outlined"
                 Label="Outlined" />
 
 <BUIInputNumber @bind-Value="_variantValue"
-                Variant="BUIInputNumberVariant.Filled"
+                Variant="BUIInputVariant.Filled"
                 Label="Filled" />
 
 <BUIInputNumber @bind-Value="_variantValue"
-                Variant="BUIInputNumberVariant.Standard"
+                Variant="BUIInputVariant.Standard"
                 Label="Standard" />
 """
     };
@@ -537,15 +537,15 @@
     {
         <div class="demo-row">
             <BUIInputNumber @bind-Value="_variantValue"
-                            Variant="BUIInputNumberVariant.Outlined"
+                            Variant="BUIInputVariant.Outlined"
                             Label="Outlined" />
 
             <BUIInputNumber @bind-Value="_variantValue"
-                            Variant="BUIInputNumberVariant.Filled"
+                            Variant="BUIInputVariant.Filled"
                             Label="Filled" />
 
             <BUIInputNumber @bind-Value="_variantValue"
-                            Variant="BUIInputNumberVariant.Standard"
+                            Variant="BUIInputVariant.Standard"
                             Label="Standard" />
         </div>;
     };
@@ -888,7 +888,7 @@
         new("Label", "string?", "null", "Input label"),
         new("Placeholder", "string?", "null", "Placeholder text"),
         new("HelperText", "string?", "null", "Helper text below input"),
-        new("Variant", "BUIInputNumberVariant", "Outlined", "Visual style variant"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual style variant"),
         new("Size", "SizeEnum", "Medium", "Input size"),
         new("Min", "T?", "null", "Minimum allowed value"),
         new("Max", "T?", "null", "Maximum allowed value"),

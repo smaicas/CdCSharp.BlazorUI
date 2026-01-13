@@ -10,7 +10,7 @@
 
 @typeparam TValue
 
-@inherits BUIInputComponentBase<TValue, BUIInputNumber<TValue>, BUIInputNumberVariant>
+@inherits BUIInputComponentBase<TValue, BUIInputNumber<TValue>, BUIInputVariant>
 @implements IHasSize
 @implements IHasFullWidth
 @implements IHasLoading
@@ -88,7 +88,7 @@
     [Parameter] public EventCallback<TValue?> OnIncrement { get; set; }
     [Parameter] public EventCallback<TValue?> OnDecrement { get; set; }
 
-    public override BUIInputNumberVariant DefaultVariant => BUIInputNumberVariant.Outlined;
+    public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
     private CultureInfo CurrentCulture => Culture ?? CultureInfo.CurrentCulture;
     private NumberFormatInfo NumberFormat => CurrentCulture.NumberFormat;
@@ -121,12 +121,12 @@
         }
     }
 
-    protected override IReadOnlyDictionary<BUIInputNumberVariant, Func<BUIInputNumber<TValue>, RenderFragment>> BuiltInTemplates { get; } =
-        new Dictionary<BUIInputNumberVariant, Func<BUIInputNumber<TValue>, RenderFragment>>
+    protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputNumber<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputVariant, Func<BUIInputNumber<TValue>, RenderFragment>>
         {
-            [BUIInputNumberVariant.Outlined] = i => i.RenderInput(),
-            [BUIInputNumberVariant.Filled] = i => i.RenderInput(),
-            [BUIInputNumberVariant.Standard] = i => i.RenderInput()
+            [BUIInputVariant.Outlined] = i => i.RenderInput(),
+            [BUIInputVariant.Filled] = i => i.RenderInput(),
+            [BUIInputVariant.Standard] = i => i.RenderInput()
         };
 
     private static bool IsNumericType(Type type)
@@ -303,22 +303,6 @@
             {
                 CurrentValue = clamped;
             }
-        }
-    }
-
-    private void HandleKeyPress(KeyboardEventArgs e)
-    {
-        if (IsDisabled || ReadOnly) return;
-
-        char key = e.Key.Length == 1 ? e.Key[0] : '\0';
-        if (key == '\0') return;
-
-        bool isValid = IsValidInputChar(key, _displayText);
-
-        if (!isValid)
-        {
-            // Blazor no puede prevenir el evento directamente,
-            // pero podemos limpiar en HandleInput
         }
     }
 

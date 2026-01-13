@@ -1,3 +1,8 @@
+bui-component:focus-visible, bui-component *:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
