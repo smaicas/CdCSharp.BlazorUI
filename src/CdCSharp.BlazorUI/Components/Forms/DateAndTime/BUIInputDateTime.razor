@@ -1,118 +1,38 @@
-﻿@* === Forms/DateAndTime/BUIInputDateTime.razor === *@
-
-@using System.Globalization
+﻿@using System.Globalization
 @using CdCSharp.BlazorUI.Components.Layout
 @using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Css
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @typeparam TValue
-@inherits BUIInputComponentBase<TValue>
-@implements IHasReadOnly
+@inherits BUIInputComponentBase<TValue, BUIInputDateTime<TValue>, BUIInputVariant>
 @implements IHasSize
 @implements IHasDensity
-
+@implements IHasShadow
+@implements IHasBorder
+@implements IHasColor
+@implements IHasBackgroundColor
+@implements IHasPrefix
+@implements IHasSuffix
 @implements IInputFamilyComponent
 
-<bui-component @attributes="ComputedAttributes">
-
-    <div class="bui-stack-column">
-        @if (!string.IsNullOrWhiteSpace(Label))
-        {
-            <label class="bui-input__label" @onclick="HandleLabelClick">
-                @Label
-                @if (Required)
-                {
-                    <span class="bui-input__required">*</span>
-                }
-            </label>
-        }
-
-        <div class="bui-input__wrapper">
-            <BUIDateTimePattern @ref="_patternRef"
-                                @bind-Text="@CurrentValueAsString"
-                                Format="@Format"
-                                Editable="@(!IsReadOnly)" />
-
-            @if (CanClear && !IsReadOnly)
-            {
-                <button type="button"
-                        class="bui-input-datetime__btn bui-input-datetime__btn--clear"
-                        @onclick="Clear"
-                        @onclick:preventDefault="true"
-                        @onclick:stopPropagation="true">
-                    <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
-                </button>
-            }
-
-            <button type="button"
-                    class="bui-input-datetime__btn"
-                    @onclick="OpenPicker"
-                    @onclick:preventDefault="true"
-                    @onclick:stopPropagation="true"
-                    disabled="@IsReadOnly">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
-            </button>
-        </div>
-
-        @if (EditContext != null && ValueExpression != null)
-        {
-            <div class="bui-input-datetime__validation">
-                <ValidationMessage For="ValueExpression" />
-            </div>
-        }
-
-        @if (!string.IsNullOrWhiteSpace(HelperText))
-        {
-            <div class="bui-input-datetime__helper">@HelperText</div>
-        }
-    </div>
-    <BUIDialog @bind-Open="_isPickerOpen"
-               Title="@GetPickerTitle()"
-               Closable="true"
-               CloseOnOverlayClick="true"
-               CloseOnEscape="true"
-               MinWidth="auto"
-               MaxWidth="fit-content">
-        <Content>
-            <div class="bui-input-datetime__picker-content">
-                @if (ShowDate)
-                {
-                    <BUIDatePicker Value="DateValue"
-                                   ValueChanged="OnDateChanged"
-                                   Size="Size"
-                                   Density="Density" />
-                }
-                @if (ShowTime)
-                {
-                    <BUITimePicker Value="TimeValue"
-                                   ValueChanged="OnTimeChanged"
-                                   Size="Size"
-                                   Density="Density" />
-                }
-            </div>
-        </Content>
-        <Footer>
-            <BUIButton Text="Cancel"
-                       OnClick="() => _isPickerOpen = false"
-                       Variant="BUIButtonVariant.Default" />
-            <BUIButton Text="Apply"
-                       OnClick="ApplyPickerValue"
-                       BackgroundColor="BUIColor.Palette.Primary"
-                       Color="BUIColor.Palette.PrimaryContrast" />
-        </Footer>
-    </BUIDialog>
-</bui-component>
+@{
+    base.BuildRenderTree(__builder);
+}
 
 @code {
+    private string _inputId = $"bui-datetime-{Guid.NewGuid():N}";
+    private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
     private bool _isPickerOpen;
     private bool ShowDate;
     private bool ShowTime;
     private TValue? _initialValue;
     private BUIDateTimePattern? _patternRef;
+    private bool _isFocused;
 
     private DateOnly _tempDateValue;
     private TimeOnly _tempTimeValue;
@@ -120,18 +40,178 @@
     private DateOnly DateValue { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly TimeValue { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
 
-    [Parameter] public string? Label { get; set; }
-    [Parameter] public string? HelperText { get; set; }
+    // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
+    // IHasShadow
+    [Parameter] public ShadowStyle? Shadow { get; set; }
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasPrefix
+    [Parameter] public string? PrefixText { get; set; }
+    [Parameter] public string? PrefixIcon { get; set; }
+    [Parameter] public CssColor? PrefixColor { get; set; }
+    [Parameter] public CssColor? PrefixBackgroundColor { get; set; }
+
+    // IHasSuffix
+    [Parameter] public string? SuffixText { get; set; }
+    [Parameter] public string? SuffixIcon { get; set; }
+    [Parameter] public CssColor? SuffixColor { get; set; }
+    [Parameter] public CssColor? SuffixBackgroundColor { get; set; }
+
+    // Component-specific
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+
+
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
-
     private string Format => GetCultureFormatString();
-
     private bool HasValue => CurrentValue != null && !IsDefaultValue(CurrentValue, UnderlyingType);
-
     private bool CanClear => !EqualityComparer<TValue>.Default.Equals(CurrentValue, _initialValue);
+    private bool IsFloated => _isFocused || HasValue;
+    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
+    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
+
+    public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
+
+    protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputDateTime<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputVariant, Func<BUIInputDateTime<TValue>, RenderFragment>>
+        {
+            [BUIInputVariant.Outlined] = i => i.RenderInput(),
+            [BUIInputVariant.Filled] = i => i.RenderInput(),
+            [BUIInputVariant.Standard] = i => i.RenderInput()
+        };
+
+    private RenderFragment RenderInput() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes"
+                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
+
+            <div class="bui-input__wrapper">
+                <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+
+                @if (HasPrefix)
+                {
+                    <span class="bui-input__prefix">
+                        @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+                        {
+                            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
+                        }
+                        @if (!string.IsNullOrWhiteSpace(PrefixText))
+                        {
+                            <span>@PrefixText</span>
+                        }
+                    </span>
+                }
+
+                <BUIDateTimePattern @ref="_patternRef"
+                                    Id="@_inputId"
+                                    ContainerClass="bui-input__field"
+                                    @bind-Text="@CurrentValueAsString"
+                                    Format="@Format"
+                                    Editable="@(!IsReadOnly)"
+                                    OnFocus="HandleFocus"
+                                    OnBlur="HandleBlur" />
+
+                @if (HasSuffix)
+                {
+                    <span class="bui-input__suffix">
+                        @if (!string.IsNullOrWhiteSpace(SuffixText))
+                        {
+                            <span>@SuffixText</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+                        {
+                            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
+                        }
+                    </span>
+                }
+
+                @if (CanClear && !IsReadOnly)
+                {
+                    <button type="button"
+                            class="bui-input-datetime__action-btn"
+                            @onclick="Clear"
+                            @onclick:preventDefault="true"
+                            @onclick:stopPropagation="true"
+                            aria-label="Clear">
+                        <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
+                    </button>
+                }
+
+                <button type="button"
+                        class="bui-input-datetime__action-btn"
+                        @onclick="OpenPicker"
+                        @onclick:preventDefault="true"
+                        @onclick:stopPropagation="true"
+                        disabled="@IsReadOnly"
+                        aria-label="Open picker">
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
+                </button>
+            </div>
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div id="@_helperTextId" class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
+
+            <BUIDialog @bind-Open="_isPickerOpen"
+                       Title="@GetPickerTitle()"
+                       Closable="true"
+                       CloseOnOverlayClick="true"
+                       CloseOnEscape="true"
+                       MinWidth="auto"
+                       MaxWidth="fit-content">
+                <Content>
+                    <div class="bui-input-datetime__picker-content">
+                        @if (ShowDate)
+                        {
+                            <BUIDatePicker Value="DateValue"
+                                           ValueChanged="OnDateChanged"
+                                           Size="Size"
+                                           Density="Density" />
+                        }
+                        @if (ShowTime)
+                        {
+                            <BUITimePicker Value="TimeValue"
+                                           ValueChanged="OnTimeChanged"
+                                           Size="Size"
+                                           Density="Density" />
+                        }
+                    </div>
+                </Content>
+                <Footer>
+                    <BUIButton Text="Cancel"
+                               OnClick="() => _isPickerOpen = false"
+                               Variant="BUIButtonVariant.Default" />
+                    <BUIButton Text="Apply"
+                               OnClick="ApplyPickerValue"
+                               BackgroundColor="BUIColor.Palette.Primary"
+                               Color="BUIColor.Palette.PrimaryContrast" />
+                </Footer>
+            </BUIDialog>
+        </bui-component>
+    };
 
     protected override void OnInitialized()
     {
@@ -157,6 +237,18 @@
         if (!HasValue) return;
 
         SyncPickersFromValue();
+    }
+
+    private void HandleFocus(FocusEventArgs e)
+    {
+        _isFocused = true;
+        StateHasChanged();
+    }
+
+    private void HandleBlur(FocusEventArgs e)
+    {
+        _isFocused = false;
+        StateHasChanged();
     }
 
     private void SyncPickersFromValue()
@@ -208,14 +300,6 @@
         if (_initialValue != null && !IsDefaultValue(_initialValue, UnderlyingType))
         {
             SyncPickersFromValue();
-        }
-    }
-
-    private async Task HandleLabelClick()
-    {
-        if (_patternRef != null)
-        {
-            await _patternRef.FocusAsync();
         }
     }
 

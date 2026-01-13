@@ -1,23 +1,22 @@
-﻿bui-component[data-bui-component="date-picker"] {
+﻿/* ========================================
+   BUIDatePicker Component Styles
+   ======================================== */
+
+bui-component[data-bui-component="date-picker"] {
     display: flex;
     flex-direction: column;
+    gap: var(--bui-density-gap, 0.5rem);
     user-select: none;
-    --bui-datepicker-day-size: 36px;
+    --_day-size: calc(36px * var(--bui-size-multiplier, 1));
+    --_btn-size: calc(32px * var(--bui-size-multiplier, 1));
 }
 
-    bui-component[data-bui-component="date-picker"][data-bui-size="small"] {
-        --bui-datepicker-day-size: 28px;
-    }
+    /* === NAVIGATION === */
 
-    bui-component[data-bui-component="date-picker"][data-bui-size="large"] {
-        --bui-datepicker-day-size: 44px;
-    }
-
-    /* Navigation */
     bui-component[data-bui-component="date-picker"] .bui-datepicker__nav {
         display: flex;
         flex-direction: column;
-        gap: var(--bui-density-gap);
+        gap: var(--bui-density-gap, 0.5rem);
     }
 
     bui-component[data-bui-component="date-picker"] .bui-datepicker__nav-year,
@@ -34,88 +33,84 @@
         text-align: center;
     }
 
+    /* === NAV BUTTONS === */
+
     bui-component[data-bui-component="date-picker"] .bui-datepicker__btn {
-        width: 32px;
-        height: 32px;
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        width: var(--_btn-size);
+        height: var(--_btn-size);
+        border: 1px solid var(--palette-border);
         border-radius: 6px;
         background: transparent;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.15s ease;
+        color: inherit;
+        transition: background-color 150ms ease, border-color 150ms ease;
     }
 
         bui-component[data-bui-component="date-picker"] .bui-datepicker__btn:hover {
-            background: rgba(0, 0, 0, 0.04);
-            border-color: rgba(0, 0, 0, 0.2);
+            background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
         }
 
-[data-theme="dark"] bui-component[data-bui-component="date-picker"] .bui-datepicker__btn {
-    border-color: rgba(255, 255, 255, 0.12);
-}
+        bui-component[data-bui-component="date-picker"] .bui-datepicker__btn:active {
+            transform: scale(0.95);
+        }
 
-    [data-theme="dark"] bui-component[data-bui-component="date-picker"] .bui-datepicker__btn:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
+    /* === WEEKDAYS === */
+
+    bui-component[data-bui-component="date-picker"] .bui-datepicker__weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, var(--_day-size));
+        gap: 2px;
     }
 
-bui-component[data-bui-component="date-picker"] .bui-datepicker__btn:active {
-    transform: scale(0.95);
-}
+        bui-component[data-bui-component="date-picker"] .bui-datepicker__weekdays span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--_day-size);
+            font-weight: 600;
+            opacity: 0.7;
+        }
 
-/* Weekdays */
-bui-component[data-bui-component="date-picker"] .bui-datepicker__weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-}
+    /* === DAYS GRID === */
 
-    bui-component[data-bui-component="date-picker"] .bui-datepicker__weekdays span {
-        text-align: center;
-        font-weight: 600;
-        opacity: 0.7;
+    bui-component[data-bui-component="date-picker"] .bui-datepicker__days {
+        display: grid;
+        grid-template-columns: repeat(7, var(--_day-size));
+        gap: 2px;
     }
 
-/* Days grid */
-bui-component[data-bui-component="date-picker"] .bui-datepicker__days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-}
-
-bui-component[data-bui-component="date-picker"] .bui-datepicker__day {
-    width: var(--bui-datepicker-day-size);
-    height: var(--bui-datepicker-day-size);
-    border: none;
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-    bui-component[data-bui-component="date-picker"] .bui-datepicker__day:hover:not(.bui-datepicker__day--selected) {
-        background: rgba(0, 0, 0, 0.04);
+    bui-component[data-bui-component="date-picker"] .bui-datepicker__day {
+        width: var(--_day-size);
+        height: var(--_day-size);
+        border: none;
+        border-radius: 50%;
+        background: transparent;
+        cursor: pointer;
+        color: inherit;
+        font: inherit;
+        transition: background-color 150ms ease;
     }
 
-[data-theme="dark"] bui-component[data-bui-component="date-picker"] .bui-datepicker__day:hover:not(.bui-datepicker__day--selected) {
-    background: rgba(255, 255, 255, 0.08);
-}
+        bui-component[data-bui-component="date-picker"] .bui-datepicker__day:hover:not(.bui-datepicker__day--selected) {
+            background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+        }
 
-bui-component[data-bui-component="date-picker"] .bui-datepicker__day--other-month {
-    opacity: 0.3;
-}
-
-bui-component[data-bui-component="date-picker"] .bui-datepicker__day--today {
-    box-shadow: inset 0 0 0 1px var(--palette-primary);
-}
-
-bui-component[data-bui-component="date-picker"] .bui-datepicker__day--selected {
-    background: var(--palette-primary);
-    color: var(--palette-primarycontrast);
-}
-
-    bui-component[data-bui-component="date-picker"] .bui-datepicker__day--selected.bui-datepicker__day--today {
-        box-shadow: none;
+    bui-component[data-bui-component="date-picker"] .bui-datepicker__day--other-month {
+        opacity: 0.3;
     }
+
+    bui-component[data-bui-component="date-picker"] .bui-datepicker__day--today {
+        box-shadow: inset 0 0 0 1px var(--palette-primary);
+    }
+
+    bui-component[data-bui-component="date-picker"] .bui-datepicker__day--selected {
+        background: var(--palette-primary);
+        color: var(--palette-primarycontrast);
+    }
+
+        bui-component[data-bui-component="date-picker"] .bui-datepicker__day--selected.bui-datepicker__day--today {
+            box-shadow: none;
+        }

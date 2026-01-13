@@ -1,95 +1,31 @@
-﻿/* ============================================
-   BUIInputDateTime.razor.css (REFACTORED)
-
-   NOTE: Unique component structure with pattern-based input
-   Does NOT use input-family because it uses custom BUIDateTimePattern
-
-   KEPT: All styles (unique component, minimal duplication)
-   OPTIMIZATION: Use global CSS variables where possible
-   ============================================ */
-
-bui-component[data-bui-component="input-date-time"] {
+﻿/* Action buttons (clear, calendar) */
+bui-component[data-bui-component="input-date-time"] .bui-input-datetime__action-btn {
     display: flex;
-    flex-direction: column;
-    gap: var(--bui-density-gap, 1);
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: opacity 150ms ease, background-color 150ms ease;
 }
 
-    bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        color: inherit;
-        opacity: 0.7;
-        transition: opacity 150ms ease, background-color 150ms ease;
+    bui-component[data-bui-component="input-date-time"] .bui-input-datetime__action-btn:hover:not(:disabled) {
+        opacity: 1;
+        background-color: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
     }
 
-        bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:hover {
-            opacity: 1;
-            background-color: rgba(0, 0, 0, 0.05);
-        }
+    bui-component[data-bui-component="input-date-time"] .bui-input-datetime__action-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
 
-[data-theme="dark"] bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__btn--clear {
-    opacity: 0.5;
-}
-
-/* Validation and helper text */
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__validation {
-    color: var(--palette-error);
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-}
-
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__helper {
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    opacity: 0.7;
-}
-
-/* Picker overlay */
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 999;
-}
-
-bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker {
-    position: absolute;
-    z-index: 1000;
-    background: var(--palette-surface);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    padding: 1rem;
-}
-
+/* Picker dialog content */
 bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker-content {
     display: flex;
     flex-direction: column;
-    gap: var(--bui-density-gap);
-}
-
-/* Size variations */
-bui-component[data-bui-component="input-date-time"][data-bui-size="small"] .bui-input-datetime__label {
-    font-size: 0.8rem;
-}
-
-bui-component[data-bui-component="input-date-time"][data-bui-size="small"] .bui-input-datetime__validation,
-bui-component[data-bui-component="input-date-time"][data-bui-size="small"] .bui-input-datetime__helper {
-    font-size: 0.65rem;
-}
-
-bui-component[data-bui-component="input-date-time"][data-bui-size="large"] .bui-input-datetime__label {
-    font-size: 1rem;
-}
-
-bui-component[data-bui-component="input-date-time"][data-bui-size="large"] .bui-input-datetime__validation,
-bui-component[data-bui-component="input-date-time"][data-bui-size="large"] .bui-input-datetime__helper {
-    font-size: 0.875rem;
+    gap: var(--bui-density-gap, 0.5rem);
 }

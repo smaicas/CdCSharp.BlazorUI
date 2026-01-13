@@ -6,41 +6,77 @@
 @namespace CdCSharp.BlazorUI.Components.Utils
 
 @inherits BUIBasePattern
-@implements IHasSize
 
-<bui-component data-bui-component="date-time-pattern"
-               data-bui-size="@Size.ToString().ToLowerInvariant()">
-    <div @ref="_containerBox" class="bui-pattern__container" data-pattern-id="@ComponentId">
-        @foreach (SpanState span in _patternState.Spans)
+<div @ref="_containerBox"
+     id="@Id"
+     class="bui-pattern @ContainerClass"
+     data-pattern-id="@ComponentId"
+     tabindex="0"
+     @onfocusin="HandleFocusIn"
+     @onfocusout="HandleFocusOut">
+    @foreach (SpanState span in _patternState.Spans)
+    {
+        @if (span.IsToggle)
         {
-            @if (span.IsToggle)
-            {
-                <span @key="@($"span_{ComponentId}_{span.Index}")"
-                      class="bui-pattern__toggle"
-                      data-index="@span.Index"
-                      tabindex="0">@span.DisplayValue</span>
-            }
-            else
-            {
-                <span @key="@($"span_{ComponentId}_{span.Index}")"
-                      class="@GetSpanClass(span)"
-                      contenteditable="@(span.IsEditable && Editable ? "true" : "false")"
-                      spellcheck="false"
-                      data-index="@span.Index"
-                      data-maxlength="@span.MaxLength">@span.DisplayValue</span>
-            }
+            <span @key="@($"span_{ComponentId}_{span.Index}")"
+                  class="bui-pattern__toggle"
+                  data-index="@span.Index"
+                  tabindex="-1">@span.DisplayValue</span>
         }
-    </div>
-</bui-component>
+        else if (span.IsEditable)
+        {
+            <span @key="@($"span_{ComponentId}_{span.Index}")"
+                  class="bui-pattern__editable"
+                  contenteditable="@(Editable ? "true" : "false")"
+                  spellcheck="false"
+                  data-index="@span.Index"
+                  data-maxlength="@span.MaxLength"
+                  tabindex="-1">@span.DisplayValue</span>
+        }
+        else
+        {
+            <span @key="@($"span_{ComponentId}_{span.Index}")"
+                  class="bui-pattern__separator"
+                  data-index="@span.Index">@span.DisplayValue</span>
+        }
+    }
+</div>
 
 @code {
     private ParsedDatePattern? _parsedPattern;
+    private bool _hasFocus;
 
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? ContainerClass { get; set; }
+    [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
+    [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
-    private string GetSpanClass(SpanState span)
+    public async Task FocusAsync()
     {
-        return span.IsEditable ? "bui-pattern__editable" : "bui-pattern__separator";
+        if (_containerBox.Id != null)
+        {
+            await _containerBox.FocusAsync();
+        }
+    }
+
+    private async Task HandleFocusIn(FocusEventArgs e)
+    {
+        if (!_hasFocus)
+        {
+            _hasFocus = true;
+            await OnFocus.InvokeAsync(e);
+        }
+    }
+
+    private async Task HandleFocusOut(FocusEventArgs e)
+    {
+        await Task.Delay(10);
+
+        if (_hasFocus)
+        {
+            _hasFocus = false;
+            await OnBlur.InvokeAsync(e);
+        }
     }
 
     protected override PatternState CreatePatternState()

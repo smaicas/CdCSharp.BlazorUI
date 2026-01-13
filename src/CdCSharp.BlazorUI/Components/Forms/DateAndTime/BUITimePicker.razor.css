@@ -1,148 +1,127 @@
-﻿bui-component[data-bui-component="time-picker"] {
+﻿/* ========================================
+   BUITimePicker Component Styles
+   ======================================== */
+
+bui-component[data-bui-component="time-picker"] {
     display: flex;
     align-items: center;
-    gap: var(--bui-density-gap, 1);
+    gap: var(--bui-density-gap, 0.5rem);
     user-select: none;
-    --bui-timepicker-input-width: 48px;
-    --bui-timepicker-input-font-size: 1.5rem;
-    --bui-timepicker-btn-height: 28px;
+    --_input-width: calc(48px * var(--bui-size-multiplier, 1));
+    --_input-font-size: calc(1.5rem * var(--bui-size-multiplier, 1));
+    --_btn-height: calc(28px * var(--bui-size-multiplier, 1));
+    --_btn-width: calc(40px * var(--bui-size-multiplier, 1));
 }
 
-    bui-component[data-bui-component="time-picker"][data-bui-size="small"] {
-        --bui-timepicker-input-width: 40px;
-        --bui-timepicker-input-font-size: 1.25rem;
-        --bui-timepicker-btn-height: 24px;
-    }
+    /* === FORMAT BUTTON === */
 
-    bui-component[data-bui-component="time-picker"][data-bui-size="large"] {
-        --bui-timepicker-input-width: 56px;
-        --bui-timepicker-input-font-size: 1.75rem;
-        --bui-timepicker-btn-height: 32px;
-    }
-
-    /* Format button */
     bui-component[data-bui-component="time-picker"] .bui-timepicker__format-btn {
-        border: 1px solid rgba(0, 0, 0, 0.12);
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--palette-border);
         border-radius: 6px;
-        background: rgba(0, 0, 0, 0.02);
+        background: transparent;
         cursor: pointer;
         font-weight: 500;
+        color: inherit;
         opacity: 0.7;
-        transition: all 0.15s ease;
+        transition: background-color 150ms ease, opacity 150ms ease;
     }
 
         bui-component[data-bui-component="time-picker"] .bui-timepicker__format-btn:hover {
-            background: rgba(0, 0, 0, 0.04);
-            border-color: rgba(0, 0, 0, 0.2);
+            opacity: 1;
+            background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
         }
 
-[data-theme="dark"] bui-component[data-bui-component="time-picker"] .bui-timepicker__format-btn {
-    border-color: rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.02);
-}
+    /* === SPINNERS === */
 
-    [data-theme="dark"] bui-component[data-bui-component="time-picker"] .bui-timepicker__format-btn:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
+    bui-component[data-bui-component="time-picker"] .bui-timepicker__spinners {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
     }
 
-/* Spinners container */
-bui-component[data-bui-component="time-picker"] .bui-timepicker__spinners {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-/* Single spinner */
-bui-component[data-bui-component="time-picker"] .bui-timepicker__spinner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-}
-
-/* Spin buttons */
-bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn {
-    width: 40px;
-    height: var(--bui-timepicker-btn-height);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-}
-
-    bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn:hover {
-        background: rgba(0, 0, 0, 0.04);
-        border-color: rgba(0, 0, 0, 0.2);
+    bui-component[data-bui-component="time-picker"] .bui-timepicker__spinner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
     }
 
-[data-theme="dark"] bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn {
-    border-color: rgba(255, 255, 255, 0.12);
-}
+    /* === SPIN BUTTONS === */
 
-    [data-theme="dark"] bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn:hover {
-        background: rgba(255, 255, 255, 0.08);
-        border-color: rgba(255, 255, 255, 0.2);
+    bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn {
+        width: var(--_btn-width);
+        height: var(--_btn-height);
+        border: 1px solid var(--palette-border);
+        border-radius: 4px;
+        background: transparent;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: inherit;
+        transition: background-color 150ms ease;
     }
 
-bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn:active {
-    transform: scale(0.95);
-}
+        bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn:hover {
+            background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+        }
 
-/* Input */
-bui-component[data-bui-component="time-picker"] .bui-timepicker__input {
-    width: var(--bui-timepicker-input-width);
-    font-size: var(--bui-timepicker-input-font-size);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    text-align: center;
-    padding: 0.25rem;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    background: transparent;
-    transition: all 0.15s ease;
-}
+        bui-component[data-bui-component="time-picker"] .bui-timepicker__spin-btn:active {
+            transform: scale(0.95);
+        }
 
-    bui-component[data-bui-component="time-picker"] .bui-timepicker__input:hover {
-        border-color: rgba(0, 0, 0, 0.12);
+    /* === INPUT === */
+
+    bui-component[data-bui-component="time-picker"] .bui-timepicker__input {
+        width: var(--_input-width);
+        font-size: var(--_input-font-size);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+        padding: 0.25rem;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: inherit;
+        transition: border-color 150ms ease, background-color 150ms ease;
     }
 
-    bui-component[data-bui-component="time-picker"] .bui-timepicker__input:focus {
-        outline: none;
-        border-color: var(--palette-primary);
-        background: var(--palette-surface);
+        bui-component[data-bui-component="time-picker"] .bui-timepicker__input:hover {
+            border-color: var(--palette-border);
+        }
+
+        bui-component[data-bui-component="time-picker"] .bui-timepicker__input:focus {
+            outline: none;
+            border-color: var(--palette-primary);
+            background: var(--palette-surface);
+        }
+
+    /* === SEPARATOR === */
+
+    bui-component[data-bui-component="time-picker"] .bui-timepicker__separator {
+        font-size: var(--_input-font-size);
+        font-weight: 600;
+        padding-bottom: 0.25rem;
     }
 
-[data-theme="dark"] bui-component[data-bui-component="time-picker"] .bui-timepicker__input:hover {
-    border-color: rgba(255, 255, 255, 0.12);
-}
+    /* === AM/PM BUTTON === */
 
-/* Separator */
-bui-component[data-bui-component="time-picker"] .bui-timepicker__separator {
-    font-size: var(--bui-timepicker-input-font-size);
-    font-weight: 600;
-    padding-bottom: 0.25rem;
-}
-
-/* AM/PM button */
-bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn {
-    border: 1px solid var(--palette-primary);
-    border-radius: 6px;
-    background: var(--palette-primary);
-    color: var(--palette-primarycontrast);
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.15s ease;
-}
-
-    bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn:hover {
-        filter: brightness(1.1);
+    bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--palette-primary);
+        border-radius: 6px;
+        background: var(--palette-primary);
+        color: var(--palette-primarycontrast);
+        cursor: pointer;
+        font-weight: 600;
+        transition: filter 150ms ease;
     }
 
-    bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn:active {
-        filter: brightness(0.95);
-    }
+        bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        bui-component[data-bui-component="time-picker"] .bui-timepicker__ampm-btn:active {
+            filter: brightness(0.95);
+        }
