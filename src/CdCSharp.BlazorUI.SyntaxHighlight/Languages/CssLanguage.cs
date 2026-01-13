@@ -97,8 +97,7 @@ public static class CssLanguage
                 "aqua", "lime", "olive", "maroon", "silver", "fuchsia"
             ], priority: 696)
 
-            // Units
-            // Units (% doesn't need word boundary, others do)
+            // Units Units (% doesn't need word boundary, others do)
             .AddPattern(TokenType.CssUnit, @"\d+\.?\d*%", priority: 651)
             .AddPattern(TokenType.CssUnit, @"\d+\.?\d*(?:px|em|rem|vh|vw|vmin|vmax|ch|ex|cm|mm|in|pt|pc|deg|rad|turn|s|ms|fr)\b", priority: 650)
 

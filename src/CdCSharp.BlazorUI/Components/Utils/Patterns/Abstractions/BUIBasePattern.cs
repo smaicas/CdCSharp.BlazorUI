@@ -9,104 +9,73 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     protected PatternCallbacksRelay? _jsCallbacksRelay;
     protected PatternState _patternState = new();
     private bool _isInitialized = false;
+    private string? _lastExternalText = null;
     private bool _suppressRender = false;
+
+    [Parameter]
+    public bool Editable { get; set; } = true;
 
     [Parameter, EditorRequired]
     public string Format { get; set; } = string.Empty;
 
     [Parameter]
-    public bool Editable { get; set; } = true;
+    public string? Text { get; set; } = null;
 
     [Parameter]
     public EventCallback<string?> TextChanged { get; set; }
 
+    protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
+
     [Inject]
     protected IPatternJsInterop Js { get; set; } = default!;
 
-    [Parameter]
-    public string? Text { get; set; } = null;
-
-    protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
-
-    protected override bool ShouldRender()
+    public async ValueTask DisposeAsync()
     {
-        if (_suppressRender)
+        if (_jsCallbacksRelay != null && _isInitialized)
         {
-            _suppressRender = false;
-            return false;
+            await Js.DisposePatternAsync(ComponentId);
+            _jsCallbacksRelay.Dispose();
         }
-        return true;
+        await DisposeAsyncCore();
+        GC.SuppressFinalize(this);
     }
 
-    protected override void OnInitialized()
+    public async Task FocusAsync()
     {
-        _patternState = CreatePatternState();
-        InitializeFromText(Text);
-    }
-
-    private string? _lastExternalText = null;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        // Detectar si Text cambió desde el exterior
-        if (_isInitialized && Text != _lastExternalText)
+        if (_isInitialized)
         {
-            _lastExternalText = Text;
-
-            // Solo actualizar si el valor es diferente al estado interno
-            if (Text != _patternState.GetActualText())
-            {
-                InitializeFromText(Text);
-                await SyncSpansToJs();
-            }
+            await Js.FocusFirstEditableAsync(ComponentId);
         }
     }
 
-    private async Task SyncSpansToJs()
+    public async Task OnPaste(string text)
     {
-        foreach (SpanState span in _patternState.Spans)
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        // Try to validate complete text
+        string normalized = NormalizeSeparators(text);
+
+        if (ValidateComplete(normalized))
         {
-            if (span.IsEditable)
-            {
-                await Js.UpdateSpanValueAsync(ComponentId, span.Index, span.DisplayValue);
-            }
+            InitializeFromText(normalized);
+            await NotifyTextChanged();
+            StateHasChanged();
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _jsCallbacksRelay = new PatternCallbacksRelay(this);
-            await Js.InitializePatternAsync(_containerBox, _jsCallbacksRelay.DotNetReference, ComponentId);
-            _isInitialized = true;
-        }
-    }
-
-    protected abstract PatternState CreatePatternState();
-    protected abstract void InitializeFromText(string? text);
-    protected abstract bool ValidateComplete(string text);
-
-    public async Task OnSpanInput(int index, string value)
+    public async Task OnSpanBlur(int index)
     {
         if (!IsValidIndex(index)) return;
 
         SpanState span = _patternState.Spans[index];
-        if (!span.IsEditable) return;
 
-        string filtered = FilterInput(value, span.AllowedChars, span.MaxLength);
-
-        if (filtered != value)
+        if (span.IsEditable && (!span.IsComplete || string.IsNullOrEmpty(span.Value)))
         {
-            await Js.UpdateSpanValueAsync(ComponentId, index, filtered);
-            await Js.SetCaretToEndAsync(ComponentId, index);
+            span.Value = string.Empty;
+            await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
+            _suppressRender = true;
+            await NotifyTextChanged();
         }
-
-        span.Value = filtered;
-
-        // Suprimir render durante la notificación
-        _suppressRender = true;
-        await NotifyTextChanged();
     }
 
     public async Task<bool> OnSpanComplete(int index, string value)
@@ -136,41 +105,108 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         if (!IsValidIndex(index)) return;
     }
 
-    public async Task OnSpanBlur(int index)
+    public async Task OnSpanInput(int index, string value)
     {
         if (!IsValidIndex(index)) return;
 
         SpanState span = _patternState.Spans[index];
+        if (!span.IsEditable) return;
 
-        if (span.IsEditable && (!span.IsComplete || string.IsNullOrEmpty(span.Value)))
+        string filtered = FilterInput(value, span.AllowedChars, span.MaxLength);
+
+        if (filtered != value)
         {
-            span.Value = string.Empty;
-            await Js.UpdateSpanValueAsync(ComponentId, index, span.Placeholder);
-            _suppressRender = true;
-            await NotifyTextChanged();
+            await Js.UpdateSpanValueAsync(ComponentId, index, filtered);
+            await Js.SetCaretToEndAsync(ComponentId, index);
         }
+
+        span.Value = filtered;
+
+        // Suprimir render durante la notificación
+        _suppressRender = true;
+        await NotifyTextChanged();
     }
 
-    public async Task OnPaste(string text)
+    public async Task OnToggleClick(int index)
     {
-        if (string.IsNullOrWhiteSpace(text)) return;
+        if (!IsValidIndex(index)) return;
 
-        // Try to validate complete text
-        string normalized = NormalizeSeparators(text);
+        SpanState span = _patternState.Spans[index];
+        if (!span.IsToggle) return;
 
-        if (ValidateComplete(normalized))
-        {
-            InitializeFromText(normalized);
-            await NotifyTextChanged();
-            StateHasChanged();
-        }
+        string newValue = ToggleValue(span.Value, span.Placeholder);
+        span.Value = newValue;
+
+        await Js.UpdateSpanValueAsync(ComponentId, index, newValue);
+
+        _suppressRender = true;
+        await NotifyTextChanged();
     }
+
+    protected abstract PatternState CreatePatternState();
+
+    protected virtual ValueTask DisposeAsyncCore()
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    protected abstract void InitializeFromText(string? text);
 
     protected virtual string NormalizeSeparators(string text)
     {
         // Default implementation - can be overridden
         return text;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _jsCallbacksRelay = new PatternCallbacksRelay(this);
+            await Js.InitializePatternAsync(_containerBox, _jsCallbacksRelay.DotNetReference, ComponentId);
+            _isInitialized = true;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _patternState = CreatePatternState();
+        InitializeFromText(Text);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Detectar si Text cambió desde el exterior
+        if (_isInitialized && Text != _lastExternalText)
+        {
+            _lastExternalText = Text;
+
+            // Solo actualizar si el valor es diferente al estado interno
+            if (Text != _patternState.GetActualText())
+            {
+                InitializeFromText(Text);
+                await SyncSpansToJs();
+            }
+        }
+    }
+
+    protected override bool ShouldRender()
+    {
+        if (_suppressRender)
+        {
+            _suppressRender = false;
+            return false;
+        }
+        return true;
+    }
+
+    protected virtual string ToggleValue(string currentValue, string placeholder)
+    {
+        // Implementación por defecto - puede ser override
+        return currentValue;
+    }
+
+    protected abstract bool ValidateComplete(string text);
 
     private string FilterInput(string input, string allowedChars, int maxLength)
     {
@@ -194,27 +230,6 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         return result.ToString();
     }
 
-    public async Task OnToggleClick(int index)
-    {
-        if (!IsValidIndex(index)) return;
-
-        SpanState span = _patternState.Spans[index];
-        if (!span.IsToggle) return;
-
-        string newValue = ToggleValue(span.Value, span.Placeholder);
-        span.Value = newValue;
-
-        await Js.UpdateSpanValueAsync(ComponentId, index, newValue);
-
-        _suppressRender = true;
-        await NotifyTextChanged();
-    }
-    protected virtual string ToggleValue(string currentValue, string placeholder)
-    {
-        // Implementación por defecto - puede ser override
-        return currentValue;
-    }
-
     private bool IsValidIndex(int index)
         => index >= 0 && index < _patternState.Spans.Count;
 
@@ -230,27 +245,14 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         }
     }
 
-    public async Task FocusAsync()
+    private async Task SyncSpansToJs()
     {
-        if (_isInitialized)
+        foreach (SpanState span in _patternState.Spans)
         {
-            await Js.FocusFirstEditableAsync(ComponentId);
+            if (span.IsEditable)
+            {
+                await Js.UpdateSpanValueAsync(ComponentId, span.Index, span.DisplayValue);
+            }
         }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_jsCallbacksRelay != null && _isInitialized)
-        {
-            await Js.DisposePatternAsync(ComponentId);
-            _jsCallbacksRelay.Dispose();
-        }
-        await DisposeAsyncCore();
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual ValueTask DisposeAsyncCore()
-    {
-        return ValueTask.CompletedTask;
     }
 }

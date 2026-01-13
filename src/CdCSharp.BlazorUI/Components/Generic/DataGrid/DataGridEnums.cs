@@ -1,11 +1,13 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public enum TableVariant
+public enum FilterMode
 {
-    Default,
-    Striped,
-    Bordered,
-    Cards,
+    None,
+    Contains,
+    StartsWith,
+    EndsWith,
+    Equals,
+    Custom
 }
 
 public enum SelectionMode
@@ -22,14 +24,12 @@ public enum SortDirection
     Descending
 }
 
-public enum FilterMode
+public enum TableVariant
 {
-    None,
-    Contains,
-    StartsWith,
-    EndsWith,
-    Equals,
-    Custom
+    Default,
+    Striped,
+    Bordered,
+    Cards,
 }
 
 public enum TableColumnAlign

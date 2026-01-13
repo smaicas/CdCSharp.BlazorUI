@@ -8,10 +8,8 @@ namespace CdCSharp.BlazorUI.BuildTools.Generators;
 [AssetGenerator]
 public class CssInitializeThemesGenerator : IAssetGenerator
 {
-
-    public string Name => "Initialize Themes CSS";
-
     public string FileName => "_initialize-themes.css";
+    public string Name => "Initialize Themes CSS";
 
     public async Task<string> GetContent() => """
         body {

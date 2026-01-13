@@ -5,15 +5,19 @@ namespace CdCSharp.BlazorUI.Components.Forms.Radio;
 public interface IRadioContainer
 {
     Type ElementType { get; }
-    void RegisterOption(IRadioOption option);
-    void UnregisterOption(IRadioOption option);
+
     bool IsOptionSelected(object? value);
+
+    void RegisterOption(IRadioOption option);
+
     Task SelectOptionAsync(object? value);
+
+    void UnregisterOption(IRadioOption option);
 }
 
 public interface IRadioOption
 {
-    object? RawValue { get; }
-    bool IsDisabled { get; }
     RenderFragment? Content { get; }
+    bool IsDisabled { get; }
+    object? RawValue { get; }
 }

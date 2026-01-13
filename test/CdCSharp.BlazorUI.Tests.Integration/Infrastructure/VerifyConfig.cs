@@ -5,11 +5,11 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 
 public static class VerifyConfig
 {
-    static readonly Regex ElementReferenceRegex =
+    private static readonly Regex ElementReferenceRegex =
         new(@"blazor:elementReference=""[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    static readonly Regex OnClickRegex =
+    private static readonly Regex OnClickRegex =
         new(@"blazor:(onclick|onchange|oninput|onfocus|onblur|onsubmit)=""\d+""",
             RegexOptions.Compiled);
 

@@ -4,10 +4,8 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Rules;
 
 public sealed class SequenceRule : ITokenRule
 {
-    private readonly TokenType _tokenType;
     private readonly string _sequence;
-
-    public int Priority { get; }
+    private readonly TokenType _tokenType;
 
     public SequenceRule(TokenType tokenType, string sequence, int priority = 0)
     {
@@ -15,6 +13,8 @@ public sealed class SequenceRule : ITokenRule
         _sequence = sequence;
         Priority = priority;
     }
+
+    public int Priority { get; }
 
     public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
     {

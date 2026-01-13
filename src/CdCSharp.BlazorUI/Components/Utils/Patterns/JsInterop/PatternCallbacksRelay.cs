@@ -21,9 +21,18 @@ public sealed class PatternCallbacksRelay : IDisposable
 
     public DotNetObjectReference<PatternCallbacksRelay> DotNetReference { get; }
 
+    public void Dispose()
+    {
+        DotNetReference.Dispose();
+    }
+
     [JSInvokable]
-    public Task OnSpanInput(int index, string value)
-        => _callback.OnSpanInput(index, value);
+    public Task OnPaste(string text)
+        => _callback.OnPaste(text);
+
+    [JSInvokable]
+    public Task OnSpanBlur(int index)
+        => _callback.OnSpanBlur(index);
 
     [JSInvokable]
     public Task<bool> OnSpanComplete(int index, string value)
@@ -34,19 +43,10 @@ public sealed class PatternCallbacksRelay : IDisposable
         => _callback.OnSpanFocus(index);
 
     [JSInvokable]
-    public Task OnSpanBlur(int index)
-        => _callback.OnSpanBlur(index);
-
-    [JSInvokable]
-    public Task OnPaste(string text)
-        => _callback.OnPaste(text);
+    public Task OnSpanInput(int index, string value)
+        => _callback.OnSpanInput(index, value);
 
     [JSInvokable]
     public Task OnToggleClick(int index)
     => _callback.OnToggleClick(index);
-
-    public void Dispose()
-    {
-        DotNetReference.Dispose();
-    }
 }

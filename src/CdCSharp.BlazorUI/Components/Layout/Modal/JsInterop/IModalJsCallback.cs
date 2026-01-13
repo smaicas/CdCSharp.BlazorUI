@@ -3,5 +3,6 @@
 public interface IModalJsCallback
 {
     Task OnEscapePressed();
+
     Task OnOverlayClick();
 }

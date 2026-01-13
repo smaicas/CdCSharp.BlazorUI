@@ -8,8 +8,8 @@ namespace CdCSharp.BlazorUI.Core.Components;
 internal sealed class BUIComponentJsBehaviorBuilder
 {
     private readonly ComponentBase _component;
-    private readonly IBehaviorJsInterop _jsInterop;
     private readonly BehaviorConfiguration _config = new();
+    private readonly IBehaviorJsInterop _jsInterop;
 
     private BUIComponentJsBehaviorBuilder(
         ComponentBase component,
@@ -39,9 +39,7 @@ internal sealed class BUIComponentJsBehaviorBuilder
         return await _jsInterop.AttachBehaviorsAsync(_config);
     }
 
-    // ─────────────────────────────────────────────
-    // Behavior configurations
-    // ─────────────────────────────────────────────
+    // ───────────────────────────────────────────── Behavior configurations ─────────────────────────────────────────────
 
     private void ConfigureRipple()
     {

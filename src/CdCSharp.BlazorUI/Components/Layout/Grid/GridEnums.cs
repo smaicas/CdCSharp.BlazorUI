@@ -1,23 +1,5 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
-public enum GridDirection
-{
-    Row,
-    RowReverse,
-    Column,
-    ColumnReverse
-}
-
-public enum GridJustifyContent
-{
-    Start,
-    End,
-    Center,
-    SpaceBetween,
-    SpaceAround,
-    SpaceEvenly
-}
-
 public enum GridAlignItems
 {
     Start,
@@ -35,6 +17,24 @@ public enum GridAlignSelf
     Center,
     Stretch,
     Baseline
+}
+
+public enum GridDirection
+{
+    Row,
+    RowReverse,
+    Column,
+    ColumnReverse
+}
+
+public enum GridJustifyContent
+{
+    Start,
+    End,
+    Center,
+    SpaceBetween,
+    SpaceAround,
+    SpaceEvenly
 }
 
 public enum GridWrap

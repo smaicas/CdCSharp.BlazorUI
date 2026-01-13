@@ -4,8 +4,7 @@ using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 namespace CdCSharp.BlazorUI.Core.Themes;
 
 /// <summary>
-/// Dark theme — Carbon / Mineral
-/// Oscuro técnico y moderno, con acentos minerales y sensación de precisión.
+/// Dark theme — Carbon / Mineral Oscuro técnico y moderno, con acentos minerales y sensación de precisión.
 /// </summary>
 public class DarkTheme : BUIThemePaletteBase
 {

@@ -4,8 +4,10 @@ namespace CdCSharp.BlazorUI.Components.Forms.Dropdown;
 
 public interface IDropdownContainer
 {
-    bool IsMultiple { get; }
     Type ElementType { get; }
+    bool IsMultiple { get; }
+
     void RegisterOption(ISelectionOption option);
+
     void UnregisterOption(ISelectionOption option);
 }

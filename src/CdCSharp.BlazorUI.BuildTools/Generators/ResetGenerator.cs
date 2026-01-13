@@ -6,15 +6,14 @@ using System.Diagnostics.CodeAnalysis;
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
 /// <summary>
-/// Generates minimal CSS reset.
-/// Import order: First (before all other styles).
+/// Generates minimal CSS reset. Import order: First (before all other styles).
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class ResetGenerator : IAssetGenerator
 {
-    public string Name => "CSS Reset";
     public string FileName => "_reset.css";
+    public string Name => "CSS Reset";
 
     public async Task<string> GetContent()
     {

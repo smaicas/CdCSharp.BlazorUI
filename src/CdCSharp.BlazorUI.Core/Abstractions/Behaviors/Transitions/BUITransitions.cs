@@ -8,29 +8,11 @@ public enum TransitionTrigger
     Disabled
 }
 
-public class TransitionConfig
-{
-    public Dictionary<string, string> CustomProperties { get; set; } = [];
-    public TimeSpan? Delay { get; set; }
-    public TimeSpan? Duration { get; set; }
-    public string? Easing { get; set; }
-    public TransitionType Type { get; set; }
-}
-
 public class BUITransitions
 {
     private readonly Dictionary<TransitionTrigger, List<TransitionConfig>> _transitions = [];
 
     public bool HasTransitions => _transitions.Any();
-
-    public string GetDataAttributeValue()
-    {
-        return string.Join(" ",
-            _transitions.SelectMany(t =>
-                t.Value.Select(cfg =>
-                    $"bui-transition-{t.Key.ToString().ToLower()}-{cfg.Type.ToString().ToLower()}"
-                )));
-    }
 
     public Dictionary<string, string> GetCssVariables()
     {
@@ -61,6 +43,15 @@ public class BUITransitions
         return variables;
     }
 
+    public string GetDataAttributeValue()
+    {
+        return string.Join(" ",
+            _transitions.SelectMany(t =>
+                t.Value.Select(cfg =>
+                    $"bui-transition-{t.Key.ToString().ToLower()}-{cfg.Type.ToString().ToLower()}"
+                )));
+    }
+
     internal void AddTransition(TransitionTrigger trigger, TransitionConfig config)
     {
         if (!_transitions.TryGetValue(trigger, out List<TransitionConfig>? list))
@@ -73,16 +64,27 @@ public class BUITransitions
     }
 }
 
+public class TransitionConfig
+{
+    public Dictionary<string, string> CustomProperties { get; set; } = [];
+    public TimeSpan? Delay { get; set; }
+    public TimeSpan? Duration { get; set; }
+    public string? Easing { get; set; }
+    public TransitionType Type { get; set; }
+}
+
 public enum TransitionType
 {
     // Transform
     Scale,
+
     Rotate,
     Translate,
     Skew,
 
     // Appearance
     Fade,
+
     Blur,
     Brightness,
     Contrast,
@@ -93,6 +95,7 @@ public enum TransitionType
 
     // Layout
     Shadow,
+
     Border,
 
     // Modern CSS
@@ -100,6 +103,7 @@ public enum TransitionType
 
     // Combinations
     Lift,
+
     Glow,
     Pulse,
     Shake

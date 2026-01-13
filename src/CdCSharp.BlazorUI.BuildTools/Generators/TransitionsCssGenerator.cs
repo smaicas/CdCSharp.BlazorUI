@@ -8,10 +8,8 @@ namespace CdCSharp.BlazorUI.BuildTools.Generators;
 [AssetGenerator]
 public class TransitionsCssGenerator : IAssetGenerator
 {
-
-    public string Name => "Transitions CSS";
-
     public string FileName => "_transition-classes.css";
+    public string Name => "Transitions CSS";
 
     public async Task<string> GetContent() => """
 /* ========================================

@@ -5,20 +5,14 @@ namespace CdCSharp.BlazorUI.Components;
 
 public sealed class TreeSelectionNode<TItem> : TreeNodeBase<TItem, TreeSelectionNode<TItem>>, IHierarchicalSelectionOption
 {
-    object? ISelectionOption.Value => Item;
-
-    string ISelectionOption.DisplayText => Text ?? Item?.ToString() ?? Key;
-
-    bool ISelectionOption.IsDisabled => IsDisabled;
-
-    RenderFragment? ISelectionOption.Content => CustomContent;
-
-    string IHierarchicalSelectionOption.Key => Key;
-
-    int IHierarchicalSelectionOption.Depth => Depth;
-
-    IHierarchicalSelectionOption? IHierarchicalSelectionOption.Parent => ParentNode;
-
     IReadOnlyList<IHierarchicalSelectionOption> IHierarchicalSelectionOption.Children =>
         ChildrenInternal.Cast<IHierarchicalSelectionOption>().ToList();
+
+    RenderFragment? ISelectionOption.Content => CustomContent;
+    int IHierarchicalSelectionOption.Depth => Depth;
+    string ISelectionOption.DisplayText => Text ?? Item?.ToString() ?? Key;
+    bool ISelectionOption.IsDisabled => IsDisabled;
+    string IHierarchicalSelectionOption.Key => Key;
+    IHierarchicalSelectionOption? IHierarchicalSelectionOption.Parent => ParentNode;
+    object? ISelectionOption.Value => Item;
 }

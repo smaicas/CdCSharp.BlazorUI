@@ -8,6 +8,7 @@ namespace CdCSharp.BlazorUI.Components.Forms.Color.JsInterop;
 public interface IColorPickerJsInterop
 {
     ValueTask<double[]> GetRelativePositionAsync(ElementReference element, double clientX, double clientY);
+
     ValueTask SetHandlerPositionAsync(ElementReference handler, double x, double y);
 }
 

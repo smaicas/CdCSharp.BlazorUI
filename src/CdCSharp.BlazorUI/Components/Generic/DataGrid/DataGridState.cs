@@ -4,13 +4,33 @@ internal sealed class DataGridState<TItem>
 {
     private readonly HashSet<TItem> _selectedItems = [];
 
+    public int CurrentPage { get; set; } = 1;
+    public string FilterText { get; set; } = string.Empty;
+    public int PageSize { get; set; } = 20;
+    public IReadOnlySet<TItem> SelectedItems => _selectedItems;
     public string? SortColumn { get; set; }
     public SortDirection SortDirection { get; set; } = SortDirection.None;
-    public string FilterText { get; set; } = string.Empty;
-    public int CurrentPage { get; set; } = 1;
-    public int PageSize { get; set; } = 20;
 
-    public IReadOnlySet<TItem> SelectedItems => _selectedItems;
+    public void ClearSelection()
+    {
+        _selectedItems.Clear();
+    }
+
+    public bool IsSelected(TItem item) => _selectedItems.Contains(item);
+
+    public void ResetPagination()
+    {
+        CurrentPage = 1;
+    }
+
+    public void SelectAll(IEnumerable<TItem> items)
+    {
+        _selectedItems.Clear();
+        foreach (TItem? item in items)
+        {
+            _selectedItems.Add(item);
+        }
+    }
 
     public void SelectItem(TItem item, SelectionMode mode)
     {
@@ -27,22 +47,6 @@ internal sealed class DataGridState<TItem>
                 _selectedItems.Add(item);
         }
     }
-
-    public void SelectAll(IEnumerable<TItem> items)
-    {
-        _selectedItems.Clear();
-        foreach (TItem? item in items)
-        {
-            _selectedItems.Add(item);
-        }
-    }
-
-    public void ClearSelection()
-    {
-        _selectedItems.Clear();
-    }
-
-    public bool IsSelected(TItem item) => _selectedItems.Contains(item);
 
     public void ToggleSort(string columnName)
     {
@@ -66,10 +70,5 @@ internal sealed class DataGridState<TItem>
             SortColumn = columnName;
             SortDirection = SortDirection.Ascending;
         }
-    }
-
-    public void ResetPagination()
-    {
-        CurrentPage = 1;
     }
 }

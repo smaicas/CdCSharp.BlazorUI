@@ -4,14 +4,12 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Rules;
 
 public sealed class BalancedRule : ITokenRule
 {
-    private readonly TokenType _tokenType;
-    private readonly string _prefix;
-    private readonly char _open;
     private readonly char _close;
     private readonly Func<string, IReadOnlyList<Token>>? _innerTokenizer;
     private readonly int _maxDepth;
-
-    public int Priority { get; }
+    private readonly char _open;
+    private readonly string _prefix;
+    private readonly TokenType _tokenType;
 
     public BalancedRule(
         TokenType tokenType,
@@ -30,6 +28,8 @@ public sealed class BalancedRule : ITokenRule
         Priority = priority;
         _maxDepth = maxDepth;
     }
+
+    public int Priority { get; }
 
     public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
     {

@@ -4,13 +4,11 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Rules;
 
 public sealed class DelimitedRule : ITokenRule
 {
-    private readonly TokenType _tokenType;
-    private readonly string _start;
     private readonly string _end;
     private readonly string? _escape;
     private readonly bool _multiline;
-
-    public int Priority { get; }
+    private readonly string _start;
+    private readonly TokenType _tokenType;
 
     public DelimitedRule(
         TokenType tokenType,
@@ -27,6 +25,8 @@ public sealed class DelimitedRule : ITokenRule
         _multiline = multiline;
         Priority = priority;
     }
+
+    public int Priority { get; }
 
     public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
     {
@@ -58,6 +58,16 @@ public sealed class DelimitedRule : ITokenRule
             return null;
 
         return new TokenMatch(_tokenType, position, length);
+    }
+
+    private static int FindLineEnd(string input, int start)
+    {
+        for (int i = start; i < input.Length; i++)
+        {
+            if (input[i] is '\n' or '\r')
+                return i;
+        }
+        return input.Length;
     }
 
     private int FindEndPosition(string input, int searchStart, StringComparison comparison, bool caseSensitive)
@@ -104,15 +114,5 @@ public sealed class DelimitedRule : ITokenRule
         }
 
         return -1;
-    }
-
-    private static int FindLineEnd(string input, int start)
-    {
-        for (int i = start; i < input.Length; i++)
-        {
-            if (input[i] is '\n' or '\r')
-                return i;
-        }
-        return input.Length;
     }
 }

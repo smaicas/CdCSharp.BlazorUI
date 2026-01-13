@@ -6,4 +6,3 @@ public enum SizeEnum
     Medium,
     Large
 }
-

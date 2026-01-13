@@ -39,7 +39,7 @@ public static class RazorLanguage
             // Inline code blocks @{ ... }
             .AddBalanced(TokenType.RazorCodeBlock, "@", '{', '}', priority: 1699)
 
-            // Escaped @@ 
+            // Escaped @@
             .AddSequence(TokenType.RazorDelimiter, "@@", priority: 1699)
 
             // Explicit Razor expressions @( ... )

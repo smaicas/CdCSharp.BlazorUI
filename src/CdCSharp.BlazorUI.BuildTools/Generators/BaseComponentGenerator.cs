@@ -7,15 +7,15 @@ using System.Text;
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
 /// <summary>
-/// Generates base styles for bui-component element.
-/// Size system only sets the multiplier; components use it in their isolated CSS.
+/// Generates base styles for bui-component element. Size system only sets the multiplier;
+/// components use it in their isolated CSS.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class BaseComponentGenerator : IAssetGenerator
 {
-    public string Name => "Base Component";
     public string FileName => "_base.css";
+    public string Name => "Base Component";
 
     public async Task<string> GetContent()
     {
@@ -81,6 +81,37 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 """;
 
+    private static string GetDensitySystem() => $$"""
+/* ========================================
+   DENSITY SYSTEM
+   Affects spacing between elements.
+   ======================================== */
+
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Compact}}"] {
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.25rem;
+}
+
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Standard}}"] {
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.5rem;
+}
+
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Comfortable}}"] {
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.75rem;
+}
+""";
+
+    private static string GetShadowSystem() => $$"""
+/* ========================================
+   SHADOW SYSTEM
+   Activated by data-bui-shadow attribute.
+   Values provided via inline CSS variables.
+   ======================================== */
+
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Shadow}}] {
+    box-shadow: var({{FeatureDefinitions.InlineVariables.Shadow}});
+}
+""";
+
     private static string GetSizeSystem() => $$"""
 /* ========================================
    SIZE SYSTEM
@@ -102,25 +133,6 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 """;
 
-    private static string GetDensitySystem() => $$"""
-/* ========================================
-   DENSITY SYSTEM
-   Affects spacing between elements.
-   ======================================== */
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Compact}}"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.25rem;
-}
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Standard}}"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.5rem;
-}
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Comfortable}}"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.75rem;
-}
-""";
-
     private static string GetStateStyles() => $$"""
 /* ========================================
    UNIVERSAL STATES
@@ -139,18 +151,6 @@ public class BaseComponentGenerator : IAssetGenerator
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {
     width: 100%;
-}
-""";
-
-    private static string GetShadowSystem() => $$"""
-/* ========================================
-   SHADOW SYSTEM
-   Activated by data-bui-shadow attribute.
-   Values provided via inline CSS variables.
-   ======================================== */
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Shadow}}] {
-    box-shadow: var({{FeatureDefinitions.InlineVariables.Shadow}});
 }
 """;
 

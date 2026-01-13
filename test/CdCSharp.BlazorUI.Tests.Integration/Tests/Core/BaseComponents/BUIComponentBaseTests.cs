@@ -15,50 +15,50 @@ using NSubstitute;
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.BaseComponents;
 
 /// <summary>
-/// Functional contract tests for <see cref="BUIComponentBase"/>.
+/// Functional contract tests for <see cref="BUIComponentBase" />.
 ///
 /// These tests define and enforce the following system-level rules:
 ///
-/// 1 - AUTOMATIC NAMING: Components MUST automatically generate a kebab-case identifier 
-///     for the 'data-bui-component' attribute, derived from the class name and 
-///     stripping any 'BUI' prefix for CSS consistency.
+/// 1 - AUTOMATIC NAMING: Components MUST automatically generate a kebab-case identifier for the
+/// 'data-bui-component' attribute, derived from the class name and stripping any 'BUI' prefix for
+/// CSS consistency.
 ///
-/// 2 - DESIGN STATE MAPPING: All design-related properties (Size, Density, Elevation, 
-///     FullWidth) MUST be mapped to 'data-bui-*' HTML attributes to enable 
-///     CSS attribute selector styling.
+/// 2 - DESIGN STATE MAPPING: All design-related properties (Size, Density, Elevation,
+/// FullWidth) MUST be mapped to 'data-bui-*' HTML attributes to enable CSS attribute selector styling.
 ///
-/// 3 - DYNAMIC STYLE GENERATION: 
-///     - Colors (Foreground, Background, Ripple) MUST be injected as CSS Variables 
-///       (--bui-*) using RGBA deterministic formatting.
-///     - Borders MUST support shorthand configuration and specific side overrides 
-///       (Top, Left, etc.) via CSS Variables.
+/// 3 - DYNAMIC STYLE GENERATION:
+/// - Colors (Foreground, Background, Ripple) MUST be injected as CSS Variables (--bui-*) using RGBA
+/// deterministic formatting.
+/// - Borders MUST support shorthand configuration and specific side overrides (Top, Left, etc.) via
+/// CSS Variables.
 ///
-/// 4 - STYLE HYBRIDIZATION: User-defined 'style' strings in 'AdditionalAttributes' 
-///     MUST be preserved and merged with system-generated CSS variables.
+/// 4 - STYLE HYBRIDIZATION: User-defined 'style' strings in 'AdditionalAttributes' MUST be
+/// preserved and merged with system-generated CSS variables.
 ///
-/// 5 - RIPPLE LIFECYCLE: 
-///     - Ripple configuration MUST be exposed as CSS variables unless 'DisableRipple' is true.
-///     - When disabled, 'data-bui-ripple' MUST be 'false' and variables MUST be omitted.
+/// 5 - RIPPLE LIFECYCLE:
+/// - Ripple configuration MUST be exposed as CSS variables unless 'DisableRipple' is true.
+/// - When disabled, 'data-bui-ripple' MUST be 'false' and variables MUST be omitted.
 ///
 /// 6 - JAVASCRIPT BEHAVIOR BRIDGE:
-///     - Components MUST attach JS behaviors after the first render via <see cref="IBehaviorJsInterop"/>.
-///     - JS behaviors MUST be skipped if the component is in a 'Loading' state to prevent 
-///       initialization on incomplete DOM trees.
-///     - Components MUST ensure idempotent disposal of JS modules to prevent memory leaks.
+/// - Components MUST attach JS behaviors after the first render via <see cref="IBehaviorJsInterop" />.
+/// - JS behaviors MUST be skipped if the component is in a 'Loading' state to prevent
+/// initialization on incomplete DOM trees.
+/// - Components MUST ensure idempotent disposal of JS modules to prevent memory leaks.
 ///
-/// 7 - ATTRIBUTE CLEANLINESS: The 'style' attribute MUST NOT be rendered if no 
-///     dynamic variables or user styles are present.
+/// 7 - ATTRIBUTE CLEANLINESS: The 'style' attribute MUST NOT be rendered if no dynamic variables or
+/// user styles are present.
 /// </summary>
 [Trait("Core", "BUIComponentBase")]
 public class BUIComponentBaseTests
 {
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Naming_Should_Remove_BUI_Prefix_And_Apply_KebabCase(BlazorScenario scenario)
+    private readonly IBehaviorJsInterop _jsInterop;
+
+    private readonly IJSObjectReference _jsModule;
+
+    public BUIComponentBaseTests()
     {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>();
-        cut.Find("div").GetAttribute("data-bui-component").Should().Be("component-base_-test-stub");
+        _jsInterop = Substitute.For<IBehaviorJsInterop>();
+        _jsModule = Substitute.For<IJSObjectReference>();
     }
 
     [Theory]
@@ -91,37 +91,39 @@ public class BUIComponentBaseTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Elevation_Should_Handle_Value_And_Null(BlazorScenario scenario)
+    public async Task Border_Should_Support_Inherit_And_None_Values(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p.Add(c => c.Elevation, 12));
-        cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("12");
+        // Act: Probar BorderStyle con tipos None e Inherit (Cubre ramas de switch/if en el Builder)
+        IRenderedComponent<BUIComponentBase_TestStub> cut =
+            ctx.Render<BUIComponentBase_TestStub>(p => p
+                .Add(c => c.Border,
+                    BorderStyle.Create().None())
+            );
 
-        cut.Render(p => p.Add(c => c.Elevation, null));
-        cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("0");
+        string? style = cut.Find("div").GetAttribute("style");
+        style.Should().Contain("--bui-border-style: none");
     }
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Styles_Should_Handle_Colors_And_Ripple(BlazorScenario scenario)
+    public async Task Borders_Should_Handle_All_Specific_Sides(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Color, new CssColor("#FF0000"))
-            .Add(c => c.BackgroundColor, new CssColor("#00FF00"))
-            .Add(c => c.DisableRipple, false)
-            .Add(c => c.RippleColor, new CssColor("#FFFFFF"))
-            .Add(c => c.RippleDurationMs, 300)
-        );
+        IRenderedComponent<BUIComponentBase_TestStub> cut =
+            ctx.Render<BUIComponentBase_TestStub>(p => p
+                .Add(c => c.Border,
+                    BorderStyle.Create()
+                        .Top("1px", BorderStyleType.Solid, new CssColor("#F00"))
+                        .Left("2px", BorderStyleType.Dotted, new CssColor("#0F0")))
+            );
 
         string? style = cut.Find("div").GetAttribute("style");
-        style.Should().Contain("--bui-inline-color: rgba(255,0,0,1)");
-        style.Should().Contain("--bui-bg-color: rgba(0,255,0,1)");
-        style.Should().Contain("--bui-ripple-color: rgba(255,255,255,1)");
-        style.Should().Contain("--bui-ripple-duration: 300ms");
-        cut.Find("div").GetAttribute("data-bui-ripple").Should().Be("true");
+        style.Should().Contain("--bui-border-top-width: 1px");
+        style.Should().Contain("--bui-border-left-width: 2px");
+        style.Should().Contain("--bui-border-left-style: dotted");
     }
 
     [Theory]
@@ -151,60 +153,41 @@ public class BUIComponentBaseTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Borders_Should_Handle_All_Specific_Sides(BlazorScenario scenario)
+    public async Task Elevation_Should_Handle_Value_And_Null(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        IRenderedComponent<BUIComponentBase_TestStub> cut =
-            ctx.Render<BUIComponentBase_TestStub>(p => p
-                .Add(c => c.Border,
-                    BorderStyle.Create()
-                        .Top("1px", BorderStyleType.Solid, new CssColor("#F00"))
-                        .Left("2px", BorderStyleType.Dotted, new CssColor("#0F0")))
-            );
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p.Add(c => c.Elevation, 12));
+        cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("12");
 
-        string? style = cut.Find("div").GetAttribute("style");
-        style.Should().Contain("--bui-border-top-width: 1px");
-        style.Should().Contain("--bui-border-left-width: 2px");
-        style.Should().Contain("--bui-border-left-style: dotted");
+        cut.Render(p => p.Add(c => c.Elevation, null));
+        cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("0");
     }
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Style_Attribute_Should_Be_Removed_If_Empty(BlazorScenario scenario)
+    public async Task Naming_Should_Remove_BUI_Prefix_And_Apply_KebabCase(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
-
-        // Un componente sin nada que genere CSS vars
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>();
-        cut.Find("div").HasAttribute("style").Should().BeFalse();
+        cut.Find("div").GetAttribute("data-bui-component").Should().Be("component-base_-test-stub");
     }
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task User_Styles_Should_Be_Preserved_And_Merged(BlazorScenario scenario)
+    public async Task Ripple_Should_Be_Disabled_When_DisableRipple_Is_True(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        Dictionary<string, object> attrs = new()
-        { { "style", "display: flex;" } };
+        // Act: DisableRipple = true (Cubre la rama donde config.Ripple no debería setearse)
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.AdditionalAttributes, attrs)
-            .Add(c => c.Color, new CssColor("#FF0000"))
-        );
+            .Add(c => c.DisableRipple, true));
 
-        string? style = cut.Find("div").GetAttribute("style");
-        style.Should().StartWith("--bui-inline-color:");
-        style.Should().Contain("display: flex;");
-    }
+        IElement el = cut.Find("div");
+        el.GetAttribute("data-bui-ripple").Should().Be("false");
 
-    private readonly IBehaviorJsInterop _jsInterop;
-    private readonly IJSObjectReference _jsModule;
-
-    public BUIComponentBaseTests()
-    {
-        _jsInterop = Substitute.For<IBehaviorJsInterop>();
-        _jsModule = Substitute.For<IJSObjectReference>();
+        string? style = el.GetAttribute("style");
+        style.Should().NotContain("--bui-ripple-color");
     }
 
     [Theory]
@@ -242,35 +225,52 @@ public class BUIComponentBaseTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Ripple_Should_Be_Disabled_When_DisableRipple_Is_True(BlazorScenario scenario)
+    public async Task Style_Attribute_Should_Be_Removed_If_Empty(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        // Act: DisableRipple = true (Cubre la rama donde config.Ripple no debería setearse)
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.DisableRipple, true));
-
-        IElement el = cut.Find("div");
-        el.GetAttribute("data-bui-ripple").Should().Be("false");
-
-        string? style = el.GetAttribute("style");
-        style.Should().NotContain("--bui-ripple-color");
+        // Un componente sin nada que genere CSS vars
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>();
+        cut.Find("div").HasAttribute("style").Should().BeFalse();
     }
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Border_Should_Support_Inherit_And_None_Values(BlazorScenario scenario)
+    public async Task Styles_Should_Handle_Colors_And_Ripple(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        // Act: Probar BorderStyle con tipos None e Inherit (Cubre ramas de switch/if en el Builder)
-        IRenderedComponent<BUIComponentBase_TestStub> cut =
-            ctx.Render<BUIComponentBase_TestStub>(p => p
-                .Add(c => c.Border,
-                    BorderStyle.Create().None())
-            );
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Color, new CssColor("#FF0000"))
+            .Add(c => c.BackgroundColor, new CssColor("#00FF00"))
+            .Add(c => c.DisableRipple, false)
+            .Add(c => c.RippleColor, new CssColor("#FFFFFF"))
+            .Add(c => c.RippleDurationMs, 300)
+        );
 
         string? style = cut.Find("div").GetAttribute("style");
-        style.Should().Contain("--bui-border-style: none");
+        style.Should().Contain("--bui-inline-color: rgba(255,0,0,1)");
+        style.Should().Contain("--bui-bg-color: rgba(0,255,0,1)");
+        style.Should().Contain("--bui-ripple-color: rgba(255,255,255,1)");
+        style.Should().Contain("--bui-ripple-duration: 300ms");
+        cut.Find("div").GetAttribute("data-bui-ripple").Should().Be("true");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task User_Styles_Should_Be_Preserved_And_Merged(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        Dictionary<string, object> attrs = new()
+        { { "style", "display: flex;" } };
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.AdditionalAttributes, attrs)
+            .Add(c => c.Color, new CssColor("#FF0000"))
+        );
+
+        string? style = cut.Find("div").GetAttribute("style");
+        style.Should().StartWith("--bui-inline-color:");
+        style.Should().Contain("display: flex;");
     }
 }

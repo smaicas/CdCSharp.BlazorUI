@@ -3,20 +3,20 @@
 public sealed class TreeStructure<TNode, TItem>
     where TNode : TreeNodeBase<TItem, TNode>
 {
-    private readonly Dictionary<string, TNode> _nodeMap = [];
+    private readonly TreeNodeCache<TItem> _cache = new();
     private readonly HashSet<string> _expandedKeys = [];
     private readonly HashSet<string> _loadingKeys = [];
-    private readonly TreeNodeCache<TItem> _cache = new();
     private readonly Func<TreeNodeBuildContext<TItem>, TNode> _nodeFactory;
-
-    public List<TNode> RootNodes { get; } = [];
-    public IReadOnlySet<string> ExpandedKeys => _expandedKeys;
-    public IReadOnlyDictionary<string, TNode> NodeMap => _nodeMap;
+    private readonly Dictionary<string, TNode> _nodeMap = [];
 
     public TreeStructure(Func<TreeNodeBuildContext<TItem>, TNode> nodeFactory)
     {
         _nodeFactory = nodeFactory;
     }
+
+    public IReadOnlySet<string> ExpandedKeys => _expandedKeys;
+    public IReadOnlyDictionary<string, TNode> NodeMap => _nodeMap;
+    public List<TNode> RootNodes { get; } = [];
 
     public void BuildFromItems(
         IEnumerable<TItem>? items,
@@ -35,33 +35,20 @@ public sealed class TreeStructure<TNode, TItem>
         }
     }
 
-    public void RegisterNode(TNode node)
+    public void Clear()
     {
-        _nodeMap[node.Key] = node;
-    }
-
-    public bool IsExpanded(string key) => _expandedKeys.Contains(key);
-    public bool IsLoading(string key) => _loadingKeys.Contains(key);
-
-    public void Expand(string key)
-    {
-        _expandedKeys.Add(key);
-    }
-
-    public void ExpandIfHasChildren(string key)
-    {
-        if (_nodeMap.TryGetValue(key, out TNode? node) && node.HasChildren)
-            _expandedKeys.Add(key);
+        _nodeMap.Clear();
+        RootNodes.Clear();
+        _expandedKeys.Clear();
     }
 
     public void Collapse(string key) => _expandedKeys.Remove(key);
 
-    public void Toggle(string key)
+    public void CollapseAll() => _expandedKeys.Clear();
+
+    public void Expand(string key)
     {
-        if (IsExpanded(key))
-            Collapse(key);
-        else
-            Expand(key);
+        _expandedKeys.Add(key);
     }
 
     public void ExpandAll()
@@ -70,17 +57,26 @@ public sealed class TreeStructure<TNode, TItem>
             _expandedKeys.Add(node.Key);
     }
 
-    public void CollapseAll() => _expandedKeys.Clear();
-
-    public void SetExpandedKeys(IEnumerable<string>? keys)
+    public void ExpandIfHasChildren(string key)
     {
-        _expandedKeys.Clear();
-        if (keys != null)
-        {
-            foreach (string key in keys)
-                _expandedKeys.Add(key);
-        }
+        if (_nodeMap.TryGetValue(key, out TNode? node) && node.HasChildren)
+            _expandedKeys.Add(key);
     }
+
+    public TNode? GetNode(string key)
+        => _nodeMap.TryGetValue(key, out TNode? node) ? node : null;
+
+    public void InvalidateCache(string? key = null)
+    {
+        if (key != null)
+            _cache.Invalidate(key);
+        else
+            _cache.InvalidateAll();
+    }
+
+    public bool IsExpanded(string key) => _expandedKeys.Contains(key);
+
+    public bool IsLoading(string key) => _loadingKeys.Contains(key);
 
     public async Task<bool> LoadChildrenAsync(
         string key,
@@ -128,22 +124,27 @@ public sealed class TreeStructure<TNode, TItem>
         }
     }
 
-    public TNode? GetNode(string key)
-        => _nodeMap.TryGetValue(key, out TNode? node) ? node : null;
-
-    public void InvalidateCache(string? key = null)
+    public void RegisterNode(TNode node)
     {
-        if (key != null)
-            _cache.Invalidate(key);
-        else
-            _cache.InvalidateAll();
+        _nodeMap[node.Key] = node;
     }
 
-    public void Clear()
+    public void SetExpandedKeys(IEnumerable<string>? keys)
     {
-        _nodeMap.Clear();
-        RootNodes.Clear();
         _expandedKeys.Clear();
+        if (keys != null)
+        {
+            foreach (string key in keys)
+                _expandedKeys.Add(key);
+        }
+    }
+
+    public void Toggle(string key)
+    {
+        if (IsExpanded(key))
+            Collapse(key);
+        else
+            Expand(key);
     }
 
     private TNode BuildNodeFromItem(

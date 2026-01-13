@@ -81,7 +81,7 @@ public class CSharpSnapshotTests
                     _context.Set<TEntity>().Add(entity);
                     await _context.SaveChangesAsync();
 
-                    _logger.LogInformation("Created entity of type {Type} with id {Id}", 
+                    _logger.LogInformation("Created entity of type {Type} with id {Id}",
                         typeof(TEntity).Name, entity.Id);
 
                     return entity;
@@ -91,7 +91,7 @@ public class CSharpSnapshotTests
 
                 private static bool IsValid(TEntity entity) => entity?.Id > 0;
 
-                #endregion
+                #endregion Private Methods
             }
             """;
 
@@ -146,13 +146,13 @@ public class CSharpSnapshotTests
             public class DataProcessor
             {
                 private readonly Dictionary<string, object> _cache = [];
-                
+
                 public required string Name { get; init; }
-                
+
                 public async Task ProcessAsync(ReadOnlyMemory<byte> data)
                 {
                     var json = JsonSerializer.Deserialize<JsonElement>(data.Span);
-                    
+
                     var result = json.ValueKind switch
                     {
                         JsonValueKind.Object => ProcessObject(json),

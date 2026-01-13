@@ -6,16 +6,6 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Tests;
 public class CssTokenizerTests
 {
     [Theory]
-    [InlineData("/* comment */")]
-    [InlineData("/* multi\nline\ncomment */")]
-    public void Tokenize_BlockComment_IsRecognized(string code)
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Comment);
-    }
-
-    [Theory]
     [InlineData("@import")]
     [InlineData("@media")]
     [InlineData("@keyframes")]
@@ -30,15 +20,24 @@ public class CssTokenizerTests
     }
 
     [Theory]
-    [InlineData("#header")]
-    [InlineData("#main-content")]
-    [InlineData("#app")]
-    public void Tokenize_IdSelectors_AreRecognized(string selector)
+    [InlineData("/* comment */")]
+    [InlineData("/* multi\nline\ncomment */")]
+    public void Tokenize_BlockComment_IsRecognized(string code)
     {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(selector);
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
 
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.CssSelector, tokens[0].Type);
+        Assert.Contains(tokens, t => t.Type == TokenType.Comment);
+    }
+
+    [Fact]
+    public void Tokenize_CaseInsensitive_PropertiesMatchRegardlessOfCase()
+    {
+        IReadOnlyList<Token> tokens1 = CssLanguage.Instance.Tokenize("DISPLAY");
+        IReadOnlyList<Token> tokens2 = CssLanguage.Instance.Tokenize("display");
+        IReadOnlyList<Token> tokens3 = CssLanguage.Instance.Tokenize("Display");
+
+        Assert.Equal(tokens1[0].Type, tokens2[0].Type);
+        Assert.Equal(tokens2[0].Type, tokens3[0].Type);
     }
 
     [Theory]
@@ -54,6 +53,88 @@ public class CssTokenizerTests
     }
 
     [Theory]
+    [InlineData("rgb(255, 0, 0)")]
+    [InlineData("rgba(255, 0, 0, 0.5)")]
+    [InlineData("hsl(120, 100%, 50%)")]
+    public void Tokenize_ColorFunctions_AreRecognized(string color)
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(color);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.CssValue && t.Value.StartsWith("rgb") || t.Value.StartsWith("hsl"));
+    }
+
+    [Fact]
+    public void Tokenize_CompleteRule_ProducesCorrectTokens()
+    {
+        string code = ".container { display: flex; margin: 10px; }";
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.CssSelector && t.Value == ".container");
+        Assert.Contains(tokens, t => t.Type == TokenType.CssProperty && t.Value == "display");
+        Assert.Contains(tokens, t => t.Type == TokenType.CssValue && t.Value == "flex");
+        Assert.Contains(tokens, t => t.Type == TokenType.CssProperty && t.Value == "margin");
+        Assert.Contains(tokens, t => t.Type == TokenType.CssUnit && t.Value == "10px");
+    }
+
+    [Theory]
+    [InlineData("display:")]
+    [InlineData("color:")]
+    [InlineData("background:")]
+    [InlineData("margin:")]
+    [InlineData("padding:")]
+    [InlineData("font-size:")]
+    [InlineData("flex:")]
+    public void Tokenize_CssProperties_AreRecognized(string property)
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(property);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.CssProperty);
+    }
+
+    [Theory]
+    [InlineData("10px")]
+    [InlineData("1.5em")]
+    [InlineData("100%")]
+    [InlineData("50vh")]
+    [InlineData("2rem")]
+    [InlineData("45deg")]
+    [InlineData("500ms")]
+    public void Tokenize_CssUnits_AreRecognized(string value)
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(value);
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.CssUnit, tokens[0].Type);
+    }
+
+    [Theory]
+    [InlineData("none")]
+    [InlineData("block")]
+    [InlineData("flex")]
+    [InlineData("grid")]
+    [InlineData("hidden")]
+    [InlineData("center")]
+    [InlineData("bold")]
+    public void Tokenize_CssValues_AreRecognized(string value)
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(value);
+
+        Assert.Contains(tokens, t => t.Type is TokenType.CssValue or TokenType.CssProperty);
+    }
+
+    [Theory]
+    [InlineData("--my-color")]
+    [InlineData("--spacing-small")]
+    [InlineData("--font-size-base")]
+    public void Tokenize_CssVariables_AreRecognized(string variable)
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(variable);
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Variable, tokens[0].Type);
+    }
+
+    [Theory]
     [InlineData("div")]
     [InlineData("span")]
     [InlineData("body")]
@@ -64,6 +145,49 @@ public class CssTokenizerTests
 
         Assert.Single(tokens);
         Assert.Equal(TokenType.TagName, tokens[0].Type);
+    }
+
+    [Theory]
+    [InlineData("#fff")]
+    [InlineData("#ffffff")]
+    [InlineData("#ff0000")]
+    [InlineData("#00ff00ff")]
+    public void Tokenize_HexColors_AreRecognized(string color)
+    {
+        string code = $"color: {color}";
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.CssValue && t.Value == color);
+    }
+
+    [Theory]
+    [InlineData("#header")]
+    [InlineData("#main-content")]
+    [InlineData("#app")]
+    public void Tokenize_IdSelectors_AreRecognized(string selector)
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(selector);
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.CssSelector, tokens[0].Type);
+    }
+
+    [Fact]
+    public void Tokenize_ImportantKeyword_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize("!important");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "!important");
+    }
+
+    [Fact]
+    public void Tokenize_MediaQuery_ProducesCorrectTokens()
+    {
+        string code = "@media (max-width: 768px) { .container { display: block; } }";
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.Directive && t.Value == "@media");
+        Assert.Contains(tokens, t => t.Type == TokenType.CssSelector && t.Value == ".container");
     }
 
     [Theory]
@@ -92,104 +216,6 @@ public class CssTokenizerTests
     }
 
     [Theory]
-    [InlineData("display:")]
-    [InlineData("color:")]
-    [InlineData("background:")]
-    [InlineData("margin:")]
-    [InlineData("padding:")]
-    [InlineData("font-size:")]
-    [InlineData("flex:")]
-    public void Tokenize_CssProperties_AreRecognized(string property)
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(property);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.CssProperty);
-    }
-
-    [Theory]
-    [InlineData("none")]
-    [InlineData("block")]
-    [InlineData("flex")]
-    [InlineData("grid")]
-    [InlineData("hidden")]
-    [InlineData("center")]
-    [InlineData("bold")]
-    public void Tokenize_CssValues_AreRecognized(string value)
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(value);
-
-        Assert.Contains(tokens, t => t.Type is TokenType.CssValue or TokenType.CssProperty);
-    }
-
-    [Theory]
-    [InlineData("#fff")]
-    [InlineData("#ffffff")]
-    [InlineData("#ff0000")]
-    [InlineData("#00ff00ff")]
-    public void Tokenize_HexColors_AreRecognized(string color)
-    {
-        string code = $"color: {color}";
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.CssValue && t.Value == color);
-    }
-
-    [Theory]
-    [InlineData("rgb(255, 0, 0)")]
-    [InlineData("rgba(255, 0, 0, 0.5)")]
-    [InlineData("hsl(120, 100%, 50%)")]
-    public void Tokenize_ColorFunctions_AreRecognized(string color)
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(color);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.CssValue && t.Value.StartsWith("rgb") || t.Value.StartsWith("hsl"));
-    }
-
-    [Theory]
-    [InlineData("10px")]
-    [InlineData("1.5em")]
-    [InlineData("100%")]
-    [InlineData("50vh")]
-    [InlineData("2rem")]
-    [InlineData("45deg")]
-    [InlineData("500ms")]
-    public void Tokenize_CssUnits_AreRecognized(string value)
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(value);
-
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.CssUnit, tokens[0].Type);
-    }
-
-    [Theory]
-    [InlineData("--my-color")]
-    [InlineData("--spacing-small")]
-    [InlineData("--font-size-base")]
-    public void Tokenize_CssVariables_AreRecognized(string variable)
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(variable);
-
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.Variable, tokens[0].Type);
-    }
-
-    [Fact]
-    public void Tokenize_VarFunction_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize("var(--my-color)");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Variable);
-    }
-
-    [Fact]
-    public void Tokenize_ImportantKeyword_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize("!important");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "!important");
-    }
-
-    [Theory]
     [InlineData("\"Helvetica Neue\"")]
     [InlineData("'Arial'")]
     public void Tokenize_Strings_AreRecognized(string code)
@@ -210,36 +236,10 @@ public class CssTokenizerTests
     }
 
     [Fact]
-    public void Tokenize_CompleteRule_ProducesCorrectTokens()
+    public void Tokenize_VarFunction_IsRecognized()
     {
-        string code = ".container { display: flex; margin: 10px; }";
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
+        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize("var(--my-color)");
 
-        Assert.Contains(tokens, t => t.Type == TokenType.CssSelector && t.Value == ".container");
-        Assert.Contains(tokens, t => t.Type == TokenType.CssProperty && t.Value == "display");
-        Assert.Contains(tokens, t => t.Type == TokenType.CssValue && t.Value == "flex");
-        Assert.Contains(tokens, t => t.Type == TokenType.CssProperty && t.Value == "margin");
-        Assert.Contains(tokens, t => t.Type == TokenType.CssUnit && t.Value == "10px");
-    }
-
-    [Fact]
-    public void Tokenize_MediaQuery_ProducesCorrectTokens()
-    {
-        string code = "@media (max-width: 768px) { .container { display: block; } }";
-        IReadOnlyList<Token> tokens = CssLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Directive && t.Value == "@media");
-        Assert.Contains(tokens, t => t.Type == TokenType.CssSelector && t.Value == ".container");
-    }
-
-    [Fact]
-    public void Tokenize_CaseInsensitive_PropertiesMatchRegardlessOfCase()
-    {
-        IReadOnlyList<Token> tokens1 = CssLanguage.Instance.Tokenize("DISPLAY");
-        IReadOnlyList<Token> tokens2 = CssLanguage.Instance.Tokenize("display");
-        IReadOnlyList<Token> tokens3 = CssLanguage.Instance.Tokenize("Display");
-
-        Assert.Equal(tokens1[0].Type, tokens2[0].Type);
-        Assert.Equal(tokens2[0].Type, tokens3[0].Type);
+        Assert.Contains(tokens, t => t.Type == TokenType.Variable);
     }
 }

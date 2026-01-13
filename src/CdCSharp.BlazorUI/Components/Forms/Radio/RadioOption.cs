@@ -5,15 +5,19 @@ namespace CdCSharp.BlazorUI.Components.Forms;
 
 public class RadioOption<TOption> : ComponentBase, IRadioOption, IDisposable
 {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter] public IRadioContainer? Container { get; set; }
 
-    [Parameter, EditorRequired] public TOption? Value { get; set; }
-    [Parameter] public bool Disabled { get; set; }
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
-    object? IRadioOption.RawValue => Value;
-    bool IRadioOption.IsDisabled => Disabled;
     RenderFragment IRadioOption.Content => ChildContent ?? (builder => { });
+    [Parameter] public bool Disabled { get; set; }
+    bool IRadioOption.IsDisabled => Disabled;
+    object? IRadioOption.RawValue => Value;
+    [Parameter, EditorRequired] public TOption? Value { get; set; }
+
+    public void Dispose()
+    {
+        Container?.UnregisterOption(this);
+    }
 
     protected override void OnInitialized()
     {
@@ -40,10 +44,5 @@ public class RadioOption<TOption> : ComponentBase, IRadioOption, IDisposable
             throw new InvalidOperationException(
                 $"RadioOption<{optionType.Name}> is not compatible with the radio's value type {expectedType.Name}.");
         }
-    }
-
-    public void Dispose()
-    {
-        Container?.UnregisterOption(this);
     }
 }

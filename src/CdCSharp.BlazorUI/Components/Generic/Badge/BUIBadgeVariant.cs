@@ -4,10 +4,10 @@ namespace CdCSharp.BlazorUI.Components;
 
 public class BUIBadgeVariant : Variant
 {
+    public static readonly BUIBadgeVariant Dot = new("Dot");
     public static readonly BUIBadgeVariant Filled = new("Filled");
     public static readonly BUIBadgeVariant Outlined = new("Outlined");
     public static readonly BUIBadgeVariant Soft = new("Soft");
-    public static readonly BUIBadgeVariant Dot = new("Dot");
 
     public BUIBadgeVariant(string name) : base(name)
     {

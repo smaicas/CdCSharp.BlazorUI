@@ -55,10 +55,7 @@ app.MapStaticAssets();
 //                    });
 //            }
 
-//            return Results.LocalRedirect(redirectUri);
-//        })
-//        .WithName("SetCulture")
-//        .ExcludeFromDescription();
+// return Results.LocalRedirect(redirectUri); }) .WithName("SetCulture") .ExcludeFromDescription();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

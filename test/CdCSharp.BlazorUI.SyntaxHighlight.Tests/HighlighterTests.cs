@@ -7,6 +7,98 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Tests;
 public class HighlighterTests
 {
     [Fact]
+    public void GetRegisteredLanguages_ReturnsAllLanguages()
+    {
+        Highlighter highlighter = new();
+
+        IEnumerable<string> languages = highlighter.GetRegisteredLanguages();
+
+        Assert.Contains("csharp", languages);
+        Assert.Contains("razor", languages);
+        Assert.Contains("typescript", languages);
+        Assert.Contains("css", languages);
+    }
+
+    [Fact]
+    public void HasLanguage_ReturnsFalseForUnknownLanguage()
+    {
+        Highlighter highlighter = new();
+
+        Assert.False(highlighter.HasLanguage("unknown"));
+    }
+
+    [Fact]
+    public void HasLanguage_ReturnsTrueForRegisteredLanguage()
+    {
+        Highlighter highlighter = new();
+
+        Assert.True(highlighter.HasLanguage("csharp"));
+        Assert.True(highlighter.HasLanguage("razor"));
+        Assert.True(highlighter.HasLanguage("typescript"));
+        Assert.True(highlighter.HasLanguage("css"));
+    }
+
+    [Fact]
+    public void Highlight_ContainsPreAndCodeTags()
+    {
+        Highlighter highlighter = new();
+
+        string result = highlighter.Highlight("csharp", "int x = 1;");
+
+        Assert.Contains("<pre class=\"SH-container\">", result);
+        Assert.Contains("<code class=\"SH-code\">", result);
+        Assert.Contains("</code></pre>", result);
+    }
+
+    [Fact]
+    public void Highlight_EscapesHtmlCharacters()
+    {
+        Highlighter highlighter = new();
+
+        string result = highlighter.Highlight("csharp", "if (x < 5 && y > 3) { }");
+
+        Assert.Contains("&lt;", result);
+        Assert.Contains("&gt;", result);
+        Assert.Contains("&amp;", result);
+    }
+
+    [Fact]
+    public void Highlight_ExcludesStyleTag_WhenOptionDisabled()
+    {
+        Highlighter highlighter = new(new HtmlRenderOptions { IncludeStyles = false });
+
+        string result = highlighter.Highlight("csharp", "class Foo { }");
+
+        Assert.DoesNotContain("<style>", result);
+    }
+
+    [Fact]
+    public void Highlight_IncludesStyleTag_WhenOptionEnabled()
+    {
+        Highlighter highlighter = new(new HtmlRenderOptions { IncludeStyles = true });
+
+        string result = highlighter.Highlight("csharp", "class Foo { }");
+
+        Assert.Contains("<style>", result);
+        Assert.Contains("</style>", result);
+    }
+
+    [Theory]
+    [InlineData("csharp")]
+    [InlineData("cs")]
+    [InlineData("c#")]
+    [InlineData("CSharp")]
+    [InlineData("CSHARP")]
+    public void Highlight_WithCSharpAliases_Works(string alias)
+    {
+        Highlighter highlighter = new();
+
+        string result = highlighter.Highlight(alias, "class Foo { }");
+
+        Assert.Contains("SH-kw", result);
+    }
+
+    [Fact]
     public void Highlight_WithEmptyCode_ReturnsEmptyString()
     {
         Highlighter highlighter = new();
@@ -24,29 +116,6 @@ public class HighlighterTests
         string result = highlighter.Highlight("csharp", null!);
 
         Assert.Equal(string.Empty, result);
-    }
-
-    [Fact]
-    public void Highlight_WithUnknownLanguage_ThrowsArgumentException()
-    {
-        Highlighter highlighter = new();
-
-        Assert.Throws<ArgumentException>(() => highlighter.Highlight("unknown", "code"));
-    }
-
-    [Theory]
-    [InlineData("csharp")]
-    [InlineData("cs")]
-    [InlineData("c#")]
-    [InlineData("CSharp")]
-    [InlineData("CSHARP")]
-    public void Highlight_WithCSharpAliases_Works(string alias)
-    {
-        Highlighter highlighter = new();
-
-        string result = highlighter.Highlight(alias, "class Foo { }");
-
-        Assert.Contains("SH-kw", result);
     }
 
     [Theory]
@@ -75,69 +144,23 @@ public class HighlighterTests
     }
 
     [Fact]
-    public void Highlight_IncludesStyleTag_WhenOptionEnabled()
+    public void Highlight_WithUnknownLanguage_ThrowsArgumentException()
     {
-        Highlighter highlighter = new(new HtmlRenderOptions { IncludeStyles = true });
+        Highlighter highlighter = new();
 
+        Assert.Throws<ArgumentException>(() => highlighter.Highlight("unknown", "code"));
+    }
+
+    [Fact]
+    public void Options_CanBeChanged()
+    {
+        Highlighter highlighter = new()
+        {
+            Options = HtmlRenderOptions.LightTheme
+        };
         string result = highlighter.Highlight("csharp", "class Foo { }");
 
-        Assert.Contains("<style>", result);
-        Assert.Contains("</style>", result);
-    }
-
-    [Fact]
-    public void Highlight_ExcludesStyleTag_WhenOptionDisabled()
-    {
-        Highlighter highlighter = new(new HtmlRenderOptions { IncludeStyles = false });
-
-        string result = highlighter.Highlight("csharp", "class Foo { }");
-
-        Assert.DoesNotContain("<style>", result);
-    }
-
-    [Fact]
-    public void Highlight_ContainsPreAndCodeTags()
-    {
-        Highlighter highlighter = new();
-
-        string result = highlighter.Highlight("csharp", "int x = 1;");
-
-        Assert.Contains("<pre class=\"SH-container\">", result);
-        Assert.Contains("<code class=\"SH-code\">", result);
-        Assert.Contains("</code></pre>", result);
-    }
-
-    [Fact]
-    public void Highlight_EscapesHtmlCharacters()
-    {
-        Highlighter highlighter = new();
-
-        string result = highlighter.Highlight("csharp", "if (x < 5 && y > 3) { }");
-
-        Assert.Contains("&lt;", result);
-        Assert.Contains("&gt;", result);
-        Assert.Contains("&amp;", result);
-    }
-
-    [Fact]
-    public void Tokenize_ReturnsTokenList()
-    {
-        Highlighter highlighter = new();
-
-        IReadOnlyList<Token> tokens = highlighter.Tokenize("csharp", "class Foo { }");
-
-        Assert.NotEmpty(tokens);
-        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "class");
-    }
-
-    [Fact]
-    public void Tokenize_WithEmptyCode_ReturnsEmptyList()
-    {
-        Highlighter highlighter = new();
-
-        IReadOnlyList<Token> tokens = highlighter.Tokenize("csharp", "");
-
-        Assert.Empty(tokens);
+        Assert.Contains("#ffffff", result);
     }
 
     [Fact]
@@ -170,46 +193,23 @@ public class HighlighterTests
     }
 
     [Fact]
-    public void HasLanguage_ReturnsTrueForRegisteredLanguage()
+    public void Tokenize_ReturnsTokenList()
     {
         Highlighter highlighter = new();
 
-        Assert.True(highlighter.HasLanguage("csharp"));
-        Assert.True(highlighter.HasLanguage("razor"));
-        Assert.True(highlighter.HasLanguage("typescript"));
-        Assert.True(highlighter.HasLanguage("css"));
+        IReadOnlyList<Token> tokens = highlighter.Tokenize("csharp", "class Foo { }");
+
+        Assert.NotEmpty(tokens);
+        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "class");
     }
 
     [Fact]
-    public void HasLanguage_ReturnsFalseForUnknownLanguage()
+    public void Tokenize_WithEmptyCode_ReturnsEmptyList()
     {
         Highlighter highlighter = new();
 
-        Assert.False(highlighter.HasLanguage("unknown"));
-    }
+        IReadOnlyList<Token> tokens = highlighter.Tokenize("csharp", "");
 
-    [Fact]
-    public void GetRegisteredLanguages_ReturnsAllLanguages()
-    {
-        Highlighter highlighter = new();
-
-        IEnumerable<string> languages = highlighter.GetRegisteredLanguages();
-
-        Assert.Contains("csharp", languages);
-        Assert.Contains("razor", languages);
-        Assert.Contains("typescript", languages);
-        Assert.Contains("css", languages);
-    }
-
-    [Fact]
-    public void Options_CanBeChanged()
-    {
-        Highlighter highlighter = new()
-        {
-            Options = HtmlRenderOptions.LightTheme
-        };
-        string result = highlighter.Highlight("csharp", "class Foo { }");
-
-        Assert.Contains("#ffffff", result);
+        Assert.Empty(tokens);
     }
 }

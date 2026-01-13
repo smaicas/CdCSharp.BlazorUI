@@ -2,16 +2,11 @@
 
 public sealed class PatternState
 {
-    public List<SpanState> Spans { get; set; } = [];
-
     public bool IsComplete => Spans
         .Where(s => s.IsEditable)
         .All(s => s.IsComplete && !string.IsNullOrEmpty(s.Value));
 
-    public string GetFullText()
-    {
-        return string.Join("", Spans.Select(s => s.DisplayValue));
-    }
+    public List<SpanState> Spans { get; set; } = [];
 
     public string? GetActualText()
     {
@@ -21,5 +16,10 @@ public sealed class PatternState
         return string.Join("", Spans.Select(s =>
             s.IsEditable ? s.Value : s.Placeholder
         ));
+    }
+
+    public string GetFullText()
+    {
+        return string.Join("", Spans.Select(s => s.DisplayValue));
     }
 }

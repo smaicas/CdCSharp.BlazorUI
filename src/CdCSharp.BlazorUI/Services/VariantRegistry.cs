@@ -7,8 +7,8 @@ namespace CdCSharp.BlazorUI.Services;
 
 public sealed class VariantRegistry : IVariantRegistry
 {
-    private readonly Dictionary<(Type, Type, string), Delegate> _templates = [];
     private readonly bool _initialized;
+    private readonly Dictionary<(Type, Type, string), Delegate> _templates = [];
 
     public VariantRegistry(IEnumerable<IVariantRegistryInitializer> initializers)
     {
@@ -18,20 +18,6 @@ public sealed class VariantRegistry : IVariantRegistry
         }
 
         _initialized = true;
-    }
-
-    public void Register<TComponent, TVariant>(
-        TVariant variant,
-        Func<TComponent, RenderFragment> template)
-        where TComponent : ComponentBase
-        where TVariant : Variant
-    {
-        if (_initialized)
-            throw new InvalidOperationException(
-                "Variants must be registered during startup");
-
-        (Type, Type, string Name) key = (typeof(TComponent), typeof(TVariant), variant.Name);
-        _templates[key] = template;
     }
 
     public RenderFragment? GetTemplate(
@@ -54,6 +40,20 @@ public sealed class VariantRegistry : IVariantRegistry
         }
 
         return null;
+    }
+
+    public void Register<TComponent, TVariant>(
+            TVariant variant,
+        Func<TComponent, RenderFragment> template)
+        where TComponent : ComponentBase
+        where TVariant : Variant
+    {
+        if (_initialized)
+            throw new InvalidOperationException(
+                "Variants must be registered during startup");
+
+        (Type, Type, string Name) key = (typeof(TComponent), typeof(TVariant), variant.Name);
+        _templates[key] = template;
     }
 }
 

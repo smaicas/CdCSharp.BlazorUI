@@ -24,25 +24,107 @@ public static class SearchAlgorithms
         };
     }
 
-    private static IEnumerable<SearchResult<T>> SearchSmart<T>(
-        IEnumerable<T> items,
-        string query,
-        Func<T, string> textSelector)
+    private static int LevenshteinDistance(string source, string target)
     {
-        List<SearchResult<T>> results = [];
-
-        foreach (T item in items)
+        if (string.IsNullOrEmpty(source))
         {
-            string text = textSelector(item).ToLowerInvariant();
-            SearchResult<T>? result = ScoreItem(item, text, query);
+            return target?.Length ?? 0;
+        }
 
-            if (result.HasValue)
+        if (string.IsNullOrEmpty(target))
+        {
+            return source.Length;
+        }
+
+        int sourceLength = source.Length;
+        int targetLength = target.Length;
+
+        int[,] distance = new int[sourceLength + 1, targetLength + 1];
+
+        for (int i = 0; i <= sourceLength; i++)
+        {
+            distance[i, 0] = i;
+        }
+
+        for (int j = 0; j <= targetLength; j++)
+        {
+            distance[0, j] = j;
+        }
+
+        for (int i = 1; i <= sourceLength; i++)
+        {
+            for (int j = 1; j <= targetLength; j++)
             {
-                results.Add(result.Value);
+                int cost = source[i - 1] == target[j - 1] ? 0 : 1;
+
+                distance[i, j] = Math.Min(
+                    Math.Min(
+                        distance[i - 1, j] + 1,
+                        distance[i, j - 1] + 1),
+                    distance[i - 1, j - 1] + cost);
             }
         }
 
-        return results.OrderByDescending(r => r.Score).ThenBy(r => textSelector(r.Item));
+        return distance[sourceLength, targetLength];
+    }
+
+    private static bool MatchesAcronym(string text, string query)
+    {
+        string[] words = text.Split(new[] { ' ', '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length < query.Length)
+        {
+            return false;
+        }
+
+        int queryIndex = 0;
+
+        foreach (string word in words)
+        {
+            if (queryIndex < query.Length &&
+                word.Length > 0 &&
+                char.ToLowerInvariant(word[0]) == query[queryIndex])
+            {
+                queryIndex++;
+            }
+
+            if (queryIndex == query.Length)
+            {
+                return true;
+            }
+        }
+
+        return queryIndex == query.Length;
+    }
+
+    private static bool MatchesWordStart(string text, string query)
+    {
+        string[] words = text.Split(new[] { ' ', '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
+        int queryIndex = 0;
+
+        foreach (string word in words)
+        {
+            if (queryIndex < query.Length && word.StartsWith(query[queryIndex].ToString()))
+            {
+                queryIndex++;
+                int matchLength = 1;
+
+                while (queryIndex < query.Length &&
+                       matchLength < word.Length &&
+                       word[matchLength] == query[queryIndex])
+                {
+                    queryIndex++;
+                    matchLength++;
+                }
+            }
+
+            if (queryIndex == query.Length)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static SearchResult<T>? ScoreItem<T>(T item, string text, string query)
@@ -87,75 +169,6 @@ public static class SearchAlgorithms
         return null;
     }
 
-    private static bool MatchesWordStart(string text, string query)
-    {
-        string[] words = text.Split(new[] { ' ', '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
-        int queryIndex = 0;
-
-        foreach (string word in words)
-        {
-            if (queryIndex < query.Length && word.StartsWith(query[queryIndex].ToString()))
-            {
-                queryIndex++;
-                int matchLength = 1;
-
-                while (queryIndex < query.Length &&
-                       matchLength < word.Length &&
-                       word[matchLength] == query[queryIndex])
-                {
-                    queryIndex++;
-                    matchLength++;
-                }
-            }
-
-            if (queryIndex == query.Length)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool MatchesAcronym(string text, string query)
-    {
-        string[] words = text.Split(new[] { ' ', '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
-
-        if (words.Length < query.Length)
-        {
-            return false;
-        }
-
-        int queryIndex = 0;
-
-        foreach (string word in words)
-        {
-            if (queryIndex < query.Length &&
-                word.Length > 0 &&
-                char.ToLowerInvariant(word[0]) == query[queryIndex])
-            {
-                queryIndex++;
-            }
-
-            if (queryIndex == query.Length)
-            {
-                return true;
-            }
-        }
-
-        return queryIndex == query.Length;
-    }
-
-    private static IEnumerable<SearchResult<T>> SearchStartsWith<T>(
-        IEnumerable<T> items,
-        string query,
-        Func<T, string> textSelector)
-    {
-        return items
-            .Where(item => textSelector(item).ToLowerInvariant().StartsWith(query))
-            .Select(item => new SearchResult<T>(item, 1.0, SearchMatchType.StartsWith));
-    }
-
     private static IEnumerable<SearchResult<T>> SearchContains<T>(
         IEnumerable<T> items,
         string query,
@@ -186,47 +199,34 @@ public static class SearchAlgorithms
             .Select(x => new SearchResult<T>(x.Item, x.Score, SearchMatchType.Fuzzy));
     }
 
-    private static int LevenshteinDistance(string source, string target)
+    private static IEnumerable<SearchResult<T>> SearchSmart<T>(
+                                IEnumerable<T> items,
+        string query,
+        Func<T, string> textSelector)
     {
-        if (string.IsNullOrEmpty(source))
+        List<SearchResult<T>> results = [];
+
+        foreach (T item in items)
         {
-            return target?.Length ?? 0;
-        }
+            string text = textSelector(item).ToLowerInvariant();
+            SearchResult<T>? result = ScoreItem(item, text, query);
 
-        if (string.IsNullOrEmpty(target))
-        {
-            return source.Length;
-        }
-
-        int sourceLength = source.Length;
-        int targetLength = target.Length;
-
-        int[,] distance = new int[sourceLength + 1, targetLength + 1];
-
-        for (int i = 0; i <= sourceLength; i++)
-        {
-            distance[i, 0] = i;
-        }
-
-        for (int j = 0; j <= targetLength; j++)
-        {
-            distance[0, j] = j;
-        }
-
-        for (int i = 1; i <= sourceLength; i++)
-        {
-            for (int j = 1; j <= targetLength; j++)
+            if (result.HasValue)
             {
-                int cost = source[i - 1] == target[j - 1] ? 0 : 1;
-
-                distance[i, j] = Math.Min(
-                    Math.Min(
-                        distance[i - 1, j] + 1,
-                        distance[i, j - 1] + 1),
-                    distance[i - 1, j - 1] + cost);
+                results.Add(result.Value);
             }
         }
 
-        return distance[sourceLength, targetLength];
+        return results.OrderByDescending(r => r.Score).ThenBy(r => textSelector(r.Item));
+    }
+
+    private static IEnumerable<SearchResult<T>> SearchStartsWith<T>(
+        IEnumerable<T> items,
+        string query,
+        Func<T, string> textSelector)
+    {
+        return items
+            .Where(item => textSelector(item).ToLowerInvariant().StartsWith(query))
+            .Select(item => new SearchResult<T>(item, 1.0, SearchMatchType.StartsWith));
     }
 }

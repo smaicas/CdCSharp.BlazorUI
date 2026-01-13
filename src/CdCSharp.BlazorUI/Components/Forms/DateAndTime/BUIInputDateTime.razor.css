@@ -1,9 +1,9 @@
 ﻿/* ============================================
    BUIInputDateTime.razor.css (REFACTORED)
-   
+
    NOTE: Unique component structure with pattern-based input
    Does NOT use input-family because it uses custom BUIDateTimePattern
-   
+
    KEPT: All styles (unique component, minimal duplication)
    OPTIMIZATION: Use global CSS variables where possible
    ============================================ */

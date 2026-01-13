@@ -7,13 +7,13 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 
 public abstract class BlazorTestContextBase : BunitContext
 {
-    public abstract string Scenario { get; }
-
     protected BlazorTestContextBase()
     {
         ConfigureCommonServices(Services);
         ConfigureScenarioServices(Services);
     }
+
+    public abstract string Scenario { get; }
 
     protected virtual void ConfigureCommonServices(IServiceCollection services)
     {

@@ -41,6 +41,24 @@ public sealed class HtmlRenderer
         return sb.ToString();
     }
 
+    private static string EscapeHtml(string text)
+    {
+        StringBuilder sb = new(text.Length);
+        foreach (char c in text)
+        {
+            sb.Append(c switch
+            {
+                '<' => "&lt;",
+                '>' => "&gt;",
+                '&' => "&amp;",
+                '"' => "&quot;",
+                '\'' => "&#39;",
+                _ => c
+            });
+        }
+        return sb.ToString();
+    }
+
     private static string GenerateStyles(HtmlRenderOptions options)
     {
         StringBuilder sb = new();
@@ -109,23 +127,5 @@ public sealed class HtmlRenderer
             TokenType.RazorCodeBlock => $"{CssPrefix}-rblk",
             _ => $"{CssPrefix}-txt"
         };
-    }
-
-    private static string EscapeHtml(string text)
-    {
-        StringBuilder sb = new(text.Length);
-        foreach (char c in text)
-        {
-            sb.Append(c switch
-            {
-                '<' => "&lt;",
-                '>' => "&gt;",
-                '&' => "&amp;",
-                '"' => "&quot;",
-                '\'' => "&#39;",
-                _ => c
-            });
-        }
-        return sb.ToString();
     }
 }

@@ -5,8 +5,8 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Tokenizer;
 
 public sealed class Tokenizer
 {
-    private readonly List<ITokenRule> _rules;
     private readonly TokenizerContext _context;
+    private readonly List<ITokenRule> _rules;
 
     public Tokenizer(IEnumerable<ITokenRule> rules, TokenizerContext context)
     {

@@ -17,20 +17,6 @@ public class NodeToolsManager
     }
 
     /// <summary>
-    /// Ensures npm packages are installed
-    /// </summary>
-    public async Task EnsurePackagesInstalledAsync()
-    {
-        string nodeModulesPath = _context.GetFullPath("node_modules");
-
-        if (!Directory.Exists(nodeModulesPath))
-        {
-            Console.WriteLine("    - Installing npm packages...");
-            await RunNpmInstallAsync();
-        }
-    }
-
-    /// <summary>
     /// Builds CSS using Vite
     /// </summary>
     public async Task BuildCssAsync()
@@ -44,6 +30,20 @@ public class NodeToolsManager
     public async Task BuildJsAsync()
     {
         await RunViteBuildAsync("vite.config.js");
+    }
+
+    /// <summary>
+    /// Ensures npm packages are installed
+    /// </summary>
+    public async Task EnsurePackagesInstalledAsync()
+    {
+        string nodeModulesPath = _context.GetFullPath("node_modules");
+
+        if (!Directory.Exists(nodeModulesPath))
+        {
+            Console.WriteLine("    - Installing npm packages...");
+            await RunNpmInstallAsync();
+        }
     }
 
     /// <summary>
@@ -78,22 +78,6 @@ public class NodeToolsManager
             throw new InvalidOperationException(
                 "Node.js is required to build BlazorUI. Please install Node.js from https://nodejs.org/");
         }
-    }
-
-    private async Task RunNpmInstallAsync()
-    {
-        await RunCommand(GetNpmPath(), "install", _context.ProjectPath);
-    }
-
-    private async Task RunViteBuildAsync(string configFile)
-    {
-        string args = "vite build";
-        if (!string.IsNullOrWhiteSpace(configFile))
-        {
-            args += $" --config {configFile}";
-        }
-
-        await RunCommand(GetNpxPath(), args, _context.ProjectPath);
     }
 
     private static string GetNpmPath()
@@ -244,5 +228,21 @@ public class NodeToolsManager
 
         commandPath = null;
         return false;
+    }
+
+    private async Task RunNpmInstallAsync()
+    {
+        await RunCommand(GetNpmPath(), "install", _context.ProjectPath);
+    }
+
+    private async Task RunViteBuildAsync(string configFile)
+    {
+        string args = "vite build";
+        if (!string.IsNullOrWhiteSpace(configFile))
+        {
+            args += $" --config {configFile}";
+        }
+
+        await RunCommand(GetNpxPath(), args, _context.ProjectPath);
     }
 }

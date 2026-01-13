@@ -9,7 +9,7 @@ public interface IVariantComponent
 public interface IVariantComponent<TVariant> : IVariantComponent
     where TVariant : Variant
 {
-    TVariant? Variant { get; set; }
-    TVariant DefaultVariant { get; }
     new TVariant CurrentVariant { get; }
+    TVariant DefaultVariant { get; }
+    TVariant? Variant { get; set; }
 }

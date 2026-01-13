@@ -34,30 +34,6 @@ public enum ColorOutputFormats
     ColorElements
 }
 
-public class CssColorVariant
-{
-    private const double VariantModifier = 0.030; // 5% per alteration step
-
-    public CssColorVariant(Modifier modifier, double alteration)
-    {
-        Mode = modifier;
-        Alteration = alteration;
-    }
-
-    public enum Modifier
-    {
-        Darken,
-        Lighten
-    }
-
-    public double Alteration { get; set; }
-    public Modifier Mode { get; set; }
-
-    public static CssColorVariant Darken(int alteration) => new(Modifier.Darken, VariantModifier * alteration);
-
-    public static CssColorVariant Lighten(int alteration) => new(Modifier.Lighten, VariantModifier * alteration);
-}
-
 /// <summary>
 /// The Css color representation.
 /// </summary>
@@ -67,10 +43,12 @@ public class CssColor : IEquatable<CssColor>
 
     private const double Epsilon = 0.000000000000001;
 
+    private readonly string? _cssVariable;
+
+    private readonly bool _isCssVariable;
+
     //private readonly ColorVariant? _associatedColorVariant;
     private readonly byte[] _valuesAsByte;
-    private readonly string? _cssVariable;
-    private readonly bool _isCssVariable;
 
     /// <summary>
     /// The Alpha value.
@@ -469,8 +447,8 @@ public class CssColor : IEquatable<CssColor>
     public static void SetContrastWhite(CssColor white) => _contrastWhite = white;
 
     /// <summary>
-    /// Returns the best contrast color (black or white) for this color.
-    /// Uses CSS variables with fallback if no custom values are set.
+    /// Returns the best contrast color (black or white) for this color. Uses CSS variables with
+    /// fallback if no custom values are set.
     /// </summary>
     public CssColor GetBestContrast()
     {
@@ -488,8 +466,7 @@ public class CssColor : IEquatable<CssColor>
     }
 
     /// <summary>
-    /// Returns the relative luminance of the current color (0 = dark, 1 = light)
-    /// using the WCAG 2.1 formula.
+    /// Returns the relative luminance of the current color (0 = dark, 1 = light) using the WCAG 2.1 formula.
     /// </summary>
     public double GetRelativeLuminance()
     {
@@ -510,7 +487,7 @@ public class CssColor : IEquatable<CssColor>
         return 0.2126 * Rlin + 0.7152 * Glin + 0.0722 * Blin;
     }
 
-    #endregion
+    #endregion Contrast Helpers
 
     #region Helper
 
@@ -611,6 +588,30 @@ public class CssColor : IEquatable<CssColor>
     }
 
     #endregion operators and object members
+}
+
+public class CssColorVariant
+{
+    private const double VariantModifier = 0.030; // 5% per alteration step
+
+    public CssColorVariant(Modifier modifier, double alteration)
+    {
+        Mode = modifier;
+        Alteration = alteration;
+    }
+
+    public enum Modifier
+    {
+        Darken,
+        Lighten
+    }
+
+    public double Alteration { get; set; }
+    public Modifier Mode { get; set; }
+
+    public static CssColorVariant Darken(int alteration) => new(Modifier.Darken, VariantModifier * alteration);
+
+    public static CssColorVariant Lighten(int alteration) => new(Modifier.Lighten, VariantModifier * alteration);
 }
 
 internal static class NumberExtensions

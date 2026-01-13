@@ -1,21 +1,21 @@
 ﻿namespace CdCSharp.BlazorUI.Core.Css;
 
 /// <summary>
-/// Represents a color in HSV (Hue, Saturation, Value) color space.
-/// Used internally by the color picker component.
+/// Represents a color in HSV (Hue, Saturation, Value) color space. Used internally by the color
+/// picker component.
 /// </summary>
 public readonly struct HsvColor : IEquatable<HsvColor>
 {
-    public int Hue { get; }
-    public double Saturation { get; }
-    public double Value { get; }
-
     public HsvColor(int hue, double saturation, double value)
     {
         Hue = Math.Clamp(hue, 0, 360);
         Saturation = Math.Clamp(saturation, 0.0, 1.0);
         Value = Math.Clamp(value, 0.0, 1.0);
     }
+
+    public int Hue { get; }
+    public double Saturation { get; }
+    public double Value { get; }
 
     public static HsvColor FromCssColor(CssColor color)
     {
@@ -46,6 +46,19 @@ public readonly struct HsvColor : IEquatable<HsvColor>
         return new HsvColor((int)Math.Round(h), Math.Round(s, 4), Math.Round(v, 4));
     }
 
+    public static bool operator !=(HsvColor left, HsvColor right) => !left.Equals(right);
+
+    public static bool operator ==(HsvColor left, HsvColor right) => left.Equals(right);
+
+    public bool Equals(HsvColor other) =>
+        Hue == other.Hue &&
+        Math.Abs(Saturation - other.Saturation) < 0.0001 &&
+        Math.Abs(Value - other.Value) < 0.0001;
+
+    public override bool Equals(object? obj) => obj is HsvColor other && Equals(other);
+
+    public override int GetHashCode() => HashCode.Combine(Hue, Saturation, Value);
+
     public CssColor ToCssColor(byte alpha = 255)
     {
         double c = Value * Saturation;
@@ -72,17 +85,8 @@ public readonly struct HsvColor : IEquatable<HsvColor>
     }
 
     public HsvColor WithHue(int hue) => new(hue, Saturation, Value);
+
     public HsvColor WithSaturation(double saturation) => new(Hue, saturation, Value);
+
     public HsvColor WithValue(double value) => new(Hue, Saturation, value);
-
-    public bool Equals(HsvColor other) =>
-        Hue == other.Hue &&
-        Math.Abs(Saturation - other.Saturation) < 0.0001 &&
-        Math.Abs(Value - other.Value) < 0.0001;
-
-    public override bool Equals(object? obj) => obj is HsvColor other && Equals(other);
-    public override int GetHashCode() => HashCode.Combine(Hue, Saturation, Value);
-
-    public static bool operator ==(HsvColor left, HsvColor right) => left.Equals(right);
-    public static bool operator !=(HsvColor left, HsvColor right) => !left.Equals(right);
 }

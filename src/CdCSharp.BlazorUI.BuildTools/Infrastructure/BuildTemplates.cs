@@ -6,14 +6,36 @@ namespace CdCSharp.BlazorUI.BuildTools.Infrastructure;
 [ExcludeFromCodeCoverage]
 public class BuildTemplates
 {
+    [BuildTemplate("CssBundle/entry.js")]
+    public static string GetEntryJsTemplate() => """import "./main.css";""";
+
+    [BuildTemplate("CssBundle/main.css")]
+    public static string GetMainCssTemplate() => """
+/* === GLOBAL CSS BUNDLE === */
+
+/* 1. Reset & Base */
+@import './_reset.css';
+@import './_typography.css';
+
+/* 2. Theme Variables */
+@import './_themes.css';
+@import './_initialize-themes.css';
+
+/* 3. Universal Component Styles */
+@import './_tokens.css';
+@import './_base.css';
+@import './_transition-classes.css';
+
+/* 4. Family-based Shared Styles */
+@import './_input-family.css';
+
+""";
+
     [BuildTemplate(".npmrc")]
     public static string GetNpmRcTemplate() => """
         fund=false
-        audit=false  
+        audit=false
         """;
-
-    [BuildTemplate("CssBundle/entry.js")]
-    public static string GetEntryJsTemplate() => """import "./main.css";""";
 
     [BuildTemplate("package.json")]
     public static string GetPackageJsonTemplate() => """
@@ -63,26 +85,40 @@ public class BuildTemplates
 }
 """;
 
-    [BuildTemplate("CssBundle/main.css")]
-    public static string GetMainCssTemplate() => """
-/* === GLOBAL CSS BUNDLE === */
+    [BuildTemplate("vite.config.css.js")]
+    public static string GetViteCssConfigTemplate() => """
+import { defineConfig } from "vite";
 
-/* 1. Reset & Base */
-@import './_reset.css';
-@import './_typography.css';
-
-/* 2. Theme Variables */
-@import './_themes.css';
-@import './_initialize-themes.css';
-
-/* 3. Universal Component Styles */
-@import './_tokens.css';
-@import './_base.css';
-@import './_transition-classes.css';
-
-/* 4. Family-based Shared Styles */
-@import './_input-family.css';
-
+export default defineConfig({
+    build: {
+        outDir: "wwwroot/css",
+        emptyOutDir: false,
+        cssCodeSplit: false,
+        rollupOptions: {
+            input: "./CssBundle/entry.js",
+            output: {
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name.endsWith(".css")) {
+                        return "blazorui.css";
+                    }
+                    return "[name][extname]";
+                }
+            },
+            plugins: [
+                {
+                    name: "remove-js-output",
+                    generateBundle(_, bundle) {
+                        Object.keys(bundle).forEach((file) => {
+                            if (file.endsWith(".js")) {
+                                delete bundle[file];
+                            }
+                        });
+                    }
+                }
+            ]
+        }
+    }
+});
 """;
 
     [BuildTemplate("vite.config.js")]
@@ -129,42 +165,6 @@ export default defineConfig({
             format: {
                 comments: false
             }
-        }
-    }
-});
-""";
-
-    [BuildTemplate("vite.config.css.js")]
-    public static string GetViteCssConfigTemplate() => """
-import { defineConfig } from "vite";
-
-export default defineConfig({
-    build: {
-        outDir: "wwwroot/css",
-        emptyOutDir: false,
-        cssCodeSplit: false,
-        rollupOptions: {
-            input: "./CssBundle/entry.js",
-            output: {
-                assetFileNames: (assetInfo) => {
-                    if (assetInfo.name.endsWith(".css")) {
-                        return "blazorui.css";
-                    }
-                    return "[name][extname]";
-                }
-            },
-            plugins: [
-                {
-                    name: "remove-js-output",
-                    generateBundle(_, bundle) {
-                        Object.keys(bundle).forEach((file) => {
-                            if (file.endsWith(".js")) {
-                                delete bundle[file];
-                            }
-                        });
-                    }
-                }
-            ]
         }
     }
 });

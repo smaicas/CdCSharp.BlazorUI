@@ -17,6 +17,8 @@ public sealed class DraggableCallbacksRelay : IDisposable
 
     public DotNetObjectReference<DraggableCallbacksRelay> DotNetReference { get; }
 
+    public void Dispose() => DotNetReference.Dispose();
+
     [JSInvokable]
     public Task OnMouseMove(double clientX, double clientY) =>
         _callback.OnMouseMove(clientX, clientY);
@@ -24,6 +26,4 @@ public sealed class DraggableCallbacksRelay : IDisposable
     [JSInvokable]
     public Task OnMouseUp(double clientX, double clientY) =>
         _callback.OnMouseUp(clientX, clientY);
-
-    public void Dispose() => DotNetReference.Dispose();
 }

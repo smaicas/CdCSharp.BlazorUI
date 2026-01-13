@@ -4,8 +4,8 @@ using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 namespace CdCSharp.BlazorUI.Core.Themes;
 
 /// <summary>
-/// Light theme — Porcelain / Ink
-/// Neutral, editorial y muy profesional, inspirado en diseño impreso de alta gama.
+/// Light theme — Porcelain / Ink Neutral, editorial y muy profesional, inspirado en diseño impreso
+/// de alta gama.
 /// </summary>
 public class LightTheme : BUIThemePaletteBase
 {

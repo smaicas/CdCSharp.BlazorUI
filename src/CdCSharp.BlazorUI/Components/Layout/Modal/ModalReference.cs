@@ -2,8 +2,8 @@
 
 public class ModalReference
 {
-    private readonly TaskCompletionSource<object?> _resultSource = new();
     private readonly Action<ModalReference> _onClose;
+    private readonly TaskCompletionSource<object?> _resultSource = new();
 
     internal ModalReference(string id, Action<ModalReference> onClose)
     {

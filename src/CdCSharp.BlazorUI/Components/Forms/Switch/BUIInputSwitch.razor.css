@@ -1,12 +1,12 @@
 ﻿/* ============================================
    BUIInputSwitch.razor.css (REFACTORED)
-   
+
    NOTE: This component does NOT use input-family
    because it has unique visual structure (track + thumb)
-   
+
    REMOVED (now in common-classes.css):
    - Base disabled opacity (inherited)
-   
+
    OPTIMIZATION: Use --bui-size-scale from global
    ============================================ */
 

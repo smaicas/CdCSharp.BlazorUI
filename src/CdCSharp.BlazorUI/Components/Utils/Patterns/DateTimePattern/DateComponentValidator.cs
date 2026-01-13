@@ -27,6 +27,24 @@ public static class DateComponentValidator
         };
     }
 
+    private static int ConvertTwoDigitYear(int year)
+    {
+        try
+        {
+            return CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(year);
+        }
+        catch
+        {
+            return 2000 + year;
+        }
+    }
+
+    private static bool ValidateAmPm(string value)
+    {
+        string upper = value.ToUpperInvariant();
+        return upper is "A" or "P" or "AM" or "PM";
+    }
+
     private static bool ValidateDay(string value, Dictionary<DateComponentType, string>? ctx)
     {
         if (!int.TryParse(value, out int day) || day < 1 || day > 31)
@@ -63,8 +81,20 @@ public static class DateComponentValidator
         }
     }
 
+    private static bool ValidateHour12(string value)
+        => int.TryParse(value, out int hour) && hour >= 1 && hour <= 12;
+
+    private static bool ValidateHour24(string value)
+        => int.TryParse(value, out int hour) && hour >= 0 && hour <= 23;
+
+    private static bool ValidateMinute(string value)
+        => int.TryParse(value, out int minute) && minute >= 0 && minute <= 59;
+
     private static bool ValidateMonth(string value)
-        => int.TryParse(value, out int month) && month >= 1 && month <= 12;
+                    => int.TryParse(value, out int month) && month >= 1 && month <= 12;
+
+    private static bool ValidateSecond(string value)
+        => int.TryParse(value, out int second) && second >= 0 && second <= 59;
 
     private static bool ValidateYear(string value)
     {
@@ -75,35 +105,5 @@ public static class DateComponentValidator
             return true;
 
         return year is >= 1900 and <= 2100;
-    }
-
-    private static bool ValidateHour12(string value)
-        => int.TryParse(value, out int hour) && hour >= 1 && hour <= 12;
-
-    private static bool ValidateHour24(string value)
-        => int.TryParse(value, out int hour) && hour >= 0 && hour <= 23;
-
-    private static bool ValidateMinute(string value)
-        => int.TryParse(value, out int minute) && minute >= 0 && minute <= 59;
-
-    private static bool ValidateSecond(string value)
-        => int.TryParse(value, out int second) && second >= 0 && second <= 59;
-
-    private static bool ValidateAmPm(string value)
-    {
-        string upper = value.ToUpperInvariant();
-        return upper is "A" or "P" or "AM" or "PM";
-    }
-
-    private static int ConvertTwoDigitYear(int year)
-    {
-        try
-        {
-            return CultureInfo.CurrentCulture.Calendar.ToFourDigitYear(year);
-        }
-        catch
-        {
-            return 2000 + year;
-        }
     }
 }

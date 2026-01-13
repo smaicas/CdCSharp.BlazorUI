@@ -14,11 +14,20 @@ public static partial class BUIColor
         public static CssColor BackgroundContrast =>
             new("var(--palette-backgroundcontrast)", true);
 
-        public static CssColor Surface =>
-            new("var(--palette-surface)", true);
+        public static CssColor Black =>
+            new("var(--palette-black)", true);
 
-        public static CssColor SurfaceContrast =>
-            new("var(--palette-surfacecontrast)", true);
+        public static CssColor Error =>
+            new("var(--palette-error)", true);
+
+        public static CssColor ErrorContrast =>
+            new("var(--palette-errorcontrast)", true);
+
+        public static CssColor Info =>
+            new("var(--palette-info)", true);
+
+        public static CssColor InfoContrast =>
+            new("var(--palette-infocontrast)", true);
 
         // Main
         public static CssColor Primary =>
@@ -33,6 +42,9 @@ public static partial class BUIColor
         public static CssColor SecondaryContrast =>
             new("var(--palette-secondarycontrast)", true);
 
+        public static CssColor Shadow =>
+            new("var(--palette-shadow)", true);
+
         // Status
         public static CssColor Success =>
             new("var(--palette-success)", true);
@@ -40,31 +52,19 @@ public static partial class BUIColor
         public static CssColor SuccessContrast =>
             new("var(--palette-successcontrast)", true);
 
+        public static CssColor Surface =>
+                                                                                                            new("var(--palette-surface)", true);
+
+        public static CssColor SurfaceContrast =>
+            new("var(--palette-surfacecontrast)", true);
+
         public static CssColor Warning =>
             new("var(--palette-warning)", true);
 
         public static CssColor WarningContrast =>
             new("var(--palette-warningcontrast)", true);
 
-        public static CssColor Error =>
-            new("var(--palette-error)", true);
-
-        public static CssColor ErrorContrast =>
-            new("var(--palette-errorcontrast)", true);
-
-        public static CssColor Info =>
-            new("var(--palette-info)", true);
-
-        public static CssColor InfoContrast =>
-            new("var(--palette-infocontrast)", true);
-
-        public static CssColor Black =>
-            new("var(--palette-black)", true);
-
         public static CssColor White =>
             new("var(--palette-white)", true);
-
-        public static CssColor Shadow =>
-            new("var(--palette-shadow)", true);
     }
 }

@@ -11,17 +11,16 @@
         transition: all 150ms ease;
     }
 
-
-bui-component[data-bui-component="date-time-pattern"] .bui-pattern__editable {
-    min-width: 2ch;
-    text-align: center;
-    outline: none;
-    transition: background 150ms ease;
-}
-
-    bui-component[data-bui-component="date-time-pattern"] .bui-pattern__editable:focus {
-        background: rgba(0, 0, 0, 0.04);
+    bui-component[data-bui-component="date-time-pattern"] .bui-pattern__editable {
+        min-width: 2ch;
+        text-align: center;
+        outline: none;
+        transition: background 150ms ease;
     }
+
+        bui-component[data-bui-component="date-time-pattern"] .bui-pattern__editable:focus {
+            background: rgba(0, 0, 0, 0.04);
+        }
 
 [data-theme="dark"] bui-component[data-bui-component="date-time-pattern"] .bui-pattern__editable:focus {
     background: rgba(255, 255, 255, 0.08);

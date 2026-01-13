@@ -7,20 +7,29 @@ public abstract class BUIDataGridColumnBase<TItem> : ComponentBase
 {
     private bool _registered;
 
-    [CascadingParameter(Name = "DataGridColumnRegistry")]
-    internal IDataGridColumnRegistry<TItem>? Registry { get; set; }
+    [Parameter] public TableColumnAlign Align { get; set; } = TableColumnAlign.Left;
+
+    [Parameter] public string? CellClass { get; set; }
+
+    [Parameter] public bool Filterable { get; set; }
 
     [Parameter] public string? Header { get; set; }
-    [Parameter] public TableColumnAlign Align { get; set; } = TableColumnAlign.Left;
-    [Parameter] public string? Width { get; set; }
+
     [Parameter] public string? HeaderClass { get; set; }
-    [Parameter] public string? CellClass { get; set; }
-    [Parameter] public bool Visible { get; set; } = true;
-    [Parameter] public RenderFragment<TItem>? Template { get; set; }
 
     // DataGrid-specific
     [Parameter] public bool Sortable { get; set; }
-    [Parameter] public bool Filterable { get; set; }
+
+    [Parameter] public RenderFragment<TItem>? Template { get; set; }
+
+    [Parameter] public bool Visible { get; set; } = true;
+
+    [Parameter] public string? Width { get; set; }
+
+    [CascadingParameter(Name = "DataGridColumnRegistry")]
+    internal IDataGridColumnRegistry<TItem>? Registry { get; set; }
+
+    protected abstract DataGridColumnRegistration<TItem> CreateRegistration();
 
     protected override void OnParametersSet()
     {
@@ -31,17 +40,14 @@ public abstract class BUIDataGridColumnBase<TItem> : ComponentBase
             _registered = true;
         }
     }
-
-    protected abstract DataGridColumnRegistration<TItem> CreateRegistration();
 }
 
 public abstract class BUIDataGridColumnBase<TItem, TValue> : BUIDataGridColumnBase<TItem>
 {
-    [Parameter] public Expression<Func<TItem, TValue>>? Property { get; set; }
-    [Parameter] public string? Format { get; set; }
     [Parameter] public Func<TItem, TItem, int>? CustomComparer { get; set; }
     [Parameter] public Func<TItem, string, bool>? CustomFilter { get; set; }
-
+    [Parameter] public string? Format { get; set; }
+    [Parameter] public Expression<Func<TItem, TValue>>? Property { get; set; }
     protected Func<TItem, object?>? CompiledSelector { get; private set; }
     protected string? PropertyName { get; private set; }
 

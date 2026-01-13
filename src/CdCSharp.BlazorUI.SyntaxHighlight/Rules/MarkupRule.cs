@@ -6,12 +6,12 @@ public sealed class MarkupRule : ITokenRule
 {
     private const int MaxTagLength = 10000;
 
-    public int Priority { get; }
-
     public MarkupRule(int priority = 0)
     {
         Priority = priority;
     }
+
+    public int Priority { get; }
 
     public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
     {
@@ -97,6 +97,12 @@ public sealed class MarkupRule : ITokenRule
 
         return -1;
     }
+
+    private static bool IsAttributeNameChar(char c) =>
+        char.IsLetterOrDigit(c) || c == '-' || c == '_' || c == ':' || c == '@' || c == '.';
+
+    private static bool IsTagNameChar(char c) =>
+        char.IsLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
 
     private static List<Token> ParseTagContent(string input, int start, int end)
     {
@@ -245,10 +251,4 @@ public sealed class MarkupRule : ITokenRule
 
         return tokens;
     }
-
-    private static bool IsTagNameChar(char c) =>
-        char.IsLetterOrDigit(c) || c == '-' || c == '_' || c == '.' || c == ':';
-
-    private static bool IsAttributeNameChar(char c) =>
-        char.IsLetterOrDigit(c) || c == '-' || c == '_' || c == ':' || c == '@' || c == '.';
 }

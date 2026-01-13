@@ -17,11 +17,11 @@ public sealed class ModalCallbacksRelay : IDisposable
 
     public DotNetObjectReference<ModalCallbacksRelay> DotNetReference { get; }
 
+    public void Dispose() => DotNetReference.Dispose();
+
     [JSInvokable]
     public Task OnEscapePressed() => _callback.OnEscapePressed();
 
     [JSInvokable]
     public Task OnOverlayClick() => _callback.OnOverlayClick();
-
-    public void Dispose() => DotNetReference.Dispose();
 }

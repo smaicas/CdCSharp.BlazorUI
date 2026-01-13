@@ -1,8 +1,8 @@
 ﻿/* ============================================
    BUIColorPicker.razor.css (REFACTORED)
-   
+
    NOTE: Complex unique component with color selection UI
-   
+
    KEPT: All styles (color picker is very specific)
    OPTIMIZATION: Minor cleanup, use palette variables consistently
    ============================================ */

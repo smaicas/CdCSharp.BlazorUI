@@ -7,10 +7,12 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight;
 
 public sealed class Highlighter
 {
-    private readonly HtmlRenderer _renderer;
     private readonly Dictionary<string, LanguageDefinition> _languages;
+    private readonly HtmlRenderer _renderer;
 
-    public Highlighter() : this(HtmlRenderOptions.Default) { }
+    public Highlighter() : this(HtmlRenderOptions.Default)
+    {
+    }
 
     public Highlighter(HtmlRenderOptions options)
     {
@@ -32,6 +34,10 @@ public sealed class Highlighter
 
     public HtmlRenderOptions Options { get; set; }
 
+    public IEnumerable<string> GetRegisteredLanguages() => _languages.Keys.Distinct();
+
+    public bool HasLanguage(string name) => _languages.ContainsKey(name);
+
     public string Highlight(string language, string code)
     {
         if (string.IsNullOrEmpty(code))
@@ -40,15 +46,6 @@ public sealed class Highlighter
         LanguageDefinition definition = GetLanguage(language);
         IReadOnlyList<Token> tokens = definition.Tokenize(code);
         return _renderer.Render(tokens, Options);
-    }
-
-    public IReadOnlyList<Token> Tokenize(string language, string code)
-    {
-        if (string.IsNullOrEmpty(code))
-            return [];
-
-        LanguageDefinition definition = GetLanguage(language);
-        return definition.Tokenize(code);
     }
 
     public void RegisterLanguage(string name, LanguageDefinition definition)
@@ -64,9 +61,14 @@ public sealed class Highlighter
         }
     }
 
-    public bool HasLanguage(string name) => _languages.ContainsKey(name);
+    public IReadOnlyList<Token> Tokenize(string language, string code)
+    {
+        if (string.IsNullOrEmpty(code))
+            return [];
 
-    public IEnumerable<string> GetRegisteredLanguages() => _languages.Keys.Distinct();
+        LanguageDefinition definition = GetLanguage(language);
+        return definition.Tokenize(code);
+    }
 
     private LanguageDefinition GetLanguage(string name)
     {

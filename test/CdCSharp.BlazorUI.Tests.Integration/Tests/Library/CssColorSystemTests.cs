@@ -9,47 +9,43 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Library;
 ///
 /// These tests define and enforce the following system-level rules:
 ///
-/// 1 - The color system MUST provide a stable and immutable set of base colors
-///     through <see cref="BUIColor"/> and its nested classes.
+/// 1 - The color system MUST provide a stable and immutable set of base colors through <see
+/// cref="BUIColor" /> and its nested classes.
 ///
-/// 2 - Every base color MUST expose a <c>Default</c> value and MAY expose
-///     derived variants (LightenX / DarkenX) computed deterministically
-///     from the base color.
+/// 2 - Every base color MUST expose a <c> Default </c> value and MAY expose derived variants
+/// (LightenX / DarkenX) computed deterministically from the base color.
 ///
-/// 3 - Color variants (Lighten / Darken) MUST be derived using HSL lightness
-///     modification and MUST preserve alpha values unless explicitly changed.
+/// 3 - Color variants (Lighten / Darken) MUST be derived using HSL lightness modification and MUST
+/// preserve alpha values unless explicitly changed.
 ///
-/// 4 - Palette colors (e.g. Primary, Background, Success, etc.) MUST be
-///     represented as CSS variables and MUST NOT be parsed or evaluated
-///     as concrete RGB values.
+/// 4 - Palette colors (e.g. Primary, Background, Success, etc.) MUST be represented as CSS
+/// variables and MUST NOT be parsed or evaluated as concrete RGB values.
 ///
-/// 5 - <see cref="CssColor"/> MUST support construction from:
-///     - RGBA byte and integer values
-///     - HSL values
-///     - Valid CSS string representations (HEX, RGB, RGBA)
-///     - CSS variables when explicitly marked as such
+/// 5 - <see cref="CssColor" /> MUST support construction from:
+/// - RGBA byte and integer values
+/// - HSL values
+/// - Valid CSS string representations (HEX, RGB, RGBA)
+/// - CSS variables when explicitly marked as such
 ///
-/// 6 - Invalid color inputs MUST throw <see cref="ArgumentException"/> or
-///     <see cref="ArgumentOutOfRangeException"/> and MUST NEVER fail silently.
+/// 6 - Invalid color inputs MUST throw <see cref="ArgumentException" /> or <see
+/// cref="ArgumentOutOfRangeException" /> and MUST NEVER fail silently.
 ///
-/// 7 - <see cref="CssColor"/> equality and hash code MUST be value-based
-///     and depend exclusively on RGBA channel values.
+/// 7 - <see cref="CssColor" /> equality and hash code MUST be value-based and depend exclusively on
+/// RGBA channel values.
 ///
-/// 8 - String output MUST be deterministic and MUST respect the requested
-///     <see cref="ColorOutputFormats"/>.
+/// 8 - String output MUST be deterministic and MUST respect the requested <see
+/// cref="ColorOutputFormats" />.
 ///
-/// 9 - When no output format is specified, <see cref="CssColor.ToString()"/>
-///     MUST default to RGBA format.
+/// 9 - When no output format is specified, <see cref="CssColor.ToString()" /> MUST default to RGBA format.
 ///
-/// 10 - CSS variable–based colors MUST round-trip without modification and
-///      MUST bypass numeric color calculations.
+/// 10 - CSS variable–based colors MUST round-trip without modification and MUST bypass numeric
+/// color calculations.
 ///
-/// 11 - Relative luminance and contrast helpers MUST follow WCAG 2.1 rules
-///      when numeric color values are available, and MUST degrade gracefully
-///      for CSS variable–based colors.
+/// 11 - Relative luminance and contrast helpers MUST follow WCAG 2.1 rules when numeric color
+/// values are available, and MUST degrade gracefully for CSS variable–based colors.
 ///
-/// Together, these tests define the parsing, normalization, transformation,
-/// formatting, and safety guarantees of the BlazorUI CSS Color System.
+/// Together, these tests define the parsing, normalization, transformation, formatting, and safety
+/// guarantees of the BlazorUI CSS Color System.
 /// </summary>
 [Trait("Library", "CssColorSystem")]
 public class CssColorSystemTests
@@ -70,6 +66,16 @@ public class CssColorSystemTests
         CssColor color = BUIColor.Blue.Default;
         string rgba = color.ToString(ColorOutputFormats.Rgba);
         rgba.Should().StartWith("rgba(");
+    }
+
+    [Fact]
+    public void BUIColor_Should_Return_Deterministic_Values()
+    {
+        CssColor first = BUIColor.Red.Default;
+        CssColor second = BUIColor.Red.Default;
+
+        first.Should().Be(second);
+        first.GetHashCode().Should().Be(second.GetHashCode());
     }
 
     [Fact]
@@ -146,6 +152,29 @@ public class CssColorSystemTests
     }
 
     [Fact]
+    public void CssColor_Constructor_WithCssVariable_StoresVariable()
+    {
+        // Act
+        CssColor color = new("var(--palette-primary)", true);
+
+        // Assert
+        color.ToString(ColorOutputFormats.Rgba).Should().Be("var(--palette-primary)");
+    }
+
+    [Theory]
+    [InlineData("var(--palette-primary)", true, "var(--palette-primary)")]
+    [InlineData("#FF0000", false, "rgba(255,0,0,1)")]
+    [InlineData("rgb(255,0,0)", false, "rgba(255,0,0,1)")]
+    public void CssColor_Constructor_WithCssVariable_VariousCases(string input, bool isCssVariable, string expected)
+    {
+        // Act
+        CssColor color = new(input, isCssVariable);
+
+        // Assert
+        color.ToString(ColorOutputFormats.Rgba).Should().Be(expected);
+    }
+
+    [Fact]
     public void CssColor_EqualityOperator_ComparesTwoColors()
     {
         // Arrange
@@ -191,6 +220,20 @@ public class CssColorSystemTests
         color1.Equals((object)color2).Should().BeTrue();
         color1.Equals(nullObject).Should().BeFalse();
         color1.Equals(notAColor).Should().BeFalse();
+    }
+
+    [Fact]
+    public void CssColor_GetBestContrast_WithCssVariable_Should_NotThrow()
+    {
+        // Arrange
+        CssColor cssVar = new("var(--palette-primary)", true);
+
+        // Act
+        CssColor contrast = cssVar.GetBestContrast();
+
+        // Assert
+        contrast.Should().NotBeNull();
+        contrast.ToString().Should().StartWith("var(");
     }
 
     [Fact]
@@ -338,39 +381,6 @@ public class CssColorSystemTests
     }
 
     [Fact]
-    public void CssColor_Constructor_WithCssVariable_StoresVariable()
-    {
-        // Act
-        CssColor color = new("var(--palette-primary)", true);
-
-        // Assert
-        color.ToString(ColorOutputFormats.Rgba).Should().Be("var(--palette-primary)");
-    }
-
-    [Theory]
-    [InlineData("var(--palette-primary)", true, "var(--palette-primary)")]
-    [InlineData("#FF0000", false, "rgba(255,0,0,1)")]
-    [InlineData("rgb(255,0,0)", false, "rgba(255,0,0,1)")]
-    public void CssColor_Constructor_WithCssVariable_VariousCases(string input, bool isCssVariable, string expected)
-    {
-        // Act
-        CssColor color = new(input, isCssVariable);
-
-        // Assert
-        color.ToString(ColorOutputFormats.Rgba).Should().Be(expected);
-    }
-
-    [Fact]
-    public void BUIColor_Should_Return_Deterministic_Values()
-    {
-        CssColor first = BUIColor.Red.Default;
-        CssColor second = BUIColor.Red.Default;
-
-        first.Should().Be(second);
-        first.GetHashCode().Should().Be(second.GetHashCode());
-    }
-
-    [Fact]
     public void CssColorVariant_Should_Preserve_Alpha_Channel()
     {
         // Arrange
@@ -383,19 +393,5 @@ public class CssColorSystemTests
         // Assert
         lightened.A.Should().Be(128);
         darkened.A.Should().Be(128);
-    }
-
-    [Fact]
-    public void CssColor_GetBestContrast_WithCssVariable_Should_NotThrow()
-    {
-        // Arrange
-        CssColor cssVar = new("var(--palette-primary)", true);
-
-        // Act
-        CssColor contrast = cssVar.GetBestContrast();
-
-        // Assert
-        contrast.Should().NotBeNull();
-        contrast.ToString().Should().StartWith("var(");
     }
 }

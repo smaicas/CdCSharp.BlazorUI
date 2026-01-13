@@ -13,26 +13,65 @@ namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 // Base class without variants
 public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable, IBuiltComponent
 {
-    private IJSObjectReference? _behaviorInstance;
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
+    private IJSObjectReference? _behaviorInstance;
     private FieldIdentifier _fieldIdentifier;
     private EditContext? _previousEditContext;
 
-    [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
-
     // Common parameters for all inputs
     [Parameter] public bool Disabled { get; set; }
-    [Parameter] public bool ReadOnly { get; set; }
-    [Parameter] public bool Required { get; set; }
+
+    public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.IsLoading);
 
     // Computed states - available for all inputs
     public bool IsError { get; private set; }
-    public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.IsLoading);
+
     public bool IsReadOnly => ReadOnly;
     public bool IsRequired => Required;
+    [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public bool Required { get; set; }
 
     // This is what components will use with @attributes
     protected Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
+
+    [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
+
+    public virtual void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    { }
+
+    public virtual void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    { }
+
+    public virtual async ValueTask DisposeAsync()
+    {
+        if (_behaviorInstance != null)
+        {
+            await _behaviorInstance.InvokeVoidAsync("dispose");
+            await _behaviorInstance.DisposeAsync();
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && EditContext != null)
+        {
+            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+        }
+
+        base.Dispose(disposing);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _behaviorInstance = await BUIComponentJsBehaviorBuilder
+                .For(this, BehaviorJsInterop)
+                .BuildAndAttachAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
     protected override void OnInitialized()
     {
@@ -73,6 +112,20 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
         base.OnParametersSet();
     }
 
+    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
+    {
+        bool hadErrors = IsError;
+        UpdateErrorState();
+
+        if (hadErrors != IsError)
+        {
+            // En lugar de llamar a OnParametersSet (que re-suscribe eventos), llamamos directamente
+            // a la reconstrucción de estilos y notificamos el cambio.
+            _styleBuilder.BuildStyles(this, AdditionalAttributes);
+            StateHasChanged();
+        }
+    }
+
     private void UpdateErrorState()
     {
         if (EditContext != null && ValueExpression != null)
@@ -84,54 +137,6 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
             IsError = false;
         }
     }
-
-    private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
-    {
-        bool hadErrors = IsError;
-        UpdateErrorState();
-
-        if (hadErrors != IsError)
-        {
-            // En lugar de llamar a OnParametersSet (que re-suscribe eventos), 
-            // llamamos directamente a la reconstrucción de estilos y notificamos el cambio.
-            _styleBuilder.BuildStyles(this, AdditionalAttributes);
-            StateHasChanged();
-        }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _behaviorInstance = await BUIComponentJsBehaviorBuilder
-                .For(this, BehaviorJsInterop)
-                .BuildAndAttachAsync();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing && EditContext != null)
-        {
-            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
-        }
-
-        base.Dispose(disposing);
-    }
-
-    public virtual async ValueTask DisposeAsync()
-    {
-        if (_behaviorInstance != null)
-        {
-            await _behaviorInstance.InvokeVoidAsync("dispose");
-            await _behaviorInstance.DisposeAsync();
-        }
-    }
-
-    public virtual void BuildComponentCssVariables(Dictionary<string, string> cssVariables) { }
-    public virtual void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes) { }
 }
 
 // Base class with variants
@@ -143,17 +148,16 @@ public abstract class BUIInputComponentBase<TValue, TComponent, TVariant>
     private RenderFragment? _resolvedTemplate;
     private VariantHelper<TComponent, TVariant>? _variantHelper;
 
-    [Parameter] public TVariant? Variant { get; set; }
-
-    protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
-    public abstract TVariant DefaultVariant { get; }
-
-    [Inject] private IVariantRegistry VariantRegistry { get; set; } = default!;
-
     // Implementation of IVariantComponent interfaces
     Variant IVariantComponent.CurrentVariant => CurrentVariant;
-    Type IVariantComponent.VariantType => typeof(TVariant);
+
     public TVariant CurrentVariant => Variant ?? DefaultVariant;
+    public abstract TVariant DefaultVariant { get; }
+    [Parameter] public TVariant? Variant { get; set; }
+
+    Type IVariantComponent.VariantType => typeof(TVariant);
+    protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
+    [Inject] private IVariantRegistry VariantRegistry { get; set; } = default!;
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {

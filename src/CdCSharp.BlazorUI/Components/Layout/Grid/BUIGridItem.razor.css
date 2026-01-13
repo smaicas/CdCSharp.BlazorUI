@@ -3,7 +3,7 @@
 /*
  * Width formula with gap compensation:
  * width = (100% - (columns - 1) * gap) / columns * span + (span - 1) * gap
- * 
+ *
  * Simplified: width = calc((100% + gap) / columns * span - gap)
  * This works because each "slot" includes its share of gap, then we subtract one gap.
  */

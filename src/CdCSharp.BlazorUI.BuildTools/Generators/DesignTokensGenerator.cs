@@ -6,16 +6,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
 /// <summary>
-/// Generates core design tokens: spacing, z-index, opacity.
-/// Typography is handled by TypographyGenerator.
-/// Border radius, transitions, and shadows are handled by component systems.
+/// Generates core design tokens: spacing, z-index, opacity. Typography is handled by
+/// TypographyGenerator. Border radius, transitions, and shadows are handled by component systems.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class DesignTokensGenerator : IAssetGenerator
 {
-    public string Name => "Design Tokens";
     public string FileName => "_tokens.css";
+    public string Name => "Design Tokens";
 
     public async Task<string> GetContent()
     {
@@ -23,11 +22,11 @@ public class DesignTokensGenerator : IAssetGenerator
 /* ========================================
    Design Tokens
    Auto-generated - Do not edit manually
-   
+
    Core system values:
    - Z-index layers
    - Opacity states
-   
+
    NOT included (handled elsewhere):
    - Typography (TypographyGenerator)
    - Border radius (BorderStyle system)

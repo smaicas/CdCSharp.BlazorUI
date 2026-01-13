@@ -4,15 +4,6 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Rendering;
 
 public sealed class HtmlRenderOptions
 {
-    public bool IncludeStyles { get; init; } = true;
-    public string BackgroundColor { get; init; } = "#1e1e1e";
-    public string DefaultColor { get; init; } = "#d4d4d4";
-    public string FontFamily { get; init; } = "'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace";
-    public string FontSize { get; init; } = "14px";
-    public Dictionary<TokenType, string> TokenColors { get; init; } = [];
-
-    public static HtmlRenderOptions Default => DarkTheme;
-
     public static HtmlRenderOptions DarkTheme => new()
     {
         BackgroundColor = "#1e1e1e",
@@ -53,6 +44,8 @@ public sealed class HtmlRenderOptions
         }
     };
 
+    public static HtmlRenderOptions Default => DarkTheme;
+
     public static HtmlRenderOptions LightTheme => new()
     {
         BackgroundColor = "#ffffff",
@@ -92,4 +85,11 @@ public sealed class HtmlRenderOptions
             [TokenType.RazorCodeBlock] = "#af00db",
         }
     };
+
+    public string BackgroundColor { get; init; } = "#1e1e1e";
+    public string DefaultColor { get; init; } = "#d4d4d4";
+    public string FontFamily { get; init; } = "'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace";
+    public string FontSize { get; init; } = "14px";
+    public bool IncludeStyles { get; init; } = true;
+    public Dictionary<TokenType, string> TokenColors { get; init; } = [];
 }

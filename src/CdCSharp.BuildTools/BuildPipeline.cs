@@ -20,15 +20,10 @@ public class BuildPipeline
         await BuildAssetsAsync();
     }
 
-    private async Task InitializeAsync()
+    private async Task BuildAssetsAsync()
     {
-        await _node.VerifyNodeInstalledAsync();
-        _context.EnsureDirectoriesFromConfig();
-
-        TemplateManager templates = new(_context);
-        await templates.EnsureTemplatesAsync();
-
-        await _node.EnsurePackagesInstalledAsync();
+        await _node.BuildCssAsync();
+        await _node.BuildJsAsync();
     }
 
     private async Task GenerateAssetsAsync()
@@ -42,9 +37,14 @@ public class BuildPipeline
         }
     }
 
-    private async Task BuildAssetsAsync()
+    private async Task InitializeAsync()
     {
-        await _node.BuildCssAsync();
-        await _node.BuildJsAsync();
+        await _node.VerifyNodeInstalledAsync();
+        _context.EnsureDirectoriesFromConfig();
+
+        TemplateManager templates = new(_context);
+        await templates.EnsureTemplatesAsync();
+
+        await _node.EnsurePackagesInstalledAsync();
     }
 }

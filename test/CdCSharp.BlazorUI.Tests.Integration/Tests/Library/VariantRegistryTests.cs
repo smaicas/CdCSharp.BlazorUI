@@ -10,29 +10,29 @@ using Microsoft.Extensions.DependencyInjection;
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Library;
 
 /// <summary>
-/// Functional contract tests for <see cref="IVariantRegistry"/>.
+/// Functional contract tests for <see cref="IVariantRegistry" />.
 ///
 /// These tests define and enforce the following system-level rules:
 ///
-/// 1 - Variants MUST NOT be registered directly through <see cref="IVariantRegistry"/> at runtime.
-/// 2 - Variants MUST be registered during application startup via <c>AddBlazorUIVariants</c>.
+/// 1 - Variants MUST NOT be registered directly through <see cref="IVariantRegistry" /> at runtime.
+/// 2 - Variants MUST be registered during application startup via <c> AddBlazorUIVariants </c>.
 ///
-/// 3 - Variant registration is cumulative during startup and supports multiple calls to
-///     <c>AddBlazorUIVariants</c>.
+/// 3 - Variant registration is cumulative during startup and supports multiple calls to <c>
+/// AddBlazorUIVariants </c>.
 ///
-/// 4 - When multiple registrations target the same component + variant key,
-///     the last registration wins (deterministic override).
+/// 4 - When multiple registrations target the same component + variant key, the last registration
+/// wins (deterministic override).
 ///
 /// 5 - Registered variants can be resolved and executed correctly at render time.
 ///
-/// 6 - Requests for non-registered variants MUST return <c>null</c> and never throw.
+/// 6 - Requests for non-registered variants MUST return <c> null </c> and never throw.
 ///
-/// 7 - Calling <c>AddBlazorUIVariants</c> without first calling <c>AddBlazorUI</c>
-///     is considered an invalid configuration and MUST fail when the registry is resolved.
+/// 7 - Calling <c> AddBlazorUIVariants </c> without first calling <c> AddBlazorUI </c> is
+/// considered an invalid configuration and MUST fail when the registry is resolved.
 ///
-/// 8 - The same <see cref="Variant"/> instance MAY be registered for multiple component types.
-///     This is supported but not recommended; consumers are encouraged to define
-///     component-specific variant classes for clarity and maintainability.
+/// 8 - The same <see cref="Variant" /> instance MAY be registered for multiple component types.
+/// This is supported but not recommended; consumers are encouraged to define component-specific
+/// variant classes for clarity and maintainability.
 ///
 /// 9 - Variants registered for a base component type MUST be resolvable by derived components.
 ///
@@ -41,8 +41,8 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Library;
 /// - Variant resolution is read-only after startup and is safe for concurrent use.
 /// - Thread-safety guarantees are by design and documented here, not enforced by tests.
 ///
-/// Together, these tests define the immutability, lifecycle, resolution and usage
-/// semantics of the Variant Registry.
+/// Together, these tests define the immutability, lifecycle, resolution and usage semantics of the
+/// Variant Registry.
 /// </summary>
 [Trait("Library", "VariantRegistry")]
 public class VariantRegistryTests
@@ -51,42 +51,33 @@ public class VariantRegistryTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task VariantRegistry_Should_Register_And_Retrieve_Custom_Variants(
+    public async Task VariantRegistry_Allows_Same_Variant_For_Multiple_Components(
         BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        TestVariant customVariant = TestVariant.Custom("Custom");
+        TestVariant sharedVariant = TestVariant.Custom("Shared");
 
         ctx.Services.AddBlazorUIVariants(builder =>
+        {
             builder.ForComponent<TestVariantComponent>()
-                   .AddVariant(customVariant, _templates.BasicCustomTemplate));
+                   .AddVariant(sharedVariant, _templates.BasicCustomTemplate);
 
-        IRenderedComponent<TestVariantComponent> cut =
-            ctx.Render<TestVariantComponent>(parameters => parameters
-                .Add(p => p.Variant, customVariant)
-                .Add(p => p.Text, "Custom Component"));
-
-        cut.Find("button").TextContent.Should().Be("Custom Component");
-    }
-
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task VariantRegistry_Register_Throws_WhenCalledAfterStartup(
-        BlazorScenario scenario)
-    {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
+            builder.ForComponent<DerivedTestVariantComponent>()
+                   .AddVariant(sharedVariant, _templates.BasicCustomTemplate);
+        });
 
         IVariantRegistry registry = ctx.Services.GetRequiredService<IVariantRegistry>();
-        TestVariant variant = TestVariant.Custom("Late");
 
-        Action act = () =>
-            registry.Register<TestVariantComponent, TestVariant>(
-                variant,
-                _ => __builder => { });
+        registry.GetTemplate(
+            typeof(TestVariantComponent),
+            sharedVariant,
+            null!).Should().NotBeNull();
 
-        act.Should().Throw<InvalidOperationException>()
-           .WithMessage("Variants must be registered during startup");
+        registry.GetTemplate(
+            typeof(DerivedTestVariantComponent),
+            sharedVariant,
+            null!).Should().NotBeNull();
     }
 
     [Theory]
@@ -163,49 +154,23 @@ public class VariantRegistryTests
         retrieved.Should().NotBeNull();
     }
 
-    [Fact]
-    public void VariantRegistry_Throws_When_AddBlazorUI_IsMissing()
-    {
-        ServiceCollection services = new();
-
-        services.AddBlazorUIVariants(_ => { });
-
-        Action act = () =>
-            services.BuildServiceProvider()
-                    .GetRequiredService<IVariantRegistry>();
-
-        act.Should().Throw<InvalidOperationException>();
-    }
-
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task VariantRegistry_Allows_Same_Variant_For_Multiple_Components(
+    public async Task VariantRegistry_Register_Throws_WhenCalledAfterStartup(
         BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        TestVariant sharedVariant = TestVariant.Custom("Shared");
-
-        ctx.Services.AddBlazorUIVariants(builder =>
-        {
-            builder.ForComponent<TestVariantComponent>()
-                   .AddVariant(sharedVariant, _templates.BasicCustomTemplate);
-
-            builder.ForComponent<DerivedTestVariantComponent>()
-                   .AddVariant(sharedVariant, _templates.BasicCustomTemplate);
-        });
-
         IVariantRegistry registry = ctx.Services.GetRequiredService<IVariantRegistry>();
+        TestVariant variant = TestVariant.Custom("Late");
 
-        registry.GetTemplate(
-            typeof(TestVariantComponent),
-            sharedVariant,
-            null!).Should().NotBeNull();
+        Action act = () =>
+            registry.Register<TestVariantComponent, TestVariant>(
+                variant,
+                _ => __builder => { });
 
-        registry.GetTemplate(
-            typeof(DerivedTestVariantComponent),
-            sharedVariant,
-            null!).Should().NotBeNull();
+        act.Should().Throw<InvalidOperationException>()
+           .WithMessage("Variants must be registered during startup");
     }
 
     [Theory]
@@ -230,5 +195,40 @@ public class VariantRegistryTests
                 null!);
 
         template.Should().NotBeNull();
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task VariantRegistry_Should_Register_And_Retrieve_Custom_Variants(
+        BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        TestVariant customVariant = TestVariant.Custom("Custom");
+
+        ctx.Services.AddBlazorUIVariants(builder =>
+            builder.ForComponent<TestVariantComponent>()
+                   .AddVariant(customVariant, _templates.BasicCustomTemplate));
+
+        IRenderedComponent<TestVariantComponent> cut =
+            ctx.Render<TestVariantComponent>(parameters => parameters
+                .Add(p => p.Variant, customVariant)
+                .Add(p => p.Text, "Custom Component"));
+
+        cut.Find("button").TextContent.Should().Be("Custom Component");
+    }
+
+    [Fact]
+    public void VariantRegistry_Throws_When_AddBlazorUI_IsMissing()
+    {
+        ServiceCollection services = new();
+
+        services.AddBlazorUIVariants(_ => { });
+
+        Action act = () =>
+            services.BuildServiceProvider()
+                    .GetRequiredService<IVariantRegistry>();
+
+        act.Should().Throw<InvalidOperationException>();
     }
 }

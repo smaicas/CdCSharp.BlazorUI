@@ -157,7 +157,7 @@ bui-component[data-bui-component="input-dropdown"] .bui-dropdown__option--focuse
 
 bui-component[data-bui-component="input-dropdown"] .bui-dropdown__option--disabled {
     opacity: 0.5;
-    filter:grayscale();
+    filter: grayscale();
     cursor: not-allowed;
 }
 

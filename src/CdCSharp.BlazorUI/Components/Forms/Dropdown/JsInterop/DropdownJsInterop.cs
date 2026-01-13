@@ -7,17 +7,17 @@ namespace CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
 
 public interface IDropdownJsInterop
 {
-    ValueTask InitializeAsync(
-        ElementReference triggerElement,
-        ElementReference menuElement,
-        DotNetObjectReference<DropdownCallbacksRelay> dotnetReference,
-        string componentId);
-
-    ValueTask<DropdownPosition> GetPositionAsync(string componentId);
+    ValueTask DisposeAsync(string componentId);
 
     ValueTask FocusSearchInputAsync(string componentId);
 
-    ValueTask DisposeAsync(string componentId);
+    ValueTask<DropdownPosition> GetPositionAsync(string componentId);
+
+    ValueTask InitializeAsync(
+                    ElementReference triggerElement,
+        ElementReference menuElement,
+        DotNetObjectReference<DropdownCallbacksRelay> dotnetReference,
+        string componentId);
 }
 
 public sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsInterop
@@ -27,8 +27,32 @@ public sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsInterop
     {
     }
 
+    public async ValueTask DisposeAsync(string componentId)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync("dispose", componentId);
+    }
+
+    public async ValueTask FocusSearchInputAsync(string componentId)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync("focusSearchInput", componentId);
+    }
+
+    public async ValueTask<DropdownPosition> GetPositionAsync(string componentId)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        return await module.InvokeAsync<DropdownPosition>("getPosition", componentId);
+    }
+
     public async ValueTask InitializeAsync(
-        ElementReference triggerElement,
+                    ElementReference triggerElement,
         ElementReference menuElement,
         DotNetObjectReference<DropdownCallbacksRelay> dotnetReference,
         string componentId)
@@ -42,29 +66,5 @@ public sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsInterop
             menuElement,
             dotnetReference,
             componentId);
-    }
-
-    public async ValueTask<DropdownPosition> GetPositionAsync(string componentId)
-    {
-        await IsModuleTaskLoaded.Task;
-        IJSObjectReference module = await ModuleTask.Value;
-
-        return await module.InvokeAsync<DropdownPosition>("getPosition", componentId);
-    }
-
-    public async ValueTask FocusSearchInputAsync(string componentId)
-    {
-        await IsModuleTaskLoaded.Task;
-        IJSObjectReference module = await ModuleTask.Value;
-
-        await module.InvokeVoidAsync("focusSearchInput", componentId);
-    }
-
-    public async ValueTask DisposeAsync(string componentId)
-    {
-        await IsModuleTaskLoaded.Task;
-        IJSObjectReference module = await ModuleTask.Value;
-
-        await module.InvokeVoidAsync("dispose", componentId);
     }
 }

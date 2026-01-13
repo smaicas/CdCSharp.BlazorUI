@@ -2,7 +2,8 @@
 
 public interface IAssetGenerator
 {
-    string Name { get; }
     string FileName { get; }
+    string Name { get; }
+
     Task<string> GetContent();
 }

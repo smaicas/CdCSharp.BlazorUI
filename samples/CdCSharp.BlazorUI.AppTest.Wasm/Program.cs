@@ -32,18 +32,11 @@ IJSRuntime js = host.Services.GetRequiredService<IJSRuntime>();
 //    // Intentar obtener la cultura guardada
 //    string? storedCulture = await js.InvokeAsync<string?>("blazorCulture.get");
 
-//    if (!string.IsNullOrEmpty(storedCulture))
-//    {
-//        CultureInfo culture = new(storedCulture);
-//        CultureInfo.DefaultThreadCurrentCulture = culture;
-//        CultureInfo.DefaultThreadCurrentUICulture = culture;
-//    }
-//    else
-//    {
-//        // Si no hay cultura guardada, usar la predeterminada
-//        CultureInfo culture = new(defaultCulture);
-//        CultureInfo.DefaultThreadCurrentCulture = culture;
-//        CultureInfo.DefaultThreadCurrentUICulture = culture;
+// if (!string.IsNullOrEmpty(storedCulture)) { CultureInfo culture = new(storedCulture);
+// CultureInfo.DefaultThreadCurrentCulture = culture; CultureInfo.DefaultThreadCurrentUICulture =
+// culture; } else { // Si no hay cultura guardada, usar la predeterminada CultureInfo culture =
+// new(defaultCulture); CultureInfo.DefaultThreadCurrentCulture = culture;
+// CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 //        // Guardar la cultura predeterminada
 //        await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);

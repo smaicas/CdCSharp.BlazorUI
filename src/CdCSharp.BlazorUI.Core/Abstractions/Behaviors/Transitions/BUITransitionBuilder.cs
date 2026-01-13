@@ -2,6 +2,21 @@
 
 namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions;
 
+public class BUITransitionsBuilder
+{
+    internal BUITransitions _transitions = new();
+
+    public BUITransitions Build() => _transitions;
+
+    public TriggerTransitionBuilder OnActive() => new(_transitions, TransitionTrigger.Active);
+
+    public TriggerTransitionBuilder OnDisabled() => new(_transitions, TransitionTrigger.Disabled);
+
+    public TriggerTransitionBuilder OnFocus() => new(_transitions, TransitionTrigger.Focus);
+
+    public TriggerTransitionBuilder OnHover() => new(_transitions, TransitionTrigger.Hover);
+}
+
 public class TriggerTransitionBuilder
 {
     private readonly BUITransitions _transitions;
@@ -24,10 +39,26 @@ public class TriggerTransitionBuilder
         return this;
     }
 
+    public TriggerTransitionBuilder Background(string background = "rgba(0,0,0,0)", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Background, options);
+        config.CustomProperties["background"] = background;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
     public TriggerTransitionBuilder Blur(string amount = "2px", Action<TransitionOptions>? options = null)
     {
         TransitionConfig config = CreateConfig(TransitionType.Blur, options);
         config.CustomProperties["amount"] = amount;
+        _transitions.AddTransition(_trigger, config);
+        return this;
+    }
+
+    public TriggerTransitionBuilder Border(string border = "1px solid #cccccc", Action<TransitionOptions>? options = null)
+    {
+        TransitionConfig config = CreateConfig(TransitionType.Border, options);
+        config.CustomProperties["border"] = border;
         _transitions.AddTransition(_trigger, config);
         return this;
     }
@@ -84,22 +115,6 @@ public class TriggerTransitionBuilder
         return this;
     }
 
-    public TriggerTransitionBuilder Background(string background = "rgba(0,0,0,0)", Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.Background, options);
-        config.CustomProperties["background"] = background;
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
-
-    public TriggerTransitionBuilder Border(string border = "1px solid #cccccc", Action<TransitionOptions>? options = null)
-    {
-        TransitionConfig config = CreateConfig(TransitionType.Border, options);
-        config.CustomProperties["border"] = border;
-        _transitions.AddTransition(_trigger, config);
-        return this;
-    }
-
     public TriggerTransitionBuilder Translate(string x = "0", string y = "-4px", Action<TransitionOptions>? options = null)
     {
         TransitionConfig config = CreateConfig(TransitionType.Translate, options);
@@ -128,21 +143,6 @@ public class TriggerTransitionBuilder
 
         return config;
     }
-}
-
-public class BUITransitionsBuilder
-{
-    internal BUITransitions _transitions = new();
-
-    public BUITransitions Build() => _transitions;
-
-    public TriggerTransitionBuilder OnActive() => new(_transitions, TransitionTrigger.Active);
-
-    public TriggerTransitionBuilder OnDisabled() => new(_transitions, TransitionTrigger.Disabled);
-
-    public TriggerTransitionBuilder OnFocus() => new(_transitions, TransitionTrigger.Focus);
-
-    public TriggerTransitionBuilder OnHover() => new(_transitions, TransitionTrigger.Hover);
 }
 
 public class TransitionOptions

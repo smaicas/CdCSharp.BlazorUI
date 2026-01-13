@@ -90,10 +90,10 @@ bui-component[data-bui-component="card"] {
         border-top: 1px solid rgba(0, 0, 0, 0.12);
     }
 
-/* Variant: Outlined */
-bui-component[data-bui-component="card"][data-bui-variant="outlined"] .bui-card {
-    border: 1px solid rgba(0, 0, 0, 0.12);
-}
+    /* Variant: Outlined */
+    bui-component[data-bui-component="card"][data-bui-variant="outlined"] .bui-card {
+        border: 1px solid rgba(0, 0, 0, 0.12);
+    }
 
 [data-theme="dark"] bui-component[data-bui-component="card"][data-bui-variant="outlined"] .bui-card {
     border-color: rgba(255, 255, 255, 0.12);

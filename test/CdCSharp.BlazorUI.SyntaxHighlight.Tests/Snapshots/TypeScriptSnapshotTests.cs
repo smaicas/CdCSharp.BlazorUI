@@ -177,8 +177,8 @@ public class TypeScriptSnapshotTests
                 /**
                  * Searches users by query string.
                  */
-                searchUsers(query: string, options?: { 
-                    page?: number; 
+                searchUsers(query: string, options?: {
+                    page?: number;
                     pageSize?: number;
                     sortBy?: keyof User;
                     sortOrder?: 'asc' | 'desc';
@@ -213,12 +213,15 @@ public class TypeScriptSnapshotTests
                             case 401:
                                 errorMessage = 'Unauthorized. Please log in again.';
                                 break;
+
                             case 403:
                                 errorMessage = 'Access forbidden.';
                                 break;
+
                             case 404:
                                 errorMessage = 'Resource not found.';
                                 break;
+
                             case 500:
                                 errorMessage = 'Internal server error. Please try again later.';
                                 break;
@@ -239,7 +242,7 @@ public class TypeScriptSnapshotTests
             }
 
             // Utility functions
-            export const formatUserName = (user: User): string => 
+            export const formatUserName = (user: User): string =>
                 `${user.firstName} ${user.lastName}`.trim();
 
             export const isAdmin = (user: User): boolean => user.role === 'admin';

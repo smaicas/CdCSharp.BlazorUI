@@ -10,10 +10,10 @@ public interface IHasShadow
 
 public readonly struct ShadowLine
 {
-    public readonly int X, Y, Blur, Spread;
-    public readonly float Opacity;
     public readonly CssColor Color;
     public readonly bool Inset;
+    public readonly float Opacity;
+    public readonly int X, Y, Blur, Spread;
 
     internal ShadowLine(
         int x, int y, int blur, int spread,
@@ -33,10 +33,13 @@ public sealed class ShadowStyle
 {
     private readonly List<ShadowLine> _lines = [];
 
-    private ShadowStyle() { }
+    private ShadowStyle()
+    { }
+
+    internal IReadOnlyList<ShadowLine> Lines => _lines;
 
     public static ShadowStyle Create(
-        int y,
+            int y,
         int blur,
         float opacity = 0.2f,
         int x = 0,
@@ -71,15 +74,13 @@ public sealed class ShadowStyle
 
         return this;
     }
-
-    internal IReadOnlyList<ShadowLine> Lines => _lines;
 }
 
 public static class BUIShadowPresets
 {
     /// <summary>
-    /// Generates realistic Material Design-inspired elevation shadows.
-    /// Each elevation level (0-24) has been calibrated for visual consistency.
+    /// Generates realistic Material Design-inspired elevation shadows. Each elevation level (0-24)
+    /// has been calibrated for visual consistency.
     /// </summary>
     public static ShadowStyle Elevation(int level, CssColor? color = null)
     {
@@ -95,42 +96,6 @@ public static class BUIShadowPresets
         return ShadowStyle
             .Create(keyY, keyBlur, keyOpacity, color: color)
             .Add(ambientY, ambientBlur, ambientOpacity, color: color);
-    }
-
-    private static (int y, int blur, float opacity) GetKeyShadow(int level)
-    {
-        // Key shadow: directional, represents direct light occlusion
-        // Based on Material Design 3 elevation system
-        return level switch
-        {
-            0 => (0, 0, 0.00f),
-            1 => (1, 3, 0.20f),
-            2 => (2, 4, 0.20f),
-            3 => (3, 5, 0.20f),
-            4 => (4, 6, 0.20f),
-            5 => (5, 7, 0.20f),
-            6 => (6, 8, 0.20f),
-            7 => (7, 9, 0.21f),
-            8 => (8, 10, 0.22f),
-            9 => (9, 12, 0.22f),
-            10 => (10, 13, 0.23f),
-            11 => (11, 13, 0.23f),
-            12 => (12, 14, 0.24f),
-            13 => (13, 15, 0.24f),
-            14 => (14, 16, 0.24f),
-            15 => (15, 17, 0.24f),
-            16 => (16, 18, 0.24f),
-            17 => (17, 19, 0.25f),
-            18 => (18, 20, 0.25f),
-            19 => (19, 21, 0.25f),
-            20 => (20, 22, 0.25f),
-            21 => (21, 22, 0.26f),
-            22 => (22, 23, 0.26f),
-            23 => (23, 23, 0.26f),
-            24 => (24, 24, 0.26f),
-
-            _ => throw new ArgumentOutOfRangeException(nameof(level))
-        };
     }
 
     private static (int y, int blur, float opacity) GetAmbientShadow(int level)
@@ -163,6 +128,42 @@ public static class BUIShadowPresets
             22 => (19, 35, 0.18f),
             23 => (20, 36, 0.18f),
             24 => (20, 38, 0.18f),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(level))
+        };
+    }
+
+    private static (int y, int blur, float opacity) GetKeyShadow(int level)
+    {
+        // Key shadow: directional, represents direct light occlusion Based on Material Design 3
+        // elevation system
+        return level switch
+        {
+            0 => (0, 0, 0.00f),
+            1 => (1, 3, 0.20f),
+            2 => (2, 4, 0.20f),
+            3 => (3, 5, 0.20f),
+            4 => (4, 6, 0.20f),
+            5 => (5, 7, 0.20f),
+            6 => (6, 8, 0.20f),
+            7 => (7, 9, 0.21f),
+            8 => (8, 10, 0.22f),
+            9 => (9, 12, 0.22f),
+            10 => (10, 13, 0.23f),
+            11 => (11, 13, 0.23f),
+            12 => (12, 14, 0.24f),
+            13 => (13, 15, 0.24f),
+            14 => (14, 16, 0.24f),
+            15 => (15, 17, 0.24f),
+            16 => (16, 18, 0.24f),
+            17 => (17, 19, 0.25f),
+            18 => (18, 20, 0.25f),
+            19 => (19, 21, 0.25f),
+            20 => (20, 22, 0.25f),
+            21 => (21, 22, 0.26f),
+            22 => (22, 23, 0.26f),
+            23 => (23, 23, 0.26f),
+            24 => (24, 24, 0.26f),
 
             _ => throw new ArgumentOutOfRangeException(nameof(level))
         };

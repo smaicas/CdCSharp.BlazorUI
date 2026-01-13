@@ -10,9 +10,8 @@ public interface IBehaviorJsInterop
 
 public class BehaviorConfiguration
 {
-    public RippleConfiguration? Ripple { get; set; }
-
     public bool HasAnyBehavior => Ripple != null;
+    public RippleConfiguration? Ripple { get; set; }
 }
 
 public class RippleConfiguration

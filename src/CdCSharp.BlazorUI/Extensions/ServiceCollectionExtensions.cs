@@ -60,37 +60,6 @@ public static class ServiceCollectionExtensions
 #region Variant Registry Builders
 
 /// <summary>
-/// Builder for registering custom component variants
-/// </summary>
-public sealed class VariantBuilder
-{
-    private readonly IVariantRegistry _registry;
-
-    internal VariantBuilder(IVariantRegistry registry)
-    {
-        _registry = registry;
-    }
-
-    /// <summary>
-    /// Start configuration for a specific component type
-    /// </summary>
-    /// <typeparam name="TComponent">The component type to configure variants for</typeparam>
-    /// <returns>A builder for the component variants</returns>
-    /// <example>
-    /// <code>
-    /// builder.ForComponent&lt;UIButton&gt;()
-    ///     .AddVariant(MyCustomVariants.Gradient, button => ...)
-    ///     .AddVariant(MyCustomVariants.Ghost, button => ...);
-    /// </code>
-    /// </example>
-    public ComponentVariantBuilder<TComponent> ForComponent<TComponent>()
-        where TComponent : ComponentBase
-    {
-        return new ComponentVariantBuilder<TComponent>(_registry);
-    }
-}
-
-/// <summary>
 /// Builder for registering variants for a specific component type
 /// </summary>
 public sealed class ComponentVariantBuilder<TComponent>
@@ -120,4 +89,34 @@ public sealed class ComponentVariantBuilder<TComponent>
     }
 }
 
+/// <summary>
+/// Builder for registering custom component variants
+/// </summary>
+public sealed class VariantBuilder
+{
+    private readonly IVariantRegistry _registry;
+
+    internal VariantBuilder(IVariantRegistry registry)
+    {
+        _registry = registry;
+    }
+
+    /// <summary>
+    /// Start configuration for a specific component type
+    /// </summary>
+    /// <typeparam name="TComponent">The component type to configure variants for</typeparam>
+    /// <returns>A builder for the component variants</returns>
+    /// <example>
+    /// <code>
+    /// builder.ForComponent&lt;UIButton&gt;()
+    ///     .AddVariant(MyCustomVariants.Gradient, button => ...)
+    ///     .AddVariant(MyCustomVariants.Ghost, button => ...);
+    /// </code>
+    /// </example>
+    public ComponentVariantBuilder<TComponent> ForComponent<TComponent>()
+        where TComponent : ComponentBase
+    {
+        return new ComponentVariantBuilder<TComponent>(_registry);
+    }
+}
 #endregion

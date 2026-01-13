@@ -24,16 +24,6 @@ public class TestScenarios
         }
     ];
 
-    public static IEnumerable<object[]> OnlyWasm =>
-    [
-        new object[]
-        {
-            new BlazorScenario(
-                "Wasm",
-                () => new WasmTestContext())
-        }
-    ];
-
     public static IEnumerable<object[]> OnlyServer =>
     [
         new object[]
@@ -41,6 +31,16 @@ public class TestScenarios
             new BlazorScenario(
                 "Server",
                 () => new ServerTestContext())
+        }
+    ];
+
+    public static IEnumerable<object[]> OnlyWasm =>
+        [
+        new object[]
+        {
+            new BlazorScenario(
+                "Wasm",
+                () => new WasmTestContext())
         }
     ];
 }

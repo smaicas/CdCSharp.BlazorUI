@@ -3,8 +3,23 @@ namespace CdCSharp.BlazorUI.Core.Utilities;
 
 public sealed class DelayedActionHandler : IDisposable
 {
-    private CancellationTokenSource? _cts;
     private readonly object _lock = new();
+    private CancellationTokenSource? _cts;
+
+    public void Cancel()
+    {
+        lock (_lock)
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        Cancel();
+    }
 
     public async Task ExecuteWithDelayAsync(Func<Task> action, TimeSpan delay)
     {
@@ -28,20 +43,5 @@ public sealed class DelayedActionHandler : IDisposable
         catch (TaskCanceledException)
         {
         }
-    }
-
-    public void Cancel()
-    {
-        lock (_lock)
-        {
-            _cts?.Cancel();
-            _cts?.Dispose();
-            _cts = null;
-        }
-    }
-
-    public void Dispose()
-    {
-        Cancel();
     }
 }

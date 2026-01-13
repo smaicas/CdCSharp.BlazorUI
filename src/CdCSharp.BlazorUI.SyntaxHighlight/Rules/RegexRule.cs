@@ -5,11 +5,9 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Rules;
 
 public sealed class RegexRule : ITokenRule
 {
-    private readonly TokenType _tokenType;
     private readonly Regex _regex;
     private readonly bool _requireWordBoundary;
-
-    public int Priority { get; }
+    private readonly TokenType _tokenType;
 
     public RegexRule(
         TokenType tokenType,
@@ -26,6 +24,8 @@ public sealed class RegexRule : ITokenRule
             RegexOptions.Compiled | RegexOptions.CultureInvariant,
             TimeSpan.FromMilliseconds(100));
     }
+
+    public int Priority { get; }
 
     public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
     {

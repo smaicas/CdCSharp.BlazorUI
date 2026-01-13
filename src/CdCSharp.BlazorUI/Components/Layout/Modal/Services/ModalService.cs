@@ -2,11 +2,16 @@
 
 public interface IModalService
 {
-    IReadOnlyList<ModalState> ActiveModals { get; }
     event Action? OnChange;
 
+    IReadOnlyList<ModalState> ActiveModals { get; }
+
+    Task CloseAllAsync();
+
+    Task CloseAsync();
+
     Task<TResult?> ShowDialogAsync<TComponent, TResult>(
-        object? parameters = null,
+                object? parameters = null,
         DialogOptions? options = null)
         where TComponent : IModalContent;
 
@@ -24,21 +29,34 @@ public interface IModalService
         object? parameters = null,
         DrawerOptions? options = null)
         where TComponent : IModalContent;
-
-    Task CloseAsync();
-    Task CloseAllAsync();
 }
 
 public class ModalService : IModalService
 {
     private readonly List<ModalState> _modals = [];
 
-    public IReadOnlyList<ModalState> ActiveModals => _modals.AsReadOnly();
-
     public event Action? OnChange;
 
+    public IReadOnlyList<ModalState> ActiveModals => _modals.AsReadOnly();
+
+    public async Task CloseAllAsync()
+    {
+        while (_modals.Count > 0)
+        {
+            await CloseAsync();
+        }
+    }
+
+    public async Task CloseAsync()
+    {
+        if (_modals.Count == 0) return;
+
+        ModalState current = _modals[^1];
+        await CloseModalAsync(current);
+    }
+
     public async Task<TResult?> ShowDialogAsync<TComponent, TResult>(
-        object? parameters = null,
+                object? parameters = null,
         DialogOptions? options = null)
         where TComponent : IModalContent
     {
@@ -89,24 +107,20 @@ public class ModalService : IModalService
         return ShowAsync(state);
     }
 
-    public async Task CloseAsync()
+    private async Task CloseModalAsync(ModalState state)
     {
-        if (_modals.Count == 0) return;
+        state.IsAnimatingOut = true;
+        OnChange?.Invoke();
 
-        ModalState current = _modals[^1];
-        await CloseModalAsync(current);
-    }
+        await Task.Delay(200);
 
-    public async Task CloseAllAsync()
-    {
-        while (_modals.Count > 0)
-        {
-            await CloseAsync();
-        }
+        _modals.Remove(state);
+        ShowPreviousModal();
+        OnChange?.Invoke();
     }
 
     private ModalState CreateModalState<TComponent>(
-        ModalType type,
+            ModalType type,
         object? parameters,
         ModalOptionsBase options)
         where TComponent : IModalContent
@@ -133,12 +147,21 @@ public class ModalService : IModalService
         };
     }
 
-    private Task ShowAsync(ModalState state)
+    private void HideCurrentModal()
     {
-        HideCurrentModal();
-        _modals.Add(state);
-        OnChange?.Invoke();
-        return Task.CompletedTask;
+        if (_modals.Count > 0)
+        {
+            _modals[^1].IsVisible = false;
+        }
+    }
+
+    private void OnModalClose(ModalReference reference)
+    {
+        ModalState? state = _modals.FirstOrDefault(m => m.Reference == reference);
+        if (state != null)
+        {
+            _ = CloseModalAsync(state);
+        }
     }
 
     private async Task<TResult?> ShowAndWaitAsync<TResult>(ModalState state)
@@ -158,12 +181,12 @@ public class ModalService : IModalService
         }
     }
 
-    private void HideCurrentModal()
+    private Task ShowAsync(ModalState state)
     {
-        if (_modals.Count > 0)
-        {
-            _modals[^1].IsVisible = false;
-        }
+        HideCurrentModal();
+        _modals.Add(state);
+        OnChange?.Invoke();
+        return Task.CompletedTask;
     }
 
     private void ShowPreviousModal()
@@ -171,27 +194,6 @@ public class ModalService : IModalService
         if (_modals.Count > 0)
         {
             _modals[^1].IsVisible = true;
-        }
-    }
-
-    private async Task CloseModalAsync(ModalState state)
-    {
-        state.IsAnimatingOut = true;
-        OnChange?.Invoke();
-
-        await Task.Delay(200);
-
-        _modals.Remove(state);
-        ShowPreviousModal();
-        OnChange?.Invoke();
-    }
-
-    private void OnModalClose(ModalReference reference)
-    {
-        ModalState? state = _modals.FirstOrDefault(m => m.Reference == reference);
-        if (state != null)
-        {
-            _ = CloseModalAsync(state);
         }
     }
 }

@@ -6,16 +6,16 @@ using System.Diagnostics.CodeAnalysis;
 namespace CdCSharp.BlazorUI.Core.Assets.Generators;
 
 /// <summary>
-/// Generates shared styles for input family components.
-/// Border and border-radius have fallback values that can be overridden via IHasBorder.
-/// Transitions use fixed values as fallback for future IHasTransitions implementation.
+/// Generates shared styles for input family components. Border and border-radius have fallback
+/// values that can be overridden via IHasBorder. Transitions use fixed values as fallback for
+/// future IHasTransitions implementation.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class InputFamilyGenerator : IAssetGenerator
 {
-    public string Name => "Input Family";
     public string FileName => "_input-family.css";
+    public string Name => "Input Family";
 
     public async Task<string> GetContent()
     {
@@ -23,7 +23,7 @@ public class InputFamilyGenerator : IAssetGenerator
 /* ========================================
    Input Family Styles
    Auto-generated - Do not edit manually
-   
+
    Shared styles for all input components.
    Border/radius can be overridden via IHasBorder.
    ======================================== */
@@ -40,17 +40,17 @@ bui-component[{{FeatureDefinitions.DataAttributes.InputBase}}] {
     --input-height: calc(2.5rem * var({{FeatureDefinitions.ComponentVariables.Size.Multiplier}}, 1));
     --input-padding-x: calc(0.75rem * var({{FeatureDefinitions.ComponentVariables.Size.Multiplier}}, 1));
     --input-padding-y: calc(0.5rem * var({{FeatureDefinitions.ComponentVariables.Size.Multiplier}}, 1));
-    
+
     /* Border fallbacks - overridable via IHasBorder inline variables */
     {{FeatureDefinitions.ComponentVariables.Input.BorderColor}}: var({{FeatureDefinitions.InlineVariables.Border}}, var(--palette-border, currentColor));
     {{FeatureDefinitions.ComponentVariables.Input.BorderWidth}}: 1px;
     {{FeatureDefinitions.ComponentVariables.Input.BorderRadius}}: var({{FeatureDefinitions.InlineVariables.BorderRadius}}, 4px);
-    
+
     {{FeatureDefinitions.ComponentVariables.Input.Background}}: transparent;
-    
+
     /* Transition fallback - fixed value for now, future IHasTransitions support */
     {{FeatureDefinitions.ComponentVariables.Input.Transition}}: 200ms ease;
-    
+
     /* Label colors */
     {{FeatureDefinitions.ComponentVariables.Input.LabelColor}}: var(--palette-surfacecontrast);
     {{FeatureDefinitions.ComponentVariables.Input.LabelFocusColor}}: var(--palette-primary);

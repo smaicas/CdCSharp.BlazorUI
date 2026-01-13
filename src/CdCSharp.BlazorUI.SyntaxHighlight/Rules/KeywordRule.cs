@@ -4,13 +4,11 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Rules;
 
 public sealed class KeywordRule : ITokenRule
 {
-    private readonly TokenType _tokenType;
     private readonly HashSet<string> _keywords;
     private readonly HashSet<string> _keywordsLower;
-    private readonly int _minLength;
     private readonly int _maxLength;
-
-    public int Priority { get; }
+    private readonly int _minLength;
+    private readonly TokenType _tokenType;
 
     public KeywordRule(TokenType tokenType, IEnumerable<string> keywords, int priority = 0)
     {
@@ -21,6 +19,8 @@ public sealed class KeywordRule : ITokenRule
         _maxLength = _keywords.Max(k => k.Length);
         Priority = priority;
     }
+
+    public int Priority { get; }
 
     public TokenMatch? TryMatch(string input, int position, TokenizerContext context)
     {

@@ -6,29 +6,82 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Tests;
 public class LanguageDefinitionBuilderTests
 {
     [Fact]
-    public void Create_WithName_SetsName()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test").Build();
-
-        Assert.Equal("test", definition.Name);
-    }
-
-    [Fact]
-    public void CaseSensitive_DefaultsToTrue()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test").Build();
-
-        Assert.True(definition.CaseSensitive);
-    }
-
-    [Fact]
-    public void CaseSensitive_CanBeSetToFalse()
+    public void AddBalanced_HandlesNestedBrackets()
     {
         LanguageDefinition definition = LanguageDefinition.Create("test")
-            .CaseSensitive(false)
+            .AddBalanced(TokenType.RazorExpression, "@", '(', ')')
             .Build();
 
-        Assert.False(definition.CaseSensitive);
+        IReadOnlyList<Token> tokens = definition.Tokenize("@(Method(inner))");
+
+        Token token = tokens.First(t => t.Type == TokenType.RazorExpression);
+        Assert.Equal("@(Method(inner))", token.Value);
+    }
+
+    [Fact]
+    public void AddBalanced_TokenizesBalancedContent()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddBalanced(TokenType.RazorExpression, "@", '(', ')')
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("@(expression)");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression);
+    }
+
+    [Fact]
+    public void AddBlockComment_SpansMultipleLines()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddBlockComment("/*", "*/")
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("/* line1\nline2\nline3 */");
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Comment, tokens[0].Type);
+        Assert.Contains("line1", tokens[0].Value);
+        Assert.Contains("line2", tokens[0].Value);
+        Assert.Contains("line3", tokens[0].Value);
+    }
+
+    [Fact]
+    public void AddDelimited_HandlesEscapeSequences()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddDelimited(TokenType.String, "\"", "\"", escape: "\\")
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("\"hello \\\"escaped\\\" world\"");
+
+        Assert.Single(tokens);
+        Assert.Equal("\"hello \\\"escaped\\\" world\"", tokens[0].Value);
+    }
+
+    [Fact]
+    public void AddDelimited_TokenizesDelimitedContent()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddDelimited(TokenType.String, "\"", "\"", escape: "\\")
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("\"hello world\"");
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.String, tokens[0].Type);
+    }
+
+    [Fact]
+    public void AddKeywords_DoesNotMatchPartialWords()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddKeywords(TokenType.Keyword, ["if"])
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("iffy");
+
+        Assert.DoesNotContain(tokens, t => t.Type == TokenType.Keyword);
     }
 
     [Fact]
@@ -46,44 +99,6 @@ public class LanguageDefinitionBuilderTests
     }
 
     [Fact]
-    public void AddKeywords_DoesNotMatchPartialWords()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddKeywords(TokenType.Keyword, ["if"])
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("iffy");
-
-        Assert.DoesNotContain(tokens, t => t.Type == TokenType.Keyword);
-    }
-
-    [Fact]
-    public void AddDelimited_TokenizesDelimitedContent()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddDelimited(TokenType.String, "\"", "\"", escape: "\\")
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("\"hello world\"");
-
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.String, tokens[0].Type);
-    }
-
-    [Fact]
-    public void AddDelimited_HandlesEscapeSequences()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddDelimited(TokenType.String, "\"", "\"", escape: "\\")
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("\"hello \\\"escaped\\\" world\"");
-
-        Assert.Single(tokens);
-        Assert.Equal("\"hello \\\"escaped\\\" world\"", tokens[0].Value);
-    }
-
-    [Fact]
     public void AddLineComment_StopsAtNewline()
     {
         LanguageDefinition definition = LanguageDefinition.Create("test")
@@ -97,19 +112,42 @@ public class LanguageDefinitionBuilderTests
     }
 
     [Fact]
-    public void AddBlockComment_SpansMultipleLines()
+    public void AddMarkup_TokenizesHtmlTags()
     {
         LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddBlockComment("/*", "*/")
+            .AddMarkup()
             .Build();
 
-        IReadOnlyList<Token> tokens = definition.Tokenize("/* line1\nline2\nline3 */");
+        IReadOnlyList<Token> tokens = definition.Tokenize("<div class=\"container\">");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "class");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeValue);
+    }
+
+    [Fact]
+    public void AddOperators_LongerOperatorsMatchFirst()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddOperators(["==", "="])
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("==");
 
         Assert.Single(tokens);
-        Assert.Equal(TokenType.Comment, tokens[0].Type);
-        Assert.Contains("line1", tokens[0].Value);
-        Assert.Contains("line2", tokens[0].Value);
-        Assert.Contains("line3", tokens[0].Value);
+        Assert.Equal("==", tokens[0].Value);
+    }
+
+    [Fact]
+    public void AddOperators_TokenizesMultiCharOperators()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .AddOperators(["=>", "==", "!=", "<=", ">="])
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("=> == != <= >=");
+
+        Assert.Equal(5, tokens.Count(t => t.Type == TokenType.Operator));
     }
 
     [Fact]
@@ -137,31 +175,6 @@ public class LanguageDefinitionBuilderTests
     }
 
     [Fact]
-    public void AddOperators_TokenizesMultiCharOperators()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddOperators(["=>", "==", "!=", "<=", ">="])
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("=> == != <= >=");
-
-        Assert.Equal(5, tokens.Count(t => t.Type == TokenType.Operator));
-    }
-
-    [Fact]
-    public void AddOperators_LongerOperatorsMatchFirst()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddOperators(["==", "="])
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("==");
-
-        Assert.Single(tokens);
-        Assert.Equal("==", tokens[0].Value);
-    }
-
-    [Fact]
     public void AddPunctuation_TokenizesSingleCharacters()
     {
         LanguageDefinition definition = LanguageDefinition.Create("test")
@@ -186,17 +199,61 @@ public class LanguageDefinitionBuilderTests
     }
 
     [Fact]
-    public void Priority_HigherPriorityMatchesFirst()
+    public void Build_ReturnsImmutableDefinition()
+    {
+        LanguageDefinitionBuilder builder = LanguageDefinition.Create("test")
+            .AddKeywords(TokenType.Keyword, ["foo"]);
+
+        LanguageDefinition definition1 = builder.Build();
+        builder.AddKeywords(TokenType.Type, ["bar"]);
+        LanguageDefinition definition2 = builder.Build();
+
+        IReadOnlyList<Token> tokens1 = definition1.Tokenize("foo bar");
+        IReadOnlyList<Token> tokens2 = definition2.Tokenize("foo bar");
+
+        Assert.DoesNotContain(tokens1, t => t.Type == TokenType.Type);
+        Assert.Contains(tokens2, t => t.Type == TokenType.Type);
+    }
+
+    [Fact]
+    public void CaseSensitive_CanBeSetToFalse()
     {
         LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddKeywords(TokenType.Type, ["string"], priority: 100)
-            .AddKeywords(TokenType.Keyword, ["string"], priority: 50)
+            .CaseSensitive(false)
             .Build();
 
-        IReadOnlyList<Token> tokens = definition.Tokenize("string");
+        Assert.False(definition.CaseSensitive);
+    }
 
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.Type, tokens[0].Type);
+    [Fact]
+    public void CaseSensitive_DefaultsToTrue()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test").Build();
+
+        Assert.True(definition.CaseSensitive);
+    }
+
+    [Fact]
+    public void CaseSensitiveFalse_MatchesKeywordsRegardlessOfCase()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test")
+            .CaseSensitive(false)
+            .AddKeywords(TokenType.Keyword, ["select", "from", "where"])
+            .Build();
+
+        IReadOnlyList<Token> tokens = definition.Tokenize("SELECT FROM WHERE");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "SELECT");
+        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "FROM");
+        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "WHERE");
+    }
+
+    [Fact]
+    public void Create_WithName_SetsName()
+    {
+        LanguageDefinition definition = LanguageDefinition.Create("test").Build();
+
+        Assert.Equal("test", definition.Name);
     }
 
     [Fact]
@@ -218,73 +275,16 @@ public class LanguageDefinitionBuilderTests
     }
 
     [Fact]
-    public void AddMarkup_TokenizesHtmlTags()
+    public void Priority_HigherPriorityMatchesFirst()
     {
         LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddMarkup()
+            .AddKeywords(TokenType.Type, ["string"], priority: 100)
+            .AddKeywords(TokenType.Keyword, ["string"], priority: 50)
             .Build();
 
-        IReadOnlyList<Token> tokens = definition.Tokenize("<div class=\"container\">");
+        IReadOnlyList<Token> tokens = definition.Tokenize("string");
 
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "class");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeValue);
-    }
-
-    [Fact]
-    public void AddBalanced_TokenizesBalancedContent()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddBalanced(TokenType.RazorExpression, "@", '(', ')')
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("@(expression)");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression);
-    }
-
-    [Fact]
-    public void AddBalanced_HandlesNestedBrackets()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .AddBalanced(TokenType.RazorExpression, "@", '(', ')')
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("@(Method(inner))");
-
-        Token token = tokens.First(t => t.Type == TokenType.RazorExpression);
-        Assert.Equal("@(Method(inner))", token.Value);
-    }
-
-    [Fact]
-    public void Build_ReturnsImmutableDefinition()
-    {
-        LanguageDefinitionBuilder builder = LanguageDefinition.Create("test")
-            .AddKeywords(TokenType.Keyword, ["foo"]);
-
-        LanguageDefinition definition1 = builder.Build();
-        builder.AddKeywords(TokenType.Type, ["bar"]);
-        LanguageDefinition definition2 = builder.Build();
-
-        IReadOnlyList<Token> tokens1 = definition1.Tokenize("foo bar");
-        IReadOnlyList<Token> tokens2 = definition2.Tokenize("foo bar");
-
-        Assert.DoesNotContain(tokens1, t => t.Type == TokenType.Type);
-        Assert.Contains(tokens2, t => t.Type == TokenType.Type);
-    }
-
-    [Fact]
-    public void CaseSensitiveFalse_MatchesKeywordsRegardlessOfCase()
-    {
-        LanguageDefinition definition = LanguageDefinition.Create("test")
-            .CaseSensitive(false)
-            .AddKeywords(TokenType.Keyword, ["select", "from", "where"])
-            .Build();
-
-        IReadOnlyList<Token> tokens = definition.Tokenize("SELECT FROM WHERE");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "SELECT");
-        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "FROM");
-        Assert.Contains(tokens, t => t.Type == TokenType.Keyword && t.Value == "WHERE");
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Type, tokens[0].Type);
     }
 }

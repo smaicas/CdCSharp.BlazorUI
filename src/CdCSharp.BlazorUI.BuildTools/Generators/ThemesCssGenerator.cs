@@ -10,9 +10,8 @@ namespace CdCSharp.BlazorUI.BuildTools.Generators;
 [AssetGenerator]
 public class ThemesCssGenerator : IAssetGenerator
 {
-    public string Name => "Themes CSS";
-
     public string FileName => "_themes.css";
+    public string Name => "Themes CSS";
 
     public async Task<string> GetContent() => CssThemeGenerator.Generate("dark",
             [new Core.Themes.DarkTheme(), new Core.Themes.LightTheme()]);

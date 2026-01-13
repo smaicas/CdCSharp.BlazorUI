@@ -7,17 +7,21 @@ namespace CdCSharp.BlazorUI.Components.Forms;
 
 public class DropdownOption<TOption> : ComponentBase, ISelectionOption, IDisposable
 {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter] public IDropdownContainer? Container { get; set; }
 
-    [Parameter, EditorRequired] public TOption? Value { get; set; }
-    [Parameter] public string? Text { get; set; }
+    RenderFragment? ISelectionOption.Content => ChildContent ?? (builder => builder.AddContent(0, Text ?? Value?.ToString()));
     [Parameter] public bool Disabled { get; set; }
-    [Parameter] public RenderFragment? ChildContent { get; set; }
-
-    object? ISelectionOption.Value => Value;
     string ISelectionOption.DisplayText => Text ?? Value?.ToString() ?? string.Empty;
     bool ISelectionOption.IsDisabled => Disabled;
-    RenderFragment? ISelectionOption.Content => ChildContent ?? (builder => builder.AddContent(0, Text ?? Value?.ToString()));
+    [Parameter] public string? Text { get; set; }
+    [Parameter, EditorRequired] public TOption? Value { get; set; }
+    object? ISelectionOption.Value => Value;
+
+    public void Dispose()
+    {
+        Container?.UnregisterOption(this);
+    }
 
     protected override void OnInitialized()
     {
@@ -42,10 +46,5 @@ public class DropdownOption<TOption> : ComponentBase, ISelectionOption, IDisposa
                 $"For single selection, use DropdownOption<{expectedType.Name}>. " +
                 $"For multiple selection (arrays/lists), use DropdownOption<{expectedType.Name}> (the element type, not the collection type).");
         }
-    }
-
-    public void Dispose()
-    {
-        Container?.UnregisterOption(this);
     }
 }

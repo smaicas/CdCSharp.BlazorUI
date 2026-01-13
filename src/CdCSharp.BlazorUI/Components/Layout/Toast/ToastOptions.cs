@@ -2,16 +2,13 @@
 
 public sealed class ToastOptions
 {
-    public ToastPosition Position { get; init; } = ToastPosition.TopRight;
-    public ToastAnimation Animation { get; init; } = ToastAnimation.Default;
-    public bool AutoDismiss { get; init; } = true;
-    public TimeSpan Duration { get; init; } = TimeSpan.FromSeconds(5);
-    public bool Closable { get; init; } = true;
-    public Action? OnClick { get; init; }
-    public Action? OnClose { get; init; }
-    public string? CssClass { get; init; }
-
     public static ToastOptions Default => new();
+
+    public static ToastOptions Long => new()
+    {
+        AutoDismiss = true,
+        Duration = TimeSpan.FromSeconds(10)
+    };
 
     public static ToastOptions Persistent => new()
     {
@@ -25,11 +22,14 @@ public sealed class ToastOptions
         Duration = TimeSpan.FromSeconds(2)
     };
 
-    public static ToastOptions Long => new()
-    {
-        AutoDismiss = true,
-        Duration = TimeSpan.FromSeconds(10)
-    };
+    public ToastAnimation Animation { get; init; } = ToastAnimation.Default;
+    public bool AutoDismiss { get; init; } = true;
+    public bool Closable { get; init; } = true;
+    public string? CssClass { get; init; }
+    public TimeSpan Duration { get; init; } = TimeSpan.FromSeconds(5);
+    public Action? OnClick { get; init; }
+    public Action? OnClose { get; init; }
+    public ToastPosition Position { get; init; } = ToastPosition.TopRight;
 }
 
 public enum ToastPosition

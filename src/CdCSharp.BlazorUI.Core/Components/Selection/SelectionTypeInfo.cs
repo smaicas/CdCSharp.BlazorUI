@@ -4,12 +4,8 @@ namespace CdCSharp.BlazorUI.Core.Components.Selection;
 
 public sealed class SelectionTypeInfo
 {
-    public bool IsMultiple { get; }
-    public Type ElementType { get; }
-    public Type ValueType { get; }
-
-    private readonly Func<object?, IEnumerable<object>> _extractValues;
     private readonly Func<IEnumerable<object>, object?> _createValue;
+    private readonly Func<object?, IEnumerable<object>> _extractValues;
 
     public SelectionTypeInfo(Type valueType)
     {
@@ -37,18 +33,9 @@ public sealed class SelectionTypeInfo
         _createValue = BuildCreateValueFunc();
     }
 
-    public IEnumerable<object> ExtractValues(object? value)
-        => _extractValues(value);
-
-    public TValue CreateValue<TValue>(IEnumerable<object> values)
-        => (TValue)_createValue(values)!;
-
-    public bool ValuesEqual(object? a, object? b)
-    {
-        if (a == null && b == null) return true;
-        if (a == null || b == null) return false;
-        return a.Equals(b);
-    }
+    public Type ElementType { get; }
+    public bool IsMultiple { get; }
+    public Type ValueType { get; }
 
     public bool ContainsValue(object? collection, object? value)
     {
@@ -60,18 +47,17 @@ public sealed class SelectionTypeInfo
         return ExtractValues(collection).Any(v => ValuesEqual(v, value));
     }
 
-    private Func<object?, IEnumerable<object>> BuildExtractValuesFunc()
+    public TValue CreateValue<TValue>(IEnumerable<object> values)
+        => (TValue)_createValue(values)!;
+
+    public IEnumerable<object> ExtractValues(object? value)
+                => _extractValues(value);
+
+    public bool ValuesEqual(object? a, object? b)
     {
-        return value =>
-        {
-            if (value == null)
-                return Enumerable.Empty<object>();
-
-            if (IsMultiple && value is IEnumerable enumerable and not string)
-                return enumerable.Cast<object>();
-
-            return new[] { value };
-        };
+        if (a == null && b == null) return true;
+        if (a == null || b == null) return false;
+        return a.Equals(b);
     }
 
     private Func<IEnumerable<object>, object?> BuildCreateValueFunc()
@@ -132,6 +118,20 @@ public sealed class SelectionTypeInfo
             for (int i = 0; i < list.Count; i++)
                 array.SetValue(list[i], i);
             return array;
+        };
+    }
+
+    private Func<object?, IEnumerable<object>> BuildExtractValuesFunc()
+    {
+        return value =>
+        {
+            if (value == null)
+                return Enumerable.Empty<object>();
+
+            if (IsMultiple && value is IEnumerable enumerable and not string)
+                return enumerable.Cast<object>();
+
+            return new[] { value };
         };
     }
 }

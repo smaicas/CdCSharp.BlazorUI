@@ -4,17 +4,17 @@ namespace CdCSharp.BlazorUI.Core.Components.Selection;
 
 public interface ISelectionOption
 {
-    object? Value { get; }
+    RenderFragment? Content { get; }
     string DisplayText { get; }
     bool IsDisabled { get; }
-    RenderFragment? Content { get; }
+    object? Value { get; }
 }
 
 public interface IHierarchicalSelectionOption : ISelectionOption
 {
-    string Key { get; }
+    IReadOnlyList<IHierarchicalSelectionOption> Children { get; }
     int Depth { get; }
     bool HasChildren { get; }
+    string Key { get; }
     IHierarchicalSelectionOption? Parent { get; }
-    IReadOnlyList<IHierarchicalSelectionOption> Children { get; }
 }

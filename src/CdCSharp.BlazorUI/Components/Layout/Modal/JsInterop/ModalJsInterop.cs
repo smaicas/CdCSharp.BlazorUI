@@ -8,9 +8,12 @@ namespace CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop;
 public interface IModalJsInterop
 {
     ValueTask LockScrollAsync();
-    ValueTask UnlockScrollAsync();
-    ValueTask TrapFocusAsync(ElementReference element);
+
     ValueTask ReleaseFocusAsync();
+
+    ValueTask TrapFocusAsync(ElementReference element);
+
+    ValueTask UnlockScrollAsync();
 }
 
 public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
@@ -27,11 +30,11 @@ public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
         await module.InvokeVoidAsync("lockScroll");
     }
 
-    public async ValueTask UnlockScrollAsync()
+    public async ValueTask ReleaseFocusAsync()
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
-        await module.InvokeVoidAsync("unlockScroll");
+        await module.InvokeVoidAsync("releaseFocus");
     }
 
     public async ValueTask TrapFocusAsync(ElementReference element)
@@ -41,10 +44,10 @@ public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
         await module.InvokeVoidAsync("trapFocus", element);
     }
 
-    public async ValueTask ReleaseFocusAsync()
+    public async ValueTask UnlockScrollAsync()
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
-        await module.InvokeVoidAsync("releaseFocus");
+        await module.InvokeVoidAsync("unlockScroll");
     }
 }

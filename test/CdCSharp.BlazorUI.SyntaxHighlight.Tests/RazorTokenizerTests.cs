@@ -6,152 +6,11 @@ namespace CdCSharp.BlazorUI.SyntaxHighlight.Tests;
 public class RazorTokenizerTests
 {
     [Fact]
-    public void Tokenize_RazorComment_IsRecognized()
+    public void Tokenize_BindAttribute_IsRecognized()
     {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@* this is a comment *@");
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<input @bind=\"Value\" />");
 
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.Comment, tokens[0].Type);
-    }
-
-    [Fact]
-    public void Tokenize_HtmlComment_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<!-- html comment -->");
-
-        Assert.Single(tokens);
-        Assert.Equal(TokenType.Comment, tokens[0].Type);
-    }
-
-    [Theory]
-    [InlineData("@page")]
-    [InlineData("@using")]
-    [InlineData("@inject")]
-    [InlineData("@inherits")]
-    [InlineData("@implements")]
-    [InlineData("@namespace")]
-    [InlineData("@layout")]
-    [InlineData("@typeparam")]
-    [InlineData("@attribute")]
-    [InlineData("@rendermode")]
-    public void Tokenize_RazorDirectives_AreRecognized(string directive)
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(directive);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Directive && t.Value == directive);
-    }
-
-    [Fact]
-    public void Tokenize_PageDirectiveWithPath_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@page \"/counter\"");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.Directive && t.Value == "@page");
-        Assert.Contains(tokens, t => t.Type == TokenType.String && t.Value == "\"/counter\"");
-    }
-
-    [Fact]
-    public void Tokenize_RazorImplicitExpression_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@variable");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression && t.Value == "@variable");
-    }
-
-    [Fact]
-    public void Tokenize_RazorImplicitExpressionWithDot_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@Model.Property");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression && t.Value == "@Model.Property");
-    }
-
-    [Fact]
-    public void Tokenize_RazorExplicitExpression_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@(expression + value)");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression);
-    }
-
-    [Fact]
-    public void Tokenize_EscapedAtSign_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@@");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorDelimiter && t.Value == "@@");
-    }
-
-    [Fact]
-    public void Tokenize_CodeBlock_IsRecognized()
-    {
-        string code = "@code { public int Value { get; set; } }";
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorCodeBlock);
-    }
-
-    [Fact]
-    public void Tokenize_InlineCodeBlock_IsRecognized()
-    {
-        string code = "@{ var x = 5; }";
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.RazorCodeBlock);
-    }
-
-    [Theory]
-    [InlineData("@if")]
-    [InlineData("@else")]
-    [InlineData("@foreach")]
-    [InlineData("@for")]
-    [InlineData("@while")]
-    [InlineData("@switch")]
-    public void Tokenize_RazorControlFlow_AreRecognized(string keyword)
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize($"{keyword} (true) {{ }}");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.ControlKeyword && t.Value == keyword);
-    }
-
-    [Fact]
-    public void Tokenize_HtmlTag_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<div>");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
-        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == "<");
-        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == ">");
-    }
-
-    [Fact]
-    public void Tokenize_HtmlTagWithAttributes_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<div class=\"container\" id=\"main\">");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "class");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeValue && t.Value == "\"container\"");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "id");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeValue && t.Value == "\"main\"");
-    }
-
-    [Fact]
-    public void Tokenize_SelfClosingTag_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<br />");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "br");
-        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == "/");
-    }
-
-    [Fact]
-    public void Tokenize_ClosingTag_IsRecognized()
-    {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("</div>");
-
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
-        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == "/");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "@bind");
     }
 
     [Fact]
@@ -164,19 +23,21 @@ public class RazorTokenizerTests
     }
 
     [Fact]
-    public void Tokenize_EventHandler_IsRecognized()
+    public void Tokenize_ClosingTag_IsRecognized()
     {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<button @onclick=\"HandleClick\">");
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("</div>");
 
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "@onclick");
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
+        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == "/");
     }
 
     [Fact]
-    public void Tokenize_BindAttribute_IsRecognized()
+    public void Tokenize_CodeBlock_IsRecognized()
     {
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<input @bind=\"Value\" />");
+        string code = "@code { public int Value { get; set; } }";
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
 
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "@bind");
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorCodeBlock);
     }
 
     [Fact]
@@ -210,6 +71,73 @@ public class RazorTokenizerTests
     }
 
     [Fact]
+    public void Tokenize_ComponentWithGenericParameter_IsRecognized()
+    {
+        string code = """<Grid TItem="Person" Items="@people" />""";
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "Grid");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "TItem");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "Items");
+    }
+
+    [Fact]
+    public void Tokenize_EscapedAtSign_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@@");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorDelimiter && t.Value == "@@");
+    }
+
+    [Fact]
+    public void Tokenize_EventHandler_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<button @onclick=\"HandleClick\">");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "@onclick");
+    }
+
+    [Fact]
+    public void Tokenize_HtmlComment_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<!-- html comment -->");
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Comment, tokens[0].Type);
+    }
+
+    [Fact]
+    public void Tokenize_HtmlTag_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<div>");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
+        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == "<");
+        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == ">");
+    }
+
+    [Fact]
+    public void Tokenize_HtmlTagWithAttributes_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<div class=\"container\" id=\"main\">");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "div");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "class");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeValue && t.Value == "\"container\"");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "id");
+        Assert.Contains(tokens, t => t.Type == TokenType.AttributeValue && t.Value == "\"main\"");
+    }
+
+    [Fact]
+    public void Tokenize_InlineCodeBlock_IsRecognized()
+    {
+        string code = "@{ var x = 5; }";
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorCodeBlock);
+    }
+
+    [Fact]
     public void Tokenize_MixedContent_MaintainsCorrectOrder()
     {
         string code = "<p>Hello @name!</p>";
@@ -224,17 +152,6 @@ public class RazorTokenizerTests
     }
 
     [Fact]
-    public void Tokenize_RazorWithLambdaAndNestedQuotes_DoesNotBreakTagParsing()
-    {
-        string code = """<BUIButton Text="Click" OnClick="@(() => Log("msg"))" />""";
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "BUIButton");
-
-        Assert.DoesNotContain(tokens, t => t.Type == TokenType.Operator && t.Value == "<");
-    }
-
-    [Fact]
     public void Tokenize_MultipleComponentsWithEnumValues_AllRecognized()
     {
         string code = """
@@ -246,17 +163,6 @@ public class RazorTokenizerTests
 
         Assert.Equal(3, tokens.Count(t => t.Type == TokenType.TagName && t.Value == "Dropdown"));
         Assert.Equal(3, tokens.Count(t => t.Type == TokenType.AttributeName && t.Value == "Placement"));
-    }
-
-    [Fact]
-    public void Tokenize_ComponentWithGenericParameter_IsRecognized()
-    {
-        string code = """<Grid TItem="Person" Items="@people" />""";
-        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
-
-        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "Grid");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "TItem");
-        Assert.Contains(tokens, t => t.Type == TokenType.AttributeName && t.Value == "Items");
     }
 
     [Fact]
@@ -276,5 +182,99 @@ public class RazorTokenizerTests
         Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "CardHeader");
         Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "CardBody");
         Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "Button");
+    }
+
+    [Fact]
+    public void Tokenize_PageDirectiveWithPath_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@page \"/counter\"");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.Directive && t.Value == "@page");
+        Assert.Contains(tokens, t => t.Type == TokenType.String && t.Value == "\"/counter\"");
+    }
+
+    [Fact]
+    public void Tokenize_RazorComment_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@* this is a comment *@");
+
+        Assert.Single(tokens);
+        Assert.Equal(TokenType.Comment, tokens[0].Type);
+    }
+
+    [Theory]
+    [InlineData("@if")]
+    [InlineData("@else")]
+    [InlineData("@foreach")]
+    [InlineData("@for")]
+    [InlineData("@while")]
+    [InlineData("@switch")]
+    public void Tokenize_RazorControlFlow_AreRecognized(string keyword)
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize($"{keyword} (true) {{ }}");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.ControlKeyword && t.Value == keyword);
+    }
+
+    [Theory]
+    [InlineData("@page")]
+    [InlineData("@using")]
+    [InlineData("@inject")]
+    [InlineData("@inherits")]
+    [InlineData("@implements")]
+    [InlineData("@namespace")]
+    [InlineData("@layout")]
+    [InlineData("@typeparam")]
+    [InlineData("@attribute")]
+    [InlineData("@rendermode")]
+    public void Tokenize_RazorDirectives_AreRecognized(string directive)
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(directive);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.Directive && t.Value == directive);
+    }
+
+    [Fact]
+    public void Tokenize_RazorExplicitExpression_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@(expression + value)");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression);
+    }
+
+    [Fact]
+    public void Tokenize_RazorImplicitExpression_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@variable");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression && t.Value == "@variable");
+    }
+
+    [Fact]
+    public void Tokenize_RazorImplicitExpressionWithDot_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("@Model.Property");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.RazorExpression && t.Value == "@Model.Property");
+    }
+
+    [Fact]
+    public void Tokenize_RazorWithLambdaAndNestedQuotes_DoesNotBreakTagParsing()
+    {
+        string code = """<BUIButton Text="Click" OnClick="@(() => Log("msg"))" />""";
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize(code);
+
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "BUIButton");
+
+        Assert.DoesNotContain(tokens, t => t.Type == TokenType.Operator && t.Value == "<");
+    }
+
+    [Fact]
+    public void Tokenize_SelfClosingTag_IsRecognized()
+    {
+        IReadOnlyList<Token> tokens = RazorLanguage.Instance.Tokenize("<br />");
+
+        Assert.Contains(tokens, t => t.Type == TokenType.TagName && t.Value == "br");
+        Assert.Contains(tokens, t => t.Type == TokenType.Punctuation && t.Value == "/");
     }
 }

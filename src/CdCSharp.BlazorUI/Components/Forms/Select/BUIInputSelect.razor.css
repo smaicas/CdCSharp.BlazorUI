@@ -1,6 +1,6 @@
 ﻿/* ============================================
    BUIInputSelect.razor.css (REFACTORED)
-   
+
    REMOVED (now in _dropdown-family.css):
    - display: flex; flex-direction: column; position: relative
    - Size variants (padding adjustments)
@@ -9,7 +9,7 @@
    - Disabled/Error states
    - Arrow animation
    - Menu positioning
-   
+
    REMAINING: Component-specific menu items styling
    ============================================ */
 

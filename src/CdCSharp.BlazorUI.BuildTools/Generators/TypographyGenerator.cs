@@ -11,15 +11,15 @@ namespace CdCSharp.BlazorUI.BuildTools.Generators;
 /// - Responsive font sizing via media queries
 /// - Heading styles (h1-h6)
 /// - Text element styles (p, small, strong, em, code, pre, blockquote, a)
-/// 
+///
 /// Import order: after _reset.css
 /// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class TypographyGenerator : IAssetGenerator
 {
-    public string Name => "Typography";
     public string FileName => "_typography.css";
+    public string Name => "Typography";
 
     public async Task<string> GetContent()
     {
@@ -34,10 +34,10 @@ public class TypographyGenerator : IAssetGenerator
     {{FeatureDefinitions.Typography.FontFamily}}: {{FeatureDefinitions.Typography.FontFamilyValue}};
     {{FeatureDefinitions.Typography.FontFamilyHeading}}: {{FeatureDefinitions.Typography.FontFamilyHeadingValue}};
     {{FeatureDefinitions.Typography.FontMono}}: {{FeatureDefinitions.Typography.FontMonoValue}};
-    
+
     /* Base font size - default for medium screens */
     {{FeatureDefinitions.Typography.FontSizeBase}}: {{FeatureDefinitions.Typography.FontSizeBaseValue}};
-    
+
     /* Line heights */
     {{FeatureDefinitions.Typography.LineHeight}}: {{FeatureDefinitions.Typography.LineHeightValue}};
     {{FeatureDefinitions.Typography.LineHeightHeading}}: {{FeatureDefinitions.Typography.LineHeightHeadingValue}};

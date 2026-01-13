@@ -7,8 +7,9 @@ namespace CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop;
 
 public interface ITextAreaJsInterop
 {
-    ValueTask InitializeAutoResizeAsync(ElementReference textarea, string textareaId);
     ValueTask DisposeAutoResizeAsync(string textareaId);
+
+    ValueTask InitializeAutoResizeAsync(ElementReference textarea, string textareaId);
 }
 
 public sealed class TextAreaJsInterop : ModuleJsInteropBase, ITextAreaJsInterop
@@ -18,19 +19,19 @@ public sealed class TextAreaJsInterop : ModuleJsInteropBase, ITextAreaJsInterop
     {
     }
 
-    public async ValueTask InitializeAutoResizeAsync(ElementReference textarea, string textareaId)
-    {
-        await IsModuleTaskLoaded.Task;
-        IJSObjectReference module = await ModuleTask.Value;
-
-        await module.InvokeVoidAsync("initializeAutoResize", textarea, textareaId);
-    }
-
     public async ValueTask DisposeAutoResizeAsync(string textareaId)
     {
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync("disposeAutoResize", textareaId);
+    }
+
+    public async ValueTask InitializeAutoResizeAsync(ElementReference textarea, string textareaId)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+
+        await module.InvokeVoidAsync("initializeAutoResize", textarea, textareaId);
     }
 }

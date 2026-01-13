@@ -13,25 +13,14 @@ public interface IHasBorder
 public sealed class BorderStyle
 {
     private Border? _all;
-    private Border? _top;
-    private Border? _right;
     private Border? _bottom;
     private Border? _left;
-
     private BorderRadius? _radius;
-
+    private Border? _right;
+    private Border? _top;
     private BorderStyle() { }
 
     public static BorderStyle Create() => new();
-
-    // ---------- PRESETS ----------
-    public BorderStyle None()
-    {
-        _all = Border.None;
-        _top = _right = _bottom = _left = null;
-        _radius = null;
-        return this;
-    }
 
     // ---------- ALL ----------
     public BorderStyle All(string width, BorderStyleType style, CssColor color)
@@ -41,19 +30,6 @@ public sealed class BorderStyle
         // Definir ALL invalida overrides anteriores
         _top = _right = _bottom = _left = null;
 
-        return this;
-    }
-
-    // ---------- SIDES ----------
-    public BorderStyle Top(string width, BorderStyleType style, CssColor color)
-    {
-        _top = new Border(width, style, color);
-        return this;
-    }
-
-    public BorderStyle Right(string width, BorderStyleType style, CssColor color)
-    {
-        _right = new Border(width, style, color);
         return this;
     }
 
@@ -69,6 +45,14 @@ public sealed class BorderStyle
         return this;
     }
 
+    // ---------- PRESETS ----------
+    public BorderStyle None()
+    {
+        _all = Border.None;
+        _top = _right = _bottom = _left = null;
+        _radius = null;
+        return this;
+    }
     // ---------- RADIUS ----------
     public BorderStyle Radius(int all)
     {
@@ -77,10 +61,10 @@ public sealed class BorderStyle
     }
 
     public BorderStyle Radius(
-        int? topLeft = null,
-        int? topRight = null,
-        int? bottomRight = null,
-        int? bottomLeft = null)
+            int? topLeft = null,
+            int? topRight = null,
+            int? bottomRight = null,
+            int? bottomLeft = null)
     {
         _radius = new BorderRadius
         {
@@ -89,6 +73,12 @@ public sealed class BorderStyle
             BottomRight = bottomRight,
             BottomLeft = bottomLeft
         };
+        return this;
+    }
+
+    public BorderStyle Right(string width, BorderStyleType style, CssColor color)
+    {
+        _right = new Border(width, style, color);
         return this;
     }
 
@@ -113,6 +103,12 @@ public sealed class BorderStyle
         return vars;
     }
 
+    // ---------- SIDES ----------
+    public BorderStyle Top(string width, BorderStyleType style, CssColor color)
+    {
+        _top = new Border(width, style, color);
+        return this;
+    }
     private static void AddSide(
         IDictionary<string, string> vars,
         Border? side,
@@ -131,17 +127,6 @@ public sealed class BorderStyle
 
 internal sealed class Border
 {
-    public static Border None => new("0", BorderStyleType.None, new(0, 0, 0, 0));
-
-    public string Width { get; }
-    public BorderStyleType Style { get; }
-    public CssColor Color { get; }
-
-    public bool IsNone => Style == BorderStyleType.None;
-
-    public string StyleCss => Style.ToString().ToLowerInvariant();
-    public string ColorCss => Color.ToString(ColorOutputFormats.Rgba);
-
     public Border(string width, BorderStyleType style, CssColor color)
     {
         if (style == BorderStyleType.None || width == "0" || width == "0px")
@@ -157,6 +142,14 @@ internal sealed class Border
         Color = color;
     }
 
+    public static Border None => new("0", BorderStyleType.None, new(0, 0, 0, 0));
+
+    public CssColor Color { get; }
+    public string ColorCss => Color.ToString(ColorOutputFormats.Rgba);
+    public bool IsNone => Style == BorderStyleType.None;
+    public BorderStyleType Style { get; }
+    public string StyleCss => Style.ToString().ToLowerInvariant();
+    public string Width { get; }
     public string ToCss()
     {
         if (IsNone)
@@ -168,11 +161,10 @@ internal sealed class Border
 
 internal sealed class BorderRadius
 {
+    public int? BottomLeft { get; set; }
+    public int? BottomRight { get; set; }
     public int? TopLeft { get; set; }
     public int? TopRight { get; set; }
-    public int? BottomRight { get; set; }
-    public int? BottomLeft { get; set; }
-
     public static BorderRadius All(int value)
     {
         value = Math.Max(0, value);

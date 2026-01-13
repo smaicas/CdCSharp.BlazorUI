@@ -70,10 +70,54 @@ internal sealed class BUIComponentAttributesBuilder
         BuildInlineStyles(cssVariables);
     }
 
-    private void BuildSize(ComponentBase component)
+    private static string ToKebabCaseComponentName(string value)
     {
-        if (component is IHasSize size)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Size] = size.Size.ToString().ToLowerInvariant();
+        if (string.IsNullOrEmpty(value)) return value;
+
+        int tickIndex = value.IndexOf('`');
+        if (tickIndex != -1)
+        {
+            value = value[..tickIndex];
+        }
+
+        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase))
+        {
+            value = value[3..];
+        }
+
+        StringBuilder sb = new();
+        for (int i = 0; i < value.Length; i++)
+        {
+            char c = value[i];
+            if (char.IsUpper(c) && i > 0 && value[i - 1] != '-')
+            {
+                sb.Append('-');
+            }
+            sb.Append(char.ToLower(c));
+        }
+
+        return sb.ToString();
+    }
+
+    private void BuildBackgroundColor(ComponentBase component, Dictionary<string, string> cssVariables)
+    {
+        if (component is IHasBackgroundColor bg && bg.BackgroundColor != null)
+            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Rgba);
+    }
+
+    private void BuildBorder(ComponentBase component, Dictionary<string, string> cssVariables)
+    {
+        if (component is IHasBorder hasBorder && hasBorder.Border != null)
+        {
+            foreach (KeyValuePair<string, string> kv in hasBorder.Border.ToCssVariables())
+                cssVariables[kv.Key] = kv.Value;
+        }
+    }
+
+    private void BuildColor(ComponentBase component, Dictionary<string, string> cssVariables)
+    {
+        if (component is IHasColor color && color.Color != null)
+            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color.ToString(ColorOutputFormats.Rgba);
     }
 
     private void BuildDensity(ComponentBase component)
@@ -82,10 +126,10 @@ internal sealed class BUIComponentAttributesBuilder
             ComputedAttributes[FeatureDefinitions.DataAttributes.Density] = density.Density.ToString().ToLowerInvariant();
     }
 
-    private void BuildFullWidth(ComponentBase component)
+    private void BuildDisabled(ComponentBase component)
     {
-        if (component is IHasFullWidth fullWidth)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = fullWidth.FullWidth.ToString().ToLowerInvariant();
+        if (component is IHasDisabled disabled)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
     }
 
     private void BuildElevation(ComponentBase component, Dictionary<string, string> cssVariables)
@@ -104,22 +148,45 @@ internal sealed class BUIComponentAttributesBuilder
         }
     }
 
-    private void BuildLoading(ComponentBase component)
-    {
-        if (component is IHasLoading loading)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = loading.IsLoading.ToString().ToLowerInvariant();
-    }
-
     private void BuildError(ComponentBase component)
     {
         if (component is IHasError error)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = error.IsError.ToString().ToLowerInvariant();
     }
 
-    private void BuildDisabled(ComponentBase component)
+    private void BuildFamilyAttributes(ComponentBase component)
     {
-        if (component is IHasDisabled disabled)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
+        if (component is IInputFamilyComponent)
+        {
+            ComputedAttributes[FeatureDefinitions.DataAttributes.InputBase] = "true";
+        }
+    }
+
+    private void BuildFullWidth(ComponentBase component)
+    {
+        if (component is IHasFullWidth fullWidth)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = fullWidth.FullWidth.ToString().ToLowerInvariant();
+    }
+
+    private void BuildInlineStyles(Dictionary<string, string> cssVariables)
+    {
+        string cssVars = string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"));
+        string computedStyles = string.IsNullOrWhiteSpace(_originalUserStyles)
+            ? cssVars
+            : string.IsNullOrWhiteSpace(cssVars)
+                ? _originalUserStyles
+                : $"{cssVars}; {_originalUserStyles}";
+
+        if (!string.IsNullOrWhiteSpace(computedStyles))
+            ComputedAttributes["style"] = computedStyles;
+        else
+            ComputedAttributes.Remove("style");
+    }
+
+    private void BuildLoading(ComponentBase component)
+    {
+        if (component is IHasLoading loading)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = loading.IsLoading.ToString().ToLowerInvariant();
     }
 
     private void BuildReadOnly(ComponentBase component)
@@ -150,25 +217,10 @@ internal sealed class BUIComponentAttributesBuilder
         }
     }
 
-    private void BuildColor(ComponentBase component, Dictionary<string, string> cssVariables)
+    private void BuildSize(ComponentBase component)
     {
-        if (component is IHasColor color && color.Color != null)
-            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color.ToString(ColorOutputFormats.Rgba);
-    }
-
-    private void BuildBackgroundColor(ComponentBase component, Dictionary<string, string> cssVariables)
-    {
-        if (component is IHasBackgroundColor bg && bg.BackgroundColor != null)
-            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Rgba);
-    }
-
-    private void BuildBorder(ComponentBase component, Dictionary<string, string> cssVariables)
-    {
-        if (component is IHasBorder hasBorder && hasBorder.Border != null)
-        {
-            foreach (KeyValuePair<string, string> kv in hasBorder.Border.ToCssVariables())
-                cssVariables[kv.Key] = kv.Value;
-        }
+        if (component is IHasSize size)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Size] = size.Size.ToString().ToLowerInvariant();
     }
 
     private void BuildTransitions(ComponentBase component, Dictionary<string, string> cssVariables)
@@ -180,57 +232,5 @@ internal sealed class BUIComponentAttributesBuilder
 
             ComputedAttributes[FeatureDefinitions.DataAttributes.Transitions] = transitions.Transitions.GetDataAttributeValue();
         }
-    }
-
-    private void BuildFamilyAttributes(ComponentBase component)
-    {
-        if (component is IInputFamilyComponent)
-        {
-            ComputedAttributes[FeatureDefinitions.DataAttributes.InputBase] = "true";
-        }
-    }
-
-    private void BuildInlineStyles(Dictionary<string, string> cssVariables)
-    {
-        string cssVars = string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"));
-        string computedStyles = string.IsNullOrWhiteSpace(_originalUserStyles)
-            ? cssVars
-            : string.IsNullOrWhiteSpace(cssVars)
-                ? _originalUserStyles
-                : $"{cssVars}; {_originalUserStyles}";
-
-        if (!string.IsNullOrWhiteSpace(computedStyles))
-            ComputedAttributes["style"] = computedStyles;
-        else
-            ComputedAttributes.Remove("style");
-    }
-
-    private static string ToKebabCaseComponentName(string value)
-    {
-        if (string.IsNullOrEmpty(value)) return value;
-
-        int tickIndex = value.IndexOf('`');
-        if (tickIndex != -1)
-        {
-            value = value[..tickIndex];
-        }
-
-        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase))
-        {
-            value = value[3..];
-        }
-
-        StringBuilder sb = new();
-        for (int i = 0; i < value.Length; i++)
-        {
-            char c = value[i];
-            if (char.IsUpper(c) && i > 0 && value[i - 1] != '-')
-            {
-                sb.Append('-');
-            }
-            sb.Append(char.ToLower(c));
-        }
-
-        return sb.ToString();
     }
 }

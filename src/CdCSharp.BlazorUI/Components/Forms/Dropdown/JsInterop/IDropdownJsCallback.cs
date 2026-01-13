@@ -3,7 +3,9 @@
 public interface IDropdownJsCallback
 {
     Task OnClickOutside();
+
     Task OnKeyDown(string key, bool shiftKey, bool ctrlKey);
+
     Task<DropdownPosition> OnRequestPosition();
 }
 

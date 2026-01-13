@@ -8,6 +8,17 @@ public class HtmlRendererTests
     private readonly HtmlRenderer _renderer = new();
 
     [Fact]
+    public void Render_DarkTheme_HasCorrectColors()
+    {
+        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
+
+        string result = _renderer.Render(tokens, HtmlRenderOptions.DarkTheme);
+
+        Assert.Contains("background-color: #1e1e1e", result);
+        Assert.Contains("color: #d4d4d4", result);
+    }
+
+    [Fact]
     public void Render_EmptyTokenList_ReturnsEmptyContainer()
     {
         string result = _renderer.Render([], new HtmlRenderOptions { IncludeStyles = false });
@@ -18,24 +29,66 @@ public class HtmlRendererTests
     }
 
     [Fact]
-    public void Render_SingleToken_WrapsInSpan()
+    public void Render_EscapesAmpersand()
     {
-        List<Token> tokens = [new Token(TokenType.Keyword, "class", 0, 5)];
+        List<Token> tokens = [new Token(TokenType.Operator, "&&", 0, 2)];
 
         string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
-        Assert.Contains("<span class=\"SH-kw\">class</span>", result);
+        Assert.Contains("&amp;&amp;", result);
     }
 
     [Fact]
-    public void Render_TextToken_NotWrappedInSpan()
+    public void Render_EscapesHtmlCharacters()
     {
-        List<Token> tokens = [new Token(TokenType.Text, " ", 0, 1)];
+        List<Token> tokens = [new Token(TokenType.Operator, "<", 0, 1)];
 
         string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
-        Assert.DoesNotContain("<span class=\"SH-txt\">", result);
-        Assert.Contains(" ", result);
+        Assert.Contains("&lt;", result);
+        Assert.DoesNotContain(">SH-op\"><", result);
+    }
+
+    [Fact]
+    public void Render_EscapesQuotes()
+    {
+        List<Token> tokens = [new Token(TokenType.String, "\"hello\"", 0, 7)];
+
+        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
+
+        Assert.Contains("&quot;hello&quot;", result);
+    }
+
+    [Fact]
+    public void Render_ExcludesStyles_WhenDisabled()
+    {
+        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
+
+        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
+
+        Assert.DoesNotContain("<style>", result);
+    }
+
+    [Fact]
+    public void Render_IncludesStyles_WhenEnabled()
+    {
+        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
+
+        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = true });
+
+        Assert.Contains("<style>", result);
+        Assert.Contains("</style>", result);
+    }
+
+    [Fact]
+    public void Render_LightTheme_HasCorrectColors()
+    {
+        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
+
+        string result = _renderer.Render(tokens, HtmlRenderOptions.LightTheme);
+
+        Assert.Contains("background-color: #ffffff", result);
+        Assert.Contains("color: #000000", result);
     }
 
     [Fact]
@@ -61,55 +114,33 @@ public class HtmlRendererTests
     }
 
     [Fact]
-    public void Render_EscapesHtmlCharacters()
+    public void Render_PreservesNewlines()
     {
-        List<Token> tokens = [new Token(TokenType.Operator, "<", 0, 1)];
+        List<Token> tokens = [new Token(TokenType.Text, "line1\nline2\nline3", 0, 17)];
 
         string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
-        Assert.Contains("&lt;", result);
-        Assert.DoesNotContain(">SH-op\"><", result);
+        Assert.Contains("line1\nline2\nline3", result);
     }
 
     [Fact]
-    public void Render_EscapesAmpersand()
+    public void Render_PreservesWhitespace()
     {
-        List<Token> tokens = [new Token(TokenType.Operator, "&&", 0, 2)];
+        List<Token> tokens = [new Token(TokenType.Text, "    indented", 0, 12)];
 
         string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
-        Assert.Contains("&amp;&amp;", result);
+        Assert.Contains("    indented", result);
     }
 
     [Fact]
-    public void Render_EscapesQuotes()
+    public void Render_SingleToken_WrapsInSpan()
     {
-        List<Token> tokens = [new Token(TokenType.String, "\"hello\"", 0, 7)];
+        List<Token> tokens = [new Token(TokenType.Keyword, "class", 0, 5)];
 
         string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
-        Assert.Contains("&quot;hello&quot;", result);
-    }
-
-    [Fact]
-    public void Render_IncludesStyles_WhenEnabled()
-    {
-        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
-
-        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = true });
-
-        Assert.Contains("<style>", result);
-        Assert.Contains("</style>", result);
-    }
-
-    [Fact]
-    public void Render_ExcludesStyles_WhenDisabled()
-    {
-        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
-
-        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
-
-        Assert.DoesNotContain("<style>", result);
+        Assert.Contains("<span class=\"SH-kw\">class</span>", result);
     }
 
     [Fact]
@@ -191,25 +222,14 @@ public class HtmlRendererTests
     }
 
     [Fact]
-    public void Render_DarkTheme_HasCorrectColors()
+    public void Render_TextToken_NotWrappedInSpan()
     {
-        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
+        List<Token> tokens = [new Token(TokenType.Text, " ", 0, 1)];
 
-        string result = _renderer.Render(tokens, HtmlRenderOptions.DarkTheme);
+        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
-        Assert.Contains("background-color: #1e1e1e", result);
-        Assert.Contains("color: #d4d4d4", result);
-    }
-
-    [Fact]
-    public void Render_LightTheme_HasCorrectColors()
-    {
-        List<Token> tokens = [new Token(TokenType.Keyword, "test", 0, 4)];
-
-        string result = _renderer.Render(tokens, HtmlRenderOptions.LightTheme);
-
-        Assert.Contains("background-color: #ffffff", result);
-        Assert.Contains("color: #000000", result);
+        Assert.DoesNotContain("<span class=\"SH-txt\">", result);
+        Assert.Contains(" ", result);
     }
 
     [Theory]
@@ -235,25 +255,5 @@ public class HtmlRendererTests
         string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
 
         Assert.Contains($"class=\"{expectedClass}\"", result);
-    }
-
-    [Fact]
-    public void Render_PreservesNewlines()
-    {
-        List<Token> tokens = [new Token(TokenType.Text, "line1\nline2\nline3", 0, 17)];
-
-        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
-
-        Assert.Contains("line1\nline2\nline3", result);
-    }
-
-    [Fact]
-    public void Render_PreservesWhitespace()
-    {
-        List<Token> tokens = [new Token(TokenType.Text, "    indented", 0, 12)];
-
-        string result = _renderer.Render(tokens, new HtmlRenderOptions { IncludeStyles = false });
-
-        Assert.Contains("    indented", result);
     }
 }
