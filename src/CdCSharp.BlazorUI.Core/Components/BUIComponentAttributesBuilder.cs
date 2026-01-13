@@ -30,7 +30,6 @@ internal sealed class BUIComponentAttributesBuilder
 
         Dictionary<string, string> cssVariables = [];
 
-        // Nombre del componente
         string componentName = ToKebabCaseComponentName(component.GetType().Name);
         ComputedAttributes[FeatureDefinitions.DataAttributes.Component] = componentName;
 
@@ -41,7 +40,6 @@ internal sealed class BUIComponentAttributesBuilder
             ComputedAttributes[dataAttr] = value;
         }
 
-        // ===== FEATURES =====
         BuildFamilyAttributes(component);
 
         BuildSize(component);
@@ -59,13 +57,11 @@ internal sealed class BUIComponentAttributesBuilder
         BuildBorder(component, cssVariables);
         BuildTransitions(component, cssVariables);
 
-        // ===== COMPONENT-SPECIFIC DATA ATTRIBUTES =====
         if (component is IBuiltComponent buiComponent)
         {
             buiComponent.BuildComponentDataAttributes(ComputedAttributes);
         }
 
-        // ===== COMPONENT-SPECIFIC CSS VARIABLES =====
         if (component is IBuiltComponent buiComponentForVars)
         {
             buiComponentForVars.BuildComponentCssVariables(cssVariables);
@@ -74,7 +70,6 @@ internal sealed class BUIComponentAttributesBuilder
         BuildInlineStyles(cssVariables);
     }
 
-    // -------- Feature Methods --------
     private void BuildSize(ComponentBase component)
     {
         if (component is IHasSize size)
@@ -187,7 +182,6 @@ internal sealed class BUIComponentAttributesBuilder
 
     private void BuildFamilyAttributes(ComponentBase component)
     {
-        // Input family - applies shared input styles
         if (component is IInputFamilyComponent)
         {
             ComputedAttributes[FeatureDefinitions.DataAttributes.InputBase] = "true";
@@ -213,25 +207,21 @@ internal sealed class BUIComponentAttributesBuilder
     {
         if (string.IsNullOrEmpty(value)) return value;
 
-        // Clean generic notation (e.g., InputCheckbox`1 -> InputCheckbox)
         int tickIndex = value.IndexOf('`');
         if (tickIndex != -1)
         {
             value = value[..tickIndex];
         }
 
-        // Clean "BUI" prefix
         if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase))
         {
             value = value[3..];
         }
 
-        // Convert to kebab-case
         StringBuilder sb = new();
         for (int i = 0; i < value.Length; i++)
         {
             char c = value[i];
-            // Only add hyphen if uppercase, not the first letter, and previous char is not already a hyphen
             if (char.IsUpper(c) && i > 0 && value[i - 1] != '-')
             {
                 sb.Append('-');

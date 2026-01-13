@@ -5,6 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
+/// <summary>
+/// Generates core design tokens: spacing, z-index, opacity.
+/// Typography is handled by TypographyGenerator.
+/// Border radius, transitions, and shadows are handled by component systems.
+/// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class DesignTokensGenerator : IAssetGenerator
@@ -14,15 +19,29 @@ public class DesignTokensGenerator : IAssetGenerator
 
     public async Task<string> GetContent()
     {
-
         return $$"""
 /* ========================================
    Design Tokens
    Auto-generated - Do not edit manually
+   
+   Core system values:
+   - Spacing scale
+   - Z-index layers
+   - Opacity states
+   
+   NOT included (handled elsewhere):
+   - Typography (TypographyGenerator)
+   - Border radius (BorderStyle system)
+   - Transitions (BUITransitions system)
+   - Shadows (Elevation system)
    ======================================== */
 
 :root {
-    /* === SPACING SCALE === */
+    /* ========================================
+       SPACING SCALE
+       Based on 0.25rem (4px) increments.
+       Usage: margins, paddings, gaps.
+       ======================================== */
     {{FeatureDefinitions.Tokens.Spacing.Space1}}: {{FeatureDefinitions.Tokens.Spacing.Space1Value}};
     {{FeatureDefinitions.Tokens.Spacing.Space2}}: {{FeatureDefinitions.Tokens.Spacing.Space2Value}};
     {{FeatureDefinitions.Tokens.Spacing.Space3}}: {{FeatureDefinitions.Tokens.Spacing.Space3Value}};
@@ -30,38 +49,22 @@ public class DesignTokensGenerator : IAssetGenerator
     {{FeatureDefinitions.Tokens.Spacing.Space5}}: {{FeatureDefinitions.Tokens.Spacing.Space5Value}};
     {{FeatureDefinitions.Tokens.Spacing.Space6}}: {{FeatureDefinitions.Tokens.Spacing.Space6Value}};
 
-    /* === TYPOGRAPHY === */
-    {{FeatureDefinitions.Tokens.Typography.FontFamily}}: {{FeatureDefinitions.Tokens.Typography.FontFamilyValue}};
-    {{FeatureDefinitions.Tokens.Typography.FontMono}}: {{FeatureDefinitions.Tokens.Typography.FontMonoValue}};
-    {{FeatureDefinitions.Tokens.Typography.FontSizeSm}}: {{FeatureDefinitions.Tokens.Typography.FontSizeSmValue}};
-    {{FeatureDefinitions.Tokens.Typography.FontSizeMd}}: {{FeatureDefinitions.Tokens.Typography.FontSizeMdValue}};
-    {{FeatureDefinitions.Tokens.Typography.FontSizeLg}}: {{FeatureDefinitions.Tokens.Typography.FontSizeLgValue}};
-    {{FeatureDefinitions.Tokens.Typography.LineHeight}}: {{FeatureDefinitions.Tokens.Typography.LineHeightValue}};
-
-    /* === BORDER RADIUS === */
-    {{FeatureDefinitions.Tokens.Radius.Sm}}: {{FeatureDefinitions.Tokens.Radius.SmValue}};
-    {{FeatureDefinitions.Tokens.Radius.Md}}: {{FeatureDefinitions.Tokens.Radius.MdValue}};
-    {{FeatureDefinitions.Tokens.Radius.Lg}}: {{FeatureDefinitions.Tokens.Radius.LgValue}};
-    {{FeatureDefinitions.Tokens.Radius.Full}}: {{FeatureDefinitions.Tokens.Radius.FullValue}};
-
-    /* === TRANSITIONS === */
-    {{FeatureDefinitions.Tokens.Transition.Fast}}: {{FeatureDefinitions.Tokens.Transition.FastValue}};
-    {{FeatureDefinitions.Tokens.Transition.Normal}}: {{FeatureDefinitions.Tokens.Transition.NormalValue}};
-    {{FeatureDefinitions.Tokens.Transition.Slow}}: {{FeatureDefinitions.Tokens.Transition.SlowValue}};
-
-    /* === Z-INDEX SCALE === */
+    /* ========================================
+       Z-INDEX SCALE
+       Stacking context layers.
+       Usage: overlays, modals, tooltips.
+       ======================================== */
     {{FeatureDefinitions.Tokens.ZIndex.Dropdown}}: {{FeatureDefinitions.Tokens.ZIndex.DropdownValue}};
     {{FeatureDefinitions.Tokens.ZIndex.Sticky}}: {{FeatureDefinitions.Tokens.ZIndex.StickyValue}};
     {{FeatureDefinitions.Tokens.ZIndex.Modal}}: {{FeatureDefinitions.Tokens.ZIndex.ModalValue}};
     {{FeatureDefinitions.Tokens.ZIndex.Tooltip}}: {{FeatureDefinitions.Tokens.ZIndex.TooltipValue}};
     {{FeatureDefinitions.Tokens.ZIndex.Toast}}: {{FeatureDefinitions.Tokens.ZIndex.ToastValue}};
 
-    /* === SHADOWS === */
-    {{FeatureDefinitions.Tokens.Shadow.Sm}}: {{FeatureDefinitions.Tokens.Shadow.SmValue}};
-    {{FeatureDefinitions.Tokens.Shadow.Md}}: {{FeatureDefinitions.Tokens.Shadow.MdValue}};
-    {{FeatureDefinitions.Tokens.Shadow.Lg}}: {{FeatureDefinitions.Tokens.Shadow.LgValue}};
-
-    /* === OPACITY === */
+    /* ========================================
+       OPACITY STATES
+       Visual feedback values.
+       Usage: disabled, placeholder, hover.
+       ======================================== */
     {{FeatureDefinitions.Tokens.Opacity.Disabled}}: {{FeatureDefinitions.Tokens.Opacity.DisabledValue}};
     {{FeatureDefinitions.Tokens.Opacity.Placeholder}}: {{FeatureDefinitions.Tokens.Opacity.PlaceholderValue}};
     {{FeatureDefinitions.Tokens.Opacity.Hover}}: {{FeatureDefinitions.Tokens.Opacity.HoverValue}};

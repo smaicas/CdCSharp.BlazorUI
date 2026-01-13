@@ -6,6 +6,10 @@ using System.Text;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
+/// <summary>
+/// Generates base styles for bui-component element.
+/// Size system only sets the multiplier; components use it in their isolated CSS.
+/// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class BaseComponentGenerator : IAssetGenerator
@@ -42,20 +46,19 @@ public class BaseComponentGenerator : IAssetGenerator
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-    gap: var({{FeatureDefinitions.DensityVariables.Gap}}, var({{FeatureDefinitions.Tokens.Spacing.Space2}}));
+    gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}});
 
     /* Inline color overrides */
     background-color: var({{FeatureDefinitions.InlineVariables.BackgroundColor}}, inherit);
     color: var({{FeatureDefinitions.InlineVariables.Color}}, inherit);
 
     /* =====================================
-       Border system (shorthand)
+       Border system (from IHasBorder)
        ===================================== */
 
     border: var({{FeatureDefinitions.InlineVariables.Border}}, 0);
     border-radius: var({{FeatureDefinitions.InlineVariables.BorderRadius}}, 0);
 
-    /* Individual border sides override shorthand */
     border-top: var(
         {{FeatureDefinitions.InlineVariables.BorderTop}},
         var({{FeatureDefinitions.InlineVariables.Border}}, 0)
@@ -79,66 +82,49 @@ public class BaseComponentGenerator : IAssetGenerator
 """;
 
     private static string GetSizeSystem() => $$"""
-/* === SIZE SYSTEM === */
+/* ========================================
+   SIZE SYSTEM
+   Only sets the multiplier.
+   Components use calc() with multiplier
+   in their isolated CSS files.
+   ======================================== */
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.SizeValues.Small}}"] {
-    {{FeatureDefinitions.SizeVariables.Multiplier}}: 0.85;
-    {{FeatureDefinitions.SizeVariables.Font}}: var({{FeatureDefinitions.Tokens.Typography.FontSizeSm}});
-    {{FeatureDefinitions.SizeVariables.Icon}}: 1rem;
-    {{FeatureDefinitions.SizeVariables.Height}}: 2rem;
-    {{FeatureDefinitions.SizeVariables.PaddingX}}: var({{FeatureDefinitions.Tokens.Spacing.Space2}});
-    {{FeatureDefinitions.SizeVariables.PaddingY}}: var({{FeatureDefinitions.Tokens.Spacing.Space1}});
-    font-size: var({{FeatureDefinitions.SizeVariables.Font}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.Values.Size.Small}}"] {
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 0.85;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.SizeValues.Medium}}"] {
-    {{FeatureDefinitions.SizeVariables.Multiplier}}: 1;
-    {{FeatureDefinitions.SizeVariables.Font}}: var({{FeatureDefinitions.Tokens.Typography.FontSizeMd}});
-    {{FeatureDefinitions.SizeVariables.Icon}}: 1.25rem;
-    {{FeatureDefinitions.SizeVariables.Height}}: 2.5rem;
-    {{FeatureDefinitions.SizeVariables.PaddingX}}: var({{FeatureDefinitions.Tokens.Spacing.Space3}});
-    {{FeatureDefinitions.SizeVariables.PaddingY}}: var({{FeatureDefinitions.Tokens.Spacing.Space2}});
-    font-size: var({{FeatureDefinitions.SizeVariables.Font}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.Values.Size.Medium}}"] {
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 1;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.SizeValues.Large}}"] {
-    {{FeatureDefinitions.SizeVariables.Multiplier}}: 1.25;
-    {{FeatureDefinitions.SizeVariables.Font}}: var({{FeatureDefinitions.Tokens.Typography.FontSizeLg}});
-    {{FeatureDefinitions.SizeVariables.Icon}}: 1.5rem;
-    {{FeatureDefinitions.SizeVariables.Height}}: 3rem;
-    {{FeatureDefinitions.SizeVariables.PaddingX}}: var({{FeatureDefinitions.Tokens.Spacing.Space4}});
-    {{FeatureDefinitions.SizeVariables.PaddingY}}: var({{FeatureDefinitions.Tokens.Spacing.Space3}});
-    font-size: var({{FeatureDefinitions.SizeVariables.Font}});
-}
-
-{{FeatureDefinitions.Tags.Component}} svg {
-    width: var({{FeatureDefinitions.SizeVariables.Icon}}, 1.25rem);
-    height: var({{FeatureDefinitions.SizeVariables.Icon}}, 1.25rem);
-    fill: currentColor;
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.Values.Size.Large}}"] {
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 1.25;
 }
 """;
 
     private static string GetDensitySystem() => $$"""
-/* === DENSITY SYSTEM === */
+/* ========================================
+   DENSITY SYSTEM
+   Affects spacing between elements.
+   ======================================== */
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.DensityValues.Compact}}"] {
-    {{FeatureDefinitions.DensityVariables.Gap}}: var({{FeatureDefinitions.Tokens.Spacing.Space1}});
-    {{FeatureDefinitions.DensityVariables.Padding}}: var({{FeatureDefinitions.Tokens.Spacing.Space1}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Compact}}"] {
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.25rem;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.DensityValues.Standard}}"] {
-    {{FeatureDefinitions.DensityVariables.Gap}}: var({{FeatureDefinitions.Tokens.Spacing.Space2}});
-    {{FeatureDefinitions.DensityVariables.Padding}}: var({{FeatureDefinitions.Tokens.Spacing.Space2}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Standard}}"] {
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.50rem;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.DensityValues.Comfortable}}"] {
-    {{FeatureDefinitions.DensityVariables.Gap}}: var({{FeatureDefinitions.Tokens.Spacing.Space3}});
-    {{FeatureDefinitions.DensityVariables.Padding}}: var({{FeatureDefinitions.Tokens.Spacing.Space3}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Comfortable}}"] {
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.75rem;
 }
 """;
 
     private static string GetStateStyles() => $$"""
-/* === UNIVERSAL STATES === */
+/* ========================================
+   UNIVERSAL STATES
+   ======================================== */
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Disabled}}="true"] {
     opacity: var({{FeatureDefinitions.Tokens.Opacity.Disabled}});
@@ -163,7 +149,10 @@ public class BaseComponentGenerator : IAssetGenerator
     private static string GetElevationSystem()
     {
         StringBuilder sb = new();
-        sb.AppendLine("/* === ELEVATION SYSTEM === */");
+        sb.AppendLine("/* ========================================");
+        sb.AppendLine("   ELEVATION SYSTEM");
+        sb.AppendLine("   Material Design inspired shadows.");
+        sb.AppendLine("   ======================================== */");
         sb.AppendLine();
 
         string tag = FeatureDefinitions.Tags.Component;
@@ -203,7 +192,9 @@ public class BaseComponentGenerator : IAssetGenerator
     }
 
     private static string GetUtilities() => $$"""
-/* === UTILITIES === */
+/* ========================================
+   UTILITIES
+   ======================================== */
 
 {{FeatureDefinitions.Tags.Component}} .{{FeatureDefinitions.CssClasses.VisuallyHidden}} {
     position: absolute;
@@ -217,7 +208,10 @@ public class BaseComponentGenerator : IAssetGenerator
     border: 0;
 }
 
-/* === RIPPLE EFFECT === */
+/* ========================================
+   RIPPLE EFFECT
+   ======================================== */
+
 .{{FeatureDefinitions.CssClasses.Ripple}} {
     position: absolute;
     border-radius: 50%;

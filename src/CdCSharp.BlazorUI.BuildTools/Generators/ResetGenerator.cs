@@ -5,6 +5,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
+/// <summary>
+/// Generates minimal CSS reset.
+/// Import order: First (before all other styles).
+/// </summary>
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
 public class ResetGenerator : IAssetGenerator
@@ -32,9 +36,9 @@ html {
 }
 
 body {
-    font-family: var({{FeatureDefinitions.Tokens.Typography.FontFamily}});
-    font-size: var({{FeatureDefinitions.Tokens.Typography.FontSizeMd}});
-    line-height: var({{FeatureDefinitions.Tokens.Typography.LineHeight}});
+    font-family: var({{FeatureDefinitions.Typography.FontFamily}});
+    font-size: var({{FeatureDefinitions.Typography.FontSizeBase}});
+    line-height: var({{FeatureDefinitions.Typography.LineHeight}});
     background-color: var(--palette-background);
     color: var(--palette-backgroundcontrast);
     -webkit-font-smoothing: antialiased;

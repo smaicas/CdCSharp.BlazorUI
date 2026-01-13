@@ -69,6 +69,7 @@ public class BuildTemplates
 
 /* 1. Reset & Base */
 @import './_reset.css';
+@import './_typography.css';
 
 /* 2. Theme Variables */
 @import './_themes.css';

@@ -1,17 +1,10 @@
-﻿/* ============================================
-   BUIInputText.razor.css (REFACTORED)
+﻿/* ========================================
+   BUIInputText Component Styles
    
-   REMOVED (now in _input-family.css):
-   - display: flex; flex-direction: column
-   - Size variants (--bui-input-padding-y/x adjustments)
-   - Variant styles (outlined/filled/standard)
-   - Hover/focus states for variants
-   - Disabled/Error states
-   
-   REMAINING: Only component-specific mappings
-   ============================================ */
+   Most styles come from _input-family.css.
+   This file contains only component-specific styles.
+   ======================================== */
 
-/* Map the native input to use family styles */
 bui-component[data-bui-component="input-text"] input {
     width: 100%;
     font-family: inherit;

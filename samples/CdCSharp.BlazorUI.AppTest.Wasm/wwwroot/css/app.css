@@ -115,10 +115,10 @@ code {
 
 /*Override CSS Variables form BlazorUI fonts*/
 :root {
-    --bui-font-base: 'Roboto Custom', system-ui, sans-serif;
-    --bui-font-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
-    --bui-font-display: 'MPLUSRounded Custom', system-ui, sans-serif;
+    --bui-font-family: 'Roboto Custom', system-ui, sans-serif;
+    --bui-font-family-heading: 'ArchivoBlack Custom', system-ui, sans-serif;
 }
+
 
 
 /*CUSTOM STYLES*/

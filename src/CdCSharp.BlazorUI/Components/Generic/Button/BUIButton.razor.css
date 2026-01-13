@@ -1,50 +1,48 @@
-﻿bui-component[data-bui-component="button"] button {
-    display: inline-flex;
-    align-items: center;
-    background-color: var(--bui-inline-background-color, var(--palette-primary));
-    color: var(--bui-inline-color, var(--palette-primarycontrast));
-    border: none;
-    cursor: pointer;
-    padding: var(--bui-button-padding-y) var(--bui-button-padding-x);
-    min-height: var(--bui-button-min-height);
+﻿/* ========================================
+   BUIButton Component Styles
+   Uses --bui-size-multiplier from global CSS.
+   ======================================== */
+
+bui-component[data-bui-component="button"] {
+    /* Size-dependent calculations using multiplier */
+    --button-height: calc(2.5rem * var(--bui-size-multiplier, 1));
+    --button-padding-x: calc(1rem * var(--bui-size-multiplier, 1));
+    --button-padding-y: calc(0.5rem * var(--bui-size-multiplier, 1));
+    --button-icon-size: calc(1.25rem * var(--bui-size-multiplier, 1));
 }
 
-/* Support ripple */
-bui-component[data-bui-component="button"] button {
-    position: relative;
-    overflow: hidden;
-}
+    bui-component[data-bui-component="button"] button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: calc(0.5rem * var(--bui-size-multiplier, 1));
+        background-color: var(--bui-inline-bg, var(--palette-primary));
+        color: var(--bui-inline-color, var(--palette-primarycontrast));
+        border: none;
+        cursor: pointer;
+        padding: var(--button-padding-y) var(--button-padding-x);
+        min-height: var(--button-height);
+        position: relative;
+        overflow: hidden;
+    }
 
 .bui-button__text {
     white-space: nowrap;
 }
 
+/* Icon sizing */
+bui-component[data-bui-component="button"] svg {
+    width: var(--button-icon-size);
+    height: var(--button-icon-size);
+}
+
 /* Icon only button */
 bui-component[data-bui-component="button"]:not(:has(.bui-button__text)) button {
-    --bui-button-icon-only-padding: 0.5rem;
-}
-
-/* Size variations */
-bui-component[data-bui-component="button"][data-bui-size="medium"] {
-    --bui-button-padding-y: 0.5rem;
-    --bui-button-padding-x: 1rem;
-    --bui-button-min-height: 2.5rem;
-}
-
-bui-component[data-bui-component="button"][data-bui-size="small"] {
-    --bui-button-padding-y: 0.375rem;
-    --bui-button-padding-x: 0.75rem;
-    --bui-button-min-height: 2rem;
-}
-
-bui-component[data-bui-component="button"][data-bui-size="large"] {
-    --bui-button-padding-y: 0.625rem;
-    --bui-button-padding-x: 1.25rem;
-    --bui-button-min-height: 3rem;
+    padding: var(--button-padding-y);
+    aspect-ratio: 1;
 }
 
 /* Disabled state */
 bui-component[data-bui-component="button"] button:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
 }
