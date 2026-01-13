@@ -86,7 +86,9 @@
     private RenderFragment RenderDefault() => __builder =>
     {
         <bui-component @attributes="@ComputedAttributes">
-            <button @ref="_buttonElement"
+            <button bui-apply-border
+                    bui-apply-colors
+                    @ref="_buttonElement"
                     type="button"
                     disabled="@IsDisabled"
                     @onclick="HandleClick">

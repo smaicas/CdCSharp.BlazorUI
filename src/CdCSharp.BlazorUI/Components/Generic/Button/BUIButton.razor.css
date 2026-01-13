@@ -15,10 +15,7 @@ bui-component[data-bui-component="button"] {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: calc(0.5rem * var(--bui-size-multiplier, 1));
-        background-color: var(--bui-inline-bg, var(--palette-primary));
-        color: var(--bui-inline-color, var(--palette-primarycontrast));
-        border: none;
+        gap: var(--bui-density-gap);
         cursor: pointer;
         padding: var(--button-padding-y) var(--button-padding-x);
         min-height: var(--button-height);

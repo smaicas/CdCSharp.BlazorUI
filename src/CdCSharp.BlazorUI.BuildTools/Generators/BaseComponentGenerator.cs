@@ -22,6 +22,8 @@ public class BaseComponentGenerator : IAssetGenerator
         StringBuilder sb = new();
         sb.AppendLine(GetBaseStyles());
         sb.AppendLine();
+        sb.AppendLine(GetInlineAppliedStyles());
+        sb.AppendLine();
         sb.AppendLine(GetSizeSystem());
         sb.AppendLine();
         sb.AppendLine(GetDensitySystem());
@@ -47,11 +49,16 @@ public class BaseComponentGenerator : IAssetGenerator
     font-size: inherit;
     line-height: inherit;
     gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}}, 0.5rem);
+}
+""";
 
-    /* Inline color overrides */
-    background-color: var({{FeatureDefinitions.InlineVariables.BackgroundColor}}, inherit);
-    color: var({{FeatureDefinitions.InlineVariables.Color}}, inherit);
+    private static string GetInlineAppliedStyles() => $$"""
+/* ========================================
+   Inline applied styles
+   Auto-generated - Do not edit manually
+   ======================================== */
 
+{{FeatureDefinitions.Tags.Component}} [bui-apply-border]{
     /* =====================================
        Border system (from IHasBorder)
        ===================================== */
@@ -79,6 +86,32 @@ public class BaseComponentGenerator : IAssetGenerator
         var({{FeatureDefinitions.InlineVariables.Border}}, 0)
     );
 }
+
+{{FeatureDefinitions.Tags.Component}} [bui-apply-colors]{
+    /* =====================================
+       Colors system (from IHasColor, IHasBackgroundColor)
+       ===================================== */
+
+    background-color: var({{FeatureDefinitions.InlineVariables.BackgroundColor}}, inherit);
+    color: var({{FeatureDefinitions.InlineVariables.Color}}, inherit);
+}
+
+{{FeatureDefinitions.Tags.Component}} [bui-apply-color]{
+    /* =====================================
+       Colors system (from IHasColor, IHasBackgroundColor)
+       ===================================== */
+
+    color: var({{FeatureDefinitions.InlineVariables.Color}}, inherit);
+}
+
+{{FeatureDefinitions.Tags.Component}} [bui-apply-background]{
+    /* =====================================
+       Colors system (from IHasColor, IHasBackgroundColor)
+       ===================================== */
+
+    background-color: var({{FeatureDefinitions.InlineVariables.BackgroundColor}}, inherit);
+}
+
 """;
 
     private static string GetDensitySystem() => $$"""
