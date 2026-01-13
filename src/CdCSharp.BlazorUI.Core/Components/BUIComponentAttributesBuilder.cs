@@ -45,7 +45,7 @@ internal sealed class BUIComponentAttributesBuilder
         BuildSize(component);
         BuildDensity(component);
         BuildFullWidth(component);
-        BuildElevation(component, cssVariables);
+        BuildShadow(component, cssVariables);
         BuildLoading(component);
         BuildError(component);
         BuildDisabled(component);
@@ -132,7 +132,7 @@ internal sealed class BUIComponentAttributesBuilder
             ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
     }
 
-    private void BuildElevation(ComponentBase component, Dictionary<string, string> cssVariables)
+    private void BuildShadow(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasShadow shadow && shadow.Shadow != null)
         {

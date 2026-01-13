@@ -25,46 +25,35 @@ public static class CssThemeGenerator
     {
         StringBuilder sb = new();
 
+        // 1. Definir el tema por defecto en :root con valores finales
         sb.AppendLine(":root {");
-        sb.AppendLine("  /* === Theme palettes === */");
+        sb.AppendLine("  /* === Base Palette (Default Theme) === */");
 
-        // 1. Generate theme-specific variables for all themes
-        foreach (BUIThemePaletteBase palette in palettes)
-        {
-            Dictionary<string, string> themeVariables = palette.GetThemeVariables();
-            foreach (KeyValuePair<string, string> variable in themeVariables)
-            {
-                sb.AppendLine($"  {variable.Key}: {variable.Value};");
-            }
-        }
-
-        sb.AppendLine("  /* === Default palette mapping === */");
-
-        // 2. Map --palette-* to the default theme
         BUIThemePaletteBase defaultPalette = palettes.First(p => p.Id == defaultTheme);
-        Dictionary<string, string> defaultMapping = defaultPalette.GetPaletteMapping();
-        foreach (KeyValuePair<string, string> variable in defaultMapping)
+        // Suponiendo que GetThemeVariables devuelve el Diccionario con nombres limpios y valores RGBA
+        foreach (KeyValuePair<string, string> variable in defaultPalette.GetThemeVariables())
         {
-            sb.AppendLine($"  {variable.Key}: {variable.Value};");
+            // Forzamos que la variable se llame --palette-Nombre
+            // Ajusta el replace según cómo devuelva tu clase los nombres
+            string key = variable.Key.Replace("--dark-", "--palette-").Replace("--light-", "--palette-");
+            sb.AppendLine($"  {key}: {variable.Value};");
         }
-
         sb.AppendLine("}");
 
-        // 3. Generate theme selectors
+        // 2. Generar sobreescrituras para los demás temas
         foreach (BUIThemePaletteBase palette in palettes)
         {
-            sb.AppendLine($"html[data-theme=\"{palette.Id}\"] {{");
+            if (palette.Id == defaultTheme) continue; // No repetimos el default
 
-            Dictionary<string, string> mapping = palette.GetPaletteMapping();
-            foreach (KeyValuePair<string, string> variable in mapping)
+            sb.AppendLine($"\nhtml[data-theme=\"{palette.Id}\"] {{");
+            foreach (KeyValuePair<string, string> variable in palette.GetThemeVariables())
             {
-                sb.AppendLine($"  {variable.Key}: {variable.Value};");
+                string key = variable.Key.Replace("--dark-", "--palette-").Replace("--light-", "--palette-");
+                sb.AppendLine($"  {key}: {variable.Value};");
             }
-
             sb.AppendLine("}");
         }
 
-        // Remove the last empty line
         return sb.ToString().TrimEnd();
     }
 }

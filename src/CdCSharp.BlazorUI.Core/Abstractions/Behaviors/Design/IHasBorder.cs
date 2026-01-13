@@ -90,15 +90,21 @@ public sealed class BorderStyle
         if (_all != null && !_all.IsNone)
         {
             vars[InlineVariables.Border] = _all.ToCss();
-
-            if (_radius != null)
-                vars[InlineVariables.BorderRadius] = _radius.ToCss();
         }
 
-        AddSide(vars, _top, InlineVariables.BorderTop);
-        AddSide(vars, _right, InlineVariables.BorderRight);
-        AddSide(vars, _bottom, InlineVariables.BorderBottom);
-        AddSide(vars, _left, InlineVariables.BorderLeft);
+        if (_radius != null)
+        {
+            vars[InlineVariables.BorderRadius] = _radius.ToCss();
+        }
+
+        if (_top != null && !_top.IsNone)
+            vars[InlineVariables.BorderTop] = _top.ToCss();
+        if (_right != null && !_right.IsNone)
+            vars[InlineVariables.BorderRight] = _right.ToCss();
+        if (_bottom != null && !_bottom.IsNone)
+            vars[InlineVariables.BorderBottom] = _bottom.ToCss();
+        if (_left != null && !_left.IsNone)
+            vars[InlineVariables.BorderLeft] = _left.ToCss();
 
         return vars;
     }
@@ -108,16 +114,6 @@ public sealed class BorderStyle
     {
         _top = new Border(width, style, color);
         return this;
-    }
-    private static void AddSide(
-        IDictionary<string, string> vars,
-        Border? side,
-        string cssVar)
-    {
-        if (side == null || side.IsNone)
-            return;
-
-        vars[cssVar] = side.ToCss();
     }
 }
 

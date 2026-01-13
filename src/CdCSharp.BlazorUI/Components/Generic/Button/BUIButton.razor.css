@@ -1,17 +1,14 @@
-﻿/* ========================================
-   BUIButton Component Styles
-   Uses --bui-size-multiplier from global CSS.
-   ======================================== */
-
-bui-component[data-bui-component="button"] {
+﻿bui-component[data-bui-component="button"] {
     /* Size-dependent calculations using multiplier */
     --button-height: calc(2.5rem * var(--bui-size-multiplier, 1));
     --button-padding-x: calc(1rem * var(--bui-size-multiplier, 1));
     --button-padding-y: calc(0.5rem * var(--bui-size-multiplier, 1));
     --button-icon-size: calc(1.25rem * var(--bui-size-multiplier, 1));
-    /* Defaults */
-    --button-default-color: var(--palette-primarycontrast);
-    --button-default-background: var(--palette-primary);
+    /* Component defaults */
+    --button-background-default: var(--palette-primary);
+    --button-color-default: var(--palette-primarycontrast);
+    --button-border-default: none;
+    --button-border-radius-default: 4px;
 }
 
     bui-component[data-bui-component="button"] button {
@@ -20,18 +17,17 @@ bui-component[data-bui-component="button"] {
         justify-content: center;
         gap: var(--bui-density-gap);
         cursor: pointer;
-        color: var(--bui-inline-color, var(--button-default-color));
-        background: var(--bui-inline-background, var(--button-default-background));
         padding: var(--button-padding-y) var(--button-padding-x);
         min-height: var(--button-height);
         position: relative;
         overflow: hidden;
-        border: var(--bui-inline-border, 0);
-        border-radius: var(--bui-inline-border-radius, 0);
-        border-top: var(--bui-inline-border-top, var(--bui-inline-border, 0));
-        border-right: var(--bui-inline-border-right, var(--bui-inline-border, 0) );
-        border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, 0) );
-        border-left: var(--bui-inline-border-left, var(--bui-inline-border, 0) );
+        /* Consume inline overrides with fallback to defaults */
+        background-color: var(--bui-inline-background, var(--button-background-default));
+        color: var(--bui-inline-color, var(--button-color-default));
+        border-top: var(--bui-inline-border-top, var(--button-border, var(--button-border-default)));
+        border-bottom: var(--bui-inline-border-bottom, var(--button-border, var(--button-border-default)));
+        border-left: var(--bui-inline-border-left, var(--button-border, var(--button-border-default)));
+        border-right: var(--bui-inline-border-right, var(--button-border, var(--button-border-default)));
     }
 
 .bui-button__text {
@@ -53,4 +49,15 @@ bui-component[data-bui-component="button"]:not(:has(.bui-button__text)) button {
 /* Disabled state */
 bui-component[data-bui-component="button"] button:disabled {
     cursor: not-allowed;
+}
+
+/* Hover state - respects inline overrides */
+bui-component[data-bui-component="button"] button:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+/* Focus state */
+bui-component[data-bui-component="button"] button:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
 }

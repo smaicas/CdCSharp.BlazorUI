@@ -69,7 +69,7 @@
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
-            <div class="bui-input__wrapper" bui-apply-border bui-apply-colors @ref="_inputContainer">
+            <div class="bui-input__wrapper" @ref="_inputContainer">
 
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
 
