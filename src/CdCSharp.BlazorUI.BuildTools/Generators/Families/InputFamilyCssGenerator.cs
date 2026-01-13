@@ -34,7 +34,7 @@ public class InputFamilyGenerator : IAssetGenerator
 
 bui-component[{{FeatureDefinitions.DataAttributes.InputBase}}] {
     flex-direction: column;
-    gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}});
+    gap: 0.25rem;
 
     /* Size-dependent variables using multiplier */
     --input-height: calc(2.5rem * var({{FeatureDefinitions.ComponentVariables.Size.Multiplier}}, 1));

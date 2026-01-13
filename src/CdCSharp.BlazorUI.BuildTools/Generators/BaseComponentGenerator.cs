@@ -40,13 +40,12 @@ public class BaseComponentGenerator : IAssetGenerator
    Auto-generated - Do not edit manually
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}} {
-    display: inline-flex;
+{{FeatureDefinitions.Tags.Component}} {display: inline-flex;
     box-sizing: border-box;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
-    gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}});
+    gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}}, 0.5rem);
 
     /* Inline color overrides */
     background-color: var({{FeatureDefinitions.InlineVariables.BackgroundColor}}, inherit);
@@ -113,7 +112,7 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Standard}}"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.50rem;
+    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.5rem;
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Comfortable}}"] {
@@ -126,23 +125,16 @@ public class BaseComponentGenerator : IAssetGenerator
    UNIVERSAL STATES
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Disabled}}="true"] {
-    opacity: var({{FeatureDefinitions.Tokens.Opacity.Disabled}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Disabled}}="true"] {opacity: var({{FeatureDefinitions.Tokens.Opacity.Disabled}});
     pointer-events: none;
     cursor: not-allowed;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Loading}}="true"] {
-    pointer-events: none;
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Loading}}="true"] {pointer-events: none;
     position: relative;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {
-    width: 100%;
-}
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Error}}="true"] {
-    --bui-state-color: var(--palette-error);
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {width: 100%;
 }
 """;
 

@@ -174,7 +174,7 @@ public static class FeatureDefinitions
 
         /// <summary>
         /// Density-related variables set by [data-bui-density].
-        /// Affects spacing between and within components.
+        /// Affects spacing between elements via gap.
         /// </summary>
         public static class Density
         {

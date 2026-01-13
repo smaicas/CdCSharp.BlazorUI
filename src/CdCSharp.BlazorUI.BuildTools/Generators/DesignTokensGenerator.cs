@@ -25,7 +25,6 @@ public class DesignTokensGenerator : IAssetGenerator
    Auto-generated - Do not edit manually
    
    Core system values:
-   - Spacing scale
    - Z-index layers
    - Opacity states
    
@@ -37,18 +36,6 @@ public class DesignTokensGenerator : IAssetGenerator
    ======================================== */
 
 :root {
-    /* ========================================
-       SPACING SCALE
-       Based on 0.25rem (4px) increments.
-       Usage: margins, paddings, gaps.
-       ======================================== */
-    {{FeatureDefinitions.Tokens.Spacing.Space1}}: {{FeatureDefinitions.Tokens.Spacing.Space1Value}};
-    {{FeatureDefinitions.Tokens.Spacing.Space2}}: {{FeatureDefinitions.Tokens.Spacing.Space2Value}};
-    {{FeatureDefinitions.Tokens.Spacing.Space3}}: {{FeatureDefinitions.Tokens.Spacing.Space3Value}};
-    {{FeatureDefinitions.Tokens.Spacing.Space4}}: {{FeatureDefinitions.Tokens.Spacing.Space4Value}};
-    {{FeatureDefinitions.Tokens.Spacing.Space5}}: {{FeatureDefinitions.Tokens.Spacing.Space5Value}};
-    {{FeatureDefinitions.Tokens.Spacing.Space6}}: {{FeatureDefinitions.Tokens.Spacing.Space6Value}};
-
     /* ========================================
        Z-INDEX SCALE
        Stacking context layers.
