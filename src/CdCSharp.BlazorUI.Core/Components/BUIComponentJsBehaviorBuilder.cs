@@ -48,7 +48,7 @@ internal sealed class BUIComponentJsBehaviorBuilder
 
         _config.Ripple = new RippleConfiguration
         {
-            Color = hasRipple.RippleColor?.ToString(ColorOutputFormats.Rgba),
+            Color = hasRipple.RippleColor?.ToString(ColorOutputFormats.Optimized),
             Duration = hasRipple.RippleDurationMs,
             RippleContainer = hasRipple.GetRippleContainer(),
         };

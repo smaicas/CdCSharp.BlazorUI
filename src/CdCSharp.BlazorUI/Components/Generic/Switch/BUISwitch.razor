@@ -88,9 +88,9 @@
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
         if (TrackColorInactive != null)
-            cssVariables["--bui-switch-track-bg"] = TrackColorInactive.ToString(ColorOutputFormats.Rgba);
+            cssVariables["--bui-switch-track-bg"] = TrackColorInactive.ToString(ColorOutputFormats.Optimized);
         if (TrackColorActive != null)
-            cssVariables["--bui-switch-track-bg-checked"] = TrackColorActive.ToString(ColorOutputFormats.Rgba);
+            cssVariables["--bui-switch-track-bg-checked"] = TrackColorActive.ToString(ColorOutputFormats.Optimized);
 
     }
 }

@@ -17,6 +17,8 @@ public class ResetGenerator : IAssetGenerator
 
     public async Task<string> GetContent()
     {
+        // Solo el contenido del return, el resto del archivo queda igual:
+
         return $$"""
 /* ========================================
    Minimal CSS Reset
@@ -52,27 +54,11 @@ button, input, select, textarea {
     outline: none;
 }
 
-button {
-    cursor: pointer;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-img, svg, video {
-    display: block;
-    max-width: 100%;
-}
-
-ul, ol {
-    list-style: none;
-}
-
-[hidden] {
-    display: none !important;
-}
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+img, svg, video { display: block; max-inline-size: 100%; }
+ul, ol { list-style: none; }
+[hidden] { display: none !important; }
 """;
     }
 }

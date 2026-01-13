@@ -52,8 +52,7 @@ public static partial class BUIColor
         public static CssColor SuccessContrast =>
             new("var(--palette-successcontrast)", true);
 
-        public static CssColor Surface =>
-                                                                                                            new("var(--palette-surface)", true);
+        public static CssColor Surface => new("var(--palette-surface)", true);
 
         public static CssColor SurfaceContrast =>
             new("var(--palette-surfacecontrast)", true);

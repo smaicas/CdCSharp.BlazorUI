@@ -76,7 +76,7 @@ public abstract class BUIThemePaletteBase
         {
             string cssName = ToCssVariableName(property.Name);
             CssColor color = (CssColor)property.GetValue(this)!;
-            variables[$"--{Id}-{cssName}"] = color.ToString(ColorOutputFormats.Rgba);
+            variables[$"--{Id}-{cssName}"] = color.ToString(ColorOutputFormats.Optimized);
         }
 
         return variables;

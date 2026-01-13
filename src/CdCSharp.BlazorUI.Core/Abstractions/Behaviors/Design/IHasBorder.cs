@@ -141,7 +141,7 @@ internal sealed class Border
     public static Border None => new("0", BorderStyleType.None, new(0, 0, 0, 0));
 
     public CssColor Color { get; }
-    public string ColorCss => Color.ToString(ColorOutputFormats.Rgba);
+    public string ColorCss => Color.ToString(ColorOutputFormats.Optimized);
     public bool IsNone => Style == BorderStyleType.None;
     public BorderStyleType Style { get; }
     public string StyleCss => Style.ToString().ToLowerInvariant();

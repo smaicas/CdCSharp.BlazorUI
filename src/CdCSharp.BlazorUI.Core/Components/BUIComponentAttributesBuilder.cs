@@ -102,7 +102,7 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildBackgroundColor(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasBackgroundColor bg && bg.BackgroundColor != null)
-            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Rgba);
+            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Optimized);
     }
 
     private void BuildBorder(ComponentBase component, Dictionary<string, string> cssVariables)
@@ -117,7 +117,7 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildColor(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasColor color && color.Color != null)
-            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color.ToString(ColorOutputFormats.Rgba);
+            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color.ToString(ColorOutputFormats.Optimized);
     }
 
     private void BuildDensity(ComponentBase component)
@@ -142,7 +142,7 @@ internal sealed class BUIComponentAttributesBuilder
                 string.Join(", ", shadow.Shadow.Lines.Select(l =>
                     $"{(l.Inset ? "inset " : "")}" +
                     $"{l.X}px {l.Y}px {l.Blur}px {l.Spread}px " +
-                    $"color-mix(in srgb, {l.Color.ToString(ColorOutputFormats.Rgba)} " +
+                    $"color-mix(in srgb, {l.Color.ToString(ColorOutputFormats.Optimized)} " +
                     $"{l.Opacity * 100}%, transparent)"
                 ));
         }
@@ -210,7 +210,7 @@ internal sealed class BUIComponentAttributesBuilder
             if (!ripple.DisableRipple)
             {
                 if (ripple.RippleColor != null)
-                    cssVariables[FeatureDefinitions.InlineVariables.RippleColor] = ripple.RippleColor.ToString(ColorOutputFormats.Rgba);
+                    cssVariables[FeatureDefinitions.InlineVariables.RippleColor] = ripple.RippleColor.ToString(ColorOutputFormats.Optimized);
                 if (ripple.RippleDurationMs.HasValue)
                     cssVariables[FeatureDefinitions.InlineVariables.RippleDuration] = $"{ripple.RippleDurationMs}ms";
             }

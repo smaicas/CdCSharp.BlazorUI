@@ -31,7 +31,11 @@ public enum ColorOutputFormats
     /// <summary>
     /// Will output the color elements without any decorator and without alpha. Example 12,15,26
     /// </summary>
-    ColorElements
+    ColorElements,
+    /// <summary>
+    /// Will output the color elements optimized for CSS usage.
+    /// </summary>
+    Optimized
 }
 
 /// <summary>
@@ -581,10 +585,33 @@ public class CssColor : IEquatable<CssColor>
             ColorOutputFormats.Hex => Value.Substring(0, 7),
             ColorOutputFormats.HexA => Value,
             ColorOutputFormats.Rgb => $"rgb({R},{G},{B})",
-            ColorOutputFormats.Rgba => $"rgba({R},{G},{B},{(A / 255.0).ToString(CultureInfo.InvariantCulture)})",
+            ColorOutputFormats.Rgba => $"rgba({R},{G},{B},{APercentage.ToString(CultureInfo.InvariantCulture)})",
             ColorOutputFormats.ColorElements => $"{R},{G},{B}",
+            ColorOutputFormats.Optimized => ToOptimizedFormat(),
             _ => Value
         };
+    }
+
+    private string ToOptimizedFormat()
+    {
+        if (A < 255)
+        {
+            return $"rgba({R},{G},{B},{APercentage.ToString(CultureInfo.InvariantCulture)})";
+        }
+
+        if (CanUseShortHex())
+        {
+            return $"#{R:x1}{G:x1}{B:x1}";
+        }
+
+        return $"#{R:x2}{G:x2}{B:x2}";
+    }
+
+    private bool CanUseShortHex()
+    {
+        return (R >> 4) == (R & 0x0F) &&
+               (G >> 4) == (G & 0x0F) &&
+               (B >> 4) == (B & 0x0F);
     }
 
     #endregion operators and object members

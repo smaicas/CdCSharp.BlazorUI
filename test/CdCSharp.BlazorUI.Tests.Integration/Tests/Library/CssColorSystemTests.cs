@@ -394,4 +394,129 @@ public class CssColorSystemTests
         lightened.A.Should().Be(128);
         darkened.A.Should().Be(128);
     }
+
+    [Theory]
+    [InlineData(0x00, 0x00, 0x00, 255, "#000")]        // Black - short hex
+    [InlineData(0xFF, 0xFF, 0xFF, 255, "#fff")]        // White - short hex
+    [InlineData(0xAA, 0xBB, 0xCC, 255, "#abc")]        // Pairs match - short hex
+    [InlineData(0x11, 0x22, 0x33, 255, "#123")]        // Pairs match - short hex
+    [InlineData(0xFF, 0x00, 0x00, 255, "#f00")]        // Red - short hex
+    [InlineData(0x00, 0xFF, 0x00, 255, "#0f0")]        // Green - short hex
+    [InlineData(0x00, 0x00, 0xFF, 255, "#00f")]        // Blue - short hex
+    public void CssColor_Optimized_ShouldReturn_ShortHex_WhenPairsMatch(byte r, byte g, byte b, byte a, string expected)
+    {
+        // Arrange
+        CssColor color = new(r, g, b, a);
+
+        // Act
+        string result = color.ToString(ColorOutputFormats.Optimized);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(0x12, 0x34, 0x56, 255, "#123456")]     // No pairs match
+    [InlineData(0xAB, 0xCD, 0xEF, 255, "#abcdef")]     // No pairs match
+    [InlineData(0x10, 0x20, 0x30, 255, "#102030")]     // First nibble differs from second
+    [InlineData(0xFF, 0x00, 0x01, 255, "#ff0001")]     // Almost red but B=1
+    [InlineData(0x01, 0x23, 0x45, 255, "#012345")]     // Mixed values
+    public void CssColor_Optimized_ShouldReturn_FullHex_WhenPairsDontMatch(byte r, byte g, byte b, byte a, string expected)
+    {
+        // Arrange
+        CssColor color = new(r, g, b, a);
+
+        // Act
+        string result = color.ToString(ColorOutputFormats.Optimized);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(255, 0, 0, 128, "rgba(255,0,0,0.5)")]           // 50% alpha
+    [InlineData(0, 255, 0, 0, "rgba(0,255,0,0)")]               // Fully transparent
+    [InlineData(100, 150, 200, 25, "rgba(100,150,200,0.1)")]    // ~10% alpha
+    [InlineData(0, 0, 0, 254, "rgba(0,0,0,1)")]                 // Almost opaque (rounds to 1)
+    public void CssColor_Optimized_ShouldReturn_Rgba_WhenAlphaLessThan255(byte r, byte g, byte b, byte a, string expected)
+    {
+        // Arrange
+        CssColor color = new(r, g, b, a);
+
+        // Act
+        string result = color.ToString(ColorOutputFormats.Optimized);
+
+        // Assert
+        result.Should().Be(expected);
+    }
+
+    [Fact]
+    public void CssColor_Optimized_ShouldReturn_CssVariable_WhenIsCssVariable()
+    {
+        // Arrange
+        CssColor color = new("var(--palette-primary)", true);
+
+        // Act
+        string result = color.ToString(ColorOutputFormats.Optimized);
+
+        // Assert
+        result.Should().Be("var(--palette-primary)");
+    }
+
+    [Fact]
+    public void CssColor_Optimized_OutputLength_ShouldBeShorterOrEqual_ToRgba()
+    {
+        // Arrange
+        CssColor[] testColors = new[]
+        {
+        new CssColor(255, 255, 255, 255),  // #fff vs rgba(255,255,255,1)
+        new CssColor(0, 0, 0, 255),        // #000 vs rgba(0,0,0,1)
+        new CssColor(170, 187, 204, 255),  // #abc vs rgba(170,187,204,1)
+        new CssColor(18, 52, 86, 255),     // #123456 vs rgba(18,52,86,1)
+    };
+
+        foreach (CssColor color in testColors)
+        {
+            // Act
+            string optimized = color.ToString(ColorOutputFormats.Optimized);
+            string rgba = color.ToString(ColorOutputFormats.Rgba);
+
+            // Assert
+            optimized.Length.Should().BeLessThanOrEqualTo(rgba.Length,
+                "Optimized format '{0}' should not be longer than RGBA format '{1}'", optimized, rgba);
+        }
+    }
+
+    [Fact]
+    public void CssColor_Optimized_ShouldProduce_ValidCssColors()
+    {
+        // Arrange
+        CssColor[] testColors = new[]
+        {
+        new CssColor("#abc"),
+        new CssColor("#123456"),
+        new CssColor("rgb(100,150,200)"),
+        new CssColor("rgba(50,100,150,0.5)"),
+    };
+
+        foreach (CssColor original in testColors)
+        {
+            // Act
+            string optimized = original.ToString(ColorOutputFormats.Optimized);
+
+            // Assert - Should be parseable back (except short hex needs expansion)
+            if (optimized.StartsWith("rgba"))
+            {
+                CssColor reparsed = new(optimized);
+                reparsed.R.Should().Be(original.R);
+                reparsed.G.Should().Be(original.G);
+                reparsed.B.Should().Be(original.B);
+            }
+            else
+            {
+                // Hex format validation
+                optimized.Should().MatchRegex(@"^#[0-9a-f]{3}$|^#[0-9a-f]{6}$");
+            }
+        }
+    }
 }
