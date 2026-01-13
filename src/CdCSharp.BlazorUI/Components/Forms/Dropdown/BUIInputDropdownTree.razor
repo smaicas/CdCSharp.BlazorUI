@@ -18,7 +18,6 @@
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasElevation
-@implements IHasBorder
 @implements IDropdownJsCallback
 @implements IInputFamilyComponent
 
@@ -49,12 +48,7 @@
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
     [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationColor { get; set; }
-    [Parameter] public BorderStyle? Border { get; set; }
-    [Parameter] public BorderStyle? BorderTop { get; set; }
-    [Parameter] public BorderStyle? BorderRight { get; set; }
-    [Parameter] public BorderStyle? BorderBottom { get; set; }
-    [Parameter] public BorderStyle? BorderLeft { get; set; }
+    [Parameter] public CssColor? ElevationShadowColor { get; set; }
 
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? Label { get; set; }

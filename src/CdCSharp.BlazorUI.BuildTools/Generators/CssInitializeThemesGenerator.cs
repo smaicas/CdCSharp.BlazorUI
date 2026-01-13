@@ -11,7 +11,7 @@ public class CssInitializeThemesGenerator : IAssetGenerator
 
     public string Name => "Initialize Themes CSS";
 
-    public string FileName => "initialize-themes.css";
+    public string FileName => "_initialize-themes.css";
 
     public async Task<string> GetContent() => """
         body {

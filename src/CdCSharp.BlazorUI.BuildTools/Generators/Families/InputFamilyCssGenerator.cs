@@ -18,15 +18,16 @@ public class InputFamilyCssGenerator : IAssetGenerator
 
 /* === BASE VARIABLES === */
 [data-bui-input-base] {
+    display: flex;
     flex-direction: column;
     
-    /* Input dimensions - escalados por Size */
+    /* Input dimensions - scaled by Size */
     --bui-input-height: 3.5em;
     --bui-input-padding-x: 0.875em;
     --bui-input-padding-y: 1em;
     --bui-input-border-radius: 4px;
     
-    /* Colores */
+    /* Colors */
     --bui-input-border-color: rgba(0, 0, 0, 0.23);
     --bui-input-hover-border-color: var(--palette-backgroundcontrast);
     --bui-input-focus-border-color: var(--palette-primary);
@@ -37,7 +38,7 @@ public class InputFamilyCssGenerator : IAssetGenerator
     --bui-label-focus-color: var(--palette-primary);
     --bui-label-error-color: var(--palette-error);
     
-    /* Floating label - posiciones parametrizadas */
+    /* Floating label - parameterized positions */
     --bui-label-floated-scale: 0.85;
     --bui-label-floated-top: 0;
     --bui-label-translate-y: -50%;

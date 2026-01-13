@@ -68,19 +68,20 @@ public class BuildTemplates
 /* === GLOBAL CSS BUNDLE === */
 
 /* 1. Reset & Base */
-@import './reset.css';
+@import './_reset.css';
 
 /* 2. Theme Variables */
-@import './themes.css';
-@import './initialize-themes.css';
+@import './_themes.css';
+@import './_initialize-themes.css';
 
 /* 3. Universal Component Styles */
-@import './common-classes.css';
-@import './transition-classes.css';
+@import './_tokens.css';
+@import './_base.css';
+@import './_transition-classes.css';
 
 /* 4. Family-based Shared Styles */
 @import './_input-family.css';
-@import './_dropdown-family.css';
+
 """;
 
     [BuildTemplate("vite.config.js")]

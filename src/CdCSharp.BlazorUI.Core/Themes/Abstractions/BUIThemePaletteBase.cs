@@ -40,7 +40,9 @@ public abstract class BUIThemePaletteBase
     public CssColor Black { get; set; } = new("#010101");
     public CssColor White { get; set; } = new("#e9e9e9");
 
-    public virtual CssColor Shadow { get; set; } = BUIColor.White.Default;
+    public CssColor Shadow { get; set; } = BUIColor.White.Default;
+    public CssColor Border { get; set; } = BUIColor.White.Default;
+    public CssColor Highlight { get; set; } = BUIColor.Yellow.Default;
 
     /// <summary>
     /// Gets theme-specific CSS variables (e.g., --dark-background, --light-background)

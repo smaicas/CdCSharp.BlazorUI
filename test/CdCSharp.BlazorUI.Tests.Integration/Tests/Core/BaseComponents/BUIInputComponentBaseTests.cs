@@ -91,11 +91,15 @@ public class BUIInputComponentBaseTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
         TestModel model = new();
 
-        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
-            .Add(c => c.ValueExpression, () => model.Value)
-            .Add(c => c.Color, new CssColor("#0000FF"))
-            .Add(c => c.Border, new BorderStyle("2px", BorderStyleType.Solid, new CssColor("#FF0000"), 8))
-        );
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut =
+            ctx.Render<BUIInputComponentBase_TestStub>(p => p
+                .Add(c => c.ValueExpression, () => model.Value)
+                .Add(c => c.Color, new CssColor("#0000FF"))
+                .Add(c => c.Border,
+                    BorderStyle.Create()
+                        .All("2px", BorderStyleType.Solid, new CssColor("#FF0000"))
+                        .Radius(8))
+            );
 
         string? style = cut.Find("input").GetAttribute("style");
         style.Should().Contain("--bui-inline-color: rgba(0,0,255,1)");

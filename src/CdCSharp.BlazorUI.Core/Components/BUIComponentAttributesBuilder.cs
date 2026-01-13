@@ -99,10 +99,10 @@ internal sealed class BUIComponentAttributesBuilder
         {
             ComputedAttributes[FeatureDefinitions.DataAttributes.Elevation] = elevation.Elevation?.ToString() ?? "0";
 
-            if (elevation.ElevationColor != null)
+            if (elevation.ElevationShadowColor != null)
             {
-                cssVariables[FeatureDefinitions.CssVariables.ElevationShadowColor] =
-                    elevation.ElevationColor.ToString(ColorOutputFormats.Rgba);
+                cssVariables[FeatureDefinitions.InlineVariables.ElevationShadowColor] =
+                    elevation.ElevationShadowColor.ToString(ColorOutputFormats.Rgba);
             }
         }
     }
@@ -146,9 +146,9 @@ internal sealed class BUIComponentAttributesBuilder
             if (!ripple.DisableRipple)
             {
                 if (ripple.RippleColor != null)
-                    cssVariables[FeatureDefinitions.CssVariables.RippleColor] = ripple.RippleColor.ToString(ColorOutputFormats.Rgba);
-                if (ripple.RippleDuration.HasValue)
-                    cssVariables[FeatureDefinitions.CssVariables.RippleDuration] = $"{ripple.RippleDuration}ms";
+                    cssVariables[FeatureDefinitions.InlineVariables.RippleColor] = ripple.RippleColor.ToString(ColorOutputFormats.Rgba);
+                if (ripple.RippleDurationMs.HasValue)
+                    cssVariables[FeatureDefinitions.InlineVariables.RippleDuration] = $"{ripple.RippleDurationMs}ms";
             }
         }
     }
@@ -156,58 +156,21 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildColor(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasColor color && color.Color != null)
-            cssVariables[FeatureDefinitions.CssVariables.Color] = color.Color.ToString(ColorOutputFormats.Rgba);
+            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color.ToString(ColorOutputFormats.Rgba);
     }
 
     private void BuildBackgroundColor(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasBackgroundColor bg && bg.BackgroundColor != null)
-            cssVariables[FeatureDefinitions.CssVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Rgba);
+            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Rgba);
     }
 
     private void BuildBorder(ComponentBase component, Dictionary<string, string> cssVariables)
     {
-        if (component is IHasBorder border)
+        if (component is IHasBorder hasBorder && hasBorder.Border != null)
         {
-            // Shorthand
-            if (border.Border != null)
-            {
-                cssVariables[FeatureDefinitions.CssVariables.BorderWidth] = border.Border.Width;
-                cssVariables[FeatureDefinitions.CssVariables.BorderStyle] = border.Border.Style.ToString().ToLowerInvariant();
-                cssVariables[FeatureDefinitions.CssVariables.BorderColor] = border.Border.Color.ToString(ColorOutputFormats.Rgba);
-
-                if (border.Border.Radius.HasValue)
-                    cssVariables[FeatureDefinitions.CssVariables.BorderRadius] = $"{border.Border.Radius}px";
-            }
-
-            // Individual borders override shorthand
-            if (border.BorderTop != null)
-            {
-                cssVariables[FeatureDefinitions.CssVariables.BorderTopWidth] = border.BorderTop.Width;
-                cssVariables[FeatureDefinitions.CssVariables.BorderTopStyle] = border.BorderTop.Style.ToString().ToLowerInvariant();
-                cssVariables[FeatureDefinitions.CssVariables.BorderTopColor] = border.BorderTop.Color.ToString(ColorOutputFormats.Rgba);
-            }
-
-            if (border.BorderRight != null)
-            {
-                cssVariables[FeatureDefinitions.CssVariables.BorderRightWidth] = border.BorderRight.Width;
-                cssVariables[FeatureDefinitions.CssVariables.BorderRightStyle] = border.BorderRight.Style.ToString().ToLowerInvariant();
-                cssVariables[FeatureDefinitions.CssVariables.BorderRightColor] = border.BorderRight.Color.ToString(ColorOutputFormats.Rgba);
-            }
-
-            if (border.BorderBottom != null)
-            {
-                cssVariables[FeatureDefinitions.CssVariables.BorderBottomWidth] = border.BorderBottom.Width;
-                cssVariables[FeatureDefinitions.CssVariables.BorderBottomStyle] = border.BorderBottom.Style.ToString().ToLowerInvariant();
-                cssVariables[FeatureDefinitions.CssVariables.BorderBottomColor] = border.BorderBottom.Color.ToString(ColorOutputFormats.Rgba);
-            }
-
-            if (border.BorderLeft != null)
-            {
-                cssVariables[FeatureDefinitions.CssVariables.BorderLeftWidth] = border.BorderLeft.Width;
-                cssVariables[FeatureDefinitions.CssVariables.BorderLeftStyle] = border.BorderLeft.Style.ToString().ToLowerInvariant();
-                cssVariables[FeatureDefinitions.CssVariables.BorderLeftColor] = border.BorderLeft.Color.ToString(ColorOutputFormats.Rgba);
-            }
+            foreach (KeyValuePair<string, string> kv in hasBorder.Border.ToCssVariables())
+                cssVariables[kv.Key] = kv.Value;
         }
     }
 

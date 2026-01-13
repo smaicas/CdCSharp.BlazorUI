@@ -54,11 +54,14 @@
     /* ===================== CUSTOM BORDERS ===================== */
 
     private BorderStyle _customBorder =
-        new("3px", BorderStyleType.Solid, BUIColor.Purple.Default);
+    BorderStyle.Create()
+        .All("3px", BorderStyleType.Solid, BUIColor.Purple.Default);
+
 
     private BorderStyle _customBorderWithRadius =
-        new BorderStyle("2px", BorderStyleType.Solid, BUIColor.Blue.Default)
-            .WithRadius(16);
+    BorderStyle.Create()
+        .All("2px", BorderStyleType.Solid, BUIColor.Blue.Default)
+        .Radius(16);
 
     /* ===================== DEMOS ===================== */
 

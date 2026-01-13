@@ -11,7 +11,7 @@ public class TransitionsCssGenerator : IAssetGenerator
 
     public string Name => "Transitions CSS";
 
-    public string FileName => "transition-classes.css";
+    public string FileName => "_transition-classes.css";
 
     public async Task<string> GetContent() => """
 /* ========================================

@@ -113,7 +113,7 @@ public class BUIComponentBaseTests
             .Add(c => c.BackgroundColor, new CssColor("#00FF00"))
             .Add(c => c.DisableRipple, false)
             .Add(c => c.RippleColor, new CssColor("#FFFFFF"))
-            .Add(c => c.RippleDuration, 300)
+            .Add(c => c.RippleDurationMs, 300)
         );
 
         string? style = cut.Find("div").GetAttribute("style");
@@ -130,10 +130,14 @@ public class BUIComponentBaseTests
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Border, new BorderStyle("1px", BorderStyleType.Solid, new CssColor("#000"), 5))
-            .Add(c => c.BorderBottom, new BorderStyle("2px", BorderStyleType.Dashed, new CssColor("#FFF"), 5))
-        );
+        IRenderedComponent<BUIComponentBase_TestStub> cut =
+    ctx.Render<BUIComponentBase_TestStub>(p => p
+        .Add(c => c.Border,
+            BorderStyle.Create()
+                .All("1px", BorderStyleType.Solid, new CssColor("#000"))
+                .Bottom("2px", BorderStyleType.Dashed, new CssColor("#FFF"))
+                .Radius(5))
+    );
 
         string? style = cut.Find("div").GetAttribute("style");
         // Shorthand vars
@@ -151,10 +155,13 @@ public class BUIComponentBaseTests
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.BorderTop, new BorderStyle("1px", BorderStyleType.Solid, new CssColor("#F00"), 0))
-            .Add(c => c.BorderLeft, new BorderStyle("2px", BorderStyleType.Dotted, new CssColor("#0F0"), 0))
-        );
+        IRenderedComponent<BUIComponentBase_TestStub> cut =
+            ctx.Render<BUIComponentBase_TestStub>(p => p
+                .Add(c => c.Border,
+                    BorderStyle.Create()
+                        .Top("1px", BorderStyleType.Solid, new CssColor("#F00"))
+                        .Left("2px", BorderStyleType.Dotted, new CssColor("#0F0")))
+            );
 
         string? style = cut.Find("div").GetAttribute("style");
         style.Should().Contain("--bui-border-top-width: 1px");
@@ -257,8 +264,11 @@ public class BUIComponentBaseTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         // Act: Probar BorderStyle con tipos None e Inherit (Cubre ramas de switch/if en el Builder)
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Border, new BorderStyle("0", BorderStyleType.None, BUIColor.Transparent.Default, 0)));
+        IRenderedComponent<BUIComponentBase_TestStub> cut =
+            ctx.Render<BUIComponentBase_TestStub>(p => p
+                .Add(c => c.Border,
+                    BorderStyle.Create().None())
+            );
 
         string? style = cut.Find("div").GetAttribute("style");
         style.Should().Contain("--bui-border-style: none");

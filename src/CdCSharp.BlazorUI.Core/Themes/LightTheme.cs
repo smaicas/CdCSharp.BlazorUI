@@ -64,5 +64,9 @@ public class LightTheme : BUIThemePaletteBase
 
         Shadow = new CssColor("#00000040");
         // Sombra marcada y limpia: separación clara entre planos.
+
+        Border = new CssColor("#111111");
+
+        Highlight = new CssColor("#AA2222");
     }
 }

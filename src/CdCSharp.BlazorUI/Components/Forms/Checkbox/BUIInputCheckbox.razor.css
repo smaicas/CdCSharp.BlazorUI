@@ -1,24 +1,6 @@
-﻿/* ============================================
-   BUIInputCheckbox.razor.css (REFACTORED)
-   
-   NOTE: This component does NOT use input-family
-   because it has unique visual structure (icon-based checkbox)
-   
-   REMOVED (now in common-classes.css):
-   - data-bui-size font-size adjustments (uses --bui-size-scale)
-   - data-bui-disabled base opacity (inherited)
-   
-   KEPT: All checkbox-specific styles (unique component)
-   ============================================ */
-
-bui-component[data-bui-component="input-checkbox"] {
-    --bui-checkbox-scale: var(--bui-size-scale, 1);
-    --bui-checkbox-box-size: calc(20px * var(--bui-checkbox-scale));
+﻿bui-component[data-bui-component="input-checkbox"] {
+    --bui-checkbox-box-size: calc(20px * var(--bui-size-scale));
 }
-
-    bui-component[data-bui-component="input-checkbox"] .bui-input__container {
-        cursor: pointer;
-    }
 
     /* Checkbox box */
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox__box {
@@ -29,22 +11,4 @@ bui-component[data-bui-component="input-checkbox"] {
         justify-content: center;
         transition: all 0.2s ease;
         color: var(--bui-inline-color, var(--palette-primary));
-    }
-
-    /* Label */
-    bui-component[data-bui-component="input-checkbox"] .bui-checkbox__label {
-        cursor: pointer;
-        user-select: none;
-    }
-
-    /* Hover state */
-    bui-component[data-bui-component="input-checkbox"]:not([data-bui-disabled="true"]) .bui-input__container:hover .bui-checkbox__box {
-        opacity: 0.8;
-    }
-
-    /* Focus visible */
-    bui-component[data-bui-component="input-checkbox"] .bui-input__field:focus-visible + .bui-checkbox__box {
-        outline: 2px solid var(--palette-primary);
-        outline-offset: 2px;
-        border-radius: 2px;
     }

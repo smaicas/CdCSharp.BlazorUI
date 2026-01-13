@@ -42,7 +42,7 @@
     /* ========= IHasElevation ========= */
 
     [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationColor { get; set; }
+    [Parameter] public CssColor? ElevationShadowColor { get; set; }
 
     /* ========= IHasDensity ========= */
 
@@ -51,16 +51,12 @@
     /* ========= IHasBorder ========= */
 
     [Parameter] public BorderStyle? Border { get; set; }
-    [Parameter] public BorderStyle? BorderTop { get; set; }
-    [Parameter] public BorderStyle? BorderRight { get; set; }
-    [Parameter] public BorderStyle? BorderBottom { get; set; }
-    [Parameter] public BorderStyle? BorderLeft { get; set; }
 
     /* ========= IHasRipple ========= */
 
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public CssColor? RippleColor { get; set; }
-    [Parameter] public int? RippleDuration { get; set; }
+    [Parameter] public int? RippleDurationMs { get; set; }
 
     public ElementReference GetRippleContainer() => _cardElement;
 
@@ -70,11 +66,10 @@
 
     /* ========= Variant ========= */
 
-    public override BUICardVariant DefaultVariant => BUICardVariant.Elevated;
+    public override BUICardVariant DefaultVariant => BUICardVariant.Outlined;
 
     protected override Dictionary<BUICardVariant, Func<BUICard, RenderFragment>> BuiltInTemplates { get; } = new()
     {
-        [BUICardVariant.Elevated] = c => c.RenderCard(),
         [BUICardVariant.Outlined] = c => c.RenderCard(),
         [BUICardVariant.Flat] = c => c.RenderCard(),
     };

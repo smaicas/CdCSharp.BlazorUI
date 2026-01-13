@@ -4,26 +4,89 @@ namespace CdCSharp.BlazorUI.Components;
 
 public static class BUIBorderPresets
 {
-    // Bordes básicos sin radius
-    public static readonly BorderStyle Default = new("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2);
-    public static readonly BorderStyle Subtle = new("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten3);
-    public static readonly BorderStyle Strong = new("2px", BorderStyleType.Solid, BUIColor.Gray.Default);
+    // =====================================
+    // Básicos (sin radius)
+    // =====================================
 
-    // Bordes temáticos
-    public static readonly BorderStyle Primary = new("2px", BorderStyleType.Solid, BUIColor.Palette.Primary);
-    public static readonly BorderStyle Secondary = new("2px", BorderStyleType.Solid, BUIColor.Palette.Secondary);
-    public static readonly BorderStyle Error = new("2px", BorderStyleType.Solid, BUIColor.Palette.Error);
-    public static readonly BorderStyle Warning = new("2px", BorderStyleType.Solid, BUIColor.Palette.Warning);
-    public static readonly BorderStyle Success = new("2px", BorderStyleType.Solid, BUIColor.Palette.Success);
-    public static readonly BorderStyle Info = new("2px", BorderStyleType.Solid, BUIColor.Palette.Info);
+    public static BorderStyle Default =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2);
 
-    // Bordes con estilos especiales
-    public static readonly BorderStyle Dashed = new("1px", BorderStyleType.Dashed, BUIColor.Gray.Default);
-    public static readonly BorderStyle Dotted = new("1px", BorderStyleType.Dotted, BUIColor.Gray.Default);
-    public static readonly BorderStyle Double = new("3px", BorderStyleType.Double, BUIColor.Gray.Default);
+    public static BorderStyle Subtle =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten3);
 
-    // Bordes con radius predefinidos
-    public static readonly BorderStyle Rounded = new("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2, 4);
-    public static readonly BorderStyle RoundedLarge = new("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2, 8);
-    public static readonly BorderStyle Pill = new("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2, 9999);
+    public static BorderStyle Strong =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Gray.Default);
+
+    // =====================================
+    // Temáticos
+    // =====================================
+
+    public static BorderStyle Primary =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Primary);
+
+    public static BorderStyle Secondary =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Secondary);
+
+    public static BorderStyle Error =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Error);
+
+    public static BorderStyle Warning =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Warning);
+
+    public static BorderStyle Success =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Success);
+
+    public static BorderStyle Info =>
+        BorderStyle.Create()
+            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Info);
+
+    // =====================================
+    // Estilos especiales
+    // =====================================
+
+    public static BorderStyle Dashed =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Dashed, BUIColor.Gray.Default);
+
+    public static BorderStyle Dotted =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Dotted, BUIColor.Gray.Default);
+
+    public static BorderStyle Double =>
+        BorderStyle.Create()
+            .All("3px", BorderStyleType.Double, BUIColor.Gray.Default);
+
+    // =====================================
+    // Radius predefinido
+    // =====================================
+
+    public static BorderStyle Rounded =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2)
+            .Radius(4);
+
+    public static BorderStyle RoundedLarge =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2)
+            .Radius(8);
+
+    public static BorderStyle Pill =>
+        BorderStyle.Create()
+            .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten2)
+            .Radius(9999);
+
+    // =====================================
+    // Utilitarios
+    // =====================================
+
+    public static BorderStyle None =>
+        BorderStyle.Create().None();
 }

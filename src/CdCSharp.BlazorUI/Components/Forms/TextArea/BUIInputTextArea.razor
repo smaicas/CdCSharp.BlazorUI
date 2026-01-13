@@ -16,7 +16,6 @@
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasElevation
-@implements IHasBorder
 @implements IHasRipple
 @implements IAsyncDisposable
 
@@ -50,19 +49,12 @@
 
     // IHasElevation
     [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationColor { get; set; }
-
-    // IHasBorder
-    [Parameter] public BorderStyle? Border { get; set; }
-    [Parameter] public BorderStyle? BorderTop { get; set; }
-    [Parameter] public BorderStyle? BorderRight { get; set; }
-    [Parameter] public BorderStyle? BorderBottom { get; set; }
-    [Parameter] public BorderStyle? BorderLeft { get; set; }
+    [Parameter] public CssColor? ElevationShadowColor { get; set; }
 
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public CssColor? RippleColor { get; set; }
-    [Parameter] public int? RippleDuration { get; set; }
+    [Parameter] public int? RippleDurationMs { get; set; }
     public ElementReference GetRippleContainer() => _textareaContainer;
 
     // TextArea specific parameters

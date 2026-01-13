@@ -15,7 +15,7 @@ bui-component[data-bui-component="card"] {
         display: flex;
         flex-direction: column;
         background: var(--palette-surface);
-        border-radius: 8px;
+        border-radius: var(--bui-radius-md);
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         position: relative;
@@ -90,20 +90,6 @@ bui-component[data-bui-component="card"] {
         border-top: 1px solid rgba(0, 0, 0, 0.12);
     }
 
-[data-theme="dark"] bui-component[data-bui-component="card"] .bui-card__actions--outlined {
-    border-top-color: rgba(255, 255, 255, 0.12);
-}
-
-/* Variant: Elevated */
-bui-component[data-bui-component="card"][data-bui-variant="elevated"] .bui-card {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.08);
-}
-
-bui-component[data-bui-component="card"][data-bui-variant="elevated"][data-bui-clickable="true"] .bui-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
-
 /* Variant: Outlined */
 bui-component[data-bui-component="card"][data-bui-variant="outlined"] .bui-card {
     border: 1px solid rgba(0, 0, 0, 0.12);
@@ -163,6 +149,6 @@ bui-component[data-bui-component="card"][data-bui-media-position="bottom"] .bui-
 
 /* Accessibility */
 bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:focus-visible {
-    outline: 2px solid var(--palette-primary);
+    outline: 2px solid var(--palette-highlight);
     outline-offset: 2px;
 }

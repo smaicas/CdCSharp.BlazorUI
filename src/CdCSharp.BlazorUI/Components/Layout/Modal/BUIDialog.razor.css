@@ -1,9 +1,7 @@
-﻿/* === Modal/Dialog/BUIDialog.razor.css === */
-
-.bui-dialog-host {
+﻿.bui-dialog-host {
     position: fixed;
     inset: 0;
-    z-index: 9999;
+    z-index: var(--bui-z-modal);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,7 +23,7 @@
 .bui-dialog {
     position: relative;
     background: var(--palette-surface);
-    border-radius: 8px;
+    border-radius: var(--bui-radius-md);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -42,11 +40,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .bui-dialog__header {
-    border-bottom-color: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--palette-border);
 }
 
 .bui-dialog__title {
@@ -71,15 +65,6 @@
     transition: all 150ms ease;
 }
 
-    .bui-dialog__close:hover {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.05);
-    }
-
-[data-theme="dark"] .bui-dialog__close:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
 .bui-dialog__content {
     flex: 1;
     padding: 1.5rem;
@@ -92,11 +77,7 @@
     justify-content: flex-end;
     gap: 0.5rem;
     padding: 1rem 1.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-[data-theme="dark"] .bui-dialog__footer {
-    border-top-color: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--palette-border);
 }
 
 @keyframes bui-dialog-overlay-in {

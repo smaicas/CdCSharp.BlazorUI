@@ -16,7 +16,6 @@
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasElevation
-@implements IHasBorder
 
 @implements IInputFamilyComponent
 
@@ -55,14 +54,7 @@
 
     // IHasElevation
     [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationColor { get; set; }
-
-    // IHasBorder
-    [Parameter] public BorderStyle? Border { get; set; }
-    [Parameter] public BorderStyle? BorderTop { get; set; }
-    [Parameter] public BorderStyle? BorderRight { get; set; }
-    [Parameter] public BorderStyle? BorderBottom { get; set; }
-    [Parameter] public BorderStyle? BorderLeft { get; set; }
+    [Parameter] public CssColor? ElevationShadowColor { get; set; }
 
     // Number-specific parameters
     [Parameter] public string? Label { get; set; }

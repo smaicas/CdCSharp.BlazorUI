@@ -64,5 +64,9 @@ public class DarkTheme : BUIThemePaletteBase
 
         Shadow = new CssColor("#000000CC");
         // Sombra profunda y densa: sensación real de elevación y capas.
+
+        Border = new CssColor("#EEEEEE");
+
+        Highlight = new CssColor("#AA2222");
     }
 }
