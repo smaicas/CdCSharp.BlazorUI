@@ -150,18 +150,7 @@ public class BaseComponentGenerator : IAssetGenerator
    ======================================== */
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Shadow}}] {
-    box-shadow: 
-        var({{FeatureDefinitions.InlineVariables.ShadowInset}})
-        var({{FeatureDefinitions.InlineVariables.ShadowOffsetX}}, 0)
-        var({{FeatureDefinitions.InlineVariables.ShadowOffsetY}}, 4px)
-        var({{FeatureDefinitions.InlineVariables.ShadowBlur}}, 8px)
-        var({{FeatureDefinitions.InlineVariables.ShadowSpread}}, 0)
-        color-mix(
-            in srgb,
-            var({{FeatureDefinitions.InlineVariables.ShadowColor}}, var(--palette-shadow, rgba(0,0,0,1)))
-            calc(var({{FeatureDefinitions.InlineVariables.ShadowOpacity}}, 0.2) * 100%),
-            transparent
-        );
+    box-shadow: var({{FeatureDefinitions.InlineVariables.Shadow}});
 }
 """;
 

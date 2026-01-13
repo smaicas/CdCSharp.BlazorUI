@@ -62,7 +62,7 @@ public class LightTheme : BUIThemePaletteBase
         SecondaryContrast = new CssColor("#FFFFFF");
         // Legibilidad consistente.
 
-        Shadow = new CssColor("#00000040");
+        Shadow = new CssColor("#000000");
         // Sombra marcada y limpia: separación clara entre planos.
 
         Border = new CssColor("#111111");

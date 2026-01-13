@@ -62,7 +62,7 @@ public class DarkTheme : BUIThemePaletteBase
         SecondaryContrast = new CssColor("#121417");
         // Lectura clara en elementos secundarios.
 
-        Shadow = new CssColor("#000000CC");
+        Shadow = new CssColor("#777777");
         // Sombra profunda y densa: sensación real de elevación y capas.
 
         Border = new CssColor("#EEEEEE");

@@ -230,14 +230,8 @@ public static class FeatureDefinitions
         public const string RippleColor = "--bui-inline-ripple-color";
         public const string RippleDuration = "--bui-inline-ripple-duration";
 
-        // --- Shadow variables (short names for minimal inline) ---
-        public const string ShadowOffsetX = "--s-x";
-        public const string ShadowOffsetY = "--s-y";
-        public const string ShadowBlur = "--s-b";
-        public const string ShadowSpread = "--s-sp";
-        public const string ShadowColor = "--s-c";
-        public const string ShadowOpacity = "--s-o";
-        public const string ShadowInset = "--s-i";
+        // --- Shadow variables
+        public const string Shadow = "--bui-shadow";
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

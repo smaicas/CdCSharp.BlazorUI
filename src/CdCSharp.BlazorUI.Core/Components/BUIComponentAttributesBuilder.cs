@@ -94,8 +94,13 @@ internal sealed class BUIComponentAttributesBuilder
         {
             ComputedAttributes[FeatureDefinitions.DataAttributes.Shadow] = "true";
 
-            foreach (KeyValuePair<string, string> kv in shadow.Shadow.ToCssVariables())
-                cssVariables[kv.Key] = kv.Value;
+            cssVariables[FeatureDefinitions.InlineVariables.Shadow] =
+                string.Join(", ", shadow.Shadow.Lines.Select(l =>
+                    $"{(l.Inset ? "inset " : "")}" +
+                    $"{l.X}px {l.Y}px {l.Blur}px {l.Spread}px " +
+                    $"color-mix(in srgb, {l.Color.ToString(ColorOutputFormats.Rgba)} " +
+                    $"{l.Opacity * 100}%, transparent)"
+                ));
         }
     }
 

@@ -262,7 +262,8 @@
     private RenderFragment RenderBasicUsage() => __builder =>
     {
         <BUIButton Text="Click me"
-                   OnClick="@(() => Clicks++)" />;
+                   OnClick="@(() => Clicks++)" />
+        ;
     };
 
     private RenderFragment RenderSizes() => __builder =>
@@ -271,7 +272,8 @@
             <BUIButton Text="Small" Size="SizeEnum.Small" />
             <BUIButton Text="Medium" Size="SizeEnum.Medium" />
             <BUIButton Text="Large" Size="SizeEnum.Large" />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderDensity() => __builder =>
@@ -280,7 +282,8 @@
             <BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" />
             <BUIButton Text="Standard" Density="DensityEnum.Standard" />
             <BUIButton Text="Compact" Density="DensityEnum.Compact" />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderIcons() => __builder =>
@@ -291,14 +294,16 @@
 
             <BUIButton Text="Next"
                        TrailingIcon="@BUIIcons.MaterialIconsRound.i_chevron_right" />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderIconOnly() => __builder =>
     {
         <div class="demo-row">
             <BUIButton LeadingIcon="@BUIIcons.MaterialIconsRound.i_favorite" />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderLoading() => __builder =>
@@ -311,19 +316,22 @@
             <BUIButton Text="Dots"
                        IsLoading
                        LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderDisabled() => __builder =>
     {
         <div class="demo-row">
             <BUIButton Text="Disabled" Disabled />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderFullWidth() => __builder =>
     {
-        <BUIButton Text="Full width button" FullWidth />;
+        <BUIButton Text="Full width button" FullWidth />
+        ;
     };
 
     private RenderFragment RenderElevation() => __builder =>
@@ -339,25 +347,17 @@
 
         <h4>Custom Shadow</h4>
         <div class="demo-row">
-            <BUIButton Text="Custom Blue" Shadow="@(ShadowStyle.Create()
-                                                  .Color(BUIColor.Blue.Default)
-                                                  .OffsetY(8)
-                                                  .Blur(16)
-                                                  .Opacity(0.4f))" />
 
-    <BUIButton Text="Custom Purple" Shadow="@(ShadowStyle.Create()
-                                            .Color(BUIColor.Purple.Default)
-                                            .OffsetY(4)
-                                            .Blur(20)
-                                            .Spread(2)
-                                            .Opacity(0.5f))" />
+            <BUIButton Text="Custom Blue"
+                       Shadow="@(ShadowStyle.Create(y: 8, blur: 16, opacity: 0.4f, color: BUIColor.Blue.Default))" />
 
-    <BUIButton Text="Inset" Shadow="@(ShadowStyle.Create()
-                                    .Inset()
-                                    .OffsetY(2)
-                                    .Blur(4)
-                                    .Opacity(0.3f))" />
-</div>
+            <BUIButton Text="Custom Purple"
+                       Shadow="@(ShadowStyle.Create(y: 4,blur: 20,opacity: 0.5f,color: BUIColor.Purple.Default).Add(y: 10,blur: 32,opacity: 0.15f))" />
+
+            <BUIButton Text="Inset"
+                       Shadow="@(ShadowStyle.Create(y: 2,blur: 4,opacity: 0.3f,inset: true))" />
+
+        </div>
 
         <h4>No Shadow (default)</h4>
         <div class="demo-row">
@@ -379,7 +379,8 @@
             <BUIButton Text="Custom"
                        BackgroundColor="BUIColor.BlueViolet.Lighten1"
                        Color="BUIColor.White.Default" />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderRipple() => __builder =>
@@ -391,7 +392,8 @@
 
             <BUIButton Text="No ripple"
                        DisableRipple />
-        </div>;
+        </div>
+        ;
     };
 
     private RenderFragment RenderTransitions() => __builder =>
@@ -402,7 +404,8 @@
 
             <BUIButton Text="Premium"
                        Transitions="BUITransitionPresets.PremiumButton" />
-        </div>;
+        </div>
+        ;
     };
 
     /* ===================== PROPERTIES ===================== */
