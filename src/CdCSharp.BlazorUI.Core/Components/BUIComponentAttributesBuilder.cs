@@ -45,12 +45,14 @@ internal sealed class BUIComponentAttributesBuilder
         BuildSize(component);
         BuildDensity(component);
         BuildFullWidth(component);
-        BuildShadow(component, cssVariables);
         BuildLoading(component);
         BuildError(component);
         BuildDisabled(component);
         BuildReadOnly(component);
         BuildRequired(component);
+        BuildPrefix(component, cssVariables);
+        BuildSuffix(component, cssVariables);
+        BuildShadow(component, cssVariables);
         BuildRipple(component, cssVariables);
         BuildColor(component, cssVariables);
         BuildBackgroundColor(component, cssVariables);
@@ -111,6 +113,28 @@ internal sealed class BUIComponentAttributesBuilder
         {
             foreach (KeyValuePair<string, string> kv in hasBorder.Border.ToCssVariables())
                 cssVariables[kv.Key] = kv.Value;
+        }
+    }
+
+    private void BuildPrefix(ComponentBase component, Dictionary<string, string> cssVariables)
+    {
+        if (component is IHasPrefix prefix)
+        {
+            if (prefix.PrefixColor != null)
+                cssVariables[FeatureDefinitions.InlineVariables.PrefixColor] = prefix.PrefixColor.ToString(ColorOutputFormats.Optimized);
+            if (prefix.PrefixBackgroundColor != null)
+                cssVariables[FeatureDefinitions.InlineVariables.PrefixBackgroundColor] = prefix.PrefixBackgroundColor.ToString(ColorOutputFormats.Optimized);
+        }
+    }
+
+    private void BuildSuffix(ComponentBase component, Dictionary<string, string> cssVariables)
+    {
+        if (component is IHasSuffix suffix)
+        {
+            if (suffix.SuffixColor != null)
+                cssVariables[FeatureDefinitions.InlineVariables.SuffixColor] = suffix.SuffixColor.ToString(ColorOutputFormats.Optimized);
+            if (suffix.SuffixBackgroundColor != null)
+                cssVariables[FeatureDefinitions.InlineVariables.SuffixBackgroundColor] = suffix.SuffixBackgroundColor.ToString(ColorOutputFormats.Optimized);
         }
     }
 

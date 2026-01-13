@@ -16,7 +16,11 @@
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasShadow
-
+@implements IHasBorder
+@implements IHasColor
+@implements IHasBackgroundColor
+@implements IHasPrefix
+@implements IHasSuffix
 @implements IInputFamilyComponent
 
 @{
@@ -34,10 +38,10 @@
     private readonly bool _isNullable;
     private bool _preventKeyDown = false;
 
-    // Estado interno para edición
     private string _displayText = string.Empty;
     private bool _isFocused = false;
-    private int _lastCursorPosition = 0;
+    private bool _keyboardFocus;
+    private bool _mouseDownFlag;
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
@@ -52,8 +56,29 @@
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
-    // ========= IHasShadow ========= //
+    // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasPrefix
+    [Parameter] public string? PrefixText { get; set; }
+    [Parameter] public string? PrefixIcon { get; set; }
+    [Parameter] public CssColor? PrefixColor { get; set; }
+    [Parameter] public CssColor? PrefixBackgroundColor { get; set; }
+
+    // IHasSuffix
+    [Parameter] public string? SuffixText { get; set; }
+    [Parameter] public string? SuffixIcon { get; set; }
+    [Parameter] public CssColor? SuffixColor { get; set; }
+    [Parameter] public CssColor? SuffixBackgroundColor { get; set; }
 
     // Number-specific parameters
     [Parameter] public string? Label { get; set; }
@@ -68,12 +93,6 @@
     [Parameter] public bool AllowNegative { get; set; } = true;
     [Parameter] public bool ShowStepButtons { get; set; } = true;
     [Parameter] public StepButtonPlacement ButtonPlacement { get; set; } = StepButtonPlacement.Right;
-
-    // Prefix/Suffix con texto e iconos
-    [Parameter] public string? PrefixText { get; set; }
-    [Parameter] public string? PrefixIcon { get; set; }
-    [Parameter] public string? SuffixText { get; set; }
-    [Parameter] public string? SuffixIcon { get; set; }
 
     [Parameter] public bool UseThousandsSeparator { get; set; }
     [Parameter] public CultureInfo? Culture { get; set; }
@@ -97,6 +116,8 @@
     private string NegativeSign => NumberFormat.NegativeSign;
     private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
     private bool IsFloated => _isFocused || HasValue;
+    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
+    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
     public BUIInputNumber()
     {
@@ -114,7 +135,6 @@
     {
         base.OnParametersSet();
 
-        // Actualizar displayText solo si no está enfocado
         if (!_isFocused)
         {
             _displayText = FormatValueForDisplay(CurrentValue);
@@ -141,77 +161,77 @@
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
-                       data-bui-button-placement="@ButtonPlacement.ToString().ToLowerInvariant()">
+                       data-bui-button-placement="@ButtonPlacement.ToString().ToLowerInvariant()"
+                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
 
-            <div class="bui-input-number__container">
+            <div class="bui-input__wrapper">
+                <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+
                 @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Left)
                 {
                     @RenderStepButtons()
                 }
 
-                <div class="bui-input__wrapper">
-                    <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+                @if (HasPrefix)
+                {
+                    <span class="bui-input__prefix">
+                        @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+                        {
+                            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
+                        }
+                        @if (!string.IsNullOrWhiteSpace(PrefixText))
+                        {
+                            <span>@PrefixText</span>
+                        }
+                    </span>
+                }
 
-                    @if (!string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon))
-                    {
-                        <span class="bui-input-number__prefix">
-                            @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-                            {
-                                <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-                            }
-                            @if (!string.IsNullOrWhiteSpace(PrefixText))
-                            {
-                                <span>@PrefixText</span>
-                            }
-                        </span>
-                    }
+                <input @ref="_inputRef"
+                       type="text"
+                       inputmode="decimal"
+                       id="@_inputId"
+                       class="bui-input__field"
+                       value="@_displayText"
+                       @oninput="HandleInput"
+                       @onkeydown="HandleKeyDown"
+                       @onkeydown:preventDefault="_preventKeyDown"
+                       @onwheel="HandleWheel"
+                       @onfocus="HandleFocus"
+                       @onblur="HandleBlur"
+                       @onmousedown="HandleMouseDown"
+                       aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+                       aria-describedby="@_helperTextId"
+                       aria-invalid="@IsError.ToString().ToLower()"
+                       aria-required="@Required.ToString().ToLower()"
+                       placeholder="@(IsFloated? Placeholder : null)"
+                       disabled="@IsDisabled"
+                       readonly="@ReadOnly"
+                       required="@Required" />
 
-                    <input @ref="_inputRef"
-                           type="text"
-                           inputmode="decimal"
-                           id="@_inputId"
-                           class="bui-input__field"
-                           value="@_displayText"
-                           @oninput="HandleInput"
-                           @onkeydown="HandleKeyDown"
-                           @onkeydown:preventDefault="_preventKeyDown"
-                           @onwheel="HandleWheel"
-                           @onfocus="HandleFocus"
-                           @onblur="HandleBlur"
-                           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                           aria-describedby="@_helperTextId"
-                           aria-invalid="@IsError.ToString().ToLower()"
-                           aria-required="@Required.ToString().ToLower()"
-                           placeholder="@(IsFloated? Placeholder : null)"
-                           disabled="@IsDisabled"
-                           readonly="@ReadOnly"
-                           required="@Required" />
-
-                    @if (!string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon))
-                    {
-                        <span class="bui-input-number__suffix">
-                            @if (!string.IsNullOrWhiteSpace(SuffixText))
-                            {
-                                <span>@SuffixText</span>
-                            }
-                            @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-                            {
-                                <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-                            }
-                        </span>
-                    }
-
-                    @if (IsLoading && LoadingIndicatorVariant != null)
-                    {
-                        <div class="bui-input__loading">
-                            <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                        </div>
-                    }
-                </div>
+                @if (HasSuffix)
+                {
+                    <span class="bui-input__suffix">
+                        @if (!string.IsNullOrWhiteSpace(SuffixText))
+                        {
+                            <span>@SuffixText</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+                        {
+                            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
+                        }
+                    </span>
+                }
 
                 @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Right)
                 {
                     @RenderStepButtons()
+                }
+
+                @if (IsLoading && LoadingIndicatorVariant != null)
+                {
+                    <div class="bui-input__loading">
+                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                    </div>
                 }
             </div>
 
@@ -233,9 +253,9 @@
 
     private RenderFragment RenderStepButtons() => __builder =>
     {
-        <div class="bui-input-number__step-buttons">
+        <div class="bui-input__step-buttons">
             <button type="button"
-                    class="bui-input-number__step-btn bui-input-number__step-btn--increment"
+                    class="bui-input__step-btn bui-input__step-btn--increment"
                     @onmousedown="StartIncrement"
                     @onmouseup="StopIncrement"
                     @onmouseleave="StopIncrement"
@@ -245,7 +265,7 @@
                 <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
             </button>
             <button type="button"
-                    class="bui-input-number__step-btn bui-input-number__step-btn--decrement"
+                    class="bui-input__step-btn bui-input__step-btn--decrement"
                     @onmousedown="StartDecrement"
                     @onmouseup="StopDecrement"
                     @onmouseleave="StopDecrement"
@@ -256,6 +276,11 @@
             </button>
         </div>
     };
+
+    private void HandleMouseDown(MouseEventArgs e)
+    {
+        _mouseDownFlag = true;
+    }
 
     private string FormatValueForDisplay(TValue? value)
     {
@@ -284,18 +309,14 @@
         if (IsDisabled || ReadOnly) return;
 
         string? input = e.Value?.ToString() ?? string.Empty;
-
-        // Guardar el texto tal cual para edición fluida
         _displayText = input;
 
-        // Intentar parsear el valor
         if (string.IsNullOrWhiteSpace(input))
         {
             CurrentValue = default;
             return;
         }
 
-        // Solo actualizar el valor si es parseable completamente
         if (TryParseInput(input, out TValue? parsed))
         {
             TValue? clamped = ClampValue(parsed);
@@ -323,15 +344,10 @@
         return false;
     }
 
-    private async Task HandlePaste(ClipboardEventArgs e)
-    {
-        // El paste se manejará en HandleInput
-        await Task.CompletedTask;
-    }
-
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
         _preventKeyDown = false;
+        _mouseDownFlag = false;
 
         if (IsDisabled || ReadOnly) return;
 
@@ -383,16 +399,15 @@
             await DecrementValue();
     }
 
-    private async Task HandleFocus(FocusEventArgs e)
+    private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
+        _keyboardFocus = !_mouseDownFlag;
 
-        // Al hacer foco, mostrar valor sin formato para edición
         if (CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default))
         {
             decimal decimalValue = ConvertToDecimal(CurrentValue);
 
-            // Mostrar sin separadores de miles para facilitar edición
             string format = DecimalPlaces.HasValue
                 ? $"F{DecimalPlaces.Value}"
                 : "G";
@@ -401,14 +416,14 @@
         }
 
         StateHasChanged();
-        await Task.CompletedTask;
     }
 
-    private async Task HandleBlur(FocusEventArgs e)
+    private void HandleBlur(FocusEventArgs e)
     {
         _isFocused = false;
+        _keyboardFocus = false;
+        _mouseDownFlag = false;
 
-        // Al perder foco, validar y formatear
         if (!string.IsNullOrWhiteSpace(_displayText))
         {
             if (TryParseInput(_displayText, out TValue? parsed))
@@ -419,7 +434,6 @@
             }
             else
             {
-                // Si no es válido, restaurar último valor válido
                 _displayText = FormatValueForDisplay(CurrentValue);
             }
         }
@@ -430,7 +444,6 @@
         }
 
         StateHasChanged();
-        await Task.CompletedTask;
     }
 
     private void StartIncrement(MouseEventArgs e)

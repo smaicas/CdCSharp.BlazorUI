@@ -40,6 +40,13 @@ public class InputFamilyGenerator : IAssetGenerator
         string loading = FeatureDefinitions.CssClasses.Input.Loading;
         string opacityPlaceholder = FeatureDefinitions.Tokens.Opacity.Placeholder;
 
+        string prefix = FeatureDefinitions.CssClasses.Input.Prefix;
+        string suffix = FeatureDefinitions.CssClasses.Input.Suffix;
+        string inlinePrefixColor = FeatureDefinitions.InlineVariables.PrefixColor;
+        string inlinePrefixBg = FeatureDefinitions.InlineVariables.PrefixBackgroundColor;
+        string inlineSuffixColor = FeatureDefinitions.InlineVariables.SuffixColor;
+        string inlineSuffixBg = FeatureDefinitions.InlineVariables.SuffixBackgroundColor;
+
         return $$"""
 /* ========================================
    Input Family Styles
@@ -173,6 +180,32 @@ bui-component[{{inputBase}}] .{{loading}} {
     inset-inline-end: var(--_input-px);
     top: 50%;
     transform: translateY(-50%);
+}
+
+/* === PREFIX / SUFFIX === */
+
+bui-component[{{inputBase}}] .{{prefix}},
+bui-component[{{inputBase}}] .{{suffix}} {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding-inline: calc(0.5rem * {{V(sizeMult, "1")}});
+    white-space: nowrap;
+    user-select: none;
+    color: {{V(inlinePrefixColor, "var(--_input-label-color)")}};
+    background: {{V(inlinePrefixBg, "transparent")}};
+    opacity: 0.7;
+    transition: opacity var(--_input-transition);
+}
+
+bui-component[{{inputBase}}] .{{suffix}} {
+    color: {{V(inlineSuffixColor, "var(--_input-label-color)")}};
+    background: {{V(inlineSuffixBg, "transparent")}};
+}
+
+bui-component[{{inputBase}}]:focus-within .{{prefix}},
+bui-component[{{inputBase}}]:focus-within .{{suffix}} {
+    opacity: 1;
 }
 
 /* === FIELDSET BASE === */

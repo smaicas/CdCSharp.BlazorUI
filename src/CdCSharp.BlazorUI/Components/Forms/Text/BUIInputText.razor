@@ -17,7 +17,8 @@
 @implements IHasBorder
 @implements IHasColor
 @implements IHasBackgroundColor
-
+@implements IHasPrefix
+@implements IHasSuffix
 @implements IInputFamilyComponent
 
 @{
@@ -29,22 +30,27 @@
     private string _inputId = $"bui-input-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
     private bool _isFocused;
-    private bool _keyboardFocus; // NEW: Track keyboard focus
-    private bool _mouseDownFlag;  // NEW: Track if mouse is being used
+    private bool _keyboardFocus;
+    private bool _mouseDownFlag;
 
+    // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasFullWidth
     [Parameter] public bool FullWidth { get; set; }
+
+    // IHasLoading
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
+    // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }
+
+    // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }
-    [Parameter] public string? Placeholder { get; set; }
-    [Parameter] public string? Label { get; set; }
-    [Parameter] public string? HelperText { get; set; }
-    [Parameter] public bool UpdateOnInput { get; set; }
-    [Parameter] public EventCallback<string> OnInput { get; set; }
 
     // IHasBackgroundColor
     [Parameter] public CssColor? BackgroundColor { get; set; }
@@ -52,10 +58,31 @@
     // IHasColor
     [Parameter] public CssColor? Color { get; set; }
 
+    // IHasPrefix
+    [Parameter] public string? PrefixText { get; set; }
+    [Parameter] public string? PrefixIcon { get; set; }
+    [Parameter] public CssColor? PrefixColor { get; set; }
+    [Parameter] public CssColor? PrefixBackgroundColor { get; set; }
+
+    // IHasSuffix
+    [Parameter] public string? SuffixText { get; set; }
+    [Parameter] public string? SuffixIcon { get; set; }
+    [Parameter] public CssColor? SuffixColor { get; set; }
+    [Parameter] public CssColor? SuffixBackgroundColor { get; set; }
+
+    // Component-specific
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public bool UpdateOnInput { get; set; }
+    [Parameter] public EventCallback<string> OnInput { get; set; }
+
     public ElementReference GetRippleContainer() => _inputContainer;
 
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
     private bool IsFloated => _isFocused || HasValue;
+    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
+    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
@@ -71,10 +98,24 @@
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
-                       data-keyboard-focus="@(_keyboardFocus.ToString().ToLowerInvariant())">
+                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
             <div class="bui-input__wrapper" @ref="_inputContainer">
 
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+
+                @if (HasPrefix)
+                {
+                    <span class="bui-input__prefix">
+                        @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+                        {
+                            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
+                        }
+                        @if (!string.IsNullOrWhiteSpace(PrefixText))
+                        {
+                            <span>@PrefixText</span>
+                        }
+                    </span>
+                }
 
                 <input type="text"
                        id="@_inputId"
@@ -94,6 +135,20 @@
                        disabled="@IsDisabled"
                        readonly="@ReadOnly"
                        required="@Required" />
+
+                @if (HasSuffix)
+                {
+                    <span class="bui-input__suffix">
+                        @if (!string.IsNullOrWhiteSpace(SuffixText))
+                        {
+                            <span>@SuffixText</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+                        {
+                            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
+                        }
+                    </span>
+                }
 
                 @if (IsLoading && LoadingIndicatorVariant != null)
                 {
@@ -139,21 +194,17 @@
 
     private void HandleMouseDown(MouseEventArgs e)
     {
-        // Mark that the next focus event is from a mouse interaction
         _mouseDownFlag = true;
     }
 
     private void HandleKeyDown(KeyboardEventArgs e)
     {
-        // Mark that keyboard is being used
         _mouseDownFlag = false;
     }
 
     private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
-
-        // Only show keyboard focus ring if the focus wasn't triggered by mouse
         _keyboardFocus = !_mouseDownFlag;
     }
 

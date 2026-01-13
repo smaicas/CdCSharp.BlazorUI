@@ -76,6 +76,8 @@ public static class FeatureDefinitions
             public const string Required = "bui-input__required";
             public const string Validation = "bui-input__validation";
             public const string Wrapper = "bui-input__wrapper";
+            public const string Prefix = "bui-input__prefix";
+            public const string Suffix = "bui-input__suffix";
         }
     }
 
@@ -101,12 +103,6 @@ public static class FeatureDefinitions
         /// Marks component as part of dropdown family for shared styles.
         /// </summary>
         public const string DropdownBase = "data-bui-dropdown-base";
-
-        /// <summary>
-        /// Elevation level (0-24). Generates box-shadow.
-        /// </summary>
-        [Obsolete("Use Shadow with ShadowStyle instead")]
-        public const string Elevation = "data-bui-elevation";
 
         /// <summary>
         /// Component has validation error.
@@ -175,7 +171,7 @@ public static class FeatureDefinitions
 
     public static class InlineVariables
     {
-        // --- Color overrides ---
+        // --- Color overrides (from IHasColor/IHasBackgroundColor) ---
         public const string BackgroundColor = "--bui-inline-background";
         public const string Color = "--bui-inline-color";
 
@@ -188,13 +184,19 @@ public static class FeatureDefinitions
         public const string BorderRight = "--bui-inline-border-right";
         public const string BorderTop = "--bui-inline-border-top";
 
-        // --- Effect overrides ---
+        // --- Effect overrides (from IHasRipple) ---
         public const string RippleColor = "--bui-inline-ripple-color";
 
         public const string RippleDuration = "--bui-inline-ripple-duration";
 
-        // --- Shadow variables
+        // --- Shadow variables (from IHasShadow) ---
         public const string Shadow = "--bui-inline-shadow";
+
+        // --- Prefix/Suffix overrides (from IHasPrefix/IHasSuffix) ---
+        public const string PrefixColor = "--bui-inline-prefix-color";
+        public const string PrefixBackgroundColor = "--bui-inline-prefix-background";
+        public const string SuffixColor = "--bui-inline-suffix-color";
+        public const string SuffixBackgroundColor = "--bui-inline-suffix-background";
     }
 
     public static class Tags
@@ -278,37 +280,3 @@ public static class FeatureDefinitions
         }
     }
 }
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 1: HTML
-// STRUCTURE Custom HTML elements used by the library. Used in: All component .razor files as
-// the root wrapper element.
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 2: DATA
-// ATTRIBUTES Used for CSS targeting via [data-*] selectors and component state management. Set
-// by: BUIComponentAttributesBuilder based on IHas* interfaces. Used in: Global CSS generators
-// and component-specific CSS files.
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 3: DESIGN
-// TOKENS Global design system values defined in :root via DesignTokensGenerator. These are
-// foundational values used across the entire application.
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 4:
-// TYPOGRAPHY TOKENS Defined in :root via TypographyGenerator. Font sizes are responsive via
-// media queries.
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 5:
-// COMPONENT VARIABLES CSS custom properties set on bui-component elements based on data
-// attributes. Set by: BaseComponentGenerator and family-specific generators.
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 6: INLINE
-// VARIABLES CSS custom properties set via style="" attribute for per-instance customization.
-// Set by: BUIComponentAttributesBuilder when component has specific properties.
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 7: CSS
-// CLASSES Utility and component-specific class names. Used in: Component templates and global
-// ═══════════════════════════════════════════════════════════════════════════
-// SECTION 8:
-// ATTRIBUTE VALUES Valid string values for data attributes. Used in: Generators and components
-// for consistency.
-// ═══════════════════════════════════════════════════════════════════════════
