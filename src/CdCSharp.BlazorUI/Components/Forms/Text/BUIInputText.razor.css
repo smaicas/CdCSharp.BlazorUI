@@ -7,8 +7,4 @@
 
 bui-component[data-bui-component="input-text"] input {
     width: 100%;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: 1.5;
-    color: inherit;
 }

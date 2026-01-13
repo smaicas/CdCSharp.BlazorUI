@@ -21,6 +21,20 @@
         <p class="demo-result">Value: <strong>"@_basicValue"</strong></p>
     </section>
 
+    <!-- COLORS -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@ColorsDemo" />
+        <p class="demo-result">Value: <strong>"@_basicValue"</strong></p>
+    </section>
+
+    <!-- BORDERS -->
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BordersDemo" />
+        <p class="demo-result">Value: <strong>"@_basicValue"</strong></p>
+    </section>
+
     <!-- VARIANTS -->
     <section class="doc-section">
         <h2>Variants</h2>
@@ -133,20 +147,44 @@
 """
     };
 
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """
+<BUIInputText @bind-Value="value" Label="Name" />
+
+@code {
+    private string value = string.Empty;
+}
+"""
+    };
+
+    private ComponentDemoDefinition BordersDemo => new()
+    {
+        Demo = RenderBorders(),
+        Code = """
+<BUIInputText @bind-Value="value" Label="Name" />
+
+@code {
+    private string value = string.Empty;
+}
+"""
+    };
+
     private ComponentDemoDefinition VariantsDemo => new()
     {
         Demo = RenderVariants(),
         Code = """
 <BUIInputText @bind-Value="value"
-              Variant="BUIInputTextVariant.Outlined"
+              Variant="BUIInputVariant.Outlined"
               Label="Outlined" />
 
 <BUIInputText @bind-Value="value"
-              Variant="BUIInputTextVariant.Filled"
+              Variant="BUIInputVariant.Filled"
               Label="Filled" />
 
 <BUIInputText @bind-Value="value"
-              Variant="BUIInputTextVariant.Standard"
+              Variant="BUIInputVariant.Standard"
               Label="Standard" />
 """
     };
@@ -245,19 +283,29 @@
         <BUIInputText @bind-Value="_basicValue" Label="Name" />
     };
 
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIInputText @bind-Value="_basicValue" Label="Name" Color="BUIColor.Gold.Default" BackgroundColor="@BUIColor.BlueViolet.Default"/>
+    };
+
+    private RenderFragment RenderBorders() => __builder =>
+    {
+        <BUIInputText @bind-Value="_basicValue" Label="Name" Border="BUIBorderPresets.Info.Radius(15)"/>
+    };
+
     private RenderFragment RenderVariants() => __builder =>
     {
         <div class="demo-column">
             <BUIInputText @bind-Value="_outlinedValue"
-                          Variant="BUIInputTextVariant.Outlined"
+                          Variant="BUIInputVariant.Outlined"
                           Label="Outlined" />
 
             <BUIInputText @bind-Value="_filledValue"
-                          Variant="BUIInputTextVariant.Filled"
+                          Variant="BUIInputVariant.Filled"
                           Label="Filled" />
 
             <BUIInputText @bind-Value="_standardValue"
-                          Variant="BUIInputTextVariant.Standard"
+                          Variant="BUIInputVariant.Standard"
                           Label="Standard" />
         </div>
     };
@@ -265,19 +313,19 @@
     private RenderFragment RenderSizes() => __builder =>
     {
         <div class="demo-column">
-            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputTextVariant.Outlined" />
-            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputTextVariant.Outlined" />
-            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputTextVariant.Outlined" />
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputVariant.Outlined" />
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputVariant.Outlined" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputVariant.Outlined" />
         </div>
         <div class="demo-column">
-            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputTextVariant.Filled"/>
-            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputTextVariant.Filled" />
-            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputTextVariant.Filled" />
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputVariant.Filled"/>
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputVariant.Filled" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputVariant.Filled" />
         </div>
         <div class="demo-column">
-            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputTextVariant.Standard" />
-            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputTextVariant.Standard" />
-            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputTextVariant.Standard" />
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputVariant.Standard" />
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputVariant.Standard" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputVariant.Standard" />
         </div>
     };
 
@@ -347,7 +395,7 @@
     {
         new("Value", "string", "-", "Current input value"),
         new("ValueChanged", "EventCallback<string>", "-", "Value change callback"),
-        new("Variant", "BUIInputTextVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
         new("Label", "string?", "null", "Floating label text"),
         new("Placeholder", "string?", "null", "Placeholder text (visible when label is floated)"),
         new("HelperText", "string?", "null", "Helper text below the input"),

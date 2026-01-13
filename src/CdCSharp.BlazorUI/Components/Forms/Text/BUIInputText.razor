@@ -8,13 +8,15 @@
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
-@inherits BUIInputComponentBase<string, BUIInputText, BUIInputTextVariant>
+@inherits BUIInputComponentBase<string, BUIInputText, BUIInputVariant>
 @implements IHasSize
 @implements IHasFullWidth
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasShadow
 @implements IHasBorder
+@implements IHasColor
+@implements IHasBackgroundColor
 
 @implements IInputFamilyComponent
 
@@ -42,26 +44,32 @@
     [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter] public EventCallback<string> OnInput { get; set; }
 
+    // IHasBackgroundColor
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
     public ElementReference GetRippleContainer() => _inputContainer;
 
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
     private bool IsFloated => _isFocused || HasValue;
 
-    public override BUIInputTextVariant DefaultVariant => BUIInputTextVariant.Outlined;
+    public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
-    protected override IReadOnlyDictionary<BUIInputTextVariant, Func<BUIInputText, RenderFragment>> BuiltInTemplates { get; } =
-        new Dictionary<BUIInputTextVariant, Func<BUIInputText, RenderFragment>>
+    protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputText, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputVariant, Func<BUIInputText, RenderFragment>>
         {
-            [BUIInputTextVariant.Outlined] = i => i.RenderInput(),
-            [BUIInputTextVariant.Filled] = i => i.RenderInput(),
-            [BUIInputTextVariant.Standard] = i => i.RenderInput()
+            [BUIInputVariant.Outlined] = i => i.RenderInput(),
+            [BUIInputVariant.Filled] = i => i.RenderInput(),
+            [BUIInputVariant.Standard] = i => i.RenderInput()
         };
 
     private RenderFragment RenderInput() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
-            <div class="bui-input__wrapper" @ref="_inputContainer">
+            <div class="bui-input__wrapper" bui-apply-border bui-apply-colors @ref="_inputContainer">
 
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
 
