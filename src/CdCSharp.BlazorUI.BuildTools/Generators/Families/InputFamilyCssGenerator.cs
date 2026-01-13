@@ -56,7 +56,9 @@ public class InputFamilyGenerator : IAssetGenerator
 /* === BASE === */
 
 bui-component[{{inputBase}}] {
+    display: flex;
     flex-direction: column;
+    width: 100%;
     gap: 0.25rem;
 
     --_input-h: calc(2.5rem * {{V(sizeMult, "1")}});
@@ -237,7 +239,7 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] .{{fieldset}} {
     transition: var(--_input-transition);
 }
 
-/* Legend mechanics (CRITICAL) */
+/* Legend mechanics */
 
 bui-component[{{inputBase}}][{{variant}}="outlined"] .{{legend}} {
     padding: 0;
@@ -266,7 +268,7 @@ bui-component[{{inputBase}}][{{variant}}="outlined"][{{floated}}="true"] .{{labe
 bui-component[{{inputBase}}][{{variant}}="outlined"][{{floated}}="true"] .{{legend}} {
     max-width: 100%;
 }
-
+a
 /* Outlined: focus & error */
 
 bui-component[{{inputBase}}][{{variant}}="outlined"]:focus-within .{{fieldset}} {

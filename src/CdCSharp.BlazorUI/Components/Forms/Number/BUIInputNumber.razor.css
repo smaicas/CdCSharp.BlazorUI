@@ -3,7 +3,6 @@
 }
 
     bui-component[data-bui-component="input-number"] .bui-input__field {
-        width: 100%;
         font-variant-numeric: tabular-nums;
         font-feature-settings: 'tnum';
     }

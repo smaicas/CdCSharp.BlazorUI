@@ -1,5 +1,5 @@
 ﻿bui-component[data-bui-component="input-radio"] {
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     gap: var(--bui-density-gap);
     --bui-radio-scale: 1;

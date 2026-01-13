@@ -1,12 +1,26 @@
-﻿.bui-pattern {
+﻿/* ========================================
+   BUIDateTimePattern Component Styles
+   
+   This is a helper component for BUIInputDateTime.
+   The .bui-pattern container receives .bui-input__field
+   class from parent, inheriting input-family styles.
+   ======================================== */
+
+.bui-pattern {
     display: inline-flex;
     align-items: center;
+    flex: 1;
     font-family: var(--bui-font-mono);
     cursor: text;
+    min-height: 1.5em;
 }
 
     .bui-pattern:focus {
         outline: none;
+    }
+
+    .bui-pattern:empty {
+        min-width: 100%;
     }
 
 .bui-pattern__editable {
@@ -20,6 +34,13 @@
     .bui-pattern__editable:focus {
         background: color-mix(in srgb, var(--palette-primary) 15%, transparent);
     }
+
+/* Show placeholder styling when no value */
+.bui-pattern[data-has-value="false"] .bui-pattern__editable,
+.bui-pattern[data-has-value="false"] .bui-pattern__separator,
+.bui-pattern[data-has-value="false"] .bui-pattern__toggle {
+    opacity: var(--bui-opacity-placeholder, 0.5);
+}
 
 .bui-pattern__separator {
     padding-inline: 2px;

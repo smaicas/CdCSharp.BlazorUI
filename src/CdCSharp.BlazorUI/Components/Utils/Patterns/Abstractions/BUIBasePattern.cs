@@ -24,6 +24,9 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     [Parameter]
     public EventCallback<string?> TextChanged { get; set; }
 
+    [Parameter]
+    public EventCallback<bool> OnDirtyStateChanged { get; set; }
+
     protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
 
     [Inject]
@@ -240,9 +243,10 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         if (Text != actualText)
         {
             Text = actualText;
-            _lastExternalText = actualText;  // Mantener sincronizado
+            _lastExternalText = actualText;
             await TextChanged.InvokeAsync(Text);
         }
+        await OnDirtyStateChanged.InvokeAsync(_patternState.IsDirty);
     }
 
     private async Task SyncSpansToJs()

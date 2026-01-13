@@ -1,4 +1,5 @@
 ﻿bui-component[data-bui-component="input-checkbox"] {
+    display: inline-flex;
     --bui-checkbox-box-size: calc(20px * var(--bui-size-scale));
 }
 

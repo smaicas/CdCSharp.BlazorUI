@@ -6,6 +6,9 @@ public sealed class PatternState
         .Where(s => s.IsEditable)
         .All(s => s.IsComplete && !string.IsNullOrEmpty(s.Value));
 
+    public bool IsDirty => Spans
+        .Any(s => s.IsEditable && !string.IsNullOrEmpty(s.Value));
+
     public List<SpanState> Spans { get; set; } = [];
 
     public string? GetActualText()

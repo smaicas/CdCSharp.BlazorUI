@@ -11,6 +11,7 @@
    ============================================ */
 
 bui-component[data-bui-component="input-switch"] {
+    display:inline-flex;
     --bui-switch-scale: var(--bui-size-scale, 1);
     --bui-switch-track-width: calc(60px * var(--bui-switch-scale));
     --bui-switch-track-height: calc(32px * var(--bui-switch-scale));

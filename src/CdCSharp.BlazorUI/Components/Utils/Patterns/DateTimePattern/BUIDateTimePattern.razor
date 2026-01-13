@@ -2,6 +2,8 @@
 @using CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using System.Globalization
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
 
 @namespace CdCSharp.BlazorUI.Components.Utils
 
@@ -11,33 +13,37 @@
      id="@Id"
      class="bui-pattern @ContainerClass"
      data-pattern-id="@ComponentId"
+     data-has-value="@HasValue.ToString().ToLowerInvariant()"
      tabindex="0"
      @onfocusin="HandleFocusIn"
      @onfocusout="HandleFocusOut">
-    @foreach (SpanState span in _patternState.Spans)
+    @if (ShowPlaceholder)
     {
-        @if (span.IsToggle)
+        @foreach (SpanState span in _patternState.Spans)
         {
-            <span @key="@($"span_{ComponentId}_{span.Index}")"
-                  class="bui-pattern__toggle"
-                  data-index="@span.Index"
-                  tabindex="-1">@span.DisplayValue</span>
-        }
-        else if (span.IsEditable)
-        {
-            <span @key="@($"span_{ComponentId}_{span.Index}")"
-                  class="bui-pattern__editable"
-                  contenteditable="@(Editable ? "true" : "false")"
-                  spellcheck="false"
-                  data-index="@span.Index"
-                  data-maxlength="@span.MaxLength"
-                  tabindex="-1">@span.DisplayValue</span>
-        }
-        else
-        {
-            <span @key="@($"span_{ComponentId}_{span.Index}")"
-                  class="bui-pattern__separator"
-                  data-index="@span.Index">@span.DisplayValue</span>
+            @if (span.IsToggle)
+            {
+                <span @key="@($"span_{ComponentId}_{span.Index}")"
+                      class="bui-pattern__toggle"
+                      data-index="@span.Index"
+                      tabindex="-1">@span.DisplayValue</span>
+            }
+            else if (span.IsEditable)
+            {
+                <span @key="@($"span_{ComponentId}_{span.Index}")"
+                      class="bui-pattern__editable"
+                      contenteditable="@(Editable ? "true" : "false")"
+                      spellcheck="false"
+                      data-index="@span.Index"
+                      data-maxlength="@span.MaxLength"
+                      tabindex="-1">@span.DisplayValue</span>
+            }
+            else
+            {
+                <span @key="@($"span_{ComponentId}_{span.Index}")"
+                      class="bui-pattern__separator"
+                      data-index="@span.Index">@span.DisplayValue</span>
+            }
         }
     }
 </div>
@@ -48,8 +54,11 @@
 
     [Parameter] public string? Id { get; set; }
     [Parameter] public string? ContainerClass { get; set; }
+    [Parameter] public bool ShowPlaceholder { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
+
+    private bool HasValue => _patternState.Spans.Any(s => s.IsEditable && !string.IsNullOrEmpty(s.Value));
 
     public async Task FocusAsync()
     {
@@ -70,9 +79,13 @@
 
     private async Task HandleFocusOut(FocusEventArgs e)
     {
-        await Task.Delay(10);
+        await Task.Yield();
 
-        if (_hasFocus)
+        bool stillInside = await JS.InvokeAsync<bool>(
+            "eval",
+            $"document.activeElement?.closest('[data-pattern-id=\"{ComponentId}\"]') !== null");
+
+        if (_hasFocus && !stillInside)
         {
             _hasFocus = false;
             await OnBlur.InvokeAsync(e);

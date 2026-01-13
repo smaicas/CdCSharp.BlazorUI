@@ -33,6 +33,7 @@
     private TValue? _initialValue;
     private BUIDateTimePattern? _patternRef;
     private bool _isFocused;
+    private bool _isDirty;
 
     private DateOnly _tempDateValue;
     private TimeOnly _tempTimeValue;
@@ -74,12 +75,11 @@
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
 
-
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
     private string Format => GetCultureFormatString();
     private bool HasValue => CurrentValue != null && !IsDefaultValue(CurrentValue, UnderlyingType);
-    private bool CanClear => !EqualityComparer<TValue>.Default.Equals(CurrentValue, _initialValue);
-    private bool IsFloated => _isFocused || HasValue;
+    private bool CanClear => _isDirty;
+    private bool IsFloated => _isFocused || HasValue || _isDirty;
     private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
     private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
@@ -118,11 +118,13 @@
                 <BUIDateTimePattern @ref="_patternRef"
                                     Id="@_inputId"
                                     ContainerClass="bui-input__field"
+                                    ShowPlaceholder="@IsFloated"
                                     @bind-Text="@CurrentValueAsString"
                                     Format="@Format"
                                     Editable="@(!IsReadOnly)"
                                     OnFocus="HandleFocus"
-                                    OnBlur="HandleBlur" />
+                                    OnBlur="HandleBlur" 
+                                    OnDirtyStateChanged="@((isDirty)=> _isDirty = isDirty)"/>
 
                 @if (HasSuffix)
                 {
