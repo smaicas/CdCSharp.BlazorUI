@@ -6,10 +6,6 @@
 /// </summary>
 public static class FeatureDefinitions
 {
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 1: HTML
-    // STRUCTURE Custom HTML elements used by the library. Used in: All component .razor files as
-    // the root wrapper element. ═══════════════════════════════════════════════════════════════════════════
-
     public static class ComponentVariables
     {
         /// <summary>
@@ -180,7 +176,8 @@ public static class FeatureDefinitions
     public static class InlineVariables
     {
         // --- Color overrides ---
-        public const string BackgroundColor = "--bui-inline-bg";
+        public const string BackgroundColor = "--bui-inline-background";
+        public const string Color = "--bui-inline-color";
 
         // --- Border overrides (from IHasBorder) ---
         public const string Border = "--bui-inline-border";
@@ -190,7 +187,6 @@ public static class FeatureDefinitions
         public const string BorderRadius = "--bui-inline-border-radius";
         public const string BorderRight = "--bui-inline-border-right";
         public const string BorderTop = "--bui-inline-border-top";
-        public const string Color = "--bui-inline-color";
 
         // --- Effect overrides ---
         public const string RippleColor = "--bui-inline-ripple-color";
@@ -198,7 +194,7 @@ public static class FeatureDefinitions
         public const string RippleDuration = "--bui-inline-ripple-duration";
 
         // --- Shadow variables
-        public const string Shadow = "--bui-shadow";
+        public const string Shadow = "--bui-inline-shadow";
     }
 
     public static class Tags
@@ -208,15 +204,6 @@ public static class FeatureDefinitions
         /// </summary>
         public const string Component = "bui-component";
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 2: DATA
-    // ATTRIBUTES Used for CSS targeting via [data-*] selectors and component state management. Set
-    // by: BUIComponentAttributesBuilder based on IHas* interfaces. Used in: Global CSS generators
-    // and component-specific CSS files.
-    // ═══════════════════════════════════════════════════════════════════════════
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 3: DESIGN
-    // TOKENS Global design system values defined in :root via DesignTokensGenerator. These are
-    // foundational values used across the entire application. ═══════════════════════════════════════════════════════════════════════════
 
     public static class Tokens
     {
@@ -251,10 +238,6 @@ public static class FeatureDefinitions
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 4:
-    // TYPOGRAPHY TOKENS Defined in :root via TypographyGenerator. Font sizes are responsive via
-    // media queries. ═══════════════════════════════════════════════════════════════════════════
-
     public static class Typography
     {
         public const string FontFamily = "--bui-font-family";
@@ -270,21 +253,6 @@ public static class FeatureDefinitions
         public const string LineHeightHeadingValue = "1.2";
         public const string LineHeightValue = "1.5";
     }
-
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 5:
-    // COMPONENT VARIABLES CSS custom properties set on bui-component elements based on data
-    // attributes. Set by: BaseComponentGenerator and family-specific generators.
-    // ═══════════════════════════════════════════════════════════════════════════
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 6: INLINE
-    // VARIABLES CSS custom properties set via style="" attribute for per-instance customization.
-    // Set by: BUIComponentAttributesBuilder when component has specific properties.
-    // ═══════════════════════════════════════════════════════════════════════════
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 7: CSS
-    // CLASSES Utility and component-specific class names. Used in: Component templates and global
-    // utilities. ═══════════════════════════════════════════════════════════════════════════
-    // ═══════════════════════════════════════════════════════════════════════════ SECTION 8:
-    // ATTRIBUTE VALUES Valid string values for data attributes. Used in: Generators and components
-    // for consistency. ═══════════════════════════════════════════════════════════════════════════
 
     public static class Values
     {
@@ -310,3 +278,37 @@ public static class FeatureDefinitions
         }
     }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 1: HTML
+// STRUCTURE Custom HTML elements used by the library. Used in: All component .razor files as
+// the root wrapper element.
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 2: DATA
+// ATTRIBUTES Used for CSS targeting via [data-*] selectors and component state management. Set
+// by: BUIComponentAttributesBuilder based on IHas* interfaces. Used in: Global CSS generators
+// and component-specific CSS files.
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 3: DESIGN
+// TOKENS Global design system values defined in :root via DesignTokensGenerator. These are
+// foundational values used across the entire application.
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 4:
+// TYPOGRAPHY TOKENS Defined in :root via TypographyGenerator. Font sizes are responsive via
+// media queries.
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 5:
+// COMPONENT VARIABLES CSS custom properties set on bui-component elements based on data
+// attributes. Set by: BaseComponentGenerator and family-specific generators.
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 6: INLINE
+// VARIABLES CSS custom properties set via style="" attribute for per-instance customization.
+// Set by: BUIComponentAttributesBuilder when component has specific properties.
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 7: CSS
+// CLASSES Utility and component-specific class names. Used in: Component templates and global
+// ═══════════════════════════════════════════════════════════════════════════
+// SECTION 8:
+// ATTRIBUTE VALUES Valid string values for data attributes. Used in: Generators and components
+// for consistency.
+// ═══════════════════════════════════════════════════════════════════════════
