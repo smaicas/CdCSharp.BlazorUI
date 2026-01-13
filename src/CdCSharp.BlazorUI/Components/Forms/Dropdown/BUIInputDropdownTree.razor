@@ -17,7 +17,7 @@
 @implements IHasFullWidth
 @implements IHasLoading
 @implements IHasDensity
-@implements IHasElevation
+@implements IHasShadow
 @implements IDropdownJsCallback
 @implements IInputFamilyComponent
 
@@ -47,8 +47,8 @@
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-    [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationShadowColor { get; set; }
+    // ========= IHasShadow ========= //
+    [Parameter] public ShadowStyle? Shadow { get; set; }
 
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? Label { get; set; }

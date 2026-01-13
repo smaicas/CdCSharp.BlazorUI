@@ -1,5 +1,6 @@
 ﻿using Bunit;
 using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 
@@ -34,7 +35,7 @@ public class BUIButtonSnapshotTests
 
             new { Name = "Elevated", Builder = (Action<ComponentParameterCollectionBuilder<BUIButton>>)(p => p
                 .Add(c => c.Text, "Elevated")
-                .Add(c => c.Elevation, 8)
+                .Add(c => c.Shadow, BUIShadowPresets.Elevation(8))
                 .Add(c => c.Transitions, BUITransitionPresets.HoverLift)) }
         };
 

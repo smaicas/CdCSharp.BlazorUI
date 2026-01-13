@@ -90,15 +90,12 @@ internal sealed class BUIComponentAttributesBuilder
 
     private void BuildElevation(ComponentBase component, Dictionary<string, string> cssVariables)
     {
-        if (component is IHasElevation elevation)
+        if (component is IHasShadow shadow && shadow.Shadow != null)
         {
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Elevation] = elevation.Elevation?.ToString() ?? "0";
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Shadow] = "true";
 
-            if (elevation.ElevationShadowColor != null)
-            {
-                cssVariables[FeatureDefinitions.InlineVariables.ElevationShadowColor] =
-                    elevation.ElevationShadowColor.ToString(ColorOutputFormats.Rgba);
-            }
+            foreach (KeyValuePair<string, string> kv in shadow.Shadow.ToCssVariables())
+                cssVariables[kv.Key] = kv.Value;
         }
     }
 

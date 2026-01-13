@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
 using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
@@ -92,7 +93,7 @@ public class BUIButtonStateTests
         // Act & Assert - Change multiple properties
         cut.Render(p => p
             .Add(c => c.Size, SizeEnum.Large)
-            .Add(c => c.Elevation, 4));
+            .Add(c => c.Shadow, BUIShadowPresets.Elevation(4)));
 
         component.GetAttribute("data-bui-size").Should().Be("large");
         component.GetAttribute("data-bui-variant").Should().Be("default");

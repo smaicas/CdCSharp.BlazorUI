@@ -1,5 +1,6 @@
 ﻿using Bunit;
 using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
@@ -22,7 +23,7 @@ public class BUIButtonRenderingTests
             .Add(c => c.BackgroundColor, BUIColor.Palette.Background)
             .Add(c => c.Color, BUIColor.Palette.BackgroundContrast)
 
-            .Add(c => c.Elevation, 4));
+            .Add(c => c.Shadow, BUIShadowPresets.Elevation(4)));
 
         // Assert
         cut.Find("bui-component").Should().NotBeNull();

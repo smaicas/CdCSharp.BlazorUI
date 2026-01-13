@@ -15,7 +15,7 @@
 @implements IHasFullWidth
 @implements IHasLoading
 @implements IHasDensity
-@implements IHasElevation
+@implements IHasShadow
 @implements IHasRipple
 @implements IAsyncDisposable
 
@@ -47,9 +47,8 @@
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
-    // IHasElevation
-    [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationShadowColor { get; set; }
+    // ========= IHasShadow ========= //
+    [Parameter] public ShadowStyle? Shadow { get; set; }
 
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }

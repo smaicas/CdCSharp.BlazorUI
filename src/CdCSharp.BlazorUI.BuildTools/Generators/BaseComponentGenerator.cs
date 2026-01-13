@@ -28,7 +28,7 @@ public class BaseComponentGenerator : IAssetGenerator
         sb.AppendLine();
         sb.AppendLine(GetStateStyles());
         sb.AppendLine();
-        sb.AppendLine(GetElevationSystem());
+        sb.AppendLine(GetShadowSystem());
         sb.AppendLine();
         sb.AppendLine(GetUtilities());
         return sb.ToString();
@@ -40,7 +40,8 @@ public class BaseComponentGenerator : IAssetGenerator
    Auto-generated - Do not edit manually
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}} {display: inline-flex;
+{{FeatureDefinitions.Tags.Component}} {
+    display: inline-flex;
     box-sizing: border-box;
     font-family: inherit;
     font-size: inherit;
@@ -125,63 +126,44 @@ public class BaseComponentGenerator : IAssetGenerator
    UNIVERSAL STATES
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Disabled}}="true"] {opacity: var({{FeatureDefinitions.Tokens.Opacity.Disabled}});
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Disabled}}="true"] {
+    opacity: var({{FeatureDefinitions.Tokens.Opacity.Disabled}});
     pointer-events: none;
     cursor: not-allowed;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Loading}}="true"] {pointer-events: none;
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Loading}}="true"] {
+    pointer-events: none;
     position: relative;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {width: 100%;
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {
+    width: 100%;
 }
 """;
 
-    private static string GetElevationSystem()
-    {
-        StringBuilder sb = new();
-        sb.AppendLine("/* ========================================");
-        sb.AppendLine("   ELEVATION SYSTEM");
-        sb.AppendLine("   Material Design inspired shadows.");
-        sb.AppendLine("   ======================================== */");
-        sb.AppendLine();
+    private static string GetShadowSystem() => $$"""
+/* ========================================
+   SHADOW SYSTEM
+   Activated by data-bui-shadow attribute.
+   Values provided via inline CSS variables.
+   ======================================== */
 
-        string tag = FeatureDefinitions.Tags.Component;
-        string attr = FeatureDefinitions.DataAttributes.Elevation;
-
-        for (int i = 0; i <= 24; i++)
-        {
-            string shadow = GetShadowForElevation(i);
-            sb.AppendLine($"{tag}[{attr}=\"{i}\"] {{");
-            sb.AppendLine($"    box-shadow: {shadow};");
-            sb.AppendLine("}");
-            if (i < 24) sb.AppendLine();
-        }
-
-        return sb.ToString();
-    }
-
-    private static string GetShadowForElevation(int elevation)
-    {
-        if (elevation == 0) return "none";
-
-        string shadowColor = $"var({FeatureDefinitions.InlineVariables.ElevationShadowColor}, var(--palette-shadow))";
-
-        double umbraY = Math.Round(elevation * 0.5, 1);
-        double umbraBlur = elevation;
-        double penumbraY = elevation;
-        double penumbraBlur = elevation * 2;
-
-        string umbra = FormattableString.Invariant(
-            $"0 {umbraY}px {umbraBlur}px color-mix(in srgb, {shadowColor} 20%, transparent)");
-        string penumbra = FormattableString.Invariant(
-            $"0 {penumbraY}px {penumbraBlur}px color-mix(in srgb, {shadowColor} 14%, transparent)");
-        string ambient = FormattableString.Invariant(
-            $"0 1px 3px color-mix(in srgb, {shadowColor} 12%, transparent)");
-
-        return $"{umbra}, {penumbra}, {ambient}";
-    }
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Shadow}}] {
+    box-shadow: 
+        var({{FeatureDefinitions.InlineVariables.ShadowInset}})
+        var({{FeatureDefinitions.InlineVariables.ShadowOffsetX}}, 0)
+        var({{FeatureDefinitions.InlineVariables.ShadowOffsetY}}, 4px)
+        var({{FeatureDefinitions.InlineVariables.ShadowBlur}}, 8px)
+        var({{FeatureDefinitions.InlineVariables.ShadowSpread}}, 0)
+        color-mix(
+            in srgb,
+            var({{FeatureDefinitions.InlineVariables.ShadowColor}}, var(--palette-shadow, rgba(0,0,0,1)))
+            calc(var({{FeatureDefinitions.InlineVariables.ShadowOpacity}}, 0.2) * 100%),
+            transparent
+        );
+}
+""";
 
     private static string GetUtilities() => $$"""
 /* ========================================

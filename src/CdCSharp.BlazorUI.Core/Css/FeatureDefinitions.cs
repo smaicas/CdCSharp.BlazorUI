@@ -48,6 +48,7 @@ public static class FeatureDefinitions
         public const string FullWidth = "data-bui-fullwidth";
 
         /// <summary>Elevation level (0-24). Generates box-shadow.</summary>
+        [Obsolete("Use Shadow with ShadowStyle instead")]
         public const string Elevation = "data-bui-elevation";
 
         /// <summary>Space-separated list of transition class names.</summary>
@@ -75,6 +76,9 @@ public static class FeatureDefinitions
         // --- Behavior attributes ---
         /// <summary>Whether ripple effect is enabled.</summary>
         public const string Ripple = "data-bui-ripple";
+
+        /// <summary>Whether shadow is applied (activates shadow CSS).</summary>
+        public const string Shadow = "data-bui-shadow";
 
         // --- Component family attributes ---
         /// <summary>Marks component as part of input family for shared styles.</summary>
@@ -223,9 +227,17 @@ public static class FeatureDefinitions
         public const string BorderLeft = "--bui-inline-border-left";
 
         // --- Effect overrides ---
-        public const string ElevationShadowColor = "--bui-inline-elevation-shadow-color";
         public const string RippleColor = "--bui-inline-ripple-color";
         public const string RippleDuration = "--bui-inline-ripple-duration";
+
+        // --- Shadow variables (short names for minimal inline) ---
+        public const string ShadowOffsetX = "--s-x";
+        public const string ShadowOffsetY = "--s-y";
+        public const string ShadowBlur = "--s-b";
+        public const string ShadowSpread = "--s-sp";
+        public const string ShadowColor = "--s-c";
+        public const string ShadowOpacity = "--s-o";
+        public const string ShadowInset = "--s-i";
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

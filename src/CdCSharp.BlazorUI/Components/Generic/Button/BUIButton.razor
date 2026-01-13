@@ -11,7 +11,7 @@
 @implements IHasSize
 @implements IHasFullWidth
 @implements IHasLoading
-@implements IHasElevation
+@implements IHasShadow
 @implements IHasRipple
 @implements IHasDensity
 @implements IHasBorder
@@ -44,9 +44,8 @@
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
 
-    // IHasElevation
-    [Parameter] public int? Elevation { get; set; }
-    [Parameter] public CssColor? ElevationShadowColor { get; set; }
+    // IHasShadow
+    [Parameter] public ShadowStyle? Shadow { get; set; }
 
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }

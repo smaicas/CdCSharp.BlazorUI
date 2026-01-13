@@ -2,6 +2,7 @@
 
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
 @using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Css
 
 <PageTitle>Buttons - CdCSharp.BlazorUI</PageTitle>
@@ -180,9 +181,41 @@
     {
         Demo = RenderElevation(),
         Code = """
-<BUIButton Text="0" Elevation="0" />
-<BUIButton Text="6" Elevation="6" />
-<BUIButton Text="12" Elevation="12" />
+<h4>Elevation Presets</h4>
+        <div class="demo-row">
+            <BUIButton Text="Elevation 0" Shadow="@BUIShadowPresets.Elevation(0)" />
+            <BUIButton Text="Elevation 4" Shadow="@BUIShadowPresets.Elevation(4)" />
+            <BUIButton Text="Elevation 8" Shadow="@BUIShadowPresets.Elevation(8)" />
+            <BUIButton Text="Elevation 16" Shadow="@BUIShadowPresets.Elevation(16)" />
+            <BUIButton Text="Elevation 24" Shadow="@BUIShadowPresets.Elevation(24)" />
+        </div>
+
+        <h4>Custom Shadow</h4>
+        <div class="demo-row">
+            <BUIButton Text="Custom Blue" Shadow="@(ShadowStyle.Create()
+                                                  .Color(BUIColor.Blue.Default)
+                                                  .OffsetY(8)
+                                                  .Blur(16)
+                                                  .Opacity(0.4f))" />
+
+    <BUIButton Text="Custom Purple" Shadow="@(ShadowStyle.Create()
+                                            .Color(BUIColor.Purple.Default)
+                                            .OffsetY(4)
+                                            .Blur(20)
+                                            .Spread(2)
+                                            .Opacity(0.5f))" />
+
+    <BUIButton Text="Inset" Shadow="@(ShadowStyle.Create()
+                                    .Inset()
+                                    .OffsetY(2)
+                                    .Blur(4)
+                                    .Opacity(0.3f))" />
+</div>
+
+        <h4>No Shadow (default)</h4>
+        <div class="demo-row">
+            <BUIButton Text="No Shadow" />
+        </div>
 """
     };
 
@@ -295,11 +328,41 @@
 
     private RenderFragment RenderElevation() => __builder =>
     {
+        <h4>Elevation Presets</h4>
         <div class="demo-row">
-            <BUIButton Text="0" Elevation="0" />
-            <BUIButton Text="6" Elevation="6" />
-            <BUIButton Text="12" Elevation="12" />
-        </div>;
+            <BUIButton Text="Elevation 0" Shadow="@BUIShadowPresets.Elevation(0)" />
+            <BUIButton Text="Elevation 4" Shadow="@BUIShadowPresets.Elevation(4)" />
+            <BUIButton Text="Elevation 8" Shadow="@BUIShadowPresets.Elevation(8)" />
+            <BUIButton Text="Elevation 16" Shadow="@BUIShadowPresets.Elevation(16)" />
+            <BUIButton Text="Elevation 24" Shadow="@BUIShadowPresets.Elevation(24)" />
+        </div>
+
+        <h4>Custom Shadow</h4>
+        <div class="demo-row">
+            <BUIButton Text="Custom Blue" Shadow="@(ShadowStyle.Create()
+                                                  .Color(BUIColor.Blue.Default)
+                                                  .OffsetY(8)
+                                                  .Blur(16)
+                                                  .Opacity(0.4f))" />
+
+    <BUIButton Text="Custom Purple" Shadow="@(ShadowStyle.Create()
+                                            .Color(BUIColor.Purple.Default)
+                                            .OffsetY(4)
+                                            .Blur(20)
+                                            .Spread(2)
+                                            .Opacity(0.5f))" />
+
+    <BUIButton Text="Inset" Shadow="@(ShadowStyle.Create()
+                                    .Inset()
+                                    .OffsetY(2)
+                                    .Blur(4)
+                                    .Opacity(0.3f))" />
+</div>
+
+        <h4>No Shadow (default)</h4>
+        <div class="demo-row">
+            <BUIButton Text="No Shadow" />
+        </div>
     };
 
     private RenderFragment RenderColors() => __builder =>
