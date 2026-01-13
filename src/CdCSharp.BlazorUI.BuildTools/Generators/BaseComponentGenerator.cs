@@ -82,6 +82,7 @@ public class BaseComponentGenerator : IAssetGenerator
 /* === SIZE SYSTEM === */
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.SizeValues.Small}}"] {
+    {{FeatureDefinitions.SizeVariables.Multiplier}}: 0.85;
     {{FeatureDefinitions.SizeVariables.Font}}: var({{FeatureDefinitions.Tokens.Typography.FontSizeSm}});
     {{FeatureDefinitions.SizeVariables.Icon}}: 1rem;
     {{FeatureDefinitions.SizeVariables.Height}}: 2rem;
@@ -91,6 +92,7 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.SizeValues.Medium}}"] {
+    {{FeatureDefinitions.SizeVariables.Multiplier}}: 1;
     {{FeatureDefinitions.SizeVariables.Font}}: var({{FeatureDefinitions.Tokens.Typography.FontSizeMd}});
     {{FeatureDefinitions.SizeVariables.Icon}}: 1.25rem;
     {{FeatureDefinitions.SizeVariables.Height}}: 2.5rem;
@@ -100,6 +102,7 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.SizeValues.Large}}"] {
+    {{FeatureDefinitions.SizeVariables.Multiplier}}: 1.25;
     {{FeatureDefinitions.SizeVariables.Font}}: var({{FeatureDefinitions.Tokens.Typography.FontSizeLg}});
     {{FeatureDefinitions.SizeVariables.Icon}}: 1.5rem;
     {{FeatureDefinitions.SizeVariables.Height}}: 3rem;

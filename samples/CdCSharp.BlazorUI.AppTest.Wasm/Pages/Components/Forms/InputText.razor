@@ -265,9 +265,19 @@
     private RenderFragment RenderSizes() => __builder =>
     {
         <div class="demo-column">
-            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" />
-            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" />
-            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" />
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputTextVariant.Outlined" />
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputTextVariant.Outlined" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputTextVariant.Outlined" />
+        </div>
+        <div class="demo-column">
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputTextVariant.Filled"/>
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputTextVariant.Filled" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputTextVariant.Filled" />
+        </div>
+        <div class="demo-column">
+            <BUIInputText @bind-Value="_smallValue" Size="SizeEnum.Small" Label="Small" Variant="BUIInputTextVariant.Standard" />
+            <BUIInputText @bind-Value="_mediumValue" Size="SizeEnum.Medium" Label="Medium" Variant="BUIInputTextVariant.Standard" />
+            <BUIInputText @bind-Value="_largeValue" Size="SizeEnum.Large" Label="Large" Variant="BUIInputTextVariant.Standard" />
         </div>
     };
 

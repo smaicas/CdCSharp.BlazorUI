@@ -134,10 +134,6 @@ public static class FeatureDefinitions
         public const string BackgroundColor = "--bui-inline-bg";
         public const string Color = "--bui-inline-color";
 
-        // =====================================
-        // Border system (shorthand)
-        // =====================================
-
         public const string Border = "--bui-inline-border";
         public const string BorderRadius = "--bui-inline-border-radius";
 
@@ -153,6 +149,7 @@ public static class FeatureDefinitions
 
     public static class SizeVariables
     {
+        public const string Multiplier = "--bui-size-multiplier";
         public const string Font = "--bui-size-font";
         public const string Icon = "--bui-size-icon";
         public const string Height = "--bui-size-height";
@@ -166,6 +163,7 @@ public static class FeatureDefinitions
         public const string Padding = "--bui-density-padding";
     }
 
+    // Input-specific variables (scoped to input components)
     public static class InputVariables
     {
         public const string Height = "--input-height";
@@ -175,6 +173,10 @@ public static class FeatureDefinitions
         public const string BorderColor = "--input-border-color";
         public const string Background = "--input-bg";
         public const string Transition = "--input-transition";
+        public const string LabelColor = "--input-label-color";
+        public const string LabelFocusColor = "--input-label-focus-color";
+        public const string LabelErrorColor = "--input-label-error-color";
+        public const string LabelScale = "--input-label-scale";
     }
 
     public static class CssClasses
@@ -184,12 +186,15 @@ public static class FeatureDefinitions
 
         public static class Input
         {
-            public const string Label = "bui-input__label";
-            public const string Required = "bui-input__required";
             public const string Wrapper = "bui-input__wrapper";
             public const string Field = "bui-input__field";
-            public const string Helper = "bui-input__helper";
+            public const string Label = "bui-input__label";
+            public const string Required = "bui-input__required";
+            public const string Fieldset = "bui-input__fieldset";
+            public const string Legend = "bui-input__legend";
+            public const string HelperText = "bui-input__helper-text";
             public const string Validation = "bui-input__validation";
+            public const string Loading = "bui-input__loading";
         }
     }
 
