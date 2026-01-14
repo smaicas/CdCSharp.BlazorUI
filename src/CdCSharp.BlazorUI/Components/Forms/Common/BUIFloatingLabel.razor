@@ -1,13 +1,16 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Forms
 
+<fieldset class="bui-input__fieldset" aria-hidden="true">
+    <legend class="bui-input__legend">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <span>@Label</span>
+        }
+    </legend>
+</fieldset>
+
 @if (!string.IsNullOrWhiteSpace(Label))
 {
-    <fieldset class="bui-input__fieldset" aria-hidden="true">
-        <legend class="bui-input__legend">
-            <span>@Label</span>
-        </legend>
-    </fieldset>
-
     <label for="@For" class="bui-input__label">
         @Label
         @if (Required)

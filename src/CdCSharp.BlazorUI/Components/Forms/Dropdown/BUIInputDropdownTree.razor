@@ -52,6 +52,7 @@
                              HasChildrenSelector="@HasChildrenSelector"
                              OnLoadChildren="@OnLoadChildren"
                              NodeTemplate="@NodeTemplate"
+                             DisplayTextSelector="@DisplayTextSelector"
                              SelectedKeys="@_internalSelectedKeys"
                              SelectedKeysChanged="@OnTreeSelectionChangedAsync"
                              SelectionMode="@(IsMultiple ? TreeSelectionMode.Multiple : TreeSelectionMode.Single)"
@@ -121,6 +122,9 @@
     [Parameter] public EventCallback<HashSet<string>> ExpandedKeysChanged { get; set; }
 
     [Parameter] public TreeSelectionCascade SelectionCascade { get; set; } = TreeSelectionCascade.None;
+
+    [Parameter] public TreeDisplayMode DisplayMode { get; set; } = TreeDisplayMode.Single;
+    [Parameter] public string InheritanceSeparator { get; set; } = " > ";
 
     [Parameter] public RenderFragment? NoOptionsTemplate { get; set; }
 
@@ -221,14 +225,43 @@
 
             if (item != null)
             {
-                if (DisplayTextSelector != null)
-                    return DisplayTextSelector(item);
-                return item.ToString() ?? key;
+                if (DisplayMode == TreeDisplayMode.Inheritance)
+                {
+                    return GetInheritancePath(key);
+                }
+
+                return GetItemDisplayText(item, key);
             }
             return key;
         }
 
         return $"{_internalSelectedKeys.Count} selected";
+    }
+
+    private string GetItemDisplayText(TItem item, string fallbackKey)
+    {
+        if (DisplayTextSelector != null)
+            return DisplayTextSelector(item);
+
+        return item?.ToString() ?? fallbackKey;
+    }
+
+    private string GetInheritancePath(string key)
+    {
+        List<string> path = new();
+        TreeSelectionNode<TItem>? node = _treeSelectorRef?.GetNode(key);
+
+        while (node != null)
+        {
+            string text = node.Item != null
+                ? GetItemDisplayText(node.Item, node.Key)
+                : node.Text ?? node.Key;
+
+            path.Insert(0, text);
+            node = node.ParentNode;
+        }
+
+        return string.Join(InheritanceSeparator, path);
     }
 
     private async Task SetValueAsync(TValue? value)

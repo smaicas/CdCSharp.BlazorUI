@@ -45,6 +45,7 @@
     [Parameter] public Func<TItem, bool>? HasChildrenSelector { get; set; }
     [Parameter] public Func<TItem, Task<IEnumerable<TItem>>>? OnLoadChildren { get; set; }
     [Parameter] public RenderFragment<TreeSelectionNode<TItem>>? NodeTemplate { get; set; }
+    [Parameter] public Func<TItem, string>? DisplayTextSelector { get; set; }
     [Parameter] public TreeNodeCache<TItem>? Cache { get; set; }
 
     [Parameter] public HashSet<string>? ExpandedKeys { get; set; }
@@ -292,8 +293,19 @@
         {
             <BUISvgIcon Icon="@node.Icon" Size="Size" class="bui-tree-selector__node-icon" />
         }
-        <span class="bui-tree-selector__node-text">@(node.Text ?? node.Item?.ToString() ?? node.Key)</span>
+        <span class="bui-tree-selector__node-text">@GetNodeDisplayText(node)</span>
     };
+
+    private string GetNodeDisplayText(TreeSelectionNode<TItem> node)
+    {
+        if (!string.IsNullOrEmpty(node.Text))
+            return node.Text;
+
+        if (node.Item != null && DisplayTextSelector != null)
+            return DisplayTextSelector(node.Item);
+
+        return node.Key;
+    }
 
     public bool IsSelected(string key) => _selectedKeysInternal.Contains(key);
 

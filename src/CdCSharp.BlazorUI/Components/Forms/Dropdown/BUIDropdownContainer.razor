@@ -107,11 +107,18 @@
                         aria-haspopup="@AriaRole">
 
                     <span class="bui-dropdown__value @(HasValue ? "" : "bui-dropdown__placeholder")">
-                        @(HasValue? DisplayValue : Placeholder)
+                        @if (HasValue)
+                        {
+                            @DisplayValue
+                        }
+                        else if ((string.IsNullOrWhiteSpace(Label) || IsFloated) && !string.IsNullOrEmpty(Placeholder))
+                        {
+                            @Placeholder
+                        }
                     </span>
 
                     <span class="bui-dropdown__arrow">
-                        <BUISvgIcon Icon="@(IsOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="Size" />
                     </span>
                 </button>
 

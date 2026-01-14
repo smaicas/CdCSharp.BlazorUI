@@ -35,7 +35,7 @@ export function initialize(
 
     const clickOutsideHandler = (e: MouseEvent): void => {
         const target = e.target as HTMLElement;
-        const container = triggerElement.closest('[data-bui-component="input-dropdown"]');
+        const container = triggerElement.closest('[data-bui-component="dropdown-container"]');
 
         if (container && !container.contains(target)) {
             dotnetRef.invokeMethodAsync('OnClickOutside');
@@ -43,7 +43,7 @@ export function initialize(
     };
 
     const keyDownHandler = (e: KeyboardEvent): void => {
-        const container = triggerElement.closest('[data-bui-component="input-dropdown"]');
+        const container = triggerElement.closest('[data-bui-component="dropdown-container"]');
         if (!container?.contains(document.activeElement)) return;
 
         const relevantKeys = ['Escape', 'ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Home', 'End'];
@@ -88,7 +88,7 @@ export function focusSearchInput(componentId: string): void {
     const instance = dropdownInstances.get(componentId);
     if (!instance) return;
 
-    const container = instance.triggerElement.closest('[data-bui-component="input-dropdown"]');
+    const container = instance.triggerElement.closest('[data-bui-component="dropdown-container"]');
     const searchInput = container?.querySelector('.bui-dropdown__search-input') as HTMLInputElement;
 
     if (searchInput) {
@@ -102,6 +102,5 @@ export function dispose(componentId: string): void {
 
     document.removeEventListener('mousedown', instance.clickOutsideHandler);
     document.removeEventListener('keydown', instance.keyDownHandler);
-
     dropdownInstances.delete(componentId);
 }
