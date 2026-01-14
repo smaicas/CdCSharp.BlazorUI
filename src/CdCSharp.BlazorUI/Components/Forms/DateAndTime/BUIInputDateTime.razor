@@ -34,6 +34,7 @@
     private BUIDateTimePattern? _patternRef;
     private bool _isFocused;
     private bool _isDirty;
+    private string? _patternKey = Guid.NewGuid().ToString("N");
 
     private DateOnly _tempDateValue;
     private TimeOnly _tempTimeValue;
@@ -77,7 +78,7 @@
 
     private Type UnderlyingType => Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
     private string Format => GetCultureFormatString();
-    private bool HasValue => CurrentValue != null && !IsDefaultValue(CurrentValue, UnderlyingType);
+    private bool HasValue => CurrentValue != null;
     private bool CanClear => _isDirty;
     private bool IsFloated => _isFocused || HasValue || _isDirty;
     private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
@@ -115,7 +116,8 @@
                     </span>
                 }
 
-                <BUIDateTimePattern @ref="_patternRef"
+                <BUIDateTimePattern @key="@_patternKey"
+                                    @ref="_patternRef"
                                     Id="@_inputId"
                                     ContainerClass="bui-input__field"
                                     ShowPlaceholder="@IsFloated"
@@ -302,12 +304,31 @@
 
     private void Clear()
     {
+        // Reset the value to initial
         CurrentValue = _initialValue;
 
-        if (_initialValue != null && !IsDefaultValue(_initialValue, UnderlyingType))
+        // Sync pickers with the new value
+        if (HasValue)
         {
             SyncPickersFromValue();
         }
+        else
+        {
+            // Reset to sensible defaults when clearing to null
+            DateValue = DateOnly.FromDateTime(DateTime.Today);
+            TimeValue = TimeOnly.FromDateTime(DateTime.Now);
+        }
+
+        // CRITICAL FIX: Force Pattern to recreate by changing its @key
+        // This ensures the Pattern reinitializes with the new value (or null)
+        // Without this, the Pattern doesn't detect the change from incomplete → initial
+        _patternKey = Guid.NewGuid().ToString("N");
+
+        // Reset dirty state
+        _isDirty = false;
+
+        // Force UI update
+        StateHasChanged();
     }
 
     private Task OnDateChanged(DateOnly? value)
@@ -366,8 +387,6 @@
 
         Type type = UnderlyingType;
 
-        if (IsDefaultValue(value, type)) return null;
-
         return type switch
         {
             Type t when t == typeof(DateOnly)
@@ -383,20 +402,6 @@
                 => ((DateTimeOffset)(object)value).ToString(Format, CultureInfo.CurrentCulture),
 
             _ => value.ToString()
-        };
-    }
-
-    private bool IsDefaultValue(TValue? value, Type type)
-    {
-        if (value == null) return true;
-
-        return type switch
-        {
-            Type t when t == typeof(DateOnly) => ((DateOnly)(object)value) == default,
-            Type t when t == typeof(TimeOnly) => ((TimeOnly)(object)value) == default,
-            Type t when t == typeof(DateTime) => ((DateTime)(object)value) == default,
-            Type t when t == typeof(DateTimeOffset) => ((DateTimeOffset)(object)value) == default,
-            _ => false
         };
     }
 

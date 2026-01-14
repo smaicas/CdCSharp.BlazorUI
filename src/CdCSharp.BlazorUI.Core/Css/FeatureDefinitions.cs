@@ -237,6 +237,7 @@ public static class FeatureDefinitions
             public const string ToastValue = "1500";
             public const string Tooltip = "--bui-z-tooltip";
             public const string TooltipValue = "1400";
+
         }
     }
 

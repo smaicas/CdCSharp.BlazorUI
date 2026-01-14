@@ -125,6 +125,12 @@ bui-component[{{inputBase}}][{{floated}}="true"] .{{field}}::placeholder {
     opacity: {{V(opacityPlaceholder)}};
 }
 
+/* Z-Index adjustment to keep fieldset(absolute) below other elements */
+
+bui-component[{{inputBase}}] .{{wrapper}} > *:not(.{{fieldset}}) {
+    z-index: 1;
+}
+
 /* === LABEL === */
 
 bui-component[{{inputBase}}] .{{label}} {

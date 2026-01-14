@@ -157,10 +157,10 @@ public class BUIComponentBaseTests
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p.Add(c => c.Elevation, 12));
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p.Add(c => c.Shadow, BUIShadowPresets.Elevation(12)));
         cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("12");
 
-        cut.Render(p => p.Add(c => c.Elevation, null));
+        cut.Render(p => p.Add(c => c.Shadow, null));
         cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("0");
     }
 

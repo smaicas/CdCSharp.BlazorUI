@@ -1,0 +1,667 @@
+﻿/* ============================================================
+   DEBUG PANEL - Estilos Mejorados
+   Panel opaco, sólido y profesional
+   ============================================================ */
+
+/* ============================================================
+   PANEL PRINCIPAL
+   ============================================================ */
+
+.debug-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 420px;
+    max-height: calc(100vh - 40px);
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #0f3460;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(100, 150, 255, 0.1);
+    z-index: 999999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    font-size: 14px;
+    color: #e8e8e8;
+    transform: translateX(460px);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+    .debug-panel.open {
+        transform: translateX(0);
+    }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.debug-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    border-bottom: 2px solid #2a4a7e;
+    backdrop-filter: blur(10px);
+}
+
+    .debug-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+.btn-close {
+    background: linear-gradient(135deg, #4a5fdc 0%, #6366f1 100%);
+    border: none;
+    color: #ffffff;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(74, 95, 220, 0.3);
+}
+
+    .btn-close:hover {
+        background: linear-gradient(135deg, #5a6fec 0%, #7376f6 100%);
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 6px 20px rgba(74, 95, 220, 0.5);
+    }
+
+    .btn-close:active {
+        transform: scale(0.95);
+    }
+
+/* ============================================================
+   TABS NAVEGACIÓN
+   ============================================================ */
+
+.debug-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 12px 20px;
+    background: #0f1824;
+    border-bottom: 2px solid #1f2937;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4a5fdc #0f1824;
+}
+
+    .debug-tabs::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .debug-tabs::-webkit-scrollbar-track {
+        background: #0f1824;
+        border-radius: 3px;
+    }
+
+    .debug-tabs::-webkit-scrollbar-thumb {
+        background: linear-gradient(90deg, #4a5fdc 0%, #6366f1 100%);
+        border-radius: 3px;
+    }
+
+        .debug-tabs::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, #5a6fec 0%, #7376f6 100%);
+        }
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #8b92a8;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+    .tab-btn:hover {
+        background: rgba(74, 95, 220, 0.1);
+        border-color: rgba(74, 95, 220, 0.3);
+        color: #c5c9d6;
+    }
+
+    .tab-btn.active {
+        background: linear-gradient(135deg, rgba(74, 95, 220, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
+        border-color: #4a5fdc;
+        color: #ffffff;
+        box-shadow: 0 0 20px rgba(74, 95, 220, 0.3);
+    }
+
+/* ============================================================
+   CONTENIDO DEL PANEL
+   ============================================================ */
+
+.debug-content {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px 24px;
+    background: #16213e;
+    scrollbar-width: thin;
+    scrollbar-color: #4a5fdc #16213e;
+}
+
+    .debug-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .debug-content::-webkit-scrollbar-track {
+        background: #16213e;
+        border-radius: 4px;
+    }
+
+    .debug-content::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #4a5fdc 0%, #6366f1 100%);
+        border-radius: 4px;
+    }
+
+        .debug-content::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5a6fec 0%, #7376f6 100%);
+        }
+
+.tab-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+    .tab-section h4 {
+        margin: 20px 0 10px 0;
+        font-size: 12px;
+        font-weight: 700;
+        color: #7c8db0;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        border-bottom: 2px solid #2a4a7e;
+        padding-bottom: 8px;
+    }
+
+        .tab-section h4:first-child {
+            margin-top: 0;
+        }
+
+/* ============================================================
+   CONTROLES
+   ============================================================ */
+
+.toggle-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.6) 0%, rgba(17, 24, 39, 0.6) 100%);
+    border: 1px solid rgba(74, 95, 220, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .toggle-control:hover {
+        background: linear-gradient(135deg, rgba(42, 74, 126, 0.4) 0%, rgba(26, 34, 54, 0.4) 100%);
+        border-color: rgba(74, 95, 220, 0.4);
+        transform: translateX(4px);
+    }
+
+    .toggle-control input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #4a5fdc;
+        flex-shrink: 0;
+    }
+
+    .toggle-control span {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 500;
+        color: #d1d5db;
+        letter-spacing: 0.2px;
+    }
+
+.select-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .select-control span {
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .select-control select {
+        padding: 12px 14px;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border: 1px solid rgba(74, 95, 220, 0.3);
+        border-radius: 10px;
+        color: #e5e7eb;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .select-control select:hover {
+            background: linear-gradient(135deg, #2a4a7e 0%, #1a3454 100%);
+            border-color: rgba(74, 95, 220, 0.5);
+        }
+
+        .select-control select:focus {
+            outline: none;
+            border-color: #4a5fdc;
+            box-shadow: 0 0 0 3px rgba(74, 95, 220, 0.2);
+        }
+
+.slider-control {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+    .slider-control span {
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .slider-control input[type="range"] {
+        width: 100%;
+        height: 8px;
+        background: linear-gradient(90deg, #1f2937 0%, #111827 100%);
+        border-radius: 4px;
+        outline: none;
+        cursor: pointer;
+        border: 1px solid rgba(74, 95, 220, 0.3);
+    }
+
+        .slider-control input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #4a5fdc 0%, #6366f1 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(74, 95, 220, 0.4);
+        }
+
+            .slider-control input[type="range"]::-webkit-slider-thumb:hover {
+                transform: scale(1.3);
+                box-shadow: 0 4px 16px rgba(74, 95, 220, 0.6);
+            }
+
+        .slider-control input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #4a5fdc 0%, #6366f1 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(74, 95, 220, 0.4);
+        }
+
+            .slider-control input[type="range"]::-moz-range-thumb:hover {
+                transform: scale(1.3);
+                box-shadow: 0 4px 16px rgba(74, 95, 220, 0.6);
+            }
+
+.btn-action {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #4a5fdc 0%, #6366f1 100%);
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 12px rgba(74, 95, 220, 0.3);
+    letter-spacing: 0.3px;
+}
+
+    .btn-action:hover {
+        background: linear-gradient(135deg, #5a6fec 0%, #7376f6 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(74, 95, 220, 0.5);
+    }
+
+    .btn-action:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(74, 95, 220, 0.3);
+    }
+
+/* ============================================================
+   MÉTRICAS Y REPORTES
+   ============================================================ */
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.6) 0%, rgba(17, 24, 39, 0.6) 100%);
+    border: 1px solid rgba(74, 95, 220, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+    .metric-row:hover {
+        border-color: rgba(74, 95, 220, 0.4);
+        transform: translateX(4px);
+    }
+
+    .metric-row span {
+        font-size: 13px;
+        color: #9ca3af;
+        font-weight: 500;
+    }
+
+    .metric-row strong {
+        font-size: 16px;
+        color: #4a5fdc;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+
+.a11y-report {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+    .a11y-report > p {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        color: #d1d5db;
+        font-weight: 600;
+    }
+
+.a11y-issue {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+}
+
+    .a11y-issue:hover {
+        transform: translateX(4px);
+    }
+
+    .a11y-issue.error {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: #ef4444;
+    }
+
+    .a11y-issue.warning {
+        background: rgba(245, 158, 11, 0.15);
+        border-color: #f59e0b;
+    }
+
+    .a11y-issue.info {
+        background: rgba(74, 95, 220, 0.15);
+        border-color: #4a5fdc;
+    }
+
+    .a11y-issue .severity {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .a11y-issue.error .severity {
+        color: #fca5a5;
+    }
+
+    .a11y-issue.warning .severity {
+        color: #fcd34d;
+    }
+
+    .a11y-issue.info .severity {
+        color: #93c5fd;
+    }
+
+    .a11y-issue small {
+        margin-left: auto;
+        color: #9ca3af;
+        font-weight: 600;
+    }
+
+/* ============================================================
+   CSS VARIABLES LIST
+   ============================================================ */
+
+.css-vars-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #4a5fdc #16213e;
+}
+
+    .css-vars-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .css-vars-list::-webkit-scrollbar-thumb {
+        background: #4a5fdc;
+        border-radius: 3px;
+    }
+
+.css-var-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.6) 0%, rgba(17, 24, 39, 0.6) 100%);
+    border: 1px solid rgba(74, 95, 220, 0.2);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+    .css-var-item:hover {
+        border-color: rgba(74, 95, 220, 0.4);
+    }
+
+    .css-var-item label {
+        font-size: 11px;
+        color: #4a5fdc;
+        font-family: 'Courier New', 'Consolas', monospace;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+    }
+
+    .css-var-item input[type="text"] {
+        padding: 8px 10px;
+        background: #0f1824;
+        border: 1px solid rgba(74, 95, 220, 0.3);
+        border-radius: 6px;
+        color: #e5e7eb;
+        font-size: 12px;
+        font-family: 'Courier New', 'Consolas', monospace;
+        transition: all 0.3s ease;
+    }
+
+        .css-var-item input[type="text"]:focus {
+            outline: none;
+            border-color: #4a5fdc;
+            box-shadow: 0 0 0 3px rgba(74, 95, 220, 0.2);
+        }
+
+/* ============================================================
+   INSPECTOR INFO
+   ============================================================ */
+
+.element-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(74, 95, 220, 0.2) 0%, rgba(99, 102, 241, 0.1) 100%);
+    border: 2px solid rgba(74, 95, 220, 0.4);
+    border-radius: 12px;
+    margin-top: 12px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(74, 95, 220, 0.1);
+}
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-row span {
+        color: #9ca3af;
+        font-weight: 600;
+    }
+
+    .info-row strong {
+        color: #93c5fd;
+        font-family: 'Courier New', 'Consolas', monospace;
+        font-size: 11px;
+    }
+
+.info-box {
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(74, 95, 220, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border: 1px solid rgba(74, 95, 220, 0.3);
+    border-radius: 12px;
+    margin-top: 12px;
+}
+
+    .info-box p {
+        margin: 8px 0;
+        font-size: 12px;
+        color: #d1d5db;
+        line-height: 1.6;
+    }
+
+    .info-box strong {
+        color: #4a5fdc;
+        font-weight: 700;
+    }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+    .debug-panel {
+        width: calc(100% - 20px);
+        max-width: 400px;
+        right: 10px;
+        top: 10px;
+    }
+
+    .debug-tabs {
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    .tab-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-height: 600px) {
+    .debug-panel {
+        max-height: calc(100vh - 20px);
+        font-size: 12px;
+    }
+
+    .debug-header {
+        padding: 12px 18px;
+    }
+}
+
+/* ============================================================
+   ACCESIBILIDAD
+   ============================================================ */
+
+.debug-panel *:focus-visible {
+    outline: 3px solid #4a5fdc;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .debug-panel,
+    .debug-panel *,
+    .btn-close,
+    .tab-btn,
+    .btn-action {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================================
+   ASEGURAR AISLAMIENTO DE ESTILOS
+   ============================================================ */
+
+.debug-panel {
+    all: initial;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    width: 420px !important;
+    max-height: calc(100vh - 40px) !important;
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%) !important;
+    border: 2px solid #0f3460 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(100, 150, 255, 0.1) !important;
+    z-index: 999999 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
+    font-size: 14px !important;
+    color: #e8e8e8 !important;
+    transform: translateX(460px) !important;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+    .debug-panel * {
+        all: unset;
+        display: revert;
+        box-sizing: border-box;
+    }
+
+    .debug-panel button,
+    .debug-panel input,
+    .debug-panel select {
+        font-family: inherit;
+    }

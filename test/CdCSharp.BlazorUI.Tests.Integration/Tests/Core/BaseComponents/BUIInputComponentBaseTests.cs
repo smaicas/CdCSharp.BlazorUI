@@ -181,7 +181,7 @@ public class BUIInputComponentBaseTests
             .Add(c => c.Size, SizeEnum.Small)
             .Add(c => c.Density, DensityEnum.Compact)
             .Add(c => c.FullWidth, true)
-            .Add(c => c.Elevation, 4)
+            .Add(c => c.Shadow, BUIShadowPresets.Elevation(4))
         );
 
         IElement input = cut.Find("input");

@@ -1,8 +1,3 @@
-bui-component:focus-visible, bui-component *:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
-}
-
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -144,7 +139,6 @@ code {
     border-bottom: 1px solid rgba(var(--palette-backgroundcontrast-rgb), 0.1);
     position: sticky;
     top: 0;
-    z-index: 100;
 }
 
 .doc-header__brand {
