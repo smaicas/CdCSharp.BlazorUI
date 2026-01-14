@@ -1,24 +1,16 @@
-﻿@using CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript
-@using CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop
+﻿@using CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
-@using CdCSharp.BlazorUI.Components.Forms.TextArea
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
-@inherits BUIInputComponentBase<string, BUIInputTextArea, BUIInputTextAreaVariant>
+@inherits BUIInputComponentBase<string, BUIInputTextArea, BUIInputVariant>
 @implements IHasSize
-@implements IHasFullWidth
 @implements IHasLoading
 @implements IHasDensity
-@implements IHasShadow
-@implements IHasRipple
-@implements IAsyncDisposable
-
 @implements IInputFamilyComponent
 
 @inject ITextAreaJsInterop TextAreaJs
@@ -28,17 +20,16 @@
 }
 
 @code {
-    private ElementReference _textareaContainer;
-    private ElementReference _textarea;
+    private ElementReference _textareaRef;
     private string _textareaId = $"bui-textarea-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
-    private bool _jsInitialized = false;
+    private bool _jsInitialized;
+    private bool _isFocused;
+    private bool _keyboardFocus;
+    private bool _mouseDownFlag;
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-
-    // IHasFullWidth
-    [Parameter] public bool FullWidth { get; set; }
 
     // IHasLoading
     [Parameter] public bool IsLoading { get; set; }
@@ -47,40 +38,29 @@
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
-    // ========= IHasShadow ========= //
-    [Parameter] public ShadowStyle? Shadow { get; set; }
-
-    // IHasRipple
-    [Parameter] public bool DisableRipple { get; set; }
-    [Parameter] public CssColor? RippleColor { get; set; }
-    [Parameter] public int? RippleDurationMs { get; set; }
-    public ElementReference GetRippleContainer() => _textareaContainer;
-
-    // TextArea specific parameters
-    [Parameter] public string? Placeholder { get; set; }
+    // Component-specific
     [Parameter] public string? Label { get; set; }
+    [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? HelperText { get; set; }
-    [Parameter] public int? Rows { get; set; } = 3;
-    [Parameter] public int? Cols { get; set; }
+    [Parameter] public int Rows { get; set; } = 3;
     [Parameter] public int? MaxLength { get; set; }
-    [Parameter] public bool AutoResize { get; set; } = false;
+    [Parameter] public bool AutoResize { get; set; }
     [Parameter] public TextAreaResize Resize { get; set; } = TextAreaResize.Vertical;
     [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter] public EventCallback<string> OnInput { get; set; }
 
-    /* ========= Variant ========= */
+    public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
-    public override BUIInputTextAreaVariant DefaultVariant => BUIInputTextAreaVariant.Outlined;
+    private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
+    private bool IsFloated => _isFocused || HasValue;
 
-    protected override IReadOnlyDictionary<BUIInputTextAreaVariant, Func<BUIInputTextArea, RenderFragment>> BuiltInTemplates { get; } =
-        new Dictionary<BUIInputTextAreaVariant, Func<BUIInputTextArea, RenderFragment>>
+    protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputTextArea, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputVariant, Func<BUIInputTextArea, RenderFragment>>
         {
-            [BUIInputTextAreaVariant.Outlined] = t => t.RenderTextArea(),
-            [BUIInputTextAreaVariant.Filled] = t => t.RenderTextArea(),
-            [BUIInputTextAreaVariant.Standard] = t => t.RenderTextArea()
+            [BUIInputVariant.Outlined] = t => t.RenderTextArea(),
+            [BUIInputVariant.Filled] = t => t.RenderTextArea(),
+            [BUIInputVariant.Standard] = t => t.RenderTextArea()
         };
-
-    /* ========= Lifecycle ========= */
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -88,73 +68,83 @@
 
         if (firstRender && AutoResize)
         {
-            await TextAreaJs.InitializeAutoResizeAsync(_textarea, _textareaId);
+            await TextAreaJs.InitializeAutoResizeAsync(_textareaRef, _textareaId);
             _jsInitialized = true;
         }
     }
 
-    /* ========= Render Methods ========= */
-
     private RenderFragment RenderTextArea() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <div class="bui-stack-column">
-                @if (!string.IsNullOrWhiteSpace(Label))
+        <bui-component @attributes="ComputedAttributes"
+                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
+                       data-bui-resize="@Resize.ToString().ToLowerInvariant()"
+                       data-bui-autoresize="@AutoResize.ToString().ToLowerInvariant()"
+                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+
+            <div class="bui-input__wrapper">
+                <BUIFloatingLabel Label="@Label" For="@_textareaId" Required="@Required" />
+
+                <textarea @ref="_textareaRef"
+                          id="@_textareaId"
+                          class="bui-input__field"
+                          value="@CurrentValue"
+                          rows="@Rows"
+                          maxlength="@MaxLength"
+                          placeholder="@(IsFloated? Placeholder : null)"
+                          disabled="@IsDisabled"
+                          readonly="@ReadOnly"
+                          required="@Required"
+                          @onchange="HandleChange"
+                          @oninput="HandleInput"
+                          @onfocus="HandleFocus"
+                          @onblur="HandleBlur"
+                          @onmousedown="HandleMouseDown"
+                          @onkeydown="HandleKeyDown"
+                          aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
+                          aria-describedby="@_helperTextId"
+                          aria-invalid="@IsError.ToString().ToLowerInvariant()"
+                          aria-required="@Required.ToString().ToLowerInvariant()"></textarea>
+
+                @if (IsLoading && LoadingIndicatorVariant != null)
                 {
-                    <label for="@_textareaId" class="bui-input__label">
-                        @Label
-                        @if (Required)
-                        {
-                            <span class="bui-textarea__required">*</span>
-                        }
-                    </label>
-                }
-
-                <div class="bui-textarea__container" @ref="_textareaContainer">
-                    <textarea @ref="_textarea"
-                              id="@_textareaId"
-                              value="@CurrentValue"
-                              @onchange="HandleChange"
-                              @oninput="HandleInput"
-                              aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                              aria-describedby="@_helperTextId"
-                              aria-invalid="@IsError.ToString().ToLower()"
-                              aria-required="@Required.ToString().ToLower()"
-                              placeholder="@Placeholder"
-                              rows="@Rows"
-                              cols="@Cols"
-                              maxlength="@MaxLength"
-                              disabled="@IsDisabled"
-                              readonly="@ReadOnly"
-                              required="@Required"
-                              data-resize="@Resize.ToString().ToLowerInvariant()"></textarea>
-
-                    @if (IsLoading && LoadingIndicatorVariant != null)
-                    {
-                        <div class="bui-textarea__loading">
-                            <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                        </div>
-                    }
-                </div>
-
-                @if (IsError && EditContext != null && ValueExpression != null)
-                {
-                    <div class="bui-textarea__validation">
-                        <ValidationMessage For="ValueExpression" />
-                    </div>
-                }
-
-                @if (!string.IsNullOrWhiteSpace(HelperText))
-                {
-                    <div id="@_helperTextId" class="bui-textarea__helper-text">
-                        @HelperText
+                    <div class="bui-input__loading">
+                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
                     </div>
                 }
             </div>
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div id="@_helperTextId" class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
         </bui-component>
     };
 
-    /* ========= Event Handlers ========= */
+    private void HandleMouseDown(MouseEventArgs e) => _mouseDownFlag = true;
+
+    private void HandleKeyDown(KeyboardEventArgs e) => _mouseDownFlag = false;
+
+    private void HandleFocus(FocusEventArgs e)
+    {
+        _isFocused = true;
+        _keyboardFocus = !_mouseDownFlag;
+    }
+
+    private void HandleBlur(FocusEventArgs e)
+    {
+        _isFocused = false;
+        _keyboardFocus = false;
+        _mouseDownFlag = false;
+    }
 
     private async Task HandleChange(ChangeEventArgs e)
     {
@@ -180,8 +170,6 @@
         validationErrorMessage = string.Empty;
         return true;
     }
-
-    /* ========= Disposal ========= */
 
     public override async ValueTask DisposeAsync()
     {

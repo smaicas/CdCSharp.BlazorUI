@@ -11,7 +11,6 @@
 
 @inherits BUIInputComponentBase<TValue, BUIDropdownContainer<TValue>, BUIInputVariant>
 @implements IHasSize
-@implements IHasFullWidth
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasShadow
@@ -39,7 +38,6 @@
     [Inject] private IDropdownJsInterop JsInterop { get; set; } = default!;
 
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public bool FullWidth { get; set; }
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;

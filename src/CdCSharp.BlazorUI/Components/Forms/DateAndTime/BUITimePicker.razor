@@ -1,59 +1,64 @@
 ﻿@using System.Globalization
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @inherits BUIComponentBase
 @implements IHasSize
 @implements IHasDensity
+@implements IPickerFamilyComponent
 
 <bui-component @attributes="ComputedAttributes">
-    <button type="button"
-            class="bui-timepicker__format-btn"
-            @onclick="ToggleFormat">
-        @(Format == "24" ? "24h" : "12h")
-    </button>
-
-    <div class="bui-timepicker__spinners">
-        <div class="bui-timepicker__spinner">
-            <button type="button" class="bui-timepicker__spin-btn" @onclick="IncrementHour">▲</button>
-            <input type="text"
-                   class="bui-timepicker__input"
-                   value="@DisplayHour.ToString("00")"
-                   @onchange="OnHourInput"
-                   @onfocus="OnInputFocus"
-                   maxlength="2" />
-            <button type="button" class="bui-timepicker__spin-btn" @onclick="DecrementHour">▼</button>
-        </div>
-
-        <span class="bui-timepicker__separator">:</span>
-
-        <div class="bui-timepicker__spinner">
-            <button type="button" class="bui-timepicker__spin-btn" @onclick="IncrementMinute">▲</button>
-            <input type="text"
-                   class="bui-timepicker__input"
-                   value="@Minute.ToString("00")"
-                   @onchange="OnMinuteInput"
-                   @onfocus="OnInputFocus"
-                   maxlength="2" />
-            <button type="button" class="bui-timepicker__spin-btn" @onclick="DecrementMinute">▼</button>
-        </div>
-    </div>
-
-    @if (Format == "12")
-    {
-        <button type="button"
-                class="bui-timepicker__ampm-btn"
-                @onclick="ToggleAmPm">
-            @AmPm
+    <div class="bui-picker__row">
+        <button type="button" class="bui-picker__btn" @onclick="ToggleFormat">
+            @(Format == "24" ? "24h" : "12h")
         </button>
-    }
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
+                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="IncrementHour">
+                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
+                </button>
+                <input type="text"
+                       class="bui-picker__input"
+                       value="@DisplayHour.ToString("00")"
+                       @onchange="OnHourInput"
+                       maxlength="2" />
+                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="DecrementHour">
+                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
+                </button>
+            </div>
+
+            <span class="bui-picker__separator">:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
+                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="IncrementMinute">
+                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
+                </button>
+                <input type="text"
+                       class="bui-picker__input"
+                       value="@Minute.ToString("00")"
+                       @onchange="OnMinuteInput"
+                       maxlength="2" />
+                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="DecrementMinute">
+                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
+                </button>
+            </div>
+        </div>
+
+        @if (Format == "12")
+        {
+            <button type="button" class="bui-picker__btn" @onclick="ToggleAmPm">
+                @AmPm
+            </button>
+        }
+    </div>
 </bui-component>
 
 @code {
     [Parameter] public TimeOnly? Value { get; set; }
     [Parameter] public EventCallback<TimeOnly?> ValueChanged { get; set; }
-
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
@@ -62,28 +67,17 @@
     private string Format = "24";
     private string AmPm = "AM";
 
-    private int DisplayHour
-    {
-        get
-        {
-            if (Format == "24") return Hour;
-            int h = Hour % 12;
-            return h == 0 ? 12 : h;
-        }
-    }
+    private int DisplayHour => Format == "24" ? Hour : (Hour % 12 == 0 ? 12 : Hour % 12);
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern.Contains("tt")
-            ? "12"
-            : "24";
+        Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern.Contains("tt") ? "12" : "24";
     }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-
         if (Value.HasValue)
         {
             Hour = Value.Value.Hour;
@@ -92,34 +86,19 @@
         }
     }
 
-    private async Task UpdateValue()
-    {
-        TimeOnly t = new(Hour, Minute);
-        await ValueChanged.InvokeAsync(t);
-    }
-
-    private void OnInputFocus(FocusEventArgs e) { }
+    private async Task UpdateValue() => await ValueChanged.InvokeAsync(new TimeOnly(Hour, Minute));
 
     private void OnHourInput(ChangeEventArgs e)
     {
         if (!int.TryParse(e.Value?.ToString(), out int h)) return;
-
-        if (Format == "24")
-        {
-            Hour = Math.Clamp(h, 0, 23);
-        }
-        else
-        {
-            h = Math.Clamp(h, 1, 12);
-            Hour = AmPm == "PM" ? (h % 12) + 12 : h % 12;
-        }
+        if (Format == "24") Hour = Math.Clamp(h, 0, 23);
+        else { h = Math.Clamp(h, 1, 12); Hour = AmPm == "PM" ? (h % 12) + 12 : h % 12; }
         _ = UpdateValue();
     }
 
     private void OnMinuteInput(ChangeEventArgs e)
     {
         if (!int.TryParse(e.Value?.ToString(), out int m)) return;
-
         Minute = Math.Clamp(m, 0, 59);
         _ = UpdateValue();
     }
@@ -127,66 +106,30 @@
     private void ToggleFormat()
     {
         Format = Format == "24" ? "12" : "24";
-        if (Format == "12")
-        {
-            AmPm = Hour >= 12 ? "PM" : "AM";
-        }
+        if (Format == "12") AmPm = Hour >= 12 ? "PM" : "AM";
     }
 
     private void ToggleAmPm()
     {
-        if (AmPm == "AM")
-        {
-            AmPm = "PM";
-            if (Hour < 12) Hour += 12;
-        }
-        else
-        {
-            AmPm = "AM";
-            if (Hour >= 12) Hour -= 12;
-        }
+        if (AmPm == "AM") { AmPm = "PM"; if (Hour < 12) Hour += 12; }
+        else { AmPm = "AM"; if (Hour >= 12) Hour -= 12; }
         _ = UpdateValue();
     }
 
     private void IncrementHour()
     {
-        if (Format == "24")
-        {
-            Hour = (Hour + 1) % 24;
-        }
-        else
-        {
-            int display = DisplayHour;
-            display = display % 12 + 1;
-            Hour = AmPm == "PM" ? (display % 12) + 12 : display % 12;
-        }
+        if (Format == "24") Hour = (Hour + 1) % 24;
+        else { int d = DisplayHour % 12 + 1; Hour = AmPm == "PM" ? (d % 12) + 12 : d % 12; }
         _ = UpdateValue();
     }
 
     private void DecrementHour()
     {
-        if (Format == "24")
-        {
-            Hour = (Hour + 23) % 24;
-        }
-        else
-        {
-            int display = DisplayHour;
-            display = display == 1 ? 12 : display - 1;
-            Hour = AmPm == "PM" ? (display % 12) + 12 : display % 12;
-        }
+        if (Format == "24") Hour = (Hour + 23) % 24;
+        else { int d = DisplayHour == 1 ? 12 : DisplayHour - 1; Hour = AmPm == "PM" ? (d % 12) + 12 : d % 12; }
         _ = UpdateValue();
     }
 
-    private void IncrementMinute()
-    {
-        Minute = (Minute + 1) % 60;
-        _ = UpdateValue();
-    }
-
-    private void DecrementMinute()
-    {
-        Minute = (Minute + 59) % 60;
-        _ = UpdateValue();
-    }
+    private void IncrementMinute() { Minute = (Minute + 1) % 60; _ = UpdateValue(); }
+    private void DecrementMinute() { Minute = (Minute + 59) % 60; _ = UpdateValue(); }
 }

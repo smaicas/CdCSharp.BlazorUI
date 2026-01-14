@@ -58,6 +58,7 @@ public class InputFamilyGenerator : IAssetGenerator
 /* === BASE === */
 
 bui-component[{{inputBase}}] {
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;

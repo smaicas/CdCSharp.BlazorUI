@@ -154,15 +154,15 @@
         Demo = RenderVariants(),
         Code = """
 <BUIInputColor Label="Outlined"
-               Variant="BUIInputColorVariant.Outlined"
+               Variant="BUIInputVariant.Outlined"
                @bind-Value="model.Color" />
 
 <BUIInputColor Label="Filled"
-               Variant="BUIInputColorVariant.Filled"
+               Variant="BUIInputVariant.Filled"
                @bind-Value="model.Color" />
 
 <BUIInputColor Label="Standard"
-               Variant="BUIInputColorVariant.Standard"
+               Variant="BUIInputVariant.Standard"
                @bind-Value="model.Color" />
 """
     };
@@ -301,15 +301,15 @@
     {
         <div class="demo-column">
             <BUIInputColor Label="Outlined"
-                           Variant="BUIInputColorVariant.Outlined"
+                           Variant="BUIInputVariant.Outlined"
                            @bind-Value="Model.Color" />
 
             <BUIInputColor Label="Filled"
-                           Variant="BUIInputColorVariant.Filled"
+                           Variant="BUIInputVariant.Filled"
                            @bind-Value="Model.Color" />
 
             <BUIInputColor Label="Standard"
-                           Variant="BUIInputColorVariant.Standard"
+                           Variant="BUIInputVariant.Standard"
                            @bind-Value="Model.Color" />
         </div>
     };
@@ -451,7 +451,7 @@
         new("Disabled", "bool", "false", "Disables the input"),
         new("Size", "SizeEnum", "Medium", "Input size"),
         new("Density", "DensityEnum", "Standard", "Input density"),
-        new("Variant", "BUIInputColorVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
         new("FullWidth", "bool", "false", "Makes the input full width"),
     };
 

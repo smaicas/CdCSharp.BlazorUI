@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Forms.TextArea;
+﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
 /// <summary>
 /// Defines how the textarea can be resized by the user.

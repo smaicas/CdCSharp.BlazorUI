@@ -1,151 +1,71 @@
 ﻿@using CdCSharp.BlazorUI.Components.Forms.Color.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Css
-@using System.Globalization
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @inherits BUIComponentBase
 @implements IHasSize
+@implements IHasDensity
+@implements IPickerFamilyComponent
 @implements IAsyncDisposable
 
 <bui-component @attributes="ComputedAttributes">
-    <!-- Selection Box (Saturation/Value) -->
-    <div class="bui-colorpicker__selection-wrapper">
-        <BUIDraggable OnDrag="HandleSelectionDrag" OnDragEnd="HandleSelectionDrag">
-            <div @ref="_selectionRef"
-                 class="bui-colorpicker__selection"
-                 style="width: @(SelectionWidth)px; height: @(SelectionHeight)px;">
-                <div class="bui-colorpicker__selection-gradient"
-                     style="background-color: @GetHueColor();">
-                    <div class="bui-colorpicker__selection-white">
-                        <div class="bui-colorpicker__selection-black">
-                        </div>
-                    </div>
-                    <span @ref="_handlerRef" class="bui-colorpicker__handler"></span>
-                </div>
+    <BUIDraggable OnDrag="HandleSelectionDrag" OnDragEnd="HandleSelectionDrag">
+        <div @ref="_selectionRef"
+             class="bui-colorpicker__selection"
+             style="width:@(SelectionWidth)px; height:@(SelectionHeight)px; background-color:@GetHueColor();">
+            <div class="bui-colorpicker__selection-gradient">
+                <span @ref="_handlerRef" class="bui-colorpicker__handler"></span>
             </div>
-        </BUIDraggable>
+        </div>
+    </BUIDraggable>
+
+    <div class="bui-picker__slider bui-colorpicker__slider--hue"
+         style="--value:@((_hsvColor.Hue / 360.0 * 100).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%">
+        <input type="range" min="0" max="360" step="1" value="@_hsvColor.Hue" @oninput="HandleHueChange" />
     </div>
 
-    <!-- Sliders -->
-    <div class="bui-colorpicker__sliders">
-        <!-- Hue Slider -->
-        <div class="bui-colorpicker__slider">
-            <input type="range"
-                   class="bui-colorpicker__hue-input"
-                   min="0" max="360" step="1"
-                   value="@_hsvColor.Hue"
-                   @oninput="HandleHueChange" />
-        </div>
-
-        <!-- Alpha Slider -->
-        <div class="bui-colorpicker__alpha-slider">
-            <div class="bui-colorpicker__alpha-chess"></div>
-            <div class="bui-colorpicker__alpha-gradient"
-                 style="background: linear-gradient(to right, transparent, @GetOpaqueColor());"></div>
-            <input type="range"
-                   class="bui-colorpicker__alpha-input"
-                   min="0" max="255" step="1"
-                   value="@_alpha"
-                   @oninput="HandleAlphaChange" />
-        </div>
+    <div class="bui-picker__slider bui-colorpicker__slider--alpha"
+         style="--value:@((_alpha / 255.0 * 100).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%; --color:@GetOpaqueColor()">
+        <input type="range" min="0" max="255" step="1" value="@_alpha" @oninput="HandleAlphaChange" />
     </div>
 
-    <!-- Color Inputs -->
-    <div class="bui-colorpicker__inputs">
+    <div class="bui-picker__row">
         @switch (OutputFormat)
         {
-            case ColorPickerOutputFormat.Hsv:
-                <div class="bui-colorpicker__input-group">
-                    <input type="number" min="0" max="360" step="1"
-                           value="@_hsvColor.Hue"
-                           @onchange="e => SetHue(e)" />
-                    <span>H</span>
-                </div>
-                <div class="bui-colorpicker__input-group">
-                    <input type="number" min="0" max="100" step="1"
-                           value="@((int)(_hsvColor.Saturation * 100))"
-                           @onchange="e => SetSaturation(e)" />
-                    <span>S</span>
-                </div>
-                <div class="bui-colorpicker__input-group">
-                    <input type="number" min="0" max="100" step="1"
-                           value="@((int)(_hsvColor.Value * 100))"
-                           @onchange="e => SetValue(e)" />
-                    <span>V</span>
-                </div>
-                <div class="bui-colorpicker__input-group bui-colorpicker__input-group--alpha">
-                    <input type="number" min="0" max="255" step="1"
-                           value="@_alpha"
-                           @onchange="e => SetAlpha(e)" />
-                    <span>A</span>
-                </div>
-                break;
-
             case ColorPickerOutputFormat.Hex:
-                <div class="bui-colorpicker__input-group bui-colorpicker__input-group--hex">
-                    <input type="text"
-                           value="@GetCurrentColor().ToString(ColorOutputFormats.HexA)"
-                           @onchange="e => SetHex(e)" />
-                    <span>HEX</span>
-                </div>
+                <input type="text"
+                       class="bui-picker__input"
+                       style="flex:1"
+                       value="@GetCurrentColor().ToString(ColorOutputFormats.HexA)"
+                       @onchange="SetHex" />
                 break;
-
             default:
-                <div class="bui-colorpicker__input-group">
-                    <input type="number" min="0" max="255" step="1"
-                           value="@GetCurrentColor().R"
-                           @onchange="e => SetRgb(e, 0)" />
-                    <span>R</span>
-                </div>
-                <div class="bui-colorpicker__input-group">
-                    <input type="number" min="0" max="255" step="1"
-                           value="@GetCurrentColor().G"
-                           @onchange="e => SetRgb(e, 1)" />
-                    <span>G</span>
-                </div>
-                <div class="bui-colorpicker__input-group">
-                    <input type="number" min="0" max="255" step="1"
-                           value="@GetCurrentColor().B"
-                           @onchange="e => SetRgb(e, 2)" />
-                    <span>B</span>
-                </div>
-                <div class="bui-colorpicker__input-group bui-colorpicker__input-group--alpha">
-                    <input type="number" min="0" max="255" step="1"
-                           value="@_alpha"
-                           @onchange="e => SetAlpha(e)" />
-                    <span>A</span>
-                </div>
+                <input type="number" class="bui-picker__input" min="0" max="255"
+                       value="@GetCurrentColor().R" @onchange="e => SetRgb(e, 0)" />
+                <input type="number" class="bui-picker__input" min="0" max="255"
+                       value="@GetCurrentColor().G" @onchange="e => SetRgb(e, 1)" />
+                <input type="number" class="bui-picker__input" min="0" max="255"
+                       value="@GetCurrentColor().B" @onchange="e => SetRgb(e, 2)" />
+                <input type="number" class="bui-picker__input" min="0" max="255"
+                       value="@_alpha" @onchange="SetAlpha" />
                 break;
         }
-
-        <button type="button"
-                class="bui-colorpicker__format-btn"
-                @onclick="CycleFormat"
-                title="Change format">
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_swap_vert" Size="SizeEnum.Small" />
+        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="CycleFormat">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_sync" Size="SizeEnum.Small" />
         </button>
     </div>
 
-    <!-- Preview -->
-    <div class="bui-colorpicker__preview">
-        <div class="bui-colorpicker__preview-chess">
-            <div class="bui-colorpicker__preview-color"
-                 style="background-color: @GetCurrentColor().ToString(ColorOutputFormats.Rgba);">
-            </div>
-        </div>
+    <div class="bui-picker__preview">
+        <div style="background-color:@GetCurrentColor().ToString(ColorOutputFormats.Rgba);"></div>
     </div>
 
-    <!-- Actions -->
     @if (ShowActions)
     {
-        <div class="bui-colorpicker__actions">
-            <button type="button"
-                    class="bui-colorpicker__action bui-colorpicker__action--revert"
-                    @onclick="HandleRevert">
-                @RevertText
-            </button>
+        <div class="bui-picker__row" style="justify-content:flex-end; border-top:1px solid var(--palette-border); padding-top:var(--bui-density-gap, 0.5rem);">
+            <button type="button" class="bui-picker__btn" @onclick="HandleRevert">@RevertText</button>
         </div>
     }
 </bui-component>
@@ -166,13 +86,13 @@
     [Parameter] public bool ShowActions { get; set; } = true;
     [Parameter] public string RevertText { get; set; } = "Revert";
     [Parameter] public int SelectionWidth { get; set; } = 200;
-    [Parameter] public int SelectionHeight { get; set; } = 200;
+    [Parameter] public int SelectionHeight { get; set; } = 150;
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-
         if (Value != null && !_isInitialized)
         {
             _hsvColor = HsvColor.FromCssColor(Value);
@@ -183,29 +103,17 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnAfterRenderAsync(firstRender);
-
-        if (firstRender && Value != null)
-        {
-            await UpdateHandlerPosition();
-        }
+        if (firstRender && Value != null) await UpdateHandlerPosition();
     }
 
     private CssColor GetCurrentColor() => _hsvColor.ToCssColor(_alpha);
-
     private string GetHueColor() => new HsvColor(_hsvColor.Hue, 1, 1).ToCssColor().ToString(ColorOutputFormats.Rgb);
-
     private string GetOpaqueColor() => _hsvColor.ToCssColor(255).ToString(ColorOutputFormats.Rgb);
 
     private async Task HandleSelectionDrag(DragEventArgs e)
     {
         double[] pos = await JsInterop.GetRelativePositionAsync(_selectionRef, e.ClientX, e.ClientY);
-
-        double saturation = pos[0] / SelectionWidth;
-        double value = 1 - (pos[1] / SelectionHeight);
-
-        _hsvColor = _hsvColor.WithSaturation(saturation).WithValue(value);
-
+        _hsvColor = _hsvColor.WithSaturation(pos[0] / SelectionWidth).WithValue(1 - pos[1] / SelectionHeight);
         await JsInterop.SetHandlerPositionAsync(_handlerRef, pos[0], pos[1]);
         await NotifyColorChanged();
     }
@@ -228,55 +136,16 @@
         }
     }
 
-    private async Task SetHue(ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int hue))
-        {
-            _hsvColor = _hsvColor.WithHue(Math.Clamp(hue, 0, 360));
-            await NotifyColorChanged();
-        }
-    }
-
-    private async Task SetSaturation(ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int sat))
-        {
-            _hsvColor = _hsvColor.WithSaturation(Math.Clamp(sat, 0, 100) / 100.0);
-            await UpdateHandlerPosition();
-            await NotifyColorChanged();
-        }
-    }
-
-    private async Task SetValue(ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out int val))
-        {
-            _hsvColor = _hsvColor.WithValue(Math.Clamp(val, 0, 100) / 100.0);
-            await UpdateHandlerPosition();
-            await NotifyColorChanged();
-        }
-    }
-
     private async Task SetRgb(ChangeEventArgs e, int component)
     {
         if (!int.TryParse(e.Value?.ToString(), out int val)) return;
-
-        CssColor current = GetCurrentColor();
-        int r = current.R, g = current.G, b = current.B;
-
-        switch (component)
-        {
-            case 0: r = Math.Clamp(val, 0, 255); break;
-            case 1: g = Math.Clamp(val, 0, 255); break;
-            case 2: b = Math.Clamp(val, 0, 255); break;
-        }
-
-        CssColor newColor = new(r, g, b, _alpha);
-        _hsvColor = HsvColor.FromCssColor(newColor);
+        CssColor c = GetCurrentColor();
+        int r = c.R, g = c.G, b = c.B;
+        switch (component) { case 0: r = Math.Clamp(val, 0, 255); break; case 1: g = Math.Clamp(val, 0, 255); break; case 2: b = Math.Clamp(val, 0, 255); break; }
+        _hsvColor = HsvColor.FromCssColor(new CssColor(r, g, b, _alpha));
         await UpdateHandlerPosition();
         await NotifyColorChanged();
     }
-
     private async Task SetAlpha(ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int alpha))
@@ -288,38 +157,24 @@
 
     private async Task SetHex(ChangeEventArgs e)
     {
-        string? hex = e.Value?.ToString();
-        if (string.IsNullOrWhiteSpace(hex)) return;
-
         try
         {
-            CssColor newColor = new(hex);
-            _hsvColor = HsvColor.FromCssColor(newColor);
-            _alpha = newColor.A;
+            CssColor c = new(e.Value?.ToString() ?? "");
+            _hsvColor = HsvColor.FromCssColor(c);
+            _alpha = c.A;
             await UpdateHandlerPosition();
             await NotifyColorChanged();
         }
-        catch
-        {
-            // Invalid hex, ignore
-        }
+        catch { }
     }
 
-    private void CycleFormat()
+    private void CycleFormat() => OutputFormat = OutputFormat switch
     {
-        OutputFormat = OutputFormat switch
-        {
-            ColorPickerOutputFormat.Rgb => ColorPickerOutputFormat.Hsv,
-            ColorPickerOutputFormat.Hsv => ColorPickerOutputFormat.Hex,
-            ColorPickerOutputFormat.Hex => ColorPickerOutputFormat.Rgb,
-            _ => ColorPickerOutputFormat.Rgb
-        };
-    }
+        ColorPickerOutputFormat.Hex => ColorPickerOutputFormat.Rgb,
+        _ => ColorPickerOutputFormat.Hex
+    };
 
-    private async Task HandleRevert()
-    {
-        await OnRevert.InvokeAsync();
-    }
+    private async Task HandleRevert() => await OnRevert.InvokeAsync();
 
     private async Task UpdateHandlerPosition()
     {
@@ -328,13 +183,7 @@
         await JsInterop.SetHandlerPositionAsync(_handlerRef, x, y);
     }
 
-    private async Task NotifyColorChanged()
-    {
-        await ValueChanged.InvokeAsync(GetCurrentColor());
-    }
+    private async Task NotifyColorChanged() => await ValueChanged.InvokeAsync(GetCurrentColor());
 
-    public async ValueTask DisposeAsync()
-    {
-        // Cleanup if needed
-    }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

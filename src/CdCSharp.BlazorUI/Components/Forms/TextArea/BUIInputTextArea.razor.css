@@ -1,33 +1,47 @@
-﻿/* ============================================
-   BUIInputTextArea.razor.css (REFACTORED)
-
-   Similar refactoring as BUIInputText
-   ============================================ */
-
-/* Textarea specific styles only */
-bui-component[data-bui-component="input-textarea"] textarea {
-    width: 100%;
-    font-family: inherit;
-    font-size: inherit;
+﻿/* Textarea field adjustments */
+bui-component[data-bui-component="input-text-area"] .bui-input__field {
+    min-height: calc(5rem * var(--bui-size-multiplier, 1));
     line-height: 1.5;
-    color: inherit;
     resize: vertical;
 }
 
-/* Resize options - component specific */
-bui-component[data-bui-component="input-textarea"][data-bui-resize="none"] textarea {
+/* Wrapper needs to align items to start for multiline */
+bui-component[data-bui-component="input-text-area"] .bui-input__wrapper {
+    align-items: flex-start;
+}
+
+/* Label positioning for textarea */
+bui-component[data-bui-component="input-text-area"] .bui-input__label {
+    top: calc(0.75rem * var(--bui-size-multiplier, 1));
+    transform: none;
+}
+
+bui-component[data-bui-component="input-text-area"][data-bui-floated="true"] .bui-input__label {
+    top: 0;
+    transform: translateY(0) scale(var(--_input-scale));
+}
+
+/* Resize options */
+bui-component[data-bui-component="input-text-area"][data-bui-resize="none"] .bui-input__field {
     resize: none;
 }
 
-bui-component[data-bui-component="input-textarea"][data-bui-resize="horizontal"] textarea {
+bui-component[data-bui-component="input-text-area"][data-bui-resize="horizontal"] .bui-input__field {
     resize: horizontal;
 }
 
-bui-component[data-bui-component="input-textarea"][data-bui-resize="both"] textarea {
+bui-component[data-bui-component="input-text-area"][data-bui-resize="both"] .bui-input__field {
     resize: both;
 }
 
-/* Auto-grow - component specific */
-bui-component[data-bui-component="input-textarea"][data-bui-autogrow="true"] textarea {
+/* Auto-resize */
+bui-component[data-bui-component="input-text-area"][data-bui-autoresize="true"] .bui-input__field {
+    resize: none;
     overflow: hidden;
+}
+
+/* Loading position adjustment */
+bui-component[data-bui-component="input-text-area"] .bui-input__loading {
+    top: calc(0.75rem * var(--bui-size-multiplier, 1));
+    transform: none;
 }

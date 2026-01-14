@@ -104,16 +104,16 @@
 
                 @if (HasPrefix)
                 {
-                    <span class="bui-input__prefix">
-                        @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-                        {
+                    @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+                    {
+                        <span class="bui-input__prefix-svg">
                             <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-                        }
-                        @if (!string.IsNullOrWhiteSpace(PrefixText))
-                        {
-                            <span>@PrefixText</span>
-                        }
-                    </span>
+                        </span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(PrefixText))
+                    {
+                        <span class="bui-input__prefix-txt">@PrefixText</span>
+                    }
                 }
 
                 <BUIDateTimePattern @key="@_patternKey"
@@ -130,16 +130,16 @@
 
                 @if (HasSuffix)
                 {
-                    <span class="bui-input__suffix">
-                        @if (!string.IsNullOrWhiteSpace(SuffixText))
-                        {
-                            <span>@SuffixText</span>
-                        }
-                        @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-                        {
+                    @if (!string.IsNullOrWhiteSpace(SuffixText))
+                    {
+                        <span class="bui-input__suffix-txt">@SuffixText</span>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+                    {
+                        <span class="bui-input__suffix-svg">
                             <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-                        }
-                    </span>
+                        </span>
+                    }
                 }
 
                 @if (CanClear && !IsReadOnly)

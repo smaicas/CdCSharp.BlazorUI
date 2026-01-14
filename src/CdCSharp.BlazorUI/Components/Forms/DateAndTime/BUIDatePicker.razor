@@ -1,38 +1,42 @@
 ﻿@using System.Globalization
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @inherits BUIComponentBase
 @implements IHasSize
 @implements IHasDensity
+@implements IPickerFamilyComponent
 
 <bui-component @attributes="ComputedAttributes">
-    <div class="bui-datepicker__nav">
-        <div class="bui-datepicker__nav-year">
-            <button type="button" class="bui-datepicker__btn" @onclick="PrevYear">«</button>
-            <span class="bui-datepicker__year">@CurrentMonth.Year</span>
-            <button type="button" class="bui-datepicker__btn" @onclick="NextYear">»</button>
-        </div>
-        <div class="bui-datepicker__nav-month">
-            <button type="button" class="bui-datepicker__btn" @onclick="PrevMonth">‹</button>
-            <span class="bui-datepicker__month">@CurrentMonth.ToString("MMMM", CultureInfo.CurrentCulture)</span>
-            <button type="button" class="bui-datepicker__btn" @onclick="NextMonth">›</button>
-        </div>
+    <div class="bui-picker__row">
+        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="PrevYear">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
+        </button>
+        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="PrevMonth">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
+        </button>
+        <span class="bui-picker__title">@CurrentMonth.ToString("MMMM yyyy", CultureInfo.CurrentCulture)</span>
+        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="NextMonth">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
+        </button>
+        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="NextYear">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
+        </button>
     </div>
 
-    <div class="bui-datepicker__weekdays">
-        @foreach (string d in WeekDays)
+    <div class="bui-picker__grid">
+        @foreach (string day in WeekDays)
         {
-            <span>@d</span>
+            <span class="bui-picker__cell bui-picker__cell--muted">@day[..2]</span>
         }
-    </div>
-
-    <div class="bui-datepicker__days">
         @foreach (DayCell day in Days)
         {
             <button type="button"
-                    class="bui-datepicker__day @(day.IsSelected ? "bui-datepicker__day--selected" : "") @(day.IsToday ? "bui-datepicker__day--today" : "") @(!day.IsCurrentMonth ? "bui-datepicker__day--other-month" : "")"
+                    class="bui-picker__cell @(day.IsSelected ? "bui-picker__cell--selected" : "") @(!day.IsCurrentMonth ? "bui-picker__cell--muted" : "")"
                     @onclick="() => SelectDate(day.Date)">
                 @day.Date.Day
             </button>
@@ -43,7 +47,6 @@
 @code {
     [Parameter] public DateOnly? Value { get; set; }
     [Parameter] public EventCallback<DateOnly?> ValueChanged { get; set; }
-
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
@@ -53,7 +56,6 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-
         if (Value.HasValue)
         {
             SelectedDate = Value.Value;
@@ -81,7 +83,6 @@
         {
             DateTime firstOfMonth = new(CurrentMonth.Year, CurrentMonth.Month, 1);
             DateTime start = firstOfMonth.AddDays(-(int)firstOfMonth.DayOfWeek);
-
             return Enumerable.Range(0, 42).Select(i =>
             {
                 DateTime d = start.AddDays(i);
@@ -89,8 +90,7 @@
                 {
                     Date = d,
                     IsCurrentMonth = d.Month == CurrentMonth.Month,
-                    IsSelected = SelectedDate.DayNumber == DateOnly.FromDateTime(d).DayNumber,
-                    IsToday = d.Date == DateTime.Today
+                    IsSelected = SelectedDate.DayNumber == DateOnly.FromDateTime(d).DayNumber
                 };
             });
         }
@@ -101,6 +101,5 @@
         public DateTime Date { get; set; }
         public bool IsCurrentMonth { get; set; }
         public bool IsSelected { get; set; }
-        public bool IsToday { get; set; }
     }
 }

@@ -81,6 +81,25 @@ public static class FeatureDefinitions
             public const string SuffixTxt = "bui-input__suffix-txt";
             public const string SuffixSvg = "bui-input__suffix-svg";
         }
+
+        /// <summary>
+        /// Picker family component class names.
+        /// </summary>
+        public static class Picker
+        {
+            public const string Row = "bui-picker__row";
+            public const string Title = "bui-picker__title";
+            public const string Btn = "bui-picker__btn";
+            public const string BtnIcon = "bui-picker__btn--icon";
+            public const string Grid = "bui-picker__grid";
+            public const string Cell = "bui-picker__cell";
+            public const string CellSelected = "bui-picker__cell--selected";
+            public const string CellMuted = "bui-picker__cell--muted";
+            public const string Input = "bui-picker__input";
+            public const string Separator = "bui-picker__separator";
+            public const string Slider = "bui-picker__slider";
+            public const string Preview = "bui-picker__preview";
+        }
     }
 
     public static class DataAttributes
@@ -126,6 +145,11 @@ public static class FeatureDefinitions
         /// Marks component as part of input family for shared styles.
         /// </summary>
         public const string InputBase = "data-bui-input-base";
+
+        /// <summary>
+        /// Marks component as part of picker family for shared styles.
+        /// </summary>
+        public const string PickerBase = "data-bui-picker";
 
         // --- State attributes ---
         /// <summary>

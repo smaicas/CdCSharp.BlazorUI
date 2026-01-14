@@ -12,7 +12,6 @@
 
 @inherits BUIInputComponentBase<TValue, BUIInputNumber<TValue>, BUIInputVariant>
 @implements IHasSize
-@implements IHasFullWidth
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasShadow
@@ -45,9 +44,6 @@
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-
-    // IHasFullWidth
-    [Parameter] public bool FullWidth { get; set; }
 
     // IHasLoading
     [Parameter] public bool IsLoading { get; set; }

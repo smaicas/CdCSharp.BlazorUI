@@ -184,6 +184,11 @@ internal sealed class BUIComponentAttributesBuilder
         {
             ComputedAttributes[FeatureDefinitions.DataAttributes.InputBase] = "true";
         }
+
+        if (component is IPickerFamilyComponent)
+        {
+            ComputedAttributes[FeatureDefinitions.DataAttributes.PickerBase] = "true";
+        }
     }
 
     private void BuildFullWidth(ComponentBase component)
