@@ -11,6 +11,12 @@
 @implements IHasSize
 @implements IHasLoading
 @implements IHasDensity
+@implements IHasShadow
+@implements IHasBorder
+@implements IHasColor
+@implements IHasBackgroundColor
+@implements IHasPrefix
+@implements IHasSuffix
 @implements IInputFamilyComponent
 
 @inject ITextAreaJsInterop TextAreaJs
@@ -32,11 +38,35 @@
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     // IHasLoading
-    [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+
+    // IHasShadow
+    [Parameter] public ShadowStyle? Shadow { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasPrefix
+    [Parameter] public string? PrefixText { get; set; }
+    [Parameter] public string? PrefixIcon { get; set; }
+    [Parameter] public CssColor? PrefixColor { get; set; }
+    [Parameter] public CssColor? PrefixBackgroundColor { get; set; }
+
+    // IHasSuffix
+    [Parameter] public string? SuffixText { get; set; }
+    [Parameter] public string? SuffixIcon { get; set; }
+    [Parameter] public CssColor? SuffixColor { get; set; }
+    [Parameter] public CssColor? SuffixBackgroundColor { get; set; }
 
     // Component-specific
     [Parameter] public string? Label { get; set; }
@@ -82,7 +112,9 @@
                        data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
 
             <div class="bui-input__wrapper">
+
                 <BUIFloatingLabel Label="@Label" For="@_textareaId" Required="@Required" />
+                <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <textarea @ref="_textareaRef"
                           id="@_textareaId"
@@ -105,12 +137,9 @@
                           aria-invalid="@IsError.ToString().ToLowerInvariant()"
                           aria-required="@Required.ToString().ToLowerInvariant()"></textarea>
 
-                @if (IsLoading && LoadingIndicatorVariant != null)
-                {
-                    <div class="bui-input__loading">
-                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                    </div>
-                }
+                <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
+                <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
+
             </div>
 
             @if (IsError && EditContext != null && ValueExpression != null)

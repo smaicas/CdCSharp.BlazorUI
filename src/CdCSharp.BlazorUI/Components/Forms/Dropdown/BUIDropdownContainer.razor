@@ -17,6 +17,8 @@
 @implements IHasBorder
 @implements IHasColor
 @implements IHasBackgroundColor
+@implements IHasPrefix
+@implements IHasSuffix
 @implements IDropdownJsCallback
 @implements IInputFamilyComponent
 
@@ -37,14 +39,39 @@
 
     [Inject] private IDropdownJsInterop JsInterop { get; set; } = default!;
 
+    // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+
+    // IHasLoading
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
+
+    // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-    [Parameter] public ShadowStyle? Shadow { get; set; }
+
+    // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }
-    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasShadow
+    [Parameter] public ShadowStyle? Shadow { get; set; }
+
+    // IHasBackgroundColor
     [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
+
+    // IHasPrefix
+    [Parameter] public string? PrefixText { get; set; }
+    [Parameter] public string? PrefixIcon { get; set; }
+    [Parameter] public CssColor? PrefixColor { get; set; }
+    [Parameter] public CssColor? PrefixBackgroundColor { get; set; }
+
+    // IHasSuffix
+    [Parameter] public string? SuffixText { get; set; }
+    [Parameter] public string? SuffixIcon { get; set; }
+    [Parameter] public CssColor? SuffixColor { get; set; }
+    [Parameter] public CssColor? SuffixBackgroundColor { get; set; }
 
     [Parameter] public string? Placeholder { get; set; }
     [Parameter] public string? Label { get; set; }
@@ -91,6 +118,7 @@
             <div class="bui-input__wrapper" @ref="_triggerElement">
 
                 <BUIFloatingLabel Label="@Label" For="@_componentId" Required="@Required" />
+                <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <button id="@_componentId"
                         type="button"
@@ -120,7 +148,7 @@
                     </span>
                 </button>
 
-                @if (IsLoading && LoadingIndicatorVariant != null)
+                @if (Loading && LoadingIndicatorVariant != null)
                 {
                     <div class="bui-input__loading">
                         <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
@@ -137,6 +165,10 @@
                         @MenuContent
                     </div>
                 }
+
+                <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
+                <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
+
             </div>
 
             @if (IsError && EditContext != null && ValueExpression != null)
@@ -190,7 +222,7 @@
 
     public async Task ToggleAsync()
     {
-        if (IsDisabled || IsLoading) return;
+        if (IsDisabled || Loading) return;
 
         if (IsOpen)
             await CloseAsync();
@@ -200,7 +232,7 @@
 
     public async Task OpenAsync()
     {
-        if (IsOpen || IsDisabled || IsLoading) return;
+        if (IsOpen || IsDisabled || Loading) return;
 
         IsOpen = true;
         _computedPlacement = Placement == DropdownPlacement.Auto ? DropdownPlacement.Bottom : Placement;

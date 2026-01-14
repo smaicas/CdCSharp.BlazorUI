@@ -1,0 +1,22 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
+
+@if (HasPrefix)
+{
+    @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+    {
+        <span class="bui-input__prefix-svg">
+            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
+        </span>
+    }
+    @if (!string.IsNullOrWhiteSpace(PrefixText))
+    {
+        <span class="bui-input__prefix-txt">@PrefixText</span>
+    }
+}
+
+@code {
+    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
+    [Parameter] public string? PrefixText { get; set; }
+    [Parameter] public string? PrefixIcon { get; set; }
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+}

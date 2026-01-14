@@ -11,7 +11,14 @@ using Microsoft.JSInterop;
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 
 // Base class without variants
-public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncDisposable, IBuiltComponent
+public abstract class BUIInputComponentBase<TValue> :
+    InputBase<TValue>,
+    IAsyncDisposable,
+    IBuiltComponent,
+    IHasReadOnly,
+    IHasDisabled,
+    IHasRequired,
+    IHasError
 {
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
     private IJSObjectReference? _behaviorInstance;
@@ -20,16 +27,15 @@ public abstract class BUIInputComponentBase<TValue> : InputBase<TValue>, IAsyncD
 
     // Common parameters for all inputs
     [Parameter] public bool Disabled { get; set; }
-
-    public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.IsLoading);
-
-    // Computed states - available for all inputs
-    public bool IsError { get; private set; }
-
-    public bool IsReadOnly => ReadOnly;
-    public bool IsRequired => Required;
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public bool Required { get; set; }
+    [Parameter] public bool Error { get; set; }
+
+    // Computed states - available for all inputs
+    public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.Loading);
+    public bool IsError { get => field || Error; private set; }
+    public bool IsReadOnly => ReadOnly;
+    public bool IsRequired => Required;
 
     // This is what components will use with @attributes
     protected Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;

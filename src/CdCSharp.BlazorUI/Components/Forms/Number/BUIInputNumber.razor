@@ -46,23 +46,23 @@
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     // IHasLoading
-    [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
-    // IHasShadow
-    [Parameter] public ShadowStyle? Shadow { get; set; }
-
     // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }
 
-    // IHasColor
-    [Parameter] public CssColor? Color { get; set; }
+    // IHasShadow
+    [Parameter] public ShadowStyle? Shadow { get; set; }
 
     // IHasBackgroundColor
     [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
 
     // IHasPrefix
     [Parameter] public string? PrefixText { get; set; }
@@ -171,20 +171,7 @@
                 @RenderStepButtons()
             }
 
-            @if (HasPrefix)
-            {
-
-                @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-                {
-                    <span class="bui-input__prefix-svg">
-                        <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-                    </span>
-                }
-                @if (!string.IsNullOrWhiteSpace(PrefixText))
-                {
-                    <span class="bui-input__prefix-txt">@PrefixText</span>
-                }
-            }
+            <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
             <input @ref="_inputRef"
                    id="@_inputId"
@@ -229,12 +216,9 @@
                 @RenderStepButtons()
             }
 
-            @if (IsLoading && LoadingIndicatorVariant != null)
-            {
-                <div class="bui-input__loading">
-                    <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                </div>
-            }
+            <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
+            <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
+
         </div>
 
         @if (IsError && EditContext != null && ValueExpression != null)

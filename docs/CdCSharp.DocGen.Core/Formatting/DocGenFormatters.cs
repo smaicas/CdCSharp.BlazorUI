@@ -62,7 +62,7 @@ public class HumanFormatter : IDocumentationFormatter
 
             foreach (IGrouping<TypeKind, TypeInfo> kindGroup in ns.GroupBy(t => t.Kind))
             {
-                sb.AppendLine($"**{kindGroup.Key}s:** {string.Join(", ", kindGroup.Select(t => t.Name))}");
+                sb.AppendLine($"**{kindGroup.Key.ToPlural()}:** {string.Join(", ", kindGroup.Select(t => t.Name))}");
             }
             sb.AppendLine();
         }

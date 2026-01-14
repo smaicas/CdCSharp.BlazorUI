@@ -36,8 +36,8 @@
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     // IHasLoading
-    [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
@@ -77,7 +77,6 @@
 
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
     private bool IsFloated => _isFocused || HasValue;
-    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
     private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
@@ -95,23 +94,11 @@
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
                        data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+
             <div class="bui-input__wrapper" @ref="_inputContainer">
 
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
-
-                @if (HasPrefix)
-                {
-                    @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-                    {
-                        <span class="bui-input__prefix-svg">
-                            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-                        </span>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(PrefixText))
-                    {
-                        <span class="bui-input__prefix-txt">@PrefixText</span>
-                    }
-                }
+                <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <input type="text"
                        id="@_inputId"
@@ -132,26 +119,9 @@
                        readonly="@ReadOnly"
                        required="@Required" />
 
-                @if (HasSuffix)
-                {
-                    @if (!string.IsNullOrWhiteSpace(SuffixText))
-                    {
-                        <span class="bui-input__suffix-txt">@SuffixText</span>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-                    {
-                        <span class="bui-input__suffix-svg">
-                            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-                        </span>
-                    }
-                }
+                <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
+                <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
 
-                @if (IsLoading && LoadingIndicatorVariant != null)
-                {
-                    <div class="bui-input__loading">
-                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                    </div>
-                }
             </div>
 
             @if (IsError && EditContext != null && ValueExpression != null)

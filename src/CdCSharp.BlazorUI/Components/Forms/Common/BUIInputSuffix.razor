@@ -1,0 +1,22 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
+
+@if (HasSuffix)
+{
+    @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+    {
+        <span class="bui-input__prefix-svg">
+            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
+        </span>
+    }
+    @if (!string.IsNullOrWhiteSpace(SuffixText))
+    {
+        <span class="bui-input__prefix-txt">@SuffixText</span>
+    }
+}
+
+@code {
+    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
+    [Parameter] public string? SuffixText { get; set; }
+    [Parameter] public string? SuffixIcon { get; set; }
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+}

@@ -2,5 +2,5 @@
 
 public interface IHasError
 {
-    bool IsError { get; }
+    bool Error { get; }
 }

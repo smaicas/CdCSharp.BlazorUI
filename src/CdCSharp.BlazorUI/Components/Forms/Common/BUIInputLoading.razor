@@ -1,0 +1,15 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
+
+@if (Loading)
+{
+    <div class="bui-input__loading">
+        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+    </div>
+}
+
+@code {
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+}

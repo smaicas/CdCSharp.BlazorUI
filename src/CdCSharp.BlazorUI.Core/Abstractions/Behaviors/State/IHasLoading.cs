@@ -2,5 +2,5 @@
 
 public interface IHasLoading
 {
-    bool IsLoading { get; set; }
+    bool Loading { get; set; }
 }

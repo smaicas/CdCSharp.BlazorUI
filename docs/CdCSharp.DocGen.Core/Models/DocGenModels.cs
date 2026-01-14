@@ -73,6 +73,23 @@ public enum TypeKind
     Delegate
 }
 
+public static class TypeKindExtensions
+{
+    public static string ToPlural(this TypeKind kind)
+    {
+        return kind switch
+        {
+            TypeKind.Class => "Classes",
+            TypeKind.Interface => "Interfaces",
+            TypeKind.Struct => "Structs",
+            TypeKind.Record => "Records",
+            TypeKind.Enum => "Enums",
+            TypeKind.Delegate => "Delegates",
+            _ => kind.ToString() + "s" // Fallback por si añades más en el futuro
+        };
+    }
+}
+
 public record MemberInfo
 {
     public required string Name { get; init; }

@@ -11,6 +11,7 @@
 @typeparam TValue
 @inherits BUIInputComponentBase<TValue, BUIInputDateTime<TValue>, BUIInputVariant>
 @implements IHasSize
+@implements IHasLoading
 @implements IHasDensity
 @implements IHasShadow
 @implements IHasBorder
@@ -45,20 +46,24 @@
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
+    // IHasLoading
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
+
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-
-    // IHasShadow
-    [Parameter] public ShadowStyle? Shadow { get; set; }
 
     // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }
 
-    // IHasColor
-    [Parameter] public CssColor? Color { get; set; }
+    // IHasShadow
+    [Parameter] public ShadowStyle? Shadow { get; set; }
 
     // IHasBackgroundColor
     [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    // IHasColor
+    [Parameter] public CssColor? Color { get; set; }
 
     // IHasPrefix
     [Parameter] public string? PrefixText { get; set; }
@@ -100,7 +105,9 @@
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
 
             <div class="bui-input__wrapper">
+
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+                <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 @if (HasPrefix)
                 {
@@ -163,6 +170,10 @@
                         aria-label="Open picker">
                     <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
                 </button>
+
+                <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
+                <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
+
             </div>
 
             @if (IsError && EditContext != null && ValueExpression != null)

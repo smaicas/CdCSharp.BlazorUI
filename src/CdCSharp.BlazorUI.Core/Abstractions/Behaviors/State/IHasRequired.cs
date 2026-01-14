@@ -2,5 +2,5 @@
 
 public interface IHasRequired
 {
-    bool IsRequired { get; }
+    bool Required { get; }
 }
