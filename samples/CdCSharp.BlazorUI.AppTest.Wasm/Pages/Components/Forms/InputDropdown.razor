@@ -342,19 +342,19 @@
         Demo = RenderVariants(),
         Code = """
 <BUIInputDropdown @bind-Value="value"
-                  Variant="BUIInputDropdownVariant.Outlined"
+                  Variant="BUIInputVariant.Outlined"
                   Placeholder="Outlined">
     ...
 </BUIInputDropdown>
 
 <BUIInputDropdown @bind-Value="value"
-                  Variant="BUIInputDropdownVariant.Filled"
+                  Variant="BUIInputVariant.Filled"
                   Placeholder="Filled">
     ...
 </BUIInputDropdown>
 
 <BUIInputDropdown @bind-Value="value"
-                  Variant="BUIInputDropdownVariant.Standard"
+                  Variant="BUIInputVariant.Standard"
                   Placeholder="Standard">
     ...
 </BUIInputDropdown>
@@ -542,9 +542,9 @@
     {
         Demo = RenderTreeVariants(),
         Code = """
-<BUIInputDropdownTree ... Variant="BUIInputDropdownTreeVariant.Outlined" Placeholder="Outlined" />
-<BUIInputDropdownTree ... Variant="BUIInputDropdownTreeVariant.Filled" Placeholder="Filled" />
-<BUIInputDropdownTree ... Variant="BUIInputDropdownTreeVariant.Standard" Placeholder="Standard" />
+<BUIInputDropdownTree ... Variant="BUIInputVariant.Outlined" Placeholder="Outlined" />
+<BUIInputDropdownTree ... Variant="BUIInputVariant.Filled" Placeholder="Filled" />
+<BUIInputDropdownTree ... Variant="BUIInputVariant.Standard" Placeholder="Standard" />
 """
     };
 
@@ -624,21 +624,21 @@
     {
         <div class="demo-row">
             <BUIInputDropdown @bind-Value="_variantOutlined"
-                              Variant="BUIInputDropdownVariant.Outlined"
+                              Variant="BUIInputVariant.Outlined"
                               Placeholder="Outlined">
                 <DropdownOption Value="@("opt1")" Text="Option 1" />
                 <DropdownOption Value="@("opt2")" Text="Option 2" />
             </BUIInputDropdown>
 
             <BUIInputDropdown @bind-Value="_variantFilled"
-                              Variant="BUIInputDropdownVariant.Filled"
+                              Variant="BUIInputVariant.Filled"
                               Placeholder="Filled">
                 <DropdownOption Value="@("opt1")" Text="Option 1" />
                 <DropdownOption Value="@("opt2")" Text="Option 2" />
             </BUIInputDropdown>
 
             <BUIInputDropdown @bind-Value="_variantStandard"
-                              Variant="BUIInputDropdownVariant.Standard"
+                              Variant="BUIInputVariant.Standard"
                               Placeholder="Standard">
                 <DropdownOption Value="@("opt1")" Text="Option 1" />
                 <DropdownOption Value="@("opt2")" Text="Option 2" />
@@ -842,7 +842,7 @@
                                   ChildrenSelector="@(c => c.Children)"
                                   DisplayTextSelector="@(c => c.Name)"
                                   @bind-Value="_treeVariantOutlined"
-                                  Variant="BUIInputDropdownTreeVariant.Outlined"
+                                  Variant="BUIInputVariant.Outlined"
                                   Placeholder="Outlined" />
 
             <BUIInputDropdownTree TItem="Category"
@@ -852,7 +852,7 @@
                                   ChildrenSelector="@(c => c.Children)"
                                   DisplayTextSelector="@(c => c.Name)"
                                   @bind-Value="_treeVariantFilled"
-                                  Variant="BUIInputDropdownTreeVariant.Filled"
+                                  Variant="BUIInputVariant.Filled"
                                   Placeholder="Filled" />
 
             <BUIInputDropdownTree TItem="Category"
@@ -862,7 +862,7 @@
                                   ChildrenSelector="@(c => c.Children)"
                                   DisplayTextSelector="@(c => c.Name)"
                                   @bind-Value="_treeVariantStandard"
-                                  Variant="BUIInputDropdownTreeVariant.Standard"
+                                  Variant="BUIInputVariant.Standard"
                                   Placeholder="Standard" />
         </div>
     };
@@ -928,7 +928,7 @@
     {
         new("Value", "TValue", "-", "Current selected value"),
         new("ValueChanged", "EventCallback<TValue>", "-", "Value change callback"),
-        new("Variant", "BUIInputDropdownVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
         new("ChildContent", "RenderFragment?", "null", "DropdownOption elements"),
         new("Placeholder", "string?", "null", "Placeholder text when nothing is selected"),
         new("Label", "string?", "null", "Label text above the dropdown"),
@@ -965,7 +965,7 @@
     {
         new("Value", "TValue", "-", "Current selected value(s)"),
         new("ValueChanged", "EventCallback<TValue>", "-", "Value change callback"),
-        new("Variant", "BUIInputDropdownTreeVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
         new("Items", "IEnumerable<TItem>", "-", "Root items of the tree (required)"),
         new("KeySelector", "Func<TItem, string>?", "null", "Function to get unique key from item"),
         new("ChildrenSelector", "Func<TItem, IEnumerable<TItem>?>?", "null", "Function to get children from item"),

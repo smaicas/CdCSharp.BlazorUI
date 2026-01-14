@@ -1,0 +1,304 @@
+﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
+@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Css
+
+@namespace CdCSharp.BlazorUI.Components.Forms.Dropdown
+
+@typeparam TValue
+
+@inherits BUIInputComponentBase<TValue, BUIDropdownContainer<TValue>, BUIInputVariant>
+@implements IHasSize
+@implements IHasFullWidth
+@implements IHasLoading
+@implements IHasDensity
+@implements IHasShadow
+@implements IHasBorder
+@implements IHasColor
+@implements IHasBackgroundColor
+@implements IDropdownJsCallback
+@implements IInputFamilyComponent
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private readonly string _componentId = $"bui-dropdown-{Guid.NewGuid():N}";
+    private ElementReference _triggerElement;
+    private ElementReference _menuElement;
+    private DropdownCallbacksRelay? _callbacksRelay;
+    private bool _jsInitialized;
+    private DropdownPlacement _computedPlacement;
+    private bool _isFocused;
+    private bool _keyboardFocus;
+    private bool _mouseDownFlag;
+
+    [Inject] private IDropdownJsInterop JsInterop { get; set; } = default!;
+
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool FullWidth { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public ShadowStyle? Shadow { get; set; }
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public CssColor? BackgroundColor { get; set; }
+
+    [Parameter] public string? Placeholder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+
+    [Parameter] public DropdownPlacement Placement { get; set; } = DropdownPlacement.Auto;
+    [Parameter] public int MaxMenuHeight { get; set; } = 320;
+
+    [Parameter, EditorRequired] public string DisplayValue { get; set; } = string.Empty;
+    [Parameter] public bool HasValue { get; set; }
+    [Parameter] public string AriaRole { get; set; } = "listbox";
+    [Parameter] public bool AriaMultiselectable { get; set; }
+
+    [Parameter] public RenderFragment? MenuContent { get; set; }
+    [Parameter] public EventCallback OnOpened { get; set; }
+    [Parameter] public EventCallback OnClosed { get; set; }
+    [Parameter] public EventCallback<DropdownKeyboardEventArgs> OnKeyboardNavigation { get; set; }
+
+    [Parameter] public EventCallback<TValue> OnValueChanged { get; set; }
+
+    public bool IsOpen { get; private set; }
+    public string ComponentId => _componentId;
+
+    public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
+
+    protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIDropdownContainer<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputVariant, Func<BUIDropdownContainer<TValue>, RenderFragment>>
+        {
+            [BUIInputVariant.Outlined] = c => c.RenderDropdown(),
+            [BUIInputVariant.Filled] = c => c.RenderDropdown(),
+            [BUIInputVariant.Standard] = c => c.RenderDropdown()
+        };
+
+    private bool IsFloated => _isFocused || HasValue || IsOpen;
+
+    private RenderFragment RenderDropdown() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes"
+                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
+                       data-bui-dropdown-open="@IsOpen.ToString().ToLowerInvariant()"
+                       data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()"
+                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+
+            <div class="bui-input__wrapper" @ref="_triggerElement">
+
+                <BUIFloatingLabel Label="@Label" For="@_componentId" Required="@Required" />
+
+                <button id="@_componentId"
+                        type="button"
+                        class="bui-input__field bui-dropdown__trigger"
+                        @onclick="ToggleAsync"
+                        @onfocus="HandleFocus"
+                        @onblur="HandleBlur"
+                        @onmousedown="HandleMouseDown"
+                        @onkeydown="HandleKeyDown"
+                        disabled="@IsDisabled"
+                        aria-expanded="@IsOpen.ToString().ToLowerInvariant()"
+                        aria-haspopup="@AriaRole">
+
+                    <span class="bui-dropdown__value @(HasValue ? "" : "bui-dropdown__placeholder")">
+                        @(HasValue? DisplayValue : Placeholder)
+                    </span>
+
+                    <span class="bui-dropdown__arrow">
+                        <BUISvgIcon Icon="@(IsOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
+                    </span>
+                </button>
+
+                @if (IsLoading && LoadingIndicatorVariant != null)
+                {
+                    <div class="bui-input__loading">
+                        <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
+                    </div>
+                }
+
+                @if (IsOpen)
+                {
+                    <div class="bui-dropdown__menu"
+                         @ref="_menuElement"
+                         role="@AriaRole"
+                         aria-multiselectable="@(AriaMultiselectable ? "true" : null)"
+                         style="max-height: @(MaxMenuHeight)px;">
+                        @MenuContent
+                    </div>
+                }
+            </div>
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
+        </bui-component>
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (IsOpen && !_jsInitialized)
+        {
+            _callbacksRelay ??= new DropdownCallbacksRelay(this);
+            await JsInterop.InitializeAsync(_triggerElement, _menuElement, _callbacksRelay.DotNetReference, _componentId);
+            _jsInitialized = true;
+
+            if (Placement == DropdownPlacement.Auto)
+            {
+                await ComputePlacementAsync();
+            }
+        }
+    }
+
+    private async Task ComputePlacementAsync()
+    {
+        DropdownPosition position = await JsInterop.GetPositionAsync(_componentId);
+        double spaceBelow = position.ViewportHeight - position.TriggerTop - position.TriggerHeight;
+        double spaceAbove = position.TriggerTop;
+
+        _computedPlacement = spaceBelow >= MaxMenuHeight || spaceBelow >= spaceAbove
+            ? DropdownPlacement.Bottom
+            : DropdownPlacement.Top;
+
+        StateHasChanged();
+    }
+
+    private DropdownPlacement GetEffectivePlacement()
+        => Placement == DropdownPlacement.Auto ? _computedPlacement : Placement;
+
+    public async Task ToggleAsync()
+    {
+        if (IsDisabled || IsLoading) return;
+
+        if (IsOpen)
+            await CloseAsync();
+        else
+            await OpenAsync();
+    }
+
+    public async Task OpenAsync()
+    {
+        if (IsOpen || IsDisabled || IsLoading) return;
+
+        IsOpen = true;
+        _computedPlacement = Placement == DropdownPlacement.Auto ? DropdownPlacement.Bottom : Placement;
+        StateHasChanged();
+
+        await OnOpened.InvokeAsync();
+    }
+
+    public async Task CloseAsync()
+    {
+        if (!IsOpen) return;
+
+        IsOpen = false;
+        _jsInitialized = false;
+
+        if (_callbacksRelay != null)
+        {
+            await JsInterop.DisposeAsync(_componentId);
+        }
+
+        StateHasChanged();
+        await OnClosed.InvokeAsync();
+    }
+
+    private void HandleMouseDown(MouseEventArgs e) => _mouseDownFlag = true;
+
+    private void HandleKeyDown(KeyboardEventArgs e) => _mouseDownFlag = false;
+
+    private void HandleFocus(FocusEventArgs e)
+    {
+        _isFocused = true;
+        _keyboardFocus = !_mouseDownFlag;
+    }
+
+    private void HandleBlur(FocusEventArgs e)
+    {
+        _isFocused = false;
+        _keyboardFocus = false;
+        _mouseDownFlag = false;
+    }
+
+    Task IDropdownJsCallback.OnClickOutside() => CloseAsync();
+
+    async Task IDropdownJsCallback.OnKeyDown(string key, bool shiftKey, bool ctrlKey)
+    {
+        DropdownKeyboardEventArgs args = new(key, shiftKey, ctrlKey);
+
+        switch (key)
+        {
+            case "Escape":
+            case "Tab":
+                await CloseAsync();
+                break;
+
+            case "ArrowDown":
+                if (!IsOpen)
+                    await OpenAsync();
+                else
+                    await OnKeyboardNavigation.InvokeAsync(args);
+                break;
+
+            case "ArrowUp":
+            case "Enter":
+            case "Home":
+            case "End":
+                if (IsOpen)
+                    await OnKeyboardNavigation.InvokeAsync(args);
+                else if (key == "Enter")
+                    await OpenAsync();
+                break;
+
+            default:
+                await OnKeyboardNavigation.InvokeAsync(args);
+                break;
+        }
+    }
+
+    async Task<DropdownPosition> IDropdownJsCallback.OnRequestPosition()
+        => await JsInterop.GetPositionAsync(_componentId);
+
+    protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
+    {
+        validationErrorMessage = string.Empty;
+        result = default!;
+        return true;
+    }
+
+    public async Task FocusSearchInputAsync()
+    {
+        if (_jsInitialized)
+        {
+            await JsInterop.FocusSearchInputAsync(_componentId);
+        }
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        if (_jsInitialized)
+        {
+            await JsInterop.DisposeAsync(_componentId);
+        }
+
+        _callbacksRelay?.Dispose();
+        await base.DisposeAsync();
+    }
+}

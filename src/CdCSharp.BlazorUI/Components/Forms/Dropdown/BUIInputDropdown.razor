@@ -1,54 +1,164 @@
 ﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown
-@using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
 @using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
-@using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Components.Selection
 @using CdCSharp.BlazorUI.Core.Css
 @using CdCSharp.BlazorUI.Core.Search
+@using System.Linq.Expressions
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @typeparam TValue
 
-@inherits BUIInputComponentBase<TValue, BUIInputDropdown<TValue>, BUIInputDropdownVariant>
-@implements IHasSize
-@implements IHasFullWidth
-@implements IHasLoading
-@implements IHasDensity
-@implements IHasShadow
-@implements IDropdownJsCallback
 @implements IDropdownContainer
-@implements IInputFamilyComponent
+@implements IAsyncDisposable
 
-@{
-    base.BuildRenderTree(__builder);
-}
+<CascadingValue Value="(IDropdownContainer)this" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+<BUIDropdownContainer @ref="_container"
+                      TValue="TValue"
+                      Value="@Value"
+                      ValueChanged="@SetValueAsync"
+                      ValueExpression="@ValueExpression"
+                      Variant="@Variant"
+                      Size="@Size"
+                      Density="@Density"
+                      FullWidth="@FullWidth"
+                      Disabled="@Disabled"
+                      IsLoading="@IsLoading"
+                      LoadingIndicatorVariant="@LoadingIndicatorVariant"
+                      Required="@Required"
+                      ReadOnly="@ReadOnly"
+                      Shadow="@Shadow"
+                      Border="@Border"
+                      Color="@Color"
+                      BackgroundColor="@BackgroundColor"
+                      Label="@Label"
+                      Placeholder="@Placeholder"
+                      HelperText="@HelperText"
+                      Placement="@Placement"
+                      MaxMenuHeight="@ComputedMaxMenuHeight"
+                      DisplayValue="@GetDisplayValue()"
+                      HasValue="@(_selectionState.Count > 0)"
+                      AriaRole="listbox"
+                      AriaMultiselectable="@_selectionState.IsMultiple"
+                      OnOpened="@HandleOpenedAsync"
+                      OnClosed="@HandleClosed"
+                      OnKeyboardNavigation="@HandleKeyboardNavigation">
+    <MenuContent>
+        @if (Searchable)
+        {
+            <div class="bui-dropdown__search">
+                <input type="text"
+                       class="bui-dropdown__search-input"
+                       placeholder="@SearchPlaceholder"
+                       value="@_searchText"
+                       @oninput="OnSearchInput"
+                       @onclick:stopPropagation="true" />
+            </div>
+        }
+
+        @if (_selectionState.IsMultiple && ShowSelectAll && _options.Count > 0)
+        {
+            <div class="bui-dropdown__select-all">
+                <button type="button"
+                        class="bui-dropdown__select-all-button"
+                        @onclick="SelectAll"
+                        @onclick:stopPropagation="true">
+                    @SelectAllText
+                </button>
+                <button type="button"
+                        class="bui-dropdown__select-all-button"
+                        @onclick="DeselectAll"
+                        @onclick:stopPropagation="true">
+                    @DeselectAllText
+                </button>
+            </div>
+        }
+
+        <div class="bui-dropdown__items">
+            @{
+                List<ISelectionOption> filteredOptions = GetFilteredOptions();
+            }
+
+            @foreach (ISelectionOption option in filteredOptions)
+            {
+                bool isSelected = _selectionState.IsSelected(option.Value);
+                bool isFocused = _focusedIndex >= 0 && filteredOptions.ElementAtOrDefault(_focusedIndex) == option;
+
+                <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(isFocused ? "bui-dropdown__option--focused" : "") @(option.IsDisabled ? "bui-dropdown__option--disabled" : "")"
+                     role="option"
+                     aria-selected="@isSelected.ToString().ToLowerInvariant()"
+                     @onclick="() => SelectOptionAsync(option)"
+                     @onclick:stopPropagation="true">
+
+                    @if (_selectionState.IsMultiple)
+                    {
+                        <span class="bui-dropdown__checkbox">
+                            <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
+                                        Size="@Size" />
+                        </span>
+                    }
+
+                    <span class="bui-dropdown__option-content">
+                        @option.Content
+                    </span>
+                </div>
+            }
+
+            @if (filteredOptions.Count == 0)
+            {
+                <div class="bui-dropdown__no-options">
+                    @if (string.IsNullOrWhiteSpace(_searchText))
+                    {
+                        @(NoOptionsTemplate ?? _defaultNoOptionsTemplate)
+                    }
+                    else
+                    {
+                        @if (NoResultsTemplate != null)
+                        {
+                            @NoResultsTemplate(new NoResultsContext(_searchText, _options.Count))
+                        }
+                        else
+                        {
+                            <span>No results for "@_searchText"</span>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    </MenuContent>
+</BUIDropdownContainer>
 
 @code {
-    private readonly string _componentId = $"bui-dropdown-{Guid.NewGuid():N}";
+    private BUIDropdownContainer<TValue>? _container;
     private readonly List<ISelectionOption> _options = [];
     private readonly SelectionState<TValue> _selectionState;
 
-    private bool _isOpen;
     private string _searchText = string.Empty;
     private int _focusedIndex = -1;
-    private ElementReference _triggerElement;
-    private ElementReference _menuElement;
-    private DropdownCallbacksRelay? _callbacksRelay;
-    private bool _jsInitialized;
-    private DropdownPlacement _computedPlacement;
 
-    [Inject] private IDropdownJsInterop JsInterop { get; set; } = default!;
+    private readonly RenderFragment _defaultNoOptionsTemplate;
 
+    [Parameter] public TValue? Value { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public Expression<Func<TValue>>? ValueExpression { get; set; }
+
+    [Parameter] public BUIInputVariant Variant { get; set; } = BUIInputVariant.Outlined;
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public bool FullWidth { get; set; }
+    [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-    // ========= IHasShadow ========= //
     [Parameter] public ShadowStyle? Shadow { get; set; }
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public CssColor? BackgroundColor { get; set; }
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
@@ -75,191 +185,23 @@
     bool IDropdownContainer.IsMultiple => _selectionState.IsMultiple;
     Type IDropdownContainer.ElementType => _selectionState.ElementType;
 
-    public override BUIInputDropdownVariant DefaultVariant => BUIInputDropdownVariant.Outlined;
-
-    protected override IReadOnlyDictionary<BUIInputDropdownVariant, Func<BUIInputDropdown<TValue>, RenderFragment>> BuiltInTemplates { get; } =
-       new Dictionary<BUIInputDropdownVariant, Func<BUIInputDropdown<TValue>, RenderFragment>>
-       {
-           [BUIInputDropdownVariant.Outlined] = i => i.RenderInput(),
-           [BUIInputDropdownVariant.Filled] = i => i.RenderInput(),
-           [BUIInputDropdownVariant.Standard] = i => i.RenderInput()
-       };
+    private int ComputedMaxMenuHeight => Math.Min(_options.Count, MaxVisibleItems) * ItemHeight + 8 +
+        (Searchable ? 48 : 0) +
+        (_selectionState.IsMultiple && ShowSelectAll ? 40 : 0);
 
     public BUIInputDropdown()
     {
         _selectionState = new SelectionState<TValue>();
+
+        _defaultNoOptionsTemplate = builder =>
+        {
+            builder.AddContent(0, "No options available");
+        };
     }
-
-    private RenderFragment RenderInput() => __builder =>
-   {
-       <CascadingValue Value="(IDropdownContainer)this" IsFixed="true">
-           @ChildContent
-       </CascadingValue>
-
-       <bui-component @attributes="ComputedAttributes"
-                      data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()"
-                      data-bui-input-dropdown-open="@_isOpen">
-
-           <div class="bui-stack-column">
-               @if (!string.IsNullOrWhiteSpace(Label))
-               {
-                   <label for="@_componentId" class="bui-input__label">
-                       @Label
-                       @if (Required)
-                       {
-                           <span class="bui-input__required">*</span>
-                       }
-                   </label>
-               }
-
-               <div class="bui-input__wrapper">
-                   <button id="@_componentId"
-                           type="button"
-                           class="bui-input__field"
-                           @ref="_triggerElement"
-                           @onclick="ToggleDropdownAsync"
-                           disabled="@(IsDisabled || IsLoading)"
-                           aria-expanded="@(_isOpen ? "true" : "false")"
-                           aria-haspopup="listbox">
-
-                       <span class="bui-dropdown__value @(string.IsNullOrEmpty(GetDisplayValue()) ? "bui-dropdown__placeholder" : "")">
-                           @(string.IsNullOrEmpty(GetDisplayValue()) ? Placeholder : GetDisplayValue())
-                       </span>
-
-                       <span class="bui-dropdown__arrow">
-                           <BUISvgIcon Icon="@(_isOpen? BUIIcons.UI.ChevronUp : BUIIcons.UI.ChevronDown)" Size="Size" />
-                       </span>
-
-                       @if (IsLoading && LoadingIndicatorVariant != null)
-                       {
-                           <div class="bui-input__loading">
-                               <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-                           </div>
-                       }
-                   </button>
-
-                   @if (_isOpen)
-                   {
-                       <div class="bui-dropdown__overlay" @onclick="CloseAsync" @onclick:stopPropagation="true"></div>
-
-                       <div class="bui-dropdown__menu"
-                            @ref="_menuElement"
-                            role="listbox"
-                            aria-multiselectable="@_selectionState.IsMultiple">
-
-                           @if (Searchable)
-                           {
-                               <div class="bui-dropdown__search">
-                                   <input type="text"
-                                          class="bui-dropdown__search-input"
-                                          placeholder="@SearchPlaceholder"
-                                          value="@_searchText"
-                                          @oninput="OnSearchInput"
-                                          @onclick:stopPropagation="true" />
-                               </div>
-                           }
-
-                           @if (_selectionState.IsMultiple && ShowSelectAll && _options.Count > 0)
-                           {
-                               <div class="bui-dropdown__select-all">
-                                   <button type="button"
-                                           class="bui-dropdown__select-all-button"
-                                           @onclick="SelectAll"
-                                           @onclick:stopPropagation="true">
-                                       @SelectAllText
-                                   </button>
-                                   <button type="button"
-                                           class="bui-dropdown__select-all-button"
-                                           @onclick="DeselectAll"
-                                           @onclick:stopPropagation="true">
-                                       @DeselectAllText
-                                   </button>
-                               </div>
-                           }
-
-                           <div class="bui-dropdown__items" style="max-height: @(MaxVisibleItems* ItemHeight)px;">
-                               @{
-                                   List<ISelectionOption> filteredOptions = GetFilteredOptions();
-                               }
-
-                               @foreach (ISelectionOption option in filteredOptions)
-                               {
-                                   bool isSelected = _selectionState.IsSelected(option.Value);
-                                   bool isFocused = _focusedIndex >= 0 && filteredOptions.ElementAtOrDefault(_focusedIndex) == option;
-
-                                   <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(isFocused ? "bui-dropdown__option--focused" : "") @(option.IsDisabled ? "bui-dropdown__option--disabled" : "")"
-                                        role="option"
-                                        aria-selected="@isSelected"
-                                        @onclick="() => SelectOptionAsync(option)"
-                                        @onclick:stopPropagation="true">
-
-                                       @if (_selectionState.IsMultiple)
-                                       {
-                                           <span class="bui-dropdown__checkbox">
-                                               <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
-                                                           Size="@Size" />
-                                           </span>
-                                       }
-
-                                       <span class="bui-dropdown__option-content">
-                                           @option.Content
-                                       </span>
-                                   </div>
-                               }
-
-                               @if (filteredOptions.Count == 0)
-                               {
-                                   <div class="bui-dropdown__no-options">
-                                       @if (string.IsNullOrWhiteSpace(_searchText))
-                                       {
-                                           @if (NoOptionsTemplate != null)
-                                           {
-                                               @NoOptionsTemplate
-                                           }
-                                           else
-                                           {
-                                               <span>No options available</span>
-                                           }
-                                       }
-                                       else
-                                       {
-                                           @if (NoResultsTemplate != null)
-                                           {
-                                               @NoResultsTemplate(new NoResultsContext(_searchText, _options.Count))
-                                           }
-                                           else
-                                           {
-                                               <span>No results for "@_searchText"</span>
-                                           }
-                                       }
-                                   </div>
-                               }
-                           </div>
-                       </div>
-                   }
-               </div>
-
-               @if (IsError && EditContext != null && ValueExpression != null)
-               {
-                   <div class="bui-input__validation">
-                       <ValidationMessage For="ValueExpression" />
-                   </div>
-               }
-
-               @if (!string.IsNullOrWhiteSpace(HelperText))
-               {
-                   <div class="bui-input__helper-text">
-                       @HelperText
-                   </div>
-               }
-           </div>
-       </bui-component>
-   };
 
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-        _selectionState.SetValue(CurrentValue);
+        _selectionState.SetValue(Value);
     }
 
     void IDropdownContainer.RegisterOption(ISelectionOption option)
@@ -278,45 +220,6 @@
             StateHasChanged();
         }
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-
-        if (_isOpen && !_jsInitialized)
-        {
-            _callbacksRelay ??= new DropdownCallbacksRelay(this);
-            await JsInterop.InitializeAsync(_triggerElement, _menuElement, _callbacksRelay.DotNetReference, _componentId);
-            _jsInitialized = true;
-
-            if (Placement == DropdownPlacement.Auto)
-            {
-                await ComputePlacementAsync();
-            }
-
-            if (Searchable)
-            {
-                await JsInterop.FocusSearchInputAsync(_componentId);
-            }
-        }
-    }
-
-    private async Task ComputePlacementAsync()
-    {
-        DropdownPosition position = await JsInterop.GetPositionAsync(_componentId);
-        double spaceBelow = position.ViewportHeight - position.TriggerTop - position.TriggerHeight;
-        double spaceAbove = position.TriggerTop;
-        int requiredHeight = Math.Min(_options.Count, MaxVisibleItems) * ItemHeight + 8;
-
-        _computedPlacement = spaceBelow >= requiredHeight || spaceBelow >= spaceAbove
-            ? DropdownPlacement.Bottom
-            : DropdownPlacement.Top;
-
-        StateHasChanged();
-    }
-
-    private DropdownPlacement GetEffectivePlacement()
-        => Placement == DropdownPlacement.Auto ? _computedPlacement : Placement;
 
     private List<ISelectionOption> GetFilteredOptions()
     {
@@ -351,44 +254,67 @@
         return $"{_selectionState.Count} selected";
     }
 
-    private async Task ToggleDropdownAsync()
+    private async Task SetValueAsync(TValue? value)
     {
-        if (IsDisabled || IsLoading) return;
-
-        if (_isOpen)
-            await CloseAsync();
-        else
-            await OpenAsync();
+        Value = value;
+        _selectionState.SetValue(value);
+        await ValueChanged.InvokeAsync(value);
     }
 
-    private Task OpenAsync()
+    private async Task HandleOpenedAsync()
     {
-        _isOpen = true;
         _searchText = string.Empty;
         _focusedIndex = -1;
-        _computedPlacement = Placement == DropdownPlacement.Auto ? DropdownPlacement.Bottom : Placement;
-        StateHasChanged();
-        return Task.CompletedTask;
+
+        if (Searchable && _container != null)
+        {
+            await Task.Yield();
+            await _container.FocusSearchInputAsync();
+        }
     }
 
-    private async Task CloseAsync()
+    private void HandleClosed()
     {
-        if (!_isOpen) return;
+        _searchText = string.Empty;
+        _focusedIndex = -1;
+    }
 
-        _isOpen = false;
-        _jsInitialized = false;
+    private async Task HandleKeyboardNavigation(DropdownKeyboardEventArgs args)
+    {
+        List<ISelectionOption> filtered = GetFilteredOptions();
 
-        if (_callbacksRelay != null)
+        switch (args.Key)
         {
-            await JsInterop.DisposeAsync(_componentId);
-        }
+            case "ArrowDown":
+                _focusedIndex = Math.Min(_focusedIndex + 1, filtered.Count - 1);
+                StateHasChanged();
+                break;
 
-        StateHasChanged();
+            case "ArrowUp":
+                _focusedIndex = Math.Max(_focusedIndex - 1, 0);
+                StateHasChanged();
+                break;
+
+            case "Enter":
+                if (_focusedIndex >= 0 && _focusedIndex < filtered.Count)
+                    await SelectOptionAsync(filtered[_focusedIndex]);
+                break;
+
+            case "Home":
+                _focusedIndex = 0;
+                StateHasChanged();
+                break;
+
+            case "End":
+                _focusedIndex = filtered.Count - 1;
+                StateHasChanged();
+                break;
+        }
     }
 
     private async Task SelectOptionAsync(ISelectionOption option)
     {
-        if (IsDisabled || option.IsDisabled) return;
+        if (Disabled || option.IsDisabled) return;
 
         if (_selectionState.IsMultiple)
         {
@@ -399,31 +325,31 @@
             _selectionState.SetSingleValue(option.Value);
         }
 
-        CurrentValue = _selectionState.GetValue();
+        await SetValueAsync(_selectionState.GetValue());
 
-        if (!_selectionState.IsMultiple && CloseOnSelect)
+        if (!_selectionState.IsMultiple && CloseOnSelect && _container != null)
         {
-            await CloseAsync();
+            await _container.CloseAsync();
         }
     }
 
-    private void SelectAll()
+    private async Task SelectAll()
     {
-        if (!_selectionState.IsMultiple || IsDisabled) return;
+        if (!_selectionState.IsMultiple || Disabled) return;
 
         IEnumerable<object?> allValues = GetFilteredOptions()
             .Where(o => !o.IsDisabled)
             .Select(o => o.Value);
 
         _selectionState.SelectAll(allValues);
-        CurrentValue = _selectionState.GetValue();
+        await SetValueAsync(_selectionState.GetValue());
     }
 
-    private void DeselectAll()
+    private async Task DeselectAll()
     {
-        if (!_selectionState.IsMultiple || IsDisabled) return;
+        if (!_selectionState.IsMultiple || Disabled) return;
         _selectionState.Clear();
-        CurrentValue = _selectionState.GetValue();
+        await SetValueAsync(_selectionState.GetValue());
     }
 
     private void OnSearchInput(ChangeEventArgs e)
@@ -432,85 +358,13 @@
         _focusedIndex = -1;
     }
 
-    Task IDropdownJsCallback.OnClickOutside() => CloseAsync();
-
-    async Task IDropdownJsCallback.OnKeyDown(string key, bool shiftKey, bool ctrlKey)
+    public async ValueTask DisposeAsync()
     {
-        List<ISelectionOption> filtered = GetFilteredOptions();
-
-        switch (key)
-        {
-            case "Escape":
-                await CloseAsync();
-                break;
-
-            case "ArrowDown":
-                if (!_isOpen)
-                    await OpenAsync();
-                else
-                {
-                    _focusedIndex = Math.Min(_focusedIndex + 1, filtered.Count - 1);
-                    StateHasChanged();
-                }
-                break;
-
-            case "ArrowUp":
-                if (_isOpen)
-                {
-                    _focusedIndex = Math.Max(_focusedIndex - 1, 0);
-                    StateHasChanged();
-                }
-                break;
-
-            case "Enter":
-                if (_isOpen && _focusedIndex >= 0 && _focusedIndex < filtered.Count)
-                    await SelectOptionAsync(filtered[_focusedIndex]);
-                else if (!_isOpen)
-                    await OpenAsync();
-                break;
-
-            case "Home":
-                if (_isOpen)
-                {
-                    _focusedIndex = 0;
-                    StateHasChanged();
-                }
-                break;
-
-            case "End":
-                if (_isOpen)
-                {
-                    _focusedIndex = filtered.Count - 1;
-                    StateHasChanged();
-                }
-                break;
-
-            case "Tab":
-                await CloseAsync();
-                break;
-        }
-    }
-
-    async Task<DropdownPosition> IDropdownJsCallback.OnRequestPosition()
-        => await JsInterop.GetPositionAsync(_componentId);
-
-    protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
-    {
-        validationErrorMessage = string.Empty;
-        result = default!;
-        return true;
-    }
-
-    public override async ValueTask DisposeAsync()
-    {
-        if (_jsInitialized)
-        {
-            await JsInterop.DisposeAsync(_componentId);
-        }
-
-        _callbacksRelay?.Dispose();
         _options.Clear();
 
-        await base.DisposeAsync();
+        if (_container != null)
+        {
+            await _container.DisposeAsync();
+        }
     }
 }

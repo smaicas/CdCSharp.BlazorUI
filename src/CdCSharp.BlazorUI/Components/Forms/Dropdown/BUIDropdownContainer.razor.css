@@ -1,0 +1,92 @@
+﻿/* ========================================
+   BUIDropdownContainer - Isolated CSS
+   Extends Input Family with dropdown-specific styles
+   ======================================== */
+
+/* === TRIGGER BUTTON === */
+
+bui-component[data-bui-component="dropdown-container"] .bui-dropdown__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    text-align: start;
+}
+
+bui-component[data-bui-component="dropdown-container"][data-bui-disabled="true"] .bui-dropdown__trigger {
+    cursor: not-allowed;
+}
+
+/* === VALUE DISPLAY === */
+
+bui-component[data-bui-component="dropdown-container"] .bui-dropdown__value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+bui-component[data-bui-component="dropdown-container"] .bui-dropdown__placeholder {
+    opacity: var(--bui-opacity-placeholder);
+}
+
+/* === ARROW INDICATOR === */
+
+bui-component[data-bui-component="dropdown-container"] .bui-dropdown__arrow {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-inline-start: var(--bui-density-gap, 0.5rem);
+    transition: transform 200ms ease;
+}
+
+bui-component[data-bui-component="dropdown-container"][data-bui-dropdown-open="true"] .bui-dropdown__arrow {
+    transform: rotate(180deg);
+}
+
+/* === MENU PANEL === */
+
+bui-component[data-bui-component="dropdown-container"] .bui-dropdown__menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background-color: var(--palette-surface);
+    border: 1px solid var(--palette-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--palette-shadow) 15%, transparent);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: var(--bui-z-dropdown);
+    min-width: 100%;
+}
+
+/* === PLACEMENT VARIANTS === */
+
+bui-component[data-bui-component="dropdown-container"][data-bui-placement="bottom"] .bui-dropdown__menu,
+bui-component[data-bui-component="dropdown-container"][data-bui-placement="bottomstart"] .bui-dropdown__menu,
+bui-component[data-bui-component="dropdown-container"][data-bui-placement="bottomend"] .bui-dropdown__menu {
+    top: 100%;
+    bottom: auto;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+bui-component[data-bui-component="dropdown-container"][data-bui-placement="top"] .bui-dropdown__menu,
+bui-component[data-bui-component="dropdown-container"][data-bui-placement="topstart"] .bui-dropdown__menu,
+bui-component[data-bui-component="dropdown-container"][data-bui-placement="topend"] .bui-dropdown__menu {
+    top: auto;
+    bottom: 100%;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+/* === NO OPTIONS STATE === */
+
+bui-component[data-bui-component="dropdown-container"] .bui-dropdown__no-options {
+    padding: calc(0.75rem * var(--bui-size-multiplier, 1));
+    text-align: center;
+    opacity: 0.6;
+}
