@@ -136,7 +136,7 @@ async function handleKeyDown(e: KeyboardEvent): Promise<void> {
 
     if (e.key === 'Tab') {
         const spans = Array.from(
-            instance.container.querySelectorAll('[contenteditable="true"], .pattern-toggle')
+            instance.container.querySelectorAll('[contenteditable="true"], [data-toggle="true"]')
         ) as HTMLElement[];
 
         const currentIdx = spans.findIndex(s => s === target);
@@ -314,7 +314,7 @@ function isEditableSpan(element: HTMLElement): boolean {
 }
 
 function isToggleSpan(element: HTMLElement): boolean {
-    return element.tagName === 'SPAN' && element.classList.contains('pattern-toggle');
+    return element.tagName === 'SPAN' && element.dataset.toggle === 'true';
 }
 
 function getSpanIndex(span: HTMLElement): number {

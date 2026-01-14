@@ -26,6 +26,7 @@
                 <span @key="@($"span_{ComponentId}_{span.Index}")"
                       class="bui-pattern__toggle"
                       data-index="@span.Index"
+                      data-toggle="true"
                       tabindex="-1">@span.DisplayValue</span>
             }
             else if (span.IsEditable)
@@ -60,12 +61,9 @@
 
     private bool HasValue => _patternState.Spans.Any(s => s.IsEditable && !string.IsNullOrEmpty(s.Value));
 
-    public async Task FocusAsync()
+    public new async Task FocusAsync()
     {
-        if (_containerBox.Id != null)
-        {
-            await _containerBox.FocusAsync();
-        }
+        await base.FocusAsync();
     }
 
     private async Task HandleFocusIn(FocusEventArgs e)
@@ -111,6 +109,12 @@
                 Validator = value => ValidateDateComponent(component.Type, value)
             };
 
+            // Initialize AM/PM toggle with default value "AM"
+            if (component.Type == DateComponentType.AmPm)
+            {
+                span.Value = component.MaxDigits == 1 ? "A" : "AM";
+            }
+
             state.Spans.Add(span);
         }
 
@@ -119,13 +123,22 @@
 
     protected override void InitializeFromText(string? text)
     {
-        foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable))
+        // Reset all editable spans (except AM/PM toggle for now)
+        foreach (SpanState span in _patternState.Spans.Where(s => s.IsEditable && !s.IsToggle))
         {
             span.Value = string.Empty;
         }
 
         if (string.IsNullOrEmpty(text) || _parsedPattern == null)
+        {
+            // Only initialize AM/PM to default if no text is provided
+            SpanState? amPmSpan = _patternState.Spans.FirstOrDefault(s => s.IsToggle);
+            if (amPmSpan != null)
+            {
+                amPmSpan.Value = amPmSpan.MaxLength == 1 ? "A" : "AM";
+            }
             return;
+        }
 
         if (DateTime.TryParseExact(text, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime date))
         {
@@ -138,6 +151,15 @@
                     span.Value = GetComponentValue(component, date);
                 }
                 spanIndex++;
+            }
+        }
+        else
+        {
+            // If parsing fails, reset AM/PM to default
+            SpanState? amPmSpan = _patternState.Spans.FirstOrDefault(s => s.IsToggle);
+            if (amPmSpan != null)
+            {
+                amPmSpan.Value = amPmSpan.MaxLength == 1 ? "A" : "AM";
             }
         }
     }
@@ -218,7 +240,9 @@
             DateComponentType.Hour24 => date.Hour.ToString("00"),
             DateComponentType.Minute => date.Minute.ToString("00"),
             DateComponentType.Second => date.Second.ToString("00"),
-            DateComponentType.AmPm => date.Hour < 12 ? "AM" : "PM",
+            DateComponentType.AmPm => date.Hour < 12
+                ? (component.MaxDigits == 1 ? "A" : "AM")
+                : (component.MaxDigits == 1 ? "P" : "PM"),
             _ => ""
         };
     }

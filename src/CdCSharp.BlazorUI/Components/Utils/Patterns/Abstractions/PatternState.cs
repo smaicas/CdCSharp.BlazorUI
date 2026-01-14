@@ -7,7 +7,7 @@ public sealed class PatternState
         .All(s => s.IsComplete && !string.IsNullOrEmpty(s.Value));
 
     public bool IsDirty => Spans
-        .Any(s => s.IsEditable && !string.IsNullOrEmpty(s.Value));
+        .Any(s => s.IsEditable && !s.IsToggle && !string.IsNullOrEmpty(s.Value));
 
     public List<SpanState> Spans { get; set; } = [];
 

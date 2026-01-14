@@ -123,8 +123,8 @@
                                     Format="@Format"
                                     Editable="@(!IsReadOnly)"
                                     OnFocus="HandleFocus"
-                                    OnBlur="HandleBlur" 
-                                    OnDirtyStateChanged="@((isDirty)=> _isDirty = isDirty)"/>
+                                    OnBlur="HandleBlur"
+                                    OnDirtyStateChanged="HandleDirtyChanged" />
 
                 @if (HasSuffix)
                 {
@@ -251,6 +251,11 @@
     {
         _isFocused = false;
         StateHasChanged();
+    }
+
+    private void HandleDirtyChanged(bool isDirty)
+    {
+        _isDirty = isDirty;
     }
 
     private void SyncPickersFromValue()
