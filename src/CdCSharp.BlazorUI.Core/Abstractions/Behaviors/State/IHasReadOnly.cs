@@ -2,5 +2,5 @@
 
 public interface IHasReadOnly
 {
-    bool IsReadOnly { get; }
+    bool ReadOnly { get; }
 }

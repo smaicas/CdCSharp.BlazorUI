@@ -113,7 +113,7 @@
                        value="@DisplayValue"
                        placeholder="@(IsFloated? Placeholder : null)"
                        readonly="@(!InputEditable)"
-                       disabled="@IsDisabled"
+                       disabled="@Disabled"
                        @onchange="HandleInputChange"
                        @onfocus="HandleFocus"
                        @onblur="HandleBlur"
@@ -135,7 +135,7 @@
                     </button>
                 }
 
-                @if (Clearable && HasValue && !IsDisabled)
+                @if (Clearable && HasValue && !Disabled)
                 {
                     <button type="button"
                             class="bui-input-color__clear-btn"
@@ -149,7 +149,7 @@
                 <button type="button"
                         class="bui-input-color__preview"
                         @onclick="TogglePicker"
-                        disabled="@IsDisabled"
+                        disabled="@Disabled"
                         title="Open color picker">
                     <div class="bui-input-color__preview-chess">
                         <div class="bui-input-color__preview-color"
@@ -259,7 +259,7 @@
 
     private void TogglePicker()
     {
-        if (IsDisabled) return;
+        if (Disabled) return;
 
         if (!_isOpen)
         {

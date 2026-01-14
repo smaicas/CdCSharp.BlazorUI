@@ -152,7 +152,7 @@ public class BUIButtonStateTests
         // Arrange
         IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
             .Add(c => c.Text, "Submit")
-            .Add(c => c.IsLoading, false));
+            .Add(c => c.Loading, false));
 
         IElement component = cut.Find("bui-component");
 
@@ -163,7 +163,7 @@ public class BUIButtonStateTests
 
         // Act - Set loading
         cut.Render(p => p
-            .Add(c => c.IsLoading, true)
+            .Add(c => c.Loading, true)
             .Add(c => c.LoadingIndicatorVariant, BUILoadingIndicatorVariant.Dots));
 
         // Assert loading state
@@ -173,7 +173,7 @@ public class BUIButtonStateTests
 
         // Act - Clear loading
         cut.Render(p => p
-            .Add(c => c.IsLoading, false));
+            .Add(c => c.Loading, false));
 
         // Assert final state
         component.GetAttribute("data-bui-loading").Should().Be("false");

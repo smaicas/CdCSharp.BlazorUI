@@ -71,11 +71,11 @@ public class BUIComponentBaseTests
             .Add(c => c.Size, SizeEnum.Large)
             .Add(c => c.Density, DensityEnum.Compact)
             .Add(c => c.FullWidth, true)
-            .Add(c => c.IsLoading, true)
-            .Add(c => c.IsError, true)
-            .Add(c => c.IsDisabled, true)
-            .Add(c => c.IsReadOnly, true)
-            .Add(c => c.IsRequired, true)
+            .Add(c => c.Loading, true)
+            .Add(c => c.Error, true)
+            .Add(c => c.Disabled, true)
+            .Add(c => c.ReadOnly, true)
+            .Add(c => c.Required, true)
         );
 
         IElement el = cut.Find("div");

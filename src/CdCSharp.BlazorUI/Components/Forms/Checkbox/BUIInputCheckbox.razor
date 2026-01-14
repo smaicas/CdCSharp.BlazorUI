@@ -122,7 +122,7 @@
                 <input type="checkbox"
                        id="@_inputId"
                        checked="@IsChecked"
-                       disabled="@IsDisabled"
+                       disabled="@Disabled"
                        @onclick:preventDefault="true"
                        aria-checked="@(IsIndeterminate ? "mixed" : IsChecked.ToString().ToLower())"
                        class="bui-input__field hidden" 
@@ -155,7 +155,7 @@
 
     private async Task HandleClick(MouseEventArgs e)
     {
-        if (IsDisabled) return;
+        if (Disabled) return;
 
         if (typeof(TValue) == typeof(bool))
         {

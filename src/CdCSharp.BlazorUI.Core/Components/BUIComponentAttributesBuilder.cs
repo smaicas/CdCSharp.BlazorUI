@@ -153,7 +153,7 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildDisabled(ComponentBase component)
     {
         if (component is IHasDisabled disabled)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.Disabled.ToString().ToLowerInvariant();
     }
 
     private void BuildShadow(ComponentBase component, Dictionary<string, string> cssVariables)
@@ -175,7 +175,7 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildError(ComponentBase component)
     {
         if (component is IHasError error)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = error.IsError.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = error.Error.ToString().ToLowerInvariant();
     }
 
     private void BuildFamilyAttributes(ComponentBase component)
@@ -215,19 +215,19 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildLoading(ComponentBase component)
     {
         if (component is IHasLoading loading)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = loading.IsLoading.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = loading.Loading.ToString().ToLowerInvariant();
     }
 
     private void BuildReadOnly(ComponentBase component)
     {
         if (component is IHasReadOnly readOnly)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = readOnly.IsReadOnly.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = readOnly.ReadOnly.ToString().ToLowerInvariant();
     }
 
     private void BuildRequired(ComponentBase component)
     {
         if (component is IHasRequired required)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = required.IsRequired.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = required.Required.ToString().ToLowerInvariant();
     }
 
     private void BuildRipple(ComponentBase component, Dictionary<string, string> cssVariables)

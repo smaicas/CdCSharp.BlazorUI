@@ -128,7 +128,7 @@
                         @onblur="HandleBlur"
                         @onmousedown="HandleMouseDown"
                         @onkeydown="HandleKeyDown"
-                        disabled="@IsDisabled"
+                        disabled="@Disabled"
                         aria-expanded="@IsOpen.ToString().ToLowerInvariant()"
                         aria-haspopup="@AriaRole">
 
@@ -222,7 +222,7 @@
 
     public async Task ToggleAsync()
     {
-        if (IsDisabled || Loading) return;
+        if (Disabled || Loading) return;
 
         if (IsOpen)
             await CloseAsync();
@@ -232,7 +232,7 @@
 
     public async Task OpenAsync()
     {
-        if (IsOpen || IsDisabled || Loading) return;
+        if (IsOpen || Disabled || Loading) return;
 
         IsOpen = true;
         _computedPlacement = Placement == DropdownPlacement.Auto ? DropdownPlacement.Bottom : Placement;

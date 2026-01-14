@@ -11,10 +11,6 @@
 @implements IHasBackgroundColor
 @implements IHasShadow
 @implements IHasLoading
-@implements IHasError
-@implements IHasDisabled
-@implements IHasReadOnly
-@implements IHasRequired
 @implements IHasFullWidth
 @implements IHasRipple
 @implements IHasBorder
@@ -23,8 +19,8 @@
 <input @ref="_elementRef"
        @attributes="ComputedAttributes"
        value="@CurrentValueAsString"
-       disabled="@IsDisabled"
-       readonly="@IsReadOnly"
+       disabled="@Disabled"
+       readonly="@ReadOnly"
        @onchange="@(e => CurrentValueAsString = e.Value?.ToString())" />
 
 @code {
@@ -34,7 +30,7 @@
     [Parameter] public CssColor? Color { get; set; }
     [Parameter] public CssColor? BackgroundColor { get; set; }
     [Parameter] public ShadowStyle? Shadow { get; set; }
-    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public bool Loading { get; set; }
     [Parameter] public bool FullWidth { get; set; }
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public CssColor? RippleColor { get; set; }

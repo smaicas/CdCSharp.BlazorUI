@@ -95,20 +95,20 @@
 
     private async Task SelectValueAsync(object? value)
     {
-        if (IsDisabled) return;
+        if (Disabled) return;
         CurrentValue = value == null ? default! : (TValue)value;
         await ValueChanged.InvokeAsync(CurrentValue);
     }
 
     private async Task ClearAsync()
     {
-        if (IsDisabled || !Clearable) return;
+        if (Disabled || !Clearable) return;
         CurrentValue = default!;
         await ValueChanged.InvokeAsync(CurrentValue);
     }
 
     private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
-    private bool ShowClearButton => Clearable && HasValue && !IsDisabled;
+    private bool ShowClearButton => Clearable && HasValue && !Disabled;
 
     private string GetCheckedIcon() => CheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_checked;
     private string GetUncheckedIcon() => UncheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked;
@@ -141,7 +141,7 @@
                     {
                         string optionId = $"{_groupName}-{option.RawValue?.GetHashCode() ?? 0}";
                         bool isSelected = ((IRadioContainer)this).IsOptionSelected(option.RawValue);
-                        bool isOptionDisabled = IsDisabled || option.IsDisabled;
+                        bool isOptionDisabled = Disabled || option.IsDisabled;
 
                         <div class="bui-radio__option @(isOptionDisabled ? "bui-radio__option--disabled" : "")"
                              @onclick="() => HandleOptionClick(option, isOptionDisabled)"

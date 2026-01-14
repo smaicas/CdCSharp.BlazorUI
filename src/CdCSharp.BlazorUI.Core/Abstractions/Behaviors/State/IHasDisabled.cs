@@ -2,5 +2,5 @@
 
 public interface IHasDisabled
 {
-    bool IsDisabled { get; }
+    bool Disabled { get; }
 }

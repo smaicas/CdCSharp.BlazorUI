@@ -41,7 +41,7 @@
     [Parameter] public bool FullWidth { get; set; }
 
     // IHasLoading
-    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public bool Loading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
 
     // IHasShadow
@@ -78,7 +78,7 @@
 
     /* ========= Private state ========= */
 
-    private bool IsDisabled => Disabled || IsLoading;
+    private bool IsDisabled => Disabled || Loading;
     private ElementReference _buttonElement;
 
     /* ========= Render ========= */
@@ -91,7 +91,7 @@
                     disabled="@IsDisabled"
                     @onclick="HandleClick">
 
-                @if (IsLoading && LoadingIndicatorVariant != null)
+                @if (Loading && LoadingIndicatorVariant != null)
                 {
                     <BUILoadingIndicator Variant="@LoadingIndicatorVariant"
                                          Size="Size"
@@ -107,7 +107,7 @@
                     <span class="bui-button__text">@Text</span>
                 }
 
-                @if (TrailingIcon != null && !IsLoading)
+                @if (TrailingIcon != null && !Loading)
                 {
                     <BUISvgIcon Icon="@TrailingIcon" class="bui-button__icon bui-button__icon--trailing" Size="@Size" />
                 }

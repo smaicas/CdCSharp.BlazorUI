@@ -26,7 +26,7 @@ public class BUIButtonSnapshotTests
 
             new { Name = "Loading", Builder = (Action<ComponentParameterCollectionBuilder<BUIButton>>)(p => p
                 .Add(c => c.Text, "Loading")
-                .Add(c => c.IsLoading, true)
+                .Add(c => c.Loading, true)
                 .Add(c => c.LoadingIndicatorVariant, BUILoadingIndicatorVariant.Spinner)) },
 
             new { Name = "Disabled", Builder = (Action<ComponentParameterCollectionBuilder<BUIButton>>)(p => p

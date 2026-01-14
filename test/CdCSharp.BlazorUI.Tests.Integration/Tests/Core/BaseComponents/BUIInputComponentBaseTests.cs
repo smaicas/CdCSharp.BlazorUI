@@ -75,7 +75,7 @@ public class BUIInputComponentBaseTests
         // Act: Loading y Disabled a la vez
         IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
             .Add(c => c.ValueExpression, () => model.Value)
-            .Add(c => c.IsLoading, true));
+            .Add(c => c.Loading, true));
 
         // Assert: Verificar que data-bui-loading prevalece o coexiste según tu Builder
         IElement input = cut.Find("input");

@@ -191,7 +191,7 @@
                    aria-invalid="@IsError.ToString().ToLower()"
                    aria-required="@Required.ToString().ToLower()"
                    placeholder="@(IsFloated? Placeholder : null)"
-                   disabled="@IsDisabled"
+                   disabled="@Disabled"
                    readonly="@ReadOnly"
                    required="@Required" />
 
@@ -246,7 +246,7 @@
                     @onmouseup="StopIncrement"
                     @onmouseleave="StopIncrement"
                     @onclick:preventDefault="true"
-                    disabled="@(IsDisabled || IsAtMax())"
+                    disabled="@(Disabled || IsAtMax())"
                     aria-label="Increment">
                 <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
             </button>
@@ -256,7 +256,7 @@
                     @onmouseup="StopDecrement"
                     @onmouseleave="StopDecrement"
                     @onclick:preventDefault="true"
-                    disabled="@(IsDisabled || IsAtMin())"
+                    disabled="@(Disabled || IsAtMin())"
                     aria-label="Decrement">
                 <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
             </button>
@@ -292,7 +292,7 @@
 
     private void HandleInput(ChangeEventArgs e)
     {
-        if (IsDisabled || ReadOnly) return;
+        if (Disabled || ReadOnly) return;
 
         string? input = e.Value?.ToString() ?? string.Empty;
         _displayText = input;
@@ -335,7 +335,7 @@
         _preventKeyDown = false;
         _mouseDownFlag = false;
 
-        if (IsDisabled || ReadOnly) return;
+        if (Disabled || ReadOnly) return;
 
         switch (e.Key)
         {
@@ -377,7 +377,7 @@
 
     private async Task HandleWheel(WheelEventArgs e)
     {
-        if (!EnableMouseWheel || IsDisabled || ReadOnly || !_isFocused) return;
+        if (!EnableMouseWheel || Disabled || ReadOnly || !_isFocused) return;
 
         if (e.DeltaY < 0)
             await IncrementValue();
@@ -434,7 +434,7 @@
 
     private void StartIncrement(MouseEventArgs e)
     {
-        if (IsDisabled || IsAtMax()) return;
+        if (Disabled || IsAtMax()) return;
 
         _isIncrementing = true;
         _ = IncrementValue();
@@ -456,7 +456,7 @@
 
     private void StartDecrement(MouseEventArgs e)
     {
-        if (IsDisabled || IsAtMin()) return;
+        if (Disabled || IsAtMin()) return;
 
         _isDecrementing = true;
         _ = DecrementValue();
@@ -508,7 +508,7 @@
 
     private async Task IncrementValue()
     {
-        if (IsDisabled || IsAtMax()) return;
+        if (Disabled || IsAtMax()) return;
 
         decimal current = CurrentValue != null
             ? ConvertToDecimal(CurrentValue)
@@ -529,7 +529,7 @@
 
     private async Task DecrementValue()
     {
-        if (IsDisabled || IsAtMin()) return;
+        if (Disabled || IsAtMin()) return;
 
         decimal current = CurrentValue != null
             ? ConvertToDecimal(CurrentValue)

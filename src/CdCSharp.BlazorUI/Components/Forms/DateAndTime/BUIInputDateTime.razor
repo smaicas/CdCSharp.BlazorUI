@@ -130,7 +130,7 @@
                                     ShowPlaceholder="@IsFloated"
                                     @bind-Text="@CurrentValueAsString"
                                     Format="@Format"
-                                    Editable="@(!IsReadOnly)"
+                                    Editable="@(!ReadOnly)"
                                     OnFocus="HandleFocus"
                                     OnBlur="HandleBlur"
                                     OnDirtyStateChanged="HandleDirtyChanged" />
@@ -149,7 +149,7 @@
                     }
                 }
 
-                @if (CanClear && !IsReadOnly)
+                @if (CanClear && !ReadOnly)
                 {
                     <button type="button"
                             class="bui-input-datetime__action-btn"
@@ -166,7 +166,7 @@
                         @onclick="OpenPicker"
                         @onclick:preventDefault="true"
                         @onclick:stopPropagation="true"
-                        disabled="@IsReadOnly"
+                        disabled="@ReadOnly"
                         aria-label="Open picker">
                     <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
                 </button>

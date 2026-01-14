@@ -76,7 +76,7 @@
                            id="@_inputId"
                            aria-checked="@IsChecked"
                            checked="@IsChecked"
-                           disabled="@IsDisabled"
+                           disabled="@Disabled"
                            @onclick:preventDefault="true"
                            class="bui-switch__input" />
 
@@ -108,7 +108,7 @@
 
     private async Task HandleClick(MouseEventArgs e)
     {
-        if (IsDisabled) return;
+        if (Disabled) return;
 
         CurrentValue = !CurrentValue;
         await ValueChanged.InvokeAsync(CurrentValue);
