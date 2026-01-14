@@ -76,8 +76,10 @@ public static class FeatureDefinitions
             public const string Required = "bui-input__required";
             public const string Validation = "bui-input__validation";
             public const string Wrapper = "bui-input__wrapper";
-            public const string Prefix = "bui-input__prefix";
-            public const string Suffix = "bui-input__suffix";
+            public const string PrefixTxt = "bui-input__prefix-txt";
+            public const string PrefixSvg = "bui-input__prefix-svg";
+            public const string SuffixTxt = "bui-input__suffix-txt";
+            public const string SuffixSvg = "bui-input__suffix-svg";
         }
     }
 

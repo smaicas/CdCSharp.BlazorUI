@@ -1,0 +1,40 @@
+{
+  "profiles": {
+    "Generate Both": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs -v"
+    },
+    "Generate Human Only": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs -m Human -v"
+    },
+    "Generate LLM Only": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs -m Llm -v"
+    },
+    "Generate No Gitignore": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs --no-gitignore -v"
+    },
+    "Analyze": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src"
+    },
+    "Analyze No Gitignore": {
+      "commandName": "Project",
+      "commandLineArgs": "analyze -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src --no-gitignore"
+    },
+    "Help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    },
+    "Generate Help": {
+      "commandName": "Project",
+      "commandLineArgs": "generate --help"
+    },
+    "Test Ignore": {
+      "commandName": "Project",
+      "commandLineArgs": "test-ignore -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src"
+    }
+  }
+}

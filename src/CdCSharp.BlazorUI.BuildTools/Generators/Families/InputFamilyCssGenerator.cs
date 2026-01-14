@@ -40,8 +40,10 @@ public class InputFamilyGenerator : IAssetGenerator
         string loading = FeatureDefinitions.CssClasses.Input.Loading;
         string opacityPlaceholder = FeatureDefinitions.Tokens.Opacity.Placeholder;
 
-        string prefix = FeatureDefinitions.CssClasses.Input.Prefix;
-        string suffix = FeatureDefinitions.CssClasses.Input.Suffix;
+        string prefixTxt = FeatureDefinitions.CssClasses.Input.PrefixTxt;
+        string prefixSvg = FeatureDefinitions.CssClasses.Input.PrefixSvg;
+        string suffixTxt = FeatureDefinitions.CssClasses.Input.SuffixTxt;
+        string suffixSvg = FeatureDefinitions.CssClasses.Input.SuffixSvg;
         string inlinePrefixColor = FeatureDefinitions.InlineVariables.PrefixColor;
         string inlinePrefixBg = FeatureDefinitions.InlineVariables.PrefixBackgroundColor;
         string inlineSuffixColor = FeatureDefinitions.InlineVariables.SuffixColor;
@@ -86,6 +88,9 @@ bui-component[{{inputBase}}] {
     --_label-inset-inline-start: var(--_input-px);
     --_label-floated-inset: var(--_input-px);
     --_label-outline-offset: 0em;
+
+    --_prefix-offset: calc(var(--p, 0) * 1rem * var(--bui-size-multiplier, 1));
+    --_suffix-offset: calc(var(--s, 0) * 1rem * var(--bui-size-multiplier, 1));
 }
 
 /* === WRAPPER === */
@@ -99,6 +104,16 @@ bui-component[{{inputBase}}] .{{wrapper}} {
     border-block-end: {{V(inlineBorderBottom, "var(--_wrapper-border-block-end)")}};
     border-radius: {{V(inlineRadius, "var(--_wrapper-radius)")}};
 }
+
+/* === LABEL TO INPUT PREFIX / SUFFIX OFFSETS === */
+
+bui-component[{{inputBase}}] { --p:0; --s:0; }
+bui-component[{{inputBase}}]:has(.{{prefixTxt}}) { --p:0.7; }
+bui-component[{{inputBase}}]:has(.{{prefixSvg}}) { --p:1.3; }
+bui-component[{{inputBase}}]:has(.{{prefixTxt}}):has(.{{prefixSvg}}) { --p:2; }
+bui-component[{{inputBase}}]:has(.{{suffixTxt}}) { --s:0.7; }
+bui-component[{{inputBase}}]:has(.{{suffixSvg}}) { --s:1.3; }
+bui-component[{{inputBase}}]:has(.{{suffixTxt}}):has(.{{suffixSvg}}) { --s:2; }
 
 /* === FIELD === */
 
@@ -135,22 +150,23 @@ bui-component[{{inputBase}}] .{{wrapper}} > *:not(.{{fieldset}}) {
 
 bui-component[{{inputBase}}] .{{label}} {
     position: absolute;
-    inset-inline-start: var(--_label-inset-inline-start);
+    inset-inline-start: calc(var(--_label-inset-inline-start) + var(--_prefix-offset));
     top: 50%;
     transform: translateY(-50%);
     color: var(--_input-label-color);
     pointer-events: none;
     transition: var(--_input-transition);
     transform-origin: top left;
-    max-width: calc(100% - 2 * var(--_input-px));
+    max-width: calc(100% - var(--_prefix-offset) - var(--_suffix-offset) - 2 * var(--_input-px));
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 bui-component[{{inputBase}}][{{floated}}="true"] .{{label}} {
-    top: 0;
+    top:0;
     transform: translateY(0) scale(var(--_input-scale));
+   /* transform: translateY(-150%) scale(var(--_input-scale)); */
 }
 
 bui-component[{{inputBase}}]:focus-within .{{label}} {
@@ -192,12 +208,14 @@ bui-component[{{inputBase}}] .{{loading}} {
 
 /* === PREFIX / SUFFIX === */
 
-bui-component[{{inputBase}}] .{{prefix}},
-bui-component[{{inputBase}}] .{{suffix}} {
+bui-component[{{inputBase}}] .{{prefixTxt}},
+bui-component[{{inputBase}}] .{{prefixSvg}},
+bui-component[{{inputBase}}] .{{suffixTxt}},
+bui-component[{{inputBase}}] .{{suffixSvg}} {
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    padding-inline: calc(0.5rem * {{V(sizeMult, "1")}});
+    padding-inline: calc(0.2rem * {{V(sizeMult, "1")}});
     white-space: nowrap;
     user-select: none;
     color: {{V(inlinePrefixColor, "var(--_input-label-color)")}};
@@ -206,13 +224,16 @@ bui-component[{{inputBase}}] .{{suffix}} {
     transition: opacity var(--_input-transition);
 }
 
-bui-component[{{inputBase}}] .{{suffix}} {
+bui-component[{{inputBase}}] .{{suffixTxt}},
+bui-component[{{inputBase}}] .{{suffixSvg}}, {
     color: {{V(inlineSuffixColor, "var(--_input-label-color)")}};
     background: {{V(inlineSuffixBg, "transparent")}};
 }
 
-bui-component[{{inputBase}}]:focus-within .{{prefix}},
-bui-component[{{inputBase}}]:focus-within .{{suffix}} {
+bui-component[{{inputBase}}]:focus-within .{{prefixTxt}},
+bui-component[{{inputBase}}]:focus-within .{{prefixSvg}},
+bui-component[{{inputBase}}]:focus-within .{{suffixTxt}},
+bui-component[{{inputBase}}]:focus-within .{{suffixSvg}} {
     opacity: 1;
 }
 

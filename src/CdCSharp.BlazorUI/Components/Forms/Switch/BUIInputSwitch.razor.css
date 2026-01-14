@@ -7,12 +7,12 @@
    REMOVED (now in common-classes.css):
    - Base disabled opacity (inherited)
 
-   OPTIMIZATION: Use --bui-size-scale from global
+   OPTIMIZATION: Use --bui-size-multiplier from global
    ============================================ */
 
 bui-component[data-bui-component="input-switch"] {
     display:inline-flex;
-    --bui-switch-scale: var(--bui-size-scale, 1);
+    --bui-switch-scale: var(--bui-size-multiplier, 1);
     --bui-switch-track-width: calc(60px * var(--bui-switch-scale));
     --bui-switch-track-height: calc(32px * var(--bui-switch-scale));
     --bui-switch-thumb-size: calc(24px * var(--bui-switch-scale));
