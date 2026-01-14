@@ -87,7 +87,7 @@
             {
                 // Cargar módulo JS
                 _jsModule = await JS.InvokeAsync<IJSObjectReference>(
-                    "import", "./DebugPanel.js");
+                    "import", "./js/DebugPanel.js");
 
                 // Crear referencia .NET para callbacks
                 _dotNetRef = DotNetObjectReference.Create(this);

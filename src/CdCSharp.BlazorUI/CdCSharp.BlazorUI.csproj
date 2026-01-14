@@ -10,7 +10,7 @@
 		<Version>1.0.0</Version>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Include="Types\Behaviors\DebugPanel.ts">
+	  <Content Include="Types\Debug\DebugPanel.ts">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </Content>
