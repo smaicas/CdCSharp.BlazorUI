@@ -1,20 +1,16 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Layout
 
 @inherits BUIComponentBase
-@implements IHasDensity
 
 <bui-component @attributes="ComputedAttributes">
-    <div class="bui-grid">
-        @ChildContent
-    </div>
+    @ChildContent
 </bui-component>
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public int Columns { get; set; } = 12;
+    [Parameter] public int? Columns { get; set; }
 
     [Parameter] public string? MaxWidth { get; set; }
-    [Parameter] public bool DisablePadding { get; set; }
 
     [Parameter] public string? Gap { get; set; }
     [Parameter] public string? GapXs { get; set; }
@@ -52,97 +48,78 @@
     [Parameter] public string? Mx { get; set; }
     [Parameter] public string? My { get; set; }
 
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        dataAttributes["data-bui-direction"] = ToKebabCase(Direction.ToString());
-        dataAttributes["data-bui-justify-content"] = ToKebabCase(JustifyContent.ToString());
-        dataAttributes["data-bui-align-items"] = ToKebabCase(AlignItems.ToString());
-        dataAttributes["data-bui-wrap"] = ToKebabCase(Wrap.ToString());
+        if (Direction != GridDirection.Row)
+            dataAttributes["data-dir"] = ToKebab(Direction);
+        if (DirectionXs.HasValue)
+            dataAttributes["data-dir-xs"] = ToKebab(DirectionXs.Value);
+        if (DirectionSm.HasValue)
+            dataAttributes["data-dir-sm"] = ToKebab(DirectionSm.Value);
+        if (DirectionMd.HasValue)
+            dataAttributes["data-dir-md"] = ToKebab(DirectionMd.Value);
+        if (DirectionLg.HasValue)
+            dataAttributes["data-dir-lg"] = ToKebab(DirectionLg.Value);
+        if (DirectionXl.HasValue)
+            dataAttributes["data-dir-xl"] = ToKebab(DirectionXl.Value);
+
+        if (JustifyContent != GridJustifyContent.Start)
+            dataAttributes["data-justify"] = ToKebab(JustifyContent);
+        if (AlignItems != GridAlignItems.Stretch)
+            dataAttributes["data-align"] = ToKebab(AlignItems);
+        if (Wrap != GridWrap.Wrap)
+            dataAttributes["data-wrap"] = ToKebab(Wrap);
 
         if (MaxWidth != null)
-            dataAttributes["data-bui-contained"] = "true";
-
-        if (DisablePadding)
-            dataAttributes["data-bui-disable-padding"] = "true";
-
-        if (DirectionXs.HasValue)
-            dataAttributes["data-bui-direction-xs"] = ToKebabCase(DirectionXs.Value.ToString());
-        if (DirectionSm.HasValue)
-            dataAttributes["data-bui-direction-sm"] = ToKebabCase(DirectionSm.Value.ToString());
-        if (DirectionMd.HasValue)
-            dataAttributes["data-bui-direction-md"] = ToKebabCase(DirectionMd.Value.ToString());
-        if (DirectionLg.HasValue)
-            dataAttributes["data-bui-direction-lg"] = ToKebabCase(DirectionLg.Value.ToString());
-        if (DirectionXl.HasValue)
-            dataAttributes["data-bui-direction-xl"] = ToKebabCase(DirectionXl.Value.ToString());
+            dataAttributes["data-contained"] = "true";
     }
 
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
-        cssVariables["--bui-grid-columns"] = Columns.ToString();
+        if (Columns.HasValue)
+            cssVariables["--columns"] = Columns.Value.ToString();
 
         if (MaxWidth != null)
-            cssVariables["--bui-grid-max-width"] = MaxWidth;
+            cssVariables["--max-w"] = MaxWidth;
 
-        string baseGap = NormalizeGapValue(Gap ?? "1rem");
-        cssVariables["--bui-grid-gap"] = $"calc({baseGap} * var(--bui-density-gap, 1))";
-
+        if (Gap != null)
+            cssVariables["--gap"] = Gap;
+        if (GapXs != null)
+            cssVariables["--gap-xs"] = GapXs;
+        if (GapSm != null)
+            cssVariables["--gap-sm"] = GapSm;
+        if (GapMd != null)
+            cssVariables["--gap-md"] = GapMd;
+        if (GapLg != null)
+            cssVariables["--gap-lg"] = GapLg;
+        if (GapXl != null)
+            cssVariables["--gap-xl"] = GapXl;
         if (RowGap != null)
-            cssVariables["--bui-grid-row-gap"] = $"calc({NormalizeGapValue(RowGap)} * var(--bui-density-gap, 1))";
+            cssVariables["--row-gap"] = RowGap;
         if (ColumnGap != null)
-            cssVariables["--bui-grid-column-gap"] = $"calc({NormalizeGapValue(ColumnGap)} * var(--bui-density-gap, 1))";
+            cssVariables["--col-gap"] = ColumnGap;
 
-        if (GapXs != null) cssVariables["--bui-grid-gap-xs"] = $"calc({NormalizeGapValue(GapXs)} * var(--bui-density-gap, 1))";
-        if (GapSm != null) cssVariables["--bui-grid-gap-sm"] = $"calc({NormalizeGapValue(GapSm)} * var(--bui-density-gap, 1))";
-        if (GapMd != null) cssVariables["--bui-grid-gap-md"] = $"calc({NormalizeGapValue(GapMd)} * var(--bui-density-gap, 1))";
-        if (GapLg != null) cssVariables["--bui-grid-gap-lg"] = $"calc({NormalizeGapValue(GapLg)} * var(--bui-density-gap, 1))";
-        if (GapXl != null) cssVariables["--bui-grid-gap-xl"] = $"calc({NormalizeGapValue(GapXl)} * var(--bui-density-gap, 1))";
-
-        AddSpacingVariables(cssVariables, "padding", P, Pt, Pr, Pb, Pl, Px, Py);
-        AddSpacingVariables(cssVariables, "margin", M, Mt, Mr, Mb, Ml, Mx, My);
+        BuildSpacing(cssVariables, P, Pt, Pr, Pb, Pl, Px, Py, "p");
+        BuildSpacing(cssVariables, M, Mt, Mr, Mb, Ml, Mx, My, "m");
     }
 
-    private void AddSpacingVariables(Dictionary<string, string> cssVariables, string property,
-        string? all, string? top, string? right, string? bottom, string? left, string? horizontal, string? vertical)
+    private static void BuildSpacing(Dictionary<string, string> css,
+        string? all, string? t, string? r, string? b, string? l, string? x, string? y, string prefix)
     {
-        if (all != null)
-        {
-            cssVariables[$"--bui-grid-{property}"] = $"calc({all} * var(--bui-density-gap, 1))";
-            return;
-        }
+        if (all != null) { css[$"--{prefix}"] = all; return; }
 
-        if (vertical != null)
-        {
-            cssVariables[$"--bui-grid-{property}-top"] = $"calc({vertical} * var(--bui-density-gap, 1))";
-            cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({vertical} * var(--bui-density-gap, 1))";
-        }
-        if (horizontal != null)
-        {
-            cssVariables[$"--bui-grid-{property}-left"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
-            cssVariables[$"--bui-grid-{property}-right"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
-        }
+        string? top = t ?? y;
+        string? right = r ?? x;
+        string? bottom = b ?? y;
+        string? left = l ?? x;
 
-        if (top != null) cssVariables[$"--bui-grid-{property}-top"] = $"calc({top} * var(--bui-density-gap, 1))";
-        if (right != null) cssVariables[$"--bui-grid-{property}-right"] = $"calc({right} * var(--bui-density-gap, 1))";
-        if (bottom != null) cssVariables[$"--bui-grid-{property}-bottom"] = $"calc({bottom} * var(--bui-density-gap, 1))";
-        if (left != null) cssVariables[$"--bui-grid-{property}-left"] = $"calc({left} * var(--bui-density-gap, 1))";
+        if (top != null) css[$"--{prefix}t"] = top;
+        if (right != null) css[$"--{prefix}r"] = right;
+        if (bottom != null) css[$"--{prefix}b"] = bottom;
+        if (left != null) css[$"--{prefix}l"] = left;
     }
 
-    private static string NormalizeGapValue(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return "0px";
-
-        string trimmed = value.Trim();
-
-        if (trimmed == "0")
-            return "0px";
-
-        return trimmed;
-    }
-
-    private static string ToKebabCase(string value) =>
-        string.Concat(value.Select((c, i) => i > 0 && char.IsUpper(c) ? $"-{char.ToLower(c)}" : char.ToLower(c).ToString()));
+    private static string ToKebab(Enum value) =>
+        string.Concat(value.ToString().Select((c, i) =>
+            i > 0 && char.IsUpper(c) ? $"-{char.ToLower(c)}" : char.ToLower(c).ToString()));
 }

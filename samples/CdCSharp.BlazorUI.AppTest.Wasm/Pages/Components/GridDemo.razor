@@ -29,9 +29,6 @@
 <h2>Wrap</h2>
 <ComponentDemo Definition="@WrapDemo" />
 
-<h2>Density</h2>
-<ComponentDemo Definition="@DensityDemo" />
-
 <h2>Max Width</h2>
 <ComponentDemo Definition="@MaxWidthDemo" />
 
@@ -316,38 +313,6 @@
         </div>
     };
 
-    private ComponentDemoDefinition DensityDemo => new()
-    {
-        Demo = RenderDensity(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderDensity() => __builder =>
-    {
-        <div>
-            <h3>Compact</h3>
-            <BUIGrid Density="DensityEnum.Compact">
-                <BUIGridItem Span="4"><div class="demo-box">Item 1</div></BUIGridItem>
-                <BUIGridItem Span="4"><div class="demo-box">Item 2</div></BUIGridItem>
-                <BUIGridItem Span="4"><div class="demo-box">Item 3</div></BUIGridItem>
-            </BUIGrid>
-
-            <h3>Standard (Default)</h3>
-            <BUIGrid Density="DensityEnum.Standard">
-                <BUIGridItem Span="4"><div class="demo-box">Item 1</div></BUIGridItem>
-                <BUIGridItem Span="4"><div class="demo-box">Item 2</div></BUIGridItem>
-                <BUIGridItem Span="4"><div class="demo-box">Item 3</div></BUIGridItem>
-            </BUIGrid>
-
-            <h3>Comfortable</h3>
-            <BUIGrid Density="DensityEnum.Comfortable">
-                <BUIGridItem Span="4"><div class="demo-box">Item 1</div></BUIGridItem>
-                <BUIGridItem Span="4"><div class="demo-box">Item 2</div></BUIGridItem>
-                <BUIGridItem Span="4"><div class="demo-box">Item 3</div></BUIGridItem>
-            </BUIGrid>
-        </div>
-    };
-
     private ComponentDemoDefinition MaxWidthDemo => new()
     {
         Demo = RenderMaxWidth(),
@@ -542,6 +507,7 @@
 
 <style>
     .demo-box {
+        width:100%;
         background-color: var(--palette-primary);
         color: var(--palette-primarycontrast);
         padding: 1rem;

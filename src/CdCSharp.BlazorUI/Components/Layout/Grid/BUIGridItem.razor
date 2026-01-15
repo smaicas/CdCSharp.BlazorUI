@@ -3,9 +3,7 @@
 @inherits BUIComponentBase
 
 <bui-component @attributes="ComputedAttributes">
-    <div class="bui-grid-item">
-        @ChildContent
-    </div>
+    @ChildContent
 </bui-component>
 
 @code {
@@ -20,6 +18,13 @@
 
     [Parameter] public bool Auto { get; set; }
 
+    [Parameter] public int? Offset { get; set; }
+    [Parameter] public int? OffsetXs { get; set; }
+    [Parameter] public int? OffsetSm { get; set; }
+    [Parameter] public int? OffsetMd { get; set; }
+    [Parameter] public int? OffsetLg { get; set; }
+    [Parameter] public int? OffsetXl { get; set; }
+
     [Parameter] public int? Order { get; set; }
     [Parameter] public int? OrderXs { get; set; }
     [Parameter] public int? OrderSm { get; set; }
@@ -28,13 +33,6 @@
     [Parameter] public int? OrderXl { get; set; }
 
     [Parameter] public GridAlignSelf? AlignSelf { get; set; }
-
-    [Parameter] public int? Offset { get; set; }
-    [Parameter] public int? OffsetXs { get; set; }
-    [Parameter] public int? OffsetSm { get; set; }
-    [Parameter] public int? OffsetMd { get; set; }
-    [Parameter] public int? OffsetLg { get; set; }
-    [Parameter] public int? OffsetXl { get; set; }
 
     [Parameter] public bool HideXs { get; set; }
     [Parameter] public bool HideSm { get; set; }
@@ -64,82 +62,75 @@
     [Parameter] public string? Mx { get; set; }
     [Parameter] public string? My { get; set; }
 
+    private bool HasSpan => Span.HasValue || Xs.HasValue || Sm.HasValue || Md.HasValue || Lg.HasValue || Xl.HasValue;
+
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        if (AlignSelf.HasValue)
-            dataAttributes["data-bui-align-self"] = ToKebabCase(AlignSelf.Value.ToString());
-
         if (Auto)
-            dataAttributes["data-bui-auto"] = "true";
+            dataAttributes["data-auto"] = "true";
+        else if (HasSpan)
+            dataAttributes["data-sized"] = "true";
 
-        if (HideXs) dataAttributes["data-bui-hide-xs"] = "true";
-        if (HideSm) dataAttributes["data-bui-hide-sm"] = "true";
-        if (HideMd) dataAttributes["data-bui-hide-md"] = "true";
-        if (HideLg) dataAttributes["data-bui-hide-lg"] = "true";
-        if (HideXl) dataAttributes["data-bui-hide-xl"] = "true";
+        if (AlignSelf.HasValue)
+            dataAttributes["data-align-self"] = ToKebab(AlignSelf.Value);
 
-        if (ShowXs) dataAttributes["data-bui-show-xs"] = "true";
-        if (ShowSm) dataAttributes["data-bui-show-sm"] = "true";
-        if (ShowMd) dataAttributes["data-bui-show-md"] = "true";
-        if (ShowLg) dataAttributes["data-bui-show-lg"] = "true";
-        if (ShowXl) dataAttributes["data-bui-show-xl"] = "true";
+        if (HideXs) dataAttributes["data-hide-xs"] = "true";
+        if (HideSm) dataAttributes["data-hide-sm"] = "true";
+        if (HideMd) dataAttributes["data-hide-md"] = "true";
+        if (HideLg) dataAttributes["data-hide-lg"] = "true";
+        if (HideXl) dataAttributes["data-hide-xl"] = "true";
+
+        if (ShowXs) dataAttributes["data-show-xs"] = "true";
+        if (ShowSm) dataAttributes["data-show-sm"] = "true";
+        if (ShowMd) dataAttributes["data-show-md"] = "true";
+        if (ShowLg) dataAttributes["data-show-lg"] = "true";
+        if (ShowXl) dataAttributes["data-show-xl"] = "true";
     }
 
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
-        if (Span.HasValue) cssVariables["--bui-grid-item-span"] = Span.Value.ToString();
-        if (Xs.HasValue) cssVariables["--bui-grid-item-xs"] = Xs.Value.ToString();
-        if (Sm.HasValue) cssVariables["--bui-grid-item-sm"] = Sm.Value.ToString();
-        if (Md.HasValue) cssVariables["--bui-grid-item-md"] = Md.Value.ToString();
-        if (Lg.HasValue) cssVariables["--bui-grid-item-lg"] = Lg.Value.ToString();
-        if (Xl.HasValue) cssVariables["--bui-grid-item-xl"] = Xl.Value.ToString();
+        if (Span.HasValue) cssVariables["--span"] = Span.Value.ToString();
+        if (Xs.HasValue) cssVariables["--xs"] = Xs.Value.ToString();
+        if (Sm.HasValue) cssVariables["--sm"] = Sm.Value.ToString();
+        if (Md.HasValue) cssVariables["--md"] = Md.Value.ToString();
+        if (Lg.HasValue) cssVariables["--lg"] = Lg.Value.ToString();
+        if (Xl.HasValue) cssVariables["--xl"] = Xl.Value.ToString();
 
-        if (Offset.HasValue) cssVariables["--bui-grid-item-offset"] = Offset.Value.ToString();
-        if (OffsetXs.HasValue) cssVariables["--bui-grid-item-offset-xs"] = OffsetXs.Value.ToString();
-        if (OffsetSm.HasValue) cssVariables["--bui-grid-item-offset-sm"] = OffsetSm.Value.ToString();
-        if (OffsetMd.HasValue) cssVariables["--bui-grid-item-offset-md"] = OffsetMd.Value.ToString();
-        if (OffsetLg.HasValue) cssVariables["--bui-grid-item-offset-lg"] = OffsetLg.Value.ToString();
-        if (OffsetXl.HasValue) cssVariables["--bui-grid-item-offset-xl"] = OffsetXl.Value.ToString();
+        if (Offset.HasValue) cssVariables["--offset"] = Offset.Value.ToString();
+        if (OffsetXs.HasValue) cssVariables["--offset-xs"] = OffsetXs.Value.ToString();
+        if (OffsetSm.HasValue) cssVariables["--offset-sm"] = OffsetSm.Value.ToString();
+        if (OffsetMd.HasValue) cssVariables["--offset-md"] = OffsetMd.Value.ToString();
+        if (OffsetLg.HasValue) cssVariables["--offset-lg"] = OffsetLg.Value.ToString();
+        if (OffsetXl.HasValue) cssVariables["--offset-xl"] = OffsetXl.Value.ToString();
 
-        if (Order.HasValue) cssVariables["--bui-grid-item-order"] = Order.Value.ToString();
-        if (OrderXs.HasValue) cssVariables["--bui-grid-item-order-xs"] = OrderXs.Value.ToString();
-        if (OrderSm.HasValue) cssVariables["--bui-grid-item-order-sm"] = OrderSm.Value.ToString();
-        if (OrderMd.HasValue) cssVariables["--bui-grid-item-order-md"] = OrderMd.Value.ToString();
-        if (OrderLg.HasValue) cssVariables["--bui-grid-item-order-lg"] = OrderLg.Value.ToString();
-        if (OrderXl.HasValue) cssVariables["--bui-grid-item-order-xl"] = OrderXl.Value.ToString();
+        if (Order.HasValue) cssVariables["--order"] = Order.Value.ToString();
+        if (OrderXs.HasValue) cssVariables["--order-xs"] = OrderXs.Value.ToString();
+        if (OrderSm.HasValue) cssVariables["--order-sm"] = OrderSm.Value.ToString();
+        if (OrderMd.HasValue) cssVariables["--order-md"] = OrderMd.Value.ToString();
+        if (OrderLg.HasValue) cssVariables["--order-lg"] = OrderLg.Value.ToString();
+        if (OrderXl.HasValue) cssVariables["--order-xl"] = OrderXl.Value.ToString();
 
-        AddSpacingVariables(cssVariables, "padding", P, Pt, Pr, Pb, Pl, Px, Py);
-        AddSpacingVariables(cssVariables, "margin", M, Mt, Mr, Mb, Ml, Mx, My);
+        BuildSpacing(cssVariables, P, Pt, Pr, Pb, Pl, Px, Py, "p");
+        BuildSpacing(cssVariables, M, Mt, Mr, Mb, Ml, Mx, My, "m");
     }
 
-    private void AddSpacingVariables(Dictionary<string, string> cssVariables, string property,
-        string? all, string? top, string? right, string? bottom, string? left, string? horizontal, string? vertical)
+    private static void BuildSpacing(Dictionary<string, string> css,
+        string? all, string? t, string? r, string? b, string? l, string? x, string? y, string prefix)
     {
-        string prefix = $"--bui-grid-item-{property}";
+        if (all != null) { css[$"--{prefix}"] = all; return; }
 
-        if (all != null)
-        {
-            cssVariables[prefix] = $"calc({all} * var(--bui-density-gap, 1))";
-            return;
-        }
+        string? top = t ?? y;
+        string? right = r ?? x;
+        string? bottom = b ?? y;
+        string? left = l ?? x;
 
-        if (vertical != null)
-        {
-            cssVariables[$"{prefix}-top"] = $"calc({vertical} * var(--bui-density-gap, 1))";
-            cssVariables[$"{prefix}-bottom"] = $"calc({vertical} * var(--bui-density-gap, 1))";
-        }
-        if (horizontal != null)
-        {
-            cssVariables[$"{prefix}-left"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
-            cssVariables[$"{prefix}-right"] = $"calc({horizontal} * var(--bui-density-gap, 1))";
-        }
-
-        if (top != null) cssVariables[$"{prefix}-top"] = $"calc({top} * var(--bui-density-gap, 1))";
-        if (right != null) cssVariables[$"{prefix}-right"] = $"calc({right} * var(--bui-density-gap, 1))";
-        if (bottom != null) cssVariables[$"{prefix}-bottom"] = $"calc({bottom} * var(--bui-density-gap, 1))";
-        if (left != null) cssVariables[$"{prefix}-left"] = $"calc({left} * var(--bui-density-gap, 1))";
+        if (top != null) css[$"--{prefix}t"] = top;
+        if (right != null) css[$"--{prefix}r"] = right;
+        if (bottom != null) css[$"--{prefix}b"] = bottom;
+        if (left != null) css[$"--{prefix}l"] = left;
     }
 
-    private static string ToKebabCase(string value) =>
-        string.Concat(value.Select((c, i) => i > 0 && char.IsUpper(c) ? $"-{char.ToLower(c)}" : char.ToLower(c).ToString()));
+    private static string ToKebab(Enum value) =>
+        string.Concat(value.ToString().Select((c, i) =>
+            i > 0 && char.IsUpper(c) ? $"-{char.ToLower(c)}" : char.ToLower(c).ToString()));
 }

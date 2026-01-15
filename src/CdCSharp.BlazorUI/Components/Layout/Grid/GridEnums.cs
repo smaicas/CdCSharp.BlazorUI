@@ -39,7 +39,7 @@ public enum GridJustifyContent
 
 public enum GridWrap
 {
-    NoWrap,
     Wrap,
+    NoWrap,
     WrapReverse
 }
