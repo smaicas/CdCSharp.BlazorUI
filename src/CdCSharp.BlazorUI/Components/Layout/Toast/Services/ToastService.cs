@@ -17,7 +17,7 @@ public interface IToastService
 
     void Resume(Guid toastId);
 
-    void Show(RenderFragment content, ToastOptions? options = null);
+    //void Show(RenderFragment content, ToastOptions? options = null);
 
     void Show(Action<RenderTreeBuilder> builder, ToastOptions? options = null);
 

@@ -1,0 +1,505 @@
+﻿@page "/demo/card"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Card - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUICard</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Title and Subtitle</h2>
+<ComponentDemo Definition="@TitleSubtitleDemo" />
+
+<h2>With Custom Header</h2>
+<ComponentDemo Definition="@CustomHeaderDemo" />
+
+<h2>With Media</h2>
+<ComponentDemo Definition="@MediaDemo" />
+
+<h2>Media Position</h2>
+<ComponentDemo Definition="@MediaPositionDemo" />
+
+<h2>With Actions</h2>
+<ComponentDemo Definition="@ActionsDemo" />
+
+<h2>Actions Alignment</h2>
+<ComponentDemo Definition="@ActionsAlignmentDemo" />
+
+<h2>Outlined Actions</h2>
+<ComponentDemo Definition="@OutlinedActionsDemo" />
+
+<h2>Clickable Card</h2>
+<ComponentDemo Definition="@ClickableDemo" />
+
+<h2>Variants</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
+<h2>With Shadow</h2>
+<ComponentDemo Definition="@ShadowDemo" />
+
+<h2>With Border</h2>
+<ComponentDemo Definition="@BorderDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>Custom Colors</h2>
+<ComponentDemo Definition="@ColorsDemo" />
+
+<h2>Complete Example</h2>
+<ComponentDemo Definition="@CompleteDemo" />
+
+@code {
+    private int _clickCount = 0;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUICard>
+            <ChildContent>
+                <p>This is a basic card with some content.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition TitleSubtitleDemo => new()
+    {
+        Demo = RenderTitleSubtitle(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderTitleSubtitle() => __builder =>
+    {
+        <BUICard Title="Card Title" Subtitle="This is a subtitle">
+            <ChildContent>
+                <p>Card content goes here. You can add any content you want.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition CustomHeaderDemo => new()
+    {
+        Demo = RenderCustomHeader(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomHeader() => __builder =>
+    {
+        <BUICard>
+            <Header>
+                <BUIGrid Direction="GridDirection.Row" AlignItems="GridAlignItems.Center" Gap="0.5rem">
+                    <BUIGridItem Auto="true">
+                        <BUISvgIcon Icon="@BUIIcons.UI.AccountCircle" Size="SizeEnum.Large" />
+                    </BUIGridItem>
+                    <BUIGridItem>
+                        <strong>John Doe</strong>
+                        <br />
+                        <small>Posted 2 hours ago</small>
+                    </BUIGridItem>
+                </BUIGrid>
+            </Header>
+            <ChildContent>
+                <p>Custom header with avatar and user information.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition MediaDemo => new()
+    {
+        Demo = RenderMedia(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMedia() => __builder =>
+    {
+        <BUICard Title="Card with Media" MediaHeight="200px">
+            <Media>
+                <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--palette-primary), var(--palette-secondary)); display: flex; align-items: center; justify-content: center;">
+                    <BUISvgIcon Icon="@BUIIcons.UI.Image" Size="SizeEnum.Large" Color="BUIColor.Palette.White" />
+                </div>
+            </Media>
+            <ChildContent>
+                <p>This card includes a media section at the top.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition MediaPositionDemo => new()
+    {
+        Demo = RenderMediaPosition(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMediaPosition() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Columns="12">
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Top (Default)" MediaPosition="CardMediaPosition.Top" MediaHeight="120px">
+                    <Media>
+                        <div style="width: 100%; height: 100%; background: var(--palette-primary);"></div>
+                    </Media>
+                    <ChildContent>
+                        <p>Media at top position.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="After Header" MediaPosition="CardMediaPosition.AfterHeader" MediaHeight="120px">
+                    <Media>
+                        <div style="width: 100%; height: 100%; background: var(--palette-secondary);"></div>
+                    </Media>
+                    <ChildContent>
+                        <p>Media after header.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Before Actions" MediaPosition="CardMediaPosition.BeforeActions" MediaHeight="120px">
+                    <Media>
+                        <div style="width: 100%; height: 100%; background: var(--palette-success);"></div>
+                    </Media>
+                    <ChildContent>
+                        <p>Media before actions.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Action" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Bottom" MediaPosition="CardMediaPosition.Bottom" MediaHeight="120px">
+                    <Media>
+                        <div style="width: 100%; height: 100%; background: var(--palette-warning);"></div>
+                    </Media>
+                    <ChildContent>
+                        <p>Media at bottom position.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ActionsDemo => new()
+    {
+        Demo = RenderActions(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderActions() => __builder =>
+    {
+        <BUICard Title="Card with Actions">
+            <ChildContent>
+                <p>This card has action buttons at the bottom.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Cancel" Variant="BUIButtonVariant.Default" OnClick="@(() => { })" />
+                <BUIButton Text="Save" BackgroundColor="BUIColor.Palette.Primary" Color="BUIColor.Palette.PrimaryContrast" OnClick="@(() => { })" />
+            </Actions>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition ActionsAlignmentDemo => new()
+    {
+        Demo = RenderActionsAlignment(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderActionsAlignment() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Start" ActionsAlignment="CardActionsAlignment.Start">
+                    <ChildContent>
+                        <p>Actions aligned to start.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Action 1" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 2" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Center" ActionsAlignment="CardActionsAlignment.Center">
+                    <ChildContent>
+                        <p>Actions aligned to center.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Action 1" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 2" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="End" ActionsAlignment="CardActionsAlignment.End">
+                    <ChildContent>
+                        <p>Actions aligned to end.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Action 1" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 2" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Space Between" ActionsAlignment="CardActionsAlignment.SpaceBetween">
+                    <ChildContent>
+                        <p>Actions with space between.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Cancel" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Confirm" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition OutlinedActionsDemo => new()
+    {
+        Demo = RenderOutlinedActions(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderOutlinedActions() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Normal Actions" OutlinedActions="false">
+                    <ChildContent>
+                        <p>Actions without outline separator.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Action" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Outlined Actions" OutlinedActions="true">
+                    <ChildContent>
+                        <p>Actions with outline separator.</p>
+                    </ChildContent>
+                    <Actions>
+                        <BUIButton Text="Action" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                    </Actions>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ClickableDemo => new()
+    {
+        Demo = RenderClickable(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderClickable() => __builder =>
+    {
+        <BUICard Title="Clickable Card"
+                 Clickable="true"
+                 OnClick="@HandleCardClick">
+            <ChildContent>
+                <p>Click this card to trigger an action.</p>
+                <p>Clicked @_clickCount times.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private void HandleCardClick()
+    {
+        _clickCount++;
+    }
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Flat Variant" Variant="BUICardVariant.Flat">
+                    <ChildContent>
+                        <p>Card with flat variant (no elevation).</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Outlined Variant" Variant="BUICardVariant.Outlined">
+                    <ChildContent>
+                        <p>Card with outlined variant.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        Demo = RenderShadow(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Elevation 1" Shadow="BUIShadowPresets.Elevation(1, null)">
+                    <ChildContent>
+                        <p>Light shadow.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Elevation 3" Shadow="BUIShadowPresets.Elevation(3, null)">
+                    <ChildContent>
+                        <p>Medium shadow.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Elevation 5" Shadow="BUIShadowPresets.Elevation(5, null)">
+                    <ChildContent>
+                        <p>Strong shadow.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition BorderDemo => new()
+    {
+        Demo = RenderBorder(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBorder() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Default Border" Border="BUIBorderPresets.Default">
+                    <ChildContent>
+                        <p>Default border style.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Rounded Large" Border="BUIBorderPresets.RoundedLarge">
+                    <ChildContent>
+                        <p>Large rounded corners.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Primary Border" Border="BUIBorderPresets.Primary">
+                    <ChildContent>
+                        <p>Primary color border.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Compact" Density="DensityEnum.Compact">
+                    <ChildContent>
+                        <p>Compact density with less padding.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Standard" Density="DensityEnum.Standard">
+                    <ChildContent>
+                        <p>Standard density (default).</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="4">
+                <BUICard Title="Comfortable" Density="DensityEnum.Comfortable">
+                    <ChildContent>
+                        <p>Comfortable density with more padding.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Primary Background"
+                         BackgroundColor="BUIColor.Palette.Primary">
+                    <ChildContent>
+                        <p style="color: var(--palette-primarycontrast);">Card with primary background color.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <BUICard Title="Success Background"
+                         BackgroundColor="BUIColor.Palette.Success">
+                    <ChildContent>
+                        <p style="color: var(--palette-successcontrast);">Card with success background color.</p>
+                    </ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition CompleteDemo => new()
+    {
+        Demo = RenderComplete(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderComplete() => __builder =>
+    {
+        <BUICard Title="Product Name"
+                 Subtitle="$99.99"
+                 MediaHeight="180px"
+                 MediaPosition="CardMediaPosition.Top"
+                 ActionsAlignment="CardActionsAlignment.SpaceBetween"
+                 Shadow="BUIShadowPresets.Elevation(2, null)"
+                 Border="BUIBorderPresets.Rounded">
+            <Media>
+                <div style="width: 100%; height: 100%; background: linear-gradient(45deg, var(--palette-primary), var(--palette-info)); display: flex; align-items: center; justify-content: center;">
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_bag" Size="SizeEnum.Large" Color="BUIColor.Palette.White" />
+                </div>
+            </Media>
+            <ChildContent>
+                <p>This is a complete card example with all features combined: media, title, subtitle, content, and actions.</p>
+                <BUIBadge Text="In Stock" BackgroundColor="BUIColor.Palette.Success" Color="BUIColor.Palette.SuccessContrast" />
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Add to Cart"
+                           LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_add_shopping_cart"
+                           BackgroundColor="BUIColor.Palette.Primary"
+                           Color="BUIColor.Palette.PrimaryContrast"
+                           OnClick="@(() => {})" />
+                <BUIButton Text="Details" OnClick="@(() => { })" />
+            </Actions>
+        </BUICard>
+    };
+}

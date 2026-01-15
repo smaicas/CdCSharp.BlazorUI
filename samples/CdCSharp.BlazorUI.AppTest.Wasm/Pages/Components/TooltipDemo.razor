@@ -1,0 +1,393 @@
+﻿@page "/demo/tooltip"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Tooltip - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUITooltip</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>Placements</h2>
+<ComponentDemo Definition="@PlacementsDemo" />
+
+<h2>Trigger Options</h2>
+<ComponentDemo Definition="@TriggerDemo" />
+
+<h2>Show/Hide Delay</h2>
+<ComponentDemo Definition="@DelayDemo" />
+
+<h2>With Arrow</h2>
+<ComponentDemo Definition="@ArrowDemo" />
+
+<h2>Interactive Tooltip</h2>
+<ComponentDemo Definition="@InteractiveDemo" />
+
+<h2>Custom Max Width</h2>
+<ComponentDemo Definition="@MaxWidthDemo" />
+
+<h2>Custom Offset</h2>
+<ComponentDemo Definition="@OffsetDemo" />
+
+<h2>Custom Content</h2>
+<ComponentDemo Definition="@CustomContentDemo" />
+
+<h2>On Various Elements</h2>
+<ComponentDemo Definition="@VariousElementsDemo" />
+
+@code {
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUITooltip Text="This is a basic tooltip">
+            <BUIButton Text="Hover me" OnClick="@(() => { })" />
+        </BUITooltip>
+    };
+
+    private ComponentDemoDefinition PlacementsDemo => new()
+    {
+        Demo = RenderPlacements(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPlacements() => __builder =>
+    {
+        <BUIGrid Gap="2rem">
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.Center">
+                    <BUIGridItem Auto="true">
+                        <BUITooltip Text="Top Start" Placement="TooltipPlacement.TopStart">
+                            <BUIButton Text="Top Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </BUITooltip>
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUITooltip Text="Top" Placement="TooltipPlacement.Top">
+                            <BUIButton Text="Top" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </BUITooltip>
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUITooltip Text="Top End" Placement="TooltipPlacement.TopEnd">
+                            <BUIButton Text="Top End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </BUITooltip>
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.SpaceBetween">
+                    <BUIGridItem Auto="true">
+                        <BUIGrid Gap="1rem">
+                            <BUIGridItem>
+                                <BUITooltip Text="Left Start" Placement="TooltipPlacement.LeftStart">
+                                    <BUIButton Text="Left Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                </BUITooltip>
+                            </BUIGridItem>
+                            <BUIGridItem>
+                                <BUITooltip Text="Left" Placement="TooltipPlacement.Left">
+                                    <BUIButton Text="Left" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                </BUITooltip>
+                            </BUIGridItem>
+                            <BUIGridItem>
+                                <BUITooltip Text="Left End" Placement="TooltipPlacement.LeftEnd">
+                                    <BUIButton Text="Left End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                </BUITooltip>
+                            </BUIGridItem>
+                        </BUIGrid>
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUIGrid Gap="1rem">
+                            <BUIGridItem>
+                                <BUITooltip Text="Right Start" Placement="TooltipPlacement.RightStart">
+                                    <BUIButton Text="Right Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                </BUITooltip>
+                            </BUIGridItem>
+                            <BUIGridItem>
+                                <BUITooltip Text="Right" Placement="TooltipPlacement.Right">
+                                    <BUIButton Text="Right" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                </BUITooltip>
+                            </BUIGridItem>
+                            <BUIGridItem>
+                                <BUITooltip Text="Right End" Placement="TooltipPlacement.RightEnd">
+                                    <BUIButton Text="Right End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                </BUITooltip>
+                            </BUIGridItem>
+                        </BUIGrid>
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.Center">
+                    <BUIGridItem Auto="true">
+                        <BUITooltip Text="Bottom Start" Placement="TooltipPlacement.BottomStart">
+                            <BUIButton Text="Bottom Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </BUITooltip>
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUITooltip Text="Bottom" Placement="TooltipPlacement.Bottom">
+                            <BUIButton Text="Bottom" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </BUITooltip>
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUITooltip Text="Bottom End" Placement="TooltipPlacement.BottomEnd">
+                            <BUIButton Text="Bottom End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </BUITooltip>
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition TriggerDemo => new()
+    {
+        Demo = RenderTrigger(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderTrigger() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Hover trigger (default)" Trigger="TooltipTrigger.Hover">
+                    <BUIButton Text="Hover" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Focus trigger" Trigger="TooltipTrigger.Focus">
+                    <BUIButton Text="Focus" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="HoverAndFocus trigger" Trigger="TooltipTrigger.HoverAndFocus">
+                    <BUIButton Text="HoverAndFocus" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DelayDemo => new()
+    {
+        Demo = RenderDelay(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDelay() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="No delay" ShowDelay="0" HideDelay="0">
+                    <BUIButton Text="No Delay" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Default delay" ShowDelay="200" HideDelay="0">
+                    <BUIButton Text="Default (200ms show)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Slow show (500ms)" ShowDelay="500" HideDelay="0">
+                    <BUIButton Text="Slow Show (500ms)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Slow hide (300ms)" ShowDelay="0" HideDelay="300">
+                    <BUIButton Text="Slow Hide (300ms)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ArrowDemo => new()
+    {
+        Demo = RenderArrow(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderArrow() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="With arrow (default)" Arrow="true">
+                    <BUIButton Text="With Arrow" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Without arrow" Arrow="false">
+                    <BUIButton Text="Without Arrow" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition InteractiveDemo => new()
+    {
+        Demo = RenderInteractive(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderInteractive() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Interactive="false" Text="Non-interactive - disappears when you move to tooltip">
+                    <BUIButton Text="Non-Interactive" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Interactive="true">
+                    <ChildContent>
+                        <BUIButton Text="Interactive" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <div>
+                            <p style="margin: 0 0 0.5rem 0;">You can interact with this tooltip!</p>
+                            <BUIButton Text="Click me" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        </div>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition MaxWidthDemo => new()
+    {
+        Demo = RenderMaxWidth(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMaxWidth() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="This is a tooltip with default max width. It will wrap when content is too long." MaxWidth="200">
+                    <BUIButton Text="200px Max Width" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="This tooltip has a wider max width of 400px. It can display more content in a single line before wrapping occurs." MaxWidth="400">
+                    <BUIButton Text="400px Max Width" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition OffsetDemo => new()
+    {
+        Demo = RenderOffset(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderOffset() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Default offset (8px)" Offset="8">
+                    <BUIButton Text="Default Offset" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Small offset (4px)" Offset="4">
+                    <BUIButton Text="Small Offset (4px)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Large offset (20px)" Offset="20">
+                    <BUIButton Text="Large Offset (20px)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition CustomContentDemo => new()
+    {
+        Demo = RenderCustomContent(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomContent() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip>
+                    <ChildContent>
+                        <BUIButton Text="Rich Content" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <div style="text-align: center;">
+                            <BUISvgIcon Icon="@BUIIcons.UI.Info" Color="BUIColor.Palette.Primary" />
+                            <p style="margin: 0.5rem 0 0 0; font-weight: bold;">Information</p>
+                            <p style="margin: 0; font-size: 0.875rem;">This is a tooltip with rich content.</p>
+                        </div>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip>
+                    <ChildContent>
+                        <BUIButton Text="With Badge" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <div>
+                            <p style="margin: 0 0 0.5rem 0;">Status:</p>
+                            <BUIBadge Text="Active" BackgroundColor="BUIColor.Palette.Success" Color="BUIColor.Palette.SuccessContrast" />
+                        </div>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Interactive="true">
+                    <ChildContent>
+                        <BUIButton Text="With List" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <div>
+                            <strong>Keyboard Shortcuts:</strong>
+                            <ul style="margin: 0.5rem 0 0 0; padding-left: 1.25rem;">
+                                <li>Ctrl+S - Save</li>
+                                <li>Ctrl+Z - Undo</li>
+                                <li>Ctrl+Y - Redo</li>
+                            </ul>
+                        </div>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition VariousElementsDemo => new()
+    {
+        Demo = RenderVariousElements(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariousElements() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="2rem" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Tooltip on icon">
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_help" Size="SizeEnum.Large" Color="BUIColor.Palette.Primary" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Tooltip on badge">
+                    <BUIBadge Text="New" BackgroundColor="BUIColor.Palette.Primary" Color="BUIColor.Palette.PrimaryContrast" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Tooltip on text">
+                    <span style="text-decoration: underline; cursor: help;">Hover this text</span>
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Disabled button info">
+                    <span>
+                        <BUIButton Text="Disabled" Disabled="true" OnClick="@(() => { })" />
+                    </span>
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+}

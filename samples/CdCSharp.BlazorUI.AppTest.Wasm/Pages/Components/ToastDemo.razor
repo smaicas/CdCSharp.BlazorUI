@@ -1,0 +1,505 @@
+﻿@page "/demo/toast"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components.Layout.Services
+@inject IToastService ToastService
+
+<PageTitle>Toast - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIToast</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>Toast Types (Colors)</h2>
+<ComponentDemo Definition="@ToastTypesDemo" />
+
+<h2>Positions</h2>
+<ComponentDemo Definition="@PositionsDemo" />
+
+<h2>Duration Options</h2>
+<ComponentDemo Definition="@DurationDemo" />
+
+<h2>Persistent Toast</h2>
+<ComponentDemo Definition="@PersistentDemo" />
+
+<h2>Closable Option</h2>
+<ComponentDemo Definition="@ClosableDemo" />
+
+<h2>Animations</h2>
+<ComponentDemo Definition="@AnimationsDemo" />
+
+<h2>Custom Content</h2>
+<ComponentDemo Definition="@CustomContentDemo" />
+
+<h2>With Click Action</h2>
+<ComponentDemo Definition="@ClickActionDemo" />
+
+<h2>Manage Toasts</h2>
+<ComponentDemo Definition="@ManageDemo" />
+
+@code {
+    private int _clickCount = 0;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIButton Text="Show Basic Toast" OnClick="@ShowBasicToast" />
+    };
+
+    private void ShowBasicToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "This is a basic toast notification!");
+            b.CloseElement();
+        });
+    }
+
+    private ComponentDemoDefinition ToastTypesDemo => new()
+    {
+        Demo = RenderToastTypes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderToastTypes() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Info"
+                           BackgroundColor="BUIColor.Palette.Info"
+                           Color="BUIColor.Palette.InfoContrast"
+                           OnClick="@ShowInfoToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Success"
+                           BackgroundColor="BUIColor.Palette.Success"
+                           Color="BUIColor.Palette.SuccessContrast"
+                           OnClick="@ShowSuccessToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Warning"
+                           BackgroundColor="BUIColor.Palette.Warning"
+                           Color="BUIColor.Palette.WarningContrast"
+                           OnClick="@ShowWarningToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Error"
+                           BackgroundColor="BUIColor.Palette.Error"
+                           Color="BUIColor.Palette.ErrorContrast"
+                           OnClick="@ShowErrorToast" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private void ShowInfoToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
+            b.OpenComponent<BUISvgIcon>(2);
+            b.AddAttribute(3, "Icon", BUIIcons.UI.Info);
+            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.CloseComponent();
+            b.OpenElement(5, "span");
+            b.AddContent(6, "This is an info message.");
+            b.CloseElement();
+            b.CloseElement();
+        }, new ToastOptions { CssClass = "toast-info" });
+    }
+
+    private void ShowSuccessToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
+            b.OpenComponent<BUISvgIcon>(2);
+            b.AddAttribute(3, "Icon", BUIIcons.UI.CheckCircle);
+            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.CloseComponent();
+            b.OpenElement(5, "span");
+            b.AddContent(6, "Operation completed successfully!");
+            b.CloseElement();
+            b.CloseElement();
+        }, new ToastOptions { CssClass = "toast-success" });
+    }
+
+    private void ShowWarningToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
+            b.OpenComponent<BUISvgIcon>(2);
+            b.AddAttribute(3, "Icon", BUIIcons.UI.Warning);
+            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.CloseComponent();
+            b.OpenElement(5, "span");
+            b.AddContent(6, "Warning: Please check your input.");
+            b.CloseElement();
+            b.CloseElement();
+        }, new ToastOptions { CssClass = "toast-warning" });
+    }
+
+    private void ShowErrorToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
+            b.OpenComponent<BUISvgIcon>(2);
+            b.AddAttribute(3, "Icon", BUIIcons.UI.Error);
+            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.CloseComponent();
+            b.OpenElement(5, "span");
+            b.AddContent(6, "Error: Something went wrong!");
+            b.CloseElement();
+            b.CloseElement();
+        }, new ToastOptions { CssClass = "toast-error" });
+    }
+
+    private ComponentDemoDefinition PositionsDemo => new()
+    {
+        Demo = RenderPositions(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPositions() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Row" Gap="0.5rem">
+                    <BUIGridItem Auto="true">
+                        <BUIButton Text="Top Left" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopLeft))" />
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUIButton Text="Top Center" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopCenter))" />
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUIButton Text="Top Right" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopRight))" />
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Row" Gap="0.5rem">
+                    <BUIGridItem Auto="true">
+                        <BUIButton Text="Bottom Left" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomLeft))" />
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUIButton Text="Bottom Center" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomCenter))" />
+                    </BUIGridItem>
+                    <BUIGridItem Auto="true">
+                        <BUIButton Text="Bottom Right" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomRight))" />
+                    </BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private void ShowPositionToast(ToastPosition position)
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, $"Toast at {position}");
+            b.CloseElement();
+        }, new ToastOptions { Position = position });
+    }
+
+    private ComponentDemoDefinition DurationDemo => new()
+    {
+        Demo = RenderDuration(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDuration() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Quick (2s)" OnClick="@ShowQuickToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Default (4s)" OnClick="@ShowDefaultToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Long (8s)" OnClick="@ShowLongToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Custom (10s)" OnClick="@ShowCustomDurationToast" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private void ShowQuickToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "Quick toast (2 seconds)");
+            b.CloseElement();
+        }, ToastOptions.Quick);
+    }
+
+    private void ShowDefaultToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "Default toast (4 seconds)");
+            b.CloseElement();
+        }, ToastOptions.Default);
+    }
+
+    private void ShowLongToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "Long toast (8 seconds)");
+            b.CloseElement();
+        }, ToastOptions.Long);
+    }
+
+    private void ShowCustomDurationToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "Custom duration toast (10 seconds)");
+            b.CloseElement();
+        }, new ToastOptions { Duration = TimeSpan.FromSeconds(10) });
+    }
+
+    private ComponentDemoDefinition PersistentDemo => new()
+    {
+        Demo = RenderPersistent(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPersistent() => __builder =>
+    {
+        <BUIButton Text="Show Persistent Toast" OnClick="@ShowPersistentToast" />
+    };
+
+    private void ShowPersistentToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "This toast will not auto-dismiss. Click X to close.");
+            b.CloseElement();
+        }, ToastOptions.Persistent);
+    }
+
+    private ComponentDemoDefinition ClosableDemo => new()
+    {
+        Demo = RenderClosable(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderClosable() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Closable (Default)" OnClick="@ShowClosableToast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Not Closable" OnClick="@ShowNotClosableToast" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private void ShowClosableToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "This toast has a close button.");
+            b.CloseElement();
+        }, new ToastOptions { Closable = true, Duration = TimeSpan.FromSeconds(10) });
+    }
+
+    private void ShowNotClosableToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "No close button - wait for auto-dismiss.");
+            b.CloseElement();
+        }, new ToastOptions { Closable = false });
+    }
+
+    private ComponentDemoDefinition AnimationsDemo => new()
+    {
+        Demo = RenderAnimations(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderAnimations() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Slide & Fade (Default)" OnClick="@(() => ShowAnimatedToast(ToastAnimation.SlideAndFade))" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Slide Only" OnClick="@(() => ShowAnimatedToast(ToastAnimation.SlideOnly))" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Fade Only" OnClick="@(() => ShowAnimatedToast(ToastAnimation.FadeOnly))" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="No Animation" OnClick="@(() => ShowAnimatedToast(ToastAnimation.None))" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private void ShowAnimatedToast(ToastAnimation animation)
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, $"Animation: {animation.Type}");
+            b.CloseElement();
+        }, new ToastOptions { Animation = animation });
+    }
+
+    private ComponentDemoDefinition CustomContentDemo => new()
+    {
+        Demo = RenderCustomContent(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomContent() => __builder =>
+    {
+        <BUIButton Text="Show Custom Toast" OnClick="@ShowCustomContentToast" />
+    };
+
+    private void ShowCustomContentToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "div");
+            b.AddAttribute(1, "style", "display: flex; flex-direction: column; gap: 0.5rem;");
+
+            b.OpenElement(2, "div");
+            b.AddAttribute(3, "style", "display: flex; align-items: center; gap: 0.5rem;");
+            b.OpenComponent<BUISvgIcon>(4);
+            b.AddAttribute(5, "Icon", BUIIcons.UI.Notifications);
+            b.CloseComponent();
+            b.OpenElement(6, "strong");
+            b.AddContent(7, "New Message");
+            b.CloseElement();
+            b.CloseElement();
+
+            b.OpenElement(8, "p");
+            b.AddAttribute(9, "style", "margin: 0;");
+            b.AddContent(10, "You have received a new message from John.");
+            b.CloseElement();
+
+            b.OpenElement(11, "small");
+            b.AddAttribute(12, "style", "opacity: 0.7;");
+            b.AddContent(13, "2 minutes ago");
+            b.CloseElement();
+
+            b.CloseElement();
+        }, new ToastOptions { Duration = TimeSpan.FromSeconds(6) });
+    }
+
+    private ComponentDemoDefinition ClickActionDemo => new()
+    {
+        Demo = RenderClickAction(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderClickAction() => __builder =>
+    {
+        <div>
+            <BUIButton Text="Show Clickable Toast" OnClick="@ShowClickableToast" />
+            <p>Click count from toasts: @_clickCount</p>
+        </div>
+    };
+
+    private void ShowClickableToast()
+    {
+        ToastService.Show(b =>
+        {
+            b.OpenElement(0, "span");
+            b.AddContent(1, "Click this toast to increment the counter!");
+            b.CloseElement();
+        }, new ToastOptions
+        {
+            OnClick = () => _clickCount++,
+            Duration = TimeSpan.FromSeconds(5)
+        });
+    }
+
+    private ComponentDemoDefinition ManageDemo => new()
+    {
+        Demo = RenderManage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderManage() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Show Multiple Toasts" OnClick="@ShowMultipleToasts" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Close All Toasts"
+                           BackgroundColor="BUIColor.Palette.Error"
+                           Color="BUIColor.Palette.ErrorContrast"
+                           OnClick="@CloseAllToasts" />
+            </BUIGridItem>
+        </BUIGrid>
+        <p style="margin-top: 1rem;">Active toasts: @ToastService.ActiveToasts.Count</p>
+    };
+
+    private void ShowMultipleToasts()
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            int index = i;
+            ToastService.Show(b =>
+            {
+                b.OpenElement(0, "span");
+                b.AddContent(1, $"Toast #{index}");
+                b.CloseElement();
+            }, new ToastOptions { Duration = TimeSpan.FromSeconds(10) });
+        }
+    }
+
+    private void CloseAllToasts()
+    {
+        ToastService.CloseAll();
+    }
+}
+
+<style>
+    .toast-info {
+        background-color: var(--palette-info);
+        color: var(--palette-infocontrast);
+    }
+
+    .toast-success {
+        background-color: var(--palette-success);
+        color: var(--palette-successcontrast);
+    }
+
+    .toast-warning {
+        background-color: var(--palette-warning);
+        color: var(--palette-warningcontrast);
+    }
+
+    .toast-error {
+        background-color: var(--palette-error);
+        color: var(--palette-errorcontrast);
+    }
+</style>

@@ -2,5 +2,5 @@
 
 public interface IModalContent
 {
-    ModalReference ModalRef { get; set; }
+    ModalReference ModalReference { get; set; }
 }
