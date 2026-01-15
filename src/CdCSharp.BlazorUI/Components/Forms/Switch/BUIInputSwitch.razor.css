@@ -1,6 +1,6 @@
 ﻿/* BUIInputSwitch.razor.css */
 
-bui-component[data-bui-component="input-switch"] {
+/*bui-component[data-bui-component="input-switch"] {
     --_scale: var(--bui-size-multiplier, 1);
     --_track-w: calc(3rem * var(--_scale));
     --_track-h: calc(1.5rem * var(--_scale));
@@ -11,28 +11,28 @@ bui-component[data-bui-component="input-switch"] {
     display: inline-flex;
     flex-direction: column;
     gap: calc(0.25rem * var(--_scale));
-}
+}*/
 
     /* Clickable container */
-    bui-component[data-bui-component="input-switch"] .bui-switch {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch {
         display: inline-flex;
         align-items: center;
         gap: var(--bui-density-gap, 0.5rem);
         cursor: pointer;
         user-select: none;
-    }
+    }*/
 
     /* Hidden native input */
-    bui-component[data-bui-component="input-switch"] .bui-switch__input {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch__input {
         position: absolute;
         opacity: 0;
         width: 0;
         height: 0;
         pointer-events: none;
-    }
+    }*/
 
     /* Track */
-    bui-component[data-bui-component="input-switch"] .bui-switch__track {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch__track {
         position: relative;
         width: var(--_track-w);
         height: var(--_track-h);
@@ -40,15 +40,15 @@ bui-component[data-bui-component="input-switch"] {
         border-radius: var(--_track-h);
         background: var(--_track-inactive);
         transition: background 0.2s ease;
-    }
+    }*/
 
     /* Track checked */
-    bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__track {
+    /*bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__track {
         background: var(--_track-active);
-    }
+    }*/
 
     /* Thumb */
-    bui-component[data-bui-component="input-switch"] .bui-switch__thumb {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch__thumb {
         position: absolute;
         top: 50%;
         left: 0.125rem;
@@ -62,48 +62,48 @@ bui-component[data-bui-component="input-switch"] {
         align-items: center;
         justify-content: center;
         transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
-    }
+    }*/
 
     /* Thumb checked */
-    bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__thumb {
+    /*bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__thumb {
         transform: translateY(-50%) translateX(var(--_thumb-translate));
-    }
+    }*/
 
     /* Icon */
-    bui-component[data-bui-component="input-switch"] .bui-switch__icon {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch__icon {
         font-size: calc(0.75rem * var(--_scale));
         line-height: 1;
         color: var(--palette-surfacecontrast);
         animation: bui-switch-icon-in 0.2s ease-out;
-    }
+    }*/
 
     /* Label */
-    bui-component[data-bui-component="input-switch"] .bui-switch__label {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch__label {
         font-size: calc(1rem * var(--_scale));
         line-height: 1.4;
         color: var(--palette-surfacecontrast);
-    }
+    }*/
 
     /* Hover */
-    bui-component[data-bui-component="input-switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb {
+    /*bui-component[data-bui-component="input-switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb {
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    }
+    }*/
 
     /* Focus */
-    bui-component[data-bui-component="input-switch"] .bui-switch__input:focus-visible + .bui-switch__track {
+    /*bui-component[data-bui-component="input-switch"] .bui-switch__input:focus-visible + .bui-switch__track {
         outline: 2px solid var(--_track-active);
         outline-offset: 2px;
-    }
+    }*/
 
     /* Disabled */
-    bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] .bui-switch {
+    /*bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] .bui-switch {
         cursor: not-allowed;
-    }
+    }*/
 
     /* ========================================
    SHARED FIELD STYLES (future global)
    ======================================== */
-    bui-component[data-bui-component="input-switch"] .bui-field__helper {
+    /*bui-component[data-bui-component="input-switch"] .bui-field__helper {
         font-size: 0.875em;
         color: var(--palette-surfacecontrast);
         opacity: 0.7;
@@ -120,4 +120,4 @@ bui-component[data-bui-component="input-switch"] {
         transform: rotate(0) scale(1);
         opacity: 1;
     }
-}
+}*/

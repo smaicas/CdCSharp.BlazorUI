@@ -46,69 +46,31 @@
         return false;
     }
 
-    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
-    {
-        base.BuildComponentDataAttributes(dataAttributes);
-        dataAttributes["data-checked"] = IsChecked.ToString().ToLowerInvariant();
-    }
-
-    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
-    {
-        base.BuildComponentCssVariables(cssVariables);
-        if (TrackColorInactive != null)
-            cssVariables["--track-inactive"] = TrackColorInactive.ToString(ColorOutputFormats.Optimized);
-        if (TrackColorActive != null)
-            cssVariables["--track-active"] = TrackColorActive.ToString(ColorOutputFormats.Optimized);
-    }
-
     private RenderFragment RenderDefault() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <label class="bui-switch" @onclick="HandleClick" @onclick:preventDefault="true">
-                <input type="checkbox"
-                       id="@_inputId"
-                       checked="@IsChecked"
-                       disabled="@IsDisabled"
-                       aria-checked="@IsChecked"
-                       class="bui-switch__input" />
-
-                <span class="bui-switch__track" aria-hidden="true">
-                    <span class="bui-switch__thumb">
-                        @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
-                        {
-                            @if (IsChecked)
-                            {
-                                <BUISvgIcon Size="SizeEnum.Small" Icon="@IconActive" class="bui-switch__icon" />
-                            }
-                            else
-                            {
-                                <BUISvgIcon Size="SizeEnum.Small" Icon="@IconInactive" class="bui-switch__icon" />
-                            }
-
-                            // <span class="bui-switch__icon">
-                            //     @(IsChecked? IconActive : IconInactive)
-                            // </span>
-                        }
-                    </span>
-                </span>
-
-                @if (!string.IsNullOrWhiteSpace(Label))
-                {
-                    <span class="bui-switch__label">@Label</span>
-                }
-            </label>
-
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div class="bui-field__helper">@HelperText</div>
-            }
-        </bui-component>
+        <BUISwitch TValue="bool"
+                   Value="@CurrentValue"
+                   ValueChanged="@OnSwitchValueChanged"
+                   OptionInactive="@false"
+                   OptionActive="@true"
+                   IsDisabled="@IsDisabled"
+                   Size="@Size"
+                   Density="@Density"
+                   Label="@Label"
+                   HelperText="@HelperText"
+                   IconInactive="@IconInactive"
+                   IconActive="@IconActive"
+                   TrackColorInactive="@TrackColorInactive"
+                   TrackColorActive="@TrackColorActive"
+                   InputId="@_inputId"
+                   @attributes="ComputedAttributes" />
     };
 
-    private async Task HandleClick(MouseEventArgs e)
+    private async Task OnSwitchValueChanged(bool newValue)
     {
         if (IsDisabled) return;
-        CurrentValue = !CurrentValue;
+
+        CurrentValue = newValue;
         await ValueChanged.InvokeAsync(CurrentValue);
     }
 }

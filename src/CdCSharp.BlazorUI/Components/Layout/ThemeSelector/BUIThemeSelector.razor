@@ -60,10 +60,10 @@
     {
         <BUISwitch TValue="string"
                    @attributes="ComputedAttributes"
-                   Option1="@("light")"
-                   Option2="@("dark")"
-                   IconOption1="@BUIIcons.MaterialIconsTwoTone.i_light_mode"
-                   IconOption2="@BUIIcons.MaterialIconsTwoTone.i_dark_mode"
+                   OptionInactive="@("light")"
+                   OptionActive="@("dark")"
+                   IconInactive="@BUIIcons.MaterialIconsTwoTone.i_light_mode"
+                   IconActive="@BUIIcons.MaterialIconsTwoTone.i_dark_mode"
                    Value="_currentTheme"
                    ValueChanged="OnSunMoonSwitchChanged" />
     };

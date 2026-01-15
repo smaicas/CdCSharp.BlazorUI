@@ -1,115 +1,175 @@
-﻿bui-component[data-bui-component="switch"] {
-    --bui-switch-scale: 1;
-    --bui-switch-track-width: calc(60px * var(--bui-switch-scale));
-    --bui-switch-track-height: calc(32px * var(--bui-switch-scale));
-    --bui-switch-thumb-size: calc(24px * var(--bui-switch-scale));
-    --bui-switch-translate: calc(28px * var(--bui-switch-scale));
-    --bui-switch-icon-size: calc(0.875rem * var(--bui-switch-scale));
+﻿/* 
+ * BUISwitch.razor.css
+ * 
+ * Shared styles for both BUISwitch and BUIInputSwitch
+ * BUIInputSwitch composes BUISwitch internally, so these styles apply to both
+ */
+
+/* ============================================
+ * COMPONENT CONTAINER
+ * ============================================ */
+
+bui-component[data-bui-component="switch"],
+bui-component[data-bui-component="input-switch"] {
+    --_scale: var(--bui-size-multiplier, 1);
+    --_track-w: calc(3rem * var(--_scale));
+    --_track-h: calc(1.5rem * var(--_scale));
+    --_thumb-size: calc(1.25rem * var(--_scale));
+    --_thumb-translate: calc(1.5rem * var(--_scale));
+    --_track-inactive: var(--track-inactive, var(--palette-border));
+    --_track-active: var(--track-active, var(--palette-primary));
     display: inline-flex;
-    align-items: center;
-    user-select: none;
+    flex-direction: column;
+    gap: calc(0.25rem * var(--_scale));
 }
 
-    /* ===== Size ===== */
+    /* ============================================
+ * CLICKABLE CONTAINER
+ * ============================================ */
 
-    bui-component[data-bui-component="switch"][data-bui-size="small"] {
-        --bui-switch-scale: 0.75;
-    }
-
-    bui-component[data-bui-component="switch"][data-bui-size="large"] {
-        --bui-switch-scale: 1.25;
-    }
-
-    /* ===== Track ===== */
-
-    bui-component[data-bui-component="switch"] .bui-switch__track {
-        width: var(--bui-switch-track-width);
-        height: var(--bui-switch-track-height);
-        padding: 0.25rem;
-        border-radius: 2rem;
-        background: var(--bui-switch-track-bg, var(--palette-background, #808080));
-        position: relative;
-        display: flex;
+    bui-component[data-bui-component="switch"] .bui-switch,
+    bui-component[data-bui-component="input-switch"] .bui-switch {
+        display: inline-flex;
         align-items: center;
+        gap: var(--bui-density-gap, 0.5rem);
         cursor: pointer;
-        transition: background 0.3s ease;
-    }
-
-    /* Checked track */
-
-    bui-component[data-bui-component="switch"][data-bui-checked="true"]
-    .bui-switch__track {
-        background: var(--bui-switch-track-bg-checked, var(--palette-background, #808080));
-    }
-
-    /* ===== Thumb ===== */
-
-    bui-component[data-bui-component="switch"] .bui-switch__thumb {
-        width: var(--bui-switch-thumb-size);
-        height: var(--bui-switch-thumb-size);
-        color: var(--palette-primarycontrast);
-        background-color: var(--palette-primary);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), box-shadow 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Checked thumb position */
-
-    bui-component[data-bui-component="switch"][data-bui-checked="true"]
-    .bui-switch__thumb {
-        transform: translateX(var(--bui-switch-translate));
-    }
-
-    /* ===== Icon ===== */
-
-    bui-component[data-bui-component="switch"] .bui-switch__icon {
-        font-size: var(--bui-switch-icon-size);
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         user-select: none;
-        animation: bui-switch-rotate-in 0.3s ease-out;
     }
 
-    /* ===== Hover ===== */
+    /* ============================================
+ * HIDDEN NATIVE INPUT
+ * ============================================ */
 
-    bui-component[data-bui-component="switch"]:not([data-bui-disabled="true"])
-    .bui-switch__track:hover .bui-switch__thumb {
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    bui-component[data-bui-component="switch"] .bui-switch__input,
+    bui-component[data-bui-component="input-switch"] .bui-switch__input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
     }
 
-    /* ===== Disabled ===== */
+    /* ============================================
+ * TRACK
+ * ============================================ */
 
-    bui-component[data-bui-component="switch"][data-bui-disabled="true"] {
+    bui-component[data-bui-component="switch"] .bui-switch__track,
+    bui-component[data-bui-component="input-switch"] .bui-switch__track {
+        position: relative;
+        width: var(--_track-w);
+        height: var(--_track-h);
+        padding: 0.125rem;
+        border-radius: var(--_track-h);
+        background: var(--_track-inactive);
+        transition: background 0.2s ease;
+    }
+
+    /* Track checked state */
+    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__track,
+    bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__track {
+        background: var(--_track-active);
+    }
+
+    /* ============================================
+ * THUMB
+ * ============================================ */
+
+    bui-component[data-bui-component="switch"] .bui-switch__thumb,
+    bui-component[data-bui-component="input-switch"] .bui-switch__thumb {
+        position: absolute;
+        top: 50%;
+        left: 0.125rem;
+        transform: translateY(-50%);
+        width: var(--_thumb-size);
+        height: var(--_thumb-size);
+        border-radius: 50%;
+        background: var(--palette-surface);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+    }
+
+    /* Thumb checked state */
+    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__thumb,
+    bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__thumb {
+        transform: translateY(-50%) translateX(var(--_thumb-translate));
+    }
+
+    /* ============================================
+ * ICON
+ * ============================================ */
+
+    bui-component[data-bui-component="switch"] .bui-switch__icon,
+    bui-component[data-bui-component="input-switch"] .bui-switch__icon {
+        font-size: calc(0.75rem * var(--_scale));
+        line-height: 1;
+        color: var(--palette-surfacecontrast);
+        animation: bui-switch-icon-in 0.2s ease-out;
+    }
+
+    /* ============================================
+ * LABEL
+ * ============================================ */
+
+    bui-component[data-bui-component="switch"] .bui-switch__label,
+    bui-component[data-bui-component="input-switch"] .bui-switch__label {
+        font-size: calc(1rem * var(--_scale));
+        line-height: 1.4;
+        color: var(--palette-surfacecontrast);
+    }
+
+    /* ============================================
+ * HOVER STATE
+ * ============================================ */
+
+    bui-component[data-bui-component="switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb,
+    bui-component[data-bui-component="input-switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ============================================
+ * FOCUS STATE
+ * ============================================ */
+
+    bui-component[data-bui-component="switch"] .bui-switch__input:focus-visible + .bui-switch__track,
+    bui-component[data-bui-component="input-switch"] .bui-switch__input:focus-visible + .bui-switch__track {
+        outline: 2px solid var(--_track-active);
+        outline-offset: 2px;
+    }
+
+    /* ============================================
+ * DISABLED STATE
+ * ============================================ */
+
+    bui-component[data-bui-component="switch"][data-bui-disabled="true"] .bui-switch,
+    bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] .bui-switch {
+        cursor: not-allowed;
+    }
+
+    bui-component[data-bui-component="switch"][data-bui-disabled="true"],
+    bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] {
         opacity: 0.5;
     }
 
-        bui-component[data-bui-component="switch"][data-bui-disabled="true"]
-        .bui-switch__track {
-            cursor: not-allowed;
-        }
+    /* ============================================
+ * HELPER TEXT
+ * ============================================ */
 
-        bui-component[data-bui-component="switch"][data-bui-disabled="true"]
-        .bui-switch__label {
-            cursor: not-allowed;
-        }
-
-    /* ===== Label ===== */
-
-    bui-component[data-bui-component="switch"] .bui-switch__label {
-        cursor: pointer;
-        user-select: none;
+    bui-component[data-bui-component="switch"] .bui-field__helper,
+    bui-component[data-bui-component="input-switch"] .bui-field__helper {
+        font-size: 0.875em;
+        color: var(--palette-surfacecontrast);
+        opacity: 0.7;
+        padding-left: calc(var(--_track-w) + var(--bui-density-gap, 0.5rem));
     }
 
-/* ===== Animations ===== */
+/* ============================================
+ * ANIMATIONS
+ * ============================================ */
 
-@keyframes bui-switch-rotate-in {
+@keyframes bui-switch-icon-in {
     from {
         transform: rotate(-180deg) scale(0.5);
         opacity: 0;

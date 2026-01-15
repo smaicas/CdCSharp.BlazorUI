@@ -31,7 +31,7 @@
 
 @code {
     private bool _basicValue = false;
-    private string? _stringValue = "off";
+    private string? _stringValue = "option1";
     private bool _labelValue = true;
     private bool _smallValue = false;
     private bool _mediumValue = true;
@@ -51,7 +51,7 @@
 
     private RenderFragment RenderBasicUsage() => __builder =>
     {
-        <BUISwitch @bind-Value="_basicValue" Option1="true" Option2="false" />
+        <BUISwitch @bind-Value="_basicValue" OptionInactive="true" OptionActive="false" />
     };
 
     private ComponentDemoDefinition StringOptionsDemo => new()
@@ -63,7 +63,7 @@
     private RenderFragment RenderStringOptions() => __builder =>
     {
         <div>
-            <BUISwitch @bind-Value="_stringValue" Option1="@("option1")" Option2="@("option2")" />
+            <BUISwitch @bind-Value="_stringValue" OptionInactive="@("option1")" OptionActive="@("option2")" />
             <p>Current value: @_stringValue</p>
         </div>
     };
@@ -76,7 +76,7 @@
 
     private RenderFragment RenderWithLabel() => __builder =>
     {
-        <BUISwitch @bind-Value="_labelValue" Option1="true" Option2="false" Label="Enable feature" />
+        <BUISwitch @bind-Value="_labelValue" OptionInactive="true" OptionActive="false" Label="Enable feature" />
     };
 
     private ComponentDemoDefinition SizesDemo => new()
@@ -89,13 +89,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUISwitch @bind-Value="_smallValue" Option1="true" Option2="false" Label="Small" Size="SizeEnum.Small" />
+                <BUISwitch @bind-Value="_smallValue" OptionInactive="true" OptionActive="false" Label="Small" Size="SizeEnum.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_mediumValue" Option1="true" Option2="false" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUISwitch @bind-Value="_mediumValue" OptionInactive="true" OptionActive="false" Label="Medium (Default)" Size="SizeEnum.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_largeValue" Option1="true" Option2="false" Label="Large" Size="SizeEnum.Large" />
+                <BUISwitch @bind-Value="_largeValue" OptionInactive="true" OptionActive="false" Label="Large" Size="SizeEnum.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -110,13 +110,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUISwitch @bind-Value="_compactValue" Option1="true" Option2="false" Label="Compact" Density="DensityEnum.Compact" />
+                <BUISwitch @bind-Value="_compactValue" OptionInactive="true" OptionActive="false" Label="Compact" Density="DensityEnum.Compact" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_standardValue" Option1="true" Option2="false" Label="Standard (Default)" Density="DensityEnum.Standard" />
+                <BUISwitch @bind-Value="_standardValue" OptionInactive="true" OptionActive="false" Label="Standard (Default)" Density="DensityEnum.Standard" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_comfortableValue" Option1="true" Option2="false" Label="Comfortable" Density="DensityEnum.Comfortable" />
+                <BUISwitch @bind-Value="_comfortableValue" OptionInactive="true" OptionActive="false" Label="Comfortable" Density="DensityEnum.Comfortable" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -131,8 +131,8 @@
     {
         <BUISwitch @bind-Value="_iconsValue" 
                    Label="Dark Mode" 
-                   Option1="true"
-                   Option2="false"
+                   OptionInactive="true"
+                   OptionActive="false"
                    IconOption1="@BUIIcons.MaterialIconsRound.i_light_mode"
                    IconOption2="@BUIIcons.MaterialIconsRound.i_dark_mode" />
     };
@@ -147,8 +147,8 @@
     {
         <BUISwitch @bind-Value="_colorsValue" 
                    Label="Custom Colors" 
-                   Option1="true"
-                   Option2="false"
+                   OptionInactive="true"
+                   OptionActive="false"
                    TrackColorInactive="BUIColor.Palette.Error"
                    TrackColorActive="BUIColor.Palette.Success" />
     };
@@ -161,6 +161,6 @@
 
     private RenderFragment RenderDisabled() => __builder =>
     {
-        <BUISwitch @bind-Value="_disabledValue" Option1="true" Option2="false" Label="Disabled switch" IsDisabled="true" />
+        <BUISwitch @bind-Value="_disabledValue" OptionInactive="true" OptionActive="false" Label="Disabled switch" IsDisabled="true" />
     };
 }

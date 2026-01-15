@@ -6,39 +6,46 @@
 @implements IHasSize
 @implements IHasDensity
 
-@{
-    base.BuildRenderTree(__builder);
-}
+<bui-component @attributes="ComputedAttributes">
+    <label class="bui-switch" @onclick="HandleClick" @onclick:preventDefault="true">
+        <input type="checkbox"
+               id="@InputId"
+               checked="@IsChecked"
+               disabled="@IsDisabled"
+               aria-checked="@IsChecked"
+               class="bui-switch__input" />
 
-<bui-component @attributes="ComputedAttributes"
-               data-bui-checked="@IsChecked.ToString().ToLowerInvariant()"
-               data-bui-disabled="@IsDisabled.ToString().ToLowerInvariant()"
-               @onclick="HandleClick">
+        <span class="bui-switch__track" aria-hidden="true">
+            <span class="bui-switch__thumb">
+                @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
+                {
+                    @if (IsChecked)
+                    {
+                        <BUISvgIcon Size="SizeEnum.Small" Icon="@IconActive" class="bui-switch__icon" />
+                    }
+                    else
+                    {
+                        <BUISvgIcon Size="SizeEnum.Small" Icon="@IconInactive" class="bui-switch__icon" />
+                    }
+                }
+            </span>
+        </span>
 
-    <div class="bui-switch__track">
-        <div class="bui-switch__thumb">
-            @if (IsChecked && IconOption2 != null)
-            {
-                <span class="bui-switch__icon">
-                    <BUISvgIcon Icon="@IconOption2" />
-                </span>
-            }
-            else if (!IsChecked && IconOption1 != null)
-            {
-                <span class="bui-switch__icon">
-                    <BUISvgIcon Icon="@IconOption1" />
-                </span>
-            }
-        </div>
-    </div>
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <span class="bui-switch__label">@Label</span>
+        }
+    </label>
 
-    @if (!string.IsNullOrWhiteSpace(Label))
+    @if (!string.IsNullOrWhiteSpace(HelperText))
     {
-        <span class="bui-switch__label">@Label</span>
+        <div class="bui-field__helper">@HelperText</div>
     }
 </bui-component>
 
 @code {
+    private string _generatedInputId = $"bui-switch-{Guid.NewGuid():N}";
+
     /* ===== Design ===== */
 
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
@@ -50,22 +57,75 @@
 
     /* ===== Switch behavior ===== */
 
+    /// <summary>
+    /// Current value of the switch
+    /// </summary>
     [Parameter] public TValue? Value { get; set; }
+
+    /// <summary>
+    /// Callback when value changes
+    /// </summary>
     [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
 
-    [Parameter, EditorRequired] public TValue Option1 { get; set; } = default!;
-    [Parameter, EditorRequired] public TValue Option2 { get; set; } = default!;
+    /// <summary>
+    /// Value when switch is in "off" state (unchecked)
+    /// </summary>
+    [Parameter, EditorRequired]
+    public TValue OptionInactive { get; set; } = default!;
+
+    /// <summary>
+    /// Value when switch is in "on" state (checked)
+    /// </summary>
+    [Parameter, EditorRequired]
+    public TValue OptionActive { get; set; } = default!;
 
     /* ===== Content ===== */
 
+    /// <summary>
+    /// Label text displayed next to the switch
+    /// </summary>
     [Parameter] public string? Label { get; set; }
-    [Parameter] public string? IconOption1 { get; set; }
-    [Parameter] public string? IconOption2 { get; set; }
+
+    /// <summary>
+    /// Helper text displayed below the switch
+    /// </summary>
+    [Parameter] public string? HelperText { get; set; }
+
+    /// <summary>
+    /// Icon shown when switch is unchecked (Option1)
+    /// </summary>
+    [Parameter] public string? IconInactive { get; set; }
+
+    /// <summary>
+    /// Icon shown when switch is checked (Option2)
+    /// </summary>
+    [Parameter] public string? IconActive { get; set; }
+
+    /// <summary>
+    /// Track background color when unchecked
+    /// </summary>
     [Parameter] public CssColor? TrackColorInactive { get; set; }
+
+    /// <summary>
+    /// Track background color when checked
+    /// </summary>
     [Parameter] public CssColor? TrackColorActive { get; set; }
 
+    /// <summary>
+    /// Optional custom input ID. If not provided, one will be generated.
+    /// </summary>
+    [Parameter] public string? InputId { get; set; }
+
+    /// <summary>
+    /// Computed input ID (custom or generated)
+    /// </summary>
+    private string ActualInputId => InputId ?? _generatedInputId;
+
+    /// <summary>
+    /// Whether the switch is currently checked (Value == Option2)
+    /// </summary>
     protected bool IsChecked =>
-        EqualityComparer<TValue>.Default.Equals(Value, Option2);
+        EqualityComparer<TValue>.Default.Equals(Value, OptionActive);
 
     private async Task HandleClick(MouseEventArgs e)
     {
@@ -73,21 +133,27 @@
             return;
 
         TValue newValue =
-            EqualityComparer<TValue>.Default.Equals(Value, Option1)
-                ? Option2
-                : Option1;
+            EqualityComparer<TValue>.Default.Equals(Value, OptionInactive)
+                ? OptionActive
+                : OptionInactive;
 
         Value = newValue;
         await ValueChanged.InvokeAsync(newValue);
     }
 
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes["data-checked"] = IsChecked.ToString().ToLowerInvariant();
+    }
+
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
-        if (TrackColorInactive != null)
-            cssVariables["--bui-switch-track-bg"] = TrackColorInactive.ToString(ColorOutputFormats.Optimized);
-        if (TrackColorActive != null)
-            cssVariables["--bui-switch-track-bg-checked"] = TrackColorActive.ToString(ColorOutputFormats.Optimized);
+        base.BuildComponentCssVariables(cssVariables);
 
+        if (TrackColorInactive != null)
+            cssVariables["--track-inactive"] = TrackColorInactive.ToString(ColorOutputFormats.Optimized);
+        if (TrackColorActive != null)
+            cssVariables["--track-active"] = TrackColorActive.ToString(ColorOutputFormats.Optimized);
     }
 }
-
