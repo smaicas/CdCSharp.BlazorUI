@@ -42,6 +42,7 @@
     private RenderFragment RenderDefault() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes">
+       
             <button @onclick="SwitchTheme"
                     disabled="@_isTransitioning">
                 <span class="bui-theme-switch__content @(_isTransitioning ? "ui-theme-switch__content--transitioning" : "")">

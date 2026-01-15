@@ -11,6 +11,9 @@
 <h2>With Label</h2>
 <ComponentDemo Definition="@WithLabelDemo" />
 
+<h2>With Helper Text</h2>
+<ComponentDemo Definition="@HelperTextDemo" />
+
 <h2>Sizes</h2>
 <ComponentDemo Definition="@SizesDemo" />
 
@@ -26,22 +29,20 @@
 <h2>Disabled</h2>
 <ComponentDemo Definition="@DisabledDemo" />
 
-<h2>Required</h2>
-<ComponentDemo Definition="@RequiredDemo" />
-
 @code {
-    private bool _basicValue = false;
+    private bool _basicValue;
     private bool _labelValue = true;
-    private bool _smallValue = false;
+    private bool _helperValue;
+    private bool _smallValue;
     private bool _mediumValue = true;
-    private bool _largeValue = false;
-    private bool _compactValue = false;
+    private bool _largeValue;
+    private bool _compactValue;
     private bool _standardValue = true;
-    private bool _comfortableValue = false;
+    private bool _comfortableValue;
     private bool _iconsValue = true;
     private bool _colorsValue = true;
     private bool _disabledValue = true;
-    private bool _requiredValue = false;
+    private bool _disabledOffValue = false;
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -63,6 +64,19 @@
     private RenderFragment RenderWithLabel() => __builder =>
     {
         <BUIInputSwitch @bind-Value="_labelValue" Label="Enable notifications" />
+    };
+
+    private ComponentDemoDefinition HelperTextDemo => new()
+    {
+        Demo = RenderHelperText(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderHelperText() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_helperValue"
+                        Label="Dark mode"
+                        HelperText="Enable dark mode for better visibility at night" />
     };
 
     private ComponentDemoDefinition SizesDemo => new()
@@ -117,8 +131,8 @@
     {
         <BUIInputSwitch @bind-Value="_iconsValue"
                         Label="Dark Mode"
-                        IconInactive="@BUIIcons.MaterialIconsRound.i_light_mode"
-                        IconActive="@BUIIcons.MaterialIconsRound.i_dark_mode" />
+                        IconInactive="@BUIIcons.MaterialIconsOutlined.i_light_mode"
+                        IconActive="@BUIIcons.MaterialIconsOutlined.i_dark_mode" />
     };
 
     private ComponentDemoDefinition ColorsDemo => new()
@@ -143,17 +157,13 @@
 
     private RenderFragment RenderDisabled() => __builder =>
     {
-        <BUIInputSwitch @bind-Value="_disabledValue" Label="Disabled switch" Disabled="true" />
-    };
-
-    private ComponentDemoDefinition RequiredDemo => new()
-    {
-        Demo = RenderRequired(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderRequired() => __builder =>
-    {
-        <BUIInputSwitch @bind-Value="_requiredValue" Label="Required field" Required="true" />
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_disabledValue" Label="Disabled (On)" Disabled="true" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_disabledOffValue" Label="Disabled (Off)" Disabled="true" />
+            </BUIGridItem>
+        </BUIGrid>
     };
 }

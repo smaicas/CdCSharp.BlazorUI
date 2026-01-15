@@ -1,24 +1,93 @@
 ﻿bui-component[data-bui-component="input-checkbox"] {
+    --_color: var(--bui-inline-color, var(--palette-primary));
+    --_size: calc(1.25rem * var(--bui-size-multiplier, 1));
     display: inline-flex;
-    flex-direction: row;
-    -webkit-flex-direction: row;
-    --bui-checkbox-box-size: calc(20px * var(--bui-size-multiplier));
+    flex-direction: column;
+    gap: calc(0.25rem * var(--bui-size-multiplier, 1));
 }
 
-    /* Checkbox box */
+    /* Clickable container */
+    bui-component[data-bui-component="input-checkbox"] .bui-checkbox {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--bui-density-gap, 0.5rem);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* Hidden native input */
+    bui-component[data-bui-component="input-checkbox"] .bui-checkbox__input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    /* Icon box */
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox__box {
-        width: var(--bui-checkbox-box-size);
-        height: var(--bui-checkbox-box-size);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s ease;
-        color: var(--bui-inline-color, var(--palette-primary));
+        width: var(--_size);
+        height: var(--_size);
+        color: var(--palette-surfacecontrast);
+        transition: color 0.15s ease, transform 0.15s ease;
+        flex-shrink: 0;
     }
 
-    /* Focus state */
-    bui-component[data-bui-component="input-checkbox"] .bui-input__field:focus-visible + .bui-radio__box {
-        outline: 2px solid var(--palette-primary);
+    /* Checked state */
+    bui-component[data-bui-component="input-checkbox"][data-checked="true"] .bui-checkbox__box,
+    bui-component[data-bui-component="input-checkbox"][data-indeterminate] .bui-checkbox__box {
+        color: var(--_color);
+    }
+
+    /* Label */
+    bui-component[data-bui-component="input-checkbox"] .bui-checkbox__label {
+        font-size: calc(1rem * var(--bui-size-multiplier, 1));
+        line-height: 1.4;
+        color: var(--palette-surfacecontrast);
+    }
+
+    /* Hover */
+    bui-component[data-bui-component="input-checkbox"]:not([data-bui-disabled="true"]) .bui-checkbox:hover .bui-checkbox__box {
+        transform: scale(1.1);
+    }
+
+    /* Focus */
+    bui-component[data-bui-component="input-checkbox"] .bui-checkbox__input:focus-visible + .bui-checkbox__box {
+        outline: 2px solid var(--_color);
         outline-offset: 2px;
-        border-radius: 50%;
+        border-radius: 4px;
+    }
+
+    /* Disabled */
+    bui-component[data-bui-component="input-checkbox"][data-bui-disabled="true"] .bui-checkbox {
+        cursor: not-allowed;
+    }
+
+    /* ========================================
+   SHARED FIELD STYLES (future global)
+   ======================================== */
+    bui-component[data-bui-component="input-checkbox"] .bui-field__required {
+        color: var(--palette-error);
+        margin-left: 0.125em;
+    }
+
+    bui-component[data-bui-component="input-checkbox"] .bui-field__helper {
+        font-size: 0.875em;
+        color: var(--palette-surfacecontrast);
+        opacity: 0.7;
+        padding-left: calc(var(--_size) + var(--bui-density-gap, 0.5rem));
+    }
+
+    bui-component[data-bui-component="input-checkbox"] .bui-field__validation {
+        font-size: 0.875em;
+        color: var(--palette-error);
+        padding-left: calc(var(--_size) + var(--bui-density-gap, 0.5rem));
+    }
+
+    /* Error state */
+    bui-component[data-bui-component="input-checkbox"][data-bui-error="true"] .bui-checkbox__box {
+        color: var(--palette-error);
     }

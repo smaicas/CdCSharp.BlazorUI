@@ -1,6 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Components.Forms.Radio
 
-
 @namespace CdCSharp.BlazorUI.Components.Forms
 
 @typeparam TValue
@@ -20,10 +19,9 @@
 }
 
 @code {
-    private readonly string _groupName = $"bui-radio-group-{Guid.NewGuid():N}";
-    private readonly List<IRadioOption> _options = new();
+    private readonly string _groupName = $"bui-radio-{Guid.NewGuid():N}";
+    private readonly List<IRadioOption> _options = [];
     private readonly Type _elementType;
-    private bool _defaultApplied;
 
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public CssColor? Color { get; set; }
@@ -33,13 +31,12 @@
     [Parameter] public string? HelperText { get; set; }
     [Parameter] public RadioOrientation Orientation { get; set; } = RadioOrientation.Vertical;
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public string ClearText { get; set; } = "Clear";
 
     [Parameter] public string? CheckedIcon { get; set; }
     [Parameter] public string? UncheckedIcon { get; set; }
 
-    // Nuevo parámetro para controlar si se muestra el botón Clear
-    [Parameter] public bool Clearable { get; set; } = false;
+    [Parameter] public bool Clearable { get; set; }
+    [Parameter] public string ClearText { get; set; } = "Clear";
 
     public override BUIInputRadioVariant DefaultVariant => BUIInputRadioVariant.Default;
 
@@ -68,45 +65,12 @@
     void IRadioContainer.UnregisterOption(IRadioOption option)
     {
         if (_options.Remove(option))
-        {
             StateHasChanged();
-        }
     }
 
-    bool IRadioContainer.IsOptionSelected(object? value)
-    {
-        return ValuesEqual(CurrentValue, value);
-    }
+    bool IRadioContainer.IsOptionSelected(object? value) => EqualityComparer<object>.Default.Equals(CurrentValue, value);
 
-    async Task IRadioContainer.SelectOptionAsync(object? value)
-    {
-        await SelectValueAsync(value);
-    }
-
-    private bool ValuesEqual(object? a, object? b)
-    {
-        return EqualityComparer<object>.Default.Equals(a, b);
-    }
-
-    private async Task SelectValueAsync(object? value)
-    {
-        if (Disabled) return;
-        CurrentValue = value == null ? default! : (TValue)value;
-        await ValueChanged.InvokeAsync(CurrentValue);
-    }
-
-    private async Task ClearAsync()
-    {
-        if (Disabled || !Clearable) return;
-        CurrentValue = default!;
-        await ValueChanged.InvokeAsync(CurrentValue);
-    }
-
-    private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
-    private bool ShowClearButton => Clearable && HasValue && !Disabled;
-
-    private string GetCheckedIcon() => CheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_checked;
-    private string GetUncheckedIcon() => UncheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked;
+    async Task IRadioContainer.SelectOptionAsync(object? value) => await SelectValueAsync(value);
 
     protected override bool TryParseValueFromString(string? value, out TValue result, out string validationErrorMessage)
     {
@@ -115,19 +79,44 @@
         return true;
     }
 
+    private async Task SelectValueAsync(object? value)
+    {
+        if (IsDisabled) return;
+        CurrentValue = value == null ? default! : (TValue)value;
+        await ValueChanged.InvokeAsync(CurrentValue);
+    }
+
+    private async Task ClearAsync()
+    {
+        if (IsDisabled || !Clearable) return;
+        CurrentValue = default!;
+        await ValueChanged.InvokeAsync(CurrentValue);
+    }
+
+    private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
+    private bool ShowClearButton => Clearable && HasValue && !IsDisabled;
+
+    private string GetCheckedIcon() => CheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_checked;
+    private string GetUncheckedIcon() => UncheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked;
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes["data-orientation"] = Orientation.ToString().ToLowerInvariant();
+    }
+
     private RenderFragment RenderDefault() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes"
-                       data-bui-orientation="@Orientation.ToString().ToLowerInvariant()">
+        <bui-component @attributes="ComputedAttributes">
             @if (!string.IsNullOrWhiteSpace(Label))
             {
-                <label class="bui-input__label">
+                <span class="bui-radio__label">
                     @Label
                     @if (Required)
                     {
-                        <span class="bui-input__required">*</span>
+                        <span class="bui-field__required">*</span>
                     }
-                </label>
+                </span>
             }
 
             <div class="bui-radio__group" role="radiogroup">
@@ -135,27 +124,25 @@
                 {
                     string optionId = $"{_groupName}-{option.RawValue?.GetHashCode() ?? 0}";
                     bool isSelected = ((IRadioContainer)this).IsOptionSelected(option.RawValue);
-                    bool isOptionDisabled = Disabled || option.IsDisabled;
+                    bool isOptionDisabled = IsDisabled || option.IsDisabled;
 
-                    <div class="bui-radio__option @(isOptionDisabled ? "bui-radio__option--disabled" : "")"
-                         @onclick="() => HandleOptionClick(option, isOptionDisabled)"
-                         @onclick:preventDefault="true">
+                    <label class="bui-radio__option @(isOptionDisabled ? "bui-radio__option--disabled" : "")"
+                           @onclick="() => HandleOptionClick(option, isOptionDisabled)"
+                           @onclick:preventDefault="true">
 
                         <input type="radio"
                                id="@optionId"
                                name="@_groupName"
                                checked="@isSelected"
                                disabled="@isOptionDisabled"
-                               class="bui-input__field sr-only" />
+                               class="bui-radio__input" />
 
                         <span class="bui-radio__box" aria-hidden="true">
                             <BUISvgIcon Icon="@(isSelected? GetCheckedIcon() : GetUncheckedIcon())" Size="Size" />
                         </span>
 
-                        <label for="@optionId" class="bui-radio__label">
-                            @option.Content
-                        </label>
-                    </div>
+                        <span class="bui-radio__text">@option.Content</span>
+                    </label>
                 }
             </div>
 
@@ -171,16 +158,14 @@
 
             @if (IsError && EditContext != null && ValueExpression != null)
             {
-                <div class="bui-input__validation">
+                <div class="bui-field__validation">
                     <ValidationMessage For="ValueExpression" />
                 </div>
             }
 
             @if (!string.IsNullOrWhiteSpace(HelperText))
             {
-                <div class="bui-input__helper-text">
-                    @HelperText
-                </div>
+                <div class="bui-field__helper">@HelperText</div>
             }
         </bui-component>
     };

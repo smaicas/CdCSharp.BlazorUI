@@ -8,7 +8,7 @@
 <h2>Basic Usage</h2>
 <ComponentDemo Definition="@BasicUsageDemo" />
 
-<h2>With Label</h2>
+<h2>With Label and Helper Text</h2>
 <ComponentDemo Definition="@WithLabelDemo" />
 
 <h2>Orientation</h2>
@@ -32,6 +32,9 @@
 <h2>Disabled</h2>
 <ComponentDemo Definition="@DisabledDemo" />
 
+<h2>Disabled Option</h2>
+<ComponentDemo Definition="@DisabledOptionDemo" />
+
 @code {
     private string? _basicValue = "option1";
     private string? _labelValue = "option2";
@@ -48,6 +51,7 @@
     private string? _customIconValue = "option1";
     private string? _clearableValue = "option2";
     private string? _disabledValue = "option1";
+    private string? _disabledOptionValue = "option1";
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -73,11 +77,11 @@
     private RenderFragment RenderWithLabel() => __builder =>
     {
         <BUIInputRadio @bind-Value="_labelValue"
-                       Label="Choose an option"
-                       HelperText="Select one of the available options">
-            <RadioOption Value="@("option1")">Option 1</RadioOption>
-            <RadioOption Value="@("option2")">Option 2</RadioOption>
-            <RadioOption Value="@("option3")">Option 3</RadioOption>
+                       Label="Choose your plan"
+                       HelperText="You can change your plan at any time">
+            <RadioOption Value="@("option1")">Free</RadioOption>
+            <RadioOption Value="@("option2")">Pro ($9/month)</RadioOption>
+            <RadioOption Value="@("option3")">Enterprise (Contact us)</RadioOption>
         </BUIInputRadio>
     };
 
@@ -119,26 +123,23 @@
 
     private RenderFragment RenderSizes() => __builder =>
     {
-        <BUIGrid Gap="1rem">
+        <BUIGrid Gap="2rem">
             <BUIGridItem>
                 <BUIInputRadio @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
-                    <RadioOption Value="@("option3")">Option 3</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
                 <BUIInputRadio @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
-                    <RadioOption Value="@("option3")">Option 3</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
                 <BUIInputRadio @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
-                    <RadioOption Value="@("option3")">Option 3</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
         </BUIGrid>
@@ -152,7 +153,7 @@
 
     private RenderFragment RenderColors() => __builder =>
     {
-        <BUIGrid Gap="1rem">
+        <BUIGrid Gap="2rem">
             <BUIGridItem>
                 <BUIInputRadio @bind-Value="_primaryValue" Label="Primary" Color="BUIColor.Palette.Primary">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
@@ -176,7 +177,7 @@
 
     private RenderFragment RenderDensity() => __builder =>
     {
-        <BUIGrid Gap="1rem">
+        <BUIGrid Gap="2rem">
             <BUIGridItem>
                 <BUIInputRadio @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
@@ -207,11 +208,15 @@
     private RenderFragment RenderCustomIcons() => __builder =>
     {
         <BUIInputRadio @bind-Value="_customIconValue"
-                       Label="Custom Icons"
+                       Label="Rate your experience"
                        CheckedIcon="@BUIIcons.MaterialIconsRound.i_star"
-                       UncheckedIcon="@BUIIcons.MaterialIconsRound.i_star_border">
-            <RadioOption Value="@("option1")">Option 1</RadioOption>
-            <RadioOption Value="@("option2")">Option 2</RadioOption>
+                       UncheckedIcon="@BUIIcons.MaterialIconsRound.i_star_border"
+                       Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("option1")">1</RadioOption>
+            <RadioOption Value="@("option2")">2</RadioOption>
+            <RadioOption Value="@("option3")">3</RadioOption>
+            <RadioOption Value="@("option4")">4</RadioOption>
+            <RadioOption Value="@("option5")">5</RadioOption>
         </BUIInputRadio>
     };
 
@@ -224,7 +229,7 @@
     private RenderFragment RenderClearable() => __builder =>
     {
         <BUIInputRadio @bind-Value="_clearableValue"
-                       Label="Clearable"
+                       Label="Clearable selection"
                        Clearable="true"
                        ClearText="Clear selection">
             <RadioOption Value="@("option1")">Option 1</RadioOption>
@@ -241,9 +246,24 @@
 
     private RenderFragment RenderDisabled() => __builder =>
     {
-        <BUIInputRadio @bind-Value="_disabledValue" Label="Disabled" Disabled="true">
+        <BUIInputRadio @bind-Value="_disabledValue" Label="Disabled group" Disabled="true">
             <RadioOption Value="@("option1")">Option 1</RadioOption>
             <RadioOption Value="@("option2")">Option 2</RadioOption>
+        </BUIInputRadio>
+    };
+
+    private ComponentDemoDefinition DisabledOptionDemo => new()
+    {
+        Demo = RenderDisabledOption(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabledOption() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_disabledOptionValue" Label="With disabled option">
+            <RadioOption Value="@("option1")">Available</RadioOption>
+            <RadioOption Value="@("option2")" Disabled="true">Unavailable (Disabled)</RadioOption>
+            <RadioOption Value="@("option3")">Available</RadioOption>
         </BUIInputRadio>
     };
 }

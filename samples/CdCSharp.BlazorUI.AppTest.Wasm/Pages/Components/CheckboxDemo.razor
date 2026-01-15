@@ -11,6 +11,9 @@
 <h2>With Label</h2>
 <ComponentDemo Definition="@WithLabelDemo" />
 
+<h2>With Helper Text</h2>
+<ComponentDemo Definition="@HelperTextDemo" />
+
 <h2>Sizes</h2>
 <ComponentDemo Definition="@SizesDemo" />
 
@@ -23,29 +26,29 @@
 <h2>Custom Icons</h2>
 <ComponentDemo Definition="@CustomIconsDemo" />
 
-<h2>Disabled</h2>
-<ComponentDemo Definition="@DisabledDemo" />
+<h2>States</h2>
+<ComponentDemo Definition="@StatesDemo" />
 
-<h2>Required</h2>
-<ComponentDemo Definition="@RequiredDemo" />
-
-<h2>Indeterminate State</h2>
+<h2>Indeterminate (Tri-State)</h2>
 <ComponentDemo Definition="@IndeterminateDemo" />
 
 @code {
     private bool _basicValue;
     private bool _labelValue;
+    private bool _helperValue;
     private bool _smallValue;
     private bool _mediumValue = true;
     private bool _largeValue;
-    private bool _primaryValue;
-    private bool _secondaryValue;
-    private bool _errorValue;
+    private bool _primaryValue = true;
+    private bool _secondaryValue = true;
+    private bool _successValue = true;
+    private bool _errorValue = true;
     private bool _compactValue;
     private bool _standardValue = true;
     private bool _comfortableValue;
     private bool _customIconValue;
-    private bool _disabledValue = true;
+    private bool _disabledOnValue = true;
+    private bool _disabledOffValue;
     private bool _requiredValue;
     private bool? _indeterminateValue = null;
 
@@ -69,6 +72,19 @@
     private RenderFragment RenderWithLabel() => __builder =>
     {
         <BUIInputCheckbox @bind-Value="_labelValue" Label="Accept terms and conditions" />
+    };
+
+    private ComponentDemoDefinition HelperTextDemo => new()
+    {
+        Demo = RenderHelperText(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderHelperText() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_helperValue"
+                          Label="Subscribe to newsletter"
+                          HelperText="We'll send you weekly updates about new features" />
     };
 
     private ComponentDemoDefinition SizesDemo => new()
@@ -108,6 +124,9 @@
                 <BUIInputCheckbox @bind-Value="_secondaryValue" Label="Secondary" Color="BUIColor.Palette.Secondary" />
             </BUIGridItem>
             <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_successValue" Label="Success" Color="BUIColor.Palette.Success" />
+            </BUIGridItem>
+            <BUIGridItem>
                 <BUIInputCheckbox @bind-Value="_errorValue" Label="Error" Color="BUIColor.Palette.Error" />
             </BUIGridItem>
         </BUIGrid>
@@ -143,31 +162,30 @@
     private RenderFragment RenderCustomIcons() => __builder =>
     {
         <BUIInputCheckbox @bind-Value="_customIconValue"
-                          Label="Custom Icons"
-                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked"
-                          CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_radio_button_checked" />
+                          Label="Favorite"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border"
+                          CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite" />
     };
 
-    private ComponentDemoDefinition DisabledDemo => new()
+    private ComponentDemoDefinition StatesDemo => new()
     {
-        Demo = RenderDisabled(),
+        Demo = RenderStates(),
         Code = """ """
     };
 
-    private RenderFragment RenderDisabled() => __builder =>
+    private RenderFragment RenderStates() => __builder =>
     {
-        <BUIInputCheckbox @bind-Value="_disabledValue" Label="Disabled checkbox" Disabled="true" />
-    };
-
-    private ComponentDemoDefinition RequiredDemo => new()
-    {
-        Demo = RenderRequired(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderRequired() => __builder =>
-    {
-        <BUIInputCheckbox @bind-Value="_requiredValue" Label="Required field" Required="true" />
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_disabledOnValue" Label="Disabled (Checked)" Disabled="true" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_disabledOffValue" Label="Disabled (Unchecked)" Disabled="true" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_requiredValue" Label="Required field" Required="true" />
+            </BUIGridItem>
+        </BUIGrid>
     };
 
     private ComponentDemoDefinition IndeterminateDemo => new()
@@ -178,8 +196,12 @@
 
     private RenderFragment RenderIndeterminate() => __builder =>
     {
-        <BUIInputCheckbox @bind-Value="_indeterminateValue"
-                          Label="Indeterminate state"
-                          IndeterminateIcon="@BUIIcons.MaterialIconsOutlined.i_star_half" />
+        <div>
+            <p style="margin-bottom: 1rem; opacity: 0.7;">
+                Click to cycle: Unchecked → Indeterminate → Checked → Unchecked
+            </p>
+            <BUIInputCheckbox @bind-Value="_indeterminateValue"
+                              Label="Select all items" />
+        </div>
     };
 }

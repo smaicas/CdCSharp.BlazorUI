@@ -1,10 +1,8 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Forms
 
-@inherits BUIInputComponentBase<bool, BUIInputSwitch, BUIInputCheckboxVariant>
+@inherits BUIInputComponentBase<bool, BUIInputSwitch, BUIInputSwitchVariant>
 @implements IHasSize
 @implements IHasDensity
-
-@implements IInputFamilyComponent
 
 @{
     base.BuildRenderTree(__builder);
@@ -14,10 +12,10 @@
     private string _inputId = $"bui-switch-{Guid.NewGuid():N}";
 
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
 
     [Parameter] public string? IconInactive { get; set; }
     [Parameter] public string? IconActive { get; set; }
@@ -25,12 +23,12 @@
     [Parameter] public CssColor? TrackColorInactive { get; set; }
     [Parameter] public CssColor? TrackColorActive { get; set; }
 
-    public override BUIInputCheckboxVariant DefaultVariant => BUIInputCheckboxVariant.Default;
+    public override BUIInputSwitchVariant DefaultVariant => BUIInputSwitchVariant.Default;
 
-    protected override IReadOnlyDictionary<BUIInputCheckboxVariant, Func<BUIInputSwitch, RenderFragment>> BuiltInTemplates { get; } =
-        new Dictionary<BUIInputCheckboxVariant, Func<BUIInputSwitch, RenderFragment>>
+    protected override IReadOnlyDictionary<BUIInputSwitchVariant, Func<BUIInputSwitch, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUIInputSwitchVariant, Func<BUIInputSwitch, RenderFragment>>
         {
-            [BUIInputCheckboxVariant.Default] = c => c.RenderSwitch()
+            [BUIInputSwitchVariant.Default] = c => c.RenderDefault()
         };
 
     protected bool IsChecked => CurrentValue;
@@ -43,78 +41,74 @@
             result = boolResult;
             return true;
         }
-
         result = false;
         validationErrorMessage = $"Unable to parse '{value}' as boolean.";
         return false;
     }
 
-    private RenderFragment RenderSwitch() => __builder =>
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        Dictionary<string, object> attrs = new(ComputedAttributes)
-        {
-            ["data-bui-checked"] = IsChecked.ToString().ToLowerInvariant()
-        };
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes["data-checked"] = IsChecked.ToString().ToLowerInvariant();
+    }
 
-        if (!string.IsNullOrEmpty(GetDynamicStyles()))
-        {
-            string existingStyle = attrs.TryGetValue("style", out object? s) ? s?.ToString() ?? "" : "";
-            attrs["style"] = string.IsNullOrEmpty(existingStyle)
-                ? GetDynamicStyles()
-                : $"{existingStyle}; {GetDynamicStyles()}";
-        }
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        base.BuildComponentCssVariables(cssVariables);
+        if (TrackColorInactive != null)
+            cssVariables["--track-inactive"] = TrackColorInactive.ToString(ColorOutputFormats.Optimized);
+        if (TrackColorActive != null)
+            cssVariables["--track-active"] = TrackColorActive.ToString(ColorOutputFormats.Optimized);
+    }
 
-        <bui-component @attributes="attrs">
-                <div class="bui-input__container" @onclick="HandleClick">
-                    <input type="checkbox"
-                           id="@_inputId"
-                           aria-checked="@IsChecked"
-                           checked="@IsChecked"
-                           disabled="@IsDisabled"
-                           @onclick:preventDefault="true"
-                           class="bui-switch__input" />
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes">
+            <label class="bui-switch" @onclick="HandleClick" @onclick:preventDefault="true">
+                <input type="checkbox"
+                       id="@_inputId"
+                       checked="@IsChecked"
+                       disabled="@IsDisabled"
+                       aria-checked="@IsChecked"
+                       class="bui-switch__input" />
 
-                    <span class="bui-switch__track" aria-hidden="true">
-                        <span class="bui-switch__thumb">
-                            @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
+                <span class="bui-switch__track" aria-hidden="true">
+                    <span class="bui-switch__thumb">
+                        @if (!string.IsNullOrWhiteSpace(IconInactive) || !string.IsNullOrWhiteSpace(IconActive))
+                        {
+                            @if (IsChecked)
                             {
-                                <span class="bui-switch__icon">
-                                    @if (IsChecked && !string.IsNullOrWhiteSpace(IconActive))
-                                    {
-                                        @IconActive
-                                    }
-                                    else if (!IsChecked && !string.IsNullOrWhiteSpace(IconInactive))
-                                    {
-                                        @IconInactive
-                                    }
-                                </span>
+                                <BUISvgIcon Size="SizeEnum.Small" Icon="@IconActive" class="bui-switch__icon" />
                             }
-                        </span>
+                            else
+                            {
+                                <BUISvgIcon Size="SizeEnum.Small" Icon="@IconInactive" class="bui-switch__icon" />
+                            }
+
+                            // <span class="bui-switch__icon">
+                            //     @(IsChecked? IconActive : IconInactive)
+                            // </span>
+                        }
                     </span>
-                </div>
+                </span>
+
                 @if (!string.IsNullOrWhiteSpace(Label))
                 {
-                    <label for="@_inputId" class="bui-input__label">@Label</label>
+                    <span class="bui-switch__label">@Label</span>
                 }
+            </label>
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div class="bui-field__helper">@HelperText</div>
+            }
         </bui-component>
     };
 
     private async Task HandleClick(MouseEventArgs e)
     {
-        if (Disabled) return;
-
+        if (IsDisabled) return;
         CurrentValue = !CurrentValue;
         await ValueChanged.InvokeAsync(CurrentValue);
-    }
-
-    private string GetDynamicStyles()
-    {
-        List<string> styles = new();
-        if (TrackColorInactive != null)
-            styles.Add($"--bui-input-switch-track-bg: {TrackColorInactive}");
-        if (TrackColorActive != null)
-            styles.Add($"--bui-input-switch-track-bg-checked: {TrackColorActive}");
-
-        return styles.Count > 0 ? string.Join(";", styles) : string.Empty;
     }
 }
