@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 internal interface IBuiltComponent
 {

@@ -1,0 +1,277 @@
+﻿@page "/demo/text"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Text Input - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputText</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>With Placeholder</h2>
+<ComponentDemo Definition="@PlaceholderDemo" />
+
+<h2>Variants</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>With Prefix</h2>
+<ComponentDemo Definition="@PrefixDemo" />
+
+<h2>With Suffix</h2>
+<ComponentDemo Definition="@SuffixDemo" />
+
+<h2>Loading State</h2>
+<ComponentDemo Definition="@LoadingDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+<h2>ReadOnly</h2>
+<ComponentDemo Definition="@ReadOnlyDemo" />
+
+<h2>Required</h2>
+<ComponentDemo Definition="@RequiredDemo" />
+
+<h2>Error State</h2>
+<ComponentDemo Definition="@ErrorDemo" />
+
+@code {
+    private string _basicValue = "";
+    private string _labelValue = "";
+    private string _placeholderValue = "";
+    private string _outlinedValue = "";
+    private string _filledValue = "";
+    private string _standardValue = "";
+    private string _smallValue = "";
+    private string _mediumValue = "";
+    private string _largeValue = "";
+    private string _compactValue = "";
+    private string _standardDensity = "";
+    private string _comfortableValue = "";
+    private string _prefixTextValue = "";
+    private string _prefixIconValue = "";
+    private string _suffixTextValue = "";
+    private string _suffixIconValue = "";
+    private string _loadingValue = "";
+    private string _disabledValue = "Disabled text";
+    private string _readOnlyValue = "Read-only text";
+    private string _requiredValue = "";
+    private string _errorValue = "";
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputText @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputText @bind-Value="_labelValue"
+                      Label="Name"
+                      HelperText="Enter your full name" />
+    };
+
+    private ComponentDemoDefinition PlaceholderDemo => new()
+    {
+        Demo = RenderPlaceholder(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPlaceholder() => __builder =>
+    {
+        <BUIInputText @bind-Value="_placeholderValue"
+                      Label="Email"
+                      Placeholder="user@example.com" />
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_outlinedValue"
+                              Label="Outlined"
+                              Variant="BUIInputVariant.Outlined" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_filledValue"
+                              Label="Filled"
+                              Variant="BUIInputVariant.Filled" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_standardValue"
+                              Label="Standard"
+                              Variant="BUIInputVariant.Standard" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_standardDensity" Label="Standard (Default)" Density="DensityEnum.Standard" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition PrefixDemo => new()
+    {
+        Demo = RenderPrefix(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPrefix() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_prefixTextValue"
+                              Label="URL"
+                              PrefixText="https://" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_prefixIconValue"
+                              Label="Search"
+                              PrefixIcon="@BUIIcons.UI.Search" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SuffixDemo => new()
+    {
+        Demo = RenderSuffix(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSuffix() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_suffixTextValue"
+                              Label="Domain"
+                              SuffixText=".com" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_suffixIconValue"
+                              Label="Email"
+                              SuffixIcon="@BUIIcons.UI.Email" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition LoadingDemo => new()
+    {
+        Demo = RenderLoading(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderLoading() => __builder =>
+    {
+        <BUIInputText @bind-Value="_loadingValue" Label="Loading" Loading="true" />
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputText @bind-Value="_disabledValue" Label="Disabled" Disabled="true" />
+    };
+
+    private ComponentDemoDefinition ReadOnlyDemo => new()
+    {
+        Demo = RenderReadOnly(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderReadOnly() => __builder =>
+    {
+        <BUIInputText @bind-Value="_readOnlyValue" Label="ReadOnly" ReadOnly="true" />
+    };
+
+    private ComponentDemoDefinition RequiredDemo => new()
+    {
+        Demo = RenderRequired(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRequired() => __builder =>
+    {
+        <BUIInputText @bind-Value="_requiredValue" Label="Required field" Required="true" />
+    };
+
+    private ComponentDemoDefinition ErrorDemo => new()
+    {
+        Demo = RenderError(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderError() => __builder =>
+    {
+        <BUIInputText @bind-Value="_errorValue"
+                      Label="Error state"
+                      Error="true"
+                      HelperText="This field has an error" />
+    };
+}

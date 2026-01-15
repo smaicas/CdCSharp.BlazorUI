@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
-
-namespace CdCSharp.BlazorUI.Components.Forms;
+﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
 public class BUIInputCheckboxVariant : Variant
 {

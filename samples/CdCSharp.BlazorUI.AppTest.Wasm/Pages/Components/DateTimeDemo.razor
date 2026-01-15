@@ -1,0 +1,189 @@
+﻿@page "/demo/datetime"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>DateTime - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputDateTime</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>With Helper Text</h2>
+<ComponentDemo Definition="@HelperTextDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>With Prefix</h2>
+<ComponentDemo Definition="@PrefixDemo" />
+
+<h2>With Suffix</h2>
+<ComponentDemo Definition="@SuffixDemo" />
+
+<h2>Loading State</h2>
+<ComponentDemo Definition="@LoadingDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+<h2>Required</h2>
+<ComponentDemo Definition="@RequiredDemo" />
+
+@code {
+    private DateTime? _basicValue = DateTime.Now;
+    private DateTime? _labelValue = DateTime.Now.AddDays(7);
+    private DateTime? _helperValue;
+    private DateTime? _smallValue = DateTime.Now;
+    private DateTime? _mediumValue = DateTime.Now;
+    private DateTime? _largeValue = DateTime.Now;
+    private DateTime? _compactValue = DateTime.Now;
+    private DateTime? _standardValue = DateTime.Now;
+    private DateTime? _comfortableValue = DateTime.Now;
+    private DateTime? _prefixValue;
+    private DateTime? _suffixValue;
+    private DateTime? _loadingValue;
+    private DateTime? _disabledValue = DateTime.Now;
+    private DateTime? _requiredValue;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_labelValue" Label="Select Date and Time" />
+    };
+
+    private ComponentDemoDefinition HelperTextDemo => new()
+    {
+        Demo = RenderHelperText(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderHelperText() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_helperValue"
+                          Label="Appointment Date"
+                          HelperText="Choose your appointment date and time" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDateTime @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDateTime @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDateTime @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDateTime @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDateTime @bind-Value="_standardValue" Label="Standard (Default)" Density="DensityEnum.Standard" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDateTime @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition PrefixDemo => new()
+    {
+        Demo = RenderPrefix(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPrefix() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_prefixValue"
+                          Label="With Prefix Icon"
+                          PrefixIcon="@BUIIcons.UI.Event" />
+    };
+
+    private ComponentDemoDefinition SuffixDemo => new()
+    {
+        Demo = RenderSuffix(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSuffix() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_suffixValue"
+                          Label="With Suffix Icon"
+                          SuffixIcon="@BUIIcons.UI.Schedule" />
+    };
+
+    private ComponentDemoDefinition LoadingDemo => new()
+    {
+        Demo = RenderLoading(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderLoading() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_loadingValue" Label="Loading" Loading="true" />
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_disabledValue" Label="Disabled" Disabled="true" />
+    };
+
+    private ComponentDemoDefinition RequiredDemo => new()
+    {
+        Demo = RenderRequired(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRequired() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_requiredValue" Label="Required field" Required="true" />
+    };
+}

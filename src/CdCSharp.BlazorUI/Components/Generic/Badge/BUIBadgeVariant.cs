@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
-
-namespace CdCSharp.BlazorUI.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public class BUIBadgeVariant : Variant
 {

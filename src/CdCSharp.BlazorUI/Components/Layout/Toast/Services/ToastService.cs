@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace CdCSharp.BlazorUI.Components.Layout.Toast.Services;
+namespace CdCSharp.BlazorUI.Components.Layout.Services;
 
 public interface IToastService
 {

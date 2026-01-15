@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IBehaviorJsInterop
 {

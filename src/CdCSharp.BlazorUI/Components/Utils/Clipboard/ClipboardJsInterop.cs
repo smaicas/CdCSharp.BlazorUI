@@ -2,7 +2,7 @@
 using CdCSharp.BlazorUI.Types;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Components.Utils;
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IClipboardJsInterop
 {

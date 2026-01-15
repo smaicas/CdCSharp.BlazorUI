@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Components.Layout.Toast.Services;
+namespace CdCSharp.BlazorUI.Components.Layout.Services;
 
 public sealed class ToastState
 {

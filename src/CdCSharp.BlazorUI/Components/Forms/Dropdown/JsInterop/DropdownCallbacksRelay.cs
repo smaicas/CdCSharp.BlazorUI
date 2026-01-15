@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
+namespace CdCSharp.BlazorUI.Components.Forms;
 
 public sealed class DropdownCallbacksRelay : IDisposable
 {

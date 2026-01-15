@@ -1,9 +1,5 @@
-﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
-@using CdCSharp.BlazorUI.Core.Abstractions.Components
-@using CdCSharp.BlazorUI.Core.Css
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+
 
 @namespace CdCSharp.BlazorUI.Components.Forms.Dropdown
 
@@ -128,7 +124,7 @@
                         @onblur="HandleBlur"
                         @onmousedown="HandleMouseDown"
                         @onkeydown="HandleKeyDown"
-                        disabled="@Disabled"
+                        disabled="@IsDisabled"
                         aria-expanded="@IsOpen.ToString().ToLowerInvariant()"
                         aria-haspopup="@AriaRole">
 

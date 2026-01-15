@@ -1,8 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Components.Forms.Radio
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
-@using CdCSharp.BlazorUI.Core.Css
+
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -13,8 +10,6 @@
 @implements IHasColor
 @implements IHasDensity
 @implements IRadioContainer
-
-@implements IInputFamilyComponent
 
 <CascadingValue Value="(IRadioContainer)this" IsFixed="true">
     @ChildContent
@@ -124,71 +119,69 @@
     {
         <bui-component @attributes="ComputedAttributes"
                        data-bui-orientation="@Orientation.ToString().ToLowerInvariant()">
-            <div class="bui-stack-column">
-                @if (!string.IsNullOrWhiteSpace(Label))
-                {
-                    <label class="bui-input__label">
-                        @Label
-                        @if (Required)
-                        {
-                            <span class="bui-input__required">*</span>
-                        }
-                    </label>
-                }
-
-                <div class="bui-radio__group" role="radiogroup">
-                    @foreach (IRadioOption option in _options)
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                <label class="bui-input__label">
+                    @Label
+                    @if (Required)
                     {
-                        string optionId = $"{_groupName}-{option.RawValue?.GetHashCode() ?? 0}";
-                        bool isSelected = ((IRadioContainer)this).IsOptionSelected(option.RawValue);
-                        bool isOptionDisabled = Disabled || option.IsDisabled;
-
-                        <div class="bui-radio__option @(isOptionDisabled ? "bui-radio__option--disabled" : "")"
-                             @onclick="() => HandleOptionClick(option, isOptionDisabled)"
-                             @onclick:preventDefault="true">
-
-                            <input type="radio"
-                                   id="@optionId"
-                                   name="@_groupName"
-                                   checked="@isSelected"
-                                   disabled="@isOptionDisabled"
-                                   class="bui-radio__input" />
-
-                            <span class="bui-radio__box" aria-hidden="true">
-                                <BUISvgIcon Icon="@(isSelected? GetCheckedIcon() : GetUncheckedIcon())" Size="Size" />
-                            </span>
-
-                            <label for="@optionId" class="bui-radio__label">
-                                @option.Content
-                            </label>
-                        </div>
+                        <span class="bui-input__required">*</span>
                     }
-                </div>
+                </label>
+            }
 
-                @if (ShowClearButton)
+            <div class="bui-radio__group" role="radiogroup">
+                @foreach (IRadioOption option in _options)
                 {
-                    <button type="button"
-                            class="bui-radio__clear"
-                            @onclick="ClearAsync"
-                            @onclick:preventDefault="true">
-                        @ClearText
-                    </button>
-                }
+                    string optionId = $"{_groupName}-{option.RawValue?.GetHashCode() ?? 0}";
+                    bool isSelected = ((IRadioContainer)this).IsOptionSelected(option.RawValue);
+                    bool isOptionDisabled = Disabled || option.IsDisabled;
 
-                @if (IsError && EditContext != null && ValueExpression != null)
-                {
-                    <div class="bui-input__validation">
-                        <ValidationMessage For="ValueExpression" />
-                    </div>
-                }
+                    <div class="bui-radio__option @(isOptionDisabled ? "bui-radio__option--disabled" : "")"
+                         @onclick="() => HandleOptionClick(option, isOptionDisabled)"
+                         @onclick:preventDefault="true">
 
-                @if (!string.IsNullOrWhiteSpace(HelperText))
-                {
-                    <div class="bui-input__helper-text">
-                        @HelperText
+                        <input type="radio"
+                               id="@optionId"
+                               name="@_groupName"
+                               checked="@isSelected"
+                               disabled="@isOptionDisabled"
+                               class="bui-input__field sr-only" />
+
+                        <span class="bui-radio__box" aria-hidden="true">
+                            <BUISvgIcon Icon="@(isSelected? GetCheckedIcon() : GetUncheckedIcon())" Size="Size" />
+                        </span>
+
+                        <label for="@optionId" class="bui-radio__label">
+                            @option.Content
+                        </label>
                     </div>
                 }
             </div>
+
+            @if (ShowClearButton)
+            {
+                <button type="button"
+                        class="bui-radio__clear"
+                        @onclick="ClearAsync"
+                        @onclick:preventDefault="true">
+                    @ClearText
+                </button>
+            }
+
+            @if (IsError && EditContext != null && ValueExpression != null)
+            {
+                <div class="bui-input__validation">
+                    <ValidationMessage For="ValueExpression" />
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(HelperText))
+            {
+                <div class="bui-input__helper-text">
+                    @HelperText
+                </div>
+            }
         </bui-component>
     };
 

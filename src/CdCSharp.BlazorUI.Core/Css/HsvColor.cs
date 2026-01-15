@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Css;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 /// <summary>
 /// Represents a color in HSV (Hue, Saturation, Value) color space. Used internally by the color

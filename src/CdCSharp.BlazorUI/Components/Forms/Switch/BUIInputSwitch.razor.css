@@ -1,16 +1,4 @@
-﻿/* ============================================
-   BUIInputSwitch.razor.css (REFACTORED)
-
-   NOTE: This component does NOT use input-family
-   because it has unique visual structure (track + thumb)
-
-   REMOVED (now in common-classes.css):
-   - Base disabled opacity (inherited)
-
-   OPTIMIZATION: Use --bui-size-multiplier from global
-   ============================================ */
-
-bui-component[data-bui-component="input-switch"] {
+﻿bui-component[data-bui-component="input-switch"] {
     display:inline-flex;
     --bui-switch-scale: var(--bui-size-multiplier, 1);
     --bui-switch-track-width: calc(60px * var(--bui-switch-scale));

@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop;
+namespace CdCSharp.BlazorUI.Components.Layout;
 
 public interface IModalJsInterop
 {

@@ -1,7 +1,4 @@
 ﻿@using CdCSharp.BlazorUI.Components
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
 @inherits BUIInputComponentBase<string>
@@ -19,7 +16,7 @@
 <input @ref="_elementRef"
        @attributes="ComputedAttributes"
        value="@CurrentValueAsString"
-       disabled="@Disabled"
+       disabled="@IsDisabled"
        readonly="@ReadOnly"
        @onchange="@(e => CurrentValueAsString = e.Value?.ToString())" />
 

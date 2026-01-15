@@ -1,10 +1,6 @@
 ﻿@using System.Globalization
 @using System.Text
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
-@using CdCSharp.BlazorUI.Core.Css
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -191,7 +187,7 @@
                    aria-invalid="@IsError.ToString().ToLower()"
                    aria-required="@Required.ToString().ToLower()"
                    placeholder="@(IsFloated? Placeholder : null)"
-                   disabled="@Disabled"
+                   disabled="@IsDisabled"
                    readonly="@ReadOnly"
                    required="@Required" />
 

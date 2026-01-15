@@ -2,7 +2,7 @@
 using CdCSharp.BlazorUI.Types;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
+namespace CdCSharp.BlazorUI.Components.Layout;
 
 public interface IThemeJsInterop
 {

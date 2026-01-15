@@ -1,0 +1,159 @@
+﻿@page "/demo/switch"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Switch - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputSwitch</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>With Icons</h2>
+<ComponentDemo Definition="@IconsDemo" />
+
+<h2>Custom Colors</h2>
+<ComponentDemo Definition="@ColorsDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+<h2>Required</h2>
+<ComponentDemo Definition="@RequiredDemo" />
+
+@code {
+    private bool _basicValue = false;
+    private bool _labelValue = true;
+    private bool _smallValue = false;
+    private bool _mediumValue = true;
+    private bool _largeValue = false;
+    private bool _compactValue = false;
+    private bool _standardValue = true;
+    private bool _comfortableValue = false;
+    private bool _iconsValue = true;
+    private bool _colorsValue = true;
+    private bool _disabledValue = true;
+    private bool _requiredValue = false;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_labelValue" Label="Enable notifications" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_standardValue" Label="Standard (Default)" Density="DensityEnum.Standard" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputSwitch @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        Demo = RenderIcons(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_iconsValue"
+                        Label="Dark Mode"
+                        IconInactive="@BUIIcons.MaterialIconsRound.i_light_mode"
+                        IconActive="@BUIIcons.MaterialIconsRound.i_dark_mode" />
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_colorsValue"
+                        Label="Custom Colors"
+                        TrackColorInactive="BUIColor.Palette.Error"
+                        TrackColorActive="BUIColor.Palette.Success" />
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_disabledValue" Label="Disabled switch" Disabled="true" />
+    };
+
+    private ComponentDemoDefinition RequiredDemo => new()
+    {
+        Demo = RenderRequired(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRequired() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_requiredValue" Label="Required field" Required="true" />
+    };
+}

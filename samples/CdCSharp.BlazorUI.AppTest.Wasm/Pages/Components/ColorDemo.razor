@@ -1,0 +1,186 @@
+﻿@page "/demo/color"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Color Picker - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputColor</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>Display Modes</h2>
+<ComponentDemo Definition="@DisplayModesDemo" />
+
+<h2>Output Formats</h2>
+<ComponentDemo Definition="@OutputFormatsDemo" />
+
+<h2>Editable Input</h2>
+<ComponentDemo Definition="@EditableInputDemo" />
+
+<h2>With Copy Button</h2>
+<ComponentDemo Definition="@CopyButtonDemo" />
+
+<h2>Clearable</h2>
+<ComponentDemo Definition="@ClearableDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+@code {
+    private CssColor? _basicValue = BUIColor.DarkRed.Default;
+    private CssColor? _labelValue = BUIColor.DarkRed.Default;
+    private CssColor? _inlineValue = BUIColor.DarkRed.Default;
+    private CssColor? _dropdownValue = BUIColor.DarkRed.Default;
+    private CssColor? _hexValue = BUIColor.DarkRed.Default;
+    private CssColor? _rgbValue = BUIColor.DarkRed.Default;
+    private CssColor? _hsvValue = new CssColor("#8ab4f8");
+    private CssColor? _editableValue = BUIColor.DarkRed.Default;
+    private CssColor? _copyValue = BUIColor.DarkRed.Default;
+    private CssColor? _clearableValue = BUIColor.DarkRed.Default;
+    private CssColor? _smallValue = BUIColor.DarkRed.Default;
+    private CssColor? _mediumValue = BUIColor.DarkRed.Default;
+    private CssColor? _largeValue = BUIColor.DarkRed.Default;
+    private CssColor? _disabledValue = BUIColor.DarkRed.Default;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_labelValue" Label="Select Color" HelperText="Choose your preferred color" />
+    };
+
+    private ComponentDemoDefinition DisplayModesDemo => new()
+    {
+        Demo = RenderDisplayModes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisplayModes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_inlineValue"
+                               Label="Inline"
+                               DisplayMode="ColorPickerDisplayMode.Modal" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_dropdownValue"
+                               Label="Dropdown (Default)"
+                               DisplayMode="ColorPickerDisplayMode.Dropdown" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition OutputFormatsDemo => new()
+    {
+        Demo = RenderOutputFormats(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderOutputFormats() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_hexValue"
+                               Label="HEX Format"
+                               OutputFormat="ColorPickerOutputFormat.Hex" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_rgbValue"
+                               Label="RGB Format"
+                               OutputFormat="ColorPickerOutputFormat.Rgb" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_hsvValue"
+                               Label="HSL Format"
+                               OutputFormat="ColorPickerOutputFormat.Hsv" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition EditableInputDemo => new()
+    {
+        Demo = RenderEditableInput(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderEditableInput() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_editableValue" Label="Editable Input" InputEditable="true" />
+    };
+
+    private ComponentDemoDefinition CopyButtonDemo => new()
+    {
+        Demo = RenderCopyButton(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCopyButton() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_copyValue" Label="With Copy Button" ShowCopyButton="true" />
+    };
+
+    private ComponentDemoDefinition ClearableDemo => new()
+    {
+        Demo = RenderClearable(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderClearable() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_clearableValue" Label="Clearable" Clearable="true" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_disabledValue" Label="Disabled" Disabled="true" />
+    };
+}

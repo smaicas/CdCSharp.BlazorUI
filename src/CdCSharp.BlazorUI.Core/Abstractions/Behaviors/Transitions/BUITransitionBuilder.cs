@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions;
+namespace CdCSharp.BlazorUI.Components;
 
 public class BUITransitionsBuilder
 {

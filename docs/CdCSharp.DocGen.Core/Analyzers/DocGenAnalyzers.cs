@@ -3,6 +3,7 @@ using CdCSharp.DocGen.Core.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Text.RegularExpressions;
 using ProjectInfo = CdCSharp.DocGen.Core.Models.ProjectInfo;
 using TypeInfo = CdCSharp.DocGen.Core.Models.TypeInfo;
 using TypeKind = CdCSharp.DocGen.Core.Models.TypeKind;
@@ -204,9 +205,9 @@ public class ComponentAnalyzer
 {
     private readonly ILogger _logger;
 
-    private static readonly System.Text.RegularExpressions.Regex ParameterRegex = new(
-        @"\[Parameter\]\s*(?:\[.*?\]\s*)*public\s+(?:required\s+)?(\w+(?:<[^>]+>)?)\s+(\w+)",
-        System.Text.RegularExpressions.RegexOptions.Compiled);
+    private static readonly Regex ParameterRegex = new(
+    @"\[Parameter\]\s*(?:\[[^\]]+\]\s*)*public\s+(?:required\s+)?([\w\.<>\?,]+)\s+(\w+)",
+    RegexOptions.Compiled | RegexOptions.Multiline);
 
     public ComponentAnalyzer(ILogger? logger = null)
     {

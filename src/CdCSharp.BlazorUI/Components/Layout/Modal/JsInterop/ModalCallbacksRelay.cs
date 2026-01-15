@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop;
+namespace CdCSharp.BlazorUI.Components.Layout;
 
 public sealed class ModalCallbacksRelay : IDisposable
 {

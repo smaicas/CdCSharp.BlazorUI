@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace CdCSharp.BlazorUI.Core.Css;
+namespace CdCSharp.BlazorUI.Components;
 
 /// <summary>
 /// The <see cref="CssColor" /> output formats.

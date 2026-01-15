@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public interface IInputFamilyComponent { }
 

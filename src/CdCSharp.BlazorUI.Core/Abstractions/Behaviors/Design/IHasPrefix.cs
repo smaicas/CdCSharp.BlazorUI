@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-
-namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasPrefix
 {

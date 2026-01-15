@@ -1,6 +1,6 @@
 ﻿using Bunit;
-using CdCSharp.BlazorUI.Components.Layout.ThemeSelector;
-using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
 using FluentAssertions;

@@ -1,5 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
 

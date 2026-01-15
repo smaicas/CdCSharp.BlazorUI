@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
-using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State;
-using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+﻿using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Core.Components;
 using Microsoft.AspNetCore.Components;

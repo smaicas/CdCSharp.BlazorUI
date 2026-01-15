@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public interface IPatternJsCallback
 {

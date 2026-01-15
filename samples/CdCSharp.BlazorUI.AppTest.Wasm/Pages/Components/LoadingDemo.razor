@@ -1,0 +1,116 @@
+﻿@page "/demo/loading"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Loading Indicator - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUILoadingIndicator</h1>
+
+<h2>Variants</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Colors</h2>
+<ComponentDemo Definition="@ColorsDemo" />
+
+@code {
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" />
+                    <p>Spinner</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Dots" />
+                    <p>Dots</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Pulse" />
+                    <p>Pulse</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" />
+                    <p>Circular Progress</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center; width: 200px;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.LinearIndeterminate" />
+                    <p>Linear Indeterminate</p>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Size="SizeEnum.Small" />
+                    <p>Small</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Size="SizeEnum.Medium" />
+                    <p>Medium (Default)</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Size="SizeEnum.Large" />
+                    <p>Large</p>
+                </div>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUILoadingIndicator Color="BUIColor.Palette.Primary" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUILoadingIndicator Color="BUIColor.Palette.Secondary" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUILoadingIndicator Color="BUIColor.Palette.Error" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUILoadingIndicator Color="BUIColor.Palette.Success" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUILoadingIndicator Color="BUIColor.Palette.Warning" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+}

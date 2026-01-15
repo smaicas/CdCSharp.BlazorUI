@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+﻿using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;

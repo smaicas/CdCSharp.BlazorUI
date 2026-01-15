@@ -1,0 +1,291 @@
+﻿@page "/demo/dropdown"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Dropdown - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputDropdown</h1>
+
+<h2>Basic Usage - Single Selection</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>Multiple Selection</h2>
+<ComponentDemo Definition="@MultipleSelectionDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>Searchable</h2>
+<ComponentDemo Definition="@SearchableDemo" />
+
+<h2>With Select All</h2>
+<ComponentDemo Definition="@SelectAllDemo" />
+
+<h2>Variants</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Placement</h2>
+<ComponentDemo Definition="@PlacementDemo" />
+
+<h2>Close on Select</h2>
+<ComponentDemo Definition="@CloseOnSelectDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+@code {
+    private string? _singleValue;
+    private List<string> _multipleValue = new();
+    private string? _labelValue;
+    private string? _searchableValue;
+    private List<string> _selectAllValue = new();
+    private string? _outlinedValue;
+    private string? _filledValue;
+    private string? _standardValue;
+    private string? _smallValue;
+    private string? _mediumValue;
+    private string? _largeValue;
+    private string? _topValue;
+    private string? _bottomValue;
+    private string? _closeValue;
+    private string? _disabledValue = "Option 1";
+
+    private List<string> _options = new() { "Option 1", "Option 2", "Option 3", "Option 4", "Option 5" };
+    private List<string> _countries = new() { "Spain", "France", "Germany", "Italy", "Portugal", "Netherlands", "Belgium" };
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_singleValue" Placeholder="Select an option">
+            @foreach (var option in _options)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition MultipleSelectionDemo => new()
+    {
+        Demo = RenderMultipleSelection(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMultipleSelection() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_multipleValue" Placeholder="Select multiple options">
+            @foreach (var option in _options)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_labelValue"
+                          Label="Country"
+                          HelperText="Select your country"
+                          Placeholder="Choose...">
+            @foreach (var country in _countries)
+            {
+                <DropdownOption Value="@country" Text="@country" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition SearchableDemo => new()
+    {
+        Demo = RenderSearchable(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSearchable() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_searchableValue"
+                          Label="Searchable Dropdown"
+                          Searchable="true"
+                          SearchPlaceholder="Type to search...">
+            @foreach (var country in _countries)
+            {
+                <DropdownOption Value="@country" Text="@country" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition SelectAllDemo => new()
+    {
+        Demo = RenderSelectAll(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSelectAll() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_selectAllValue"
+                          Label="With Select All"
+                          ShowSelectAll="true"
+                          SelectAllText="Select All"
+                          DeselectAllText="Deselect All">
+            @foreach (var option in _options)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_outlinedValue"
+                                  Label="Outlined"
+                                  Variant="BUIInputVariant.Outlined">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_filledValue"
+                                  Label="Filled"
+                                  Variant="BUIInputVariant.Filled">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_standardValue"
+                                  Label="Standard"
+                                  Variant="BUIInputVariant.Standard">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition PlacementDemo => new()
+    {
+        Demo = RenderPlacement(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPlacement() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_topValue"
+                                  Label="Top Placement"
+                                  Placement="DropdownPlacement.Top">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown @bind-Value="_bottomValue"
+                                  Label="Bottom Placement (Default)"
+                                  Placement="DropdownPlacement.Bottom">
+                    @foreach (var option in _options)
+                    {
+                        <DropdownOption Value="@option" Text="@option" />
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition CloseOnSelectDemo => new()
+    {
+        Demo = RenderCloseOnSelect(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCloseOnSelect() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_closeValue"
+                          Label="Don't Close on Select"
+                          CloseOnSelect="false">
+            @foreach (var option in _options)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_disabledValue" Label="Disabled" Disabled="true">
+            @foreach (var option in _options)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+}

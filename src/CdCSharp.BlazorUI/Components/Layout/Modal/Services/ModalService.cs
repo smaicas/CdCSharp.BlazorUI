@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Layout.Modal.Services;
+﻿namespace CdCSharp.BlazorUI.Components.Layout.Services;
 
 public interface IModalService
 {

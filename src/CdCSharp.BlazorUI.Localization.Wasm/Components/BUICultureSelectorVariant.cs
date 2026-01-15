@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
-
-namespace CdCSharp.BlazorUI.Components.Wasm;
+﻿namespace CdCSharp.BlazorUI.Components.Wasm;
 
 public class BUICultureSelectorVariant : Variant
 {

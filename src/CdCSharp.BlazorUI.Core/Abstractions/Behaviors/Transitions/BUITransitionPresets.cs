@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Transitions;
-
-namespace CdCSharp.BlazorUI.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public static class BUITransitionPresets
 {

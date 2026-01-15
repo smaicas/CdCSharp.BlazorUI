@@ -1,7 +1,7 @@
 ﻿using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+namespace CdCSharp.BlazorUI.Components;
 
 internal sealed class VariantHelper<TComponent, TVariant>
     where TComponent : ComponentBase

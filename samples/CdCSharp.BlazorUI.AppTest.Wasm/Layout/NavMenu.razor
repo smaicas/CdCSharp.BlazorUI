@@ -1,131 +1,48 @@
-﻿<div class="nav-menu">
-    <NavLink href="" Match="NavLinkMatch.All" class="nav-item">
-        <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_home" Size="SizeEnum.Small" />
-        <span>Home</span>
-    </NavLink>
+﻿<BUITreeMenu TItem="object" Size="SizeEnum.Medium">
+    <BUITreeMenuItem Text="Home"
+                     Icon="@BUIIcons.MaterialIconsRound.i_home"
+                     Href="/"
+                     Match="NavLinkMatch.All" />
 
-    <div class="nav-section">
-        <h3 class="nav-section__title">Getting Started</h3>
-        <NavLink href="getting-started/installation" class="nav-item">
-            <span>Installation</span>
-        </NavLink>
-        <NavLink href="getting-started/first-steps" class="nav-item">
-            <span>First Steps</span>
-        </NavLink>
-        <NavLink href="localization-test" class="nav-item">
-            <span>Localization</span>
-        </NavLink>
-        <NavLink href="components/modals" class="nav-item">
-            <span>Modals</span>
-        </NavLink>
-        <NavLink href="components/toasts" class="nav-item">
-            <span>Toasts</span>
-        </NavLink>
-        <NavLink href="components/tree-menu" class="nav-item">
-            <span>Tree Menu</span>
-        </NavLink>
-        <NavLink href="components/tree-selector" class="nav-item">
-            <span>Tree Selector</span>
-        </NavLink>
-        <NavLink href="components/datagrid" class="nav-item">
-            <span>Data Grid</span>
-        </NavLink>
-    </div>
+    <BUITreeMenuItem Text="Forms"
+                     Icon="@BUIIcons.MaterialIconsOutlined.i_edit_note"
+                     InitiallyExpanded="true">
+        <ChildContent>
+            <BUITreeMenuItem Text="Checkbox" Href="/demo/checkbox" />
+            <BUITreeMenuItem Text="Color Picker" Href="/demo/color" />
+            <BUITreeMenuItem Text="DateTime" Href="/demo/datetime" />
+            <BUITreeMenuItem Text="Dropdown" Href="/demo/dropdown" />
+            <BUITreeMenuItem Text="Number" Href="/demo/number" />
+            <BUITreeMenuItem Text="Radio" Href="/demo/radio" />
+            <BUITreeMenuItem Text="Switch" Href="/demo/switch" />
+            <BUITreeMenuItem Text="Text" Href="/demo/text" />
+            <BUITreeMenuItem Text="TextArea" Href="/demo/textarea" />
+        </ChildContent>
+    </BUITreeMenuItem>
 
-    <div class="nav-section">
-        <h3 class="nav-section__title">Components</h3>
-        <NavLink href="components/buttons" class="nav-item">
-            <span>Buttons</span>
-        </NavLink>
-        <NavLink href="components/icons" class="nav-item">
-            <span>Icons</span>
-        </NavLink>
-        <NavLink href="components/loading" class="nav-item">
-            <span>Loading Indicators</span>
-        </NavLink>
-        <NavLink href="components/grid" class="nav-item">
-            <span>Grid</span>
-        </NavLink>
-        <NavLink href="components/card" class="nav-item">
-            <span>Card</span>
-        </NavLink>
-        <NavLink href="components/theme-switch" class="nav-item">
-            <span>Theme Switch</span>
-        </NavLink>
-        <NavLink href="components/forms/input-text" class="nav-item">
-            <span>Forms : Input Text</span>
-        </NavLink>
-        <NavLink href="components/forms/input-number" class="nav-item">
-            <span>Forms : Input Number</span>
-        </NavLink>
-        <NavLink href="components/forms/input-checkbox" class="nav-item">
-            <span>Forms : Input Checkbox</span>
-        </NavLink>
-        <NavLink href="components/forms/input-radio" class="nav-item">
-            <span>Forms : Input Radio</span>
-        </NavLink>
-        <NavLink href="components/forms/input-select" class="nav-item">
-            <span>Forms : Input Select</span>
-        </NavLink>
-        <NavLink href="components/forms/input-dropdown" class="nav-item">
-            <span>Forms : Input Dropdown</span>
-        </NavLink>
-        <NavLink href="components/forms/input-tree-dropdown" class="nav-item">
-            <span>Forms : Input Tree Dropdown</span>
-        </NavLink>
-        <NavLink href="components/forms/input-datetime" class="nav-item">
-            <span>Forms : Input Date</span>
-        </NavLink>
-        <NavLink href="components/forms/input-textarea" class="nav-item">
-            <span>Forms : Input TextArea</span>
-        </NavLink>
-        <NavLink href="components/forms/input-color" class="nav-item">
-            <span>Forms : Input Color</span>
-        </NavLink>
-    </div>
+    <BUITreeMenuItem Text="Generic"
+                     Icon="@BUIIcons.MaterialIconsOutlined.i_widgets"
+                     InitiallyExpanded="true">
+        <ChildContent>
+            <BUITreeMenuItem Text="Button" Href="/demo/button" />
+            <BUITreeMenuItem Text="Badge" Href="/demo/badge" />
+            <BUITreeMenuItem Text="DataGrid" Href="/demo/datagrid" />
+            <BUITreeMenuItem Text="Svg Icon" Href="/demo/svgicon" />
+            <BUITreeMenuItem Text="Switch" Href="/demo/genericswitch" />
+            <BUITreeMenuItem Text="Loading" Href="/demo/loading" />
+        </ChildContent>
+    </BUITreeMenuItem>
 
-    <div class="nav-section">
-        <h3 class="nav-section__title">Features</h3>
-        <NavLink href="features/transitions" class="nav-item">
-            <span>Transitions</span>
-        </NavLink>
-        <NavLink href="features/elevation" class="nav-item">
-            <span>Elevation</span>
-        </NavLink>
-        <NavLink href="features/density" class="nav-item">
-            <span>Density</span>
-        </NavLink>
-        <NavLink href="features/ripple-effects" class="nav-item">
-            <span>Ripple Effects</span>
-        </NavLink>
-        <NavLink href="features/borders" class="nav-item">
-            <span>Borders</span>
-        </NavLink>
-        <NavLink href="utilities/tooltips" class="nav-item">
-            <span>Tooltips</span>
-        </NavLink>
-    </div>
+    <BUITreeMenuItem Text="Tree"
+                     Icon="@BUIIcons.MaterialIconsOutlined.i_account_tree"
+                     InitiallyExpanded="true">
+        <ChildContent>
+            <BUITreeMenuItem Text="Tree Menu" Href="/demo/treemenu" />
+            <BUITreeMenuItem Text="Tree Selector" Href="/demo/treeselector" />
+        </ChildContent>
+    </BUITreeMenuItem>
+</BUITreeMenu>
 
-    <div class="nav-section">
-        <h3 class="nav-section__title">Theming</h3>
-        <NavLink href="theming/overview" class="nav-item">
-            <span>Overview</span>
-        </NavLink>
-        <NavLink href="theming/colors" class="nav-item">
-            <span>Colors</span>
-        </NavLink>
-        <NavLink href="theming/custom-themes" class="nav-item">
-            <span>Custom Themes</span>
-        </NavLink>
-    </div>
+@code {
 
-    <div class="nav-section">
-        <h3 class="nav-section__title">Reference</h3>
-        <NavLink href="reference/css-classes" class="nav-item">
-            <span>CSS Classes</span>
-        </NavLink>
-        <NavLink href="utilities/icons" class="nav-item">
-            <span>Icons</span>
-        </NavLink>
-    </div>
-</div>
+}

@@ -1,5 +1,7 @@
 ﻿bui-component[data-bui-component="input-checkbox"] {
     display: inline-flex;
+    flex-direction: row;
+    -webkit-flex-direction: row;
     --bui-checkbox-box-size: calc(20px * var(--bui-size-multiplier));
 }
 
@@ -12,4 +14,11 @@
         justify-content: center;
         transition: all 0.2s ease;
         color: var(--bui-inline-color, var(--palette-primary));
+    }
+
+    /* Focus state */
+    bui-component[data-bui-component="input-checkbox"] .bui-input__field:focus-visible + .bui-radio__box {
+        outline: 2px solid var(--palette-primary);
+        outline-offset: 2px;
+        border-radius: 50%;
     }

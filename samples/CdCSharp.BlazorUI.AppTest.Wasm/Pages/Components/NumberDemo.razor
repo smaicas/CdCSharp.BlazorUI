@@ -1,0 +1,242 @@
+﻿@page "/demo/number"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Number Input - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputNumber</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>Min and Max</h2>
+<ComponentDemo Definition="@MinMaxDemo" />
+
+<h2>Step</h2>
+<ComponentDemo Definition="@StepDemo" />
+
+<h2>Decimal Places</h2>
+<ComponentDemo Definition="@DecimalPlacesDemo" />
+
+<h2>Step Buttons</h2>
+<ComponentDemo Definition="@StepButtonsDemo" />
+
+<h2>Button Placement</h2>
+<ComponentDemo Definition="@ButtonPlacementDemo" />
+
+<h2>Thousands Separator</h2>
+<ComponentDemo Definition="@ThousandsSeparatorDemo" />
+
+<h2>Allow Negative</h2>
+<ComponentDemo Definition="@AllowNegativeDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>With Prefix/Suffix</h2>
+<ComponentDemo Definition="@PrefixSuffixDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+@code {
+    private int? _basicValue = 0;
+    private decimal? _labelValue = 10.5m;
+    private int? _minMaxValue = 50;
+    private decimal? _stepValue = 0m;
+    private decimal? _decimalValue = 3.14159m;
+    private int? _stepButtonsValue = 5;
+    private int? _leftButtonValue = 0;
+    private int? _rightButtonValue = 0;
+    private decimal? _thousandsValue = 1234567.89m;
+    private int? _negativeValue = -10;
+    private int? _smallValue = 0;
+    private int? _mediumValue = 0;
+    private int? _largeValue = 0;
+    private decimal? _prefixValue = 100m;
+    private decimal? _suffixValue = 50m;
+    private int? _disabledValue = 42;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_labelValue"
+                        Label="Amount"
+                        HelperText="Enter a numeric value" />
+    };
+
+    private ComponentDemoDefinition MinMaxDemo => new()
+    {
+        Demo = RenderMinMax(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMinMax() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_minMaxValue"
+                        Label="Age (18-100)"
+                        Min="18"
+                        Max="100" />
+    };
+
+    private ComponentDemoDefinition StepDemo => new()
+    {
+        Demo = RenderStep(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderStep() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_stepValue"
+                        Label="Step by 0.5"
+                        Step="0.5m" />
+    };
+
+    private ComponentDemoDefinition DecimalPlacesDemo => new()
+    {
+        Demo = RenderDecimalPlaces(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDecimalPlaces() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_decimalValue"
+                        Label="Pi (5 decimals)"
+                        DecimalPlaces="5" />
+    };
+
+    private ComponentDemoDefinition StepButtonsDemo => new()
+    {
+        Demo = RenderStepButtons(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderStepButtons() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_stepButtonsValue"
+                        Label="With Step Buttons"
+                        ShowStepButtons="true" />
+    };
+
+    private ComponentDemoDefinition ButtonPlacementDemo => new()
+    {
+        Demo = RenderButtonPlacement(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderButtonPlacement() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_leftButtonValue"
+                                Label="Left Buttons"
+                                ShowStepButtons="true"
+                                ButtonPlacement="StepButtonPlacement.Left" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_rightButtonValue"
+                                Label="Right Buttons"
+                                ShowStepButtons="true"
+                                ButtonPlacement="StepButtonPlacement.Right" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ThousandsSeparatorDemo => new()
+    {
+        Demo = RenderThousandsSeparator(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderThousandsSeparator() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_thousandsValue"
+                        Label="With Thousands Separator"
+                        UseThousandsSeparator="true" />
+    };
+
+    private ComponentDemoDefinition AllowNegativeDemo => new()
+    {
+        Demo = RenderAllowNegative(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderAllowNegative() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_negativeValue"
+                        Label="Negative Values Allowed"
+                        AllowNegative="true" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition PrefixSuffixDemo => new()
+    {
+        Demo = RenderPrefixSuffix(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPrefixSuffix() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_prefixValue"
+                                Label="Price"
+                                PrefixText="$" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_suffixValue"
+                                Label="Weight"
+                                SuffixText="kg" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputNumber @bind-Value="_disabledValue" Label="Disabled" Disabled="true" />
+    };
+}

@@ -1,0 +1,185 @@
+﻿@page "/demo/checkbox"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Checkbox - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIInputCheckbox</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Label</h2>
+<ComponentDemo Definition="@WithLabelDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Colors</h2>
+<ComponentDemo Definition="@ColorsDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>Custom Icons</h2>
+<ComponentDemo Definition="@CustomIconsDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+<h2>Required</h2>
+<ComponentDemo Definition="@RequiredDemo" />
+
+<h2>Indeterminate State</h2>
+<ComponentDemo Definition="@IndeterminateDemo" />
+
+@code {
+    private bool _basicValue;
+    private bool _labelValue;
+    private bool _smallValue;
+    private bool _mediumValue = true;
+    private bool _largeValue;
+    private bool _primaryValue;
+    private bool _secondaryValue;
+    private bool _errorValue;
+    private bool _compactValue;
+    private bool _standardValue = true;
+    private bool _comfortableValue;
+    private bool _customIconValue;
+    private bool _disabledValue = true;
+    private bool _requiredValue;
+    private bool? _indeterminateValue = null;
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition WithLabelDemo => new()
+    {
+        Demo = RenderWithLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderWithLabel() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_labelValue" Label="Accept terms and conditions" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_primaryValue" Label="Primary" Color="BUIColor.Palette.Primary" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_secondaryValue" Label="Secondary" Color="BUIColor.Palette.Secondary" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_errorValue" Label="Error" Color="BUIColor.Palette.Error" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_standardValue" Label="Standard (Default)" Density="DensityEnum.Standard" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition CustomIconsDemo => new()
+    {
+        Demo = RenderCustomIcons(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomIcons() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_customIconValue"
+                          Label="Custom Icons"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked"
+                          CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_radio_button_checked" />
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_disabledValue" Label="Disabled checkbox" Disabled="true" />
+    };
+
+    private ComponentDemoDefinition RequiredDemo => new()
+    {
+        Demo = RenderRequired(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRequired() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_requiredValue" Label="Required field" Required="true" />
+    };
+
+    private ComponentDemoDefinition IndeterminateDemo => new()
+    {
+        Demo = RenderIndeterminate(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderIndeterminate() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_indeterminateValue"
+                          Label="Indeterminate state"
+                          IndeterminateIcon="@BUIIcons.MaterialIconsOutlined.i_star_half" />
+    };
+}

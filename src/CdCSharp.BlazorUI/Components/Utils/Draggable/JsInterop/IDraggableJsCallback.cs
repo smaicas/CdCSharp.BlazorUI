@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Utils.Draggable.JsInterop;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public interface IDraggableJsCallback
 {

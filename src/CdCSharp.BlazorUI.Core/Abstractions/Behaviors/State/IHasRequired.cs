@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasRequired
 {

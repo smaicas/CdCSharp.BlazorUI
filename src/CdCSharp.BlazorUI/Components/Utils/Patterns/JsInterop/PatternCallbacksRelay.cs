@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CdCSharp.BlazorUI.Components.Utils.Patterns.JsInterop;
+namespace CdCSharp.BlazorUI.Components;
 
 public sealed class PatternCallbacksRelay : IDisposable
 {

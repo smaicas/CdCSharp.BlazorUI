@@ -1,9 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Components.Forms.TextArea.JsInterop
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
-@using CdCSharp.BlazorUI.Core.Abstractions.Components
-@using CdCSharp.BlazorUI.Core.Css
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -123,7 +118,7 @@
                           rows="@Rows"
                           maxlength="@MaxLength"
                           placeholder="@(IsFloated? Placeholder : null)"
-                          disabled="@Disabled"
+                          disabled="@IsDisabled"
                           readonly="@ReadOnly"
                           required="@Required"
                           @onchange="HandleChange"

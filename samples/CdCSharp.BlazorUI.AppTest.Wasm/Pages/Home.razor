@@ -1,87 +1,12 @@
 ﻿@page "/"
-@using Microsoft.Extensions.Localization
 
-@inject IStringLocalizer<Home> L
+<PageTitle>Home - CdCSharp.BlazorUI</PageTitle>
 
-<PageTitle>CdCSharp.BlazorUI - Component Library</PageTitle>
-
-<br />
-<br />
-<span>@L["TEST"]</span>
-<br />
-<br />
-<BUICultureSelector />
-<br />
-
-<div class="home-hero">
-    <h1 class="home-hero__title">CdCSharp.BlazorUI</h1>
-    <p class="home-hero__subtitle">
-        A modern, feature-rich Blazor component library with built-in theming,
-        transitions, and accessibility features.
-    </p>
-    <div class="home-hero__actions">
-        <BUIButton Text="Get Started"
-                   OnClick="@(() => NavigationManager.NavigateTo("/getting-started/installation"))"
-                   Transitions="@BUITransitionPresets.HoverLift" />
-        <BUIButton Text="View Components"
-                   OnClick="@(() => NavigationManager.NavigateTo("/components/buttons"))"
-                   Variant="BUIButtonVariant.Default" />
-    </div>
-</div>
-
-<div class="home-features">
-    <h2>Key Features</h2>
-    <div class="feature-grid">
-        <div class="feature-card">
-            <div class="feature-card__icon">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_palette" Size="SizeEnum.Large" />
-            </div>
-            <h3>Theming System</h3>
-            <p>Built-in light and dark themes with full customization support through CSS variables.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-card__icon">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_animation" Size="SizeEnum.Large" />
-            </div>
-            <h3>Rich Transitions</h3>
-            <p>Smooth animations and transitions with presets for common interactions.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-card__icon">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_settings_input_component" Size="SizeEnum.Large" />
-            </div>
-            <h3>Feature-Rich Components</h3>
-            <p>Components with built-in loading states, ripple effects, elevation, and density options.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-card__icon">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_code" Size="SizeEnum.Large" />
-            </div>
-            <h3>Type-Safe</h3>
-            <p>Fully typed C# API with IntelliSense support and compile-time safety.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-card__icon">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_tire_repair" Size="SizeEnum.Large" />
-            </div>
-            <h3>Responsive Design</h3>
-            <p>Components that adapt to different screen sizes and density preferences.</p>
-        </div>
-
-        <div class="feature-card">
-            <div class="feature-card__icon">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_percent" Size="SizeEnum.Large" />
-            </div>
-            <h3>Performance Optimized</h3>
-            <p>Efficient JavaScript interop with minimal overhead and lazy loading.</p>
-        </div>
-    </div>
+<div class="home-page">
+    <h1>Welcome to CdCSharp.BlazorUI</h1>
+    <p>A modern Blazor component library.</p>
 </div>
 
 @code {
-    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
 }

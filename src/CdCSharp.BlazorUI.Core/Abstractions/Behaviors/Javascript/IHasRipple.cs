@@ -1,7 +1,6 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasRipple : IJsBehavior
 {

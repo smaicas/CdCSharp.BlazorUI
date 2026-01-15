@@ -60,7 +60,7 @@ public static class FeatureDefinitions
         /// <summary>
         /// Visually hidden but accessible to screen readers.
         /// </summary>
-        public const string VisuallyHidden = "bui-visually-hidden";
+        public const string SrOnly = "sr-only";
 
         /// <summary>
         /// Input family component class names.

@@ -1,9 +1,8 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Javascript;
-using CdCSharp.BlazorUI.Core.Abstractions.JSInterop;
+﻿using CdCSharp.BlazorUI.Core.Abstractions.JSInterop;
 using CdCSharp.BlazorUI.Types;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Abstractions.Behaviors.Javascript;
+namespace CdCSharp.BlazorUI.Components;
 
 public sealed class BehaviorJsInterop : ModuleJsInteropBase, IBehaviorJsInterop
 {

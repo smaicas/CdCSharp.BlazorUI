@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
+﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
 public interface IDropdownJsCallback
 {

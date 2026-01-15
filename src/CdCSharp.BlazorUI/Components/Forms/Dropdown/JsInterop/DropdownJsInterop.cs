@@ -3,7 +3,7 @@ using CdCSharp.BlazorUI.Types;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Components.Forms.Dropdown.JsInterop;
+namespace CdCSharp.BlazorUI.Components.Forms;
 
 public interface IDropdownJsInterop
 {

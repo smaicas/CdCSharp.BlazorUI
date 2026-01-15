@@ -1,0 +1,260 @@
+﻿@page "/demo/badge"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Badge - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIBadge</h1>
+
+<h2>Basic Usage - Text</h2>
+<ComponentDemo Definition="@BasicTextDemo" />
+
+<h2>With Icon</h2>
+<ComponentDemo Definition="@IconDemo" />
+
+<h2>Variants</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
+<h2>As Anchor Badge</h2>
+<ComponentDemo Definition="@AnchorDemo" />
+
+<h2>Badge Position</h2>
+<ComponentDemo Definition="@PositionDemo" />
+
+<h2>Pill Shape</h2>
+<ComponentDemo Definition="@PillDemo" />
+
+<h2>Rounded</h2>
+<ComponentDemo Definition="@RoundedDemo" />
+
+<h2>Dot Badge</h2>
+<ComponentDemo Definition="@DotDemo" />
+
+<h2>With Count</h2>
+<ComponentDemo Definition="@CountDemo" />
+
+<h2>Colors</h2>
+<ComponentDemo Definition="@ColorsDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+@code {
+    private ComponentDemoDefinition BasicTextDemo => new()
+    {
+        Demo = RenderBasicText(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicText() => __builder =>
+    {
+        <BUIBadge Text="New" />
+    };
+
+    private ComponentDemoDefinition IconDemo => new()
+    {
+        Demo = RenderIcon(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderIcon() => __builder =>
+    {
+        <BUIBadge Icon="@BUIIcons.MaterialIconsOutlined.i_star" Text="Featured" />
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Filled" Variant="BUIBadgeVariant.Filled" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Outlined" Variant="BUIBadgeVariant.Outlined" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Soft" Variant="BUIBadgeVariant.Soft" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Dot" Variant="BUIBadgeVariant.Dot" Dot="true" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition AnchorDemo => new()
+    {
+        Demo = RenderAnchor(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderAnchor() => __builder =>
+    {
+        <BUIBadge BadgeContent="3">
+            <AnchorContent>
+                <BUIButton Text="Messages" OnClick="@(() => { })" />
+            </AnchorContent>
+        </BUIBadge>
+    };
+
+    private ComponentDemoDefinition PositionDemo => new()
+    {
+        Demo = RenderPosition(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPosition() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.TopRight">
+                    <AnchorContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.TopLeft">
+                    <AnchorContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.BottomRight">
+                    <AnchorContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.BottomLeft">
+                    <AnchorContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition PillDemo => new()
+    {
+        Demo = RenderPill(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPill() => __builder =>
+    {
+        <BUIBadge Text="Pill Badge" Pill="true" />
+    };
+
+    private ComponentDemoDefinition RoundedDemo => new()
+    {
+        Demo = RenderRounded(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRounded() => __builder =>
+    {
+        <BUIBadge Text="Rounded" Rounded="true" />
+    };
+
+    private ComponentDemoDefinition DotDemo => new()
+    {
+        Demo = RenderDot(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDot() => __builder =>
+    {
+        <BUIBadge Dot="true">
+            <AnchorContent>
+                <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+            </AnchorContent>
+        </BUIBadge>
+    };
+
+    private ComponentDemoDefinition CountDemo => new()
+    {
+        Demo = RenderCount(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCount() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIBadge Count="5">
+                    <AnchorContent>
+                        <BUIButton Text="Inbox" OnClick="@(() => { })" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Count="150" MaxCount="99">
+                    <AnchorContent>
+                        <BUIButton Text="Notifications" OnClick="@(() => { })" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Count="0" ShowZero="true">
+                    <AnchorContent>
+                        <BUIButton Text="Tasks" OnClick="@(() => { })" />
+                    </AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Primary"
+                          BackgroundColor="BUIColor.Palette.Primary"
+                          Color="BUIColor.Palette.PrimaryContrast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Error"
+                          BackgroundColor="BUIColor.Palette.Error"
+                          Color="BUIColor.Palette.ErrorContrast" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Success"
+                          BackgroundColor="BUIColor.Palette.Success"
+                          Color="BUIColor.Palette.SuccessContrast" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Small" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Medium" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Text="Large" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+}

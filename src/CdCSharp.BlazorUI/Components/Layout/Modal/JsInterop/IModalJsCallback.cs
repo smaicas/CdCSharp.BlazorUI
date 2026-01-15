@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Components.Layout.Modal.JsInterop;
+﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
 public interface IModalJsCallback
 {

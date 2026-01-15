@@ -124,7 +124,7 @@ public class BaseComponentGenerator : IAssetGenerator
    UTILITIES
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}} .{{FeatureDefinitions.CssClasses.VisuallyHidden}} {
+{{FeatureDefinitions.Tags.Component}} .{{FeatureDefinitions.CssClasses.SrOnly}} {
     position: absolute;
     width: 1px;
     height: 1px;

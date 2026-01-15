@@ -1,9 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
-@using CdCSharp.BlazorUI.Core.Css
-
-@namespace CdCSharp.BlazorUI.Components.Forms
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
 
 @inherits BUIInputComponentBase<bool, BUIInputSwitch, BUIInputCheckboxVariant>
 @implements IHasSize
@@ -70,13 +65,12 @@
         }
 
         <bui-component @attributes="attrs">
-            <div class="bui-stack-row">
                 <div class="bui-input__container" @onclick="HandleClick">
                     <input type="checkbox"
                            id="@_inputId"
                            aria-checked="@IsChecked"
                            checked="@IsChecked"
-                           disabled="@Disabled"
+                           disabled="@IsDisabled"
                            @onclick:preventDefault="true"
                            class="bui-switch__input" />
 
@@ -102,7 +96,6 @@
                 {
                     <label for="@_inputId" class="bui-input__label">@Label</label>
                 }
-            </div>
         </bui-component>
     };
 

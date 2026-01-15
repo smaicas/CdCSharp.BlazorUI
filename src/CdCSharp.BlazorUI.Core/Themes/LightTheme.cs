@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
+﻿using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 
 namespace CdCSharp.BlazorUI.Core.Themes;

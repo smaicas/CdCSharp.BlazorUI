@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
+﻿using CdCSharp.BlazorUI.Components;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
 

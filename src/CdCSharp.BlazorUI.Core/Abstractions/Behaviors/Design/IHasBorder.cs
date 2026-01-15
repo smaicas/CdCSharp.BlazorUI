@@ -1,7 +1,6 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-using static CdCSharp.BlazorUI.Core.Css.FeatureDefinitions;
+﻿using static CdCSharp.BlazorUI.Core.Css.FeatureDefinitions;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
+namespace CdCSharp.BlazorUI.Components;
 
 #region Public API
 

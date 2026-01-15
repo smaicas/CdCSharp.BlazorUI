@@ -1,0 +1,226 @@
+﻿@page "/demo/button"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Button - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIButton</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>With Icons</h2>
+<ComponentDemo Definition="@IconsDemo" />
+
+<h2>Variants</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>Full Width</h2>
+<ComponentDemo Definition="@FullWidthDemo" />
+
+<h2>Colors</h2>
+<ComponentDemo Definition="@ColorsDemo" />
+
+<h2>Loading State</h2>
+<ComponentDemo Definition="@LoadingDemo" />
+
+<h2>Disabled</h2>
+<ComponentDemo Definition="@DisabledDemo" />
+
+<h2>With Shadow</h2>
+<ComponentDemo Definition="@ShadowDemo" />
+
+<h2>Without Ripple</h2>
+<ComponentDemo Definition="@NoRippleDemo" />
+
+@code {
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIButton Text="Click me" OnClick="@(() => { })" />
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        Demo = RenderIcons(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Leading Icon"
+                           LeadingIcon="@BUIIcons.UI.Add"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Trailing Icon"
+                           TrailingIcon="@BUIIcons.UI.ArrowForward"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Both Icons"
+                           LeadingIcon="@BUIIcons.UI.Save"
+                           TrailingIcon="@BUIIcons.UI.ChevronRight"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Default"
+                           Variant="BUIButtonVariant.Default"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Small" Size="SizeEnum.Small" OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Medium (Default)" Size="SizeEnum.Medium" OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Large" Size="SizeEnum.Large" OnClick="@(() => { })" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Compact" Density="DensityEnum.Compact" OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Standard (Default)" Density="DensityEnum.Standard" OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" OnClick="@(() => { })" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition FullWidthDemo => new()
+    {
+        Demo = RenderFullWidth(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderFullWidth() => __builder =>
+    {
+        <BUIButton Text="Full Width Button" FullWidth="true" OnClick="@(() => { })" />
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        Demo = RenderColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Primary"
+                           BackgroundColor="BUIColor.Palette.Primary"
+                           Color="BUIColor.Palette.PrimaryContrast"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Secondary"
+                           BackgroundColor="BUIColor.Palette.Secondary"
+                           Color="BUIColor.Palette.SecondaryContrast"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Error"
+                           BackgroundColor="BUIColor.Palette.Error"
+                           Color="BUIColor.Palette.ErrorContrast"
+                           OnClick="@(() => {})" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition LoadingDemo => new()
+    {
+        Demo = RenderLoading(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderLoading() => __builder =>
+    {
+        <BUIButton Text="Loading..." Loading="true" OnClick="@(() => { })" />
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        Demo = RenderDisabled(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIButton Text="Disabled" Disabled="true" OnClick="@(() => { })" />
+    };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        Demo = RenderShadow(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <BUIButton Text="With Shadow"
+                   Shadow="BUIShadowPresets.Elevation(3, null)"
+                   OnClick="@(() => {})" />
+    };
+
+    private ComponentDemoDefinition NoRippleDemo => new()
+    {
+        Demo = RenderNoRipple(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNoRipple() => __builder =>
+    {
+        <BUIButton Text="No Ripple Effect" DisableRipple="true" OnClick="@(() => { })" />
+    };
+}

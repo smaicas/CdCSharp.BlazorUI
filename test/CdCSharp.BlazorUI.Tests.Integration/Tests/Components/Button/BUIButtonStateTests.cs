@@ -1,8 +1,6 @@
 ﻿using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design;
-using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;

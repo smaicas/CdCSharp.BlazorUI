@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components.Variants;
-
-namespace CdCSharp.BlazorUI.Components.Layout;
+﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
 public class BUIThemeSelectorVariant : Variant
 {

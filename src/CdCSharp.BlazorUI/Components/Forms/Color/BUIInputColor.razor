@@ -1,10 +1,6 @@
 ﻿@using CdCSharp.BlazorUI.Components.Layout
 @using CdCSharp.BlazorUI.Components.Utils
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Families
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
-@using CdCSharp.BlazorUI.Core.Css
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -113,7 +109,7 @@
                        value="@DisplayValue"
                        placeholder="@(IsFloated? Placeholder : null)"
                        readonly="@(!InputEditable)"
-                       disabled="@Disabled"
+                       disabled="@IsDisabled"
                        @onchange="HandleInputChange"
                        @onfocus="HandleFocus"
                        @onblur="HandleBlur"
@@ -149,7 +145,7 @@
                 <button type="button"
                         class="bui-input-color__preview"
                         @onclick="TogglePicker"
-                        disabled="@Disabled"
+                        disabled="@IsDisabled"
                         title="Open color picker">
                     <div class="bui-input-color__preview-chess">
                         <div class="bui-input-color__preview-color"

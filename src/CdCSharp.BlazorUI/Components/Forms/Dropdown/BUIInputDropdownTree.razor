@@ -1,8 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Components.Forms.Dropdown
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.Design
-@using CdCSharp.BlazorUI.Core.Abstractions.Behaviors.State
 @using CdCSharp.BlazorUI.Core.Components.Selection
-@using CdCSharp.BlazorUI.Core.Css
 @using System.Linq.Expressions
 
 @namespace CdCSharp.BlazorUI.Components.Forms
@@ -20,9 +17,8 @@
                       Variant="@Variant"
                       Size="@Size"
                       Density="@Density"
-                      FullWidth="@FullWidth"
                       Disabled="@Disabled"
-                      IsLoading="@IsLoading"
+                      Loading="@IsLoading"
                       LoadingIndicatorVariant="@LoadingIndicatorVariant"
                       Required="@Required"
                       ReadOnly="@ReadOnly"
