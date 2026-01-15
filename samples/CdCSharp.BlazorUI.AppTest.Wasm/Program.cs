@@ -24,31 +24,7 @@ builder.Services.AddBlazorUILocalizationWasm(options =>
 
 WebAssemblyHost host = builder.Build();
 
-const string defaultCulture = "en-US";
 IJSRuntime js = host.Services.GetRequiredService<IJSRuntime>();
-
-//try
-//{
-//    // Intentar obtener la cultura guardada
-//    string? storedCulture = await js.InvokeAsync<string?>("blazorCulture.get");
-
-// if (!string.IsNullOrEmpty(storedCulture)) { CultureInfo culture = new(storedCulture);
-// CultureInfo.DefaultThreadCurrentCulture = culture; CultureInfo.DefaultThreadCurrentUICulture =
-// culture; } else { // Si no hay cultura guardada, usar la predeterminada CultureInfo culture =
-// new(defaultCulture); CultureInfo.DefaultThreadCurrentCulture = culture;
-// CultureInfo.DefaultThreadCurrentUICulture = culture;
-
-//        // Guardar la cultura predeterminada
-//        await js.InvokeVoidAsync("blazorCulture.set", defaultCulture);
-//    }
-//}
-//catch
-//{
-//    // En caso de error, usar la cultura predeterminada
-//    CultureInfo culture = new(defaultCulture);
-//    CultureInfo.DefaultThreadCurrentCulture = culture;
-//    CultureInfo.DefaultThreadCurrentUICulture = culture;
-//}
 
 await host.UseBlazorUILocalizationWasm();
 
