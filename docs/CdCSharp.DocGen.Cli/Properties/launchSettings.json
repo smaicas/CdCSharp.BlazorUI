@@ -20,7 +20,7 @@
     },
     "BlazorUI (No Cache)": {
       "commandName": "Project",
-      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\.docgen\" -v --no-cache",
+      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\.docgen\" --trace --no-cache",
       "environmentVariables": {
         "GROQ_API_KEY": ""
       }

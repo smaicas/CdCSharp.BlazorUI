@@ -27,14 +27,32 @@ public class Orchestrator
         _logger.Progress("Creating documentation plan...");
 
         string prompt = BuildOrchestratorPrompt(structure, destructured);
-        _logger.Verbose($"Orchestrator prompt: {prompt.Length} chars");
+
+        _logger.Verbose($"Orchestrator prompt: {prompt.Length} chars (~{prompt.Length / 4} tokens)");
+        _logger.Trace("Building orchestration plan with AI...");
 
         OrchestrationPlan? plan = await _ai.SendAsync<OrchestrationPlan>(prompt, maxTokens: 3000);
 
         if (plan == null || plan.Specialists.Count == 0)
         {
             _logger.Warning("Orchestrator returned empty plan, using fallback");
+            _logger.Trace("AI returned null or empty plan, falling back to default plan");
             return CreateFallbackPlan(structure, destructured);
+        }
+
+        _logger.Trace($"Plan received: {plan.Specialists.Count} specialists, {plan.OutputSections.Count} sections");
+        _logger.Trace($"Critical context length: {plan.CriticalContext.Length} chars");
+
+        foreach (SpecialistTask specialist in plan.Specialists)
+        {
+            _logger.Trace($"  Specialist: {specialist.Name} ({specialist.SpecialistId})");
+            _logger.Trace($"    Priority: {specialist.Priority}, Prompts: {specialist.Prompts.Count}");
+            _logger.Trace($"    Target sections: {string.Join(", ", specialist.TargetSections)}");
+            _logger.Trace($"    Required assemblies: {string.Join(", ", specialist.RequiredFiles.Destructured)}");
+            if (specialist.RequiredFiles.FullContent.Count > 0)
+            {
+                _logger.Trace($"    Required files: {string.Join(", ", specialist.RequiredFiles.FullContent)}");
+            }
         }
 
         RegisterNewSpecialists(plan);
@@ -121,9 +139,10 @@ public class Orchestrator
         sb.AppendLine("RULES:");
         sb.AppendLine("- Use existing specialistId when possible, or create new ones if needed");
         sb.AppendLine("- Each specialist can have multiple prompts if the task is complex");
+        sb.AppendLine("- Divide the task having in account prompt limits (including files) (~10000 tokens)");
         sb.AppendLine("- requiredFiles.destructured = assembly names for structure info");
-        sb.AppendLine("- requiredFiles.fullContent = specific files whose complete code is needed");
-        sb.AppendLine("- keyFiles = critical files that should be included in LLM documentation");
+        sb.AppendLine("- requiredFiles.fullContent = specific full path of files whose complete code is needed");
+        sb.AppendLine("- keyFiles = full path of critical files whose complete content should be included in LLM documentation");
         sb.AppendLine("- criticalContext = information that must be in every prompt (project purpose, key patterns, etc)");
 
         return sb.ToString();
@@ -131,6 +150,9 @@ public class Orchestrator
 
     private void RegisterNewSpecialists(OrchestrationPlan plan)
     {
+        _logger.Trace("Registering new specialists from plan...");
+
+        int newCount = 0;
         foreach (SpecialistTask task in plan.Specialists)
         {
             if (_registry.Get(task.SpecialistId) == null)
@@ -144,7 +166,18 @@ public class Orchestrator
                     Capabilities = task.TargetSections,
                     IsBuiltIn = false
                 });
+                _logger.Trace($"  Registered new specialist: {task.Name} ({task.SpecialistId})");
+                newCount++;
             }
+        }
+
+        if (newCount > 0)
+        {
+            _logger.Trace($"Total new specialists registered: {newCount}");
+        }
+        else
+        {
+            _logger.Trace("No new specialists to register (all are existing)");
         }
     }
 
@@ -152,6 +185,8 @@ public class Orchestrator
         ProjectStructure structure,
         Dictionary<string, DestructuredAssembly> destructured)
     {
+        _logger.Trace("Creating fallback plan...");
+
         List<SpecialistTask> specialists = [];
         List<DocumentSection> sections = [];
         int sectionOrder = 1;
@@ -168,6 +203,8 @@ public class Orchestrator
             .Where(a => !a.IsTestProject)
             .Select(a => a.Name)
             .ToList();
+
+        _logger.Trace($"Main assemblies for fallback plan: {string.Join(", ", mainAssemblies)}");
 
         specialists.Add(new SpecialistTask
         {
@@ -199,6 +236,8 @@ public class Orchestrator
 
         if (structure.GlobalSummary.TotalComponents > 0)
         {
+            _logger.Trace($"Adding component specialist (found {structure.GlobalSummary.TotalComponents} components)");
+
             specialists.Add(new SpecialistTask
             {
                 SpecialistId = "component_specialist",
@@ -230,6 +269,8 @@ public class Orchestrator
 
         if (structure.GlobalSummary.DetectedPatterns.Count > 0)
         {
+            _logger.Trace($"Adding architecture specialist (detected patterns: {string.Join(", ", structure.GlobalSummary.DetectedPatterns)})");
+
             specialists.Add(new SpecialistTask
             {
                 SpecialistId = "architecture_specialist",
@@ -258,6 +299,8 @@ public class Orchestrator
                 Description = "Architectural patterns and design"
             });
         }
+
+        _logger.Trace($"Fallback plan created: {specialists.Count} specialists, {sections.Count} sections");
 
         return new OrchestrationPlan
         {

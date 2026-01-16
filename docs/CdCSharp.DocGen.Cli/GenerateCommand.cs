@@ -37,11 +37,17 @@ public class GenerateCommand
 
     private static async Task<int> ExecuteAsync(GenerateOptions options)
     {
-        ILogger logger = new ConsoleLogger(options.Verbose);
+        ILogger logger = new ConsoleLogger(options.Verbose, options.Trace);
 
         logger.Info("CdCSharp Documentation Generator");
         logger.Info(new string('=', 40));
         logger.Info("");
+
+        if (options.Trace)
+        {
+            logger.Info("🔍 TRACE MODE ENABLED - Detailed logging active");
+            logger.Info("");
+        }
 
         CacheOptions cacheOptions = new()
         {
@@ -53,7 +59,7 @@ public class GenerateCommand
             ? new CacheManager(options.ProjectPath, cacheOptions, logger)
             : null;
 
-        using GroqClient ai = new(options.ApiKey, logger);
+        using GroqClient ai = new(options.ApiKey, logger, trace: options.Trace);
 
         try
         {
@@ -102,7 +108,7 @@ public class GenerateCommand
         catch (Exception ex)
         {
             logger.Error(ex.Message);
-            if (options.Verbose)
+            if (options.Verbose || options.Trace)
             {
                 Console.WriteLine(ex.StackTrace);
             }
@@ -143,6 +149,7 @@ public class GenerateCommand
             OutputPath = "docs",
             ApiKey = Environment.GetEnvironmentVariable("GROQ_API_KEY") ?? string.Empty,
             Verbose = false,
+            Trace = false,
             EnableAnalysisCache = true,
             EnableQueryCache = true
         };
@@ -164,6 +171,10 @@ public class GenerateCommand
                     options.ApiKey = GetNextArg(args, ref i);
                     break;
                 case "-v" or "--verbose":
+                    options.Verbose = true;
+                    break;
+                case "--trace":
+                    options.Trace = true;
                     options.Verbose = true;
                     break;
                 case "--no-cache":
@@ -200,6 +211,7 @@ public class GenerateCommand
         Console.WriteLine("  -o, --output <path>      Output directory (default: docs)");
         Console.WriteLine("  -k, --api-key <key>      Groq API key (or set GROQ_API_KEY)");
         Console.WriteLine("  -v, --verbose            Verbose output");
+        Console.WriteLine("  --trace                  Trace mode (very detailed logging including prompts)");
         Console.WriteLine("  --no-cache               Disable all caching");
         Console.WriteLine("  --no-analysis-cache      Disable analysis cache only");
         Console.WriteLine("  --no-query-cache         Disable query cache only");
@@ -209,6 +221,10 @@ public class GenerateCommand
         Console.WriteLine("  docs/preanalysis/        JSON preanalysis files");
         Console.WriteLine("  docs/docs-human.md       Human-readable documentation");
         Console.WriteLine("  docs/docs-llm.txt        LLM-optimized documentation");
+        Console.WriteLine();
+        Console.WriteLine("Trace mode:");
+        Console.WriteLine("  When enabled, logs all AI prompts sent and responses received");
+        Console.WriteLine("  Useful for debugging and understanding the generation process");
     }
 }
 
@@ -218,6 +234,7 @@ internal class GenerateOptions
     public string OutputPath { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
     public bool Verbose { get; set; }
+    public bool Trace { get; set; }
     public bool EnableAnalysisCache { get; set; }
     public bool EnableQueryCache { get; set; }
     public bool ShowHelp { get; set; }

@@ -14,11 +14,13 @@ public class GroqClient : IAiClient
     private readonly HttpClient _http;
     private readonly ILogger _logger;
     private readonly string _model;
+    private readonly bool _trace;
     private readonly SemaphoreSlim _rateLimiter;
+    private int _requestCounter = 0;
     private const string BaseUrl = "https://api.groq.com/openai/v1/";
     private const int MinDelayMs = 2000;
 
-    public GroqClient(string apiKey, ILogger? logger = null, string model = "llama-3.3-70b-versatile")
+    public GroqClient(string apiKey, ILogger? logger = null, string model = "llama-3.3-70b-versatile", bool trace = false)
     {
         _http = new HttpClient
         {
@@ -28,6 +30,7 @@ public class GroqClient : IAiClient
         _http.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
         _logger = logger ?? NullLogger.Instance;
         _model = model;
+        _trace = trace;
         _rateLimiter = new SemaphoreSlim(1, 1);
     }
 
@@ -36,6 +39,16 @@ public class GroqClient : IAiClient
         await _rateLimiter.WaitAsync();
         try
         {
+            int requestId = Interlocked.Increment(ref _requestCounter);
+            string requestName = $"Request-{requestId}";
+
+            if (_trace)
+            {
+                _logger.Trace($"Preparing API request #{requestId}");
+                _logger.Trace($"Model: {_model}, MaxTokens: {maxTokens}, Temperature: {temperature}");
+                _logger.TracePrompt(requestName, prompt);
+            }
+
             await Task.Delay(MinDelayMs);
 
             GroqRequest request = new()
@@ -46,7 +59,20 @@ public class GroqClient : IAiClient
                 Temperature = temperature
             };
 
+            if (_trace)
+            {
+                _logger.Trace($"Sending request to Groq API...");
+            }
+
+            DateTime startTime = DateTime.UtcNow;
             HttpResponseMessage response = await _http.PostAsJsonAsync("chat/completions", request);
+            TimeSpan elapsed = DateTime.UtcNow - startTime;
+
+            if (_trace)
+            {
+                _logger.Trace($"Received response in {elapsed.TotalSeconds:F2}s");
+                _logger.Trace($"Status: {(int)response.StatusCode} {response.StatusCode}");
+            }
 
             if (!response.IsSuccessStatusCode)
             {
@@ -55,6 +81,10 @@ public class GroqClient : IAiClient
                 if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 {
                     _logger.Warning("Rate limit hit, waiting 60s...");
+                    if (_trace)
+                    {
+                        _logger.Trace($"Rate limit error details: {error}");
+                    }
                     await Task.Delay(60000);
                     return string.Empty;
                 }
@@ -64,16 +94,34 @@ public class GroqClient : IAiClient
             }
 
             GroqResponse? result = await response.Content.ReadFromJsonAsync<GroqResponse>();
-            return result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
+            string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
+
+            if (_trace)
+            {
+                int inputTokens = prompt.Length / 4;
+                int outputTokens = content.Length / 4;
+                _logger.Trace($"Estimated tokens - Input: ~{inputTokens}, Output: ~{outputTokens}, Total: ~{inputTokens + outputTokens}");
+                _logger.TraceResponse(requestName, content);
+            }
+
+            return content;
         }
         catch (TaskCanceledException)
         {
             _logger.Warning("Groq API timeout");
+            if (_trace)
+            {
+                _logger.Trace("Request timed out after 60 seconds");
+            }
             return string.Empty;
         }
         catch (Exception ex)
         {
             _logger.Warning($"Groq API failed: {ex.Message}");
+            if (_trace)
+            {
+                _logger.Trace($"Exception details: {ex}");
+            }
             return string.Empty;
         }
         finally
@@ -92,11 +140,30 @@ public class GroqClient : IAiClient
         try
         {
             string json = ExtractJson(response);
-            return System.Text.Json.JsonSerializer.Deserialize<T>(json);
+
+            if (_trace)
+            {
+                _logger.Trace($"Parsing response as {typeof(T).Name}");
+                _logger.Trace($"Extracted JSON length: {json.Length} chars");
+            }
+
+            T? result = System.Text.Json.JsonSerializer.Deserialize<T>(json);
+
+            if (_trace)
+            {
+                _logger.Trace($"Successfully parsed as {typeof(T).Name}");
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
             _logger.Warning($"Failed to parse response as {typeof(T).Name}: {ex.Message}");
+            if (_trace)
+            {
+                _logger.Trace($"Parse error details: {ex}");
+                _logger.Trace($"Raw response that failed to parse: {response}");
+            }
             return null;
         }
     }

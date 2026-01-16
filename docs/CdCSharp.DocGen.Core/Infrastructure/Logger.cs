@@ -8,16 +8,22 @@ public interface ILogger
     void Error(string message);
     void Verbose(string message);
     void Progress(string message);
+    void Trace(string message);
+    void TracePrompt(string promptName, string content);
+    void TraceResponse(string promptName, string content);
 }
 
 public class ConsoleLogger : ILogger
 {
     private readonly bool _verbose;
+    private readonly bool _trace;
     private readonly object _lock = new();
+    private int _promptCounter = 0;
 
-    public ConsoleLogger(bool verbose = false)
+    public ConsoleLogger(bool verbose = false, bool trace = false)
     {
         _verbose = verbose;
+        _trace = trace;
     }
 
     public void Info(string message) => Write(message, ConsoleColor.White);
@@ -36,6 +42,43 @@ public class ConsoleLogger : ILogger
 
     public void Progress(string message) => Write($"→ {message}", ConsoleColor.Cyan);
 
+    public void Trace(string message)
+    {
+        if (_trace)
+            Write($"🔍 {message}", ConsoleColor.Magenta);
+    }
+
+    public void TracePrompt(string promptName, string content)
+    {
+        if (!_trace) return;
+
+        int counter = Interlocked.Increment(ref _promptCounter);
+        string separator = new('=', 80);
+
+        Write($"\n{separator}", ConsoleColor.DarkCyan);
+        Write($"📤 PROMPT #{counter}: {promptName}", ConsoleColor.Cyan);
+        Write(separator, ConsoleColor.DarkCyan);
+        Write($"Length: {content.Length} chars (~{content.Length / 4} tokens)", ConsoleColor.DarkGray);
+        Write(separator, ConsoleColor.DarkCyan);
+        Write(TruncateForDisplay(content, 2000), ConsoleColor.Gray);
+        Write($"{separator}\n", ConsoleColor.DarkCyan);
+    }
+
+    public void TraceResponse(string promptName, string content)
+    {
+        if (!_trace) return;
+
+        string separator = new('=', 80);
+
+        Write($"\n{separator}", ConsoleColor.DarkGreen);
+        Write($"📥 RESPONSE: {promptName}", ConsoleColor.Green);
+        Write(separator, ConsoleColor.DarkGreen);
+        Write($"Length: {content.Length} chars (~{content.Length / 4} tokens)", ConsoleColor.DarkGray);
+        Write(separator, ConsoleColor.DarkGreen);
+        Write(TruncateForDisplay(content, 2000), ConsoleColor.Gray);
+        Write($"{separator}\n", ConsoleColor.DarkGreen);
+    }
+
     private void Write(string message, ConsoleColor color)
     {
         lock (_lock)
@@ -45,6 +88,17 @@ public class ConsoleLogger : ILogger
             Console.WriteLine(message);
             Console.ForegroundColor = original;
         }
+    }
+
+    private static string TruncateForDisplay(string content, int maxLength)
+    {
+        if (content.Length <= maxLength)
+            return content;
+
+        int halfLength = maxLength / 2;
+        return content[..halfLength] +
+               $"\n\n... [TRUNCATED {content.Length - maxLength} chars] ...\n\n" +
+               content[^halfLength..];
     }
 }
 
@@ -58,4 +112,7 @@ public class NullLogger : ILogger
     public void Error(string message) { }
     public void Verbose(string message) { }
     public void Progress(string message) { }
+    public void Trace(string message) { }
+    public void TracePrompt(string promptName, string content) { }
+    public void TraceResponse(string promptName, string content) { }
 }
