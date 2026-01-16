@@ -50,13 +50,21 @@ public class GroqClient : IAiClient
         double temperature = 0.3)
     {
         await _rateLimiter.WaitAsync();
+
+        int requestId = Interlocked.Increment(ref _requestCounter);
+        string agentId = $"Groq-{requestId}";
+        string traceId = string.Empty;
+
         try
         {
-            int requestId = Interlocked.Increment(ref _requestCounter);
-            string requestName = $"Groq-{requestId}";
-
             _logger.LogDebug("Preparing Groq request #{RequestId}, Model: {Model}, Messages: {Count}, MaxTokens: {MaxTokens}",
                 requestId, _model, messages.Count, maxTokens);
+
+            string promptSummary = string.Join("\n", messages.Select(m =>
+                $"[{m.Role}]: {Truncate(m.Content, 200)}"));
+
+            // ✅ Traza ANTES de enviar
+            traceId = await _tracer.TracePromptStartAsync(agentId, promptSummary);
 
             await Task.Delay(MinDelayMs);
 
@@ -82,30 +90,42 @@ public class GroqClient : IAiClient
                 if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                 {
                     _logger.LogWarning("Groq rate limit hit, waiting 60s...");
+
+                    // ✅ Traza el fallo
+                    await _tracer.TracePromptFailureAsync(traceId,
+                        new Exception($"Rate limit: {error}"));
+
                     await Task.Delay(60000);
                     return string.Empty;
                 }
 
                 _logger.LogWarning("Groq API error ({StatusCode}): {Error}", response.StatusCode, error);
+
+                // ✅ Traza el error
+                await _tracer.TracePromptFailureAsync(traceId,
+                    new Exception($"HTTP {response.StatusCode}: {error}"));
+
                 return string.Empty;
             }
 
             GroqResponse? result = await response.Content.ReadFromJsonAsync<GroqResponse>();
             string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
 
-            string promptSummary = string.Join("\n", messages.Select(m => $"[{m.Role}]: {Truncate(m.Content, 200)}"));
-            await _tracer.TracePromptAsync(requestName, promptSummary, content);
+            // ✅ Completa la traza con la respuesta
+            await _tracer.TracePromptCompleteAsync(traceId, content);
 
             return content;
         }
-        catch (TaskCanceledException)
+        catch (TaskCanceledException ex)
         {
             _logger.LogWarning("Groq API timeout");
+            await _tracer.TracePromptFailureAsync(traceId, ex);
             return string.Empty;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Groq API failed");
+            await _tracer.TracePromptFailureAsync(traceId, ex);
             return string.Empty;
         }
         finally

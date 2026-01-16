@@ -35,9 +35,11 @@ public static class ServiceCollectionExtensions
             opt.Conversation = options.Conversation;
         });
 
+        // Infrastructure
         services.AddSingleton<IIgnoreFilter, IgnoreFilter>();
         services.AddSingleton<IPromptTracer, PromptTracer>();
 
+        // Analysis
         services.AddScoped<IAssemblyScanner, AssemblyScanner>();
         services.AddScoped<ITypeDestructurer, TypeDestructurer>();
         services.AddScoped<IComponentAnalyzer, ComponentAnalyzer>();
@@ -45,25 +47,30 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICssAnalyzer, CssAnalyzer>();
         services.AddScoped<IProjectAnalyzer, ProjectAnalyzer>();
 
+        // AI
         services.AddSingleton<IAiClientFactory, AiClientFactory>();
         services.AddScoped<IAiClient>(sp =>
             sp.GetRequiredService<IAiClientFactory>().Create());
 
+        // Cache
         if (options.Cache.Enabled)
             services.AddSingleton<ICacheManager, CacheManager>();
         else
             services.AddSingleton<ICacheManager, NullCacheManager>();
 
+        // Agents
         services.AddSingleton<IAgentRegistry, AgentRegistry>();
         services.AddScoped<AgentFactory>();
         services.AddScoped<IAgentFactory>(sp => sp.GetRequiredService<AgentFactory>());
         services.AddScoped<IExpertiseContextBuilder, ExpertiseContextBuilder>();
         services.AddScoped<IOrchestrator, Orchestrator>();
 
+        // Formatting
         services.AddScoped<IPlainTextFormatter, PlainTextFormatter>();
         services.AddScoped<IHumanDocComposer, HumanDocComposer>();
         services.AddScoped<ILlmDocComposer, LlmDocComposer>();
 
+        // Runner
         services.AddScoped<DocGenRunner>();
 
         return services;

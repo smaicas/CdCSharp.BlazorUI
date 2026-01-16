@@ -45,13 +45,24 @@ public class LMStudioClient : IAiClient
         double temperature = 0.3)
     {
         await _rateLimiter.WaitAsync();
+
+        int requestId = Interlocked.Increment(ref _requestCounter);
+        string agentId = $"LMStudio-{requestId}";
+        string traceId = string.Empty;
+
         try
         {
-            int requestId = Interlocked.Increment(ref _requestCounter);
-            string requestName = $"LMStudio-{requestId}";
-
             _logger.LogDebug("Preparing LM Studio request #{RequestId}, Messages: {Count}, MaxTokens: {MaxTokens}",
                 requestId, messages.Count, maxTokens);
+
+            string promptSummary = string.Join("\n", messages.Select(m => $"""
+            [{m.Role}]: 
+            
+            {m.Content}
+            """));
+
+            // ✅ Traza ANTES de enviar
+            traceId = await _tracer.TracePromptStartAsync(agentId, promptSummary);
 
             var request = new
             {
@@ -72,36 +83,38 @@ public class LMStudioClient : IAiClient
             {
                 string error = await response.Content.ReadAsStringAsync();
                 _logger.LogWarning("LM Studio API error ({StatusCode}): {Error}", response.StatusCode, error);
+
+                // ✅ Traza el error
+                await _tracer.TracePromptFailureAsync(traceId,
+                    new Exception($"HTTP {response.StatusCode}: {error}"));
+
                 return string.Empty;
             }
 
             LMStudioResponse? result = await response.Content.ReadFromJsonAsync<LMStudioResponse>();
             string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
 
-            string promptSummary = string.Join("\n", messages.Select(m => $"""
-            [{m.Role}]: 
-            
-            {m.Content}
-            """
-            ));
-
-            await _tracer.TracePromptAsync(requestName, promptSummary, content);
+            // ✅ Completa la traza con la respuesta
+            await _tracer.TracePromptCompleteAsync(traceId, content);
 
             return content;
         }
-        catch (TaskCanceledException)
+        catch (TaskCanceledException ex)
         {
             _logger.LogWarning("LM Studio request timeout");
+            await _tracer.TracePromptFailureAsync(traceId, ex);
             return string.Empty;
         }
         catch (HttpRequestException ex)
         {
             _logger.LogError(ex, "Cannot connect to LM Studio. Make sure it's running and has a model loaded");
+            await _tracer.TracePromptFailureAsync(traceId, ex);
             return string.Empty;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "LM Studio API failed");
+            await _tracer.TracePromptFailureAsync(traceId, ex);
             return string.Empty;
         }
         finally
@@ -154,9 +167,6 @@ public class LMStudioClient : IAiClient
 
         return response;
     }
-
-    private static string Truncate(string text, int maxLength)
-        => text.Length <= maxLength ? text : text[..maxLength] + "...";
 
     public void Dispose()
     {

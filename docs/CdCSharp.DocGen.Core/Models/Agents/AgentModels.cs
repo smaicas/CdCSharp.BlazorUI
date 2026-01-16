@@ -55,6 +55,27 @@ public record AgentTask
     [JsonPropertyName("agentId")]
     public string AgentId { get; init; } = string.Empty;
 
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
+
+    [JsonPropertyName("focus")]
+    public string Focus { get; init; } = string.Empty;
+
+    [JsonPropertyName("targetSections")]
+    public List<string> TargetSections { get; init; } = [];
+
+    [JsonPropertyName("priority")]
+    public int Priority { get; init; }
+
+    [JsonPropertyName("instructions")]
+    public List<TaskInstruction> Instructions { get; init; } = [];
+}
+
+public record TaskInstruction
+{
+    [JsonPropertyName("id")]
+    public string Id { get; init; } = Guid.NewGuid().ToString("N")[..4];
+
     [JsonPropertyName("instruction")]
     public string Instruction { get; init; } = string.Empty;
 
@@ -64,8 +85,17 @@ public record AgentTask
     [JsonPropertyName("maxTokens")]
     public int MaxTokens { get; init; } = 2000;
 
-    [JsonPropertyName("targetSections")]
-    public List<string> TargetSections { get; init; } = [];
+    [JsonPropertyName("requiredFiles")]
+    public RequiredFiles RequiredFiles { get; init; } = new();
+}
+
+public record RequiredFiles
+{
+    [JsonPropertyName("destructured")]
+    public List<string> Destructured { get; init; } = [];
+
+    [JsonPropertyName("fullContent")]
+    public List<string> FullContent { get; init; } = [];
 }
 
 public record AgentMessage
@@ -163,4 +193,7 @@ public record AgentResult
 
     [JsonPropertyName("executedAt")]
     public DateTime ExecutedAt { get; init; } = DateTime.UtcNow;
+
+    [JsonPropertyName("tokenCount")]
+    public int TokenCount { get; init; }
 }

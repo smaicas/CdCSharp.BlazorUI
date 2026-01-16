@@ -1,4 +1,5 @@
 ﻿using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Models.Agents;
 using CdCSharp.DocGen.Core.Models.Analysis;
 using CdCSharp.DocGen.Core.Models.Generation;
 using CdCSharp.DocGen.Core.Models.Orchestration;
@@ -40,7 +41,7 @@ public class HumanDocComposer : IHumanDocComposer
 
         foreach (DocumentSection section in orderedSections)
         {
-            List<SpecialistResult> sectionResults = context.Results
+            List<AgentResult> sectionResults = context.Results
                 .Where(r => r.TargetSections.Contains(section.Id))
                 .ToList();
 
@@ -50,7 +51,7 @@ public class HumanDocComposer : IHumanDocComposer
             sb.AppendLine($"## {section.Title}");
             sb.AppendLine();
 
-            foreach (SpecialistResult result in sectionResults)
+            foreach (AgentResult result in sectionResults)
             {
                 sb.AppendLine(CleanContent(result.Content));
                 sb.AppendLine();

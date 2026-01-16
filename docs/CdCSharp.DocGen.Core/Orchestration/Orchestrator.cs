@@ -95,7 +95,7 @@ public partial class Orchestrator : IOrchestrator
 
         OrchestrationPlan? plan = ParsePlanResponse(response);
 
-        if (plan == null || plan.Specialists.Count == 0)
+        if (plan == null || plan.Tasks.Count == 0)
         {
             _logger.LogWarning("Failed to parse plan, using fallback");
             return CreateFallbackPlan(structure);
@@ -103,7 +103,7 @@ public partial class Orchestrator : IOrchestrator
 
         await ProcessAgentCreationRequests(response);
 
-        _logger.LogInformation("Plan created: {Count} specialists", plan.Specialists.Count);
+        _logger.LogInformation("Plan created: {Count} tasks", plan.Tasks.Count);
 
         return plan;
     }
@@ -115,45 +115,46 @@ public partial class Orchestrator : IOrchestrator
         _currentDestructured = destructured;
         List<AgentResult> results = [];
 
-        IOrderedEnumerable<SpecialistTask> orderedTasks = plan.Specialists.OrderBy(s => s.Priority);
+        IOrderedEnumerable<AgentTask> orderedTasks = plan.Tasks.OrderBy(t => t.Priority);
 
         int taskNumber = 0;
-        foreach (SpecialistTask task in orderedTasks)
+        foreach (AgentTask task in orderedTasks)
         {
             taskNumber++;
             _logger.LogInformation("Executing: {Name} ({Current}/{Total})",
-                task.Name, taskNumber, plan.Specialists.Count);
+                task.Name, taskNumber, plan.Tasks.Count);
 
-            IAgent agent = await GetOrCreateAgentAsync(task.SpecialistId);
+            IAgent agent = await GetOrCreateAgentAsync(task.AgentId);
 
             string context = await BuildTaskContextAsync(task, plan.CriticalContext, destructured);
             agent.LoadExpertiseContext(context);
 
-            foreach (SpecialistPrompt prompt in task.Prompts)
+            foreach (TaskInstruction instruction in task.Instructions)
             {
-                _logger.LogDebug("Running prompt: {Id}", prompt.Id);
+                _logger.LogDebug("Running instruction: {Id}", instruction.Id);
 
-                string instruction = $"""
-                    TASK: {prompt.Instruction}
+                string prompt = $"""
+                    TASK: {instruction.Instruction}
                     
-                    EXPECTED OUTPUT: {prompt.ExpectedOutput}
+                    EXPECTED OUTPUT: {instruction.ExpectedOutput}
                     """;
 
-                string response = await agent.ExecuteAsync(instruction, prompt.MaxTokens);
+                string response = await agent.ExecuteAsync(prompt, instruction.MaxTokens);
 
                 if (!string.IsNullOrWhiteSpace(response))
                 {
                     results.Add(new AgentResult
                     {
-                        AgentId = task.SpecialistId,
-                        TaskId = prompt.Id,
+                        AgentId = task.AgentId,
+                        TaskId = instruction.Id,
                         Content = response,
-                        TargetSections = task.TargetSections
+                        TargetSections = task.TargetSections,
+                        TokenCount = response.Length / 4
                     });
                 }
             }
 
-            RecordAgentCompletion(task.SpecialistId, task.Name);
+            RecordAgentCompletion(task.AgentId, task.Name);
         }
 
         return results;
@@ -212,7 +213,7 @@ public partial class Orchestrator : IOrchestrator
         {
             definition = _agentFactory.BuildDefinition(creationRequest);
             _registry.Register(definition);
-            _logger.LogInformation("Created new agent: {Name}", definition.Name);
+            _logger.LogInformation("Created new agent: {Name} ({Id})", definition.Name, definition.Id);
         }
 
         if (definition == null)
@@ -231,6 +232,8 @@ public partial class Orchestrator : IOrchestrator
         }
 
         _activeAgents[agentId] = agent;
+        _logger.LogInformation("Agent activated: {Name} ({Id})", definition.Name, definition.Id);
+
         return agent;
     }
 
@@ -273,25 +276,25 @@ public partial class Orchestrator : IOrchestrator
             You are the Documentation Orchestrator for .NET projects.
             
             Your responsibilities:
-            1. Analyze project structure and decide which specialists are needed
+            1. Analyze project structure and decide which agents are needed
             2. Create documentation plans with specific tasks
-            3. Create new specialists when needed for specific code areas
-            4. Coordinate communication between specialists
+            3. Create new agents when needed for specific code areas
+            4. Coordinate communication between agents
             
-            AVAILABLE SPECIALISTS:
-            {_registry.GetAgentListForPrompt()}
+            AVAILABLE AGENTS:
+            {{_registry.GetAgentListForPrompt()}}
             
-            TO CREATE A NEW SPECIALIST, include in your response:
+            TO CREATE A NEW AGENT, include in your response:
             [CREATE_AGENT]
             {
-              "name": "Specialist Name",
-              "description": "What this specialist does",
+              "name": "Agent Name",
+              "description": "What this agent does",
               "expertise": {
                 "assemblies": ["AssemblyName"],
                 "filePatterns": ["*.cs"],
                 "topics": ["topic1", "topic2"]
               },
-              "reason": "Why this specialist is needed"
+              "reason": "Why this agent is needed"
             }
             [/CREATE_AGENT]
             
@@ -329,16 +332,6 @@ public partial class Orchestrator : IOrchestrator
 
             if (keyTypes.Count > 0)
                 sb.AppendLine($"    Key Types: {string.Join(", ", keyTypes)}");
-
-            List<string> files = assembly.Namespaces
-                .SelectMany(n => n.Types)
-                .Select(t => t.File)
-                .Distinct()
-                .Take(10)
-                .ToList();
-
-            if (files.Count > 0)
-                sb.AppendLine($"    Sample Files: {string.Join(", ", files)}");
         }
 
         return sb.ToString();
@@ -350,34 +343,33 @@ public partial class Orchestrator : IOrchestrator
             Create a documentation plan for this project.
             
             Consider:
-            1. Which existing specialists should be used?
-            2. Are there code areas that need NEW specialists?
+            1. Which existing agents should be used?
+            2. Are there code areas that need NEW agents?
             3. How should tasks be divided to respect token limits?
-            4. Which files need to be included for each specialist?
+            4. Which files need to be included for each agent?
             
             Respond with a valid JSON OrchestrationPlan:
             {
               "projectType": "detected type",
               "criticalContext": "important project-wide info",
-              "specialists": [
+              "tasks": [
                 {
-                  "specialistId": "existing_id or new_id",
-                  "name": "Specialist Name",
+                  "agentId": "existing_agent_id",
+                  "name": "Task Name",
                   "focus": "specific focus",
                   "targetSections": ["section-id"],
-                  "requiredFiles": {
-                    "destructured": ["AssemblyName"],
-                    "fullContent": ["path/to/file.cs"]
-                  },
-                  "prompts": [
+                  "priority": 1,
+                  "instructions": [
                     {
-                      "id": "prompt-1",
                       "instruction": "what to do",
                       "expectedOutput": "what to produce",
-                      "maxTokens": 2000
+                      "maxTokens": 2000,
+                      "requiredFiles": {
+                        "destructured": ["AssemblyName"],
+                        "fullContent": ["path/to/file.cs"]
+                      }
                     }
-                  ],
-                  "priority": 1
+                  ]
                 }
               ],
               "outputSections": [
@@ -391,7 +383,7 @@ public partial class Orchestrator : IOrchestrator
               "keyFiles": ["important/file.cs"]
             }
             
-            If you need to create new specialists, include [CREATE_AGENT] blocks BEFORE the JSON.
+            If you need to create new agents, include [CREATE_AGENT] blocks BEFORE the JSON.
             """;
     }
 
@@ -411,7 +403,8 @@ public partial class Orchestrator : IOrchestrator
                     AgentDefinition definition = _agentFactory.BuildDefinition(request);
                     _registry.Register(definition);
 
-                    _logger.LogInformation("Created specialist from plan: {Name}", definition.Name);
+                    _logger.LogInformation("Created agent from plan: {Name} ({Id})",
+                        definition.Name, definition.Id);
 
                     RecordAgentCreation(definition.Id, definition.Name, request.Reason);
                 }
@@ -447,7 +440,7 @@ public partial class Orchestrator : IOrchestrator
     }
 
     private async Task<string> BuildTaskContextAsync(
-        SpecialistTask task,
+        AgentTask task,
         string criticalContext,
         Dictionary<string, DestructuredAssembly> destructured)
     {
@@ -460,7 +453,7 @@ public partial class Orchestrator : IOrchestrator
             sb.AppendLine();
         }
 
-        foreach (string assemblyName in task.Prompts.SelectMany(p => p.RequiredFiles.Destructured))
+        foreach (string assemblyName in task.Instructions.SelectMany(i => i.RequiredFiles.Destructured).Distinct())
         {
             if (destructured.TryGetValue(assemblyName, out DestructuredAssembly? assembly))
             {
@@ -469,7 +462,7 @@ public partial class Orchestrator : IOrchestrator
             }
         }
 
-        foreach (string filePath in task.Prompts.SelectMany(p => p.RequiredFiles.FullContent))
+        foreach (string filePath in task.Instructions.SelectMany(i => i.RequiredFiles.FullContent).Distinct())
         {
             string fullPath = Path.Combine(_currentStructure?.RootPath ?? "", filePath);
             if (File.Exists(fullPath))
@@ -526,27 +519,25 @@ public partial class Orchestrator : IOrchestrator
         {
             ProjectType = structure.Summary.ProjectType,
             CriticalContext = $"This is a {structure.Summary.ProjectType} project.",
-            Specialists =
+            Tasks =
             [
-                new SpecialistTask
+                new AgentTask
                 {
-                    SpecialistId = "api_specialist",
-                    Name = "API Specialist",
+                    AgentId = "api_specialist",
+                    Name = "API Documentation",
                     Focus = "Document public API",
                     TargetSections = ["public-api"],
-
-                    Prompts =
+                    Priority = 1,
+                    Instructions =
                     [
-                        new SpecialistPrompt
+                        new TaskInstruction
                         {
-                            Id = "api-1",
                             Instruction = "Document the main public interfaces",
                             ExpectedOutput = "API documentation",
                             MaxTokens = 2000,
-                            RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
+                            RequiredFiles = new RequiredFiles { Destructured = mainAssemblies }
                         }
-                    ],
-                    Priority = 1
+                    ]
                 }
             ],
             OutputSections =

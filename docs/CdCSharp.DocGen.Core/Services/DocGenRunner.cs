@@ -68,21 +68,12 @@ public class DocGenRunner
                 plan,
                 analysis.Destructured);
 
-            List<SpecialistResult> specialistResults = results.Select(r => new SpecialistResult
-            {
-                SpecialistId = r.AgentId,
-                PromptId = r.TaskId,
-                Content = r.Content,
-                TargetSections = r.TargetSections,
-                ExecutedAt = r.ExecutedAt
-            }).ToList();
-
             GenerationContext context = new()
             {
                 Structure = analysis.Structure,
                 Destructured = analysis.Destructured,
                 Plan = plan,
-                Results = specialistResults
+                Results = results
             };
 
             string humanDoc = _humanComposer.Compose(context);
