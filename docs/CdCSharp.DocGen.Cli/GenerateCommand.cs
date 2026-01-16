@@ -13,17 +13,11 @@ public class GenerateCommand
     public static async Task<int> RunAsync(string[] args)
     {
         GenerateOptions options = ParseArgs(args);
-        options.ApiKey = "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";
+
         if (options.ShowHelp)
         {
             PrintHelp();
             return 0;
-        }
-
-        if (string.IsNullOrEmpty(options.ApiKey))
-        {
-            Console.WriteLine("Error: API key required. Use --api-key or set GROQ_API_KEY environment variable.");
-            return 1;
         }
 
         if (!Directory.Exists(options.ProjectPath))
@@ -59,7 +53,18 @@ public class GenerateCommand
             ? new CacheManager(options.ProjectPath, cacheOptions, logger)
             : null;
 
-        using GroqClient ai = new(options.ApiKey, logger, trace: options.Trace);
+        // CAMBIO PRINCIPAL: Usar LMStudioClient en lugar de GroqClient
+        using IAiClient ai = options.UseLMStudio
+            ? new LMStudioClient(
+                baseUrl: options.LMStudioUrl,
+                logger: logger,
+                model: options.Model,
+                trace: options.Trace)
+            : new GroqClient(
+                apiKey: options.ApiKey,
+                logger: logger,
+                model: options.Model,
+                trace: options.Trace);
 
         try
         {
@@ -148,10 +153,13 @@ public class GenerateCommand
             ProjectPath = Directory.GetCurrentDirectory(),
             OutputPath = "docs",
             ApiKey = Environment.GetEnvironmentVariable("GROQ_API_KEY") ?? string.Empty,
+            LMStudioUrl = Environment.GetEnvironmentVariable("LMSTUDIO_URL") ?? "http://localhost:1234/v1/",
+            Model = "local-model",
             Verbose = false,
             Trace = false,
             EnableAnalysisCache = true,
-            EnableQueryCache = true
+            EnableQueryCache = true,
+            UseLMStudio = false
         };
 
         for (int i = 0; i < args.Length; i++)
@@ -169,6 +177,16 @@ public class GenerateCommand
                     break;
                 case "-k" or "--api-key":
                     options.ApiKey = GetNextArg(args, ref i);
+                    break;
+                case "--lmstudio":
+                    options.UseLMStudio = true;
+                    break;
+                case "--lmstudio-url":
+                    options.LMStudioUrl = GetNextArg(args, ref i);
+                    options.UseLMStudio = true;
+                    break;
+                case "-m" or "--model":
+                    options.Model = GetNextArg(args, ref i);
                     break;
                 case "-v" or "--verbose":
                     options.Verbose = true;
@@ -207,24 +225,28 @@ public class GenerateCommand
         Console.WriteLine("Usage: docgen generate [options]");
         Console.WriteLine();
         Console.WriteLine("Options:");
-        Console.WriteLine("  -p, --project <path>     Project directory (default: current)");
-        Console.WriteLine("  -o, --output <path>      Output directory (default: docs)");
-        Console.WriteLine("  -k, --api-key <key>      Groq API key (or set GROQ_API_KEY)");
-        Console.WriteLine("  -v, --verbose            Verbose output");
-        Console.WriteLine("  --trace                  Trace mode (very detailed logging including prompts)");
-        Console.WriteLine("  --no-cache               Disable all caching");
-        Console.WriteLine("  --no-analysis-cache      Disable analysis cache only");
-        Console.WriteLine("  --no-query-cache         Disable query cache only");
-        Console.WriteLine("  -h, --help               Show this help");
+        Console.WriteLine("  -p, --project <path>       Project directory (default: current)");
+        Console.WriteLine("  -o, --output <path>        Output directory (default: docs)");
+        Console.WriteLine("  -k, --api-key <key>        Groq API key (or set GROQ_API_KEY)");
+        Console.WriteLine("  --lmstudio                 Use LM Studio instead of Groq");
+        Console.WriteLine("  --lmstudio-url <url>       LM Studio URL (default: http://localhost:1234/v1/)");
+        Console.WriteLine("  -m, --model <name>         Model name to use");
+        Console.WriteLine("  -v, --verbose              Verbose output");
+        Console.WriteLine("  --trace                    Trace mode (very detailed logging including prompts)");
+        Console.WriteLine("  --no-cache                 Disable all caching");
+        Console.WriteLine("  --no-analysis-cache        Disable analysis cache only");
+        Console.WriteLine("  --no-query-cache           Disable query cache only");
+        Console.WriteLine("  -h, --help                 Show this help");
+        Console.WriteLine();
+        Console.WriteLine("LM Studio Usage:");
+        Console.WriteLine("  1. Start LM Studio and load a model");
+        Console.WriteLine("  2. Go to Developer tab and start server");
+        Console.WriteLine("  3. Run: docgen generate --lmstudio");
         Console.WriteLine();
         Console.WriteLine("Output:");
-        Console.WriteLine("  docs/preanalysis/        JSON preanalysis files");
-        Console.WriteLine("  docs/docs-human.md       Human-readable documentation");
-        Console.WriteLine("  docs/docs-llm.txt        LLM-optimized documentation");
-        Console.WriteLine();
-        Console.WriteLine("Trace mode:");
-        Console.WriteLine("  When enabled, logs all AI prompts sent and responses received");
-        Console.WriteLine("  Useful for debugging and understanding the generation process");
+        Console.WriteLine("  docs/preanalysis/          JSON preanalysis files");
+        Console.WriteLine("  docs/docs-human.md         Human-readable documentation");
+        Console.WriteLine("  docs/docs-llm.txt          LLM-optimized documentation");
     }
 }
 
@@ -233,9 +255,12 @@ internal class GenerateOptions
     public string ProjectPath { get; set; } = string.Empty;
     public string OutputPath { get; set; } = string.Empty;
     public string ApiKey { get; set; } = string.Empty;
+    public string LMStudioUrl { get; set; } = string.Empty;
+    public string Model { get; set; } = string.Empty;
     public bool Verbose { get; set; }
     public bool Trace { get; set; }
     public bool EnableAnalysisCache { get; set; }
     public bool EnableQueryCache { get; set; }
     public bool ShowHelp { get; set; }
+    public bool UseLMStudio { get; set; }
 }
