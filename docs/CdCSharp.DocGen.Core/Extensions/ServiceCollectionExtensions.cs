@@ -1,4 +1,6 @@
-﻿using CdCSharp.DocGen.Core.Abstractions.Agents;
+﻿// Extensions/ServiceCollectionExtensions.cs - Añadir registro del compresor
+
+using CdCSharp.DocGen.Core.Abstractions.Agents;
 using CdCSharp.DocGen.Core.Abstractions.AI;
 using CdCSharp.DocGen.Core.Abstractions.Analysis;
 using CdCSharp.DocGen.Core.Abstractions.Cache;
@@ -13,6 +15,7 @@ using CdCSharp.DocGen.Core.Infrastructure;
 using CdCSharp.DocGen.Core.Models.Options;
 using CdCSharp.DocGen.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace CdCSharp.DocGen.Core.Extensions;
 
@@ -26,16 +29,18 @@ public static class ServiceCollectionExtensions
         configure(options);
 
         services.Configure<DocGenOptions>(opt =>
-        {
-            opt.ProjectPath = options.ProjectPath;
-            opt.OutputPath = options.OutputPath;
-            opt.Ai = options.Ai;
-            opt.Cache = options.Cache;
-            opt.PromptTracer = options.PromptTracer;
-            opt.Conversation = options.Conversation;
-        });
+    {
+        opt.ProjectPath = options.ProjectPath;
+        opt.OutputPath = options.OutputPath;
+        opt.Ai = options.Ai;
+        opt.Cache = options.Cache;
+        opt.PromptTracer = options.PromptTracer;
+        opt.Conversation = options.Conversation;
+    });
 
         // Infrastructure
+        services.AddSingleton<IValidateOptions<DocGenOptions>, DocGenOptionsValidator>();
+
         services.AddSingleton<IIgnoreFilter, IgnoreFilter>();
         services.AddSingleton<IPromptTracer, PromptTracer>();
 
@@ -51,6 +56,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IAiClientFactory, AiClientFactory>();
         services.AddScoped<IAiClient>(sp =>
             sp.GetRequiredService<IAiClientFactory>().Create());
+        services.AddScoped<IConversationCompressor, ConversationCompressor>();
 
         // Cache
         if (options.Cache.Enabled)
@@ -60,8 +66,7 @@ public static class ServiceCollectionExtensions
 
         // Agents
         services.AddSingleton<IAgentRegistry, AgentRegistry>();
-        services.AddScoped<AgentFactory>();
-        services.AddScoped<IAgentFactory>(sp => sp.GetRequiredService<AgentFactory>());
+        services.AddScoped<IAgentFactory, AgentFactory>();
         services.AddScoped<IExpertiseContextBuilder, ExpertiseContextBuilder>();
         services.AddScoped<IOrchestrator, Orchestrator>();
 

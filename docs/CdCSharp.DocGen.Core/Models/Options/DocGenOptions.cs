@@ -39,7 +39,6 @@ public record PromptTracerOptions
 }
 public record ConversationOptions
 {
-    public int MaxTotalTokens { get; init; } = 8000;
     public int SlidingWindowSize { get; init; } = 6;
     public int CompressionThreshold { get; init; } = 10;
 }

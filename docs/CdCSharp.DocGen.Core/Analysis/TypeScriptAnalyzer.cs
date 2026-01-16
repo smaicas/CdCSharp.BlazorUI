@@ -85,8 +85,8 @@ public partial class TypeScriptAnalyzer : ITypeScriptAnalyzer
             exports.Add(new TsExport
             {
                 Kind = TsExportKind.Interface,
-                Name = match.Groups[2].Value,
-                IsDefault = match.Groups[1].Success
+                Name = match.Groups[1].Value,
+                IsDefault = false
             });
         }
 

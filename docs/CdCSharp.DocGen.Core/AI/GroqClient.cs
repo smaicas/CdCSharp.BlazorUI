@@ -1,5 +1,7 @@
-﻿using CdCSharp.DocGen.Core.Abstractions.AI;
+﻿// AI/GroqClient.cs
+using CdCSharp.DocGen.Core.Abstractions.AI;
 using CdCSharp.DocGen.Core.Abstractions.Infrastructure;
+using CdCSharp.DocGen.Core.Models.AI;
 using Microsoft.Extensions.Logging;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -12,6 +14,7 @@ public class GroqClient : IAiClient
     private readonly HttpClient _http;
     private readonly ILogger<GroqClient> _logger;
     private readonly IPromptTracer _tracer;
+    private readonly RetryPolicy _retryPolicy;
     private readonly string _model;
     private readonly SemaphoreSlim _rateLimiter;
     private int _requestCounter;
@@ -36,12 +39,13 @@ public class GroqClient : IAiClient
         _tracer = tracer;
         _model = model;
         _rateLimiter = new SemaphoreSlim(1, 1);
+        _retryPolicy = new RetryPolicy(logger);
     }
 
-    public Task<string> SendAsync(string prompt, int maxTokens = 2000, double temperature = 0.3)
+    public async Task<string> SendAsync(string prompt, int maxTokens = 2000, double temperature = 0.3)
     {
-        List<ChatMessage> messages = [new("user", prompt)];
-        return SendMessagesAsync(messages, maxTokens, temperature);
+        AiResponse response = await SendWithResponseAsync(prompt, maxTokens, temperature);
+        return response.Content;
     }
 
     public async Task<string> SendMessagesAsync(
@@ -49,101 +53,122 @@ public class GroqClient : IAiClient
         int maxTokens = 2000,
         double temperature = 0.3)
     {
-        await _rateLimiter.WaitAsync();
+        AiResponse response = await SendMessagesWithResponseAsync(messages, maxTokens, temperature);
+        return response.Content;
+    }
 
-        int requestId = Interlocked.Increment(ref _requestCounter);
-        string agentId = $"Groq-{requestId}";
-        string traceId = string.Empty;
+    public Task<AiResponse> SendWithResponseAsync(string prompt, int maxTokens = 2000, double temperature = 0.3)
+    {
+        List<ChatMessage> messages = [new("user", prompt)];
+        return SendMessagesWithResponseAsync(messages, maxTokens, temperature);
+    }
 
-        try
+    public async Task<AiResponse> SendMessagesWithResponseAsync(
+        IReadOnlyList<ChatMessage> messages,
+        int maxTokens = 2000,
+        double temperature = 0.3)
+    {
+        return await _retryPolicy.ExecuteAsync(async () =>
         {
-            _logger.LogDebug("Preparing Groq request #{RequestId}, Model: {Model}, Messages: {Count}, MaxTokens: {MaxTokens}",
-                requestId, _model, messages.Count, maxTokens);
+            await _rateLimiter.WaitAsync();
 
-            string promptSummary = string.Join("\n", messages.Select(m =>
-                $"[{m.Role}]: {Truncate(m.Content, 200)}"));
+            int requestId = Interlocked.Increment(ref _requestCounter);
+            string agentId = $"Groq-{requestId}";
+            string traceId = string.Empty;
 
-            // ✅ Traza ANTES de enviar
-            traceId = await _tracer.TracePromptStartAsync(agentId, promptSummary);
-
-            await Task.Delay(MinDelayMs);
-
-            GroqRequest request = new()
+            try
             {
-                Messages = messages.Select(m => new GroqMessage(m.Role, m.Content)).ToArray(),
-                Model = _model,
-                MaxTokens = maxTokens,
-                Temperature = temperature
-            };
+                _logger.LogDebug("Preparing Groq request #{RequestId}, Model: {Model}, Messages: {Count}, MaxTokens: {MaxTokens}",
+                    requestId, _model, messages.Count, maxTokens);
 
-            DateTime startTime = DateTime.UtcNow;
-            HttpResponseMessage response = await _http.PostAsJsonAsync("chat/completions", request);
-            TimeSpan elapsed = DateTime.UtcNow - startTime;
+                string promptSummary = string.Join("\n", messages.Select(m =>
+                    $"[{m.Role}]: {Truncate(m.Content, 200)}"));
 
-            _logger.LogDebug("Groq response received in {Elapsed:F2}s, Status: {StatusCode}",
-                elapsed.TotalSeconds, response.StatusCode);
+                traceId = await _tracer.TracePromptStartAsync(agentId, promptSummary);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                string error = await response.Content.ReadAsStringAsync();
+                await Task.Delay(MinDelayMs);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                GroqRequest request = new()
                 {
-                    _logger.LogWarning("Groq rate limit hit, waiting 60s...");
+                    Messages = messages.Select(m => new GroqMessage(m.Role, m.Content)).ToArray(),
+                    Model = _model,
+                    MaxTokens = maxTokens,
+                    Temperature = temperature
+                };
 
-                    // ✅ Traza el fallo
-                    await _tracer.TracePromptFailureAsync(traceId,
-                        new Exception($"Rate limit: {error}"));
+                DateTime startTime = DateTime.UtcNow;
+                HttpResponseMessage response = await _http.PostAsJsonAsync("chat/completions", request);
+                TimeSpan elapsed = DateTime.UtcNow - startTime;
 
-                    await Task.Delay(60000);
-                    return string.Empty;
+                _logger.LogDebug("Groq response received in {Elapsed:F2}s, Status: {StatusCode}",
+                    elapsed.TotalSeconds, response.StatusCode);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    string error = await response.Content.ReadAsStringAsync();
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                    {
+                        await _tracer.TracePromptFailureAsync(traceId, new Exception($"Rate limit: {error}"));
+                        return AiResponse.Fail(AiErrorType.RateLimit, error);
+                    }
+
+                    await _tracer.TracePromptFailureAsync(traceId, new Exception($"HTTP {response.StatusCode}: {error}"));
+                    return AiResponse.Fail(AiErrorType.InvalidResponse, $"HTTP {response.StatusCode}: {error}");
                 }
 
-                _logger.LogWarning("Groq API error ({StatusCode}): {Error}", response.StatusCode, error);
+                GroqResponse? result = await response.Content.ReadFromJsonAsync<GroqResponse>();
+                string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
 
-                // ✅ Traza el error
-                await _tracer.TracePromptFailureAsync(traceId,
-                    new Exception($"HTTP {response.StatusCode}: {error}"));
+                await _tracer.TracePromptCompleteAsync(traceId, content);
 
-                return string.Empty;
+                return new AiResponse
+                {
+                    Success = true,
+                    Content = content,
+                    Metrics = new AiMetrics
+                    {
+                        EstimatedInputTokens = messages.Sum(m => m.Content.Length) / 4,
+                        EstimatedOutputTokens = content.Length / 4,
+                        LatencySeconds = elapsed.TotalSeconds
+                    }
+                };
             }
-
-            GroqResponse? result = await response.Content.ReadFromJsonAsync<GroqResponse>();
-            string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
-
-            // ✅ Completa la traza con la respuesta
-            await _tracer.TracePromptCompleteAsync(traceId, content);
-
-            return content;
-        }
-        catch (TaskCanceledException ex)
-        {
-            _logger.LogWarning("Groq API timeout");
-            await _tracer.TracePromptFailureAsync(traceId, ex);
-            return string.Empty;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Groq API failed");
-            await _tracer.TracePromptFailureAsync(traceId, ex);
-            return string.Empty;
-        }
-        finally
-        {
-            _rateLimiter.Release();
-        }
+            catch (TaskCanceledException ex)
+            {
+                _logger.LogWarning("Groq API timeout");
+                await _tracer.TracePromptFailureAsync(traceId, ex);
+                return AiResponse.Fail(AiErrorType.Timeout, "Request timed out");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogWarning(ex, "Groq API connection error");
+                await _tracer.TracePromptFailureAsync(traceId, ex);
+                return AiResponse.Fail(AiErrorType.ConnectionError, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Groq API failed");
+                await _tracer.TracePromptFailureAsync(traceId, ex);
+                return AiResponse.Fail(AiErrorType.Unknown, ex.Message);
+            }
+            finally
+            {
+                _rateLimiter.Release();
+            }
+        });
     }
 
     public async Task<T?> SendAsync<T>(string prompt, int maxTokens = 2000, double temperature = 0.3) where T : class
     {
-        string response = await SendAsync(prompt, maxTokens, temperature);
+        AiResponse response = await SendWithResponseAsync(prompt, maxTokens, temperature);
 
-        if (string.IsNullOrWhiteSpace(response))
+        if (!response.Success || string.IsNullOrWhiteSpace(response.Content))
             return null;
 
         try
         {
-            string json = ExtractJson(response);
+            string json = ExtractJson(response.Content);
             return JsonSerializer.Deserialize<T>(json);
         }
         catch (Exception ex)

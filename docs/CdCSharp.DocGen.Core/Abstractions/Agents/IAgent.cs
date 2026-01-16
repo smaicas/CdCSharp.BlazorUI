@@ -1,4 +1,5 @@
-﻿using CdCSharp.DocGen.Core.Models.Agents;
+﻿// Abstractions/Agents/IAgent.cs
+using CdCSharp.DocGen.Core.Models.Agents;
 
 namespace CdCSharp.DocGen.Core.Abstractions.Agents;
 
@@ -11,6 +12,7 @@ public interface IAgent
 
     void LoadExpertiseContext(string context);
     Task<string> ExecuteAsync(string instruction, int maxTokens = 2000);
+    Task<string> ExecuteAsync(string instruction, int maxTokens, bool requiresMemory);
     Task<AgentQueryResult> QueryAsync(AgentQuery query);
     void ClearConversation();
 }

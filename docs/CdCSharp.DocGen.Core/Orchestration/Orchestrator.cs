@@ -1,7 +1,9 @@
 ﻿using CdCSharp.DocGen.Core.Abstractions.Agents;
 using CdCSharp.DocGen.Core.Abstractions.AI;
 using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Agents.Exceptions;
 using CdCSharp.DocGen.Core.Models.Agents;
+using CdCSharp.DocGen.Core.Models.AI;
 using CdCSharp.DocGen.Core.Models.Analysis;
 using CdCSharp.DocGen.Core.Models.Options;
 using CdCSharp.DocGen.Core.Models.Orchestration;
@@ -26,7 +28,6 @@ public partial class Orchestrator : IOrchestrator
 
     private readonly List<AgentMessage> _conversationHistory = [];
     private readonly ConcurrentDictionary<string, IAgent> _activeAgents = new();
-    private string? _compressionSummary;
 
     private ProjectStructure? _currentStructure;
     private Dictionary<string, DestructuredAssembly>? _currentDestructured;
@@ -35,13 +36,13 @@ public partial class Orchestrator : IOrchestrator
     public IReadOnlyDictionary<string, IAgent> ActiveAgents => _activeAgents;
 
     public Orchestrator(
-        IAiClient aiClient,
-        IAgentRegistry registry,
-        AgentFactory agentFactory,
-        IExpertiseContextBuilder contextBuilder,
-        IPlainTextFormatter formatter,
-        IOptions<DocGenOptions> options,
-        ILogger<Orchestrator> logger)
+    IAiClient aiClient,
+    IAgentRegistry registry,
+    IAgentFactory agentFactory,  // Cambiar de AgentFactory a IAgentFactory
+    IExpertiseContextBuilder contextBuilder,
+    IPlainTextFormatter formatter,
+    IOptions<DocGenOptions> options,
+    ILogger<Orchestrator> logger)
     {
         _aiClient = aiClient;
         _registry = registry;
@@ -51,7 +52,7 @@ public partial class Orchestrator : IOrchestrator
         _logger = logger;
         _conversationOptions = options.Value.Conversation;
 
-        agentFactory.SetQueryHandler(HandleAgentQueryAsync);
+        _agentFactory.SetQueryHandler(HandleAgentQueryAsync);
 
         _conversationHistory.Add(new AgentMessage
         {
@@ -109,8 +110,8 @@ public partial class Orchestrator : IOrchestrator
     }
 
     public async Task<List<AgentResult>> ExecutePlanAsync(
-        OrchestrationPlan plan,
-        Dictionary<string, DestructuredAssembly> destructured)
+    OrchestrationPlan plan,
+    Dictionary<string, DestructuredAssembly> destructured)
     {
         _currentDestructured = destructured;
         List<AgentResult> results = [];
@@ -124,22 +125,26 @@ public partial class Orchestrator : IOrchestrator
             _logger.LogInformation("Executing: {Name} ({Current}/{Total})",
                 task.Name, taskNumber, plan.Tasks.Count);
 
-            IAgent agent = await GetOrCreateAgentAsync(task.AgentId);
+            IAgent agent = await GetOrCreateAgentAsync(task.AgentId, taskContext: task);  // Pasar task
 
             string context = await BuildTaskContextAsync(task, plan.CriticalContext, destructured);
             agent.LoadExpertiseContext(context);
 
             foreach (TaskInstruction instruction in task.Instructions)
             {
-                _logger.LogDebug("Running instruction: {Id}", instruction.Id);
+                _logger.LogDebug("Running instruction: {Id} (memory: {Memory})",
+                    instruction.Id, instruction.RequiresMemory);
 
                 string prompt = $"""
-                    TASK: {instruction.Instruction}
-                    
-                    EXPECTED OUTPUT: {instruction.ExpectedOutput}
-                    """;
+                TASK: {instruction.Instruction}
+                
+                EXPECTED OUTPUT: {instruction.ExpectedOutput}
+                """;
 
-                string response = await agent.ExecuteAsync(prompt, instruction.MaxTokens);
+                string response = await agent.ExecuteAsync(
+                    prompt,
+                    instruction.MaxTokens,
+                    instruction.RequiresMemory);
 
                 if (!string.IsNullOrWhiteSpace(response))
                 {
@@ -202,7 +207,10 @@ public partial class Orchestrator : IOrchestrator
         return result;
     }
 
-    public async Task<IAgent> GetOrCreateAgentAsync(string agentId, AgentCreationRequest? creationRequest = null)
+    public async Task<IAgent> GetOrCreateAgentAsync(
+    string agentId,
+    AgentCreationRequest? creationRequest = null,
+    AgentTask? taskContext = null)
     {
         if (_activeAgents.TryGetValue(agentId, out IAgent? existing))
             return existing;
@@ -213,11 +221,28 @@ public partial class Orchestrator : IOrchestrator
         {
             definition = _agentFactory.BuildDefinition(creationRequest);
             _registry.Register(definition);
-            _logger.LogInformation("Created new agent: {Name} ({Id})", definition.Name, definition.Id);
+            _logger.LogInformation("Created new agent from request: {Name} ({Id})", definition.Name, definition.Id);
+        }
+
+        if (definition == null && taskContext != null)
+        {
+            _logger.LogWarning("Agent {AgentId} not found, inferring from task context", agentId);
+
+            creationRequest = await InferAgentFromTaskAsync(agentId, taskContext);
+
+            if (creationRequest != null)
+            {
+                definition = _agentFactory.BuildDefinition(creationRequest);
+                _registry.Register(definition);
+                _logger.LogInformation("Inferred and created agent: {Name} ({Id})", definition.Name, definition.Id);
+                RecordAgentCreation(definition.Id, definition.Name, creationRequest.Reason);
+            }
         }
 
         if (definition == null)
-            throw new AgentNotFoundException($"Agent not found: {agentId}");
+        {
+            throw new AgentNotFoundException(agentId);
+        }
 
         IAgent agent = _agentFactory.Create(definition);
 
@@ -230,11 +255,119 @@ public partial class Orchestrator : IOrchestrator
 
             agent.LoadExpertiseContext(context);
         }
+        else
+        {
+            _logger.LogWarning("Agent {Id} created without expertise context - structure not yet loaded", agentId);
+        }
 
         _activeAgents[agentId] = agent;
         _logger.LogInformation("Agent activated: {Name} ({Id})", definition.Name, definition.Id);
 
         return agent;
+    }
+
+    private async Task<AgentCreationRequest?> InferAgentFromTaskAsync(string agentId, AgentTask task)
+    {
+        string filesContext = string.Join("\n", task.Instructions
+            .SelectMany(i => i.RequiredFiles.FullContent.Concat(i.RequiredFiles.Destructured))
+            .Distinct()
+            .Take(10)
+            .Select(f => $"  - {f}"));
+
+        string instructionsContext = string.Join("\n", task.Instructions
+            .Take(3)
+            .Select(i => $"  - {i.Instruction}"));
+
+        string prompt = $$"""
+        An agent with ID "{agentId}" was referenced but not defined.
+        Based on the task context below, generate a suitable agent definition.
+
+        TASK CONTEXT:
+        - Task Name: {{task.Name}}
+        - Focus: {{task.Focus}}
+        - Target Sections: {string.Join(", ", task.TargetSections)}
+        
+        INSTRUCTIONS THIS AGENT SHOULD HANDLE:
+        {instructionsContext}
+        
+        FILES THIS AGENT NEEDS TO WORK WITH:
+        {filesContext}
+
+        Respond with ONLY a JSON object (no markdown, no explanation):
+        {
+          "name": "Human-readable agent name",
+          "description": "Clear description of what this agent documents",
+          "expertise": {
+            "assemblies": ["relevant assembly names"],
+            "filePatterns": ["*.pattern.cs"],
+            "topics": ["topic1", "topic2"]
+          },
+          "reason": "Why this agent was created"
+        }
+        """;
+
+        _logger.LogDebug("Inferring agent definition for {AgentId}", agentId);
+
+        try
+        {
+            AgentCreationRequest? request = await _aiClient.SendAsync<AgentCreationRequest>(prompt, maxTokens: 500);
+
+            if (request != null)
+            {
+                _logger.LogDebug("Inferred agent: {Name} - {Description}", request.Name, request.Description);
+                return request;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to infer agent definition, using fallback");
+        }
+
+        // Fallback: crear agente básico basado en el ID y nombre de tarea
+        return new AgentCreationRequest
+        {
+            Name = GenerateAgentNameFromId(agentId),
+            Description = $"Specialist for: {task.Name}",
+            Expertise = new AgentExpertise
+            {
+                Topics = ExtractTopicsFromTask(agentId, task),
+                Assemblies = task.Instructions
+                    .SelectMany(i => i.RequiredFiles.Destructured)
+                    .Distinct()
+                    .ToList()
+            },
+            Reason = $"Auto-inferred from task: {task.Name}"
+        };
+    }
+
+    private static string GenerateAgentNameFromId(string agentId)
+    {
+        string[] parts = agentId.Split('_');
+
+        List<string> formattedParts = parts.Select(p =>
+            p.Length <= 3
+                ? p.ToUpperInvariant()
+                : char.ToUpperInvariant(p[0]) + p[1..].ToLowerInvariant()
+        ).ToList();
+
+        return string.Join(" ", formattedParts);
+    }
+
+    private static List<string> ExtractTopicsFromTask(string agentId, AgentTask task)
+    {
+        List<string> topics = [];
+
+        // Del ID: "cli_specialist" -> ["cli"]
+        string mainTopic = agentId.Replace("_specialist", "").Replace("_", " ");
+        topics.Add(mainTopic);
+
+        // Del nombre de tarea: extraer palabras clave
+        string[] keywords = ["api", "cli", "ui", "data", "service", "component", "config", "auth"];
+        string taskLower = task.Name.ToLowerInvariant();
+
+        topics.AddRange(keywords.Where(k => taskLower.Contains(k)));
+
+        return topics.Distinct().ToList();
     }
 
     private async Task<IAgent> CreateAgentForExpertiseAsync(string expertise)
@@ -273,33 +406,57 @@ public partial class Orchestrator : IOrchestrator
     private string BuildOrchestratorSystemPrompt()
     {
         return $$"""
-            You are the Documentation Orchestrator for .NET projects.
-            
-            Your responsibilities:
-            1. Analyze project structure and decide which agents are needed
-            2. Create documentation plans with specific tasks
-            3. Create new agents when needed for specific code areas
-            4. Coordinate communication between agents
-            
-            AVAILABLE AGENTS:
-            {{_registry.GetAgentListForPrompt()}}
-            
-            TO CREATE A NEW AGENT, include in your response:
-            [CREATE_AGENT]
-            {
-              "name": "Agent Name",
-              "description": "What this agent does",
-              "expertise": {
-                "assemblies": ["AssemblyName"],
-                "filePatterns": ["*.cs"],
-                "topics": ["topic1", "topic2"]
-              },
-              "reason": "Why this agent is needed"
-            }
-            [/CREATE_AGENT]
-            
-            When creating a plan, respond with valid JSON following the OrchestrationPlan schema.
-            """;
+        You are the Documentation Orchestrator for .NET projects. Your role is to analyze codebases and create comprehensive documentation plans.
+
+        ## YOUR RESPONSIBILITIES
+        1. Analyze project structure and identify documentation needs
+        2. Select appropriate specialist agents for each documentation area
+        3. Create new agents when existing ones don't cover specific expertise
+        4. Design efficient task sequences that respect token limits
+        5. Decide memory requirements for each instruction
+
+        ## AVAILABLE SPECIALIST AGENTS
+        {{_registry.GetAgentListForPrompt()}}
+
+        ## AGENT CREATION
+        When you identify code areas not covered by existing agents, create new specialists:
+
+        [CREATE_AGENT]
+        {
+          "name": "Descriptive Agent Name",
+          "description": "Clear description of expertise and responsibilities",
+          "expertise": {
+            "assemblies": ["TargetAssembly"],
+            "filePatterns": ["*.specific.cs", "*Pattern*.cs"],
+            "namespaces": ["Namespace.To.Focus"],
+            "topics": ["specific-topic", "related-area"]
+          },
+          "reason": "Justification for why this agent is needed"
+        }
+        [/CREATE_AGENT]
+
+        ## MEMORY MODE GUIDELINES
+        For each TaskInstruction, you must decide `requiresMemory`:
+
+        **Use requiresMemory: FALSE when:**
+        - Documenting a single file, type, or isolated component
+        - The instruction is self-contained and doesn't reference previous outputs
+        - Simple enumeration tasks (list all interfaces, document all properties)
+        - Tasks that can run in parallel
+
+        **Use requiresMemory: TRUE when:**
+        - Instructions build upon each other sequentially
+        - Later instructions reference or expand on earlier results
+        - Creating cohesive narratives across multiple aspects
+        - When "context from above" or "as mentioned" would be needed
+
+        ## OUTPUT QUALITY PRINCIPLES
+        - Prefer many small, focused tasks over few large ones
+        - Each instruction should produce 500-2000 tokens of output
+        - Group related documentation into logical sections
+        - Include full file paths for key files agents need to see
+        - Balance thoroughness with token efficiency
+        """;
     }
 
     private string BuildProjectContextMessage(
@@ -337,55 +494,71 @@ public partial class Orchestrator : IOrchestrator
         return sb.ToString();
     }
 
-    private string BuildPlanRequestMessage()
-    {
-        return """
-            Create a documentation plan for this project.
-            
-            Consider:
-            1. Which existing agents should be used?
-            2. Are there code areas that need NEW agents?
-            3. How should tasks be divided to respect token limits?
-            4. Which files need to be included for each agent?
-            
-            Respond with a valid JSON OrchestrationPlan:
+    private string BuildPlanRequestMessage() => """
+        Analyze the project structure provided and create a comprehensive documentation plan.
+
+        ## ANALYSIS STEPS
+        1. **Identify Project Type**: What kind of .NET project is this? (Library, API, Blazor, etc.)
+        2. **Find Key Components**: What are the main architectural pieces?
+        3. **Assess Complexity**: How many specialist agents are needed?
+        4. **Plan Sections**: What documentation sections will best serve users?
+
+        ## TASK DESIGN PRINCIPLES
+        - Each task should focus on ONE coherent area
+        - Instructions within a task should be ordered logically
+        - Estimate token usage: ~4 chars per token
+        - Include SPECIFIC file paths the agent needs
+
+        ## REQUIRED OUTPUT FORMAT
+        Respond with valid JSON matching this schema:
+
+        {
+          "projectType": "Detected project type with brief justification",
+          "criticalContext": "Essential information ALL agents need (architecture decisions, naming conventions, key patterns)",
+          "tasks": [
             {
-              "projectType": "detected type",
-              "criticalContext": "important project-wide info",
-              "tasks": [
+              "agentId": "existing_or_new_agent_id",
+              "name": "Human-readable task name",
+              "focus": "Specific area this task covers",
+              "targetSections": ["section-id-1"],
+              "priority": 1,
+              "instructions": [
                 {
-                  "agentId": "existing_agent_id",
-                  "name": "Task Name",
-                  "focus": "specific focus",
-                  "targetSections": ["section-id"],
-                  "priority": 1,
-                  "instructions": [
-                    {
-                      "instruction": "what to do",
-                      "expectedOutput": "what to produce",
-                      "maxTokens": 2000,
-                      "requiredFiles": {
-                        "destructured": ["AssemblyName"],
-                        "fullContent": ["path/to/file.cs"]
-                      }
-                    }
-                  ]
+                  "instruction": "Precise instruction for the agent",
+                  "expectedOutput": "Description of expected documentation format and content",
+                  "maxTokens": 2000,
+                  "requiresMemory": false,
+                  "requiredFiles": {
+                    "destructured": ["AssemblyName"],
+                    "fullContent": ["exact/path/to/important/file.cs"]
+                  }
                 }
-              ],
-              "outputSections": [
-                {
-                  "id": "section-id",
-                  "title": "Section Title",
-                  "order": 1,
-                  "description": "what this section contains"
-                }
-              ],
-              "keyFiles": ["important/file.cs"]
+              ]
             }
-            
-            If you need to create new agents, include [CREATE_AGENT] blocks BEFORE the JSON.
-            """;
-    }
+          ],
+          "outputSections": [
+            {
+              "id": "unique-section-id",
+              "title": "Section Title for Documentation",
+              "order": 1,
+              "description": "What this section contains and why it matters"
+            }
+          ],
+          "keyFiles": ["path/to/critical/file.cs", "path/to/important/interface.cs"]
+        }
+
+        ## SECTION ORGANIZATION BEST PRACTICES
+        1. **Overview** (order: 1) - Project purpose, architecture summary
+        2. **Getting Started** (order: 2) - Installation, configuration, basic usage
+        3. **Public API** (order: 3) - Interfaces, services, contracts
+        4. **Components** (order: 4) - UI components if applicable
+        5. **Architecture** (order: 5) - Patterns, dependencies, design decisions
+        6. **Advanced Topics** (order: 6) - Extensions, customization, edge cases
+
+        If you need to create new agents, include [CREATE_AGENT] blocks BEFORE the JSON plan.
+
+        Now analyze the project and generate the plan:
+        """;
 
     private async Task ProcessAgentCreationRequests(string response)
     {

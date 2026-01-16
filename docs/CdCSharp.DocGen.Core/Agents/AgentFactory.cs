@@ -1,4 +1,5 @@
-﻿using CdCSharp.DocGen.Core.Abstractions.Agents;
+﻿// Agents/AgentFactory.cs
+using CdCSharp.DocGen.Core.Abstractions.Agents;
 using CdCSharp.DocGen.Core.Abstractions.AI;
 using CdCSharp.DocGen.Core.Models.Agents;
 using CdCSharp.DocGen.Core.Models.Options;
@@ -10,16 +11,19 @@ namespace CdCSharp.DocGen.Core.Agents;
 public class AgentFactory : IAgentFactory
 {
     private readonly IAiClient _aiClient;
+    private readonly IConversationCompressor _compressor;
     private readonly ILogger<Agent> _agentLogger;
     private readonly ConversationOptions _conversationOptions;
     private Func<AgentQuery, Task<AgentQueryResult>>? _queryHandler;
 
     public AgentFactory(
         IAiClient aiClient,
+        IConversationCompressor compressor,
         IOptions<DocGenOptions> options,
         ILogger<Agent> agentLogger)
     {
         _aiClient = aiClient;
+        _compressor = compressor;
         _agentLogger = agentLogger;
         _conversationOptions = options.Value.Conversation;
     }
@@ -34,7 +38,7 @@ public class AgentFactory : IAgentFactory
         if (_queryHandler == null)
             throw new InvalidOperationException("Query handler not set. Call SetQueryHandler first.");
 
-        return new Agent(definition, _aiClient, _queryHandler, _agentLogger, _conversationOptions);
+        return new Agent(definition, _aiClient, _compressor, _queryHandler, _agentLogger, _conversationOptions);
     }
 
     public AgentDefinition BuildDefinition(AgentCreationRequest request)

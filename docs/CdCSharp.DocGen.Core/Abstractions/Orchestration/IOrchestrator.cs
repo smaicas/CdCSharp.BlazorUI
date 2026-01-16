@@ -19,5 +19,8 @@ public interface IOrchestrator
 
     Task<AgentQueryResult> HandleAgentQueryAsync(AgentQuery query);
 
-    Task<IAgent> GetOrCreateAgentAsync(string agentId, AgentCreationRequest? creationRequest = null);
+    Task<IAgent> GetOrCreateAgentAsync(
+        string agentId,
+        AgentCreationRequest? creationRequest = null,
+        AgentTask? taskContext = null);
 }

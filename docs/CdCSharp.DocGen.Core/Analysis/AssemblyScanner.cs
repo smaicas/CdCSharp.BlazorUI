@@ -71,11 +71,7 @@ public class AssemblyScanner : IAssemblyScanner
             IsTestProject = isTestProject,
             References = references,
             Files = files,
-            Metrics = new AssemblyMetrics
-            {
-                CssFiles = files.Css.Count,
-                TsModules = files.TypeScript.Count
-            }
+            Metrics = new AssemblyMetrics()
         };
     }
 

@@ -2,6 +2,7 @@
 using CdCSharp.DocGen.Core.Abstractions.Analysis;
 using CdCSharp.DocGen.Core.Abstractions.Cache;
 using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Infrastructure;
 using CdCSharp.DocGen.Core.Models.Agents;
 using CdCSharp.DocGen.Core.Models.Analysis;
 using CdCSharp.DocGen.Core.Models.Generation;
@@ -48,25 +49,51 @@ public class DocGenRunner
             _logger.LogInformation("CdCSharp Documentation Generator");
             _logger.LogInformation(new string('=', 40));
 
+            ValidateOptions();
+
             if (_options.PromptTracer.Enabled)
             {
-                _logger.LogInformation("TRACE MODE ENABLED");
+                _logger.LogInformation("TRACE MODE ENABLED - Prompts will be saved to {Path}",
+    Path.Combine(_options.OutputPath, "trace"));
+            }
+            _logger.LogInformation("Analyzing project: {Path}", _options.ProjectPath);
+            AnalysisResult analysis = await _analyzer.AnalyzeAsync(_options.ProjectPath);
+
+            if (analysis.Structure.Assemblies.Count == 0)
+            {
+                _logger.LogError("No .NET projects found in {Path}", _options.ProjectPath);
+                return 1;
             }
 
-            AnalysisResult analysis = await _analyzer.AnalyzeAsync(_options.ProjectPath);
+            _logger.LogInformation("Found {Count} assemblies ({NonTest} non-test)",
+                analysis.Structure.Assemblies.Count,
+                analysis.Structure.Assemblies.Count(a => !a.IsTestProject));
 
             string outputPath = GetOutputPath();
             Directory.CreateDirectory(outputPath);
 
             await SavePreanalysisAsync(outputPath, analysis);
 
+            _logger.LogInformation("Creating documentation plan...");
             OrchestrationPlan plan = await _orchestrator.CreatePlanAsync(
                 analysis.Structure,
                 analysis.Destructured);
 
+            if (plan.Tasks.Count == 0)
+            {
+                _logger.LogWarning("No documentation tasks generated. Check orchestrator output.");
+                return 1;
+            }
+
+            _logger.LogInformation("Executing {Count} documentation tasks...", plan.Tasks.Count);
             List<AgentResult> results = await _orchestrator.ExecutePlanAsync(
                 plan,
                 analysis.Destructured);
+
+            if (results.Count == 0)
+            {
+                _logger.LogWarning("No documentation content generated. Check agent outputs.");
+            }
 
             GenerationContext context = new()
             {
@@ -76,27 +103,50 @@ public class DocGenRunner
                 Results = results
             };
 
+            _logger.LogInformation("Composing final documentation...");
+
             string humanDoc = _humanComposer.Compose(context);
             string humanPath = Path.Combine(outputPath, "docs-human.md");
             await File.WriteAllTextAsync(humanPath, humanDoc);
-            _logger.LogInformation("Generated: {Path}", humanPath);
+            _logger.LogInformation("Generated: {Path} ({Size} chars)", humanPath, humanDoc.Length);
 
             string llmDoc = await _llmComposer.ComposeAsync(context);
             string llmPath = Path.Combine(outputPath, "docs-llm.txt");
             await File.WriteAllTextAsync(llmPath, llmDoc);
-            _logger.LogInformation("Generated: {Path}", llmPath);
+            _logger.LogInformation("Generated: {Path} ({Size} chars, ~{Tokens} tokens)",
+                llmPath, llmDoc.Length, llmDoc.Length / 4);
 
             _cache.PrintStatistics();
 
             _logger.LogInformation("");
             _logger.LogInformation("Documentation generated successfully!");
+            _logger.LogInformation("  Human-readable: {Path}", humanPath);
+            _logger.LogInformation("  LLM-optimized:  {Path}", llmPath);
 
             return 0;
+        }
+        catch (OptionsValidationException ex)
+        {
+            _logger.LogError("Configuration error: {Message}", ex.Message);
+            return 2;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Documentation generation failed");
             return 1;
+        }
+    }
+
+    private void ValidateOptions()
+    {
+        DocGenOptionsValidator validator = new();
+        ValidateOptionsResult result = validator.Validate(null, _options);
+        if (result.Failed)
+        {
+            throw new OptionsValidationException(
+                nameof(DocGenOptions),
+                typeof(DocGenOptions),
+                result.Failures);
         }
     }
 

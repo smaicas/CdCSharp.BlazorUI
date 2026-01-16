@@ -369,6 +369,7 @@ CssBundle/
 bin/
 obj/
 .docgen/
+.theon/
 
 # Build outputs
 *.min.js

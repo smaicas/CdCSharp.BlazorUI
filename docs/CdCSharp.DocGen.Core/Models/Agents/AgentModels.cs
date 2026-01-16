@@ -87,6 +87,9 @@ public record TaskInstruction
 
     [JsonPropertyName("requiredFiles")]
     public RequiredFiles RequiredFiles { get; init; } = new();
+
+    [JsonPropertyName("requiresMemory")]
+    public bool RequiresMemory { get; init; } = false;
 }
 
 public record RequiredFiles
