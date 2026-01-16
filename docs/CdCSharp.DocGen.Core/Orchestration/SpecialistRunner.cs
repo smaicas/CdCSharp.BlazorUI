@@ -23,7 +23,7 @@ public class SpecialistRunner
         _ai = ai;
         _projectRoot = projectRoot;
         _cache = cache;
-        _formatter = new OptimizedFormatter();
+        _formatter = new PlainTextFormatter();
         _logger = logger ?? NullLogger.Instance;
     }
 

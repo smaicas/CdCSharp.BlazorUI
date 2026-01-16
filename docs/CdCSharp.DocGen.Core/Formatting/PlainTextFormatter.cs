@@ -1,9 +1,10 @@
 ﻿using CdCSharp.DocGen.Core.Models;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CdCSharp.DocGen.Core.Formatting;
 
-public class PlainTextFormatter : IProjectFormatter
+public partial class PlainTextFormatter : IProjectFormatter
 {
     private const int DefaultMemberLimit = 5;
 
@@ -199,8 +200,26 @@ public class PlainTextFormatter : IProjectFormatter
     {
         string kind = GetMemberKindShort(member.Kind);
         string attrs = member.Attributes.Count > 0 ? $"@{string.Join(",", member.Attributes)}" : "";
-        sb.Append($"{kind}:{member.Signature}{attrs}");
+
+        // Limpiar la signature removiendo los accessors de propiedades
+        string signature = member.Signature;
+        if (member.Kind == MemberKind.Property)
+        {
+            signature = CleanPropertySignature(signature);
+        }
+
+        sb.Append($"{kind}:{signature}{attrs}");
     }
+
+    private static string CleanPropertySignature(string signature)
+    {
+        // Remover patrones como { get; }, { get; set; }, { get; init; }, etc.
+        // También maneja espacios variables y versiones sin espacios
+        return PropertyAccessorsRegex().Replace(signature, "").Trim();
+    }
+
+    [GeneratedRegex(@"\s*\{\s*get;\s*(?:set;|init;)?\s*\}", RegexOptions.Compiled)]
+    private static partial Regex PropertyAccessorsRegex();
 
     private string GetMemberKindShort(MemberKind kind) => kind switch
     {
