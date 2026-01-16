@@ -1,5 +1,4 @@
 ﻿using CdCSharp.DocGen.Core.Cache;
-using CdCSharp.DocGen.Core.Formatting;
 using CdCSharp.DocGen.Core.Infrastructure;
 using CdCSharp.DocGen.Core.Models;
 using System.Text;

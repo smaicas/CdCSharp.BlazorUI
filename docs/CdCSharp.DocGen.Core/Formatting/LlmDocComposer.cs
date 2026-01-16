@@ -23,12 +23,18 @@ public class LlmDocComposer
 
         StringBuilder sb = new();
 
-        sb.AppendLine("=".PadRight(60, '='));
+        // Header
+        sb.AppendLine("=".PadRight(80, '='));
         sb.AppendLine($"PROJECT: {context.Structure.Solution}");
         sb.AppendLine($"TYPE: {context.Structure.GlobalSummary.ProjectType}");
-        sb.AppendLine("=".PadRight(60, '='));
+        sb.AppendLine("=".PadRight(80, '='));
         sb.AppendLine();
 
+        // Legend
+        sb.AppendLine(PlainTextFormatter.GetLegend());
+        sb.AppendLine();
+
+        // Critical context
         if (!string.IsNullOrWhiteSpace(context.CriticalContext))
         {
             sb.AppendLine("CRITICAL CONTEXT:");
@@ -36,28 +42,31 @@ public class LlmDocComposer
             sb.AppendLine();
         }
 
+        // Project structure
         sb.AppendLine(_formatter.FormatStructure(context.Structure));
         sb.AppendLine();
 
-        sb.AppendLine("-".PadRight(60, '-'));
-        sb.AppendLine("DETAILED STRUCTURE BY ASSEMBLY");
-        sb.AppendLine("-".PadRight(60, '-'));
+        // Detailed structure by assembly
+        sb.AppendLine("-".PadRight(80, '-'));
+        sb.AppendLine("DETAILED STRUCTURE");
+        sb.AppendLine("-".PadRight(80, '-'));
         sb.AppendLine();
 
         foreach ((string name, DestructuredAssembly assembly) in context.Destructured)
         {
+            // Skip test projects
             if (context.Structure.Assemblies.FirstOrDefault(a => a.Name == name)?.IsTestProject == true)
                 continue;
 
             sb.AppendLine(_formatter.FormatDestructured(assembly));
-            sb.AppendLine();
         }
 
+        // Key files (full content)
         if (context.Plan.KeyFiles.Count > 0)
         {
-            sb.AppendLine("-".PadRight(60, '-'));
+            sb.AppendLine("-".PadRight(80, '-'));
             sb.AppendLine("KEY FILES (FULL CONTENT)");
-            sb.AppendLine("-".PadRight(60, '-'));
+            sb.AppendLine("-".PadRight(80, '-'));
             sb.AppendLine();
 
             foreach (string filePath in context.Plan.KeyFiles)

@@ -369,6 +369,7 @@ CssBundle/
 
 bin/
 obj/
+.docgen/
 
 # Build outputs
 *.min.js

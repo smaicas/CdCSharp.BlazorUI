@@ -2,77 +2,91 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CdCSharp.DocGen.Core.Formatting;
-
-public partial class PlainTextFormatter : IProjectFormatter
+public interface IProjectFormatter
 {
-    private const int DefaultMemberLimit = 5;
+    string FormatStructure(ProjectStructure structure);
+    string FormatDestructured(DestructuredAssembly assembly);
+}
 
-    private readonly FormatterOptions _options;
+public interface ITypeFormatter<T>
+{
+    string Format(T data);
+    string GetLegend();
+}
 
-    public PlainTextFormatter(FormatterOptions? options = null)
+/// <summary>
+/// Optimized plain text formatter designed for LLM consumption
+/// Minimizes character count while maintaining readability
+/// </summary>
+public partial class PlainTextFormatter
+{
+    private readonly FormatterRegistry _registry = new();
+
+    public PlainTextFormatter()
     {
-        _options = options ?? new FormatterOptions();
+        _registry.Register(new CSharpTypeFormatter());
+        _registry.Register(new BlazorComponentFormatter());
+        _registry.Register(new TypeScriptFormatter());
+        _registry.Register(new CssFormatter());
     }
 
     public string FormatStructure(ProjectStructure structure)
     {
         StringBuilder sb = new();
 
-        AppendLegend(sb);
-        sb.AppendLine($"PRJ:{structure.Solution}");
-        sb.AppendLine($"TYP:{structure.GlobalSummary.ProjectType}");
+        // Compact header
+        sb.AppendLine($"SLN:{structure.Solution}|TYP:{structure.GlobalSummary.ProjectType}");
+
+        // Detected patterns (if any)
+        if (structure.GlobalSummary.DetectedPatterns.Count > 0)
+            sb.AppendLine($"PTN:{string.Join(",", structure.GlobalSummary.DetectedPatterns)}");
+
         sb.AppendLine();
 
-        sb.AppendLine("ASM:");
+        // Assemblies (non-test only)
         foreach (AssemblyInfo asm in structure.Assemblies.Where(a => !a.IsTestProject))
         {
-            sb.Append($"  {asm.Name}");
+            sb.AppendLine($"ASM:{asm.Name}|{asm.Path}");
 
-            sb.AppendLine();
-            sb.AppendLine($"    Path:{asm.Path}");
+            //// Summary counts
+            //List<string> counts = [];
+            //if (asm.Summary.Classes > 0) counts.Add($"C:{asm.Summary.Classes}");
+            //if (asm.Summary.Interfaces > 0) counts.Add($"I:{asm.Summary.Interfaces}");
+            //if (asm.Summary.Records > 0) counts.Add($"R:{asm.Summary.Records}");
+            //if (asm.Summary.Structs > 0) counts.Add($"S:{asm.Summary.Structs}");
+            //if (asm.Summary.Enums > 0) counts.Add($"E:{asm.Summary.Enums}");
+            //if (asm.Summary.Components > 0) counts.Add($"BC:{asm.Summary.Components}");
+            //if (asm.Summary.Generators > 0) counts.Add($"SG:{asm.Summary.Generators}");
+            //if (asm.Summary.TsModules > 0) counts.Add($"TS:{asm.Summary.TsModules}");
+            //if (asm.Summary.CssFiles > 0) counts.Add($"CSS:{asm.Summary.CssFiles}");
 
-            sb.Append($" C:{asm.Summary.Classes} I:{asm.Summary.Interfaces} R:{asm.Summary.Records}");
+            //if (counts.Count > 0)
+            //    sb.AppendLine($"  {string.Join("|", counts)}");
 
-            if (asm.Summary.Components > 0)
-                sb.Append($" BC:{asm.Summary.Components}");
-
-            if (asm.Summary.Generators > 0)
-                sb.Append($" SG:{asm.Summary.Generators}");
-
-            if (asm.Summary.TsModules > 0)
-                sb.Append($" TS:{asm.Summary.TsModules}");
-
-            if (asm.Summary.CssFiles > 0)
-                sb.Append($" CSS:{asm.Summary.CssFiles}({asm.Summary.CssVariables}v)");
-
-            sb.AppendLine();
-
+            // Key references (filtered)
             List<string> keyRefs = asm.References
-                    .Where(r => !r.StartsWith("System") && !r.StartsWith("Microsoft.Extensions"))
-                    .Take(10)
-                    .ToList();
+                .Where(r => !r.StartsWith("System") && !r.StartsWith("Microsoft.Extensions"))
+                .Take(5)
+                .ToList();
 
             if (keyRefs.Count > 0)
-                sb.AppendLine($"    REF:{string.Join(",", keyRefs)}");
+                sb.AppendLine($"  REF:{string.Join(",", keyRefs)}");
         }
 
-        if (structure.GlobalSummary.DetectedPatterns.Count > 0)
-        {
-            sb.AppendLine($"PTN:{string.Join(",", structure.GlobalSummary.DetectedPatterns)}");
-        }
-
+        // Global totals
         sb.AppendLine();
-        sb.Append($"TOT: ASM:{structure.GlobalSummary.TotalAssemblies}({structure.GlobalSummary.TotalTestProjects}t)");
-        sb.Append($" C:{structure.GlobalSummary.TotalClasses} I:{structure.GlobalSummary.TotalInterfaces} R:{structure.GlobalSummary.TotalRecords}");
-
-        if (structure.GlobalSummary.TotalComponents > 0)
-            sb.Append($" BC:{structure.GlobalSummary.TotalComponents}");
-
-        if (structure.GlobalSummary.TotalGenerators > 0)
-            sb.Append($" SG:{structure.GlobalSummary.TotalGenerators}");
-
+        sb.Append($"TOT:ASM:{structure.GlobalSummary.TotalAssemblies}");
+        if (structure.GlobalSummary.TotalTestProjects > 0)
+            sb.Append($"(TEST:{structure.GlobalSummary.TotalTestProjects})");
+        sb.Append($"TOT:C:{structure.GlobalSummary.TotalClasses}");
+        sb.Append($"TOT:I:{structure.GlobalSummary.TotalInterfaces}");
+        sb.Append($"TOT:R:{structure.GlobalSummary.TotalRecords}");
+        sb.Append($"TOT:BC:{structure.GlobalSummary.TotalComponents}");
+        sb.Append($"TOT:SG:{structure.GlobalSummary.TotalGenerators}");
+        sb.Append($"TOT:TS:{structure.GlobalSummary.TotalTsModules}");
+        sb.Append($"TOT:CSS:{structure.GlobalSummary.TotalCssFiles}");
         sb.AppendLine();
+
         return sb.ToString();
     }
 
@@ -80,109 +94,175 @@ public partial class PlainTextFormatter : IProjectFormatter
     {
         StringBuilder sb = new();
 
-        sb.AppendLine($"ASM:{assembly.Assembly}");
+        sb.AppendLine($"### {assembly.Assembly}");
         sb.AppendLine();
 
-        foreach (DestructuredNamespace ns in assembly.Namespaces)
-        {
-            sb.AppendLine($"NS {ns.Name}");
+        Try(sb, assembly.Namespaces);
+        Try(sb, assembly.Components);
+        Try(sb, assembly.TypeScript);
+        Try(sb, assembly.Css);
 
-            foreach (DestructuredType type in ns.Types)
-            {
-                FormatType(sb, type, 1);
-            }
+        return sb.ToString();
+    }
+
+    private void Try<T>(StringBuilder sb, T data)
+    {
+        if (_registry.TryFormat(data, out string? text))
+        {
+            sb.Append(text);
+            sb.AppendLine();
+        }
+    }
+
+    public static string GetLegend()
+    {
+        PlainTextFormatter f = new();
+        StringBuilder sb = new();
+
+        sb.AppendLine("=== FORMAT LEGEND ===");
+        foreach (string legend in f._registry.GetLegends())
+            sb.AppendLine(legend);
+        sb.AppendLine("=====================");
+
+        return sb.ToString();
+    }
+}
+
+/// <summary>
+/// Registry for type-specific formatters
+/// </summary>
+public sealed class FormatterRegistry
+{
+    private readonly Dictionary<Type, Entry> _entries = [];
+
+    private sealed class Entry
+    {
+        public required Func<object, string> Format;
+        public required Func<string> Legend;
+    }
+
+    public void Register<T>(ITypeFormatter<T> formatter)
+    {
+        _entries[typeof(T)] = new Entry
+        {
+            Format = o => o is T t ? formatter.Format(t) : string.Empty,
+            Legend = formatter.GetLegend
+        };
+    }
+
+    public bool TryFormat<T>(T data, out string result)
+    {
+        if (_entries.TryGetValue(typeof(T), out Entry? entry))
+        {
+            result = entry.Format(data!);
+            return true;
         }
 
-        if (assembly.Components.Count > 0)
-        {
-            sb.AppendLine("BC:");
-            foreach (DestructuredComponent comp in assembly.Components)
-            {
-                FormatComponent(sb, comp);
-            }
-        }
+        result = string.Empty;
+        return false;
+    }
 
-        if (assembly.TypeScript.Count > 0)
-        {
-            sb.AppendLine("TS:");
-            foreach (DestructuredTypeScript ts in assembly.TypeScript)
-            {
-                FormatTypeScript(sb, ts);
-            }
-        }
+    public IEnumerable<string> GetLegends()
+        => _entries.Values.Select(e => e.Legend());
+}
 
-        if (assembly.Css.Count > 0)
+/// <summary>
+/// C# type formatter - handles classes, interfaces, records, etc.
+/// </summary>
+public partial class CSharpTypeFormatter : ITypeFormatter<List<DestructuredNamespace>>
+{
+    private const int MaxMembersPerType = 8;
+
+    public string[] SupportedExtensions => [".cs"];
+
+    public string Format(List<DestructuredNamespace> namespaces)
+    {
+        StringBuilder sb = new();
+
+        foreach (DestructuredNamespace ns in namespaces)
         {
-            sb.AppendLine("CSS:");
-            foreach (DestructuredCss css in assembly.Css)
+            // Namespace header with type counts
+            Dictionary<TypeKind, int> typeCounts = ns.Types
+                .GroupBy(t => t.Kind)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            List<string> counts = typeCounts
+                .Select(kvp => $"{GetKindCode(kvp.Key)}:{kvp.Value}")
+                .ToList();
+
+            sb.AppendLine($"NS:{ns.Name}|{string.Join(",", counts)}");
+
+            // Format important types (public, interfaces, attributed)
+            IEnumerable<DestructuredType> importantTypes = ns.Types
+                .Where(t => t.Modifiers.Contains("public") ||
+                           t.Kind == TypeKind.Interface ||
+                           t.Attributes.Any(a => !a.Contains("CompilerGenerated")))
+                .Take(20);
+
+            foreach (DestructuredType type in importantTypes)
             {
-                FormatCss(sb, css);
+                FormatType(sb, type);
             }
         }
 
         return sb.ToString();
     }
 
-    private void AppendLegend(StringBuilder sb)
+    private void FormatType(StringBuilder sb, DestructuredType type)
     {
-        sb.AppendLine("=== FORMAT LEGEND ===");
-        sb.AppendLine("PRJ=Project TYP=Type ASM=Assembly C=Classes I=Interfaces R=Records");
-        sb.AppendLine("BC=BlazorComponents SG=SourceGenerators TS=TypeScript CSS=CSS PTN=Patterns TOT=Totals");
-        sb.AppendLine("NS=Namespace C=Class I=Interface R=Record S=Struct E=Enum");
-        sb.AppendLine("M=Method P=Property F=Field E=Event ctor=Constructor");
-        sb.AppendLine("Component params: [ParamName:Type,Param2:Type2]");
-        sb.AppendLine("Modifiers: [mod1 mod2] Attributes: @Attr1,Attr2");
-        sb.AppendLine("Member limits applied when count exceeds threshold");
-        sb.AppendLine("=====================");
-        sb.AppendLine();
-    }
+        // Type header: kind modifiers name :base @attrs
+        sb.Append($"  {GetKindCode(type.Kind)}");
 
-    private void FormatType(StringBuilder sb, DestructuredType type, int indent)
-    {
-        string prefix = new(' ', indent * 2);
-        string kind = type.Kind switch
-        {
-            TypeKind.Class => "C",
-            TypeKind.Interface => "I",
-            TypeKind.Record => "R",
-            TypeKind.Struct => "S",
-            TypeKind.Enum => "E",
-            _ => "?"
-        };
+        if (type.Modifiers.Contains("public"))
+            sb.Append("+");
+        else if (type.Modifiers.Contains("internal"))
+            sb.Append("~");
 
-        string mods = type.Modifiers.Count > 0 ? $"[{string.Join(" ", type.Modifiers)}]" : "";
-        string bases = type.Base.Count > 0 ? $":{string.Join(",", type.Base)}" : "";
-        string attrs = type.Attributes.Count > 0 ? $"@{string.Join(",", type.Attributes)}" : "";
+        if (type.Modifiers.Contains("sealed"))
+            sb.Append("!");
+        if (type.Modifiers.Contains("abstract"))
+            sb.Append("*");
+        if (type.Modifiers.Contains("static"))
+            sb.Append("#");
 
-        sb.Append($"{prefix}{kind} {mods}{type.Name}{bases}{attrs}");
+        sb.Append($" {type.Name}");
 
-        List<IGrouping<MemberKind, DestructuredMember>> membersByKind = type.Members.GroupBy(m => m.Kind).ToList();
-        int totalMembers = type.Members.Count;
-        int shownMembers = 0;
+        // Base types
+        if (type.Base.Count > 0)
+            sb.Append($":{string.Join(",", type.Base.Take(3))}");
 
-        if (totalMembers > 0)
+        // Key attributes
+        List<string> keyAttrs = type.Attributes
+            .Where(a => !a.Contains("System") && !a.Contains("CompilerGenerated"))
+            .Take(2)
+            .ToList();
+        if (keyAttrs.Count > 0)
+            sb.Append($"@{string.Join(",", keyAttrs)}");
+
+        // Members grouped by kind
+        if (type.Members.Count > 0)
         {
             sb.Append(" {");
 
-            foreach (IGrouping<MemberKind, DestructuredMember> group in membersByKind)
+            Dictionary<MemberKind, List<DestructuredMember>> membersByKind = type.Members
+                .GroupBy(m => m.Kind)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            bool first = true;
+            foreach ((MemberKind kind, List<DestructuredMember> members) in membersByKind)
             {
-                int count = group.Count();
-                int limit = _options.GetMemberLimit(group.Key);
-                int toShow = Math.Min(count, limit);
-                int hidden = count - toShow;
+                if (!first) sb.Append(";");
+                first = false;
 
-                foreach (DestructuredMember? member in group.Take(toShow))
+                int shown = Math.Min(members.Count, MaxMembersPerType);
+                for (int i = 0; i < shown; i++)
                 {
-                    if (shownMembers > 0) sb.Append(";");
-                    FormatMemberInline(sb, member);
-                    shownMembers++;
+                    if (i > 0) sb.Append(",");
+                    FormatMember(sb, members[i]);
                 }
 
-                if (hidden > 0)
-                {
-                    if (shownMembers > 0) sb.Append(";");
-                    sb.Append($"[+{hidden}{GetMemberKindShort(group.Key)}]");
-                }
+                if (members.Count > shown)
+                    sb.Append($",+{members.Count - shown}");
             }
 
             sb.Append("}");
@@ -190,113 +270,195 @@ public partial class PlainTextFormatter : IProjectFormatter
 
         sb.AppendLine();
 
+        // Nested types (indented)
         foreach (DestructuredType nested in type.NestedTypes)
         {
-            FormatType(sb, nested, indent + 1);
+            sb.Append("  ");
+            FormatType(sb, nested);
         }
     }
 
-    private void FormatMemberInline(StringBuilder sb, DestructuredMember member)
+    private void FormatMember(StringBuilder sb, DestructuredMember member)
     {
-        string kind = GetMemberKindShort(member.Kind);
-        string attrs = member.Attributes.Count > 0 ? $"@{string.Join(",", member.Attributes)}" : "";
+        sb.Append(GetMemberCode(member.Kind));
+        sb.Append(":");
 
-        // Limpiar la signature removiendo los accessors de propiedades
         string signature = member.Signature;
+
+        // Clean property signatures
         if (member.Kind == MemberKind.Property)
-        {
-            signature = CleanPropertySignature(signature);
-        }
+            signature = PropertyAccessorsRegex().Replace(signature, "");
 
-        sb.Append($"{kind}:{signature}{attrs}");
+        // Compact common types
+        signature = CompactTypes(signature);
+
+        sb.Append(signature);
+
+        // Key attributes
+        if (member.Attributes.Any(a => a.Contains("Required") || a.Contains("Obsolete")))
+            sb.Append($"@{string.Join(",", member.Attributes.Take(1))}");
     }
 
-    private static string CleanPropertySignature(string signature)
+    private static string CompactTypes(string signature)
     {
-        // Remover patrones como { get; }, { get; set; }, { get; init; }, etc.
-        // También maneja espacios variables y versiones sin espacios
-        return PropertyAccessorsRegex().Replace(signature, "").Trim();
+        return signature
+            .Replace("System.", "")
+            .Replace("Collections.Generic.", "")
+            .Replace("List<", "L<")
+            .Replace("Dictionary<", "D<")
+            .Replace("IEnumerable<", "IE<")
+            .Replace("Task<", "T<")
+            .Replace("string", "str")
+            .Replace("bool", "b")
+            .Replace("int", "i");
     }
+
+    private static string GetKindCode(TypeKind kind) => kind switch
+    {
+        TypeKind.Class => "C",
+        TypeKind.Interface => "I",
+        TypeKind.Record => "R",
+        TypeKind.Struct => "S",
+        TypeKind.Enum => "E",
+        TypeKind.Delegate => "D",
+        _ => "?"
+    };
+
+    private static string GetMemberCode(MemberKind kind) => kind switch
+    {
+        MemberKind.Constructor => "ct",
+        MemberKind.Method => "m",
+        MemberKind.Property => "p",
+        MemberKind.Field => "f",
+        MemberKind.Event => "e",
+        MemberKind.Indexer => "ix",
+        _ => "?"
+    };
 
     [GeneratedRegex(@"\s*\{\s*get;\s*(?:set;|init;)?\s*\}", RegexOptions.Compiled)]
     private static partial Regex PropertyAccessorsRegex();
 
-    private string GetMemberKindShort(MemberKind kind) => kind switch
+    public string GetLegend()
     {
-        MemberKind.Constructor => "ctor",
-        MemberKind.Method => "M",
-        MemberKind.Property => "P",
-        MemberKind.Field => "F",
-        MemberKind.Event => "E",
-        MemberKind.Indexer => "Idx",
-        _ => "?"
-    };
-
-    private void FormatComponent(StringBuilder sb, DestructuredComponent comp)
-    {
-        sb.Append($"  {comp.Name}");
-
-        List<string> allParams = [];
-
-        foreach (ComponentParameter param in comp.Parameters)
-        {
-            string req = param.Required ? "!" : "";
-            string def = param.DefaultValue != null ? $"={param.DefaultValue}" : "";
-            allParams.Add($"{param.Name}:{param.Type}{req}{def}");
-        }
-
-        foreach (ComponentParameter param in comp.CascadingParameters)
-        {
-            allParams.Add($"^{param.Name}:{param.Type}");
-        }
-
-        foreach (InjectableService inject in comp.Injectables)
-        {
-            allParams.Add($"@{inject.Name}:{inject.Type}");
-        }
-
-        foreach (string evt in comp.EventCallbacks)
-        {
-            allParams.Add($"E:{evt}");
-        }
-
-        foreach (string frag in comp.RenderFragments)
-        {
-            allParams.Add($"RF:{frag}");
-        }
-
-        if (allParams.Count > 0)
-        {
-            sb.Append($"[{string.Join(",", allParams)}]");
-        }
-
-        sb.AppendLine();
+        return @"C# (.cs):
+  C=Class I=Interface R=Record S=Struct E=Enum D=Delegate
+  +=public ~=internal !=sealed *=abstract #=static
+  Members: ct=ctor m=method p=property f=field e=event ix=indexer
+  Types: L=List D=Dict IE=IEnumerable T=Task str=string b=bool i=int
+";
     }
+}
 
-    private void FormatTypeScript(StringBuilder sb, DestructuredTypeScript ts)
+/// <summary>
+/// Blazor component formatter - optimized for component parameters
+/// </summary>
+public class BlazorComponentFormatter : ITypeFormatter<List<DestructuredComponent>>
+{
+    public string[] SupportedExtensions => [".razor"];
+
+    public string Format(List<DestructuredComponent> components)
     {
-        sb.Append($"  {ts.File}");
+        StringBuilder sb = new();
+        sb.AppendLine($"BC:{components.Count}");
 
-        if (ts.Exports.Count > 0)
+        foreach (DestructuredComponent comp in components)
         {
-            sb.Append(" [");
-            for (int i = 0; i < ts.Exports.Count; i++)
+            sb.Append($"  {comp.Name}");
+
+            // Parameters (ALWAYS show these)
+            if (comp.Parameters.Count > 0)
             {
-                TsExport exp = ts.Exports[i];
-                if (i > 0) sb.Append(",");
-
-                string kind = GetTsExportKindShort(exp.Kind);
-                string def = exp.IsDefault ? "*" : "";
-                string sig = exp.Signature != null ? $":{exp.Signature}" : "";
-                sb.Append($"{kind}{def}{exp.Name}{sig}");
+                List<string> pars = comp.Parameters
+                    .Select(p => $"{p.Name}:{CompactType(p.Type)}{(p.Required ? "!" : "")}")
+                    .ToList();
+                sb.Append($"[{string.Join(",", pars)}]");
             }
-            sb.Append("]");
+
+            // Cascading parameters
+            if (comp.CascadingParameters.Count > 0)
+            {
+                sb.Append($"^{comp.CascadingParameters.Count}");
+            }
+
+            // Injectables
+            if (comp.Injectables.Count > 0)
+            {
+                sb.Append($"@{comp.Injectables.Count}");
+            }
+
+            // Event callbacks
+            if (comp.EventCallbacks.Count > 0)
+            {
+                sb.Append($"E{comp.EventCallbacks.Count}");
+            }
+
+            // Render fragments
+            if (comp.RenderFragments.Count > 0)
+            {
+                sb.Append($"R{comp.RenderFragments.Count}");
+            }
+
+            sb.AppendLine();
         }
 
-        sb.AppendLine();
+        return sb.ToString();
     }
 
-    private string GetTsExportKindShort(TsExportKind kind) => kind switch
+    private static string CompactType(string type)
+    {
+        return type
+            .Replace("EventCallback<", "EC<")
+            .Replace("RenderFragment<", "RF<")
+            .Replace("string", "str")
+            .Replace("bool", "b")
+            .Replace("int", "i");
+    }
+
+    public string GetLegend()
+    {
+        return @"BLAZOR (.razor):
+  BC=Blazor component
+  [param:type!] = Parameters (!=required)
+  ^N = N cascading parameters
+  @N = N injected services
+  EN = N event callbacks
+  RN = N render fragments
+";
+    }
+}
+
+/// <summary>
+/// TypeScript formatter
+/// </summary>
+public class TypeScriptFormatter : ITypeFormatter<List<DestructuredTypeScript>>
+{
+    public string[] SupportedExtensions => [".ts", ".tsx"];
+
+    public string Format(List<DestructuredTypeScript> modules)
+    {
+        StringBuilder sb = new();
+        sb.AppendLine($"TS:{modules.Count}");
+
+        foreach (DestructuredTypeScript ts in modules.Take(15))
+        {
+            sb.Append($"  {Path.GetFileName(ts.File)}");
+
+            if (ts.Exports.Count > 0)
+            {
+                List<string> exports = ts.Exports
+                    .Take(5)
+                    .Select(e => $"{GetExportCode(e.Kind)}{(e.IsDefault ? "*" : "")}{e.Name}")
+                    .ToList();
+                sb.Append($"[{string.Join(",", exports)}]");
+            }
+
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+
+    private static string GetExportCode(TsExportKind kind) => kind switch
     {
         TsExportKind.Function => "f",
         TsExportKind.Class => "c",
@@ -307,61 +469,59 @@ public partial class PlainTextFormatter : IProjectFormatter
         _ => "?"
     };
 
-    private void FormatCss(StringBuilder sb, DestructuredCss css)
+    public string GetLegend()
     {
-        sb.Append($"  {css.File}[{css.Type}]");
-
-        if (css.Variables.Count > 0)
-        {
-            sb.Append($" V:{css.Variables.Count}");
-
-            if (_options.ShowCssVariableSamples)
-            {
-                int limit = Math.Min(css.Variables.Count, _options.CssVariableSampleLimit);
-                sb.Append("(");
-                for (int i = 0; i < limit; i++)
-                {
-                    if (i > 0) sb.Append(",");
-                    CssVariable v = css.Variables[i];
-                    sb.Append($"{v.Name}:{v.Value}");
-                }
-
-                if (css.Variables.Count > limit)
-                    sb.Append($",+{css.Variables.Count - limit}");
-
-                sb.Append(")");
-            }
-        }
-
-        if (css.Selectors.Count > 0)
-        {
-            sb.Append($" S:{css.Selectors.Count}");
-        }
-
-        sb.AppendLine();
+        return @"TYPESCRIPT (.ts, .tsx):
+  TS=Typescript
+  [exports] = f=function c=class i=interface t=type k=const e=enum
+  * = default export
+";
     }
 }
 
-public class FormatterOptions
+/// <summary>
+/// CSS formatter
+/// </summary>
+public class CssFormatter : ITypeFormatter<List<DestructuredCss>>
 {
-    public int MethodLimit { get; set; } = 5;
-    public int PropertyLimit { get; set; } = 8;
-    public int FieldLimit { get; set; } = 5;
-    public int EventLimit { get; set; } = 3;
-    public int ConstructorLimit { get; set; } = 3;
-    public int IndexerLimit { get; set; } = 2;
+    public string[] SupportedExtensions => [".css", ".scss", ".less"];
 
-    public bool ShowCssVariableSamples { get; set; } = true;
-    public int CssVariableSampleLimit { get; set; } = 3;
-
-    public int GetMemberLimit(MemberKind kind) => kind switch
+    public string Format(List<DestructuredCss> files)
     {
-        MemberKind.Method => MethodLimit,
-        MemberKind.Property => PropertyLimit,
-        MemberKind.Field => FieldLimit,
-        MemberKind.Event => EventLimit,
-        MemberKind.Constructor => ConstructorLimit,
-        MemberKind.Indexer => IndexerLimit,
-        _ => 5
-    };
+        StringBuilder sb = new();
+
+        int totalVars = files.Sum(f => f.Variables.Count);
+        int totalSelectors = files.Sum(f => f.Selectors.Count);
+
+        sb.AppendLine($"CSS:{files.Count}|V:{totalVars}|S:{totalSelectors}");
+
+        foreach (DestructuredCss css in files.Take(10))
+        {
+            sb.Append($"  {Path.GetFileName(css.File)}");
+
+            if (css.Variables.Count > 0)
+            {
+                List<string> vars = css.Variables
+                    .Take(3)
+                    .Select(v => $"{v.Name}={v.Value}")
+                    .ToList();
+                sb.Append($"[{string.Join(",", vars)}]");
+
+                if (css.Variables.Count > 3)
+                    sb.Append($"+{css.Variables.Count - 3}");
+            }
+
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+
+    public string GetLegend()
+    {
+        return @"CSS (.css, .scss, .less):
+  CSS=File V=Variables S=Selectors
+  [var=value,...] = First 3 variables
+";
+    }
 }
