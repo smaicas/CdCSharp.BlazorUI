@@ -1,9 +1,11 @@
-﻿using CdCSharp.DocGen.Core.Extensions;
+﻿using CdCSharp.DocGen.Cli.Logging;
+using CdCSharp.DocGen.Core.Extensions;
 using CdCSharp.DocGen.Core.Models.Options;
 using CdCSharp.DocGen.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace CdCSharp.DocGen.Cli.Commands;
 
@@ -27,11 +29,18 @@ public static class GenerateCommand
 
         IHost host = Host.CreateDefaultBuilder()
             .ConfigureLogging((context, logging) =>
-            {
-                logging.ClearProviders();
-                logging.AddConsole();
-                logging.SetMinimumLevel(cliOptions.LogLevel);
-            })
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole(options =>
+                    {
+                        options.FormatterName = "minimal";
+                        options.TimestampFormat = "";
+                        options.UseUtcTimestamp = false;
+                        options.IncludeScopes = false;
+                    })
+                    .AddConsoleFormatter<MinimalConsoleFormatter, ConsoleFormatterOptions>();
+                    logging.SetMinimumLevel(cliOptions.LogLevel);
+                })
             .ConfigureServices((context, services) =>
             {
                 services.AddDocGen(options =>

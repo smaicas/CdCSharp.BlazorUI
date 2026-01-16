@@ -1,7 +1,8 @@
-﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+﻿using CdCSharp.DocGen.Core.Abstractions.Agents;
+using CdCSharp.DocGen.Core.Abstractions.Analysis;
 using CdCSharp.DocGen.Core.Abstractions.Cache;
 using CdCSharp.DocGen.Core.Abstractions.Formatting;
-using CdCSharp.DocGen.Core.Abstractions.Orchestration;
+using CdCSharp.DocGen.Core.Models.Agents;
 using CdCSharp.DocGen.Core.Models.Analysis;
 using CdCSharp.DocGen.Core.Models.Generation;
 using CdCSharp.DocGen.Core.Models.Options;
@@ -16,7 +17,6 @@ public class DocGenRunner
 {
     private readonly IProjectAnalyzer _analyzer;
     private readonly IOrchestrator _orchestrator;
-    private readonly ISpecialistRunner _specialistRunner;
     private readonly IHumanDocComposer _humanComposer;
     private readonly ILlmDocComposer _llmComposer;
     private readonly ICacheManager _cache;
@@ -26,7 +26,6 @@ public class DocGenRunner
     public DocGenRunner(
         IProjectAnalyzer analyzer,
         IOrchestrator orchestrator,
-        ISpecialistRunner specialistRunner,
         IHumanDocComposer humanComposer,
         ILlmDocComposer llmComposer,
         ICacheManager cache,
@@ -35,7 +34,6 @@ public class DocGenRunner
     {
         _analyzer = analyzer;
         _orchestrator = orchestrator;
-        _specialistRunner = specialistRunner;
         _humanComposer = humanComposer;
         _llmComposer = llmComposer;
         _cache = cache;
@@ -52,7 +50,7 @@ public class DocGenRunner
 
             if (_options.PromptTracer.Enabled)
             {
-                _logger.LogInformation("TRACE MODE ENABLED - Detailed logging active");
+                _logger.LogInformation("TRACE MODE ENABLED");
             }
 
             AnalysisResult analysis = await _analyzer.AnalyzeAsync(_options.ProjectPath);
@@ -66,16 +64,25 @@ public class DocGenRunner
                 analysis.Structure,
                 analysis.Destructured);
 
-            List<SpecialistResult> results = await _specialistRunner.ExecuteAllAsync(
+            List<AgentResult> results = await _orchestrator.ExecutePlanAsync(
                 plan,
                 analysis.Destructured);
+
+            List<SpecialistResult> specialistResults = results.Select(r => new SpecialistResult
+            {
+                SpecialistId = r.AgentId,
+                PromptId = r.TaskId,
+                Content = r.Content,
+                TargetSections = r.TargetSections,
+                ExecutedAt = r.ExecutedAt
+            }).ToList();
 
             GenerationContext context = new()
             {
                 Structure = analysis.Structure,
                 Destructured = analysis.Destructured,
                 Plan = plan,
-                Results = results
+                Results = specialistResults
             };
 
             string humanDoc = _humanComposer.Compose(context);

@@ -78,7 +78,13 @@ public class LMStudioClient : IAiClient
             LMStudioResponse? result = await response.Content.ReadFromJsonAsync<LMStudioResponse>();
             string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
 
-            string promptSummary = string.Join("\n", messages.Select(m => $"[{m.Role}]: {Truncate(m.Content, 200)}"));
+            string promptSummary = string.Join("\n", messages.Select(m => $"""
+            [{m.Role}]: 
+            
+            {m.Content}
+            """
+            ));
+
             await _tracer.TracePromptAsync(requestName, promptSummary, content);
 
             return content;
