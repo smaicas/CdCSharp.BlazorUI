@@ -1,36 +1,46 @@
-﻿using CdCSharp.DocGen.Core.Cache;
-using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.AI;
+using CdCSharp.DocGen.Core.Abstractions.Cache;
+using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Abstractions.Orchestration;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using CdCSharp.DocGen.Core.Models.Options;
+using CdCSharp.DocGen.Core.Models.Orchestration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace CdCSharp.DocGen.Core.Orchestration;
 
-public class SpecialistRunner
+public class SpecialistRunner : ISpecialistRunner
 {
-    private readonly IAiClient _ai;
-    private readonly CacheManager? _cache;
-    private readonly IProjectFormatter _formatter;
-    private readonly ILogger _logger;
+    private readonly IConversationManager _conversationManager;
+    private readonly ISpecialistRegistry _registry;
+    private readonly ICacheManager _cache;
+    private readonly IPlainTextFormatter _formatter;
+    private readonly ILogger<SpecialistRunner> _logger;
     private readonly string _projectRoot;
 
     public SpecialistRunner(
-        IAiClient ai,
-        string projectRoot,
-        CacheManager? cache = null,
-        ILogger? logger = null)
+        IConversationManager conversationManager,
+        ISpecialistRegistry registry,
+        ICacheManager cache,
+        IPlainTextFormatter formatter,
+        IOptions<DocGenOptions> options,
+        ILogger<SpecialistRunner> logger)
     {
-        _ai = ai;
-        _projectRoot = projectRoot;
+        _conversationManager = conversationManager;
+        _registry = registry;
         _cache = cache;
-        _formatter = new PlainTextFormatter();
-        _logger = logger ?? NullLogger.Instance;
+        _formatter = formatter;
+        _projectRoot = options.Value.ProjectPath;
+        _logger = logger;
     }
 
     public async Task<List<SpecialistResult>> ExecuteAllAsync(
         OrchestrationPlan plan,
         Dictionary<string, DestructuredAssembly> destructured)
     {
-        _logger.Trace($"Starting specialist execution for {plan.Specialists.Count} specialists");
+        _logger.LogDebug("Starting specialist execution for {Count} specialists", plan.Specialists.Count);
 
         List<SpecialistResult> results = [];
 
@@ -40,18 +50,18 @@ public class SpecialistRunner
         foreach (SpecialistTask task in orderedTasks)
         {
             taskNumber++;
-            _logger.Progress($"Running specialist: {task.Name} ({taskNumber}/{plan.Specialists.Count})");
-            _logger.Trace($"Specialist: {task.SpecialistId}, Priority: {task.Priority}");
-            _logger.Trace($"  Target sections: {string.Join(", ", task.TargetSections)}");
-            _logger.Trace($"  Prompts to execute: {task.Prompts.Count}");
+            _logger.LogInformation("Running specialist: {Name} ({Current}/{Total})",
+                task.Name, taskNumber, plan.Specialists.Count);
 
             List<SpecialistResult> taskResults = await ExecuteSpecialistAsync(task, plan, destructured);
             results.AddRange(taskResults);
 
-            _logger.Trace($"Specialist {task.Name} completed: {taskResults.Count} results produced");
+            _logger.LogDebug("Specialist {Name} completed: {Count} results produced", task.Name, taskResults.Count);
         }
 
-        _logger.Trace($"All specialists completed: {results.Count} total results");
+        _conversationManager.ClearAll();
+
+        _logger.LogDebug("All specialists completed: {Count} total results", results.Count);
 
         return results;
     }
@@ -63,71 +73,58 @@ public class SpecialistRunner
     {
         List<SpecialistResult> results = [];
 
-        _logger.Trace($"Building context for {task.Name}...");
-        string contextContent = await BuildContextAsync(task, plan, destructured);
-        _logger.Trace($"Context built: {contextContent.Length} chars");
+        SpecialistDefinition? definition = _registry.Get(task.SpecialistId);
+
+        if (definition == null)
+        {
+            _logger.LogWarning("Specialist definition not found for ID: {Id}", task.SpecialistId);
+            return results;
+        }
+
+        IConversation conversation = _conversationManager.CreateConversation(
+            task.SpecialistId,
+            definition.SystemPrompt);
+
+        _logger.LogDebug("Building context for {Name}...", task.Name);
+        string contextContent = await BuildContextAsync(task, plan.CriticalContext, destructured);
+        conversation.AddContext(contextContent);
+        _logger.LogDebug("Context built: {Length} chars", contextContent.Length);
 
         int promptNumber = 0;
         foreach (SpecialistPrompt prompt in task.Prompts)
         {
             promptNumber++;
-            _logger.Verbose($"  Executing prompt: {prompt.Id} ({promptNumber}/{task.Prompts.Count})");
-            _logger.Trace($"  Prompt ID: {prompt.Id}");
-            _logger.Trace($"  MaxTokens: {prompt.MaxTokens}");
-            _logger.Trace($"  Instruction: {TruncateForLog(prompt.Instruction, 100)}");
+            _logger.LogDebug("Executing prompt: {Id} ({Current}/{Total})",
+                prompt.Id, promptNumber, task.Prompts.Count);
 
-            string fullPrompt = BuildFullPrompt(task, prompt, plan.CriticalContext, contextContent);
-            _logger.Trace($"  Full prompt length: {fullPrompt.Length} chars (~{fullPrompt.Length / 4} tokens)");
+            string cacheKey = BuildCacheKey(task.SpecialistId, prompt.Id, contextContent);
+            (bool hit, string? cached) = _cache.TryGetQuery(cacheKey, task.SpecialistId);
 
-            if (_cache != null)
+            if (hit && cached != null)
             {
-                (bool hit, string? cached) = _cache.TryGetQuery(fullPrompt, task.SpecialistId);
-                if (hit && cached != null)
-                {
-                    _logger.Trace($"  Cache HIT for prompt {prompt.Id}");
-                    results.Add(new SpecialistResult
-                    {
-                        SpecialistId = task.SpecialistId,
-                        PromptId = prompt.Id,
-                        Content = cached,
-                        TargetSections = task.TargetSections,
-                        TokenCount = cached.Length / 4
-                    });
-                    continue;
-                }
-                else
-                {
-                    _logger.Trace($"  Cache MISS for prompt {prompt.Id}");
-                }
+                _logger.LogDebug("Cache HIT for prompt {Id}", prompt.Id);
+                results.Add(CreateResult(task, prompt, cached));
+                continue;
             }
 
-            _logger.Trace($"  Sending to AI...");
+            string userMessage = BuildUserMessage(prompt);
+
+            _logger.LogDebug("Sending to conversation...");
             DateTime startTime = DateTime.UtcNow;
-            string response = await _ai.SendAsync(fullPrompt, prompt.MaxTokens);
+            string response = await conversation.SendAsync(userMessage, prompt.MaxTokens);
             TimeSpan elapsed = DateTime.UtcNow - startTime;
-            _logger.Trace($"  AI response received in {elapsed.TotalSeconds:F2}s");
+
+            _logger.LogDebug("Response received in {Elapsed:F2}s", elapsed.TotalSeconds);
 
             if (!string.IsNullOrWhiteSpace(response))
             {
-                _logger.Trace($"  Response length: {response.Length} chars (~{response.Length / 4} tokens)");
-
-                _cache?.SetQuery(fullPrompt, task.SpecialistId, response);
-
-                results.Add(new SpecialistResult
-                {
-                    SpecialistId = task.SpecialistId,
-                    PromptId = prompt.Id,
-                    Content = response,
-                    TargetSections = task.TargetSections,
-                    TokenCount = response.Length / 4
-                });
-
-                _logger.Trace($"  Result stored successfully");
+                _cache.SetQuery(cacheKey, task.SpecialistId, response);
+                results.Add(CreateResult(task, prompt, response));
+                _logger.LogDebug("Result stored successfully");
             }
             else
             {
-                _logger.Warning($"  Empty response from AI for prompt {prompt.Id}");
-                _logger.Trace($"  Skipping empty result");
+                _logger.LogWarning("Empty response for prompt {Id}", prompt.Id);
             }
         }
 
@@ -136,32 +133,35 @@ public class SpecialistRunner
 
     private async Task<string> BuildContextAsync(
         SpecialistTask task,
-        OrchestrationPlan plan,
+        string criticalContext,
         Dictionary<string, DestructuredAssembly> destructured)
     {
         StringBuilder sb = new();
-        int assemblyCount = 0;
-        int fileCount = 0;
 
-        _logger.Trace($"Building context from {task.RequiredFiles.Destructured.Count} assemblies and {task.RequiredFiles.FullContent.Count} files");
+        if (!string.IsNullOrWhiteSpace(criticalContext))
+        {
+            sb.AppendLine("PROJECT CONTEXT:");
+            sb.AppendLine(criticalContext);
+            sb.AppendLine();
+        }
 
-        foreach (string assemblyName in task.RequiredFiles.Destructured)
+        sb.AppendLine("SPECIALIST FOCUS:");
+        sb.AppendLine(task.Focus);
+        sb.AppendLine();
+
+        sb.AppendLine("RELEVANT PROJECT INFORMATION:");
+        sb.AppendLine();
+
+        foreach (string assemblyName in task.Prompts.SelectMany(p => p.RequiredFiles.Destructured))
         {
             if (destructured.TryGetValue(assemblyName, out DestructuredAssembly? assembly))
             {
-                string formatted = _formatter.FormatDestructured(assembly);
-                sb.AppendLine(formatted);
+                sb.AppendLine(_formatter.FormatDestructured(assembly));
                 sb.AppendLine();
-                assemblyCount++;
-                _logger.Trace($"  Added assembly: {assemblyName} ({formatted.Length} chars)");
-            }
-            else
-            {
-                _logger.Trace($"  Assembly not found: {assemblyName}");
             }
         }
 
-        foreach (string filePath in task.RequiredFiles.FullContent)
+        foreach (string filePath in task.Prompts.SelectMany(p => p.RequiredFiles.FullContent))
         {
             string fullPath = Path.Combine(_projectRoot, filePath);
             if (File.Exists(fullPath))
@@ -173,71 +173,44 @@ public class SpecialistRunner
                     sb.AppendLine($"=== FILE: {filePath} ===");
                     sb.AppendLine(truncated);
                     sb.AppendLine();
-                    fileCount++;
-                    _logger.Trace($"  Added file: {filePath} ({content.Length} chars, truncated to {truncated.Length})");
                 }
                 catch (Exception ex)
                 {
-                    _logger.Warning($"Failed to read {filePath}: {ex.Message}");
-                    _logger.Trace($"  File read error: {ex}");
+                    _logger.LogWarning(ex, "Failed to read {Path}", filePath);
                 }
             }
-            else
-            {
-                _logger.Trace($"  File not found: {filePath}");
-            }
         }
 
-        string result = sb.ToString();
-        _logger.Trace($"Context complete: {assemblyCount} assemblies, {fileCount} files, total {result.Length} chars");
-
-        return result;
+        return sb.ToString();
     }
 
-    private string BuildFullPrompt(
-        SpecialistTask task,
-        SpecialistPrompt prompt,
-        string criticalContext,
-        string contextContent)
+    private static string BuildUserMessage(SpecialistPrompt prompt)
     {
-        _logger.Trace($"Building full prompt for {task.Name}/{prompt.Id}");
+        return $"""
+            TASK:
+            {prompt.Instruction}
+            
+            EXPECTED OUTPUT:
+            {prompt.ExpectedOutput}
+            """;
+    }
 
-        StringBuilder sb = new();
+    private static string BuildCacheKey(string specialistId, string promptId, string context)
+    {
+        int contextHash = context.GetHashCode();
+        return $"{specialistId}:{promptId}:{contextHash}";
+    }
 
-        sb.AppendLine($"You are a {task.Name}.");
-        sb.AppendLine($"Focus: {task.Focus}");
-        sb.AppendLine();
-
-        if (!string.IsNullOrWhiteSpace(criticalContext))
+    private static SpecialistResult CreateResult(SpecialistTask task, SpecialistPrompt prompt, string content)
+    {
+        return new SpecialistResult
         {
-            sb.AppendLine("CRITICAL PROJECT CONTEXT:");
-            sb.AppendLine(criticalContext);
-            sb.AppendLine();
-            _logger.Trace($"  Added critical context: {criticalContext.Length} chars");
-        }
-
-        sb.AppendLine("PROJECT INFORMATION:");
-        sb.AppendLine(contextContent);
-        sb.AppendLine();
-
-        sb.AppendLine("TASK:");
-        sb.AppendLine(prompt.Instruction);
-        sb.AppendLine();
-
-        sb.AppendLine("EXPECTED OUTPUT:");
-        sb.AppendLine(prompt.ExpectedOutput);
-        sb.AppendLine();
-
-        sb.AppendLine("RULES:");
-        sb.AppendLine("- Write in clear, professional technical documentation style");
-        sb.AppendLine("- Use markdown formatting");
-        sb.AppendLine("- Include code examples where relevant");
-        sb.AppendLine("- Be concise but thorough");
-
-        string result = sb.ToString();
-        _logger.Trace($"Full prompt constructed: {result.Length} chars, {result.Split('\n').Length} lines");
-
-        return result;
+            SpecialistId = task.SpecialistId,
+            PromptId = prompt.Id,
+            Content = content,
+            TargetSections = task.TargetSections,
+            TokenCount = content.Length / 4
+        };
     }
 
     private static string TruncateContent(string content, int maxChars)
@@ -246,13 +219,5 @@ public class SpecialistRunner
             return content;
 
         return content[..maxChars] + "\n// ... (truncated)";
-    }
-
-    private static string TruncateForLog(string text, int maxLength)
-    {
-        if (text.Length <= maxLength)
-            return text;
-
-        return text[..maxLength] + "...";
     }
 }

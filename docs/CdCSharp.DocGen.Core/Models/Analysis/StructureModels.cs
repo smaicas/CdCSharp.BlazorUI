@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CdCSharp.DocGen.Core.Models;
+namespace CdCSharp.DocGen.Core.Models.Analysis;
 
 public record ProjectStructure
 {
@@ -13,8 +13,8 @@ public record ProjectStructure
     [JsonPropertyName("assemblies")]
     public List<AssemblyInfo> Assemblies { get; init; } = [];
 
-    [JsonPropertyName("globalSummary")]
-    public GlobalSummary GlobalSummary { get; init; } = new();
+    [JsonPropertyName("summary")]
+    public ProjectSummary Summary { get; init; } = new();
 }
 
 public record AssemblyInfo
@@ -34,8 +34,8 @@ public record AssemblyInfo
     [JsonPropertyName("files")]
     public AssemblyFiles Files { get; init; } = new();
 
-    [JsonPropertyName("summary")]
-    public AssemblySummary Summary { get; init; } = new();
+    [JsonPropertyName("metrics")]
+    public AssemblyMetrics Metrics { get; set; } = new();
 }
 
 public record AssemblyFiles
@@ -56,7 +56,7 @@ public record AssemblyFiles
     public List<string> Other { get; init; } = [];
 }
 
-public record AssemblySummary
+public record AssemblyMetrics
 {
     [JsonPropertyName("classes")]
     public int Classes { get; set; }
@@ -87,12 +87,9 @@ public record AssemblySummary
 
     [JsonPropertyName("cssFiles")]
     public int CssFiles { get; set; }
-
-    [JsonPropertyName("cssVariables")]
-    public int CssVariables { get; set; }
 }
 
-public record GlobalSummary
+public record ProjectSummary
 {
     [JsonPropertyName("totalAssemblies")]
     public int TotalAssemblies { get; set; }
@@ -114,12 +111,6 @@ public record GlobalSummary
 
     [JsonPropertyName("totalGenerators")]
     public int TotalGenerators { get; set; }
-
-    [JsonPropertyName("totalTsModules")]
-    public int TotalTsModules { get; set; }
-
-    [JsonPropertyName("totalCssFiles")]
-    public int TotalCssFiles { get; set; }
 
     [JsonPropertyName("detectedPatterns")]
     public List<string> DetectedPatterns { get; init; } = [];

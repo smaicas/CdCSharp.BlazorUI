@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CdCSharp.DocGen.Core.Cache;
+namespace CdCSharp.DocGen.Core.Models.Cache;
 
 public record CacheManifest
 {
@@ -76,18 +76,13 @@ public record CacheStatistics
     [JsonPropertyName("totalSize")]
     public long TotalSize { get; set; }
 
+    [JsonIgnore]
     public double AnalysisHitRate => AnalysisHits + AnalysisMisses > 0
         ? (double)AnalysisHits / (AnalysisHits + AnalysisMisses)
         : 0;
 
+    [JsonIgnore]
     public double QueryHitRate => QueryHits + QueryMisses > 0
         ? (double)QueryHits / (QueryHits + QueryMisses)
         : 0;
-}
-
-public class CacheOptions
-{
-    public bool EnableAnalysisCache { get; set; } = true;
-    public bool EnableQueryCache { get; set; } = true;
-    public TimeSpan QueryCacheExpiration { get; set; } = TimeSpan.FromDays(7);
 }

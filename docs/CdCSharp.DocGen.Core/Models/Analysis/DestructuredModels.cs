@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CdCSharp.DocGen.Core.Models;
+namespace CdCSharp.DocGen.Core.Models.Analysis;
 
 public record DestructuredAssembly
 {

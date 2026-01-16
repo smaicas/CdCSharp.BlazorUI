@@ -1,4 +1,4 @@
-﻿using CdCSharp.DocGen.Cli;
+﻿using CdCSharp.DocGen.Cli.Commands;
 
 if (args.Length == 0 || args[0] is "-h" or "--help" or "help")
 {

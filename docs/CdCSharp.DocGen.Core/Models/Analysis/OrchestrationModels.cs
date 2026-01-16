@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CdCSharp.DocGen.Core.Models;
+namespace CdCSharp.DocGen.Core.Models.Orchestration;
 
 public record OrchestrationPlan
 {
@@ -34,9 +34,6 @@ public record SpecialistTask
     [JsonPropertyName("targetSections")]
     public List<string> TargetSections { get; init; } = [];
 
-    [JsonPropertyName("requiredFiles")]
-    public RequiredFiles RequiredFiles { get; init; } = new();
-
     [JsonPropertyName("prompts")]
     public List<SpecialistPrompt> Prompts { get; init; } = [];
 
@@ -66,6 +63,10 @@ public record SpecialistPrompt
 
     [JsonPropertyName("maxTokens")]
     public int MaxTokens { get; init; } = 2000;
+
+    [JsonPropertyName("requiredFiles")]
+    public RequiredFiles RequiredFiles { get; init; } = new();
+
 }
 
 public record DocumentSection
@@ -100,6 +101,9 @@ public record SpecialistDefinition
     [JsonPropertyName("capabilities")]
     public List<string> Capabilities { get; init; } = [];
 
+    [JsonPropertyName("systemPrompt")]
+    public string SystemPrompt { get; init; } = string.Empty;
+
     [JsonPropertyName("isBuiltIn")]
     public bool IsBuiltIn { get; init; }
 
@@ -126,13 +130,4 @@ public record SpecialistResult
 
     [JsonPropertyName("tokenCount")]
     public int TokenCount { get; init; }
-}
-
-public record GenerationContext
-{
-    public ProjectStructure Structure { get; init; } = new();
-    public Dictionary<string, DestructuredAssembly> Destructured { get; init; } = [];
-    public OrchestrationPlan Plan { get; init; } = new();
-    public List<SpecialistResult> Results { get; init; } = [];
-    public string CriticalContext { get; init; } = string.Empty;
 }

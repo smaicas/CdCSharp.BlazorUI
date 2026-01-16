@@ -1,32 +1,35 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using CdCSharp.DocGen.Core.Models.Generation;
+using CdCSharp.DocGen.Core.Models.Orchestration;
+using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace CdCSharp.DocGen.Core.Formatting;
 
-public class HumanDocComposer
+public class HumanDocComposer : IHumanDocComposer
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<HumanDocComposer> _logger;
 
-    public HumanDocComposer(ILogger? logger = null)
+    public HumanDocComposer(ILogger<HumanDocComposer> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
+        _logger = logger;
     }
 
     public string Compose(GenerationContext context)
     {
-        _logger.Progress("Composing human-readable documentation...");
+        _logger.LogInformation("Composing human-readable documentation...");
 
         StringBuilder sb = new();
 
         sb.AppendLine($"# {context.Structure.Solution}");
         sb.AppendLine();
-        sb.AppendLine($"**Type:** {context.Structure.GlobalSummary.ProjectType}");
+        sb.AppendLine($"**Type:** {context.Structure.Summary.ProjectType}");
         sb.AppendLine();
 
-        if (!string.IsNullOrWhiteSpace(context.CriticalContext))
+        if (!string.IsNullOrWhiteSpace(context.Plan.CriticalContext))
         {
-            sb.AppendLine(context.CriticalContext);
+            sb.AppendLine(context.Plan.CriticalContext);
             sb.AppendLine();
         }
 
@@ -57,12 +60,12 @@ public class HumanDocComposer
         AppendProjectStructure(sb, context.Structure);
 
         string doc = sb.ToString();
-        _logger.Success($"Human documentation: {doc.Length} chars");
+        _logger.LogInformation("Human documentation: {Length} chars", doc.Length);
 
         return OptimizeMarkdown(doc);
     }
 
-    private void AppendProjectStructure(StringBuilder sb, ProjectStructure structure)
+    private static void AppendProjectStructure(StringBuilder sb, ProjectStructure structure)
     {
         sb.AppendLine("## Project Structure");
         sb.AppendLine();
@@ -77,14 +80,14 @@ public class HumanDocComposer
 
             List<string> stats = [];
 
-            if (assembly.Summary.Classes > 0)
-                stats.Add($"{assembly.Summary.Classes} classes");
-            if (assembly.Summary.Interfaces > 0)
-                stats.Add($"{assembly.Summary.Interfaces} interfaces");
-            if (assembly.Summary.Records > 0)
-                stats.Add($"{assembly.Summary.Records} records");
-            if (assembly.Summary.Components > 0)
-                stats.Add($"{assembly.Summary.Components} components");
+            if (assembly.Metrics.Classes > 0)
+                stats.Add($"{assembly.Metrics.Classes} classes");
+            if (assembly.Metrics.Interfaces > 0)
+                stats.Add($"{assembly.Metrics.Interfaces} interfaces");
+            if (assembly.Metrics.Records > 0)
+                stats.Add($"{assembly.Metrics.Records} records");
+            if (assembly.Metrics.Components > 0)
+                stats.Add($"{assembly.Metrics.Components} components");
 
             if (stats.Count > 0)
                 sb.AppendLine($"- {string.Join(", ", stats)}");

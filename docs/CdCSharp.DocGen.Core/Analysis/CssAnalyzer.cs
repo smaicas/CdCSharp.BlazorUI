@@ -1,16 +1,17 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 namespace CdCSharp.DocGen.Core.Analysis;
 
-public partial class CssAnalyzer
+public partial class CssAnalyzer : ICssAnalyzer
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<CssAnalyzer> _logger;
 
-    public CssAnalyzer(ILogger? logger = null)
+    public CssAnalyzer(ILogger<CssAnalyzer> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
+        _logger = logger;
     }
 
     public async Task<List<DestructuredCss>> AnalyzeAsync(string rootPath, List<string> cssFiles)
@@ -31,14 +32,14 @@ public partial class CssAnalyzer
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Failed to analyze CSS {relativePath}: {ex.Message}");
+                _logger.LogWarning(ex, "Failed to analyze CSS {RelativePath}", relativePath);
             }
         }
 
         return results;
     }
 
-    private DestructuredCss AnalyzeFile(string filePath, string content)
+    private static DestructuredCss AnalyzeFile(string filePath, string content)
     {
         string ext = Path.GetExtension(filePath).ToLowerInvariant();
         CssFileType fileType = ext switch
@@ -61,7 +62,6 @@ public partial class CssAnalyzer
     private static List<CssVariable> ExtractVariables(string content)
     {
         List<CssVariable> variables = [];
-        string currentScope = ":root";
 
         MatchCollection scopeMatches = ScopeSelectorRegex().Matches(content);
         List<(int Start, int End, string Scope)> scopes = [];
@@ -145,7 +145,7 @@ public partial class CssAnalyzer
             if (string.IsNullOrWhiteSpace(selector))
                 continue;
 
-            if (selector.StartsWith("@") || selector.StartsWith("//") || selector.StartsWith("/*"))
+            if (selector.StartsWith('@') || selector.StartsWith("//") || selector.StartsWith("/*"))
                 continue;
 
             if (selector.Contains("--"))

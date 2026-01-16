@@ -1,156 +1,176 @@
-﻿using CdCSharp.DocGen.Core.Formatting;
-using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
-using System.Text;
+﻿using CdCSharp.DocGen.Core.Abstractions.AI;
+using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Abstractions.Orchestration;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using CdCSharp.DocGen.Core.Models.Orchestration;
+using Microsoft.Extensions.Logging;
 
 namespace CdCSharp.DocGen.Core.Orchestration;
 
-public class Orchestrator
+public class Orchestrator : IOrchestrator
 {
     private readonly IAiClient _ai;
-    private readonly SpecialistRegistry _registry;
-    private readonly PlainTextFormatter _formatter;
-    private readonly ILogger _logger;
+    private readonly ISpecialistRegistry _registry;
+    private readonly IPlainTextFormatter _formatter;
+    private readonly ILogger<Orchestrator> _logger;
 
-    public Orchestrator(IAiClient ai, SpecialistRegistry registry, ILogger? logger = null)
+    public Orchestrator(
+        IAiClient ai,
+        ISpecialistRegistry registry,
+        IPlainTextFormatter formatter,
+        ILogger<Orchestrator> logger)
     {
         _ai = ai;
         _registry = registry;
-        _formatter = new PlainTextFormatter();
-        _logger = logger ?? NullLogger.Instance;
+        _formatter = formatter;
+        _logger = logger;
     }
 
     public async Task<OrchestrationPlan> CreatePlanAsync(
         ProjectStructure structure,
         Dictionary<string, DestructuredAssembly> destructured)
     {
-        _logger.Progress("Creating documentation plan...");
+        _logger.LogInformation("Creating documentation plan...");
 
         string prompt = BuildOrchestratorPrompt(structure, destructured);
 
-        _logger.Verbose($"Orchestrator prompt: {prompt.Length} chars (~{prompt.Length / 4} tokens)");
-        _logger.Trace("Building orchestration plan with AI...");
+        _logger.LogDebug("Orchestrator prompt: {Length} chars (~{Tokens} tokens)", prompt.Length, prompt.Length / 4);
 
         OrchestrationPlan? plan = await _ai.SendAsync<OrchestrationPlan>(prompt, maxTokens: 3000);
 
         if (plan == null || plan.Specialists.Count == 0)
         {
-            _logger.Warning("Orchestrator returned empty plan, using fallback");
-            _logger.Trace("AI returned null or empty plan, falling back to default plan");
+            _logger.LogWarning("Orchestrator returned empty plan, using fallback");
             return CreateFallbackPlan(structure, destructured);
         }
 
-        _logger.Trace($"Plan received: {plan.Specialists.Count} specialists, {plan.OutputSections.Count} sections");
-        _logger.Trace($"Critical context length: {plan.CriticalContext.Length} chars");
+        _logger.LogDebug("Plan received: {SpecialistCount} specialists, {SectionCount} sections",
+            plan.Specialists.Count, plan.OutputSections.Count);
 
         foreach (SpecialistTask specialist in plan.Specialists)
         {
-            _logger.Trace($"  Specialist: {specialist.Name} ({specialist.SpecialistId})");
-            _logger.Trace($"    Priority: {specialist.Priority}, Prompts: {specialist.Prompts.Count}");
-            _logger.Trace($"    Target sections: {string.Join(", ", specialist.TargetSections)}");
-            _logger.Trace($"    Required assemblies: {string.Join(", ", specialist.RequiredFiles.Destructured)}");
-            if (specialist.RequiredFiles.FullContent.Count > 0)
-            {
-                _logger.Trace($"    Required files: {string.Join(", ", specialist.RequiredFiles.FullContent)}");
-            }
+            _logger.LogDebug("Specialist: {Name} ({Id}), Priority: {Priority}, Prompts: {PromptCount}",
+                specialist.Name, specialist.SpecialistId, specialist.Priority, specialist.Prompts.Count);
         }
 
         RegisterNewSpecialists(plan);
 
-        _logger.Success($"Plan created: {plan.Specialists.Count} specialists, {plan.OutputSections.Count} sections");
+        _logger.LogInformation("Plan created: {SpecialistCount} specialists, {SectionCount} sections",
+            plan.Specialists.Count, plan.OutputSections.Count);
 
         return plan;
     }
 
     private string BuildOrchestratorPrompt(
-        ProjectStructure structure,
-        Dictionary<string, DestructuredAssembly> destructured)
+       ProjectStructure structure,
+       Dictionary<string, DestructuredAssembly> destructured)
     {
-        StringBuilder sb = new();
+        string assembliesSection = string.Join(
+            Environment.NewLine + Environment.NewLine,
+            destructured.Select(kvp =>
+            {
+                string name = kvp.Key;
+                DestructuredAssembly assembly = kvp.Value;
 
-        sb.AppendLine("You are a technical documentation architect. Analyze this C# project and create a documentation plan.");
-        sb.AppendLine();
-        sb.AppendLine("PROJECT STRUCTURE:");
-        sb.AppendLine(_formatter.FormatStructure(structure));
-        sb.AppendLine();
+                List<string> keyTypes = assembly.Namespaces
+                    .SelectMany(n => n.Types)
+                    .Where(t =>
+                        t.Kind == TypeKind.Interface ||
+                        t.Attributes.Any(a => a.Contains("Generator")))
+                    .Take(5)
+                    .Select(t => t.Name)
+                    .ToList();
 
-        sb.AppendLine("AVAILABLE FILES BY ASSEMBLY:");
-        foreach ((string name, DestructuredAssembly assembly) in destructured)
-        {
-            sb.AppendLine($"  {name}:");
-            sb.AppendLine($"    Namespaces: {assembly.Namespaces.Count}");
-            sb.AppendLine($"    Types: {assembly.Namespaces.Sum(n => n.Types.Count)}");
-            sb.AppendLine($"    Components: {assembly.Components.Count}");
-            sb.AppendLine($"    TypeScript: {assembly.TypeScript.Count}");
-            sb.AppendLine($"    CSS: {assembly.Css.Count}");
+                List<string> files = assembly.Namespaces
+                    .SelectMany(n => n.Types)
+                    .Select(t => t.File)
+                    .Distinct()
+                    .Take(10)
+                    .ToList();
 
-            List<string> keyTypes = assembly.Namespaces
-                .SelectMany(n => n.Types)
-                .Where(t => t.Kind == TypeKind.Interface || t.Attributes.Any(a => a.Contains("Generator")))
-                .Take(5)
-                .Select(t => t.Name)
-                .ToList();
+                string keyTypesLine = keyTypes.Count > 0
+                    ? $"    Key Types: {string.Join(", ", keyTypes)}"
+                    : string.Empty;
 
-            if (keyTypes.Count > 0)
-                sb.AppendLine($"    Key Types: {string.Join(", ", keyTypes)}");
-        }
-        sb.AppendLine();
+                string filesLine = files.Count > 0
+                    ? $"    Files: {string.Join(", ", files)}"
+                    : string.Empty;
 
-        sb.AppendLine("AVAILABLE SPECIALISTS:");
-        sb.AppendLine(_registry.GetSpecialistListForPrompt());
-        sb.AppendLine();
+                return $$"""
+              {{name}}:
+                Namespaces: {{assembly.Namespaces.Count}}
+                Types: {{assembly.Namespaces.Sum(n => n.Types.Count)}}
+                Components: {{assembly.Components.Count}}
+                TypeScript: {{assembly.TypeScript.Count}}
+                CSS: {{assembly.Css.Count}}
+            {{keyTypesLine}}
+            {{filesLine}}
+            """.TrimEnd();
+            })
+        );
 
-        sb.AppendLine("CREATE A DOCUMENTATION PLAN. RESPOND ONLY WITH VALID JSON:");
-        sb.AppendLine(@"{
-  ""projectType"": ""detected project type"",
-  ""criticalContext"": ""key information that ALL specialists must know about this project"",
-  ""specialists"": [
+        return $$"""
+    You are a technical documentation architect. Analyze this C# project and create a documentation plan.
+
+    PROJECT STRUCTURE:
+    {{_formatter.FormatStructure(structure)}}
+
+    AVAILABLE FILES BY ASSEMBLY:
+    {{assembliesSection}}
+
+    AVAILABLE SPECIALISTS:
+    {{_registry.GetSpecialistListForPrompt()}}
+
+    CREATE A DOCUMENTATION PLAN. RESPOND ONLY WITH VALID JSON:
     {
-      ""specialistId"": ""api_specialist"",
-      ""name"": ""API Specialist"",
-      ""focus"": ""specific focus for this project"",
-      ""targetSections"": [""section-id-1"", ""section-id-2""],
-      ""requiredFiles"": {
-        ""destructured"": [""AssemblyName""],
-        ""fullContent"": [""path/to/critical/file.cs""]
-      },
-      ""prompts"": [
+      "projectType": "detected project type",
+      "criticalContext": "key information that ALL specialists must know about this project",
+      "specialists": [
         {
-          ""id"": ""prompt-1"",
-          ""instruction"": ""detailed instruction for this prompt"",
-          ""expectedOutput"": ""what kind of content to produce"",
-          ""maxTokens"": 2000
+          "specialistId": "api_specialist",
+          "name": "API Specialist",
+          "focus": "specific focus for this project",
+          "targetSections": ["section-id-1"],
+          "prompts": [
+            {
+              "id": "prompt-1",
+              "instruction": "detailed instruction",
+              "expectedOutput": "what to produce",
+              "maxTokens": 2000,
+              "requiredFiles": {
+                "destructured": ["AssemblyName"],
+                "fullContent": ["path/to/file.cs"]
+              }
+            }
+          ],
+          "priority": 1
         }
       ],
-      ""priority"": 1
+      "outputSections": [
+        {
+          "id": "overview",
+          "title": "Overview",
+          "order": 1,
+          "description": "section description"
+        }
+      ],
+      "keyFiles": ["path/to/critical/file.cs"]
     }
-  ],
-  ""outputSections"": [
-    {
-      ""id"": ""overview"",
-      ""title"": ""Overview"",
-      ""order"": 1,
-      ""description"": ""what this section should contain""
-    }
-  ],
-  ""keyFiles"": [""path/to/critical/file.cs""]
-}");
-        sb.AppendLine();
-        sb.AppendLine("RULES:");
-        sb.AppendLine("- Use existing specialistId when possible, or create new ones if needed");
-        sb.AppendLine("- Each specialist can have multiple prompts if the task is complex");
-        sb.AppendLine("- Divide the task having in account prompt limits (including files) (~10000 tokens)");
-        sb.AppendLine("- requiredFiles.destructured = assembly names for structure info");
-        sb.AppendLine("- requiredFiles.fullContent = specific full path of files whose complete code is needed");
-        sb.AppendLine("- keyFiles = full path of critical files whose complete content should be included in LLM documentation");
-        sb.AppendLine("- criticalContext = information that must be in every prompt (project purpose, key patterns, etc)");
 
-        return sb.ToString();
+    RULES:
+    - Use existing specialistId when possible, or create new ones if needed
+    - Each specialist can have multiple prompts if the task is complex
+    - Divide the task having in account prompt limits (~10000 tokens including context)
+    - requiredFiles.destructured = assembly names for structure info
+    - requiredFiles.fullContent = specific files whose complete code the specialist needs
+    - keyFiles = critical files to include in final LLM documentation output
+    - criticalContext = project-wide info to include in every specialist prompt
+    """;
     }
 
     private void RegisterNewSpecialists(OrchestrationPlan plan)
     {
-        _logger.Trace("Registering new specialists from plan...");
+        _logger.LogDebug("Registering new specialists from plan...");
 
         int newCount = 0;
         foreach (SpecialistTask task in plan.Specialists)
@@ -166,26 +186,20 @@ public class Orchestrator
                     Capabilities = task.TargetSections,
                     IsBuiltIn = false
                 });
-                _logger.Trace($"  Registered new specialist: {task.Name} ({task.SpecialistId})");
+                _logger.LogDebug("Registered new specialist: {Name} ({Id})", task.Name, task.SpecialistId);
                 newCount++;
             }
         }
 
         if (newCount > 0)
-        {
-            _logger.Trace($"Total new specialists registered: {newCount}");
-        }
-        else
-        {
-            _logger.Trace("No new specialists to register (all are existing)");
-        }
+            _logger.LogDebug("Total new specialists registered: {Count}", newCount);
     }
 
     private OrchestrationPlan CreateFallbackPlan(
         ProjectStructure structure,
         Dictionary<string, DestructuredAssembly> destructured)
     {
-        _logger.Trace("Creating fallback plan...");
+        _logger.LogDebug("Creating fallback plan...");
 
         List<SpecialistTask> specialists = [];
         List<DocumentSection> sections = [];
@@ -204,7 +218,7 @@ public class Orchestrator
             .Select(a => a.Name)
             .ToList();
 
-        _logger.Trace($"Main assemblies for fallback plan: {string.Join(", ", mainAssemblies)}");
+        _logger.LogDebug("Main assemblies for fallback plan: {Assemblies}", string.Join(", ", mainAssemblies));
 
         specialists.Add(new SpecialistTask
         {
@@ -212,7 +226,6 @@ public class Orchestrator
             Name = "API Specialist",
             Focus = "Document public API contracts",
             TargetSections = ["public-api"],
-            RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
             Prompts =
             [
                 new SpecialistPrompt
@@ -220,7 +233,8 @@ public class Orchestrator
                     Id = "api-1",
                     Instruction = "Document the main public interfaces and their purposes",
                     ExpectedOutput = "API documentation with interface descriptions",
-                    MaxTokens = 2000
+                    MaxTokens = 2000,
+                    RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
                 }
             ],
             Priority = 1
@@ -234,9 +248,9 @@ public class Orchestrator
             Description = "Public interfaces and contracts"
         });
 
-        if (structure.GlobalSummary.TotalComponents > 0)
+        if (structure.Summary.TotalComponents > 0)
         {
-            _logger.Trace($"Adding component specialist (found {structure.GlobalSummary.TotalComponents} components)");
+            _logger.LogDebug("Adding component specialist (found {Count} components)", structure.Summary.TotalComponents);
 
             specialists.Add(new SpecialistTask
             {
@@ -244,7 +258,6 @@ public class Orchestrator
                 Name = "Component Specialist",
                 Focus = "Document Blazor components",
                 TargetSections = ["components"],
-                RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
                 Prompts =
                 [
                     new SpecialistPrompt
@@ -252,7 +265,8 @@ public class Orchestrator
                         Id = "comp-1",
                         Instruction = "Document Blazor components with their parameters and usage",
                         ExpectedOutput = "Component documentation with examples",
-                        MaxTokens = 2000
+                        MaxTokens = 2000,
+                        RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
                     }
                 ],
                 Priority = 2
@@ -267,9 +281,10 @@ public class Orchestrator
             });
         }
 
-        if (structure.GlobalSummary.DetectedPatterns.Count > 0)
+        if (structure.Summary.DetectedPatterns.Count > 0)
         {
-            _logger.Trace($"Adding architecture specialist (detected patterns: {string.Join(", ", structure.GlobalSummary.DetectedPatterns)})");
+            _logger.LogDebug("Adding architecture specialist (detected patterns: {Patterns})",
+                string.Join(", ", structure.Summary.DetectedPatterns));
 
             specialists.Add(new SpecialistTask
             {
@@ -277,15 +292,15 @@ public class Orchestrator
                 Name = "Architecture Specialist",
                 Focus = "Explain architectural patterns",
                 TargetSections = ["architecture"],
-                RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
                 Prompts =
                 [
                     new SpecialistPrompt
                     {
                         Id = "arch-1",
-                        Instruction = $"Explain the architectural patterns used: {string.Join(", ", structure.GlobalSummary.DetectedPatterns)}",
+                        Instruction = $"Explain the architectural patterns used: {string.Join(", ", structure.Summary.DetectedPatterns)}",
                         ExpectedOutput = "Architecture overview",
-                        MaxTokens = 1500
+                        MaxTokens = 1500,
+                        RequiredFiles = new RequiredFiles { Destructured = mainAssemblies },
                     }
                 ],
                 Priority = 3
@@ -295,17 +310,18 @@ public class Orchestrator
             {
                 Id = "architecture",
                 Title = "Architecture",
-                Order = sectionOrder++,
+                Order = sectionOrder,
                 Description = "Architectural patterns and design"
             });
         }
 
-        _logger.Trace($"Fallback plan created: {specialists.Count} specialists, {sections.Count} sections");
+        _logger.LogDebug("Fallback plan created: {SpecialistCount} specialists, {SectionCount} sections",
+            specialists.Count, sections.Count);
 
         return new OrchestrationPlan
         {
-            ProjectType = structure.GlobalSummary.ProjectType,
-            CriticalContext = $"This is a {structure.GlobalSummary.ProjectType} project.",
+            ProjectType = structure.Summary.ProjectType,
+            CriticalContext = $"This is a {structure.Summary.ProjectType} project.",
             Specialists = specialists,
             OutputSections = sections,
             KeyFiles = []

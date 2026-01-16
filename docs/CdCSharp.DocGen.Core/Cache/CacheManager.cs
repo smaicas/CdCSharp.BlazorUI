@@ -1,28 +1,32 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
+﻿using CdCSharp.DocGen.Core.Abstractions.Cache;
+using CdCSharp.DocGen.Core.Models.Cache;
+using CdCSharp.DocGen.Core.Models.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
 namespace CdCSharp.DocGen.Core.Cache;
 
-public class CacheManager : IDisposable
+public class CacheManager : ICacheManager
 {
     private readonly string _cacheDir;
     private readonly string _manifestPath;
-    private readonly CacheOptions _options;
-    private readonly ILogger _logger;
+    private readonly CacheOptions _cacheOptions;
+    private readonly ILogger<CacheManager> _logger;
     private CacheManifest _manifest;
     private bool _isDirty;
 
-    public CacheManager(string projectPath, CacheOptions? options = null, ILogger? logger = null)
+    public CacheManager(IOptions<DocGenOptions> options, ILogger<CacheManager> logger)
     {
-        _options = options ?? new CacheOptions();
-        _logger = logger ?? NullLogger.Instance;
-        _cacheDir = Path.Combine(projectPath, ".doccache");
+        _cacheOptions = options.Value.Cache;
+        _logger = logger;
+        _cacheDir = Path.Combine(options.Value.ProjectPath, ".doccache");
         _manifestPath = Path.Combine(_cacheDir, "manifest.json");
 
         Directory.CreateDirectory(_cacheDir);
-        _manifest = LoadManifest(projectPath);
+        _manifest = LoadManifest(options.Value.ProjectPath);
     }
 
     private CacheManifest LoadManifest(string projectPath)
@@ -35,13 +39,14 @@ public class CacheManager : IDisposable
                 CacheManifest? manifest = JsonSerializer.Deserialize<CacheManifest>(json);
                 if (manifest != null)
                 {
-                    _logger.Verbose($"Cache loaded: {manifest.AnalysisEntries.Count} analysis, {manifest.QueryEntries.Count} queries");
+                    _logger.LogDebug("Cache loaded: {AnalysisCount} analysis, {QueryCount} queries",
+                        manifest.AnalysisEntries.Count, manifest.QueryEntries.Count);
                     return manifest;
                 }
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Failed to load cache: {ex.Message}");
+                _logger.LogWarning(ex, "Failed to load cache");
             }
         }
 
@@ -50,7 +55,7 @@ public class CacheManager : IDisposable
 
     public async Task<(bool Hit, T? Result)> TryGetAnalysisAsync<T>(string filePath, string analysisType) where T : class
     {
-        if (!_options.EnableAnalysisCache)
+        if (!_cacheOptions.EnableAnalysisCache)
             return (false, null);
 
         string fileHash = await ComputeFileHashAsync(filePath);
@@ -60,7 +65,7 @@ public class CacheManager : IDisposable
         {
             _manifest.Statistics.AnalysisHits++;
             _isDirty = true;
-            _logger.Verbose($"Cache HIT: {Path.GetFileName(filePath)} ({analysisType})");
+            _logger.LogDebug("Cache HIT: {FileName} ({AnalysisType})", Path.GetFileName(filePath), analysisType);
 
             try
             {
@@ -79,7 +84,7 @@ public class CacheManager : IDisposable
 
     public async Task SetAnalysisAsync<T>(string filePath, string analysisType, T result) where T : class
     {
-        if (!_options.EnableAnalysisCache)
+        if (!_cacheOptions.EnableAnalysisCache)
             return;
 
         string fileHash = await ComputeFileHashAsync(filePath);
@@ -97,12 +102,12 @@ public class CacheManager : IDisposable
 
         _manifest.Statistics.TotalSize += json.Length;
         _isDirty = true;
-        _logger.Verbose($"Cached: {Path.GetFileName(filePath)} ({analysisType})");
+        _logger.LogDebug("Cached: {FileName} ({AnalysisType})", Path.GetFileName(filePath), analysisType);
     }
 
     public (bool Hit, string? Response) TryGetQuery(string prompt, string specialistId)
     {
-        if (!_options.EnableQueryCache)
+        if (!_cacheOptions.EnableQueryCache)
             return (false, null);
 
         string promptHash = ComputeStringHash(prompt);
@@ -110,11 +115,11 @@ public class CacheManager : IDisposable
 
         if (_manifest.QueryEntries.TryGetValue(key, out QueryCacheEntry? entry))
         {
-            if (DateTime.UtcNow - entry.Timestamp < _options.QueryCacheExpiration)
+            if (DateTime.UtcNow - entry.Timestamp < _cacheOptions.QueryCacheExpiration)
             {
                 _manifest.Statistics.QueryHits++;
                 _isDirty = true;
-                _logger.Verbose($"Query cache HIT: {specialistId}");
+                _logger.LogDebug("Query cache HIT: {SpecialistId}", specialistId);
                 return (true, entry.Response);
             }
 
@@ -128,7 +133,7 @@ public class CacheManager : IDisposable
 
     public void SetQuery(string prompt, string specialistId, string response)
     {
-        if (!_options.EnableQueryCache)
+        if (!_cacheOptions.EnableQueryCache)
             return;
 
         string promptHash = ComputeStringHash(prompt);
@@ -145,7 +150,7 @@ public class CacheManager : IDisposable
 
         _manifest.Statistics.TotalSize += response.Length;
         _isDirty = true;
-        _logger.Verbose($"Query cached: {specialistId}");
+        _logger.LogDebug("Query cached: {SpecialistId}", specialistId);
     }
 
     public void Clear(bool analysisOnly = false, bool queriesOnly = false)
@@ -153,13 +158,13 @@ public class CacheManager : IDisposable
         if (!queriesOnly)
         {
             _manifest.AnalysisEntries.Clear();
-            _logger.Info("Analysis cache cleared");
+            _logger.LogInformation("Analysis cache cleared");
         }
 
         if (!analysisOnly)
         {
             _manifest.QueryEntries.Clear();
-            _logger.Info("Query cache cleared");
+            _logger.LogInformation("Query cache cleared");
         }
 
         _manifest.Statistics = new CacheStatistics();
@@ -195,7 +200,7 @@ public class CacheManager : IDisposable
         if (!File.Exists(filePath))
             return string.Empty;
 
-        using FileStream stream = File.OpenRead(filePath);
+        await using FileStream stream = File.OpenRead(filePath);
         byte[] hash = await SHA256.HashDataAsync(stream);
         return Convert.ToHexString(hash);
     }
@@ -217,11 +222,11 @@ public class CacheManager : IDisposable
             string json = JsonSerializer.Serialize(_manifest, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_manifestPath, json);
             _isDirty = false;
-            _logger.Verbose("Cache saved");
+            _logger.LogDebug("Cache saved");
         }
         catch (Exception ex)
         {
-            _logger.Warning($"Failed to save cache: {ex.Message}");
+            _logger.LogWarning(ex, "Failed to save cache");
         }
     }
 

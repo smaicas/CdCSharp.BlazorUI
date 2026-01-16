@@ -7,13 +7,6 @@
         "GROQ_API_KEY": ""
       }
     },
-    "Generate Docs (Self)(No Cache)": {
-      "commandName": "Project",
-      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\\.docgen\" -v --no-cache",
-      "environmentVariables": {
-        "GROQ_API_KEY": ""
-      }
-    },
     "Help": {
       "commandName": "Project",
       "commandLineArgs": "--help"
@@ -27,7 +20,14 @@
     },
     "BlazorUI (LMStudio-NoCache)": {
       "commandName": "Project",
-      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\.docgen\" --lmstudio --trace --no-cache",
+      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\.docgen\" -v --lmstudio  --trace-prompts --no-cache",
+      "environmentVariables": {
+        "GROQ_API_KEY": ""
+      }
+    },
+    "Generate Docs (LMS)(Self)(No Cache)": {
+      "commandName": "Project",
+      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\\.docgen\" -v --lmstudio  --trace-prompts --no-cache",
       "environmentVariables": {
         "GROQ_API_KEY": ""
       }

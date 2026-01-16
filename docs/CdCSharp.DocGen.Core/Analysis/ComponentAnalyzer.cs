@@ -1,16 +1,17 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 namespace CdCSharp.DocGen.Core.Analysis;
 
-public partial class ComponentAnalyzer
+public partial class ComponentAnalyzer : IComponentAnalyzer
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<ComponentAnalyzer> _logger;
 
-    public ComponentAnalyzer(ILogger? logger = null)
+    public ComponentAnalyzer(ILogger<ComponentAnalyzer> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
+        _logger = logger;
     }
 
     public async Task<List<DestructuredComponent>> AnalyzeAsync(string rootPath, List<string> razorFiles)
@@ -31,7 +32,7 @@ public partial class ComponentAnalyzer
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Failed to analyze component {relativePath}: {ex.Message}");
+                _logger.LogWarning(ex, "Failed to analyze component {RelativePath}", relativePath);
             }
         }
 
@@ -103,7 +104,7 @@ public partial class ComponentAnalyzer
             {
                 Name = name,
                 Type = type,
-                Required = isRequired || type.EndsWith("?") == false,
+                Required = isRequired || !type.EndsWith("?"),
                 EditorRequired = editorRequired,
                 DefaultValue = defaultValue
             });
@@ -182,7 +183,7 @@ public partial class ComponentAnalyzer
         {
             string type = match.Groups[1].Value;
             string name = match.Groups[2].Value;
-            fragments.Add(type.Contains("<") ? $"{name}: {type}" : name);
+            fragments.Add(type.Contains('<') ? $"{name}: {type}" : name);
         }
 
         return fragments;

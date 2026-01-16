@@ -1,19 +1,20 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+using CdCSharp.DocGen.Core.Models.Analysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using TypeKind = CdCSharp.DocGen.Core.Models.TypeKind;
+using Microsoft.Extensions.Logging;
+using TypeKind = CdCSharp.DocGen.Core.Models.Analysis.TypeKind;
 
 namespace CdCSharp.DocGen.Core.Analysis;
 
-public class TypeDestructurer
+public class TypeDestructurer : ITypeDestructurer
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<TypeDestructurer> _logger;
 
-    public TypeDestructurer(ILogger? logger = null)
+    public TypeDestructurer(ILogger<TypeDestructurer> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
+        _logger = logger;
     }
 
     public async Task<List<DestructuredNamespace>> DestructureAsync(string rootPath, List<string> csFiles)
@@ -44,7 +45,7 @@ public class TypeDestructurer
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Failed to parse {relativePath}: {ex.Message}");
+                _logger.LogWarning(ex, "Failed to parse {RelativePath}", relativePath);
             }
         }
 
@@ -58,7 +59,7 @@ public class TypeDestructurer
             .ToList();
     }
 
-    private class TypeVisitor : CSharpSyntaxWalker
+    private sealed class TypeVisitor : CSharpSyntaxWalker
     {
         private readonly string _filePath;
         private string _currentNamespace = string.Empty;

@@ -1,76 +1,89 @@
-﻿using CdCSharp.DocGen.Core.Cache;
-using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+using CdCSharp.DocGen.Core.Abstractions.Cache;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using CdCSharp.DocGen.Core.Models.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace CdCSharp.DocGen.Core.Analysis;
 
-public class ProjectAnalyzer
+public class ProjectAnalyzer : IProjectAnalyzer
 {
-    private readonly AssemblyScanner _assemblyScanner;
-    private readonly TypeDestructurer _typeDestructurer;
-    private readonly ComponentAnalyzer _componentAnalyzer;
-    private readonly TypeScriptAnalyzer _tsAnalyzer;
-    private readonly CssAnalyzer _cssAnalyzer;
-    private readonly CacheManager? _cache;
-    private readonly ILogger _logger;
+    private readonly IAssemblyScanner _assemblyScanner;
+    private readonly ITypeDestructurer _typeDestructurer;
+    private readonly IComponentAnalyzer _componentAnalyzer;
+    private readonly ITypeScriptAnalyzer _tsAnalyzer;
+    private readonly ICssAnalyzer _cssAnalyzer;
+    private readonly ICacheManager _cache;
+    private readonly ILogger<ProjectAnalyzer> _logger;
+    private readonly DocGenOptions _options;
 
-    public ProjectAnalyzer(CacheManager? cache = null, ILogger? logger = null)
+    public ProjectAnalyzer(
+        IAssemblyScanner assemblyScanner,
+        ITypeDestructurer typeDestructurer,
+        IComponentAnalyzer componentAnalyzer,
+        ITypeScriptAnalyzer tsAnalyzer,
+        ICssAnalyzer cssAnalyzer,
+        ICacheManager cache,
+        IOptions<DocGenOptions> options,
+        ILogger<ProjectAnalyzer> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
+        _assemblyScanner = assemblyScanner;
+        _typeDestructurer = typeDestructurer;
+        _componentAnalyzer = componentAnalyzer;
+        _tsAnalyzer = tsAnalyzer;
+        _cssAnalyzer = cssAnalyzer;
         _cache = cache;
-        _assemblyScanner = new AssemblyScanner(_logger);
-        _typeDestructurer = new TypeDestructurer(_logger);
-        _componentAnalyzer = new ComponentAnalyzer(_logger);
-        _tsAnalyzer = new TypeScriptAnalyzer(_logger);
-        _cssAnalyzer = new CssAnalyzer(_logger);
+        _options = options.Value;
+        _logger = logger;
     }
 
-    public async Task<(ProjectStructure Structure, Dictionary<string, DestructuredAssembly> Destructured)> AnalyzeAsync(string projectPath)
+    public async Task<AnalysisResult> AnalyzeAsync(string projectPath)
     {
-        _logger.Info($"Analyzing project: {projectPath}");
+        _logger.LogInformation("Analyzing project: {ProjectPath}", projectPath);
 
         List<AssemblyInfo> assemblies = await _assemblyScanner.ScanAsync(projectPath);
         Dictionary<string, DestructuredAssembly> destructured = [];
 
         foreach (AssemblyInfo assembly in assemblies)
         {
-            _logger.Progress($"Destructuring: {assembly.Name}");
+            _logger.LogInformation("Destructuring: {AssemblyName}", assembly.Name);
 
             DestructuredAssembly da = await DestructureAssemblyAsync(projectPath, assembly);
             destructured[assembly.Name] = da;
 
-            assembly.Summary.Classes = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Class));
-            assembly.Summary.Interfaces = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Interface));
-            assembly.Summary.Records = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Record));
-            assembly.Summary.Structs = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Struct));
-            assembly.Summary.Enums = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Enum));
-            assembly.Summary.Delegates = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Delegate));
-            assembly.Summary.Components = da.Components.Count;
-            assembly.Summary.Generators = CountGenerators(da);
-            assembly.Summary.TsModules = da.TypeScript.Count;
-            assembly.Summary.CssFiles = da.Css.Count;
-            assembly.Summary.CssVariables = da.Css.Sum(c => c.Variables.Count);
+            assembly.Metrics.Classes = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Class));
+            assembly.Metrics.Interfaces = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Interface));
+            assembly.Metrics.Records = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Record));
+            assembly.Metrics.Structs = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Struct));
+            assembly.Metrics.Enums = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Enum));
+            assembly.Metrics.Delegates = da.Namespaces.Sum(n => n.Types.Count(t => t.Kind == TypeKind.Delegate));
+            assembly.Metrics.Components = da.Components.Count;
+            assembly.Metrics.Generators = CountGenerators(da);
+            assembly.Metrics.TsModules = da.TypeScript.Count;
+            assembly.Metrics.CssFiles = da.Css.Count;
         }
 
         ProjectStructure structure = BuildStructure(projectPath, assemblies);
 
-        _logger.Success($"Analysis complete: {assemblies.Count} assemblies");
+        _logger.LogInformation("Analysis complete: {Count} assemblies", assemblies.Count);
 
-        return (structure, destructured);
+        return new AnalysisResult
+        {
+            Structure = structure,
+            Destructured = destructured
+        };
     }
 
     private async Task<DestructuredAssembly> DestructureAssemblyAsync(string rootPath, AssemblyInfo assembly)
     {
-        string cacheKey = $"destructured:{assembly.Name}";
+        string assemblyPath = Path.Combine(rootPath, assembly.Path);
 
-        if (_cache != null)
-        {
-            (bool hit, DestructuredAssembly? cached) = await _cache.TryGetAnalysisAsync<DestructuredAssembly>(
-                Path.Combine(rootPath, assembly.Path), "destructured");
+        (bool hit, DestructuredAssembly? cached) = await _cache.TryGetAnalysisAsync<DestructuredAssembly>(
+            assemblyPath, "destructured");
 
-            if (hit && cached != null)
-                return cached;
-        }
+        if (hit && cached != null)
+            return cached;
 
         List<DestructuredNamespace> namespaces = await _typeDestructurer.DestructureAsync(rootPath, assembly.Files.CSharp);
         List<DestructuredComponent> components = await _componentAnalyzer.AnalyzeAsync(rootPath, assembly.Files.Razor);
@@ -86,10 +99,7 @@ public class ProjectAnalyzer
             Css = css
         };
 
-        if (_cache != null)
-        {
-            await _cache.SetAnalysisAsync(Path.Combine(rootPath, assembly.Path), "destructured", result);
-        }
+        await _cache.SetAnalysisAsync(assemblyPath, "destructured", result);
 
         return result;
     }
@@ -105,17 +115,15 @@ public class ProjectAnalyzer
     {
         string solutionName = FindSolutionName(projectPath);
 
-        GlobalSummary globalSummary = new()
+        ProjectSummary summary = new()
         {
             TotalAssemblies = assemblies.Count,
             TotalTestProjects = assemblies.Count(a => a.IsTestProject),
-            TotalClasses = assemblies.Sum(a => a.Summary.Classes),
-            TotalInterfaces = assemblies.Sum(a => a.Summary.Interfaces),
-            TotalRecords = assemblies.Sum(a => a.Summary.Records),
-            TotalComponents = assemblies.Sum(a => a.Summary.Components),
-            TotalGenerators = assemblies.Sum(a => a.Summary.Generators),
-            TotalTsModules = assemblies.Sum(a => a.Summary.TsModules),
-            TotalCssFiles = assemblies.Sum(a => a.Summary.CssFiles),
+            TotalClasses = assemblies.Sum(a => a.Metrics.Classes),
+            TotalInterfaces = assemblies.Sum(a => a.Metrics.Interfaces),
+            TotalRecords = assemblies.Sum(a => a.Metrics.Records),
+            TotalComponents = assemblies.Sum(a => a.Metrics.Components),
+            TotalGenerators = assemblies.Sum(a => a.Metrics.Generators),
             DetectedPatterns = DetectPatterns(assemblies),
             ProjectType = DetermineProjectType(assemblies)
         };
@@ -125,7 +133,7 @@ public class ProjectAnalyzer
             Solution = solutionName,
             RootPath = projectPath,
             Assemblies = assemblies,
-            GlobalSummary = globalSummary
+            Summary = summary
         };
     }
 
@@ -142,10 +150,10 @@ public class ProjectAnalyzer
     {
         List<string> patterns = [];
 
-        if (assemblies.Any(a => a.Summary.Generators > 0))
+        if (assemblies.Any(a => a.Metrics.Generators > 0))
             patterns.Add("SourceGenerators");
 
-        if (assemblies.Any(a => a.Summary.Components > 0))
+        if (assemblies.Any(a => a.Metrics.Components > 0))
             patterns.Add("Blazor");
 
         if (assemblies.Any(a => a.References.Any(r => r.Contains("Microsoft.AspNetCore"))))
@@ -160,7 +168,7 @@ public class ProjectAnalyzer
         if (assemblies.Any(a => a.References.Any(r => r.Contains("FluentValidation"))))
             patterns.Add("FluentValidation");
 
-        if (assemblies.Any(a => a.Summary.TsModules > 0))
+        if (assemblies.Any(a => a.Metrics.TsModules > 0))
             patterns.Add("TypeScript");
 
         return patterns;
@@ -170,7 +178,7 @@ public class ProjectAnalyzer
     {
         List<AssemblyInfo> nonTest = assemblies.Where(a => !a.IsTestProject).ToList();
 
-        if (nonTest.Any(a => a.Summary.Components > 0))
+        if (nonTest.Any(a => a.Metrics.Components > 0))
         {
             if (nonTest.Any(a => a.References.Any(r => r.Contains("Microsoft.AspNetCore.Components.WebAssembly"))))
                 return "Blazor WebAssembly";
@@ -182,7 +190,7 @@ public class ProjectAnalyzer
         if (nonTest.Any(a => a.References.Any(r => r.Contains("Microsoft.AspNetCore.Mvc") || r.Contains("ControllerBase"))))
             return "ASP.NET Core Web API";
 
-        if (nonTest.Any(a => a.Summary.Generators > 0))
+        if (nonTest.Any(a => a.Metrics.Generators > 0))
             return "Source Generator Library";
 
         if (nonTest.Count == 1 && nonTest[0].Files.CSharp.Any(f => f.Contains("Program.cs")))

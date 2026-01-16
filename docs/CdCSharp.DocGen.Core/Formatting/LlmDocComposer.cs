@@ -1,52 +1,54 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Formatting;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using CdCSharp.DocGen.Core.Models.Generation;
+using CdCSharp.DocGen.Core.Models.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace CdCSharp.DocGen.Core.Formatting;
 
-public class LlmDocComposer
+public class LlmDocComposer : ILlmDocComposer
 {
-    private readonly PlainTextFormatter _formatter;
-    private readonly ILogger _logger;
+    private readonly IPlainTextFormatter _formatter;
+    private readonly ILogger<LlmDocComposer> _logger;
     private readonly string _projectRoot;
 
-    public LlmDocComposer(string projectRoot, ILogger? logger = null)
+    public LlmDocComposer(
+        IPlainTextFormatter formatter,
+        IOptions<DocGenOptions> options,
+        ILogger<LlmDocComposer> logger)
     {
-        _projectRoot = projectRoot;
-        _formatter = new PlainTextFormatter();
-        _logger = logger ?? NullLogger.Instance;
+        _formatter = formatter;
+        _projectRoot = options.Value.ProjectPath;
+        _logger = logger;
     }
 
     public async Task<string> ComposeAsync(GenerationContext context)
     {
-        _logger.Progress("Composing LLM-optimized documentation...");
+        _logger.LogInformation("Composing LLM-optimized documentation...");
 
         StringBuilder sb = new();
 
-        // Header
         sb.AppendLine("=".PadRight(80, '='));
         sb.AppendLine($"PROJECT: {context.Structure.Solution}");
-        sb.AppendLine($"TYPE: {context.Structure.GlobalSummary.ProjectType}");
+        sb.AppendLine($"TYPE: {context.Structure.Summary.ProjectType}");
         sb.AppendLine("=".PadRight(80, '='));
         sb.AppendLine();
 
-        // Legend
-        sb.AppendLine(PlainTextFormatter.GetLegend());
+        sb.AppendLine(_formatter.GetLegend());
         sb.AppendLine();
 
-        // Critical context
-        if (!string.IsNullOrWhiteSpace(context.CriticalContext))
+        if (!string.IsNullOrWhiteSpace(context.Plan.CriticalContext))
         {
             sb.AppendLine("CRITICAL CONTEXT:");
-            sb.AppendLine(context.CriticalContext);
+            sb.AppendLine(context.Plan.CriticalContext);
             sb.AppendLine();
         }
 
-        // Project structure
         sb.AppendLine(_formatter.FormatStructure(context.Structure));
         sb.AppendLine();
 
-        // Detailed structure by assembly
         sb.AppendLine("-".PadRight(80, '-'));
         sb.AppendLine("DETAILED STRUCTURE");
         sb.AppendLine("-".PadRight(80, '-'));
@@ -54,14 +56,12 @@ public class LlmDocComposer
 
         foreach ((string name, DestructuredAssembly assembly) in context.Destructured)
         {
-            // Skip test projects
             if (context.Structure.Assemblies.FirstOrDefault(a => a.Name == name)?.IsTestProject == true)
                 continue;
 
             sb.AppendLine(_formatter.FormatDestructured(assembly));
         }
 
-        // Key files (full content)
         if (context.Plan.KeyFiles.Count > 0)
         {
             sb.AppendLine("-".PadRight(80, '-'));
@@ -76,7 +76,7 @@ public class LlmDocComposer
         }
 
         string doc = sb.ToString();
-        _logger.Success($"LLM documentation: {doc.Length} chars (~{doc.Length / 4} tokens)");
+        _logger.LogInformation("LLM documentation: {Length} chars (~{Tokens} tokens)", doc.Length, doc.Length / 4);
 
         return doc;
     }
@@ -87,7 +87,7 @@ public class LlmDocComposer
 
         if (!File.Exists(fullPath))
         {
-            _logger.Warning($"Key file not found: {relativePath}");
+            _logger.LogWarning("Key file not found: {Path}", relativePath);
             return;
         }
 
@@ -101,7 +101,7 @@ public class LlmDocComposer
         }
         catch (Exception ex)
         {
-            _logger.Warning($"Failed to read {relativePath}: {ex.Message}");
+            _logger.LogWarning(ex, "Failed to read {Path}", relativePath);
         }
     }
 }

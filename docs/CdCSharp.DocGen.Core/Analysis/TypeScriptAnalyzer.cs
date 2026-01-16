@@ -1,16 +1,17 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 
 namespace CdCSharp.DocGen.Core.Analysis;
 
-public partial class TypeScriptAnalyzer
+public partial class TypeScriptAnalyzer : ITypeScriptAnalyzer
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<TypeScriptAnalyzer> _logger;
 
-    public TypeScriptAnalyzer(ILogger? logger = null)
+    public TypeScriptAnalyzer(ILogger<TypeScriptAnalyzer> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
+        _logger = logger;
     }
 
     public async Task<List<DestructuredTypeScript>> AnalyzeAsync(string rootPath, List<string> tsFiles)
@@ -31,14 +32,14 @@ public partial class TypeScriptAnalyzer
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Failed to analyze TypeScript {relativePath}: {ex.Message}");
+                _logger.LogWarning(ex, "Failed to analyze TypeScript {RelativePath}", relativePath);
             }
         }
 
         return results;
     }
 
-    private DestructuredTypeScript AnalyzeFile(string filePath, string content)
+    private static DestructuredTypeScript AnalyzeFile(string filePath, string content)
     {
         return new DestructuredTypeScript
         {
@@ -84,8 +85,8 @@ public partial class TypeScriptAnalyzer
             exports.Add(new TsExport
             {
                 Kind = TsExportKind.Interface,
-                Name = match.Groups[1].Value,
-                IsDefault = false
+                Name = match.Groups[2].Value,
+                IsDefault = match.Groups[1].Success
             });
         }
 

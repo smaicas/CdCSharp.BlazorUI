@@ -1,9 +1,13 @@
-﻿namespace CdCSharp.DocGen.Core.Infrastructure;
+﻿using CdCSharp.DocGen.Core.Abstractions.Infrastructure;
+using Microsoft.Extensions.Logging;
 
-public class IgnoreFilter
+namespace CdCSharp.DocGen.Core.Infrastructure;
+
+public class IgnoreFilter : IIgnoreFilter
 {
+    private readonly ILogger<IgnoreFilter> _logger;
     private readonly List<IgnoreRule> _rules = [];
-    private readonly string _basePath;
+    private string _basePath = string.Empty;
 
     private static readonly string[] DefaultPatterns =
     [
@@ -23,17 +27,17 @@ public class IgnoreFilter
 
     public string Source { get; private set; } = "defaults";
 
-    private IgnoreFilter(string basePath)
+    public IgnoreFilter(ILogger<IgnoreFilter> logger)
     {
-        _basePath = NormalizePath(basePath);
+        _logger = logger;
     }
 
-    public static async Task<IgnoreFilter> LoadAsync(string projectPath, ILogger? logger = null)
+    public async Task InitializeAsync(string projectPath)
     {
-        logger ??= NullLogger.Instance;
-        IgnoreFilter filter = new(projectPath);
+        _basePath = NormalizePath(projectPath);
+        _rules.Clear();
 
-        filter.AddPatterns(DefaultPatterns);
+        AddPatterns(DefaultPatterns);
 
         string dgignorePath = Path.Combine(projectPath, "dgignore.txt");
         string gitignorePath = Path.Combine(projectPath, ".gitignore");
@@ -41,19 +45,19 @@ public class IgnoreFilter
         if (File.Exists(dgignorePath))
         {
             string[] lines = await File.ReadAllLinesAsync(dgignorePath);
-            int count = filter.AddPatterns(lines);
-            filter.Source = $"dgignore.txt ({count} patterns)";
-            logger.Verbose($"Loaded {count} patterns from dgignore.txt");
+            int count = AddPatterns(lines);
+            Source = $"dgignore.txt ({count} patterns)";
+            _logger.LogDebug("Loaded {Count} patterns from dgignore.txt", count);
         }
         else if (File.Exists(gitignorePath))
         {
             string[] lines = await File.ReadAllLinesAsync(gitignorePath);
-            int count = filter.AddPatterns(lines);
-            filter.Source = $".gitignore ({count} patterns)";
-            logger.Verbose($"Loaded {count} patterns from .gitignore");
+            int count = AddPatterns(lines);
+            Source = $".gitignore ({count} patterns)";
+            _logger.LogDebug("Loaded {Count} patterns from .gitignore", count);
         }
 
-        return filter;
+        _logger.LogDebug("Using ignore patterns: {Source}", Source);
     }
 
     public bool IsIgnored(string path)
@@ -102,7 +106,7 @@ public class IgnoreFilter
     private static string NormalizePath(string path)
         => path.Replace('\\', '/').TrimEnd('/');
 
-    private class IgnoreRule
+    private sealed class IgnoreRule
     {
         private readonly string _pattern;
         public bool IsNegation { get; }

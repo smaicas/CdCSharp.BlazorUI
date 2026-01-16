@@ -1,32 +1,39 @@
-﻿using CdCSharp.DocGen.Core.Infrastructure;
-using CdCSharp.DocGen.Core.Models;
+﻿using CdCSharp.DocGen.Core.Abstractions.Analysis;
+using CdCSharp.DocGen.Core.Abstractions.Infrastructure;
+using CdCSharp.DocGen.Core.Models.Analysis;
+using Microsoft.Extensions.Logging;
 using System.Xml.Linq;
 
 namespace CdCSharp.DocGen.Core.Analysis;
 
-public class AssemblyScanner
+public class AssemblyScanner : IAssemblyScanner
 {
-    private readonly ILogger _logger;
-    private readonly List<string> _testPackageIndicators;
-    private IgnoreFilter? _ignoreFilter;
+    private readonly IIgnoreFilter _ignoreFilter;
+    private readonly ILogger<AssemblyScanner> _logger;
 
-    public AssemblyScanner(ILogger? logger = null, List<string>? testPackageIndicators = null)
+    private static readonly string[] TestPackageIndicators =
+    [
+        "xunit", "nunit", "mstest", "xUnit", "NUnit", "MSTest", "Test.Sdk"
+    ];
+
+    public AssemblyScanner(IIgnoreFilter ignoreFilter, ILogger<AssemblyScanner> logger)
     {
-        _logger = logger ?? NullLogger.Instance;
-        _testPackageIndicators = testPackageIndicators ?? ["xunit", "nunit", "mstest", "xUnit", "NUnit", "MSTest"];
+        _ignoreFilter = ignoreFilter;
+        _logger = logger;
     }
 
     public async Task<List<AssemblyInfo>> ScanAsync(string projectPath)
     {
-        _ignoreFilter = await IgnoreFilter.LoadAsync(projectPath, _logger);
-        _logger.Verbose($"Using ignore patterns: {_ignoreFilter.Source}");
+        await _ignoreFilter.InitializeAsync(projectPath);
+        _logger.LogDebug("Using ignore patterns: {Source}", _ignoreFilter.Source);
 
         List<AssemblyInfo> assemblies = [];
+
         string[] csprojFiles = Directory.GetFiles(projectPath, "*.csproj", SearchOption.AllDirectories)
             .Where(f => !_ignoreFilter.IsIgnored(f))
             .ToArray();
 
-        _logger.Progress($"Found {csprojFiles.Length} projects");
+        _logger.LogInformation("Found {Count} projects", csprojFiles.Length);
 
         foreach (string csprojPath in csprojFiles)
         {
@@ -34,11 +41,11 @@ public class AssemblyScanner
             {
                 AssemblyInfo assembly = await ScanProjectAsync(csprojPath, projectPath);
                 assemblies.Add(assembly);
-                _logger.Verbose($"  Scanned: {assembly.Name}");
+                _logger.LogDebug("Scanned: {Name}", assembly.Name);
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Failed to scan {Path.GetFileName(csprojPath)}: {ex.Message}");
+                _logger.LogWarning(ex, "Failed to scan {FileName}", Path.GetFileName(csprojPath));
             }
         }
 
@@ -64,7 +71,7 @@ public class AssemblyScanner
             IsTestProject = isTestProject,
             References = references,
             Files = files,
-            Summary = new AssemblySummary
+            Metrics = new AssemblyMetrics
             {
                 CssFiles = files.Css.Count,
                 TsModules = files.TypeScript.Count
@@ -72,7 +79,7 @@ public class AssemblyScanner
         };
     }
 
-    private List<string> ExtractReferences(XDocument csproj)
+    private static List<string> ExtractReferences(XDocument csproj)
     {
         List<string> references = [];
 
@@ -102,7 +109,7 @@ public class AssemblyScanner
         return references;
     }
 
-    private bool IsTestProject(XDocument csproj, List<string> references)
+    private static bool IsTestProject(XDocument csproj, List<string> references)
     {
         bool hasTestSdk = csproj.Descendants()
             .Any(e => e.Name.LocalName == "PackageReference" &&
@@ -112,7 +119,7 @@ public class AssemblyScanner
             return true;
 
         return references.Any(r =>
-            _testPackageIndicators.Any(indicator =>
+            TestPackageIndicators.Any(indicator =>
                 r.Contains(indicator, StringComparison.OrdinalIgnoreCase)));
     }
 
@@ -134,7 +141,7 @@ public class AssemblyScanner
 
         foreach (string file in allFiles)
         {
-            if (_ignoreFilter?.IsIgnored(file) == true)
+            if (_ignoreFilter.IsIgnored(file))
                 continue;
 
             string relativePath = Path.GetRelativePath(rootPath, file);
