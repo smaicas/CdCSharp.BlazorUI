@@ -1,40 +1,29 @@
 {
   "profiles": {
-    "Generate Both": {
+    "Generate Docs (Self)": {
       "commandName": "Project",
-      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs -v"
+      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\\.docgen\" -v",
+      "environmentVariables": {
+        "GROQ_API_KEY": ""
+      }
     },
-    "Generate Human Only": {
+    "Generate Docs (Self)(No Cache)": {
       "commandName": "Project",
-      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs -m Human -v"
-    },
-    "Generate LLM Only": {
-      "commandName": "Project",
-      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs -m Llm -v"
-    },
-    "Generate No Gitignore": {
-      "commandName": "Project",
-      "commandLineArgs": "generate -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src -o blazorui-docs --no-gitignore -v"
-    },
-    "Analyze": {
-      "commandName": "Project",
-      "commandLineArgs": "analyze -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src"
-    },
-    "Analyze No Gitignore": {
-      "commandName": "Project",
-      "commandLineArgs": "analyze -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src --no-gitignore"
+      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\docs\\.docgen\" -v --no-cache",
+      "environmentVariables": {
+        "GROQ_API_KEY": ""
+      }
     },
     "Help": {
       "commandName": "Project",
       "commandLineArgs": "--help"
     },
-    "Generate Help": {
+    "BlazorUI (No Cache)": {
       "commandName": "Project",
-      "commandLineArgs": "generate --help"
-    },
-    "Test Ignore": {
-      "commandName": "Project",
-      "commandLineArgs": "test-ignore -p V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src"
+      "commandLineArgs": "generate -p \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\" -o \"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\.docgen\" -v --no-cache",
+      "environmentVariables": {
+        "GROQ_API_KEY": ""
+      }
     }
   }
 }

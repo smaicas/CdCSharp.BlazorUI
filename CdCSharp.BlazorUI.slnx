@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/docs/">
-    <Project Path="docs/CdCSharp.DocGen.Cli/CdCSharp.DocGen.Cli.csproj" Id="c21bb634-7a95-4b25-ab08-30eac76c9d08" />
-    <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/docs/CdCSharp.DocGen.Core/CdCSharp.DocGen.Core.csproj" Id="ab8755a9-aee4-4406-9803-877cc06cface" />
+    <Project Path="docs/CdCSharp.DocGen.Cli/CdCSharp.DocGen.Cli.csproj" Id="2bc61da2-677f-4ec0-92d0-1435ff75a4bb" />
+    <Project Path="docs/CdCSharp.DocGen.Core/CdCSharp.DocGen.Core.csproj" Id="6d3bfbff-7721-4711-a483-e8122f0bf4b3" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />
