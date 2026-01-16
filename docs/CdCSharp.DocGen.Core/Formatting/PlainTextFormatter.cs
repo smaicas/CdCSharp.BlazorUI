@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CdCSharp.DocGen.Core.Formatting;
 
-public class PlainTextFormatter
+public class PlainTextFormatter : IProjectFormatter
 {
     private const int DefaultMemberLimit = 5;
 
@@ -14,15 +14,11 @@ public class PlainTextFormatter
         _options = options ?? new FormatterOptions();
     }
 
-    public string FormatStructure(ProjectStructure structure, bool simplified = true)
+    public string FormatStructure(ProjectStructure structure)
     {
         StringBuilder sb = new();
 
-        if (simplified)
-        {
-            AppendLegend(sb);
-        }
-
+        AppendLegend(sb);
         sb.AppendLine($"PRJ:{structure.Solution}");
         sb.AppendLine($"TYP:{structure.GlobalSummary.ProjectType}");
         sb.AppendLine();
@@ -32,11 +28,8 @@ public class PlainTextFormatter
         {
             sb.Append($"  {asm.Name}");
 
-            if (!simplified)
-            {
-                sb.AppendLine();
-                sb.AppendLine($"    Path:{asm.Path}");
-            }
+            sb.AppendLine();
+            sb.AppendLine($"    Path:{asm.Path}");
 
             sb.Append($" C:{asm.Summary.Classes} I:{asm.Summary.Interfaces} R:{asm.Summary.Records}");
 
@@ -54,16 +47,13 @@ public class PlainTextFormatter
 
             sb.AppendLine();
 
-            if (!simplified && asm.References.Count > 0)
-            {
-                List<string> keyRefs = asm.References
+            List<string> keyRefs = asm.References
                     .Where(r => !r.StartsWith("System") && !r.StartsWith("Microsoft.Extensions"))
                     .Take(10)
                     .ToList();
 
-                if (keyRefs.Count > 0)
-                    sb.AppendLine($"    REF:{string.Join(",", keyRefs)}");
-            }
+            if (keyRefs.Count > 0)
+                sb.AppendLine($"    REF:{string.Join(",", keyRefs)}");
         }
 
         if (structure.GlobalSummary.DetectedPatterns.Count > 0)

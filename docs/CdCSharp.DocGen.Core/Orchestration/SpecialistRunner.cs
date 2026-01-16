@@ -10,7 +10,7 @@ public class SpecialistRunner
 {
     private readonly IAiClient _ai;
     private readonly CacheManager? _cache;
-    private readonly PlainTextFormatter _formatter;
+    private readonly IProjectFormatter _formatter;
     private readonly ILogger _logger;
     private readonly string _projectRoot;
 
@@ -23,7 +23,7 @@ public class SpecialistRunner
         _ai = ai;
         _projectRoot = projectRoot;
         _cache = cache;
-        _formatter = new PlainTextFormatter();
+        _formatter = new OptimizedFormatter();
         _logger = logger ?? NullLogger.Instance;
     }
 
