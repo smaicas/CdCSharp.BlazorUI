@@ -1,5 +1,4 @@
-﻿// Infrastructure/SessionManager.cs
-using CdCSharp.Theon.Agents;
+﻿using CdCSharp.Theon.Agents;
 using CdCSharp.Theon.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -110,8 +109,13 @@ public class SessionManager
         return sessions.OrderByDescending(s => s.SavedAt).ToList();
     }
 
-    public void RestoreAgents(SessionState state, AgentRegistry registry, AgentFactory factory)
+    public void RestoreAgents(
+        SessionState state,
+        AgentRegistry registry,
+        AgentFactory factory,
+        GeneratedFilesTracker filesTracker)
     {
+        // Restore agents
         foreach (SerializedAgentState agentState in state.Agents)
         {
             Agent agent = new()
@@ -132,6 +136,13 @@ public class SessionManager
 
             _logger.Debug($"Restored agent: {agent.Name} ({agent.Id})");
         }
+
+        // Restore generated files tracking
+        if (state.GeneratedFiles != null)
+        {
+            filesTracker.RestoreRecords(state.GeneratedFiles);
+            _logger.Info($"Restored generated files for {state.GeneratedFiles.Count} agents");
+        }
     }
 }
 
@@ -143,6 +154,7 @@ public record SessionState
     public List<SerializedAgentState> Agents { get; init; } = [];
     public List<ConversationMessage> OrchestratorHistory { get; init; } = [];
     public MetricsSummary? Metrics { get; init; }
+    public Dictionary<string, List<GeneratedFileRecord>>? GeneratedFiles { get; init; }
 }
 
 public record SerializedAgentState

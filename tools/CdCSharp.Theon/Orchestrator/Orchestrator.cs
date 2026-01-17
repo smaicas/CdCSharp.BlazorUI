@@ -23,23 +23,25 @@ public class Orchestrator
     private readonly TheonOptions _options;
     private readonly SessionManager _sessionManager;
     private readonly MetricsCollector _metrics;
+    private readonly GeneratedFilesTracker _filesTracker;
 
     private string _projectFileList = string.Empty;
     private PreAnalysisResult? _preAnalysis;
     private readonly List<ConversationMessage> _orchestratorHistory = [];
 
     public Orchestrator(
-        LMStudioClient aiClient,
-        AgentRegistry registry,
-        AgentFactory agentFactory,
-        AgentExecutor agentExecutor,
-        FileAccessTool fileAccess,
-        FileOutputTool fileOutput,
-        LlmFormatter formatter,
-        TheonLogger logger,
-        SessionManager sessionManager,
-        MetricsCollector metrics,
-        TheonOptions options)
+    LMStudioClient aiClient,
+    AgentRegistry registry,
+    AgentFactory agentFactory,
+    AgentExecutor agentExecutor,
+    FileAccessTool fileAccess,
+    FileOutputTool fileOutput,
+    LlmFormatter formatter,
+    TheonLogger logger,
+    SessionManager sessionManager,
+    MetricsCollector metrics,
+    GeneratedFilesTracker filesTracker,
+    TheonOptions options)
     {
         _aiClient = aiClient;
         _registry = registry;
@@ -50,6 +52,7 @@ public class Orchestrator
         _formatter = formatter;
         _sessionManager = sessionManager;
         _metrics = metrics;
+        _filesTracker = filesTracker;
         _logger = logger;
         _options = options;
 
@@ -130,7 +133,8 @@ public class Orchestrator
             ProjectPath = _options.ProjectPath,
             Agents = agentStates,
             OrchestratorHistory = _orchestratorHistory.ToList(),
-            Metrics = _metrics.GetSummary()
+            Metrics = _metrics.GetSummary(),
+            GeneratedFiles = _filesTracker.GetAllRecords()  // <-- AÑADIR
         };
     }
 
@@ -147,12 +151,19 @@ public class Orchestrator
         if (state == null)
             return false;
 
-        _sessionManager.RestoreAgents(state, _registry, _agentFactory);
+        _sessionManager.RestoreAgents(state, _registry, _agentFactory, _filesTracker);
 
         _orchestratorHistory.Clear();
         _orchestratorHistory.AddRange(state.OrchestratorHistory);
 
         _logger.Info($"Session restored with {state.Agents.Count} agents");
+
+        if (state.GeneratedFiles != null)
+        {
+            int totalFiles = state.GeneratedFiles.Values.Sum(list => list.Count);
+            _logger.Info($"Restored {totalFiles} generated files");
+        }
+
         return true;
     }
 

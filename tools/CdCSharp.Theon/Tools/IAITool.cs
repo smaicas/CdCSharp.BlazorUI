@@ -10,6 +10,7 @@ public static class AITools
 {
     public static readonly RequestFilesList RequestFilesList = new();
     public static readonly RequestFileTool RequestFile = new();
+    public static readonly ListGeneratedFilesTool ListGeneratedFiles = new();
     public static readonly QueryAgentTool QueryAgent = new();
     public static readonly CreateAgentTool CreateAgent = new();
     public static readonly GenerateFileTool GenerateFile = new();
@@ -21,6 +22,7 @@ public static class AITools
     [
         RequestFilesList,
         RequestFile,
+        ListGeneratedFiles,
         QueryAgent,
         CreateAgent,
         GenerateFile,
@@ -74,6 +76,24 @@ public class RequestFileTool : IAITool
     public string Example => "[REQUEST_FILE: path=\"V:/src/Services/UserService.cs\"]";
 }
 
+public class ListGeneratedFilesTool : IAITool
+{
+    public string Name => "LIST_GENERATED_FILES";
+    public string Description => "See all files you have generated in previous interactions. This helps you remember what files you've created so you can reference or modify them.";
+    public string UsageFormat => "[LIST_GENERATED_FILES]";
+    public string Example => """
+        <!-- See what files you've created -->
+        [LIST_GENERATED_FILES]
+        
+        <!-- This will show you:
+        - File names
+        - Languages
+        - Sizes
+        - When created/modified
+        -->
+        """;
+}
+
 public class QueryAgentTool : IAITool
 {
     public string Name => "QUERY_AGENT";
@@ -93,7 +113,7 @@ public class CreateAgentTool : IAITool
 public class GenerateFileTool : IAITool
 {
     public string Name => "GENERATE_FILE";
-    public string Description => "Generate a new file or replace an existing one. Content goes directly between tags, no markdown formatting needed.";
+    public string Description => "Generate a new file or replace an existing one. Content goes directly between tags, no markdown formatting needed. You can later see all your generated files with LIST_GENERATED_FILES.";
     public string UsageFormat =>
     """
     [GENERATE_FILE: name="FileName.ext" language="languageid"]
@@ -115,7 +135,7 @@ public class GenerateFileTool : IAITool
 public class AppendToFileTool : IAITool
 {
     public string Name => "APPEND_TO_FILE";
-    public string Description => "Append content to an existing generated file. If file doesn't exist, creates it.";
+    public string Description => "Append content to an existing generated file. If file doesn't exist, creates it. The system remembers all files you've generated.";
     public string UsageFormat =>
     """
     [APPEND_TO_FILE: name="FileName.ext"]

@@ -11,18 +11,28 @@ public partial class AgentExecutor
     private readonly TheonLogger _logger;
     private readonly TheonOptions _options;
     private readonly CompressionAgent _compressionAgent;
+    private readonly GeneratedFilesTracker _filesTracker;
 
-    public AgentExecutor(LMStudioClient aiClient, TheonLogger logger, TheonOptions options, CompressionAgent compressionAgent)
+    public AgentExecutor(
+        LMStudioClient aiClient,
+        TheonLogger logger,
+        TheonOptions options,
+        CompressionAgent compressionAgent,
+        GeneratedFilesTracker filesTracker)
     {
         _aiClient = aiClient;
         _logger = logger;
         _options = options;
         _compressionAgent = compressionAgent;
+        _filesTracker = filesTracker;
     }
 
     public async Task<AgentExecutionResult> ExecuteAsync(Agent agent, string instruction, string? agentsSummary = null)
     {
         agent.LastActiveAt = DateTime.UtcNow;
+
+        // Inject generated files context into instruction
+        string filesContext = _filesTracker.GetFilesContext(agent.Id);
 
         string fullInstruction = instruction;
         if (!string.IsNullOrEmpty(agentsSummary))
@@ -34,7 +44,21 @@ public partial class AgentExecutor
             
             ---
             
+            {filesContext}
+            
+            ---
+            
             # Your Task
+            
+            {instruction}
+            """;
+        }
+        else
+        {
+            fullInstruction = $"""
+            {filesContext}
+            
+            ---
             
             {instruction}
             """;
@@ -63,7 +87,15 @@ public partial class AgentExecutor
             Content = response
         });
 
-        return ParseResponse(agent.Id, response);
+        AgentExecutionResult result = ParseResponse(agent.Id, response);
+
+        // Track generated files
+        if (result.GeneratedFiles.Count > 0)
+        {
+            _filesTracker.RecordFiles(agent.Id, result.GeneratedFiles);
+        }
+
+        return result;
     }
 
     private async Task CompressIfNeededAsync(Agent agent)
@@ -95,13 +127,15 @@ public partial class AgentExecutor
             .TakeLast(opts.MessagesToKeep)
             .ToList();
 
-        // Usar CompressionAgent dedicado
         string summary = await _compressionAgent.CompressAsync(toCompress);
 
         agent.ConversationHistory.Clear();
 
         if (systemMsg != null)
             agent.ConversationHistory.Add(systemMsg);
+
+        // Include generated files context in compression summary
+        string filesContext = _filesTracker.GetFilesContext(agent.Id);
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
@@ -113,6 +147,10 @@ public partial class AgentExecutor
             
             ---
             
+            {filesContext}
+            
+            ---
+            
             Continue from this context.
             """
         });
@@ -120,7 +158,7 @@ public partial class AgentExecutor
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.Assistant,
-            Content = "I understand the context from our previous conversation. Ready to continue."
+            Content = "I understand the context from our previous conversation and the files I've generated. Ready to continue."
         });
 
         agent.ConversationHistory.AddRange(toKeep);
@@ -151,7 +189,7 @@ public partial class AgentExecutor
         else
         {
             result.Confidence = 0.1f;
-            _logger.Warning($"No confidence found in response, defaulting to 0.5");
+            _logger.Warning($"No confidence found in response, defaulting to 0.1");
         }
 
         foreach (Match match in FileRequestRegex().Matches(response))
@@ -205,11 +243,12 @@ public partial class AgentExecutor
             string fileName = match.Groups[1].Value;
             string contentToAppend = match.Groups[2].Value.Trim();
 
-            // Find existing file or create new
+            // Try to find in current result first
             GeneratedFile? existing = result.GeneratedFiles.FirstOrDefault(f => f.FileName == fileName);
+
             if (existing != null)
             {
-                // Append to existing
+                // Append to existing in current result
                 result.GeneratedFiles.Remove(existing);
                 result.GeneratedFiles.Add(new GeneratedFile
                 {
@@ -220,13 +259,29 @@ public partial class AgentExecutor
             }
             else
             {
-                // Create new file with appended content
-                result.GeneratedFiles.Add(new GeneratedFile
+                // Try to get from tracker
+                string? trackedContent = _filesTracker.GetFileContent(agentId, fileName);
+
+                if (trackedContent != null)
                 {
-                    FileName = fileName,
-                    Language = Path.GetExtension(fileName).TrimStart('.'),
-                    Content = contentToAppend
-                });
+                    // Append to tracked file
+                    result.GeneratedFiles.Add(new GeneratedFile
+                    {
+                        FileName = fileName,
+                        Language = Path.GetExtension(fileName).TrimStart('.'),
+                        Content = trackedContent + "\n\n" + contentToAppend
+                    });
+                }
+                else
+                {
+                    // Create new file with appended content
+                    result.GeneratedFiles.Add(new GeneratedFile
+                    {
+                        FileName = fileName,
+                        Language = Path.GetExtension(fileName).TrimStart('.'),
+                        Content = contentToAppend
+                    });
+                }
             }
         }
 
@@ -248,16 +303,15 @@ public partial class AgentExecutor
         if (string.IsNullOrWhiteSpace(response))
             return true;
 
-        // Detectar tokens de control comunes
         string[] corruptPatterns =
         [
             "<|channel|>",
-        "<|im_start|>",
-        "<|im_end|>",
-        "<|endoftext|>",
-        "<|assistant|>",
-        "<|user|>",
-        "<|system|>"
+            "<|im_start|>",
+            "<|im_end|>",
+            "<|endoftext|>",
+            "<|assistant|>",
+            "<|user|>",
+            "<|system|>"
         ];
 
         return corruptPatterns.Any(p => response.Contains(p, StringComparison.OrdinalIgnoreCase));
@@ -276,6 +330,8 @@ public partial class AgentExecutor
 
         clean = Regex.Replace(clean, @"\[GENERATE_FILE:.*?\]", "", RegexOptions.IgnoreCase);
         clean = Regex.Replace(clean, @"\[/GENERATE_FILE\]", "", RegexOptions.IgnoreCase);
+        clean = Regex.Replace(clean, @"\[APPEND_TO_FILE:.*?\]", "", RegexOptions.IgnoreCase);
+        clean = Regex.Replace(clean, @"\[/APPEND_TO_FILE\]", "", RegexOptions.IgnoreCase);
 
         while (clean.Contains("\n\n\n"))
             clean = clean.Replace("\n\n\n", "\n\n");
@@ -300,6 +356,7 @@ public partial class AgentExecutor
 
     [GeneratedRegex(@"\[GENERATE_FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*([\s\S]*?)\[/GENERATE_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex GeneratedFileRegex();
+
     [GeneratedRegex(@"\[APPEND_TO_FILE:\s*name=""([^""]+)""\]\s*([\s\S]*?)\[/APPEND_TO_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex AppendToFileRegex();
 

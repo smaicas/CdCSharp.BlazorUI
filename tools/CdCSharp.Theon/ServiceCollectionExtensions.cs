@@ -25,6 +25,9 @@ public static class ServiceCollectionExtensions
         MetricsCollector metrics = new(logger);
         services.AddSingleton(metrics);
 
+        GeneratedFilesTracker filesTracker = new(logger);
+        services.AddSingleton(filesTracker);
+
         IgnoreFilter ignoreFilter = new();
         services.AddSingleton(ignoreFilter);
 
@@ -60,7 +63,7 @@ public static class ServiceCollectionExtensions
         AgentFactory agentFactory = new(aiClient, fileAccess, registry, logger, options);
         services.AddSingleton(agentFactory);
 
-        AgentExecutor agentExecutor = new(aiClient, logger, options, compressionAgent);
+        AgentExecutor agentExecutor = new(aiClient, logger, options, compressionAgent, filesTracker);
         services.AddSingleton(agentExecutor);
 
         services.AddSingleton<Orchestrator>();
