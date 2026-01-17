@@ -46,13 +46,11 @@ public sealed class LlmClient : ILlmClient, IDisposable
 
     public async Task<LlmResponse> SendAsync(IReadOnlyList<LlmMessage> messages, CancellationToken ct = default)
     {
-        object[] apiMessages = messages.Select(m => new { role = m.Role, content = m.Content }).ToArray();
-
-        _logger.LogLlmRequest(apiMessages);
+        _logger.LogLlmRequest(messages);
 
         object request = new
         {
-            messages = apiMessages,
+            messages,
             temperature = _options.Llm.Temperature,
             stream = false
         };

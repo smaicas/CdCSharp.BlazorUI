@@ -1,4 +1,6 @@
-﻿namespace CdCSharp.Theon.Infrastructure;
+﻿using CdCSharp.Theon.Core;
+
+namespace CdCSharp.Theon.Infrastructure;
 
 public interface ITheonLogger
 {
@@ -6,7 +8,7 @@ public interface ITheonLogger
     void Debug(string message);
     void Warning(string message);
     void Error(string message, Exception? ex = null);
-    void LogLlmRequest(IEnumerable<object> messages);
+    void LogLlmRequest(IReadOnlyList<LlmMessage> messages);
     void LogLlmResponse(string content);
 }
 
@@ -44,17 +46,20 @@ public sealed class TheonLogger : ITheonLogger, IDisposable
         }
     }
 
-    public void LogLlmRequest(IEnumerable<object> messages)
+    public void LogLlmRequest(IReadOnlyList<LlmMessage> messages)
     {
         int count = Interlocked.Increment(ref _interactionCount);
         lock (_lock)
         {
-            _llmLogWriter.WriteLine($"\n{'=',-60}");
+            _llmLogWriter.WriteLine($"\n{"=",-60}");
             _llmLogWriter.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] REQUEST #{count}");
-            _llmLogWriter.WriteLine($"{'=',-60}");
-            foreach (object msg in messages)
+            _llmLogWriter.WriteLine($"{"=",-60}");
+            foreach (LlmMessage msg in messages)
             {
-                _llmLogWriter.WriteLine(System.Text.Json.JsonSerializer.Serialize(msg));
+                _llmLogWriter.WriteLine($"[{msg.Role}]");
+                _llmLogWriter.WriteLine();
+                _llmLogWriter.WriteLine($"[{msg.Content}]");
+
             }
         }
     }

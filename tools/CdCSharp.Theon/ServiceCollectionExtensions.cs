@@ -13,18 +13,29 @@ public static class ServiceCollectionExtensions
     {
         EnsureDirectories(options);
 
+        // Core configuration
         services.AddSingleton(options);
 
+        // Infrastructure
         services.AddSingleton<ITheonLogger, TheonLogger>();
         services.AddSingleton<IFileSystem, FileSystem>();
 
+        // LLM Communication
         services.AddSingleton<ILlmClient, LlmClient>();
         services.AddSingleton<IToolParser, ToolParser>();
 
+        // Analysis
         services.AddSingleton<IProjectAnalysis, ProjectAnalysis>();
 
+        // Context Management
         services.AddSingleton<IScopeFactory, ScopeFactory>();
 
+        // NEW: Quality & Intelligence Layer
+        services.AddSingleton<IResponseValidator, ResponseValidator>();
+        services.AddSingleton<IExplorationStrategies, ExplorationStrategies>();
+        services.AddSingleton<IOutputPlanner, OutputPlanner>();
+
+        // Orchestration
         services.AddSingleton<IOrchestrator, Orchestrator>();
 
         return services;
