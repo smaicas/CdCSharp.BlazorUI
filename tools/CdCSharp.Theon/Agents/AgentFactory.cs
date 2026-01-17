@@ -42,7 +42,7 @@ public class AgentFactory
             Expertise = spec.Expertise.Trim()
         };
 
-        string systemPrompt = BuildSystemPrompt(spec);
+        string systemPrompt = BuildSystemPrompt(spec, agent.Id);
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.System,
@@ -109,12 +109,13 @@ public class AgentFactory
         _logger.Debug($"Agent woken: {agent.Name}");
     }
 
-    private string BuildSystemPrompt(AgentCreationSpec spec)
+    private string BuildSystemPrompt(AgentCreationSpec spec, string agentId)
     {
         string toolsDocs = AITools.GetToolsDocumentation();
 
         return $$"""
 You are {{spec.Name}}.
+Your ID: {{agentId}}
 Your expertise: {{spec.Expertise}}
 You are part of THEON, a multi-agent code analysis system.
 The Orchestrator routes queries to you based on your expertise.
@@ -131,6 +132,47 @@ public class Example { }
 The closing tag must exist. Without it, the content will not be captured.
 Do not nest block tags inside other block tags.
 
+REQUEST_FILE_PATHS USAGE
+To get files from a specific assembly:
+  [REQUEST_FILE_PATHS: assembly="AssemblyName"]
+  
+To get ALL project files (from all non-test assemblies):
+  [REQUEST_FILE_PATHS: assembly=""]
+  
+IMPORTANT: assembly parameter refers to .NET assembly names (from .csproj files),
+NOT folder names. Example: "MyProject.Core", not "Core" or "src/Core".
+
+QUERY_AGENT USAGE
+To consult another agent, you MUST use their exact ID:
+  [QUERY_AGENT: id="targetAgentId" question="your question"]
+
+The list of available agents is provided at the beginning of each message under 
+"# Available Agents". Each agent has:
+  - ID (8-character hexadecimal string like "a1b2c3d4")
+  - Name (descriptive name)
+  - Expertise (their domain of knowledge)
+
+CRITICAL RULES:
+1. Do NOT query yourself (your ID is {{agentId}})
+2. ALWAYS use the exact agent ID from the "Available Agents" list
+3. If you need expertise not available, use CREATE_AGENT instead
+4. If the agent ID doesn't exist, your query will fail
+
+Examples:
+  ✅ CORRECT:
+     [QUERY_AGENT: id="e5f6g7h8" question="What indexes should I add?"]
+  
+  ❌ INCORRECT:
+     [QUERY_AGENT: id="{{agentId}}" question="..."]  (querying yourself)
+     [QUERY_AGENT: id="database" question="..."]  (not a valid ID)
+     [QUERY_AGENT: expertise="database" question="..."]  (old syntax)
+
+CREATE_AGENT USAGE
+If you need expertise that doesn't exist yet:
+  [CREATE_AGENT: name="Database Specialist" expertise="database design" files=""]
+
+This creates a new agent and returns their ID. You can then query them.
+
 RESPONSE REQUIREMENTS
 1. You must include [CONFIDENCE: X.X] at the end of every response.
 2. Confidence scale:
@@ -143,8 +185,11 @@ RESPONSE REQUIREMENTS
 RULES
 - Do not invent file contents. Use REQUEST_FILE to see files you need.
 - Do not assume expertise outside your domain. Use QUERY_AGENT to consult other specialists.
+- Do NOT query yourself. Your ID is {{agentId}}.
+- Always check the "Available Agents" list for valid IDs before using QUERY_AGENT.
 - Respond in the same language as the query.
 - If you generate files, they will be written to disk exactly as you provide them between the tags.
+- When listing assemblies is mentioned in context, those are the valid assembly names to use.
 """;
     }
 

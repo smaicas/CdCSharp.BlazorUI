@@ -35,7 +35,7 @@ public partial class AgentExecutor
 
         string filesContext = _filesTracker.GetFilesContext(agent.Id);
 
-        string fullInstruction = BuildFullInstruction(instruction, agentsSummary, filesContext);
+        string fullInstruction = BuildFullInstruction(instruction, agentsSummary, filesContext, agent.Id);
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
@@ -102,7 +102,6 @@ public partial class AgentExecutor
             }
         }
 
-        // Log detallado de archivos parseados
         LogParsedFiles(agent.Id, result);
 
         if (result.GeneratedFiles.Count > 0)
@@ -113,34 +112,37 @@ public partial class AgentExecutor
         return result;
     }
 
-    private string BuildFullInstruction(string instruction, string? agentsSummary, string filesContext)
+    private string BuildFullInstruction(string instruction, string? agentsSummary, string filesContext, string currentAgentId)
     {
         if (!string.IsNullOrEmpty(agentsSummary))
         {
+            // ✅ MEJORADO: Filtrar el agente actual de la lista para evitar auto-referencia
+            string filteredAgentsSummary = FilterCurrentAgent(agentsSummary, currentAgentId);
+
             return $"""
-                # Available Agents
+            # Available Agents
 
-                {agentsSummary}
+            {filteredAgentsSummary}
 
-                ---
+            ---
 
-                {filesContext}
-
-                ---
-
-                # Your Task
-
-                {instruction}
-                """;
-        }
-
-        return $"""
             {filesContext}
 
             ---
 
+            # Your Task
+
             {instruction}
             """;
+        }
+
+        return $"""
+        {filesContext}
+
+        ---
+
+        {instruction}
+        """;
     }
 
     private string BuildFormatCorrectionPrompt(List<string> errors)
@@ -160,6 +162,12 @@ Requesting file list:
 Requesting file content:
 [REQUEST_FILE: path="Services/MyService.cs"]
 
+Querying another agent (use exact ID from Available Agents list):
+[QUERY_AGENT: id="a1b2c3d4" question="What should I do?"]
+
+Creating a new agent:
+[CREATE_AGENT: name="Database Expert" expertise="database design" files=""]
+
 Generating a file:
 [GENERATE_FILE: name="README.md" language="markdown"]
 content here
@@ -169,8 +177,42 @@ When task is complete:
 [TASK_COMPLETE]
 [CONFIDENCE: 0.85]
 
+IMPORTANT:
+- For QUERY_AGENT, use the exact 8-character ID from "Available Agents"
+- Do NOT use expertise names as IDs
+- Do NOT query yourself
+
 Provide your corrected response now.
 """;
+    }
+
+    private string FilterCurrentAgent(string agentsSummary, string currentAgentId)
+    {
+        if (string.IsNullOrEmpty(agentsSummary))
+            return "No other agents available.";
+
+        // Filtrar líneas que contengan el ID del agente actual
+        string[] lines = agentsSummary.Split('\n');
+        List<string> filteredLines = [];
+
+        foreach (string line in lines)
+        {
+            // Mantener headers y líneas que NO contengan el ID actual
+            if (!line.Contains(currentAgentId))
+            {
+                filteredLines.Add(line);
+            }
+        }
+
+        string filtered = string.Join("\n", filteredLines).Trim();
+
+        // Si no quedan agentes después de filtrar
+        if (filtered == "Current agents:" || string.IsNullOrWhiteSpace(filtered))
+        {
+            return "No other agents available. Use CREATE_AGENT if you need specialized help.";
+        }
+
+        return filtered;
     }
 
     private FormatValidationResult ValidateResponseFormat(string response, AgentExecutionResult result)
@@ -214,22 +256,23 @@ Provide your corrected response now.
             }
         }
 
-        // Detectar sintaxis incorrecta de tools (texto plano en lugar de tags)
+        // ✅ MEJORADO: Validación de sintaxis malformada más específica
+        // Detectar texto precediendo tags (como **REQUEST_FILE en lugar de [REQUEST_FILE])
         string[] malformedPatterns = [
-            @"\*\*REQUEST_FILE",
-        @"\*\*GENERATE_FILE",
-        @"\*\*QUERY_AGENT",
-        @"\*\*CREATE_AGENT",
-        @"REQUEST_FILE_PATHS[^:\]]",
-        @"REQUEST_FILE[^:\]]"
-        ];
+            @"(?<!\[)\*\*\s*REQUEST_FILE",           // **REQUEST_FILE sin [
+        @"(?<!\[)\*\*\s*GENERATE_FILE",          // **GENERATE_FILE sin [
+        @"(?<!\[)\*\*\s*QUERY_AGENT",            // **QUERY_AGENT sin [
+        @"(?<!\[)\*\*\s*CREATE_AGENT",           // **CREATE_AGENT sin [
+        @"REQUEST_FILE_PATHS[^:\[\]]",           // REQUEST_FILE_PATHS sin : o []
+        @"REQUEST_FILE(?!\s*:|\s*\])[^:\[\]]",   // REQUEST_FILE sin : o ]
+    ];
 
         foreach (string pattern in malformedPatterns)
         {
             if (Regex.IsMatch(response, pattern, RegexOptions.IgnoreCase))
             {
                 errors.Add("Malformed tool syntax detected. Use exact format: [TOOL_NAME: param=\"value\"]");
-                break;
+                break; // Solo reportar una vez
             }
         }
 
@@ -371,7 +414,7 @@ Provide your corrected response now.
             return result;
         }
 
-        // Parse todas las solicitudes primero
+        // Parse file requests
         foreach (Match match in FileRequestRegex().Matches(response))
         {
             result.FileRequests.Add(match.Groups[1].Value);
@@ -382,18 +425,21 @@ Provide your corrected response now.
             result.FilePathsRequests.Add(match.Groups[1].Value);
         }
 
+        // ✅ ACTUALIZADO: Parse agent queries por ID
         foreach (Match match in QueryAgentRegex().Matches(response))
         {
             result.AgentQueries.Add(new AgentRequest
             {
                 Type = AgentRequestType.QueryAgent,
                 FromAgentId = agentId,
-                TargetExpertise = match.Groups[1].Value,
+                TargetAgentId = match.Groups[1].Value,  // ✅ ID en lugar de expertise
+                TargetExpertise = null,                  // ✅ Ya no se usa
                 Payload = match.Groups[2].Value,
-                Reason = "Cross-agent query"
+                Reason = "Cross-agent query by ID"
             });
         }
 
+        // Parse agent creation requests
         foreach (Match match in CreateAgentRegex().Matches(response))
         {
             string filesStr = match.Groups.Count > 3 ? match.Groups[3].Value : "";
@@ -479,7 +525,7 @@ Provide your corrected response now.
                 .ToList();
         }
 
-        // Parse confidence - solo si está presente
+        // Parse confidence
         Match confidenceMatch = ConfidenceRegex().Match(response);
         if (confidenceMatch.Success && float.TryParse(confidenceMatch.Groups[1].Value,
             System.Globalization.NumberStyles.Float,
@@ -490,10 +536,9 @@ Provide your corrected response now.
         }
         else
         {
-            // Si hay solicitudes pendientes, confidence no es requerido aún
             if (result.HasPendingRequests)
             {
-                result.Confidence = -1f; // Indicador de "no aplica aún"
+                result.Confidence = -1f;
                 _logger.Debug("No confidence in response - agent has pending requests");
             }
             else
@@ -507,7 +552,6 @@ Provide your corrected response now.
 
         return result;
     }
-
     private static string CleanFileContent(string content)
     {
         // Eliminar bloques markdown que el LLM pueda haber añadido incorrectamente
@@ -556,14 +600,14 @@ Provide your corrected response now.
         return clean.Trim();
     }
 
+    [GeneratedRegex(@"\[QUERY_AGENT:\s*id=""([^""]+)""\s+question=""([^""]+)""\]", RegexOptions.IgnoreCase)]
+    private static partial Regex QueryAgentRegex();
+
     [GeneratedRegex(@"\[CONFIDENCE:\s*([\d.]+)\]", RegexOptions.IgnoreCase)]
     private static partial Regex ConfidenceRegex();
 
     [GeneratedRegex(@"\[REQUEST_FILE:\s*path=""([^""]+)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex FileRequestRegex();
-
-    [GeneratedRegex(@"\[QUERY_AGENT:\s*expertise=""([^""]+)""\s+question=""([^""]+)""\]", RegexOptions.IgnoreCase)]
-    private static partial Regex QueryAgentRegex();
 
     [GeneratedRegex(@"\[CREATE_AGENT:\s*name=""([^""]+)""\s+expertise=""([^""]+)""\s+files=""([^""]*)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex CreateAgentRegex();
@@ -573,10 +617,13 @@ Provide your corrected response now.
 
     [GeneratedRegex(@"\[GENERATE_FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*([\s\S]*?)\[/GENERATE_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex GeneratedFileRegex();
+
     [GeneratedRegex(@"\[APPEND_TO_FILE:\s*name=""([^""]+)""\]\s*([\s\S]*?)\[/APPEND_TO_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex AppendToFileRegex();
+
     [GeneratedRegex(@"\[REQUEST_FILE_PATHS:\s*assembly=""([^""]*)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex FilePathsRequestRegex();
+
     [GeneratedRegex(@"\[TASK_COMPLETE\]", RegexOptions.IgnoreCase)]
     private static partial Regex TaskCompleteRegex();
 }

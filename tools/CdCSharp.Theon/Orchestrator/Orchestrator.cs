@@ -61,6 +61,9 @@ public class Orchestrator
     {
         _preAnalysis = preAnalysis;
 
+        // CRÍTICO: Pasar la estructura al FileAccessTool
+        _fileAccess.SetPreAnalysis(preAnalysis);
+
         string projectOverview = _formatter.FormatProjectStructure(preAnalysis.Structure);
         string fileList = BuildFileListCompact(preAnalysis);
 
@@ -79,7 +82,10 @@ Files: {preAnalysis.Structure.Summary.TotalFiles}
 STRUCTURE
 {projectOverview}
 
-FILES
+AVAILABLE ASSEMBLIES (for REQUEST_FILE_PATHS)
+{BuildAssemblyList(preAnalysis)}
+
+FILES (sample)
 {fileList}
 
 Confirm understanding.
@@ -89,15 +95,35 @@ Confirm understanding.
         _orchestratorHistory.Add(new ConversationMessage
         {
             Role = MessageRole.Assistant,
-            Content = $$"""{"understood":true,"project":"{{preAnalysis.Structure.Solution}}","ready":true}"""
+            Content = $$"""{"understood":true,"project":"{{preAnalysis.Structure.Solution}}","assemblies":{{preAnalysis.Structure.Assemblies.Count}},"ready":true}"""
         });
+    }
+
+    private static string BuildAssemblyList(PreAnalysisResult preAnalysis)
+    {
+        List<string> lines = [];
+
+        foreach (AssemblyStructure assembly in preAnalysis.Structure.Assemblies.Where(a => !a.IsTestProject))
+        {
+            int totalFiles = assembly.Files.CSharp.Count +
+                            assembly.Files.Razor.Count +
+                            assembly.Files.TypeScript.Count +
+                            assembly.Files.Css.Count;
+
+            lines.Add($"  - {assembly.Name} ({totalFiles} files)");
+        }
+
+        return string.Join("\n", lines);
     }
 
     public async Task<ResponseOutput> ProcessQueryAsync(string query)
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
-        List<string> involvedAgents = [];
+
+        // ✅ CAMBIO: Usar HashSet<string> para IDs únicos
+        HashSet<string> involvedAgentIds = [];
         List<GeneratedFile> allFiles = [];
+        List<AgentInteraction> interactions = [];
 
         _logger.Info($"Processing query: {query}");
 
@@ -105,10 +131,26 @@ Confirm understanding.
         _logger.Debug($"Routing decision: {routing.Strategy} -> {routing.TargetExpertise}");
 
         Agent agent = await GetOrCreateAgentAsync(routing.TargetExpertise, routing.SuggestedFiles);
-        involvedAgents.Add(agent.Name);
+
+        // ✅ Agregar ID, no nombre
+        involvedAgentIds.Add(agent.Id);
+
+        // ✅ Registrar interacción inicial
+        interactions.Add(new AgentInteraction
+        {
+            FromAgentId = null,
+            ToAgentId = agent.Id,
+            Type = InteractionType.Query,
+            Summary = $"Route to {agent.Expertise}",
+            Timestamp = DateTime.UtcNow
+        });
 
         string instruction = BuildAgentInstruction(query, routing);
-        AgentExecutionResult result = await ExecuteWithRequestsAsync(agent, instruction, involvedAgents);
+        AgentExecutionResult result = await ExecuteWithRequestsAsync(
+            agent,
+            instruction,
+            involvedAgentIds,  // ✅ Pasar HashSet
+            interactions);      // ✅ Pasar lista de interacciones
 
         allFiles.AddRange(result.GeneratedFiles);
 
@@ -122,7 +164,8 @@ Confirm understanding.
                 result,
                 query,
                 routing.TargetExpertise,
-                involvedAgents);
+                involvedAgentIds,  // ✅ Pasar HashSet
+                interactions);      // ✅ Pasar interacciones
 
             result.CleanContent = validation.FinalContent;
             result.Confidence = validation.FinalConfidence;
@@ -133,15 +176,28 @@ Confirm understanding.
 
         stopwatch.Stop();
 
+        // ✅ Convertir IDs a nombres para metadata
+        List<string> involvedAgentNames = involvedAgentIds
+            .Select(id => _registry.Get(id))
+            .Where(a => a != null)
+            .Select(a => a!.Name)
+            .Distinct()
+            .ToList();
+
         ResponseMetadata metadata = new()
         {
-            AgentsInvolved = involvedAgents,
+            AgentsInvolved = involvedAgentNames,
             ValidationRounds = validation.Iterations,
             FinalConfidence = result.Confidence,
             ProcessingTime = stopwatch.Elapsed
         };
 
-        return await _fileOutput.SaveResponseAsync(query, result.CleanContent, allFiles, metadata);
+        return await _fileOutput.SaveResponseAsync(
+            query,
+            result.CleanContent,
+            allFiles,
+            metadata,
+            interactions);  // ✅ Pasar interacciones para diagrama
     }
 
     private bool NeedsValidation(AgentExecutionResult result)
@@ -151,11 +207,12 @@ Confirm understanding.
     }
 
     private async Task<ValidationSummary> ValidateAndImproveAsync(
-        Agent originalAgent,
-        AgentExecutionResult originalResult,
-        string originalQuery,
-        string originalExpertise,
-        List<string> involvedAgents)
+    Agent originalAgent,
+    AgentExecutionResult originalResult,
+    string originalQuery,
+    string originalExpertise,
+    HashSet<string> involvedAgentIds,
+    List<AgentInteraction> interactions)
     {
         ValidationSummary summary = new()
         {
@@ -167,7 +224,6 @@ Confirm understanding.
 
         _logger.Info($"Starting validation (confidence: {originalResult.Confidence:P0}, threshold: {_options.Validation.ConfidenceThreshold:P0})");
 
-        // Determinar expertise del validador basado en el tema
         string validatorExpertise = DetermineValidatorExpertise(originalExpertise, originalResult.SuggestedValidators);
 
         for (int iteration = 1; iteration <= _options.Validation.MaxIterations; iteration++)
@@ -175,14 +231,21 @@ Confirm understanding.
             summary.Iterations = iteration;
             _logger.Info($"Validation iteration {iteration}/{_options.Validation.MaxIterations}");
 
-            // Obtener o crear agente validador
             Agent validator = await GetOrCreateAgentAsync($"{validatorExpertise} validation", []);
-            if (!involvedAgents.Contains(validator.Name))
-            {
-                involvedAgents.Add(validator.Name);
-            }
 
-            // Validador revisa el trabajo
+            // ✅ Agregar validator ID
+            involvedAgentIds.Add(validator.Id);
+
+            // ✅ Registrar validación
+            interactions.Add(new AgentInteraction
+            {
+                FromAgentId = originalAgent.Id,
+                ToAgentId = validator.Id,
+                Type = InteractionType.Validation,
+                Summary = $"Request validation (iter {iteration})",
+                Timestamp = DateTime.UtcNow
+            });
+
             string validationPrompt = BuildValidationPrompt(
                 originalQuery,
                 summary.FinalContent,
@@ -192,11 +255,11 @@ Confirm understanding.
             AgentExecutionResult validationResult = await ExecuteWithRequestsAsync(
                 validator,
                 validationPrompt,
-                involvedAgents);
+                involvedAgentIds,
+                interactions);
 
             _logger.Debug($"Validator response confidence: {validationResult.Confidence:P0}");
 
-            // Si el validador aprueba, terminamos
             if (validationResult.Confidence >= _options.Validation.ConfidenceThreshold)
             {
                 _logger.Info($"Validation approved at iteration {iteration}");
@@ -208,7 +271,6 @@ Confirm understanding.
                 return summary;
             }
 
-            // Validador tiene objeciones, agente original debe corregir
             string correctionPrompt = BuildCorrectionPrompt(
                 originalQuery,
                 summary.FinalContent,
@@ -220,7 +282,8 @@ Confirm understanding.
             AgentExecutionResult correctionResult = await ExecuteWithRequestsAsync(
                 originalAgent,
                 correctionPrompt,
-                involvedAgents);
+                involvedAgentIds,
+                interactions);
 
             summary.FinalContent = correctionResult.CleanContent;
             summary.FinalConfidence = correctionResult.Confidence;
@@ -228,7 +291,6 @@ Confirm understanding.
 
             _logger.Debug($"Correction confidence: {correctionResult.Confidence:P0}");
 
-            // Si después de corregir alcanza el threshold, terminamos
             if (correctionResult.Confidence >= _options.Validation.ConfidenceThreshold)
             {
                 _logger.Info($"Correction approved at iteration {iteration}");
@@ -336,10 +398,11 @@ Confirm understanding.
     }
 
     private async Task<AgentExecutionResult> ExecuteWithRequestsAsync(
-        Agent agent,
-        string instruction,
-        List<string> involvedAgents,
-        int depth = 0)
+    Agent agent,
+    string instruction,
+    HashSet<string> involvedAgentIds,
+    List<AgentInteraction> interactions,
+    int depth = 0)
     {
         if (depth > 5)
         {
@@ -355,6 +418,8 @@ Confirm understanding.
         string agentsSummary = _registry.GetAgentsSummary();
         AgentExecutionResult result = await _agentExecutor.ExecuteAsync(agent, instruction, agentsSummary);
 
+        List<GeneratedFile> allGeneratedFiles = [.. result.GeneratedFiles];
+
         while (result.HasPendingRequests)
         {
             StringBuilder additionalContext = new();
@@ -362,18 +427,75 @@ Confirm understanding.
             // File path requests
             if (result.FilePathsRequests.Count > 0)
             {
-                foreach (string assembly in result.FilePathsRequests)
+                foreach (string assemblyNameOrEmpty in result.FilePathsRequests)
                 {
-                    List<string> files = string.IsNullOrEmpty(assembly)
-                        ? _fileAccess.ListFiles()
-                        : _fileAccess.ListFilesInFolder(assembly);
+                    List<string> files;
+                    string header;
 
-                    string header = string.IsNullOrEmpty(assembly) ? "PROJECT FILES" : $"FILES IN {assembly}";
-                    additionalContext.AppendLine(header);
-                    foreach (string file in files)
+                    if (string.IsNullOrWhiteSpace(assemblyNameOrEmpty))
                     {
-                        additionalContext.AppendLine($"  {file}");
+                        files = _fileAccess.ListAllProjectFiles();
+                        header = "PROJECT FILES (all non-test assemblies)";
+                        _logger.Debug($"Agent requested all project files: {files.Count} found");
                     }
+                    else
+                    {
+                        files = _fileAccess.ListFilesByAssembly(assemblyNameOrEmpty);
+                        header = $"FILES IN ASSEMBLY '{assemblyNameOrEmpty}'";
+                        _logger.Debug($"Agent requested files for assembly '{assemblyNameOrEmpty}': {files.Count} found");
+                    }
+
+                    if (files.Count == 0)
+                    {
+                        additionalContext.AppendLine(header);
+                        additionalContext.AppendLine("  (No files found)");
+
+                        if (!string.IsNullOrWhiteSpace(assemblyNameOrEmpty))
+                        {
+                            if (_preAnalysis != null)
+                            {
+                                List<string> available = _preAnalysis.Structure.Assemblies
+                                    .Where(a => !a.IsTestProject)
+                                    .Select(a => a.Name)
+                                    .ToList();
+
+                                additionalContext.AppendLine($"  Available assemblies: {string.Join(", ", available)}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        additionalContext.AppendLine(header);
+
+                        IEnumerable<IGrouping<string, string>> byExtension = files.GroupBy(f => Path.GetExtension(f).ToLowerInvariant());
+
+                        foreach (IGrouping<string, string>? group in byExtension.OrderBy(g => g.Key))
+                        {
+                            string ext = group.Key;
+                            string label = ext switch
+                            {
+                                ".cs" => "C# files",
+                                ".razor" => "Razor files",
+                                ".ts" => "TypeScript files",
+                                ".tsx" => "TypeScript JSX files",
+                                ".css" => "CSS files",
+                                ".scss" => "SCSS files",
+                                _ => $"{ext} files"
+                            };
+
+                            additionalContext.AppendLine($"  {label}:");
+                            foreach (string file in group.Take(100))
+                            {
+                                additionalContext.AppendLine($"    {file}");
+                            }
+
+                            if (group.Count() > 100)
+                            {
+                                additionalContext.AppendLine($"    ... and {group.Count() - 100} more");
+                            }
+                        }
+                    }
+
                     additionalContext.AppendLine();
                 }
             }
@@ -403,7 +525,19 @@ Confirm understanding.
             {
                 _logger.Info($"Creating sub-agent: {spec.Name}");
                 Agent subAgent = await _agentFactory.CreateAsync(spec);
-                involvedAgents.Add(subAgent.Name);
+
+                // ✅ Agregar ID al HashSet (automáticamente evita duplicados)
+                involvedAgentIds.Add(subAgent.Id);
+
+                // ✅ Registrar interacción
+                interactions.Add(new AgentInteraction
+                {
+                    FromAgentId = agent.Id,
+                    ToAgentId = subAgent.Id,
+                    Type = InteractionType.Creation,
+                    Summary = $"Created {subAgent.Name}",
+                    Timestamp = DateTime.UtcNow
+                });
 
                 additionalContext.AppendLine($"AGENT CREATED: {subAgent.Name} ({subAgent.Id})");
                 additionalContext.AppendLine($"  Expertise: {subAgent.Expertise}");
@@ -413,16 +547,26 @@ Confirm understanding.
             // Agent queries
             foreach (AgentRequest queryReq in result.AgentQueries)
             {
-                _logger.Debug($"Cross-agent query to: {queryReq.TargetExpertise}");
+                // ✅ ACTUALIZADO: Buscar por ID directamente
+                _logger.Debug($"Cross-agent query to: {queryReq.TargetAgentId}");
 
-                Agent? targetAgent = _registry.FindByExpertise(queryReq.TargetExpertise!);
+                Agent? targetAgent = _registry.Get(queryReq.TargetAgentId!);
+
                 if (targetAgent == null)
                 {
-                    targetAgent = await _agentFactory.CreateAsync(new AgentCreationSpec
+                    // ✅ CRÍTICO: Si el agente no existe, registrar error
+                    _logger.Warning($"Agent not found: {queryReq.TargetAgentId}");
+
+                    additionalContext.AppendLine($"ERROR: Agent '{queryReq.TargetAgentId}' not found.");
+                    additionalContext.AppendLine("Available agents:");
+
+                    foreach (Agent availableAgent in _registry.AllAgents)
                     {
-                        Name = $"{queryReq.TargetExpertise} Specialist",
-                        Expertise = queryReq.TargetExpertise!
-                    });
+                        additionalContext.AppendLine($"  - {availableAgent.Id}: {availableAgent.Name} ({availableAgent.Expertise})");
+                    }
+                    additionalContext.AppendLine();
+
+                    continue; // Saltar esta query
                 }
 
                 if (targetAgent.State == AgentState.Sleeping)
@@ -430,18 +574,48 @@ Confirm understanding.
                     _agentFactory.Wake(targetAgent);
                 }
 
-                involvedAgents.Add(targetAgent.Name);
+                // Agregar ID al HashSet
+                involvedAgentIds.Add(targetAgent.Id);
+
+                // Registrar query
+                interactions.Add(new AgentInteraction
+                {
+                    FromAgentId = agent.Id,
+                    ToAgentId = targetAgent.Id,
+                    Type = InteractionType.Query,
+                    Summary = queryReq.Payload.Length > 50
+                        ? queryReq.Payload[..50] + "..."
+                        : queryReq.Payload,
+                    Timestamp = DateTime.UtcNow
+                });
 
                 AgentExecutionResult subResult = await ExecuteWithRequestsAsync(
                     targetAgent,
                     queryReq.Payload,
-                    involvedAgents,
+                    involvedAgentIds,
+                    interactions,
                     depth + 1);
 
-                additionalContext.AppendLine($"RESPONSE FROM {targetAgent.Name} ({targetAgent.Expertise})");
+                // Registrar respuesta
+                interactions.Add(new AgentInteraction
+                {
+                    FromAgentId = targetAgent.Id,
+                    ToAgentId = agent.Id,
+                    Type = InteractionType.Response,
+                    Summary = $"Confidence: {subResult.Confidence:P0}",
+                    Timestamp = DateTime.UtcNow
+                });
+
+                additionalContext.AppendLine($"RESPONSE FROM {targetAgent.Name} (ID: {targetAgent.Id})");
                 additionalContext.AppendLine(subResult.CleanContent);
                 additionalContext.AppendLine($"CONFIDENCE: {subResult.Confidence:F2}");
                 additionalContext.AppendLine();
+
+                if (subResult.GeneratedFiles.Count > 0)
+                {
+                    _logger.Debug($"Sub-query generated {subResult.GeneratedFiles.Count} files");
+                    allGeneratedFiles.AddRange(subResult.GeneratedFiles);
+                }
             }
 
             if (additionalContext.Length > 0)
@@ -457,12 +631,22 @@ End with [CONFIDENCE: X.X]
 
                 agentsSummary = _registry.GetAgentsSummary();
                 result = await _agentExecutor.ExecuteAsync(agent, continuation, agentsSummary);
+
+                if (result.GeneratedFiles.Count > 0)
+                {
+                    allGeneratedFiles.AddRange(result.GeneratedFiles);
+                }
             }
             else
             {
                 break;
             }
         }
+
+        result.GeneratedFiles.Clear();
+        result.GeneratedFiles.AddRange(allGeneratedFiles);
+
+        _logger.Debug($"ExecuteWithRequestsAsync returning {result.GeneratedFiles.Count} total files");
 
         return result;
     }

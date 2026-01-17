@@ -1,5 +1,5 @@
 ﻿// Infrastructure/AgentVisualizer.cs
-using CdCSharp.Theon.Agents;
+
 using CdCSharp.Theon.Models;
 
 namespace CdCSharp.Theon.Infrastructure;
@@ -13,7 +13,8 @@ public class AgentVisualizer
         _registry = registry;
     }
 
-    public string GenerateMermaidDiagram(List<string>? involvedAgentIds = null)
+    // ✅ ACTUALIZADO: Recibe HashSet<string> de IDs
+    public string GenerateMermaidDiagram(HashSet<string>? involvedAgentIds = null)
     {
         IReadOnlyCollection<Agent> agents = _registry.AllAgents;
 
@@ -31,9 +32,8 @@ public class AgentVisualizer
             "    O((Orchestrator))"
         ];
 
-        HashSet<string> involved = involvedAgentIds != null
-            ? [.. involvedAgentIds]
-            : [];
+        // ✅ CAMBIO: involvedAgentIds ya es un HashSet
+        HashSet<string> involved = involvedAgentIds ?? [];
 
         foreach (Agent agent in agents)
         {
@@ -44,6 +44,7 @@ public class AgentVisualizer
             lines.Add($"    {nodeId}{shape}");
             lines.Add($"    O --> {nodeId}");
 
+            // ✅ CAMBIO: Comparar por ID
             if (involved.Contains(agent.Id))
             {
                 lines.Add($"    class {nodeId} involved");
@@ -84,6 +85,8 @@ public class AgentVisualizer
         ];
 
         HashSet<string> participants = [];
+
+        // ✅ MEJORADO: Procesar por ID
         foreach (AgentInteraction interaction in interactions)
         {
             if (!string.IsNullOrEmpty(interaction.FromAgentId) && participants.Add(interaction.FromAgentId))
@@ -127,16 +130,15 @@ public class AgentVisualizer
         return string.Join("\n", lines);
     }
 
-    public string GenerateTextSummary(List<string>? involvedAgentIds = null)
+    // ✅ ACTUALIZADO: Recibe HashSet<string> de IDs
+    public string GenerateTextSummary(HashSet<string>? involvedAgentIds = null)
     {
         IReadOnlyCollection<Agent> agents = _registry.AllAgents;
 
         if (agents.Count == 0)
             return "No agents registered.";
 
-        HashSet<string> involved = involvedAgentIds != null
-            ? [.. involvedAgentIds]
-            : [];
+        HashSet<string> involved = involvedAgentIds ?? [];
 
         List<string> lines =
         [

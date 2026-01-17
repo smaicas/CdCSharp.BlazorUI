@@ -89,11 +89,12 @@ public class ListGeneratedFilesTool : IAITool
     public string? ClosingTag => null;
 }
 
+// ✅ ACTUALIZADO: Query por ID
 public class QueryAgentTool : IAITool
 {
     public string Name => "QUERY_AGENT";
-    public string Description => "Send question to another agent with specified expertise.";
-    public string Syntax => "[QUERY_AGENT: expertise=\"domain\" question=\"your question\"]";
+    public string Description => "Send question to another agent by their ID.";
+    public string Syntax => "[QUERY_AGENT: id=\"agentId\" question=\"your question\"]";
     public bool RequiresClosingTag => false;
     public string? ClosingTag => null;
 }

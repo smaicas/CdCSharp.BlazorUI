@@ -1,4 +1,5 @@
 ﻿// Tools/FileOutputTool.cs
+
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Models;
 using System.Text;
@@ -23,11 +24,11 @@ public class FileOutputTool
     }
 
     public async Task<ResponseOutput> SaveResponseAsync(
-    string query,
-    string responseContent,
-    List<GeneratedFile> files,
-    ResponseMetadata metadata,
-    List<AgentInteraction>? interactions = null)
+        string query,
+        string responseContent,
+        List<GeneratedFile> files,
+        ResponseMetadata metadata,
+        List<AgentInteraction>? interactions = null)
     {
         int number = Interlocked.Increment(ref _responseCounter);
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
@@ -48,8 +49,14 @@ public class FileOutputTool
         markdown.AppendLine();
         markdown.AppendLine($"**Timestamp:** {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
         markdown.AppendLine();
-        markdown.AppendLine($"**Agents:** {string.Join(", ", metadata.AgentsInvolved)}");
+
+        // ✅ MEJORADO: Mostrar agentes únicos
+        string agentsList = metadata.AgentsInvolved.Count > 0
+            ? string.Join(", ", metadata.AgentsInvolved.Distinct())
+            : "None";
+        markdown.AppendLine($"**Agents:** {agentsList}");
         markdown.AppendLine();
+
         markdown.AppendLine($"**Confidence:** {metadata.FinalConfidence:P0}");
         markdown.AppendLine();
         markdown.AppendLine($"**Processing Time:** {metadata.ProcessingTime.TotalSeconds:F1}s");
@@ -61,13 +68,15 @@ public class FileOutputTool
             markdown.AppendLine();
         }
 
-        if (metadata.AgentsInvolved.Count > 1)
+        // ✅ MEJORADO: Generar diagramas solo si hay múltiples agentes o interacciones
+        if (metadata.AgentsInvolved.Distinct().Count() > 1 || (interactions != null && interactions.Count > 0))
         {
             markdown.AppendLine("---");
             markdown.AppendLine();
             markdown.AppendLine("## Agent Interaction");
             markdown.AppendLine();
 
+            // ✅ Pasar null porque ya tenemos la lista de nombres en metadata
             string mermaidDiagram = _visualizer.GenerateMermaidDiagram(null);
             markdown.AppendLine(mermaidDiagram);
             markdown.AppendLine();
@@ -108,18 +117,23 @@ public class FileOutputTool
                 markdown.AppendLine();
                 markdown.AppendLine($"**Size:** {file.Content.Length} characters");
                 markdown.AppendLine();
-                // Opcional: Incluir preview del contenido
+
+                // Preview condicional
                 if (file.Content.Length < 500)
                 {
-                    markdown.AppendLine("**Preview:**");
+                    markdown.AppendLine("**Content:**");
                     markdown.AppendLine();
+                    markdown.AppendLine("```" + file.Language);
                     markdown.AppendLine(file.Content);
+                    markdown.AppendLine("```");
                 }
                 else
                 {
                     markdown.AppendLine($"**Preview:** (First 500 characters)");
                     markdown.AppendLine();
-                    markdown.AppendLine(file.Content.Substring(0, 500) + "...");
+                    markdown.AppendLine("```" + file.Language);
+                    markdown.AppendLine(file.Content[..500] + "...");
+                    markdown.AppendLine("```");
                 }
                 markdown.AppendLine();
             }
@@ -127,7 +141,7 @@ public class FileOutputTool
 
         string responsePath = Path.Combine(folderPath, "response.md");
         await File.WriteAllTextAsync(responsePath, markdown.ToString(), System.Text.Encoding.UTF8);
-        _logger.Debug($"Written: response.md to: {folderPath} ({markdown.Length} chars)");
+        _logger.Debug($"Written: response.md ({markdown.Length} chars)");
 
         int writtenFiles = 0;
         int failedFiles = 0;

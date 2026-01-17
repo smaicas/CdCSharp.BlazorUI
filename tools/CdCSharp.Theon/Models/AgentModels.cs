@@ -1,4 +1,5 @@
 ﻿// Models/AgentModels.cs
+
 namespace CdCSharp.Theon.Models;
 
 public class Agent
@@ -16,12 +17,19 @@ public class Agent
 
 public enum AgentState { Active, Sleeping }
 
+// ✅ ACTUALIZADO: Query por ID
 public record AgentRequest
 {
     public required AgentRequestType Type { get; init; }
     public required string FromAgentId { get; init; }
+
+    // ✅ CAMBIO: Ahora usa TargetAgentId obligatoriamente
     public string? TargetAgentId { get; init; }
+
+    // ✅ OBSOLETO: Ya no se usa para queries, solo para validación/creación
+    [Obsolete("Use TargetAgentId for queries. TargetExpertise only used for CREATE_AGENT.")]
     public string? TargetExpertise { get; init; }
+
     public string Payload { get; init; } = string.Empty;
     public string Reason { get; init; } = string.Empty;
 }
@@ -57,10 +65,10 @@ public class AgentExecutionResult
     public List<string> FormatErrors { get; set; } = [];
 
     public bool HasPendingRequests =>
-    FileRequests.Count > 0 ||
-    FilePathsRequests.Count > 0 ||
-    AgentQueries.Count > 0 ||
-    AgentCreationRequests.Count > 0;
+        FileRequests.Count > 0 ||
+        FilePathsRequests.Count > 0 ||
+        AgentQueries.Count > 0 ||
+        AgentCreationRequests.Count > 0;
 
     public bool HasFormatErrors => FormatErrors.Count > 0;
 }

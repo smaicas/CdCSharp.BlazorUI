@@ -2,8 +2,6 @@
 using CdCSharp.Theon.Models;
 using System.Collections.Concurrent;
 
-namespace CdCSharp.Theon.Agents;
-
 public class AgentRegistry
 {
     private readonly ConcurrentDictionary<string, Agent> _agents = new();
@@ -56,6 +54,7 @@ public class AgentRegistry
         }
     }
 
+    // ✅ ACTUALIZADO: Incluir IDs en el resumen
     public string GetAgentsSummary()
     {
         if (_agents.IsEmpty)
@@ -66,7 +65,33 @@ public class AgentRegistry
         foreach (Agent agent in _agents.Values.OrderBy(a => a.Name))
         {
             string status = agent.State == AgentState.Active ? "●" : "○";
-            lines.Add($"  {status} {agent.Name} ({agent.Id}): {agent.Expertise}");
+            // ✅ FORMATO: status ID: Name (Expertise)
+            lines.Add($"  {status} {agent.Id}: {agent.Name} ({agent.Expertise})");
+        }
+
+        return string.Join("\n", lines);
+    }
+
+    // ✅ NUEVO: Resumen excluyendo un agente específico
+    public string GetAgentsSummaryExcluding(string excludeAgentId)
+    {
+        if (_agents.IsEmpty)
+            return "No other agents available";
+
+        List<Agent> otherAgents = _agents.Values
+            .Where(a => a.Id != excludeAgentId)
+            .OrderBy(a => a.Name)
+            .ToList();
+
+        if (otherAgents.Count == 0)
+            return "No other agents available. Use CREATE_AGENT if you need specialized help.";
+
+        List<string> lines = ["Other available agents:"];
+
+        foreach (Agent agent in otherAgents)
+        {
+            string status = agent.State == AgentState.Active ? "●" : "○";
+            lines.Add($"  {status} {agent.Id}: {agent.Name} ({agent.Expertise})");
         }
 
         return string.Join("\n", lines);
