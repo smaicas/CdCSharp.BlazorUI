@@ -13,6 +13,19 @@ public class LMStudioOptions
 {
     public string BaseUrl { get; set; } = "http://localhost:1234/v1/";
     public int TimeoutSeconds { get; set; } = 7200;
+    /// <summary>
+    /// Regex pattern to remove reasoning/thinking sections from model responses.
+    /// 
+    /// Common patterns by model:
+    /// - olmo-3-32b-think:     "(?s)<think>.*?</think>"
+    /// - deepseek-r1:          "(?s)<reasoning>.*?</reasoning>"
+    /// - qwen-2.5-think:       "(?s)<think>.*?</think>"
+    /// - o1-preview style:     "(?s)```thinking.*?```"
+    /// - Multiple tags:        "(?s)(<think>.*?</think>|<reasoning>.*?</reasoning>)"
+    /// 
+    /// Leave empty to disable filtering.
+    /// The (?s) flag enables dot (.) to match newlines.
+    /// </summary>
     public string ReasoningTagPattern { get; set; } = @"(?s)<think>.*?</think>";
 }
 

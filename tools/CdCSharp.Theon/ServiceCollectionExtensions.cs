@@ -35,7 +35,8 @@ public static class ServiceCollectionExtensions
             options.LMStudio.BaseUrl,
             options.LMStudio.TimeoutSeconds,
             logger,
-            metrics);
+            metrics,
+            options.LMStudio.ReasoningTagPattern);
         services.AddSingleton(aiClient);
 
         services.AddSingleton<PreAnalyzer>();

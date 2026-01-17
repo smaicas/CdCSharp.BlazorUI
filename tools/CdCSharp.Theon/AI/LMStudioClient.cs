@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace CdCSharp.Theon.AI;
 
@@ -14,8 +15,12 @@ public class LMStudioClient : IDisposable
     private readonly TheonLogger _logger;
     private readonly SemaphoreSlim _semaphore = new(1, 1);
     private readonly MetricsCollector? _metrics;
+    private readonly string? _reasoningPattern;
+    private readonly Regex? _reasoningRegex;
 
-    public LMStudioClient(string baseUrl, int timeoutSeconds, TheonLogger logger, MetricsCollector? metrics = null)
+    private const double Temperature = 0.7;
+
+    public LMStudioClient(string baseUrl, int timeoutSeconds, TheonLogger logger, MetricsCollector? metrics = null, string? reasoningPattern = null)
     {
         _http = new HttpClient
         {
@@ -24,6 +29,21 @@ public class LMStudioClient : IDisposable
         };
         _logger = logger;
         _metrics = metrics;
+        _reasoningPattern = reasoningPattern;
+
+        if (!string.IsNullOrWhiteSpace(_reasoningPattern))
+        {
+            try
+            {
+                _reasoningRegex = new Regex(_reasoningPattern, RegexOptions.Compiled | RegexOptions.Singleline);
+                _logger.Info($"Reasoning filter enabled with pattern: {_reasoningPattern}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Warning($"Invalid reasoning pattern '{_reasoningPattern}': {ex.Message}");
+                _reasoningRegex = null;
+            }
+        }
     }
 
     public async Task<string> SendAsync(List<ConversationMessage> messages, int maxTokens = 2000, string? agentId = null)
@@ -47,8 +67,8 @@ public class LMStudioClient : IDisposable
             object request = new
             {
                 messages = apiMessages,
-                max_tokens = maxTokens,
-                temperature = 0.3,
+                //max_tokens = maxTokens,
+                temperature = Temperature,
                 stream = false
             };
 
@@ -65,6 +85,18 @@ public class LMStudioClient : IDisposable
 
             LMStudioResponse? result = await response.Content.ReadFromJsonAsync<LMStudioResponse>();
             string content = result?.Choices?.FirstOrDefault()?.Message?.Content ?? string.Empty;
+
+            // Aplicar filtro de razonamiento si está configurado
+            if (_reasoningRegex != null && !string.IsNullOrEmpty(content))
+            {
+                string originalContent = content;
+                content = _reasoningRegex.Replace(content, "").Trim();
+
+                if (content != originalContent)
+                {
+                    _logger.Debug($"Reasoning filter applied: {originalContent.Length} → {content.Length} chars");
+                }
+            }
 
             // Registrar métricas
             if (_metrics != null && !string.IsNullOrEmpty(agentId))
@@ -130,6 +162,11 @@ public class LMStudioClient : IDisposable
             catch (JsonException ex)
             {
                 _logger.Warning($"JSON parse failed on attempt {attempt + 1}: {ex.Message}");
+
+                if (attempt < maxRetries)
+                {
+                    _logger.Debug($"Response that failed to parse: {response[..Math.Min(200, response.Length)]}");
+                }
             }
 
             if (attempt < maxRetries)
@@ -137,7 +174,7 @@ public class LMStudioClient : IDisposable
                 messages.Add(new ConversationMessage
                 {
                     Role = MessageRole.User,
-                    Content = "Your response was not valid JSON. Please respond with ONLY a JSON object, no other text."
+                    Content = "Your response was not valid JSON. Please respond with ONLY a JSON object, no other text. Start with { and end with }."
                 });
             }
         }
@@ -163,17 +200,63 @@ public class LMStudioClient : IDisposable
 
     private static string ExtractJson(string response)
     {
+        // Patrón mejorado para extraer JSON válido
+        string jsonPattern = @"\{(?:[^{}]|(?<open>\{)|(?<-open>\}))+(?(open)(?!))\}";
+        MatchCollection matches = Regex.Matches(response, jsonPattern, RegexOptions.Singleline);
+
+        if (matches.Count > 0)
+        {
+            string lastMatch = matches[^1].Value;
+            return SanitizeJson(lastMatch); // ← Sanitizar aquí
+        }
+
+        // Fallback
         int start = response.IndexOf('{');
         int end = response.LastIndexOf('}');
         if (start >= 0 && end > start)
-            return response[start..(end + 1)];
+        {
+            string json = response[start..(end + 1)];
+            return SanitizeJson(json); // ← Y aquí
+        }
 
+        // Arrays
         start = response.IndexOf('[');
         end = response.LastIndexOf(']');
         if (start >= 0 && end > start)
-            return response[start..(end + 1)];
+        {
+            string json = response[start..(end + 1)];
+            return SanitizeJson(json); // ← Y aquí
+        }
 
         return response;
+    }
+
+    /// <summary>
+    /// Sanitiza JSON corrigiendo backslashes sin escapar en valores string.
+    /// LLMs a menudo generan rutas de Windows sin escapar correctamente: "C:\path\file.cs"
+    /// Esta función las convierte a formato JSON válido: "C:\\path\\file.cs"
+    /// </summary>
+    private static string SanitizeJson(string json)
+    {
+        return Regex.Replace(json, @"""([^""]*?)""", match =>
+        {
+            string content = match.Groups[1].Value;
+
+            // Solo procesar si contiene backslashes
+            if (!content.Contains('\\'))
+                return match.Value;
+
+            // Proteger backslashes ya escapados
+            string temp = content.Replace(@"\\", "\x00DOUBLE\x00");
+
+            // Escapar backslashes simples
+            temp = temp.Replace(@"\", @"\\");
+
+            // Restaurar los que ya estaban correctamente escapados
+            temp = temp.Replace("\x00DOUBLE\x00", @"\\");
+
+            return $"\"{temp}\"";
+        });
     }
 
     public void Dispose()
