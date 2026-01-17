@@ -23,11 +23,11 @@ public class FileOutputTool
     }
 
     public async Task<ResponseOutput> SaveResponseAsync(
-        string query,
-        string responseContent,
-        List<GeneratedFile> files,
-        ResponseMetadata metadata,
-        List<AgentInteraction>? interactions = null)
+    string query,
+    string responseContent,
+    List<GeneratedFile> files,
+    ResponseMetadata metadata,
+    List<AgentInteraction>? interactions = null)
     {
         int number = Interlocked.Increment(ref _responseCounter);
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
@@ -50,6 +50,12 @@ public class FileOutputTool
         markdown.AppendLine();
         markdown.AppendLine($"**Processing Time:** {metadata.ProcessingTime.TotalSeconds:F1}s");
         markdown.AppendLine();
+
+        if (metadata.ValidationRounds > 0)
+        {
+            markdown.AppendLine($"**Validation Rounds:** {metadata.ValidationRounds}");
+            markdown.AppendLine();
+        }
 
         if (metadata.AgentsInvolved.Count > 1)
         {
@@ -80,6 +86,7 @@ public class FileOutputTool
         markdown.AppendLine("## Response");
         markdown.AppendLine();
         markdown.AppendLine(responseContent);
+        markdown.AppendLine();
 
         if (files.Count > 0)
         {
@@ -91,12 +98,32 @@ public class FileOutputTool
 
             foreach (GeneratedFile file in files)
             {
-                markdown.AppendLine($"- {file.FileName}");
+                markdown.AppendLine($"### {file.FileName}");
+                markdown.AppendLine();
+                markdown.AppendLine($"**Language:** {file.Language}");
+                markdown.AppendLine();
+                markdown.AppendLine($"**Size:** {file.Content.Length} characters");
+                markdown.AppendLine();
+                // Opcional: Incluir preview del contenido
+                if (file.Content.Length < 500)
+                {
+                    markdown.AppendLine("**Preview:**");
+                    markdown.AppendLine();
+                    markdown.AppendLine(file.Content);
+                }
+                else
+                {
+                    markdown.AppendLine($"**Preview:** (First 500 characters)");
+                    markdown.AppendLine();
+                    markdown.AppendLine(file.Content.Substring(0, 500) + "...");
+                }
+                markdown.AppendLine();
             }
         }
 
         string responsePath = Path.Combine(folderPath, "response.md");
-        await File.WriteAllTextAsync(responsePath, markdown.ToString());
+
+        await File.WriteAllTextAsync(responsePath, markdown.ToString(), System.Text.Encoding.UTF8);
         _logger.Info($"Saved response to: {folderPath}");
 
         foreach (GeneratedFile file in files)

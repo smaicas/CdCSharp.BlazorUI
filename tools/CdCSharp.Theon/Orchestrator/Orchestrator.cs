@@ -211,12 +211,16 @@ public class Orchestrator
 
         if (result.Confidence < _options.Validation.ConfidenceThreshold || result.SuggestedValidators.Count > 0)
         {
-            (string validatedContent, float validatedConfidence, int rounds) =
-                await ValidateResponseAsync(result, involvedAgents);
+            (string? validatedContent, float validatedConfidence, int rounds, List<GeneratedFile>? validatedFiles) =
+                await ValidateResponseAsync(result, query, involvedAgents);
 
             result.CleanContent = validatedContent;
             finalConfidence = validatedConfidence;
             validationRounds = rounds;
+
+            // Replace generated files with validated versions
+            allFiles.Clear();
+            allFiles.AddRange(validatedFiles);
         }
 
         stopwatch.Stop();
@@ -346,83 +350,29 @@ public class Orchestrator
         return result;
     }
 
-    private async Task<(string Content, float Confidence, int Rounds)> ValidateResponseAsync(
-        AgentExecutionResult originalResult,
-        List<string> involvedAgents)
+    private async Task<(string Content, float Confidence, int Rounds, List<GeneratedFile> Files)> ValidateResponseAsync(
+    AgentExecutionResult originalResult,
+    string originalQuery,
+    List<string> involvedAgents)
     {
-        string content = originalResult.CleanContent;
-        float confidence = originalResult.Confidence;
-        int rounds = 0;
+        ValidationOrchestrator validationOrch = new(
+            _agentFactory,
+            _agentExecutor,
+            _registry,
+            _logger,
+            _options);
 
-        List<string> validatorExpertise = originalResult.SuggestedValidators.Count > 0
-            ? originalResult.SuggestedValidators
-            : ["code review", "architecture"];
+        ValidationResult validationResult = await validationOrch.ValidateAndImproveAsync(
+            originalResult,
+            originalQuery,
+            involvedAgents);
 
-        for (int i = 0; i < _options.Validation.MaxIterations; i++)
-        {
-            rounds++;
-            bool allApproved = true;
-            List<string> allSuggestions = [];
-
-            foreach (string expertise in validatorExpertise.Take(2))
-            {
-                Agent? validator = _registry.FindByExpertise(expertise);
-                if (validator == null || validator.Id == originalResult.AgentId)
-                    continue;
-
-                if (validator.State == AgentState.Sleeping)
-                    _agentFactory.Wake(validator);
-
-                involvedAgents.Add(validator.Name);
-
-                string validationPrompt = $"""
-                Please review this response for accuracy and completeness:
-                
-                {content}
-                
-                Respond with:
-                - [APPROVED] if the response is correct
-                - [OBJECTION: reason] if there are issues
-                - [SUGGESTION: improvement] for enhancements
-                
-                Then provide your [CONFIDENCE: 0.0-1.0]
-                """;
-
-                AgentExecutionResult valResult = await _agentExecutor.ExecuteAsync(validator, validationPrompt);
-
-                if (valResult.CleanContent.Contains("[OBJECTION", StringComparison.OrdinalIgnoreCase))
-                {
-                    allApproved = false;
-                    allSuggestions.Add(valResult.CleanContent);
-                }
-
-                confidence = Math.Min(confidence, valResult.Confidence);
-            }
-
-            if (allApproved)
-            {
-                _logger.Debug($"Validation approved after {rounds} rounds");
-                break;
-            }
-
-            if (allSuggestions.Count > 0 && i < _options.Validation.MaxIterations - 1)
-            {
-                Agent originalAgent = _registry.Get(originalResult.AgentId)!;
-                string refinementPrompt = $"""
-                Your response received feedback:
-                
-                {string.Join("\n\n", allSuggestions)}
-                
-                Please refine your response addressing these points.
-                """;
-
-                AgentExecutionResult refined = await _agentExecutor.ExecuteAsync(originalAgent, refinementPrompt);
-                content = refined.CleanContent;
-                confidence = refined.Confidence;
-            }
-        }
-
-        return (content, confidence, rounds);
+        return (
+            validationResult.FinalContent,
+            validationResult.FinalConfidence,
+            validationResult.Iterations,
+            validationResult.GeneratedFiles
+        );
     }
 
     private async Task<RoutingDecision> DecideRoutingAsync(string query)

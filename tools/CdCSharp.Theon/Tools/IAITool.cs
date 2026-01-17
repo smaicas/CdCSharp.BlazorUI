@@ -13,6 +13,7 @@ public static class AITools
     public static readonly QueryAgentTool QueryAgent = new();
     public static readonly CreateAgentTool CreateAgent = new();
     public static readonly GenerateFileTool GenerateFile = new();
+    public static readonly AppendToFileTool AppendToFile = new();
     public static readonly SetConfidenceTool SetConfidence = new();
     public static readonly SuggestValidationTool SuggestValidation = new();
 
@@ -23,6 +24,7 @@ public static class AITools
         QueryAgent,
         CreateAgent,
         GenerateFile,
+        AppendToFile,
         SetConfidence,
         SuggestValidation
     ];
@@ -91,27 +93,44 @@ public class CreateAgentTool : IAITool
 public class GenerateFileTool : IAITool
 {
     public string Name => "GENERATE_FILE";
-    public string Description => "Generate a new file as part of your response. The content must be wrapped in markdown code blocks.";
+    public string Description => "Generate a new file or replace an existing one. Content goes directly between tags, no markdown formatting needed.";
     public string UsageFormat =>
     """
     [GENERATE_FILE: name="FileName.ext" language="languageid"]
-
     file content here
-
     [/GENERATE_FILE]
-""";
+    """;
 
     public string Example =>
-"""
-        [GENERATE_FILE: name="UserService.cs" language="csharp"]
+    """
+    [GENERATE_FILE: name="UserService.cs" language="csharp"]
+    public class UserService : IUserService
+    {
+        public Task<User> GetByIdAsync(int id) => throw new NotImplementedException();
+    }
+    [/GENERATE_FILE]
+    """;
+}
 
-        public class UserService : IUserService
-        {
-            public Task<User> GetByIdAsync(int id) => throw new NotImplementedException();
-        }
+public class AppendToFileTool : IAITool
+{
+    public string Name => "APPEND_TO_FILE";
+    public string Description => "Append content to an existing generated file. If file doesn't exist, creates it.";
+    public string UsageFormat =>
+    """
+    [APPEND_TO_FILE: name="FileName.ext"]
+    content to append
+    [/APPEND_TO_FILE]
+    """;
 
-        [/GENERATE_FILE]
-""";
+    public string Example =>
+    """
+    [APPEND_TO_FILE: name="README.md"]
+    
+    ## Additional Section
+    This content will be added to the end of README.md
+    [/APPEND_TO_FILE]
+    """;
 }
 
 public class SetConfidenceTool : IAITool

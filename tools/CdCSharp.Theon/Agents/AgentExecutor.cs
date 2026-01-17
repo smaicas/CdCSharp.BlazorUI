@@ -200,6 +200,36 @@ public partial class AgentExecutor
             });
         }
 
+        foreach (Match match in AppendToFileRegex().Matches(response))
+        {
+            string fileName = match.Groups[1].Value;
+            string contentToAppend = match.Groups[2].Value.Trim();
+
+            // Find existing file or create new
+            GeneratedFile? existing = result.GeneratedFiles.FirstOrDefault(f => f.FileName == fileName);
+            if (existing != null)
+            {
+                // Append to existing
+                result.GeneratedFiles.Remove(existing);
+                result.GeneratedFiles.Add(new GeneratedFile
+                {
+                    FileName = fileName,
+                    Language = existing.Language,
+                    Content = existing.Content + "\n\n" + contentToAppend
+                });
+            }
+            else
+            {
+                // Create new file with appended content
+                result.GeneratedFiles.Add(new GeneratedFile
+                {
+                    FileName = fileName,
+                    Language = Path.GetExtension(fileName).TrimStart('.'),
+                    Content = contentToAppend
+                });
+            }
+        }
+
         Match validationMatch = ValidationRegex().Match(response);
         if (validationMatch.Success)
         {
@@ -268,8 +298,10 @@ public partial class AgentExecutor
     [GeneratedRegex(@"\[SUGGEST_VALIDATION:\s*expertise=""([^""]+)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex ValidationRegex();
 
-    [GeneratedRegex(@"\[GENERATE_FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*```\w*\s*([\s\S]*?)```\s*\[/GENERATE_FILE\]", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"\[GENERATE_FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*([\s\S]*?)\[/GENERATE_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex GeneratedFileRegex();
+    [GeneratedRegex(@"\[APPEND_TO_FILE:\s*name=""([^""]+)""\]\s*([\s\S]*?)\[/APPEND_TO_FILE\]", RegexOptions.IgnoreCase)]
+    private static partial Regex AppendToFileRegex();
 
     [GeneratedRegex(@"\[REQUEST_FILE_PATHS:\s*assembly=""([^""]*)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex FilePathsRequestRegex();
