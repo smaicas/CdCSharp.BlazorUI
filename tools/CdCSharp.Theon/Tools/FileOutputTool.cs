@@ -37,6 +37,10 @@ public class FileOutputTool
 
         Directory.CreateDirectory(folderPath);
 
+        _logger.Info($"=== Saving Response #{number} ===");
+        _logger.Info($"  Output folder: {folderPath}");
+        _logger.Info($"  Files to write: {files.Count}");
+
         StringBuilder markdown = new();
         markdown.AppendLine($"# Response #{number}");
         markdown.AppendLine();
@@ -122,19 +126,35 @@ public class FileOutputTool
         }
 
         string responsePath = Path.Combine(folderPath, "response.md");
-
         await File.WriteAllTextAsync(responsePath, markdown.ToString(), System.Text.Encoding.UTF8);
-        _logger.Info($"Saved response to: {folderPath}");
+        _logger.Debug($"Written: response.md to: {folderPath} ({markdown.Length} chars)");
+
+        int writtenFiles = 0;
+        int failedFiles = 0;
 
         foreach (GeneratedFile file in files)
         {
-            string filePath = Path.Combine(folderPath, file.FileName);
-            string? dir = Path.GetDirectoryName(filePath);
-            if (dir != null) Directory.CreateDirectory(dir);
+            try
+            {
+                string filePath = Path.Combine(folderPath, file.FileName);
+                string? dir = Path.GetDirectoryName(filePath);
+                if (dir != null) Directory.CreateDirectory(dir);
 
-            await File.WriteAllTextAsync(filePath, file.Content);
-            _logger.Debug($"  Generated: {file.FileName}");
+                await File.WriteAllTextAsync(filePath, file.Content);
+                writtenFiles++;
+                _logger.Debug($"Written: {file.FileName} ({file.Content.Length} chars)");
+            }
+            catch (Exception ex)
+            {
+                failedFiles++;
+                _logger.Error($"Failed to write: {file.FileName}", ex);
+            }
         }
+
+        _logger.Info($"=== Response #{number} Complete ===");
+        _logger.Info($"  Written: {writtenFiles} files");
+        if (failedFiles > 0)
+            _logger.Warning($"  Failed: {failedFiles} files");
 
         return new ResponseOutput
         {

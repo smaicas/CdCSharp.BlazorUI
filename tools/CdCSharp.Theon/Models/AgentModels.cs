@@ -42,6 +42,35 @@ public record AgentCreationSpec
     public string? ParentAgentId { get; init; }
 }
 
+public class AgentExecutionResult
+{
+    public string AgentId { get; set; } = "";
+    public string RawResponse { get; set; } = "";
+    public string CleanContent { get; set; } = "";
+    public float Confidence { get; set; } = 0.0f;
+    public List<string> FileRequests { get; } = [];
+    public List<string> FilePathsRequests { get; } = [];
+    public List<AgentRequest> AgentQueries { get; } = [];
+    public List<AgentCreationSpec> AgentCreationRequests { get; } = [];
+    public List<GeneratedFile> GeneratedFiles { get; } = [];
+    public List<string> SuggestedValidators { get; set; } = [];
+    public List<string> FormatErrors { get; set; } = [];
+
+    public bool HasPendingRequests =>
+    FileRequests.Count > 0 ||
+    FilePathsRequests.Count > 0 ||
+    AgentQueries.Count > 0 ||
+    AgentCreationRequests.Count > 0;
+
+    public bool HasFormatErrors => FormatErrors.Count > 0;
+}
+
+public class FormatValidationResult
+{
+    public bool IsValid { get; init; }
+    public List<string> Errors { get; init; } = [];
+}
+
 public record AgentResponse
 {
     public required string AgentId { get; init; }

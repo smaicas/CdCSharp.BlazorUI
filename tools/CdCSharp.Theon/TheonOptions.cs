@@ -13,6 +13,7 @@ public class LMStudioOptions
 {
     public string BaseUrl { get; set; } = "http://localhost:1234/v1/";
     public int TimeoutSeconds { get; set; } = 7200;
+    public string ReasoningTagPattern { get; set; } = @"(?s)<think>.*?</think>";
 }
 
 public class ConversationOptions

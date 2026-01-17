@@ -34,7 +34,8 @@ public class PreAnalyzer
     {
         _logger.Info("Starting pre-analysis...");
 
-        string preanalysisPath = Path.Combine(_options.OutputPath, "preanalysis");
+        // Corregido: usar projectPath como base, no el directorio de trabajo
+        string preanalysisPath = Path.Combine(projectPath, _options.OutputPath, "preanalysis");
         Directory.CreateDirectory(preanalysisPath);
 
         ProjectStructure initialStructure = await ScanProjectAsync(projectPath);

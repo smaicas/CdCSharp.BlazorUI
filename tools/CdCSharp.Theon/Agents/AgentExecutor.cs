@@ -13,6 +13,8 @@ public partial class AgentExecutor
     private readonly CompressionAgent _compressionAgent;
     private readonly GeneratedFilesTracker _filesTracker;
 
+    private const int MaxFormatRetries = 2;
+
     public AgentExecutor(
         LMStudioClient aiClient,
         TheonLogger logger,
@@ -31,38 +33,9 @@ public partial class AgentExecutor
     {
         agent.LastActiveAt = DateTime.UtcNow;
 
-        // Inject generated files context into instruction
         string filesContext = _filesTracker.GetFilesContext(agent.Id);
 
-        string fullInstruction = instruction;
-        if (!string.IsNullOrEmpty(agentsSummary))
-        {
-            fullInstruction = $"""
-            # Available Agents
-            
-            {agentsSummary}
-            
-            ---
-            
-            {filesContext}
-            
-            ---
-            
-            # Your Task
-            
-            {instruction}
-            """;
-        }
-        else
-        {
-            fullInstruction = $"""
-            {filesContext}
-            
-            ---
-            
-            {instruction}
-            """;
-        }
+        string fullInstruction = BuildFullInstruction(instruction, agentsSummary, filesContext);
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
@@ -89,13 +62,234 @@ public partial class AgentExecutor
 
         AgentExecutionResult result = ParseResponse(agent.Id, response);
 
-        // Track generated files
+        // Validar formato y reintentar si hay errores
+        FormatValidationResult validation = ValidateResponseFormat(response, result);
+
+        if (!validation.IsValid)
+        {
+            _logger.Warning($"Format validation failed for agent {agent.Id}: {string.Join(", ", validation.Errors)}");
+
+            for (int retry = 0; retry < MaxFormatRetries && !validation.IsValid; retry++)
+            {
+                _logger.Info($"Requesting format correction (attempt {retry + 1}/{MaxFormatRetries})");
+
+                string correctionPrompt = BuildFormatCorrectionPrompt(validation.Errors);
+
+                agent.ConversationHistory.Add(new ConversationMessage
+                {
+                    Role = MessageRole.User,
+                    Content = correctionPrompt
+                });
+
+                response = await _aiClient.SendAsync(agent.ConversationHistory.ToList());
+
+                _logger.LogAgentInteraction(agent.Id, InteractionDirection.Output, $"[RETRY {retry + 1}] {response}");
+
+                agent.ConversationHistory.Add(new ConversationMessage
+                {
+                    Role = MessageRole.Assistant,
+                    Content = response
+                });
+
+                result = ParseResponse(agent.Id, response);
+                validation = ValidateResponseFormat(response, result);
+            }
+
+            if (!validation.IsValid)
+            {
+                _logger.Error($"Agent {agent.Id} failed to correct format after {MaxFormatRetries} retries");
+                result.FormatErrors = validation.Errors;
+            }
+        }
+
+        // Log detallado de archivos parseados
+        LogParsedFiles(agent.Id, result);
+
         if (result.GeneratedFiles.Count > 0)
         {
             _filesTracker.RecordFiles(agent.Id, result.GeneratedFiles);
         }
 
         return result;
+    }
+
+    private string BuildFullInstruction(string instruction, string? agentsSummary, string filesContext)
+    {
+        if (!string.IsNullOrEmpty(agentsSummary))
+        {
+            return $"""
+                # Available Agents
+
+                {agentsSummary}
+
+                ---
+
+                {filesContext}
+
+                ---
+
+                # Your Task
+
+                {instruction}
+                """;
+        }
+
+        return $"""
+            {filesContext}
+
+            ---
+
+            {instruction}
+            """;
+    }
+
+    private string BuildFormatCorrectionPrompt(List<string> errors)
+    {
+        return $"""
+FORMAT ERROR
+
+Your response could not be parsed. Fix the following errors:
+
+{string.Join("\n", errors.Select(e => $"- {e}"))}
+
+CORRECT SYNTAX EXAMPLES
+
+Requesting file list:
+[REQUEST_FILE_PATHS: assembly=""]
+
+Requesting file content:
+[REQUEST_FILE: path="Services/MyService.cs"]
+
+Generating a file:
+[GENERATE_FILE: name="README.md" language="markdown"]
+content here
+[/GENERATE_FILE]
+
+When task is complete:
+[TASK_COMPLETE]
+[CONFIDENCE: 0.85]
+
+Provide your corrected response now.
+""";
+    }
+
+    private FormatValidationResult ValidateResponseFormat(string response, AgentExecutionResult result)
+    {
+        List<string> errors = [];
+
+        // Detectar GENERATE_FILE sin cierre
+        MatchCollection openGenerateFile = Regex.Matches(response, @"\[GENERATE_FILE:\s*name=""([^""]+)""", RegexOptions.IgnoreCase);
+        int closeGenerateFile = Regex.Matches(response, @"\[/GENERATE_FILE\]", RegexOptions.IgnoreCase).Count;
+
+        if (openGenerateFile.Count > closeGenerateFile)
+        {
+            int unclosed = openGenerateFile.Count - closeGenerateFile;
+            List<string> unclosedFiles = openGenerateFile
+                .Cast<Match>()
+                .Skip(closeGenerateFile)
+                .Select(m => m.Groups[1].Value)
+                .ToList();
+
+            errors.Add($"Unclosed [GENERATE_FILE] tag(s): {string.Join(", ", unclosedFiles)}. Must include [/GENERATE_FILE]");
+        }
+
+        // Detectar APPEND_TO_FILE sin cierre
+        MatchCollection openAppend = Regex.Matches(response, @"\[APPEND_TO_FILE:\s*name=""([^""]+)""", RegexOptions.IgnoreCase);
+        int closeAppend = Regex.Matches(response, @"\[/APPEND_TO_FILE\]", RegexOptions.IgnoreCase).Count;
+
+        if (openAppend.Count > closeAppend)
+        {
+            int unclosed = openAppend.Count - closeAppend;
+            errors.Add($"Unclosed [APPEND_TO_FILE] tag(s). Must include [/APPEND_TO_FILE]");
+        }
+
+        // Detectar tags anidados
+        foreach (Match match in GeneratedFileRegex().Matches(response))
+        {
+            string content = match.Groups[3].Value;
+            if (Regex.IsMatch(content, @"\[GENERATE_FILE:", RegexOptions.IgnoreCase))
+            {
+                string fileName = match.Groups[1].Value;
+                errors.Add($"Nested [GENERATE_FILE] inside '{fileName}'. Nesting is not allowed.");
+            }
+        }
+
+        // Detectar sintaxis incorrecta de tools (texto plano en lugar de tags)
+        string[] malformedPatterns = [
+            @"\*\*REQUEST_FILE",
+        @"\*\*GENERATE_FILE",
+        @"\*\*QUERY_AGENT",
+        @"\*\*CREATE_AGENT",
+        @"REQUEST_FILE_PATHS[^:\]]",
+        @"REQUEST_FILE[^:\]]"
+        ];
+
+        foreach (string pattern in malformedPatterns)
+        {
+            if (Regex.IsMatch(response, pattern, RegexOptions.IgnoreCase))
+            {
+                errors.Add("Malformed tool syntax detected. Use exact format: [TOOL_NAME: param=\"value\"]");
+                break;
+            }
+        }
+
+        // CONFIDENCE solo es requerido si:
+        // 1. No hay solicitudes pendientes (el agente no está pidiendo información)
+        // 2. O el agente marcó TASK_COMPLETE
+        bool hasTaskComplete = TaskCompleteRegex().IsMatch(response);
+        bool hasConfidence = ConfidenceRegex().IsMatch(response);
+        bool hasPendingRequests = result.HasPendingRequests;
+
+        if (!hasPendingRequests && !hasConfidence)
+        {
+            errors.Add("Response appears complete but missing [CONFIDENCE: X.X]. Add confidence level at the end.");
+        }
+
+        if (hasTaskComplete && !hasConfidence)
+        {
+            errors.Add("[TASK_COMPLETE] used but missing [CONFIDENCE: X.X]. Both are required when completing a task.");
+        }
+
+        // Verificar que los archivos se parsearon correctamente
+        if (openGenerateFile.Count > 0 && result.GeneratedFiles.Count == 0 && closeGenerateFile > 0)
+        {
+            errors.Add("File generation tags found but no files were parsed. Check tag format.");
+        }
+
+        return new FormatValidationResult
+        {
+            IsValid = errors.Count == 0,
+            Errors = errors
+        };
+    }
+    private void LogParsedFiles(string agentId, AgentExecutionResult result)
+    {
+        _logger.Debug($"=== Parse Results for Agent {agentId} ===");
+        _logger.Debug($"  File requests: {result.FileRequests.Count}");
+        _logger.Debug($"  File path requests: {result.FilePathsRequests.Count}");
+        _logger.Debug($"  Agent queries: {result.AgentQueries.Count}");
+        _logger.Debug($"  Agent creation requests: {result.AgentCreationRequests.Count}");
+        _logger.Debug($"  Generated files: {result.GeneratedFiles.Count}");
+
+        if (result.GeneratedFiles.Count > 0)
+        {
+            foreach (GeneratedFile file in result.GeneratedFiles)
+            {
+                _logger.Debug($"    ✓ Parsed: {file.FileName} ({file.Language}) - {file.Content.Length} chars");
+            }
+        }
+
+        if (result.FormatErrors.Count > 0)
+        {
+            _logger.Warning($"  Format errors: {result.FormatErrors.Count}");
+            foreach (string error in result.FormatErrors)
+            {
+                _logger.Warning($"    ✗ {error}");
+            }
+        }
+
+        _logger.Debug($"  Confidence: {result.Confidence:P0}");
+        _logger.Debug($"  Has pending requests: {result.HasPendingRequests}");
     }
 
     private async Task CompressIfNeededAsync(Agent agent)
@@ -134,25 +328,24 @@ public partial class AgentExecutor
         if (systemMsg != null)
             agent.ConversationHistory.Add(systemMsg);
 
-        // Include generated files context in compression summary
         string filesContext = _filesTracker.GetFilesContext(agent.Id);
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.User,
             Content = $"""
-            # Previous Conversation Summary
-            
-            {summary}
-            
-            ---
-            
-            {filesContext}
-            
-            ---
-            
-            Continue from this context.
-            """
+                # Previous Conversation Summary
+
+                {summary}
+
+                ---
+
+                {filesContext}
+
+                ---
+
+                Continue from this context.
+                """
         });
 
         agent.ConversationHistory.Add(new ConversationMessage
@@ -178,20 +371,7 @@ public partial class AgentExecutor
             return result;
         }
 
-        Match confidenceMatch = ConfidenceRegex().Match(response);
-        if (confidenceMatch.Success && float.TryParse(confidenceMatch.Groups[1].Value,
-            System.Globalization.NumberStyles.Float,
-            System.Globalization.CultureInfo.InvariantCulture,
-            out float conf))
-        {
-            result.Confidence = Math.Clamp(conf, 0f, 1f);
-        }
-        else
-        {
-            result.Confidence = 0.1f;
-            _logger.Warning($"No confidence found in response, defaulting to 0.1");
-        }
-
+        // Parse todas las solicitudes primero
         foreach (Match match in FileRequestRegex().Matches(response))
         {
             result.FileRequests.Add(match.Groups[1].Value);
@@ -216,7 +396,7 @@ public partial class AgentExecutor
 
         foreach (Match match in CreateAgentRegex().Matches(response))
         {
-            string filesStr = match.Groups.Count > 4 ? match.Groups[4].Value : "";
+            string filesStr = match.Groups.Count > 3 ? match.Groups[3].Value : "";
             result.AgentCreationRequests.Add(new AgentCreationSpec
             {
                 Name = match.Groups[1].Value,
@@ -228,27 +408,33 @@ public partial class AgentExecutor
             });
         }
 
+        // Parse generated files
         foreach (Match match in GeneratedFileRegex().Matches(response))
         {
+            string fileName = match.Groups[1].Value;
+            string language = match.Groups[2].Value;
+            string content = match.Groups[3].Value.Trim();
+
             result.GeneratedFiles.Add(new GeneratedFile
             {
-                FileName = match.Groups[1].Value,
-                Language = match.Groups[2].Value,
-                Content = match.Groups[3].Value.Trim()
+                FileName = fileName,
+                Language = language,
+                Content = content
             });
+
+            _logger.Debug($"Parsed GENERATE_FILE: {fileName} ({language}) - {content.Length} chars");
         }
 
+        // Parse append to file
         foreach (Match match in AppendToFileRegex().Matches(response))
         {
             string fileName = match.Groups[1].Value;
             string contentToAppend = match.Groups[2].Value.Trim();
 
-            // Try to find in current result first
             GeneratedFile? existing = result.GeneratedFiles.FirstOrDefault(f => f.FileName == fileName);
 
             if (existing != null)
             {
-                // Append to existing in current result
                 result.GeneratedFiles.Remove(existing);
                 result.GeneratedFiles.Add(new GeneratedFile
                 {
@@ -259,12 +445,10 @@ public partial class AgentExecutor
             }
             else
             {
-                // Try to get from tracker
                 string? trackedContent = _filesTracker.GetFileContent(agentId, fileName);
 
                 if (trackedContent != null)
                 {
-                    // Append to tracked file
                     result.GeneratedFiles.Add(new GeneratedFile
                     {
                         FileName = fileName,
@@ -274,7 +458,6 @@ public partial class AgentExecutor
                 }
                 else
                 {
-                    // Create new file with appended content
                     result.GeneratedFiles.Add(new GeneratedFile
                     {
                         FileName = fileName,
@@ -283,8 +466,11 @@ public partial class AgentExecutor
                     });
                 }
             }
+
+            _logger.Debug($"Parsed APPEND_TO_FILE: {fileName} - {contentToAppend.Length} chars appended");
         }
 
+        // Parse validation suggestions
         Match validationMatch = ValidationRegex().Match(response);
         if (validationMatch.Success)
         {
@@ -293,9 +479,41 @@ public partial class AgentExecutor
                 .ToList();
         }
 
+        // Parse confidence - solo si está presente
+        Match confidenceMatch = ConfidenceRegex().Match(response);
+        if (confidenceMatch.Success && float.TryParse(confidenceMatch.Groups[1].Value,
+            System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out float conf))
+        {
+            result.Confidence = Math.Clamp(conf, 0f, 1f);
+        }
+        else
+        {
+            // Si hay solicitudes pendientes, confidence no es requerido aún
+            if (result.HasPendingRequests)
+            {
+                result.Confidence = -1f; // Indicador de "no aplica aún"
+                _logger.Debug("No confidence in response - agent has pending requests");
+            }
+            else
+            {
+                result.Confidence = 0.1f;
+                _logger.Warning("No confidence found in completed response, defaulting to 0.1");
+            }
+        }
+
         result.CleanContent = CleanResponse(response);
 
         return result;
+    }
+
+    private static string CleanFileContent(string content)
+    {
+        // Eliminar bloques markdown que el LLM pueda haber añadido incorrectamente
+        content = Regex.Replace(content, @"^```\w*\s*\n", "", RegexOptions.Multiline);
+        content = Regex.Replace(content, @"\n```\s*$", "", RegexOptions.Multiline);
+        return content.Trim();
     }
 
     private static bool IsCorruptedResponse(string response)
@@ -327,11 +545,10 @@ public partial class AgentExecutor
         clean = CreateAgentRegex().Replace(clean, "");
         clean = ValidationRegex().Replace(clean, "");
         clean = FilePathsRequestRegex().Replace(clean, "");
+        clean = TaskCompleteRegex().Replace(clean, "");
 
-        clean = Regex.Replace(clean, @"\[GENERATE_FILE:.*?\]", "", RegexOptions.IgnoreCase);
-        clean = Regex.Replace(clean, @"\[/GENERATE_FILE\]", "", RegexOptions.IgnoreCase);
-        clean = Regex.Replace(clean, @"\[APPEND_TO_FILE:.*?\]", "", RegexOptions.IgnoreCase);
-        clean = Regex.Replace(clean, @"\[/APPEND_TO_FILE\]", "", RegexOptions.IgnoreCase);
+        clean = Regex.Replace(clean, @"\[GENERATE_FILE:.*?\][\s\S]*?\[/GENERATE_FILE\]", "", RegexOptions.IgnoreCase);
+        clean = Regex.Replace(clean, @"\[APPEND_TO_FILE:.*?\][\s\S]*?\[/APPEND_TO_FILE\]", "", RegexOptions.IgnoreCase);
 
         while (clean.Contains("\n\n\n"))
             clean = clean.Replace("\n\n\n", "\n\n");
@@ -356,30 +573,10 @@ public partial class AgentExecutor
 
     [GeneratedRegex(@"\[GENERATE_FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*([\s\S]*?)\[/GENERATE_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex GeneratedFileRegex();
-
     [GeneratedRegex(@"\[APPEND_TO_FILE:\s*name=""([^""]+)""\]\s*([\s\S]*?)\[/APPEND_TO_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex AppendToFileRegex();
-
     [GeneratedRegex(@"\[REQUEST_FILE_PATHS:\s*assembly=""([^""]*)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex FilePathsRequestRegex();
-}
-
-public class AgentExecutionResult
-{
-    public string AgentId { get; set; } = "";
-    public string RawResponse { get; set; } = "";
-    public string CleanContent { get; set; } = "";
-    public float Confidence { get; set; } = 0.0f;
-    public List<string> FileRequests { get; } = [];
-    public List<string> FilePathsRequests { get; } = [];
-    public List<AgentRequest> AgentQueries { get; } = [];
-    public List<AgentCreationSpec> AgentCreationRequests { get; } = [];
-    public List<GeneratedFile> GeneratedFiles { get; } = [];
-    public List<string> SuggestedValidators { get; set; } = [];
-
-    public bool HasPendingRequests =>
-        FileRequests.Count > 0 ||
-        FilePathsRequests.Count > 0 ||
-        AgentQueries.Count > 0 ||
-        AgentCreationRequests.Count > 0;
+    [GeneratedRegex(@"\[TASK_COMPLETE\]", RegexOptions.IgnoreCase)]
+    private static partial Regex TaskCompleteRegex();
 }
