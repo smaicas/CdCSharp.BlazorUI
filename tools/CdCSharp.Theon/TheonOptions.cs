@@ -1,43 +1,34 @@
 ﻿namespace CdCSharp.Theon;
 
-public class TheonOptions
+public sealed class TheonOptions
 {
+    public const string SectionName = "Theon";
+
     public string ProjectPath { get; set; } = string.Empty;
     public string OutputPath { get; set; } = ".theon";
-    public LMStudioOptions LMStudio { get; set; } = new();
-    public ConversationOptions Conversation { get; set; } = new();
-    public ValidationOptions Validation { get; set; } = new();
+    public int MaxExplorationDepth { get; set; } = 5;
+
+    public LlmOptions Llm { get; set; } = new();
+    public ProjectModificationOptions Modification { get; set; } = new();
+
+    public string ResponsesPath => Path.Combine(OutputPath, "responses");
+    public string LogsPath => Path.Combine(OutputPath, "logs");
+    public string BackupsPath => Path.Combine(OutputPath, "backups");
+    public string AnalysisPath => Path.Combine(OutputPath, "analysis");
 }
 
-public class LMStudioOptions
+public sealed class LlmOptions
 {
-    public string BaseUrl { get; set; } = "http://localhost:1234/v1/";
-    public int TimeoutSeconds { get; set; } = 7200;
-    /// <summary>
-    /// Regex pattern to remove reasoning/thinking sections from model responses.
-    /// 
-    /// Common patterns by model:
-    /// - olmo-3-32b-think:     "(?s)<think>.*?</think>"
-    /// - deepseek-r1:          "(?s)<reasoning>.*?</reasoning>"
-    /// - qwen-2.5-think:       "(?s)<think>.*?</think>"
-    /// - o1-preview style:     "(?s)```thinking.*?```"
-    /// - Multiple tags:        "(?s)(<think>.*?</think>|<reasoning>.*?</reasoning>)"
-    /// 
-    /// Leave empty to disable filtering.
-    /// The (?s) flag enables dot (.) to match newlines.
-    /// </summary>
-    public string ReasoningTagPattern { get; set; } = @"(?s)<think>.*?</think>";
+    public string BaseUrl { get; set; } = "http://localhost:1234/v1";
+    public int TimeoutSeconds { get; set; } = 300;
+    public double Temperature { get; set; } = 0.7;
+    public string? ReasoningTagPattern { get; set; }
 }
 
-public class ConversationOptions
+public sealed class ProjectModificationOptions
 {
-    public int CompressionThreshold { get; set; } = 10;
-    public int MessagesToCompress { get; set; } = 7;
-    public int MessagesToKeep { get; set; } = 3;
-}
-
-public class ValidationOptions
-{
-    public int MaxIterations { get; set; } = 3;
-    public float ConfidenceThreshold { get; set; } = 0.7f;
+    public bool Enabled { get; set; } = false;
+    public bool RequireConfirmation { get; set; } = true;
+    public bool CreateBackup { get; set; } = true;
+    public bool AllowNewFiles { get; set; } = false;
 }

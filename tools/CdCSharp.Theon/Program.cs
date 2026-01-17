@@ -1,7 +1,7 @@
 ﻿using CdCSharp.Theon;
 using CdCSharp.Theon.Analysis;
+using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
-using CdCSharp.Theon.Models;
 using CdCSharp.Theon.Orchestration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,30 +22,39 @@ ServiceCollection services = new();
 services.AddTheon(options);
 ServiceProvider provider = services.BuildServiceProvider();
 
-TheonLogger logger = provider.GetRequiredService<TheonLogger>();
-PreAnalyzer scanner = provider.GetRequiredService<PreAnalyzer>();
-Orchestrator orchestrator = provider.GetRequiredService<Orchestrator>();
+ITheonLogger logger = provider.GetRequiredService<ITheonLogger>();
+IProjectAnalysis analysis = provider.GetRequiredService<IProjectAnalysis>();
+IOrchestrator orchestrator = provider.GetRequiredService<IOrchestrator>();
+ILlmClient llmClient = provider.GetRequiredService<ILlmClient>();
 
-logger.Info("=".PadRight(50, '='));
-logger.Info("  THEON - Multi-Agent Code Analysis System");
-logger.Info("=".PadRight(50, '='));
+logger.Info("═══════════════════════════════════════════════════");
+logger.Info("  THEON - Code Analysis System");
+logger.Info("═══════════════════════════════════════════════════");
 logger.Info($"Project: {options.ProjectPath}");
 logger.Info("");
 
-logger.Info("Scanning project structure...");
-PreAnalysisResult preAnalysis = await scanner.AnalyzeAsync(options.ProjectPath);
-//ProjectStructure structure = preAnalysis.Structure;
+await analysis.AnalyzeAsync();
 
-logger.Info($"Found {preAnalysis.Structure.Assemblies.Count} assemblies");
-logger.Info($"  Types: {preAnalysis.Structure.Summary.TotalTypes}");
-logger.Info($"  Files: {preAnalysis.Structure.Summary.TotalFiles}");
-if (preAnalysis.Structure.Summary.DetectedPatterns.Count > 0)
-    logger.Info($"  Patterns: {string.Join(", ", preAnalysis.Structure.Summary.DetectedPatterns)}");
+if (analysis.Project == null)
+{
+    logger.Error("Failed to analyze project");
+    return 1;
+}
 
-orchestrator.SetProjectStructure(preAnalysis);
+ModelInfo modelInfo = await llmClient.GetModelInfoAsync();
 
 logger.Info("");
-logger.Info("Ready. Type your query (or 'exit' to quit):");
+logger.Info($"Assemblies: {analysis.Project.Assemblies.Count}");
+logger.Info($"Types: {analysis.Project.Assemblies.Sum(a => a.Types.Count)}");
+logger.Info($"Files: {analysis.Project.Assemblies.Sum(a => a.Files.Count)}");
+logger.Info("");
+logger.Info("Commands:");
+logger.Info("  @file:<path> <query>      - Query with file context");
+logger.Info("  @folder:<path> <query>    - Query with folder context");
+logger.Info("  @assembly:<name> <query>  - Query with assembly context");
+logger.Info("  exit                      - Exit");
+logger.Info("");
+logger.Info("Ready. Enter your query:");
 logger.Info("");
 
 while (true)
@@ -59,96 +68,41 @@ while (true)
     if (string.IsNullOrWhiteSpace(input))
         continue;
 
-    string command = input.Trim().ToLowerInvariant();
+    string command = input.Trim();
 
-    // Comandos especiales
-    if (command is "exit" or "quit")
+    if (command.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
+        command.Equals("quit", StringComparison.OrdinalIgnoreCase))
     {
         logger.Info("Goodbye!");
         break;
     }
 
-    if (command == "agents")
-    {
-        AgentVisualizer visualizer = provider.GetRequiredService<AgentVisualizer>();
-        Console.WriteLine(visualizer.GenerateTextSummary());
-        continue;
-    }
-
-    if (command == "metrics")
-    {
-        MetricsCollector metrics = provider.GetRequiredService<MetricsCollector>();
-        Console.WriteLine(metrics.GenerateReport());
-        continue;
-    }
-
-    if (command == "save")
-    {
-        string path = await orchestrator.SaveSessionAsync();
-        logger.Info($"Session saved to: {path}");
-        continue;
-    }
-
-    if (command.StartsWith("load "))
-    {
-        string sessionId = input[5..].Trim();
-        bool loaded = await orchestrator.LoadSessionAsync(sessionId);
-        if (loaded)
-            logger.Info("Session loaded successfully");
-        else
-            logger.Warning("Failed to load session");
-        continue;
-    }
-
-    if (command == "sessions")
-    {
-        SessionManager sessionMgr = provider.GetRequiredService<SessionManager>();
-        List<SessionInfo> sessions = sessionMgr.ListSessions();
-
-        if (sessions.Count == 0)
-        {
-            Console.WriteLine("No saved sessions found.");
-        }
-        else
-        {
-            Console.WriteLine("Available sessions:");
-            foreach (SessionInfo session in sessions)
-            {
-                Console.WriteLine($"  - {session.SessionId} ({session.SavedAt:yyyy-MM-dd HH:mm}) - {session.AgentCount} agents");
-            }
-        }
-        continue;
-    }
-
-    if (command == "help")
+    if (command.Equals("help", StringComparison.OrdinalIgnoreCase))
     {
         Console.WriteLine("""
-            Available commands:
-              agents    - Show all agents and their status
-              metrics   - Show performance metrics
-              save      - Save current session
-              load <id> - Load a saved session
-              sessions  - List available sessions
-              exit      - Exit the application
+            Commands:
+              @file:<path> <query>      - Query with specific file context
+              @folder:<path> <query>    - Query with folder context
+              @assembly:<name> <query>  - Query with assembly context
+              exit                      - Exit
               
-            Or type any query to analyze your code.
+            Or just type your query to analyze the project.
             """);
         continue;
     }
 
-    // Procesar query normal
     try
     {
-        ResponseOutput response = await orchestrator.ProcessQueryAsync(input);
+        OrchestratorResponse response = await orchestrator.ProcessAsync(input);
 
         logger.Info("");
-        logger.Info($"Response saved to: {response.FolderPath}");
-        logger.Info($"  Agents: {string.Join(", ", response.Metadata.AgentsInvolved)}");
-        logger.Info($"  Confidence: {response.Metadata.FinalConfidence:P0}");
-        logger.Info($"  Time: {response.Metadata.ProcessingTime.TotalSeconds:F1}s");
+        logger.Info($"Confidence: {response.Confidence:P0}");
 
-        if (response.Files.Count > 0)
-            logger.Info($"  Generated files: {response.Files.Count}");
+        if (response.OutputFiles.Count > 0)
+            logger.Info($"Generated files: {response.OutputFiles.Count}");
+
+        if (response.ModifiedProjectFiles.Count > 0)
+            logger.Info($"Modified project files: {response.ModifiedProjectFiles.Count}");
 
         logger.Info("");
     }

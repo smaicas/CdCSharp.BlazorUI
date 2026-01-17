@@ -1,204 +1,85 @@
 ﻿namespace CdCSharp.Theon.Infrastructure;
 
-public enum LogLevel { Trace, Debug, Info, Warning, Error }
-public enum InteractionDirection { Input, Output }
-public class TheonLogger
+public interface ITheonLogger
+{
+    void Info(string message);
+    void Debug(string message);
+    void Warning(string message);
+    void Error(string message, Exception? ex = null);
+    void LogLlmRequest(IEnumerable<object> messages);
+    void LogLlmResponse(string content);
+}
+
+public sealed class TheonLogger : ITheonLogger, IDisposable
 {
     private readonly string _logsPath;
-    private readonly string _tracesPath;
-    private readonly LogLevel _minLevel;
+    private readonly StreamWriter _llmLogWriter;
     private readonly object _lock = new();
-    private readonly StreamWriter _logFile;
-    private int _promptCounter;
+    private int _interactionCount;
 
-    public TheonLogger(string outputPath, LogLevel minLevel = LogLevel.Info)
+    public TheonLogger(TheonOptions options)
     {
-        _logsPath = Path.Combine(outputPath, "logs");
-        _tracesPath = Path.Combine(outputPath, "traces");
-        _minLevel = minLevel;
+        _logsPath = Path.IsPathRooted(options.LogsPath)
+            ? options.LogsPath
+            : Path.Combine(options.ProjectPath, options.LogsPath);
 
         Directory.CreateDirectory(_logsPath);
-        Directory.CreateDirectory(_tracesPath);
 
-        string logFileName = $"theon_{DateTime.Now:yyyyMMdd_HHmmss}.log";
-        _logFile = new StreamWriter(Path.Combine(_logsPath, logFileName), append: true)
-        {
-            AutoFlush = true
-        };
-
-        Log(LogLevel.Info, $"Session started - Log file: {logFileName}");
+        string llmLogFile = Path.Combine(_logsPath, $"llm_{DateTime.Now:yyyyMMdd_HHmmss}.log");
+        _llmLogWriter = new StreamWriter(llmLogFile, append: false) { AutoFlush = true };
     }
 
-    public void Trace(string message) => Log(LogLevel.Trace, message);
-    public void Debug(string message) => Log(LogLevel.Debug, message);
-    public void Info(string message) => Log(LogLevel.Info, message);
-    public void Warning(string message) => Log(LogLevel.Warning, message);
-    public void Error(string message, Exception? ex = null) => Log(LogLevel.Error, message, ex);
+    public void Info(string message) => Log("INF", message, ConsoleColor.Cyan);
+    public void Debug(string message) => Log("DBG", message, ConsoleColor.Gray);
+    public void Warning(string message) => Log("WRN", message, ConsoleColor.Yellow);
 
-    public void Log(LogLevel level, string message, Exception? ex = null)
+    public void Error(string message, Exception? ex = null)
     {
-        if (level < _minLevel) return;
-
-        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        string prefix = level switch
+        Log("ERR", message, ConsoleColor.Red);
+        if (ex != null)
         {
-            LogLevel.Trace => "TRC",
-            LogLevel.Debug => "DBG",
-            LogLevel.Info => "INF",
-            LogLevel.Warning => "WRN",
-            LogLevel.Error => "ERR",
-            _ => "???"
-        };
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"  {ex.GetType().Name}: {ex.Message}");
+            Console.ResetColor();
+        }
+    }
 
-        string logLine = $"[{timestamp}] [{prefix}] {message}";
-        string? exLine = ex != null ? $"  Exception: {ex.GetType().Name}: {ex.Message}" : null;
-
+    public void LogLlmRequest(IEnumerable<object> messages)
+    {
+        int count = Interlocked.Increment(ref _interactionCount);
         lock (_lock)
         {
-            _logFile.WriteLine(logLine);
-            if (exLine != null) _logFile.WriteLine(exLine);
-
-            ConsoleColor color = level switch
+            _llmLogWriter.WriteLine($"\n{'=',-60}");
+            _llmLogWriter.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] REQUEST #{count}");
+            _llmLogWriter.WriteLine($"{'=',-60}");
+            foreach (object msg in messages)
             {
-                LogLevel.Trace => ConsoleColor.DarkGray,
-                LogLevel.Debug => ConsoleColor.Gray,
-                LogLevel.Info => ConsoleColor.Cyan,
-                LogLevel.Warning => ConsoleColor.Yellow,
-                LogLevel.Error => ConsoleColor.Red,
-                _ => ConsoleColor.White
-            };
-
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write($"[{DateTime.Now:HH:mm:ss}] ");
-            Console.ForegroundColor = color;
-            Console.Write($"{prefix} ");
-            Console.ResetColor();
-            Console.WriteLine(message);
-
-            if (ex != null)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"  {ex.GetType().Name}: {ex.Message}");
-                Console.ResetColor();
+                _llmLogWriter.WriteLine(System.Text.Json.JsonSerializer.Serialize(msg));
             }
         }
     }
 
-    public void LogOrchestratorInteraction(InteractionDirection direction, string content)
+    public void LogLlmResponse(string content)
     {
-        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        string separator = new('=', 60);
-
         lock (_lock)
         {
-            _logFile.WriteLine();
-            _logFile.WriteLine(separator);
-            _logFile.WriteLine($"[{timestamp}] ORCHESTRATOR {direction}");
-            _logFile.WriteLine(separator);
-            _logFile.WriteLine(content);
-            _logFile.WriteLine(separator);
-            _logFile.WriteLine();
+            _llmLogWriter.WriteLine($"\n{'-',-60}");
+            _llmLogWriter.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] RESPONSE");
+            _llmLogWriter.WriteLine($"{'-',-60}");
+            _llmLogWriter.WriteLine(content);
+            _llmLogWriter.WriteLine();
         }
     }
 
-    public void LogAgentInteraction(string agentId, InteractionDirection direction, string content)
+    private void Log(string level, string message, ConsoleColor color)
     {
-        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-
-        lock (_lock)
-        {
-            _logFile.WriteLine();
-            _logFile.WriteLine($"[{timestamp}] AGENT:{agentId} {direction}");
-            _logFile.WriteLine($"Content length: {content.Length} chars");
-            _logFile.WriteLine(content);
-            //_logFile.WriteLine(content.Length > 2000 ? content[..2000] + "\n... (truncated)" : content);
-            _logFile.WriteLine();
-        }
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write($"[{DateTime.Now:HH:mm:ss}] ");
+        Console.ForegroundColor = color;
+        Console.Write($"{level} ");
+        Console.ResetColor();
+        Console.WriteLine(message);
     }
 
-    public string TracePrompt(string agentId, string prompt, string? response = null)
-    {
-        int counter = Interlocked.Increment(ref _promptCounter);
-        string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        string fileName = $"{counter:D4}_{timestamp}_{SanitizeFileName(agentId)}.md";
-        string filePath = Path.Combine(_tracesPath, fileName);
-
-        string content = $"""
-            # Prompt Trace #{counter}
-            
-            **Agent:** {agentId}
-            **Timestamp:** {DateTime.Now:yyyy-MM-dd HH:mm:ss}
-            **Status:** {(response == null ? "PENDING" : "COMPLETED")}
-            
-            ## Prompt
-
-            {prompt}
-            
-            ## Response
-            
-            {(response == null ? "_Waiting for response..._" : response)}
-            """;
-
-        File.WriteAllText(filePath, content);
-        return filePath;
-    }
-
-    public void LogMetric(string category, string name, object value)
-    {
-        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-        string logLine = $"[{timestamp}] [MTR] [{category}] {name}={value}";
-
-        lock (_lock)
-        {
-            _logFile.WriteLine(logLine);
-
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write($"[{DateTime.Now:HH:mm:ss}] ");
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.Write("MTR ");
-            Console.ResetColor();
-            Console.WriteLine($"[{category}] {name}={value}");
-        }
-    }
-
-    public void LogAgentCreation(string agentId, string name, string expertise)
-    {
-        Info($"Created agent: {name} ({agentId})");
-        LogMetric("Agent", "Created", $"{agentId}|{expertise}");
-    }
-
-    public void LogQueryStart(string queryId, string query)
-    {
-        Debug($"Query started: {queryId} - {(query.Length > 50 ? query[..50] + "..." : query)}");
-        LogMetric("Query", "Start", queryId);
-    }
-
-    public void LogQueryEnd(string queryId, TimeSpan duration, bool success)
-    {
-        string status = success ? "SUCCESS" : "FAILED";
-        Info($"Query {queryId} completed in {duration.TotalSeconds:F1}s [{status}]");
-        LogMetric("Query", "End", $"{queryId}|{duration.TotalMilliseconds:F0}ms|{status}");
-    }
-
-    public void UpdateTrace(string filePath, string response)
-    {
-        if (!File.Exists(filePath)) return;
-
-        string content = File.ReadAllText(filePath);
-        content = content.Replace("**Status:** PENDING", "**Status:** COMPLETED");
-        content = content.Replace("_Waiting for response..._", response);
-        File.WriteAllText(filePath, content);
-    }
-
-    private static string SanitizeFileName(string name)
-    {
-        char[] invalid = Path.GetInvalidFileNameChars();
-        return string.Join("_", name.Split(invalid, StringSplitOptions.RemoveEmptyEntries));
-    }
-
-    public void Dispose()
-    {
-        _logFile.Flush();
-        _logFile.Dispose();
-    }
+    public void Dispose() => _llmLogWriter.Dispose();
 }
