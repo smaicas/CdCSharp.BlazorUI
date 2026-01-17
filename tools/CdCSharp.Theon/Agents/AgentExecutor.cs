@@ -28,6 +28,8 @@ public partial class AgentExecutor
             Content = instruction
         });
 
+        _logger.LogAgentInteraction(agent.Id, InteractionDirection.Input, instruction);
+
         await CompressIfNeededAsync(agent);
 
         string traceFile = _logger.TracePrompt(agent.Id, instruction);
@@ -35,6 +37,7 @@ public partial class AgentExecutor
         string response = await _aiClient.SendAsync(agent.ConversationHistory.ToList());
 
         _logger.UpdateTrace(traceFile, response);
+        _logger.LogAgentInteraction(agent.Id, InteractionDirection.Output, response);
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
@@ -68,13 +71,21 @@ public partial class AgentExecutor
             .ToList();
 
         string summaryPrompt = $"""
-            Summarize the key points from this conversation in a concise format.
-            Focus on: decisions made, information gathered, conclusions reached.
+            # Compression Task
             
-            Conversation:
-            {string.Join("\n", toCompress.Select(m => $"[{m.Role}]: {m.Content}"))}
+            Summarize the following conversation, preserving:
+            - Key decisions made
+            - Important information discovered
+            - Conclusions reached
+            - Any pending questions or tasks
             
-            Summary (be concise):
+            Be concise but don't lose critical details.
+            
+            ## Conversation to Summarize
+            
+            {string.Join("\n\n", toCompress.Select(m => $"**[{m.Role}]:**\n{m.Content}"))}
+            
+            ## Summary
             """;
 
         List<ConversationMessage> summaryMessages =
@@ -92,13 +103,21 @@ public partial class AgentExecutor
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.User,
-            Content = $"Summary of our previous conversation:\n{summary}"
+            Content = $"""
+                # Previous Conversation Summary
+                
+                The following is a summary of our earlier conversation:
+                
+                {summary}
+                
+                Continue from this context.
+                """
         });
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.Assistant,
-            Content = "Understood. I'll continue with this context in mind."
+            Content = "I understand. I have the context from our previous conversation and I'm ready to continue."
         });
 
         agent.ConversationHistory.AddRange(toKeep);
@@ -111,9 +130,12 @@ public partial class AgentExecutor
         AgentExecutionResult result = new() { AgentId = agentId, RawResponse = response };
 
         Match confidenceMatch = ConfidenceRegex().Match(response);
-        if (confidenceMatch.Success && float.TryParse(confidenceMatch.Groups[1].Value, out float conf))
+        if (confidenceMatch.Success && float.TryParse(confidenceMatch.Groups[1].Value,
+            System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out float conf))
         {
-            result.Confidence = conf;
+            result.Confidence = Math.Clamp(conf, 0f, 1f);
         }
 
         foreach (Match match in FileRequestRegex().Matches(response))
@@ -135,11 +157,14 @@ public partial class AgentExecutor
 
         foreach (Match match in CreateAgentRegex().Matches(response))
         {
+            string filesStr = match.Groups.Count > 4 ? match.Groups[4].Value : "";
             result.AgentCreationRequests.Add(new AgentCreationSpec
             {
                 Name = match.Groups[1].Value,
                 Expertise = match.Groups[2].Value,
-                InitialContextFiles = match.Groups[3].Value.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList(),
+                InitialContextFiles = string.IsNullOrEmpty(filesStr)
+                    ? []
+                    : filesStr.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList(),
                 ParentAgentId = agentId
             });
         }
@@ -158,8 +183,7 @@ public partial class AgentExecutor
         if (validationMatch.Success)
         {
             result.SuggestedValidators = validationMatch.Groups[1].Value
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Trim())
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .ToList();
         }
 
@@ -177,7 +201,12 @@ public partial class AgentExecutor
         clean = QueryAgentRegex().Replace(clean, "");
         clean = CreateAgentRegex().Replace(clean, "");
         clean = ValidationRegex().Replace(clean, "");
-        clean = GeneratedFileRegex().Replace(clean, "");
+
+        clean = Regex.Replace(clean, @"\[GENERATE_FILE:.*?\]", "", RegexOptions.IgnoreCase);
+        clean = Regex.Replace(clean, @"\[/GENERATE_FILE\]", "", RegexOptions.IgnoreCase);
+
+        while (clean.Contains("\n\n\n"))
+            clean = clean.Replace("\n\n\n", "\n\n");
 
         return clean.Trim();
     }

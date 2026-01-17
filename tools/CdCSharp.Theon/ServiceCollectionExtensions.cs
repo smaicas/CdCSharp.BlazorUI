@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
             logger);
         services.AddSingleton(aiClient);
 
-        services.AddSingleton<ProjectScanner>();
+        services.AddSingleton<PreAnalyzer>();
         services.AddSingleton<TypeDestructurer>();
         services.AddSingleton<LlmFormatter>();
 

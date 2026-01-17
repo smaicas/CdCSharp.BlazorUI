@@ -6,6 +6,7 @@ using CdCSharp.Theon.Models;
 using CdCSharp.Theon.Tools;
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json;
 
 namespace CdCSharp.Theon.Orchestration;
 
@@ -21,7 +22,6 @@ public class Orchestrator
     private readonly TheonLogger _logger;
     private readonly TheonOptions _options;
 
-    private ProjectStructure? _projectStructure;
     private readonly List<ConversationMessage> _orchestratorHistory = [];
 
     public Orchestrator(
@@ -48,15 +48,12 @@ public class Orchestrator
         InitializeOrchestratorPrompt();
     }
 
-    public void SetProjectStructure(ProjectStructure structure)
+    public void SetProjectStructure(PreAnalysisResult preAnalysis)
     {
-        _projectStructure = structure;
-
-        string projectContext = _formatter.FormatProjectStructure(structure);
         _orchestratorHistory.Add(new ConversationMessage
         {
             Role = MessageRole.User,
-            Content = $"Project structure loaded:\n\n{projectContext}"
+            Content = $"Project structure loaded:\n\n{preAnalysis.ProjectLlmFormat}"
         });
         _orchestratorHistory.Add(new ConversationMessage
         {
@@ -305,6 +302,9 @@ public class Orchestrator
 
         RoutingDecision? decision = await _aiClient.SendAsync<RoutingDecision>(
             _orchestratorHistory, maxTokens: 500);
+
+        _logger.LogOrchestratorInteraction(InteractionDirection.Input, string.Join("\n\n", _orchestratorHistory));
+        _logger.LogOrchestratorInteraction(InteractionDirection.Output, JsonSerializer.Serialize(decision));
 
         if (decision == null)
         {

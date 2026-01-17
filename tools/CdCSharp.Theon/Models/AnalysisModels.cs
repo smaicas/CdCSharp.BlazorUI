@@ -1,5 +1,21 @@
 ﻿namespace CdCSharp.Theon.Models;
 
+public record PreAnalysisResult
+{
+    public required ProjectStructure Structure { get; init; }
+    public required Dictionary<string, AssemblyAnalysis> AssemblyAnalyses { get; init; }
+    public required string ProjectLlmFormat { get; init; }
+    public required string OutputPath { get; init; }
+}
+
+public record AssemblyAnalysis
+{
+    public required AssemblyStructure Assembly { get; init; }
+    public required string JsonPath { get; init; }
+    public required string LlmPath { get; init; }
+    public required string LlmContent { get; init; }
+}
+
 public record ProjectStructure
 {
     public string Solution { get; init; } = string.Empty;

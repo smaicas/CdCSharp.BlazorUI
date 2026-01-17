@@ -1,20 +1,32 @@
 ﻿namespace CdCSharp.Theon.Infrastructure;
 
 public enum LogLevel { Trace, Debug, Info, Warning, Error }
-
+public enum InteractionDirection { Input, Output }
 public class TheonLogger
 {
-    private readonly string _outputPath;
+    private readonly string _logsPath;
+    private readonly string _tracesPath;
     private readonly LogLevel _minLevel;
     private readonly object _lock = new();
+    private readonly StreamWriter _logFile;
     private int _promptCounter;
 
     public TheonLogger(string outputPath, LogLevel minLevel = LogLevel.Info)
     {
-        _outputPath = outputPath;
+        _logsPath = Path.Combine(outputPath, "logs");
+        _tracesPath = Path.Combine(outputPath, "traces");
         _minLevel = minLevel;
-        Directory.CreateDirectory(Path.Combine(_outputPath, "logs"));
-        Directory.CreateDirectory(Path.Combine(_outputPath, "traces"));
+
+        Directory.CreateDirectory(_logsPath);
+        Directory.CreateDirectory(_tracesPath);
+
+        string logFileName = $"theon_{DateTime.Now:yyyyMMdd_HHmmss}.log";
+        _logFile = new StreamWriter(Path.Combine(_logsPath, logFileName), append: true)
+        {
+            AutoFlush = true
+        };
+
+        Log(LogLevel.Info, $"Session started - Log file: {logFileName}");
     }
 
     public void Trace(string message) => Log(LogLevel.Trace, message);
@@ -27,7 +39,7 @@ public class TheonLogger
     {
         if (level < _minLevel) return;
 
-        string timestamp = DateTime.Now.ToString("HH:mm:ss.fff");
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         string prefix = level switch
         {
             LogLevel.Trace => "TRC",
@@ -38,20 +50,26 @@ public class TheonLogger
             _ => "???"
         };
 
-        ConsoleColor color = level switch
-        {
-            LogLevel.Trace => ConsoleColor.DarkGray,
-            LogLevel.Debug => ConsoleColor.Gray,
-            LogLevel.Info => ConsoleColor.Cyan,
-            LogLevel.Warning => ConsoleColor.Yellow,
-            LogLevel.Error => ConsoleColor.Red,
-            _ => ConsoleColor.White
-        };
+        string logLine = $"[{timestamp}] [{prefix}] {message}";
+        string? exLine = ex != null ? $"  Exception: {ex.GetType().Name}: {ex.Message}" : null;
 
         lock (_lock)
         {
+            _logFile.WriteLine(logLine);
+            if (exLine != null) _logFile.WriteLine(exLine);
+
+            ConsoleColor color = level switch
+            {
+                LogLevel.Trace => ConsoleColor.DarkGray,
+                LogLevel.Debug => ConsoleColor.Gray,
+                LogLevel.Info => ConsoleColor.Cyan,
+                LogLevel.Warning => ConsoleColor.Yellow,
+                LogLevel.Error => ConsoleColor.Red,
+                _ => ConsoleColor.White
+            };
+
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.Write($"[{timestamp}] ");
+            Console.Write($"[{DateTime.Now:HH:mm:ss}] ");
             Console.ForegroundColor = color;
             Console.Write($"{prefix} ");
             Console.ResetColor();
@@ -66,12 +84,44 @@ public class TheonLogger
         }
     }
 
+    public void LogOrchestratorInteraction(InteractionDirection direction, string content)
+    {
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        string separator = new('=', 60);
+
+        lock (_lock)
+        {
+            _logFile.WriteLine();
+            _logFile.WriteLine(separator);
+            _logFile.WriteLine($"[{timestamp}] ORCHESTRATOR {direction}");
+            _logFile.WriteLine(separator);
+            _logFile.WriteLine(content);
+            _logFile.WriteLine(separator);
+            _logFile.WriteLine();
+        }
+    }
+
+    public void LogAgentInteraction(string agentId, InteractionDirection direction, string content)
+    {
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+        lock (_lock)
+        {
+            _logFile.WriteLine();
+            _logFile.WriteLine($"[{timestamp}] AGENT:{agentId} {direction}");
+            _logFile.WriteLine($"Content length: {content.Length} chars");
+            _logFile.WriteLine(content);
+            //_logFile.WriteLine(content.Length > 2000 ? content[..2000] + "\n... (truncated)" : content);
+            _logFile.WriteLine();
+        }
+    }
+
     public string TracePrompt(string agentId, string prompt, string? response = null)
     {
         int counter = Interlocked.Increment(ref _promptCounter);
         string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string fileName = $"{counter:D4}_{timestamp}_{SanitizeFileName(agentId)}.md";
-        string filePath = Path.Combine(_outputPath, "traces", fileName);
+        string filePath = Path.Combine(_tracesPath, fileName);
 
         string content = $"""
             # Prompt Trace #{counter}
@@ -107,5 +157,11 @@ public class TheonLogger
     {
         char[] invalid = Path.GetInvalidFileNameChars();
         return string.Join("_", name.Split(invalid, StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    public void Dispose()
+    {
+        _logFile.Flush();
+        _logFile.Dispose();
     }
 }

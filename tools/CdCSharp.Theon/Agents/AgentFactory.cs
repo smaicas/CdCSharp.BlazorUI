@@ -51,18 +51,37 @@ public class AgentFactory
                 agent.ConversationHistory.Add(new ConversationMessage
                 {
                     Role = MessageRole.User,
-                    Content = $"Here is your expertise context:\n\n{context}"
+                    Content = $"""
+                        # Your Expertise Context
+                        
+                        The following files define your area of expertise. Study them carefully.
+                        
+                        {context}
+                        
+                        Confirm you have reviewed this context.
+                        """
                 });
                 agent.ConversationHistory.Add(new ConversationMessage
                 {
                     Role = MessageRole.Assistant,
-                    Content = "I've reviewed my expertise context and I'm ready to help."
+                    Content = $"""
+                        I have reviewed my expertise context for "{spec.Expertise}".
+                        
+                        I analyzed {spec.InitialContextFiles.Count} file(s) and I'm ready to answer questions about:
+                        - The code structure and patterns used
+                        - Implementation details and dependencies
+                        - How to extend or modify this code
+                        
+                        I will use the available tools when I need additional information.
+                        """
                 });
             }
         }
 
         _registry.Register(agent);
-        _logger.Info($"Created agent: {agent.Name} with expertise: {agent.Expertise}");
+        _logger.Info($"Created agent: {agent.Name} ({agent.Id})");
+        _logger.Debug($"  Expertise: {agent.Expertise}");
+        _logger.Debug($"  Context files: {spec.InitialContextFiles.Count}");
 
         return agent;
     }
@@ -96,41 +115,77 @@ public class AgentFactory
 
     private string BuildSystemPrompt(AgentCreationSpec spec)
     {
+        string toolsDocs = AITools.GetToolsDocumentation();
+
         return $"""
-            You are a specialized AI agent named "{spec.Name}".
+            # Agent Identity
             
-            Your expertise: {spec.Expertise}
+            You are **{spec.Name}**, a specialized AI agent.
             
-            ## Your Capabilities
+            **Your Expertise:** {spec.Expertise}
             
-            You can request actions from the orchestrator by including these tags in your response:
+            You are part of a multi-agent system. The Orchestrator coordinates all agents and routes queries to the most appropriate specialist.
             
-            1. Request file content:
-               [REQUEST_FILE: path="relative/path/to/file.cs"]
+            ---
             
-            2. Request to query another agent:
-               [QUERY_AGENT: expertise="area of expertise" question="your question"]
+            # Available Tools
             
-            3. Request creation of a new specialized agent:
-               [CREATE_AGENT: name="Agent Name" expertise="specific expertise" files="file1.cs,file2.cs"]
+            You can use the following tools by including the exact syntax in your response:
             
-            ## Response Guidelines
+            {toolsDocs}
             
-            - Be precise and focused on your expertise area
-            - If you need information outside your context, request it
-            - Include a confidence score (0.0-1.0) at the end: [CONFIDENCE: 0.85]
-            - If generating code, wrap it in appropriate markdown code blocks
-            - Suggest validation by other agents if the topic spans multiple areas:
-               [SUGGEST_VALIDATION: expertise="area1,area2"]
+            ---
             
-            ## Output Format for Generated Files
+            # Response Guidelines
             
-            When generating files, use this format:
-            [FILE: name="FileName.cs" language="csharp"]
-
-            // file content here
-
-            [/FILE]
+            ## When to Use Tools
+            
+            1. **REQUEST_FILE**: Use when you need to see code you don't have in your context
+               - Be specific with file paths
+               - Request only files relevant to the current question
+            
+            2. **QUERY_AGENT**: Use when the question involves expertise outside your area
+               - Clearly describe the expertise needed
+               - Ask specific, focused questions
+            
+            3. **CREATE_AGENT**: Use sparingly, only when:
+               - A specific area needs deep specialization
+               - Multiple files need to be analyzed together
+               - The current agents cannot answer adequately
+            
+            4. **GENERATE_FILE**: Use when creating new code or files
+               - Always include the complete file content
+               - Use appropriate language identifier
+            
+            5. **CONFIDENCE**: Always include at the end of your response
+               - 0.9-1.0: Very confident, straightforward answer
+               - 0.7-0.9: Confident but some assumptions made
+               - 0.5-0.7: Moderate confidence, may need validation
+               - Below 0.5: Low confidence, definitely needs validation
+            
+            6. **SUGGEST_VALIDATION**: Use when your answer spans multiple domains
+            
+            ---
+            
+            ## Response Format
+            
+            Structure your responses clearly:
+            
+            1. **Direct answer** to the question
+            2. **Explanation** with relevant details
+            3. **Code examples** if applicable (use GENERATE_FILE for new files)
+            4. **Tool calls** if you need more information
+            5. **Confidence score** at the end
+            
+            ---
+            
+            ## Important Rules
+            
+            - Do NOT invent or assume file contents you haven't seen
+            - Do NOT claim expertise you don't have - use QUERY_AGENT instead
+            - Be concise but thorough
+            - If uncertain, state it clearly and lower your confidence
+            - Always respond in the same language as the question
             """;
     }
 
@@ -144,10 +199,25 @@ public class AgentFactory
         List<string> parts = [];
         foreach ((string path, string content) in contents)
         {
-            parts.Add($"=== {path} ===\n{content}");
+            string lang = Path.GetExtension(path).TrimStart('.') switch
+            {
+                "cs" => "csharp",
+                "razor" => "razor",
+                "ts" or "tsx" => "typescript",
+                "css" or "scss" => "css",
+                "json" => "json",
+                _ => ""
+            };
+
+            parts.Add($$""""
+                ## File: `{{path}}`
+                ```{{lang}}
+                {{content}}
+                ```
+                """");
         }
 
-        return string.Join("\n\n", parts);
+        return string.Join("\n\n---\n\n", parts);
     }
 
     private static byte[] SerializeState(Agent agent)

@@ -23,7 +23,7 @@ services.AddTheon(options);
 ServiceProvider provider = services.BuildServiceProvider();
 
 TheonLogger logger = provider.GetRequiredService<TheonLogger>();
-ProjectScanner scanner = provider.GetRequiredService<ProjectScanner>();
+PreAnalyzer scanner = provider.GetRequiredService<PreAnalyzer>();
 Orchestrator orchestrator = provider.GetRequiredService<Orchestrator>();
 
 logger.Info("=".PadRight(50, '='));
@@ -33,15 +33,16 @@ logger.Info($"Project: {options.ProjectPath}");
 logger.Info("");
 
 logger.Info("Scanning project structure...");
-ProjectStructure structure = await scanner.ScanAsync(options.ProjectPath);
+PreAnalysisResult preAnalysis = await scanner.AnalyzeAsync(options.ProjectPath);
+//ProjectStructure structure = preAnalysis.Structure;
 
-logger.Info($"Found {structure.Assemblies.Count} assemblies");
-logger.Info($"  Types: {structure.Summary.TotalTypes}");
-logger.Info($"  Files: {structure.Summary.TotalFiles}");
-if (structure.Summary.DetectedPatterns.Count > 0)
-    logger.Info($"  Patterns: {string.Join(", ", structure.Summary.DetectedPatterns)}");
+logger.Info($"Found {preAnalysis.Structure.Assemblies.Count} assemblies");
+logger.Info($"  Types: {preAnalysis.Structure.Summary.TotalTypes}");
+logger.Info($"  Files: {preAnalysis.Structure.Summary.TotalFiles}");
+if (preAnalysis.Structure.Summary.DetectedPatterns.Count > 0)
+    logger.Info($"  Patterns: {string.Join(", ", preAnalysis.Structure.Summary.DetectedPatterns)}");
 
-orchestrator.SetProjectStructure(structure);
+orchestrator.SetProjectStructure(preAnalysis);
 
 logger.Info("");
 logger.Info("Ready. Type your query (or 'exit' to quit):");

@@ -1,23 +1,99 @@
 ﻿using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Models;
+using System.Text.Json;
 using System.Xml.Linq;
 
 namespace CdCSharp.Theon.Analysis;
 
-public class ProjectScanner
+public class PreAnalyzer
 {
-    private readonly IgnoreFilter _ignoreFilter;
+    private readonly TypeDestructurer _destructurer;
+    private readonly LlmFormatter _formatter;
     private readonly TheonLogger _logger;
+    private readonly TheonOptions _options;
+    private readonly IgnoreFilter _ignoreFilter;
 
     private static readonly string[] TestIndicators = ["xunit", "nunit", "mstest", "Test.Sdk"];
 
-    public ProjectScanner(IgnoreFilter ignoreFilter, TheonLogger logger)
+    public PreAnalyzer(
+        TypeDestructurer destructurer,
+        LlmFormatter formatter,
+        TheonLogger logger,
+        TheonOptions options,
+        IgnoreFilter ignoreFilter)
     {
-        _ignoreFilter = ignoreFilter;
+        _destructurer = destructurer;
+        _formatter = formatter;
         _logger = logger;
+        _options = options;
+        _ignoreFilter = ignoreFilter;
     }
 
-    public async Task<ProjectStructure> ScanAsync(string projectPath)
+    public async Task<PreAnalysisResult> AnalyzeAsync(string projectPath)
+    {
+        _logger.Info("Starting pre-analysis...");
+
+        string preanalysisPath = Path.Combine(_options.OutputPath, "preanalysis");
+        Directory.CreateDirectory(preanalysisPath);
+
+        // Scan project structure
+        ProjectStructure structure = await ScanProjectAsync(projectPath);
+        _logger.Info($"Scanned {structure.Assemblies.Count} assemblies");
+
+        // Save project structure
+        string structureJson = JsonSerializer.Serialize(structure, new JsonSerializerOptions { WriteIndented = true });
+        string structureJsonPath = Path.Combine(preanalysisPath, "structure.json");
+        await File.WriteAllTextAsync(structureJsonPath, structureJson);
+        _logger.Debug($"Saved: {structureJsonPath}");
+
+        Dictionary<string, AssemblyAnalysis> assemblyAnalyses = [];
+
+        // Process each assembly
+        foreach (AssemblyStructure assembly in structure.Assemblies.Where(a => !a.IsTestProject))
+        {
+            _logger.Info($"Destructuring: {assembly.Name}");
+
+            List<NamespaceInfo> namespaces = await _destructurer.DestructureAsync(
+                projectPath, assembly.Files.CSharp);
+
+            AssemblyStructure detailedAssembly = assembly with { Namespaces = namespaces };
+
+            string assemblyJson = JsonSerializer.Serialize(detailedAssembly, new JsonSerializerOptions { WriteIndented = true });
+            string assemblyJsonPath = Path.Combine(preanalysisPath, $"{assembly.Name}.json");
+            await File.WriteAllTextAsync(assemblyJsonPath, assemblyJson);
+
+            string llmFormat = _formatter.FormatAssemblyDetail(detailedAssembly);
+            string llmPath = Path.Combine(preanalysisPath, $"{assembly.Name}.llm.txt");
+            await File.WriteAllTextAsync(llmPath, llmFormat);
+
+            assemblyAnalyses[assembly.Name] = new AssemblyAnalysis
+            {
+                Assembly = detailedAssembly,
+                JsonPath = assemblyJsonPath,
+                LlmPath = llmPath,
+                LlmContent = llmFormat
+            };
+
+            _logger.Debug($"  Types: {namespaces.Sum(n => n.Types.Count)}");
+        }
+
+        // Generate project-level LLM format
+        string projectLlmFormat = _formatter.FormatProjectStructure(structure);
+        string projectLlmPath = Path.Combine(preanalysisPath, "project.llm.txt");
+        await File.WriteAllTextAsync(projectLlmPath, projectLlmFormat);
+
+        _logger.Info($"Pre-analysis complete. Output: {preanalysisPath}");
+
+        return new PreAnalysisResult
+        {
+            Structure = structure,
+            AssemblyAnalyses = assemblyAnalyses,
+            ProjectLlmFormat = projectLlmFormat,
+            OutputPath = preanalysisPath
+        };
+    }
+
+    private async Task<ProjectStructure> ScanProjectAsync(string projectPath)
     {
         await _ignoreFilter.InitializeAsync(projectPath);
         _logger.Info($"Scanning project: {projectPath}");
@@ -31,7 +107,7 @@ public class ProjectScanner
         List<AssemblyStructure> assemblies = [];
         foreach (string csproj in csprojFiles)
         {
-            AssemblyStructure assembly = await ScanProjectAsync(csproj, projectPath);
+            AssemblyStructure assembly = await ScanCsprojAsync(csproj, projectPath);
             assemblies.Add(assembly);
             _logger.Debug($"  {assembly.Name}: {assembly.Namespaces.Sum(n => n.Types.Count)} types");
         }
@@ -47,7 +123,7 @@ public class ProjectScanner
         };
     }
 
-    private async Task<AssemblyStructure> ScanProjectAsync(string csprojPath, string rootPath)
+    private async Task<AssemblyStructure> ScanCsprojAsync(string csprojPath, string rootPath)
     {
         string projectDir = Path.GetDirectoryName(csprojPath)!;
         string projectName = Path.GetFileNameWithoutExtension(csprojPath);
@@ -65,7 +141,7 @@ public class ProjectScanner
             Path = relativePath,
             IsTestProject = isTest,
             References = references,
-            Namespaces = [], // Se llena con TypeDestructurer si se necesita detalle
+            Namespaces = [],
             Files = files
         };
     }
