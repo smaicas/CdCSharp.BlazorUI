@@ -29,10 +29,17 @@ public class AgentFactory
 
     public async Task<Agent> CreateAsync(AgentCreationSpec spec)
     {
+        // Validar spec antes de crear
+        if (string.IsNullOrWhiteSpace(spec.Name))
+            throw new ArgumentException("Agent name cannot be empty", nameof(spec));
+
+        if (string.IsNullOrWhiteSpace(spec.Expertise))
+            throw new ArgumentException("Agent expertise cannot be empty", nameof(spec));
+
         Agent agent = new()
         {
-            Name = spec.Name,
-            Expertise = spec.Expertise
+            Name = spec.Name.Trim(),
+            Expertise = spec.Expertise.Trim()
         };
 
         string systemPrompt = BuildSystemPrompt(spec);
@@ -52,36 +59,25 @@ public class AgentFactory
                 {
                     Role = MessageRole.User,
                     Content = $"""
-                        # Your Expertise Context
-                        
-                        The following files define your area of expertise. Study them carefully.
-                        
-                        {context}
-                        
-                        Confirm you have reviewed this context.
-                        """
+                    # Context Files
+                    
+                    Study these files - they define your area of expertise:
+                    
+                    {context}
+                    
+                    Confirm you understand this context.
+                    """
                 });
                 agent.ConversationHistory.Add(new ConversationMessage
                 {
                     Role = MessageRole.Assistant,
-                    Content = $"""
-                        I have reviewed my expertise context for "{spec.Expertise}".
-                        
-                        I analyzed {spec.InitialContextFiles.Count} file(s) and I'm ready to answer questions about:
-                        - The code structure and patterns used
-                        - Implementation details and dependencies
-                        - How to extend or modify this code
-                        
-                        I will use the available tools when I need additional information.
-                        """
+                    Content = $"I have analyzed {spec.InitialContextFiles.Count} file(s) for my expertise in \"{spec.Expertise}\". Ready to answer questions."
                 });
             }
         }
 
         _registry.Register(agent);
-        _logger.Info($"Created agent: {agent.Name} ({agent.Id})");
-        _logger.Debug($"  Expertise: {agent.Expertise}");
-        _logger.Debug($"  Context files: {spec.InitialContextFiles.Count}");
+        _logger.LogAgentCreation(agent.Id, agent.Name, agent.Expertise);
 
         return agent;
     }
@@ -117,77 +113,130 @@ public class AgentFactory
     {
         string toolsDocs = AITools.GetToolsDocumentation();
 
-        return $"""
-            # Agent Identity
-            
-            You are **{spec.Name}**, a specialized AI agent.
-            
-            **Your Expertise:** {spec.Expertise}
-            
-            You are part of a multi-agent system. The Orchestrator coordinates all agents and routes queries to the most appropriate specialist.
-            
-            ---
-            
-            # Available Tools
-            
-            You can use the following tools by including the exact syntax in your response:
-            
-            {toolsDocs}
-            
-            ---
-            
-            # Response Guidelines
-            
-            ## When to Use Tools
-            
-            1. **REQUEST_FILE**: Use when you need to see code you don't have in your context
-               - Be specific with file paths
-               - Request only files relevant to the current question
-            
-            2. **QUERY_AGENT**: Use when the question involves expertise outside your area
-               - Clearly describe the expertise needed
-               - Ask specific, focused questions
-            
-            3. **CREATE_AGENT**: Use sparingly, only when:
-               - A specific area needs deep specialization
-               - Multiple files need to be analyzed together
-               - The current agents cannot answer adequately
-            
-            4. **GENERATE_FILE**: Use when creating new code or files
-               - Always include the complete file content
-               - Use appropriate language identifier
-            
-            5. **CONFIDENCE**: Always include at the end of your response
-               - 0.9-1.0: Very confident, straightforward answer
-               - 0.7-0.9: Confident but some assumptions made
-               - 0.5-0.7: Moderate confidence, may need validation
-               - Below 0.5: Low confidence, definitely needs validation
-            
-            6. **SUGGEST_VALIDATION**: Use when your answer spans multiple domains
-            
-            ---
-            
-            ## Response Format
-            
-            Structure your responses clearly:
-            
-            1. **Direct answer** to the question
-            2. **Explanation** with relevant details
-            3. **Code examples** if applicable (use GENERATE_FILE for new files)
-            4. **Tool calls** if you need more information
-            5. **Confidence score** at the end
-            
-            ---
-            
-            ## Important Rules
-            
-            - Do NOT invent or assume file contents you haven't seen
-            - Do NOT claim expertise you don't have - use QUERY_AGENT instead
-            - Be concise but thorough
-            - If uncertain, state it clearly and lower your confidence
-            - Always respond in the same language as the question
-            """;
+        return
+$"""
+        # Agent Identity
+        
+        You are **{spec.Name}**, a specialized AI agent.
+        
+        **Your Expertise:** {spec.Expertise}
+        
+        You are part of a multi-agent system called THEON. The Orchestrator coordinates all agents and routes queries to the most appropriate specialist.
+        
+        **Important:** Before each interaction, you will receive an updated list of available agents. Use QUERY_AGENT to consult specialists when needed.
+        
+        ---
+        
+        # Available Tools
+        
+        You can use the following tools by including the exact syntax in your response:
+        
+        {toolsDocs}
+        
+        ---
+        
+        # Response Guidelines
+        
+        ## Tool Syntax (MUST follow exactly)
+        
+        ### File Operations
+
+        [REQUEST_FILE: path="relative/path/to/file.cs"]
+        [REQUEST_FILE_PATHS: assembly="AssemblyName"]
+        [REQUEST_FILE_PATHS: assembly=""]  <!-- Empty for full project -->
+
+        
+        ### Agent Operations
+
+        [QUERY_AGENT: expertise="domain expertise" question="specific question"]
+        [CREATE_AGENT: name="Agent Name" expertise="specific expertise" files="file1.cs,file2.cs"]
+
+        
+        ### Output Operations
+
+        [GENERATE_FILE: name="FileName.ext" language="csharp"]
+         
+        // Your code here
+
+        [/GENERATE_FILE]
+
+        
+        ### Metadata
+
+        [CONFIDENCE: 0.85]
+        [SUGGEST_VALIDATION: expertise="security,performance"]
+
+        
+        ## When to Use Each Tool
+        
+        | Tool | Use When |
+        |------|----------|
+        | REQUEST_FILE | Need to see specific file content |
+        | REQUEST_FILE_PATHS | Need to discover files in assembly/project |
+        | QUERY_AGENT | Question requires expertise outside your domain |
+        | CREATE_AGENT | Deep specialization needed for specific files |
+        | GENERATE_FILE | Creating new code or documentation |
+        | CONFIDENCE | Always include at response end |
+        | SUGGEST_VALIDATION | Response spans multiple domains |
+        
+        ## Confidence Scale
+        
+        - **0.9-1.0**: Certain, straightforward answer from context
+        - **0.7-0.9**: Confident with minor assumptions
+        - **0.5-0.7**: Moderate, may need validation
+        - **Below 0.5**: Low confidence, definitely needs review
+        
+        ---
+        
+        ## Critical Rules
+        
+        1. **Never invent file contents** - Request files you haven't seen
+        2. **Never assume expertise** - Use QUERY_AGENT for other domains
+        3. **Be concise but thorough**
+        4. **State uncertainty clearly** and adjust confidence
+        5. **Respond in the same language as the question**
+        6. **Always end with [CONFIDENCE: X.X]**
+""";
     }
+
+    //    private string BuildSystemPrompt(AgentCreationSpec spec)
+    //{
+    //    return $"""
+    //        # You are {spec.Name}
+
+    //        Your expertise: {spec.Expertise}
+
+    //        You are part of THEON, a multi-agent code analysis system.
+
+    //        ## How to Respond
+
+    //        1. Answer the user's question directly
+    //        2. If you need to see a file, use: [REQUEST_FILE: path="path/to/file.cs"]
+    //        3. If you need the file list, use: [REQUEST_FILE_PATHS: assembly=""]
+    //        4. If you need another expert, use: [QUERY_AGENT: expertise="area" question="your question"]
+    //        5. To generate a file, use:
+    //           [GENERATE_FILE: name="File.cs" language="csharp"]
+
+    //           // code here
+
+    //           [/GENERATE_FILE]
+    //        6. Always end with: [CONFIDENCE: 0.0-1.0]
+
+    //        ## Rules
+
+    //        - Never invent file contents - request files you need
+    //        - Be concise but complete
+    //        - Respond in the same language as the question
+    //        - If uncertain, lower your confidence score
+
+    //        ## Confidence Scale
+
+    //        - 0.9-1.0: Certain
+    //        - 0.7-0.9: Confident
+    //        - 0.5-0.7: Moderate
+    //        - Below 0.5: Needs review
+    //        """;
+    //}
 
     private async Task<string> BuildInitialContextAsync(List<string> files)
     {
@@ -210,10 +259,12 @@ public class AgentFactory
             };
 
             parts.Add($$""""
-                ## File: `{{path}}`
-                ```{{lang}}
+                ## File: {{path}}
+                ## Lang: {{lang}}
+                ## Content:
+
                 {{content}}
-                ```
+
                 """");
         }
 

@@ -1,4 +1,5 @@
-﻿namespace CdCSharp.Theon.Models;
+﻿// Models/AgentModels.cs
+namespace CdCSharp.Theon.Models;
 
 public class Agent
 {

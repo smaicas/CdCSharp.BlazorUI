@@ -1,4 +1,5 @@
-﻿using CdCSharp.Theon.Infrastructure;
+﻿// Analysis/PreAnalyzer.cs
+using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Models;
 using System.Text.Json;
 using System.Xml.Linq;
@@ -36,59 +37,65 @@ public class PreAnalyzer
         string preanalysisPath = Path.Combine(_options.OutputPath, "preanalysis");
         Directory.CreateDirectory(preanalysisPath);
 
-        // Scan project structure
-        ProjectStructure structure = await ScanProjectAsync(projectPath);
-        _logger.Info($"Scanned {structure.Assemblies.Count} assemblies");
+        ProjectStructure initialStructure = await ScanProjectAsync(projectPath);
+        _logger.Info($"Scanned {initialStructure.Assemblies.Count} assemblies");
 
-        // Save project structure
-        string structureJson = JsonSerializer.Serialize(structure, new JsonSerializerOptions { WriteIndented = true });
-        string structureJsonPath = Path.Combine(preanalysisPath, "structure.json");
-        await File.WriteAllTextAsync(structureJsonPath, structureJson);
-        _logger.Debug($"Saved: {structureJsonPath}");
+        Dictionary<string, AssemblyOutputPaths> assemblyPaths = [];
+        List<AssemblyStructure> processedAssemblies = [];
 
-        Dictionary<string, AssemblyAnalysis> assemblyAnalyses = [];
-
-        // Process each assembly
-        foreach (AssemblyStructure assembly in structure.Assemblies.Where(a => !a.IsTestProject))
+        foreach (AssemblyStructure assembly in initialStructure.Assemblies)
         {
+            if (assembly.IsTestProject)
+            {
+                processedAssemblies.Add(assembly);
+                continue;
+            }
+
             _logger.Info($"Destructuring: {assembly.Name}");
 
             List<NamespaceInfo> namespaces = await _destructurer.DestructureAsync(
                 projectPath, assembly.Files.CSharp);
 
             AssemblyStructure detailedAssembly = assembly with { Namespaces = namespaces };
+            processedAssemblies.Add(detailedAssembly);
 
-            string assemblyJson = JsonSerializer.Serialize(detailedAssembly, new JsonSerializerOptions { WriteIndented = true });
             string assemblyJsonPath = Path.Combine(preanalysisPath, $"{assembly.Name}.json");
+            string assemblyJson = JsonSerializer.Serialize(detailedAssembly, new JsonSerializerOptions { WriteIndented = true });
             await File.WriteAllTextAsync(assemblyJsonPath, assemblyJson);
 
-            string llmFormat = _formatter.FormatAssemblyDetail(detailedAssembly);
             string llmPath = Path.Combine(preanalysisPath, $"{assembly.Name}.llm.txt");
+            string llmFormat = _formatter.FormatAssemblyDetail(detailedAssembly);
             await File.WriteAllTextAsync(llmPath, llmFormat);
 
-            assemblyAnalyses[assembly.Name] = new AssemblyAnalysis
+            assemblyPaths[assembly.Name] = new AssemblyOutputPaths
             {
-                Assembly = detailedAssembly,
                 JsonPath = assemblyJsonPath,
-                LlmPath = llmPath,
-                LlmContent = llmFormat
+                LlmPath = llmPath
             };
 
             _logger.Debug($"  Types: {namespaces.Sum(n => n.Types.Count)}");
         }
 
-        // Generate project-level LLM format
-        string projectLlmFormat = _formatter.FormatProjectStructure(structure);
+        ProjectStructure finalStructure = initialStructure with
+        {
+            Assemblies = processedAssemblies,
+            Summary = BuildSummary(processedAssemblies)
+        };
+
+        string structureJsonPath = Path.Combine(preanalysisPath, "structure.json");
+        string structureJson = JsonSerializer.Serialize(finalStructure, new JsonSerializerOptions { WriteIndented = true });
+        await File.WriteAllTextAsync(structureJsonPath, structureJson);
+
         string projectLlmPath = Path.Combine(preanalysisPath, "project.llm.txt");
+        string projectLlmFormat = _formatter.FormatProjectStructure(finalStructure);
         await File.WriteAllTextAsync(projectLlmPath, projectLlmFormat);
 
         _logger.Info($"Pre-analysis complete. Output: {preanalysisPath}");
 
         return new PreAnalysisResult
         {
-            Structure = structure,
-            AssemblyAnalyses = assemblyAnalyses,
-            ProjectLlmFormat = projectLlmFormat,
+            Structure = finalStructure,
+            AssemblyPaths = assemblyPaths,
             OutputPath = preanalysisPath
         };
     }
@@ -109,17 +116,14 @@ public class PreAnalyzer
         {
             AssemblyStructure assembly = await ScanCsprojAsync(csproj, projectPath);
             assemblies.Add(assembly);
-            _logger.Debug($"  {assembly.Name}: {assembly.Namespaces.Sum(n => n.Types.Count)} types");
         }
-
-        string solutionName = FindSolutionName(projectPath);
 
         return new ProjectStructure
         {
-            Solution = solutionName,
+            Solution = FindSolutionName(projectPath),
             RootPath = projectPath,
             Assemblies = assemblies,
-            Summary = BuildSummary(assemblies)
+            Summary = new ProjectSummary()
         };
     }
 
@@ -220,6 +224,8 @@ public class PreAnalyzer
         if (assemblies.Any(a => a.Files.TypeScript.Count > 0)) patterns.Add("TypeScript");
         if (assemblies.Any(a => a.References.Any(r => r.Contains("EntityFramework")))) patterns.Add("EF");
 
+        string projectType = DetermineProjectType(assemblies);
+
         return new ProjectSummary
         {
             TotalAssemblies = assemblies.Count,
@@ -227,7 +233,24 @@ public class PreAnalyzer
             TotalFiles = assemblies.Sum(a =>
                 a.Files.CSharp.Count + a.Files.Razor.Count +
                 a.Files.TypeScript.Count + a.Files.Css.Count),
-            DetectedPatterns = patterns
+            DetectedPatterns = patterns,
+            ProjectType = projectType
         };
+    }
+
+    private static string DetermineProjectType(List<AssemblyStructure> assemblies)
+    {
+        if (assemblies.Any(a => a.Files.Razor.Count > 0))
+            return "Blazor";
+        if (assemblies.Any(a => a.References.Any(r => r.Contains("AspNetCore"))))
+            return "ASP.NET Core";
+        if (assemblies.Any(a => a.References.Any(r => r.Contains("WPF") || r.Contains("WindowsDesktop"))))
+            return "WPF";
+        if (assemblies.Any(a => a.References.Any(r => r.Contains("Avalonia"))))
+            return "Avalonia";
+        if (assemblies.Count > 0)
+            return "Class Library";
+
+        return "Unknown";
     }
 }

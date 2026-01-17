@@ -59,19 +59,84 @@ while (true)
     if (string.IsNullOrWhiteSpace(input))
         continue;
 
-    if (input.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
-        input.Equals("quit", StringComparison.OrdinalIgnoreCase))
+    string command = input.Trim().ToLowerInvariant();
+
+    // Comandos especiales
+    if (command is "exit" or "quit")
     {
         logger.Info("Goodbye!");
         break;
     }
 
-    if (input.Equals("agents", StringComparison.OrdinalIgnoreCase))
+    if (command == "agents")
     {
-        Console.WriteLine(provider.GetRequiredService<CdCSharp.Theon.Agents.AgentRegistry>().GetAgentsSummary());
+        AgentVisualizer visualizer = provider.GetRequiredService<AgentVisualizer>();
+        Console.WriteLine(visualizer.GenerateTextSummary());
         continue;
     }
 
+    if (command == "metrics")
+    {
+        MetricsCollector metrics = provider.GetRequiredService<MetricsCollector>();
+        Console.WriteLine(metrics.GenerateReport());
+        continue;
+    }
+
+    if (command == "save")
+    {
+        string path = await orchestrator.SaveSessionAsync();
+        logger.Info($"Session saved to: {path}");
+        continue;
+    }
+
+    if (command.StartsWith("load "))
+    {
+        string sessionId = input[5..].Trim();
+        bool loaded = await orchestrator.LoadSessionAsync(sessionId);
+        if (loaded)
+            logger.Info("Session loaded successfully");
+        else
+            logger.Warning("Failed to load session");
+        continue;
+    }
+
+    if (command == "sessions")
+    {
+        SessionManager sessionMgr = provider.GetRequiredService<SessionManager>();
+        List<SessionInfo> sessions = sessionMgr.ListSessions();
+
+        if (sessions.Count == 0)
+        {
+            Console.WriteLine("No saved sessions found.");
+        }
+        else
+        {
+            Console.WriteLine("Available sessions:");
+            foreach (SessionInfo session in sessions)
+            {
+                Console.WriteLine($"  - {session.SessionId} ({session.SavedAt:yyyy-MM-dd HH:mm}) - {session.AgentCount} agents");
+            }
+        }
+        continue;
+    }
+
+    if (command == "help")
+    {
+        Console.WriteLine("""
+            Available commands:
+              agents    - Show all agents and their status
+              metrics   - Show performance metrics
+              save      - Save current session
+              load <id> - Load a saved session
+              sessions  - List available sessions
+              exit      - Exit the application
+              
+            Or type any query to analyze your code.
+            """);
+        continue;
+    }
+
+    // Procesar query normal
     try
     {
         ResponseOutput response = await orchestrator.ProcessQueryAsync(input);

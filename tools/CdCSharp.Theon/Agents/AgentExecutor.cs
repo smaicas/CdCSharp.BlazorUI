@@ -10,29 +10,47 @@ public partial class AgentExecutor
     private readonly LMStudioClient _aiClient;
     private readonly TheonLogger _logger;
     private readonly TheonOptions _options;
+    private readonly CompressionAgent _compressionAgent;
 
-    public AgentExecutor(LMStudioClient aiClient, TheonLogger logger, TheonOptions options)
+    public AgentExecutor(LMStudioClient aiClient, TheonLogger logger, TheonOptions options, CompressionAgent compressionAgent)
     {
         _aiClient = aiClient;
         _logger = logger;
         _options = options;
+        _compressionAgent = compressionAgent;
     }
 
-    public async Task<AgentExecutionResult> ExecuteAsync(Agent agent, string instruction)
+    public async Task<AgentExecutionResult> ExecuteAsync(Agent agent, string instruction, string? agentsSummary = null)
     {
         agent.LastActiveAt = DateTime.UtcNow;
+
+        string fullInstruction = instruction;
+        if (!string.IsNullOrEmpty(agentsSummary))
+        {
+            fullInstruction = $"""
+            # Available Agents
+            
+            {agentsSummary}
+            
+            ---
+            
+            # Your Task
+            
+            {instruction}
+            """;
+        }
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.User,
-            Content = instruction
+            Content = fullInstruction
         });
 
-        _logger.LogAgentInteraction(agent.Id, InteractionDirection.Input, instruction);
+        _logger.LogAgentInteraction(agent.Id, InteractionDirection.Input, fullInstruction);
 
         await CompressIfNeededAsync(agent);
 
-        string traceFile = _logger.TracePrompt(agent.Id, instruction);
+        string traceFile = _logger.TracePrompt(agent.Id, fullInstruction);
 
         string response = await _aiClient.SendAsync(agent.ConversationHistory.ToList());
 
@@ -58,42 +76,27 @@ public partial class AgentExecutor
 
         _logger.Debug($"Compressing conversation for {agent.Name} ({messageCount} messages)");
 
-        ConversationMessage? systemMsg = agent.ConversationHistory.FirstOrDefault(m => m.Role == MessageRole.System);
+        ConversationMessage? systemMsg = agent.ConversationHistory
+            .FirstOrDefault(m => m.Role == MessageRole.System);
 
-        List<ConversationMessage> toCompress = agent.ConversationHistory
+        List<ConversationMessage> nonSystemMessages = agent.ConversationHistory
             .Where(m => m.Role != MessageRole.System)
-            .Take(opts.MessagesToCompress)
             .ToList();
 
-        List<ConversationMessage> toKeep = agent.ConversationHistory
-            .Where(m => m.Role != MessageRole.System)
-            .Skip(opts.MessagesToCompress)
+        int messagesToCompress = nonSystemMessages.Count - opts.MessagesToKeep;
+        if (messagesToCompress <= 0)
+            return;
+
+        List<ConversationMessage> toCompress = nonSystemMessages
+            .Take(messagesToCompress)
             .ToList();
 
-        string summaryPrompt = $"""
-            # Compression Task
-            
-            Summarize the following conversation, preserving:
-            - Key decisions made
-            - Important information discovered
-            - Conclusions reached
-            - Any pending questions or tasks
-            
-            Be concise but don't lose critical details.
-            
-            ## Conversation to Summarize
-            
-            {string.Join("\n\n", toCompress.Select(m => $"**[{m.Role}]:**\n{m.Content}"))}
-            
-            ## Summary
-            """;
+        List<ConversationMessage> toKeep = nonSystemMessages
+            .TakeLast(opts.MessagesToKeep)
+            .ToList();
 
-        List<ConversationMessage> summaryMessages =
-        [
-            new() { Role = MessageRole.User, Content = summaryPrompt }
-        ];
-
-        string summary = await _aiClient.SendAsync(summaryMessages, maxTokens: 500);
+        // Usar CompressionAgent dedicado
+        string summary = await _compressionAgent.CompressAsync(toCompress);
 
         agent.ConversationHistory.Clear();
 
@@ -104,30 +107,38 @@ public partial class AgentExecutor
         {
             Role = MessageRole.User,
             Content = $"""
-                # Previous Conversation Summary
-                
-                The following is a summary of our earlier conversation:
-                
-                {summary}
-                
-                Continue from this context.
-                """
+            # Previous Conversation Summary
+            
+            {summary}
+            
+            ---
+            
+            Continue from this context.
+            """
         });
 
         agent.ConversationHistory.Add(new ConversationMessage
         {
             Role = MessageRole.Assistant,
-            Content = "I understand. I have the context from our previous conversation and I'm ready to continue."
+            Content = "I understand the context from our previous conversation. Ready to continue."
         });
 
         agent.ConversationHistory.AddRange(toKeep);
 
-        _logger.Debug($"Compressed to {agent.ConversationHistory.Count} messages");
+        _logger.Debug($"Compressed {messagesToCompress} messages, kept {opts.MessagesToKeep}. Total: {agent.ConversationHistory.Count}");
     }
 
     private AgentExecutionResult ParseResponse(string agentId, string response)
     {
         AgentExecutionResult result = new() { AgentId = agentId, RawResponse = response };
+
+        if (IsCorruptedResponse(response))
+        {
+            _logger.Warning($"Corrupted response detected from agent {agentId}");
+            result.Confidence = 0.0f;
+            result.CleanContent = "[Error: Invalid response from model. Please try again.]";
+            return result;
+        }
 
         Match confidenceMatch = ConfidenceRegex().Match(response);
         if (confidenceMatch.Success && float.TryParse(confidenceMatch.Groups[1].Value,
@@ -137,10 +148,20 @@ public partial class AgentExecutor
         {
             result.Confidence = Math.Clamp(conf, 0f, 1f);
         }
+        else
+        {
+            result.Confidence = 0.1f;
+            _logger.Warning($"No confidence found in response, defaulting to 0.5");
+        }
 
         foreach (Match match in FileRequestRegex().Matches(response))
         {
             result.FileRequests.Add(match.Groups[1].Value);
+        }
+
+        foreach (Match match in FilePathsRequestRegex().Matches(response))
+        {
+            result.FilePathsRequests.Add(match.Groups[1].Value);
         }
 
         foreach (Match match in QueryAgentRegex().Matches(response))
@@ -192,6 +213,26 @@ public partial class AgentExecutor
         return result;
     }
 
+    private static bool IsCorruptedResponse(string response)
+    {
+        if (string.IsNullOrWhiteSpace(response))
+            return true;
+
+        // Detectar tokens de control comunes
+        string[] corruptPatterns =
+        [
+            "<|channel|>",
+        "<|im_start|>",
+        "<|im_end|>",
+        "<|endoftext|>",
+        "<|assistant|>",
+        "<|user|>",
+        "<|system|>"
+        ];
+
+        return corruptPatterns.Any(p => response.Contains(p, StringComparison.OrdinalIgnoreCase));
+    }
+
     private static string CleanResponse(string response)
     {
         string clean = response;
@@ -201,6 +242,7 @@ public partial class AgentExecutor
         clean = QueryAgentRegex().Replace(clean, "");
         clean = CreateAgentRegex().Replace(clean, "");
         clean = ValidationRegex().Replace(clean, "");
+        clean = FilePathsRequestRegex().Replace(clean, "");
 
         clean = Regex.Replace(clean, @"\[GENERATE_FILE:.*?\]", "", RegexOptions.IgnoreCase);
         clean = Regex.Replace(clean, @"\[/GENERATE_FILE\]", "", RegexOptions.IgnoreCase);
@@ -226,8 +268,11 @@ public partial class AgentExecutor
     [GeneratedRegex(@"\[SUGGEST_VALIDATION:\s*expertise=""([^""]+)""\]", RegexOptions.IgnoreCase)]
     private static partial Regex ValidationRegex();
 
-    [GeneratedRegex(@"\[FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*```\w*\s*([\s\S]*?)```\s*\[/FILE\]", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"\[GENERATE_FILE:\s*name=""([^""]+)""\s+language=""([^""]+)""\]\s*```\w*\s*([\s\S]*?)```\s*\[/GENERATE_FILE\]", RegexOptions.IgnoreCase)]
     private static partial Regex GeneratedFileRegex();
+
+    [GeneratedRegex(@"\[REQUEST_FILE_PATHS:\s*assembly=""([^""]*)""\]", RegexOptions.IgnoreCase)]
+    private static partial Regex FilePathsRequestRegex();
 }
 
 public class AgentExecutionResult
@@ -235,8 +280,9 @@ public class AgentExecutionResult
     public string AgentId { get; set; } = "";
     public string RawResponse { get; set; } = "";
     public string CleanContent { get; set; } = "";
-    public float Confidence { get; set; } = 1.0f;
+    public float Confidence { get; set; } = 0.0f;
     public List<string> FileRequests { get; } = [];
+    public List<string> FilePathsRequests { get; } = [];
     public List<AgentRequest> AgentQueries { get; } = [];
     public List<AgentCreationSpec> AgentCreationRequests { get; } = [];
     public List<GeneratedFile> GeneratedFiles { get; } = [];
@@ -244,6 +290,7 @@ public class AgentExecutionResult
 
     public bool HasPendingRequests =>
         FileRequests.Count > 0 ||
+        FilePathsRequests.Count > 0 ||
         AgentQueries.Count > 0 ||
         AgentCreationRequests.Count > 0;
 }

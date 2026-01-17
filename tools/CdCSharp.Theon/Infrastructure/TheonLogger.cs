@@ -143,6 +143,43 @@ public class TheonLogger
         return filePath;
     }
 
+    public void LogMetric(string category, string name, object value)
+    {
+        string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        string logLine = $"[{timestamp}] [MTR] [{category}] {name}={value}";
+
+        lock (_lock)
+        {
+            _logFile.WriteLine(logLine);
+
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write($"[{DateTime.Now:HH:mm:ss}] ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("MTR ");
+            Console.ResetColor();
+            Console.WriteLine($"[{category}] {name}={value}");
+        }
+    }
+
+    public void LogAgentCreation(string agentId, string name, string expertise)
+    {
+        Info($"Created agent: {name} ({agentId})");
+        LogMetric("Agent", "Created", $"{agentId}|{expertise}");
+    }
+
+    public void LogQueryStart(string queryId, string query)
+    {
+        Debug($"Query started: {queryId} - {(query.Length > 50 ? query[..50] + "..." : query)}");
+        LogMetric("Query", "Start", queryId);
+    }
+
+    public void LogQueryEnd(string queryId, TimeSpan duration, bool success)
+    {
+        string status = success ? "SUCCESS" : "FAILED";
+        Info($"Query {queryId} completed in {duration.TotalSeconds:F1}s [{status}]");
+        LogMetric("Query", "End", $"{queryId}|{duration.TotalMilliseconds:F0}ms|{status}");
+    }
+
     public void UpdateTrace(string filePath, string response)
     {
         if (!File.Exists(filePath)) return;

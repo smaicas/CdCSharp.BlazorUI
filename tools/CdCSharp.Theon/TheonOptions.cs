@@ -12,7 +12,7 @@ public class TheonOptions
 public class LMStudioOptions
 {
     public string BaseUrl { get; set; } = "http://localhost:1234/v1/";
-    public int TimeoutSeconds { get; set; } = 300;
+    public int TimeoutSeconds { get; set; } = 7200;
 }
 
 public class ConversationOptions

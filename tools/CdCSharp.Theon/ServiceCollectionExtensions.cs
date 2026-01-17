@@ -22,13 +22,17 @@ public static class ServiceCollectionExtensions
         TheonLogger logger = new(outputPath, LogLevel.Debug);
         services.AddSingleton(logger);
 
+        MetricsCollector metrics = new(logger);
+        services.AddSingleton(metrics);
+
         IgnoreFilter ignoreFilter = new();
         services.AddSingleton(ignoreFilter);
 
         LMStudioClient aiClient = new(
             options.LMStudio.BaseUrl,
             options.LMStudio.TimeoutSeconds,
-            logger);
+            logger,
+            metrics);
         services.AddSingleton(aiClient);
 
         services.AddSingleton<PreAnalyzer>();
@@ -38,16 +42,25 @@ public static class ServiceCollectionExtensions
         FileAccessTool fileAccess = new(options.ProjectPath, ignoreFilter, logger);
         services.AddSingleton(fileAccess);
 
-        FileOutputTool fileOutput = new(outputPath, logger);
-        services.AddSingleton(fileOutput);
-
         AgentRegistry registry = new(logger);
         services.AddSingleton(registry);
+
+        AgentVisualizer visualizer = new(registry);
+        services.AddSingleton(visualizer);
+
+        FileOutputTool fileOutput = new(outputPath, logger, visualizer);
+        services.AddSingleton(fileOutput);
+
+        SessionManager sessionManager = new(outputPath, logger);
+        services.AddSingleton(sessionManager);
+
+        CompressionAgent compressionAgent = new(aiClient, logger);
+        services.AddSingleton(compressionAgent);
 
         AgentFactory agentFactory = new(aiClient, fileAccess, registry, logger, options);
         services.AddSingleton(agentFactory);
 
-        AgentExecutor agentExecutor = new(aiClient, logger, options);
+        AgentExecutor agentExecutor = new(aiClient, logger, options, compressionAgent);
         services.AddSingleton(agentExecutor);
 
         services.AddSingleton<Orchestrator>();

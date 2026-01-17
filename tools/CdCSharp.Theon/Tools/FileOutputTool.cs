@@ -1,4 +1,5 @@
-﻿using CdCSharp.Theon.Infrastructure;
+﻿// Tools/FileOutputTool.cs
+using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Models;
 using System.Text;
 
@@ -8,12 +9,14 @@ public class FileOutputTool
 {
     private readonly string _outputPath;
     private readonly TheonLogger _logger;
+    private readonly AgentVisualizer _visualizer;
     private int _responseCounter;
 
-    public FileOutputTool(string outputPath, TheonLogger logger)
+    public FileOutputTool(string outputPath, TheonLogger logger, AgentVisualizer visualizer)
     {
         _outputPath = Path.Combine(outputPath, "responses");
         _logger = logger;
+        _visualizer = visualizer;
         Directory.CreateDirectory(_outputPath);
 
         _responseCounter = GetLastResponseNumber();
@@ -23,7 +26,8 @@ public class FileOutputTool
         string query,
         string responseContent,
         List<GeneratedFile> files,
-        ResponseMetadata metadata)
+        ResponseMetadata metadata,
+        List<AgentInteraction>? interactions = null)
     {
         int number = Interlocked.Increment(ref _responseCounter);
         string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HHmmss");
@@ -46,7 +50,34 @@ public class FileOutputTool
         markdown.AppendLine();
         markdown.AppendLine($"**Processing Time:** {metadata.ProcessingTime.TotalSeconds:F1}s");
         markdown.AppendLine();
+
+        if (metadata.AgentsInvolved.Count > 1)
+        {
+            markdown.AppendLine("---");
+            markdown.AppendLine();
+            markdown.AppendLine("## Agent Interaction");
+            markdown.AppendLine();
+
+            string mermaidDiagram = _visualizer.GenerateMermaidDiagram(null);
+            markdown.AppendLine(mermaidDiagram);
+            markdown.AppendLine();
+
+            if (interactions != null && interactions.Count > 0)
+            {
+                string sequenceDiagram = _visualizer.GenerateInteractionDiagram(interactions);
+                if (!string.IsNullOrEmpty(sequenceDiagram))
+                {
+                    markdown.AppendLine("### Interaction Flow");
+                    markdown.AppendLine();
+                    markdown.AppendLine(sequenceDiagram);
+                    markdown.AppendLine();
+                }
+            }
+        }
+
         markdown.AppendLine("---");
+        markdown.AppendLine();
+        markdown.AppendLine("## Response");
         markdown.AppendLine();
         markdown.AppendLine(responseContent);
 
@@ -60,7 +91,7 @@ public class FileOutputTool
 
             foreach (GeneratedFile file in files)
             {
-                markdown.AppendLine($"- `{file.FileName}`");
+                markdown.AppendLine($"- {file.FileName}");
             }
         }
 
@@ -112,9 +143,7 @@ public class FileOutputTool
     private static string CreateSlug(string text)
     {
         string slug = text.ToLowerInvariant();
-
         slug = string.Join("", slug.Where(c => char.IsLetterOrDigit(c) || c == ' '));
-
         slug = slug.Replace(' ', '-');
 
         while (slug.Contains("--"))

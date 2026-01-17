@@ -53,9 +53,15 @@ public static class AITools
 public class RequestFilesList : IAITool
 {
     public string Name => "REQUEST_FILE_PATHS";
-    public string Description => "Request the list of files. For specific assembly. Leave 'assemly' parameter empty for full project files list";
-    public string UsageFormat => "[REQUEST_FILE_PATHS: assembly=\"full/path/to/file.extension\"]";
-    public string Example => "[REQUEST_FILE_PATHS: assembly=\"CdCSharp.BlazorUI\"]";
+    public string Description => "Request the list of files in an assembly or the entire project. Use empty assembly for full project listing.";
+    public string UsageFormat => "[REQUEST_FILE_PATHS: assembly=\"AssemblyName\"]";
+    public string Example => """
+        <!-- List files in specific assembly -->
+        [REQUEST_FILE_PATHS: assembly="CdCSharp.BlazorUI"]
+        
+        <!-- List all project files -->
+        [REQUEST_FILE_PATHS: assembly=""]
+        """;
 }
 
 public class RequestFileTool : IAITool
@@ -85,23 +91,27 @@ public class CreateAgentTool : IAITool
 public class GenerateFileTool : IAITool
 {
     public string Name => "GENERATE_FILE";
-    public string Description => "Generate a new file as part of your response. Use this when creating code, configurations, or documentation.";
-    public string UsageFormat => """
-        [GENERATE_FILE: name="FileName.ext" language="language"]
+    public string Description => "Generate a new file as part of your response. The content must be wrapped in markdown code blocks.";
+    public string UsageFormat =>
+    """
+    [GENERATE_FILE: name="FileName.ext" language="languageid"]
 
-        file content here
+    file content here
 
-        [/GENERATE_FILE]
-        """;
-    public string Example => """
+    [/GENERATE_FILE]
+""";
+
+    public string Example =>
+"""
         [GENERATE_FILE: name="UserService.cs" language="csharp"]
 
         public class UserService : IUserService
         {
             public Task<User> GetByIdAsync(int id) => throw new NotImplementedException();
+        }
 
         [/GENERATE_FILE]
-        """;
+""";
 }
 
 public class SetConfidenceTool : IAITool
