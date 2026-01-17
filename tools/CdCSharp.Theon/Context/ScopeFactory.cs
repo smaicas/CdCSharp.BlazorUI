@@ -53,9 +53,10 @@ public sealed class ScopeFactory : IScopeFactory
         return new ProjectScope(_analysis.Project);
     }
 
-    public async Task<AssemblyScope?> CreateAssemblyScopeAsync(string assemblyName, CancellationToken ct = default)
+    public Task<AssemblyScope?> CreateAssemblyScopeAsync(string assemblyName, CancellationToken ct = default)
     {
-        if (_analysis.Project == null) return null;
+        if (_analysis.Project == null)
+            return Task.FromResult<AssemblyScope?>(null);
 
         AssemblyInfo? assembly = _analysis.Project.Assemblies
             .FirstOrDefault(a => a.Name.Equals(assemblyName, StringComparison.OrdinalIgnoreCase));
@@ -69,10 +70,10 @@ public sealed class ScopeFactory : IScopeFactory
         if (assembly == null)
         {
             _logger.Warning($"Assembly not found: {assemblyName}");
-            return null;
+            return Task.FromResult<AssemblyScope?>(null);
         }
 
-        return new AssemblyScope(assembly);
+        return Task.FromResult<AssemblyScope?>(new AssemblyScope(assembly));
     }
 
     public async Task<FileScope?> CreateFileScopeAsync(string relativePath, CancellationToken ct = default)

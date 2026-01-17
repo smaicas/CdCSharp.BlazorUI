@@ -23,7 +23,9 @@ public sealed class Orchestrator : IOrchestrator
 
     private readonly List<LlmMessage> _conversationHistory = [];
     private int _responseCounter;
+    private int _maxContextTokens;
     private const float LowConfidenceThreshold = 0.5f;
+    private const int ReservedTokensForResponse = 4000;
 
     public Orchestrator(
         TheonOptions options,
@@ -48,14 +50,23 @@ public sealed class Orchestrator : IOrchestrator
         if (_analysis.Project == null)
             throw new InvalidOperationException("Project not analyzed");
 
-        (string? scopeOverride, string query) = ParseUserInput(userInput);
+        await EnsureContextLimitAsync(ct);
+
+        ScopeOverride? scopeOverride = ParseScopeOverride(userInput, out string query);
 
         if (_conversationHistory.Count == 0)
-        {
             InitializeConversation();
+
+        string userMessage = query;
+        if (scopeOverride != null)
+        {
+            string? scopeContext = await BuildScopeContextAsync(scopeOverride, ct);
+            if (scopeContext != null)
+                userMessage = $"{scopeContext}\n\n---\n\nQUESTION: {query}";
         }
 
-        _conversationHistory.Add(LlmMessage.User(query));
+        TrimConversationIfNeeded();
+        _conversationHistory.Add(LlmMessage.User(userMessage));
 
         List<GeneratedFile> outputFiles = [];
         List<string> modifiedProjectFiles = [];
@@ -111,6 +122,7 @@ public sealed class Orchestrator : IOrchestrator
 
             if (additionalContext.Length > 0)
             {
+                TrimConversationIfNeeded();
                 _conversationHistory.Add(LlmMessage.User(Prompts.ContinueWithContext(additionalContext.ToString())));
             }
         }
@@ -138,9 +150,40 @@ public sealed class Orchestrator : IOrchestrator
         return new OrchestratorResponse(finalContent, outputFiles, modifiedProjectFiles, confidence);
     }
 
+    private async Task EnsureContextLimitAsync(CancellationToken ct)
+    {
+        if (_maxContextTokens == 0)
+        {
+            ModelInfo info = await _llmClient.GetModelInfoAsync(ct);
+            _maxContextTokens = info.ContextLength - ReservedTokensForResponse;
+        }
+    }
+
+    private void TrimConversationIfNeeded()
+    {
+        int totalTokens = _conversationHistory.Sum(m => _llmClient.EstimateTokens(m.Content));
+
+        while (totalTokens > _maxContextTokens && _conversationHistory.Count > 3)
+        {
+            int removeIndex = _conversationHistory.FindIndex(m => m.Role == "user");
+            if (removeIndex < 1) break;
+
+            int nextIndex = removeIndex + 1;
+            if (nextIndex < _conversationHistory.Count && _conversationHistory[nextIndex].Role == "assistant")
+            {
+                totalTokens -= _llmClient.EstimateTokens(_conversationHistory[nextIndex].Content);
+                _conversationHistory.RemoveAt(nextIndex);
+            }
+
+            totalTokens -= _llmClient.EstimateTokens(_conversationHistory[removeIndex].Content);
+            _conversationHistory.RemoveAt(removeIndex);
+
+            _logger.Debug($"Trimmed conversation, now {_conversationHistory.Count} messages, ~{totalTokens} tokens");
+        }
+    }
+
     private void InitializeConversation()
     {
-        ProjectScope projectScope = _scopeFactory.CreateProjectScope();
         string systemPrompt = Prompts.SystemPrompt(_analysis.Project!, _options.Modification.Enabled);
         string projectOverview = Prompts.ProjectOverview(_analysis.Project!);
 
@@ -149,66 +192,66 @@ public sealed class Orchestrator : IOrchestrator
         _conversationHistory.Add(LlmMessage.Assistant("I understand the project structure. Ready to help."));
     }
 
-    private static (string? ScopeOverride, string Query) ParseUserInput(string input)
-    {
-        if (input.StartsWith("@assembly:", StringComparison.OrdinalIgnoreCase))
-        {
-            int spaceIdx = input.IndexOf(' ');
-            if (spaceIdx > 0)
-                return (input[10..spaceIdx], input[(spaceIdx + 1)..]);
-        }
+    private record ScopeOverride(ScopeType Type, string Value);
+    private enum ScopeType { File, Folder, Assembly }
 
+    private static ScopeOverride? ParseScopeOverride(string input, out string query)
+    {
         if (input.StartsWith("@file:", StringComparison.OrdinalIgnoreCase))
         {
             int spaceIdx = input.IndexOf(' ');
             if (spaceIdx > 0)
-                return (input[6..spaceIdx], input[(spaceIdx + 1)..]);
+            {
+                query = input[(spaceIdx + 1)..];
+                return new ScopeOverride(ScopeType.File, input[6..spaceIdx]);
+            }
         }
 
         if (input.StartsWith("@folder:", StringComparison.OrdinalIgnoreCase))
         {
             int spaceIdx = input.IndexOf(' ');
             if (spaceIdx > 0)
-                return (input[8..spaceIdx], input[(spaceIdx + 1)..]);
+            {
+                query = input[(spaceIdx + 1)..];
+                return new ScopeOverride(ScopeType.Folder, input[8..spaceIdx]);
+            }
         }
 
-        return (null, input);
+        if (input.StartsWith("@assembly:", StringComparison.OrdinalIgnoreCase))
+        {
+            int spaceIdx = input.IndexOf(' ');
+            if (spaceIdx > 0)
+            {
+                query = input[(spaceIdx + 1)..];
+                return new ScopeOverride(ScopeType.Assembly, input[10..spaceIdx]);
+            }
+        }
+
+        query = input;
+        return null;
+    }
+
+    private async Task<string?> BuildScopeContextAsync(ScopeOverride scope, CancellationToken ct)
+    {
+        return scope.Type switch
+        {
+            ScopeType.File => (await _scopeFactory.CreateFileScopeAsync(scope.Value, ct))?.BuildContext(),
+            ScopeType.Folder => (await _scopeFactory.CreateFolderScopeAsync(scope.Value, ct))?.BuildContext(),
+            ScopeType.Assembly => (await _scopeFactory.CreateAssemblyScopeAsync(scope.Value, ct))?.BuildContext(),
+            _ => null
+        };
     }
 
     private async Task<string?> ProcessExplorationToolAsync(ToolInvocation tool, CancellationToken ct)
     {
         return tool switch
         {
-            ExploreAssemblyTool t => await ExploreAssemblyAsync(t.Name, ct),
-            ExploreFileTool t => await ExploreFileAsync(t.Path, ct),
-            ExploreFolderTool t => await ExploreFolderAsync(t.Path, ct),
-            ExploreFilesTool t => await ExploreFilesAsync(t.Paths, ct),
+            ExploreAssemblyTool t => (await _scopeFactory.CreateAssemblyScopeAsync(t.Name, ct))?.BuildContext(),
+            ExploreFileTool t => (await _scopeFactory.CreateFileScopeAsync(t.Path, ct))?.BuildContext(),
+            ExploreFolderTool t => (await _scopeFactory.CreateFolderScopeAsync(t.Path, ct))?.BuildContext(),
+            ExploreFilesTool t => (await _scopeFactory.CreateMultiFileScopeAsync(t.Paths, ct))?.BuildContext(),
             _ => null
         };
-    }
-
-    private async Task<string?> ExploreAssemblyAsync(string name, CancellationToken ct)
-    {
-        AssemblyScope? scope = await _scopeFactory.CreateAssemblyScopeAsync(name, ct);
-        return scope?.BuildContext();
-    }
-
-    private async Task<string?> ExploreFileAsync(string path, CancellationToken ct)
-    {
-        FileScope? scope = await _scopeFactory.CreateFileScopeAsync(path, ct);
-        return scope?.BuildContext();
-    }
-
-    private async Task<string?> ExploreFolderAsync(string path, CancellationToken ct)
-    {
-        FolderScope? scope = await _scopeFactory.CreateFolderScopeAsync(path, ct);
-        return scope?.BuildContext();
-    }
-
-    private async Task<string?> ExploreFilesAsync(IReadOnlyList<string> paths, CancellationToken ct)
-    {
-        MultiFileScope? scope = await _scopeFactory.CreateMultiFileScopeAsync(paths, ct);
-        return scope?.BuildContext();
     }
 
     private async Task<GeneratedFile?> ProcessOutputToolAsync(
@@ -299,7 +342,7 @@ public sealed class Orchestrator : IOrchestrator
         CancellationToken ct)
     {
         StringBuilder md = new();
-        md.AppendLine($"# Response");
+        md.AppendLine("# Response");
         md.AppendLine();
         md.AppendLine($"**Query:** {query}");
         md.AppendLine($"**Timestamp:** {DateTime.Now:yyyy-MM-dd HH:mm:ss}");

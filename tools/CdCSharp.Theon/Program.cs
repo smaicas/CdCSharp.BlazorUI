@@ -20,7 +20,7 @@ TheonOptions options = new()
 
 ServiceCollection services = new();
 services.AddTheon(options);
-ServiceProvider provider = services.BuildServiceProvider();
+await using ServiceProvider provider = services.BuildServiceProvider();
 
 ITheonLogger logger = provider.GetRequiredService<ITheonLogger>();
 IProjectAnalysis analysis = provider.GetRequiredService<IProjectAnalysis>();
@@ -95,16 +95,21 @@ while (true)
     {
         OrchestratorResponse response = await orchestrator.ProcessAsync(input);
 
-        logger.Info("");
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(response.Content);
+        Console.ResetColor();
+        Console.WriteLine();
+
         logger.Info($"Confidence: {response.Confidence:P0}");
 
         if (response.OutputFiles.Count > 0)
-            logger.Info($"Generated files: {response.OutputFiles.Count}");
+            logger.Info($"Generated files: {string.Join(", ", response.OutputFiles.Select(f => f.Name))}");
 
         if (response.ModifiedProjectFiles.Count > 0)
-            logger.Info($"Modified project files: {response.ModifiedProjectFiles.Count}");
+            logger.Info($"Modified: {string.Join(", ", response.ModifiedProjectFiles)}");
 
-        logger.Info("");
+        Console.WriteLine();
     }
     catch (Exception ex)
     {

@@ -11,7 +11,8 @@ public static class Prompts
         PROJECT: {project.Name}
         ROOT: {project.RootPath}
         ASSEMBLIES: {project.Assemblies.Count} ({project.Assemblies.Count(a => !a.IsTestProject)} non-test)
-        
+        FILES: {string.Join("\n", project.AllFiles)}
+
         AVAILABLE TOOLS:
         
         NAVIGATION (explore code structure):
