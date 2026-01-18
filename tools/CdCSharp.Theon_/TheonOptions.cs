@@ -2,12 +2,13 @@
 
 public sealed class TheonOptions
 {
-    public required string ProjectPath { get; set; }
+    public string ProjectPath { get; set; } = string.Empty;
     public string OutputPath { get; set; } = ".theon";
-    public string[] IgnoreFiles { get; set; } = [".gitignore", "thignore.txt"];
+    public int MaxExplorationDepth { get; set; } = 20;
+
     public LlmOptions Llm { get; set; } = new();
     public ProjectModificationOptions Modification { get; set; } = new();
-    public ValidationOptions Validation { get; set; } = new();
+    public ExplorationOptions Exploration { get; set; } = new();
 
     public string ResponsesPath => Path.Combine(OutputPath, "responses");
     public string LogsPath => Path.Combine(OutputPath, "logs");
@@ -17,19 +18,27 @@ public sealed class TheonOptions
 public sealed class LlmOptions
 {
     public string BaseUrl { get; set; } = "http://localhost:1234/v1";
-    public string Model { get; set; } = "openai/gpt-oss-20b";
     public int TimeoutSeconds { get; set; } = 7200;
     public double Temperature { get; set; } = 0.7;
+    public string? ReasoningTagPattern { get; set; }
+    public ModelCapabilitiesConfig? Capabilities { get; set; }
+}
+
+public sealed class ModelCapabilitiesConfig
+{
+    public bool? SupportsTools { get; set; }
 }
 
 public sealed class ProjectModificationOptions
 {
     public bool Enabled { get; set; } = false;
+    public bool RequireConfirmation { get; set; } = true;
     public bool CreateBackup { get; set; } = true;
+    public bool AllowNewFiles { get; set; } = false;
 }
 
-public sealed class ValidationOptions
+public sealed class ExplorationOptions
 {
-    public float LowConfidenceThreshold { get; set; } = 0.8f;
+    public float LowConfidenceThreshold { get; set; } = 0.6f;
     public int MaxValidationRetries { get; set; } = 3;
 }

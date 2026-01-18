@@ -2,24 +2,18 @@
 
 public interface IFileSystem
 {
+    string ProjectPath { get; }
+
     Task<string?> ReadFileAsync(string relativePath, CancellationToken ct = default);
     Task WriteOutputFileAsync(string responseFolder, string fileName, string content, CancellationToken ct = default);
     Task<bool> WriteProjectFileAsync(string relativePath, string content, CancellationToken ct = default);
+
     IEnumerable<string> EnumerateFiles(string? relativePath = null, string pattern = "*.*");
-    void RegisterObserver(IFileSystemObserver observer);
-    void UnregisterObserver(IFileSystemObserver observer);
-}
+    IEnumerable<string> EnumerateDirectories(string? relativePath = null);
+    bool FileExists(string relativePath);
+    bool DirectoryExists(string relativePath);
 
-public interface IFileSystemObserver
-{
-    void OnFileChanged(string relativePath, FileChangeType changeType);
-}
-
-public enum FileChangeType
-{
-    Created,
-    Modified,
-    Deleted
+    string GetFullPath(string relativePath);
 }
 
 public sealed class FileSystem : IFileSystem
@@ -27,33 +21,14 @@ public sealed class FileSystem : IFileSystem
     private readonly TheonOptions _options;
     private readonly ITheonLogger _logger;
     private readonly HashSet<string> _ignoredPatterns;
-    private readonly List<IFileSystemObserver> _observers = [];
-    private readonly object _observersLock = new();
+
+    public string ProjectPath => _options.ProjectPath;
 
     public FileSystem(TheonOptions options, ITheonLogger logger)
     {
         _options = options;
         _logger = logger;
         _ignoredPatterns = LoadIgnorePatterns();
-    }
-
-    public void RegisterObserver(IFileSystemObserver observer)
-    {
-        lock (_observersLock)
-        {
-            if (!_observers.Contains(observer))
-            {
-                _observers.Add(observer);
-            }
-        }
-    }
-
-    public void UnregisterObserver(IFileSystemObserver observer)
-    {
-        lock (_observersLock)
-        {
-            _observers.Remove(observer);
-        }
     }
 
     public async Task<string?> ReadFileAsync(string relativePath, CancellationToken ct = default)
@@ -64,6 +39,7 @@ public sealed class FileSystem : IFileSystem
             _logger.Warning($"File not found: {relativePath}");
             return null;
         }
+
         return await File.ReadAllTextAsync(fullPath, ct);
     }
 
@@ -71,12 +47,15 @@ public sealed class FileSystem : IFileSystem
     {
         string responsesPath = Path.IsPathRooted(_options.ResponsesPath)
             ? _options.ResponsesPath
-            : GetFullPath(_options.ResponsesPath);
+            : Path.Combine(_options.ProjectPath, _options.ResponsesPath);
+
         string folderPath = Path.Combine(responsesPath, responseFolder);
         Directory.CreateDirectory(folderPath);
+
         string filePath = Path.Combine(folderPath, fileName);
         string? dir = Path.GetDirectoryName(filePath);
         if (dir != null) Directory.CreateDirectory(dir);
+
         await File.WriteAllTextAsync(filePath, content, ct);
         _logger.Debug($"Output file written: {fileName}");
     }
@@ -92,6 +71,12 @@ public sealed class FileSystem : IFileSystem
         string fullPath = GetFullPath(relativePath);
         bool exists = File.Exists(fullPath);
 
+        if (!exists && !_options.Modification.AllowNewFiles)
+        {
+            _logger.Warning($"Cannot create new project file (disabled): {relativePath}");
+            return false;
+        }
+
         if (_options.Modification.CreateBackup && exists)
         {
             await CreateBackupAsync(relativePath, ct);
@@ -101,12 +86,7 @@ public sealed class FileSystem : IFileSystem
         if (dir != null) Directory.CreateDirectory(dir);
 
         await File.WriteAllTextAsync(fullPath, content, ct);
-
         _logger.Info($"Project file {(exists ? "modified" : "created")}: {relativePath}");
-
-        FileChangeType changeType = exists ? FileChangeType.Modified : FileChangeType.Created;
-        NotifyObservers(relativePath, changeType);
-
         return true;
     }
 
@@ -115,24 +95,45 @@ public sealed class FileSystem : IFileSystem
         string basePath = relativePath == null
             ? _options.ProjectPath
             : GetFullPath(relativePath);
+
         if (!Directory.Exists(basePath))
             return [];
+
         return Directory.EnumerateFiles(basePath, pattern, SearchOption.AllDirectories)
             .Where(f => !IsIgnored(f))
             .Select(f => Path.GetRelativePath(_options.ProjectPath, f));
     }
 
-    private string GetFullPath(string relativePath) => Path.Combine(_options.ProjectPath, relativePath);
+    public IEnumerable<string> EnumerateDirectories(string? relativePath = null)
+    {
+        string basePath = relativePath == null
+            ? _options.ProjectPath
+            : GetFullPath(relativePath);
+
+        if (!Directory.Exists(basePath))
+            return [];
+
+        return Directory.EnumerateDirectories(basePath)
+            .Where(d => !IsIgnored(d))
+            .Select(d => Path.GetRelativePath(_options.ProjectPath, d));
+    }
+
+    public bool FileExists(string relativePath) => File.Exists(GetFullPath(relativePath));
+    public bool DirectoryExists(string relativePath) => Directory.Exists(GetFullPath(relativePath));
+    public string GetFullPath(string relativePath) => Path.Combine(_options.ProjectPath, relativePath);
 
     private async Task CreateBackupAsync(string relativePath, CancellationToken ct)
     {
         string backupsPath = Path.IsPathRooted(_options.BackupsPath)
             ? _options.BackupsPath
-            : GetFullPath(_options.BackupsPath);
+            : Path.Combine(_options.ProjectPath, _options.BackupsPath);
+
         Directory.CreateDirectory(backupsPath);
+
         string fileName = Path.GetFileName(relativePath);
         string backupName = $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.Now:yyyyMMdd_HHmmss}{Path.GetExtension(fileName)}";
         string backupPath = Path.Combine(backupsPath, backupName);
+
         string content = await File.ReadAllTextAsync(GetFullPath(relativePath), ct);
         await File.WriteAllTextAsync(backupPath, content, ct);
         _logger.Debug($"Backup created: {backupName}");
@@ -142,44 +143,30 @@ public sealed class FileSystem : IFileSystem
     {
         HashSet<string> patterns =
         [
-            "bin/", "obj/", ".vs/", ".vscode/", ".idea/", ".git/",
-            "node_modules/", "packages/", "TestResults/", ".theon/"
+            "bin", "obj", ".vs", ".vscode", ".idea", ".git",
+            "node_modules", "packages", "TestResults", ".theon"
         ];
-        foreach (string ignoreFilePath in _options.IgnoreFiles)
+
+        string gitignorePath = Path.Combine(_options.ProjectPath, ".gitignore");
+        if (File.Exists(gitignorePath))
         {
-            if (!File.Exists(ignoreFilePath)) continue;
-            foreach (string line in File.ReadLines(ignoreFilePath))
+            foreach (string line in File.ReadLines(gitignorePath))
             {
                 string trimmed = line.Trim();
                 if (!string.IsNullOrEmpty(trimmed) && !trimmed.StartsWith('#'))
                 {
-                    patterns.Add(trimmed);
+                    patterns.Add(trimmed.TrimEnd('/'));
                 }
             }
         }
+
         return patterns;
     }
 
-    private bool IsIgnored(string path) => _ignoredPatterns.Any(path.Contains);
-
-    private void NotifyObservers(string relativePath, FileChangeType changeType)
+    private bool IsIgnored(string path)
     {
-        List<IFileSystemObserver> observersCopy;
-        lock (_observersLock)
-        {
-            observersCopy = [.. _observers];
-        }
-
-        foreach (IFileSystemObserver observer in observersCopy)
-        {
-            try
-            {
-                observer.OnFileChanged(relativePath, changeType);
-            }
-            catch (Exception ex)
-            {
-                _logger.Warning($"Observer notification failed: {ex.Message}");
-            }
-        }
+        string relativePath = Path.GetRelativePath(_options.ProjectPath, path);
+        string[] parts = relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        return parts.Any(p => _ignoredPatterns.Contains(p));
     }
 }

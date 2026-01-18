@@ -1,4 +1,4 @@
-﻿using CdCSharp.Theon.Core;
+﻿using Microsoft.Extensions.Options;
 
 namespace CdCSharp.Theon.Infrastructure;
 
@@ -8,8 +8,10 @@ public interface ITheonLogger
     void Debug(string message);
     void Warning(string message);
     void Error(string message, Exception? ex = null);
-    void LogLlmRequest(IReadOnlyList<LlmMessage> messages);
-    void LogLlmResponse(string content);
+    void Section(string title);
+    void Success(string message);
+    //void LogLlmRequest(IReadOnlyList<LlmMessage> messages);
+    //void LogLlmResponse(string content, IReadOnlyList<LlmToolCall>? toolCalls = null);
 }
 
 public sealed class TheonLogger : ITheonLogger, IDisposable
@@ -19,11 +21,11 @@ public sealed class TheonLogger : ITheonLogger, IDisposable
     private readonly object _lock = new();
     private int _interactionCount;
 
-    public TheonLogger(TheonOptions options)
+    public TheonLogger(IOptions<TheonOptions> options)
     {
-        _logsPath = Path.IsPathRooted(options.LogsPath)
-            ? options.LogsPath
-            : Path.Combine(options.ProjectPath, options.LogsPath);
+        _logsPath = Path.IsPathRooted(options.Value.LogsPath)
+            ? options.Value.LogsPath
+            : Path.Combine(options.Value.ProjectPath, options.Value.LogsPath);
 
         Directory.CreateDirectory(_logsPath);
 
@@ -34,45 +36,26 @@ public sealed class TheonLogger : ITheonLogger, IDisposable
     public void Info(string message) => Log("INF", message, ConsoleColor.Cyan);
     public void Debug(string message) => Log("DBG", message, ConsoleColor.Gray);
     public void Warning(string message) => Log("WRN", message, ConsoleColor.Yellow);
+    public void Success(string message) => Log("SUC", $"✓ {message}", ConsoleColor.Green);
+
+    public void Section(string title)
+    {
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine(title);
+        Console.WriteLine(new string('─', title.Length));
+        Console.ResetColor();
+        Console.WriteLine();
+    }
 
     public void Error(string message, Exception? ex = null)
     {
-        Log("ERR", message, ConsoleColor.Red);
+        Log("ERR", $"✗ {message}", ConsoleColor.Red);
         if (ex != null)
         {
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"  {ex.GetType().Name}: {ex.Message}");
             Console.ResetColor();
-        }
-    }
-
-    public void LogLlmRequest(IReadOnlyList<LlmMessage> messages)
-    {
-        int count = Interlocked.Increment(ref _interactionCount);
-        lock (_lock)
-        {
-            _llmLogWriter.WriteLine($"\n{"=",-60}");
-            _llmLogWriter.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] REQUEST #{count}");
-            _llmLogWriter.WriteLine($"{"=",-60}");
-            foreach (LlmMessage msg in messages)
-            {
-                _llmLogWriter.WriteLine($"[{msg.Role}]");
-                _llmLogWriter.WriteLine();
-                _llmLogWriter.WriteLine($"[{msg.Content}]");
-
-            }
-        }
-    }
-
-    public void LogLlmResponse(string content)
-    {
-        lock (_lock)
-        {
-            _llmLogWriter.WriteLine($"\n{'-',-60}");
-            _llmLogWriter.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] RESPONSE");
-            _llmLogWriter.WriteLine($"{'-',-60}");
-            _llmLogWriter.WriteLine(content);
-            _llmLogWriter.WriteLine();
         }
     }
 

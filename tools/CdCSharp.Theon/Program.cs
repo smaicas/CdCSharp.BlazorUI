@@ -1,8 +1,6 @@
 ﻿using CdCSharp.Theon;
-using CdCSharp.Theon.Analysis;
-using CdCSharp.Theon.Core;
+using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Infrastructure;
-using CdCSharp.Theon.Orchestration;
 using Microsoft.Extensions.DependencyInjection;
 
 string projectPath = args.Length > 0 ? args[0] : Directory.GetCurrentDirectory();
@@ -12,109 +10,108 @@ if (!Directory.Exists(projectPath))
     Console.WriteLine($"Error: Directory not found: {projectPath}");
     return 1;
 }
-
-TheonOptions options = new()
-{
-    ProjectPath = Path.GetFullPath(projectPath)
-};
+Banner.ShowTheonBanner(projectPath);
 
 ServiceCollection services = new();
-services.AddTheon(options);
+services.AddTheon(options => options.ProjectPath = Path.GetFullPath(projectPath));
+
 await using ServiceProvider provider = services.BuildServiceProvider();
 
 ITheonLogger logger = provider.GetRequiredService<ITheonLogger>();
-IProjectAnalysis analysis = provider.GetRequiredService<IProjectAnalysis>();
-IOrchestrator orchestrator = provider.GetRequiredService<IOrchestrator>();
-ILlmClient llmClient = provider.GetRequiredService<ILlmClient>();
 
-logger.Info("═══════════════════════════════════════════════════");
-logger.Info("  THEON - Code Analysis System");
-logger.Info("═══════════════════════════════════════════════════");
-logger.Info($"Project: {options.ProjectPath}");
-logger.Info("");
-
-await analysis.AnalyzeAsync();
-
-if (analysis.Project == null)
+if (provider.GetRequiredService<IAIClient>() is LMStudioClient lmClient)
 {
-    logger.Error("Failed to analyze project");
-    return 1;
+    await lmClient.ValidateCapabilities();
 }
 
-ModelInfo modelInfo = await llmClient.GetModelInfoAsync();
+//while (true)
+//{
+//    Console.ForegroundColor = ConsoleColor.Green;
+//    Console.Write("> ");
+//    Console.ResetColor();
 
-logger.Info("");
-logger.Info($"Assemblies: {analysis.Project.Assemblies.Count}");
-logger.Info($"Types: {analysis.Project.Assemblies.Sum(a => a.Types.Count)}");
-logger.Info($"Files: {analysis.Project.Assemblies.Sum(a => a.Files.Count)}");
-logger.Info("");
-logger.Info("Commands:");
-logger.Info("  @file:<path> <query>      - Query with file context");
-logger.Info("  @folder:<path> <query>    - Query with folder context");
-logger.Info("  @assembly:<name> <query>  - Query with assembly context");
-logger.Info("  exit                      - Exit");
-logger.Info("");
-logger.Info("Ready. Enter your query:");
-logger.Info("");
+//    string? input = Console.ReadLine();
 
-while (true)
-{
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.Write("> ");
-    Console.ResetColor();
+//    if (string.IsNullOrWhiteSpace(input))
+//        continue;
 
-    string? input = Console.ReadLine();
+//    string command = input.Trim();
 
-    if (string.IsNullOrWhiteSpace(input))
-        continue;
+//    if (command.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
+//        command.Equals("quit", StringComparison.OrdinalIgnoreCase))
+//    {
+//        logger.Info("Peace!");
+//        break;
+//    }
 
-    string command = input.Trim();
+//    try
+//    {
+//        OrchestratorResponse response = await orchestrator.ProcessAsync(input);
 
-    if (command.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
-        command.Equals("quit", StringComparison.OrdinalIgnoreCase))
-    {
-        logger.Info("Goodbye!");
-        break;
-    }
+//        Console.WriteLine();
+//        Console.ForegroundColor = ConsoleColor.White;
+//        Console.WriteLine(response.Content);
+//        Console.ResetColor();
+//        Console.WriteLine();
 
-    if (command.Equals("help", StringComparison.OrdinalIgnoreCase))
-    {
-        Console.WriteLine("""
-            Commands:
-              @file:<path> <query>      - Query with specific file context
-              @folder:<path> <query>    - Query with folder context
-              @assembly:<name> <query>  - Query with assembly context
-              exit                      - Exit
-              
-            Or just type your query to analyze the project.
-            """);
-        continue;
-    }
+//        logger.Info($"Confidence: {response.Confidence:P0}");
 
-    try
-    {
-        OrchestratorResponse response = await orchestrator.ProcessAsync(input);
+//        if (response.OutputFiles.Count > 0)
+//            logger.Info($"Generated files: {string.Join(", ", response.OutputFiles.Select(f => f.Name))}");
 
-        Console.WriteLine();
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine(response.Content);
-        Console.ResetColor();
-        Console.WriteLine();
+//        if (response.ModifiedProjectFiles.Count > 0)
+//            logger.Info($"Modified: {string.Join(", ", response.ModifiedProjectFiles)}");
 
-        logger.Info($"Confidence: {response.Confidence:P0}");
+//        Console.WriteLine();
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.Error("Failed to process query", ex);
+//    }
 
-        if (response.OutputFiles.Count > 0)
-            logger.Info($"Generated files: {string.Join(", ", response.OutputFiles.Select(f => f.Name))}");
-
-        if (response.ModifiedProjectFiles.Count > 0)
-            logger.Info($"Modified: {string.Join(", ", response.ModifiedProjectFiles)}");
-
-        Console.WriteLine();
-    }
-    catch (Exception ex)
-    {
-        logger.Error("Failed to process query", ex);
-    }
-}
-
+//}
 return 0;
+
+class Banner
+{
+    public static void ShowTheonBanner(string projectPath)
+    {
+        string[] ascii =
+        {
+        "       ████████╗██╗  ██╗███████╗ ██████╗ ███╗   ██╗",
+        "       ╚══██╔══╝██║  ██║██╔════╝██╔═══██╗████╗  ██║",
+        "          ██║   ███████║█████╗  ██║   ██║██╔██╗ ██║",
+        "          ██║   ██╔══██║██╔══╝  ██║   ██║██║╚██╗██║",
+        "          ██║   ██║  ██║███████╗╚██████╔╝██║ ╚████║",
+        "          ╚═╝   ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝"
+    };
+
+        int consoleWidth = Console.WindowWidth;
+        int asciiWidth = ascii[0].Length;
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine(new string('═', consoleWidth));
+        Console.WriteLine();
+
+        Console.ForegroundColor = ConsoleColor.DarkRed;
+        foreach (string line in ascii)
+        {
+            int pad = (consoleWidth - line.Length) / 2;
+            Console.WriteLine(new string(' ', pad) + line);
+        }
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine(new string('═', consoleWidth));
+        Console.WriteLine();
+
+        string subtitle = $"Project: {projectPath}";
+        int subtitlePad = (consoleWidth - subtitle.Length) / 2;
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine(new string(' ', subtitlePad) + subtitle);
+        Console.WriteLine(new string(' ', subtitlePad) + "Type your query to analyze the project.");
+
+        Console.WriteLine();
+        Console.ResetColor();
+    }
+}

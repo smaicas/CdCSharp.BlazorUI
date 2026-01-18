@@ -2,7 +2,8 @@
   <Folder Name="/docs/">
     <Project Path="docs/CdCSharp.DocGen.Cli/CdCSharp.DocGen.Cli.csproj" Id="2bc61da2-677f-4ec0-92d0-1435ff75a4bb" />
     <Project Path="docs/CdCSharp.DocGen.Core/CdCSharp.DocGen.Core.csproj" Id="6d3bfbff-7721-4711-a483-e8122f0bf4b3" />
-    <Project Path="tools/CdCSharp.Theon/CdCSharp.Theon.csproj" Id="45598675-573e-472e-a33d-91834b6a4e21" />
+    <Project Path="tools/CdCSharp.Theon/CdCSharp.Theon.csproj" Id="22db459c-d14c-4e91-9e1c-e15dc6a998d0" />
+    <Project Path="tools/CdCSharp.Theon_/CdCSharp.Theon_.csproj" Id="45598675-573e-472e-a33d-91834b6a4e21" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />

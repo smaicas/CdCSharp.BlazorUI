@@ -1,57 +1,123 @@
-﻿using CdCSharp.Theon.Analysis;
-using CdCSharp.Theon.Context;
-using CdCSharp.Theon.Core;
+﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Infrastructure;
-using CdCSharp.Theon.Orchestration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace CdCSharp.Theon;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddTheon(this IServiceCollection services, TheonOptions options)
+    public static IServiceCollection AddTheon(this IServiceCollection services, Action<TheonOptions> configure)
     {
-        EnsureDirectories(options);
+        services.Configure(configure);
+        services.AddSingleton<IValidateOptions<TheonOptions>, TheonOptionsValidator>();
+        services.AddSingleton<IPostConfigureOptions<TheonOptions>, TheonOptionsSetup>();
 
-        // Core configuration
-        services.AddSingleton(options);
-
-        // Infrastructure
+        //// Infrastructure
         services.AddSingleton<ITheonLogger, TheonLogger>();
-        services.AddSingleton<IFileSystem, FileSystem>();
+        services.AddSingleton<IAIClient, LMStudioClient>();
+        //services.AddSingleton<IFileSystem, FileSystem>();
+        //services.AddSingleton<IOutputContext, OutputContext>();
 
-        // LLM Communication
-        services.AddSingleton<ILlmClient, LlmClient>();
-        services.AddSingleton<IToolParser, ToolParser>();
+        //// Tools - registered via IEnumerable<ITool>
+        //services.AddSingleton<ITool, ExploreAssemblyTool>();
+        //services.AddSingleton<ITool, ExploreFileTool>();
+        //services.AddSingleton<ITool, ExploreFolderTool>();
+        //services.AddSingleton<ITool, ExploreFilesTool>();
+        //services.AddSingleton<ITool, GenerateFileTool>();
+        //services.AddSingleton<ITool, AppendFileTool>();
+        //services.AddSingleton<ITool, OverwriteFileTool>();
+        //services.AddSingleton<ITool, ModifyProjectFileTool>();
 
-        // Analysis
-        services.AddSingleton<IProjectAnalysis, ProjectAnalysis>();
+        //// Tool Registry
+        //services.AddSingleton<IToolRegistry, ToolRegistry>();
 
-        // Context Management
-        services.AddSingleton<IScopeFactory, ScopeFactory>();
+        //// LLM Communication
+        //services.AddSingleton<ILlmClient, LlmClient>();
+        //services.AddSingleton<IResponseParser, ResponseParser>();
+        //services.AddSingleton<IPromptBuilder, PromptBuilder>();
 
-        // NEW: Quality & Intelligence Layer
-        services.AddSingleton<IResponseValidator, ResponseValidator>();
-        services.AddSingleton<IExplorationStrategies, ExplorationStrategies>();
-        services.AddSingleton<IOutputPlanner, OutputPlanner>();
+        //// Analysis
+        //services.AddSingleton<IProjectAnalysis, ProjectAnalysis>();
 
-        // Orchestration
-        services.AddSingleton<IOrchestrator, Orchestrator>();
+        //// Context
+        //services.AddSingleton<IScopeFactory, ScopeFactory>();
+
+        //// Quality Layer
+        //services.AddSingleton<IResponseValidator, ResponseValidator>();
+        //services.AddSingleton<IExplorationStrategies, ExplorationStrategies>();
+        //services.AddSingleton<IOutputPlanner, OutputPlanner>();
+
+        //// Orchestration
+        //services.AddSingleton<IOrchestrator, Orchestrator>();
 
         return services;
     }
 
-    private static void EnsureDirectories(TheonOptions options)
+    internal sealed class TheonOptionsValidator : IValidateOptions<TheonOptions>
     {
-        string basePath = Path.IsPathRooted(options.OutputPath)
-            ? options.OutputPath
-            : Path.Combine(options.ProjectPath, options.OutputPath);
+        public ValidateOptionsResult Validate(string? name, TheonOptions options)
+        {
+            List<string> errors = [];
 
-        Directory.CreateDirectory(basePath);
-        Directory.CreateDirectory(Path.Combine(basePath, "responses"));
-        Directory.CreateDirectory(Path.Combine(basePath, "logs"));
+            if (string.IsNullOrWhiteSpace(options.ProjectPath))
+            {
+                errors.Add("ProjectPath es requerido.");
+            }
 
-        if (options.Modification.CreateBackup)
-            Directory.CreateDirectory(Path.Combine(basePath, "backups"));
+            if (string.IsNullOrWhiteSpace(options.OutputPath))
+            {
+                errors.Add("OutputPath es requerido.");
+            }
+
+            if (options.Validation.LowConfidenceThreshold is < 0 or > 1)
+            {
+                errors.Add("LowConfidenceThreshold debe estar entre 0 y 1.");
+            }
+
+            if (options.Validation.MaxValidationRetries < 0)
+            {
+                errors.Add("MaxValidationRetries debe ser mayor o igual a 0.");
+            }
+
+            if (options.Llm.TimeoutSeconds <= 0)
+            {
+                errors.Add("TimeoutSeconds debe ser mayor que 0.");
+            }
+
+            if (options.Llm.Temperature is < 0 or > 2)
+            {
+                errors.Add("Temperature debe estar entre 0 y 2.");
+            }
+
+            return errors.Count > 0
+                ? ValidateOptionsResult.Fail(errors)
+                : ValidateOptionsResult.Success;
+        }
+    }
+
+    internal sealed class TheonOptionsSetup : IPostConfigureOptions<TheonOptions>
+    {
+        public void PostConfigure(string? name, TheonOptions options)
+        {
+            EnsureDirectories(options);
+
+            static void EnsureDirectories(TheonOptions options)
+            {
+                string basePath = Path.IsPathRooted(options.OutputPath)
+                    ? options.OutputPath
+                    : Path.Combine(options.ProjectPath, options.OutputPath);
+
+                Directory.CreateDirectory(basePath);
+                Directory.CreateDirectory(options.ResponsesPath);
+                Directory.CreateDirectory(options.LogsPath);
+
+                if (options.Modification.CreateBackup)
+                {
+                    Directory.CreateDirectory(options.BackupsPath);
+                }
+            }
+
+        }
     }
 }
