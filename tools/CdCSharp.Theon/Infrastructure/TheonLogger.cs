@@ -61,12 +61,16 @@ public sealed class TheonLogger : ITheonLogger, IDisposable
 
     private void Log(string level, string message, ConsoleColor color)
     {
+        string timestamp = DateTime.Now.ToString("HH:mm:ss");
+
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.Write($"[{DateTime.Now:HH:mm:ss}] ");
+        Console.Write($"[{timestamp}] ");
         Console.ForegroundColor = color;
         Console.Write($"{level} ");
         Console.ResetColor();
         Console.WriteLine(message);
+        _llmLogWriter.WriteLine($"[{timestamp}] {level}: {message}");
+        _llmLogWriter.Flush();
     }
 
     public void Dispose() => _llmLogWriter.Dispose();

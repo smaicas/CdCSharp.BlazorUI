@@ -1,5 +1,9 @@
 ﻿using CdCSharp.Theon.AI;
+using CdCSharp.Theon.Analysis;
+using CdCSharp.Theon.Context;
 using CdCSharp.Theon.Infrastructure;
+using CdCSharp.Theon.Orchestrator;
+using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -13,43 +17,29 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IValidateOptions<TheonOptions>, TheonOptionsValidator>();
         services.AddSingleton<IPostConfigureOptions<TheonOptions>, TheonOptionsSetup>();
 
-        //// Infrastructure
+        // Infrastructure
         services.AddSingleton<ITheonLogger, TheonLogger>();
+        services.AddSingleton<IFileSystem>(sp =>
+        {
+            TheonOptions options = sp.GetRequiredService<IOptions<TheonOptions>>().Value;
+            ITheonLogger logger = sp.GetRequiredService<ITheonLogger>();
+            return new FileSystem(options, logger);
+        });
+
+        // AI
         services.AddSingleton<IAIClient, LMStudioClient>();
-        //services.AddSingleton<IFileSystem, FileSystem>();
-        //services.AddSingleton<IOutputContext, OutputContext>();
 
-        //// Tools - registered via IEnumerable<ITool>
-        //services.AddSingleton<ITool, ExploreAssemblyTool>();
-        //services.AddSingleton<ITool, ExploreFileTool>();
-        //services.AddSingleton<ITool, ExploreFolderTool>();
-        //services.AddSingleton<ITool, ExploreFilesTool>();
-        //services.AddSingleton<ITool, GenerateFileTool>();
-        //services.AddSingleton<ITool, AppendFileTool>();
-        //services.AddSingleton<ITool, OverwriteFileTool>();
-        //services.AddSingleton<ITool, ModifyProjectFileTool>();
+        // Analysis
+        services.AddSingleton<IProjectContext, ProjectContext>();
 
-        //// Tool Registry
-        //services.AddSingleton<IToolRegistry, ToolRegistry>();
+        // Context System
+        services.AddSingleton<IContextFactory, ContextFactory>();
 
-        //// LLM Communication
-        //services.AddSingleton<ILlmClient, LlmClient>();
-        //services.AddSingleton<IResponseParser, ResponseParser>();
-        //services.AddSingleton<IPromptBuilder, PromptBuilder>();
+        // Tracing
+        services.AddSingleton<ITracer, Tracer>();
 
-        //// Analysis
-        //services.AddSingleton<IProjectAnalysis, ProjectAnalysis>();
-
-        //// Context
-        //services.AddSingleton<IScopeFactory, ScopeFactory>();
-
-        //// Quality Layer
-        //services.AddSingleton<IResponseValidator, ResponseValidator>();
-        //services.AddSingleton<IExplorationStrategies, ExplorationStrategies>();
-        //services.AddSingleton<IOutputPlanner, OutputPlanner>();
-
-        //// Orchestration
-        //services.AddSingleton<IOrchestrator, Orchestrator>();
+        // Orchestrator
+        services.AddSingleton<IOrchestrator, Orchestrator.Orchestrator>();
 
         return services;
     }
@@ -62,32 +52,32 @@ public static class ServiceCollectionExtensions
 
             if (string.IsNullOrWhiteSpace(options.ProjectPath))
             {
-                errors.Add("ProjectPath es requerido.");
+                errors.Add("ProjectPath is required.");
             }
 
             if (string.IsNullOrWhiteSpace(options.OutputPath))
             {
-                errors.Add("OutputPath es requerido.");
+                errors.Add("OutputPath is required.");
             }
 
             if (options.Validation.LowConfidenceThreshold is < 0 or > 1)
             {
-                errors.Add("LowConfidenceThreshold debe estar entre 0 y 1.");
+                errors.Add("LowConfidenceThreshold must be between 0 and 1.");
             }
 
             if (options.Validation.MaxValidationRetries < 0)
             {
-                errors.Add("MaxValidationRetries debe ser mayor o igual a 0.");
+                errors.Add("MaxValidationRetries must be >= 0.");
             }
 
             if (options.Llm.TimeoutSeconds <= 0)
             {
-                errors.Add("TimeoutSeconds debe ser mayor que 0.");
+                errors.Add("TimeoutSeconds must be > 0.");
             }
 
             if (options.Llm.Temperature is < 0 or > 2)
             {
-                errors.Add("Temperature debe estar entre 0 y 2.");
+                errors.Add("Temperature must be between 0 and 2.");
             }
 
             return errors.Count > 0
@@ -117,7 +107,6 @@ public static class ServiceCollectionExtensions
                     Directory.CreateDirectory(options.BackupsPath);
                 }
             }
-
         }
     }
 }

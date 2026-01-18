@@ -1,6 +1,8 @@
 ﻿using CdCSharp.Theon;
 using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Infrastructure;
+using CdCSharp.Theon.Orchestrator;
+using CdCSharp.Theon.Orchestrator.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 string projectPath = args.Length > 0 ? args[0] : Directory.GetCurrentDirectory();
@@ -10,7 +12,8 @@ if (!Directory.Exists(projectPath))
     Console.WriteLine($"Error: Directory not found: {projectPath}");
     return 1;
 }
-Banner.ShowTheonBanner(projectPath);
+
+ShowBanner(projectPath);
 
 ServiceCollection services = new();
 services.AddTheon(options => options.ProjectPath = Path.GetFullPath(projectPath));
@@ -18,100 +21,190 @@ services.AddTheon(options => options.ProjectPath = Path.GetFullPath(projectPath)
 await using ServiceProvider provider = services.BuildServiceProvider();
 
 ITheonLogger logger = provider.GetRequiredService<ITheonLogger>();
+IOrchestrator orchestrator = provider.GetRequiredService<IOrchestrator>();
 
 if (provider.GetRequiredService<IAIClient>() is LMStudioClient lmClient)
 {
     await lmClient.ValidateCapabilities();
 }
 
-//while (true)
-//{
-//    Console.ForegroundColor = ConsoleColor.Green;
-//    Console.Write("> ");
-//    Console.ResetColor();
+logger.Section("Ready");
+logger.Info("Type your query or 'exit' to quit.");
+Console.WriteLine();
 
-//    string? input = Console.ReadLine();
+while (true)
+{
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.Write("> ");
+    Console.ResetColor();
 
-//    if (string.IsNullOrWhiteSpace(input))
-//        continue;
+    string? input = Console.ReadLine();
 
-//    string command = input.Trim();
+    if (string.IsNullOrWhiteSpace(input))
+        continue;
 
-//    if (command.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
-//        command.Equals("quit", StringComparison.OrdinalIgnoreCase))
-//    {
-//        logger.Info("Peace!");
-//        break;
-//    }
+    string command = input.Trim();
 
-//    try
-//    {
-//        OrchestratorResponse response = await orchestrator.ProcessAsync(input);
+    if (command.Equals("exit", StringComparison.OrdinalIgnoreCase) ||
+        command.Equals("quit", StringComparison.OrdinalIgnoreCase))
+    {
+        logger.Info("Goodbye!");
+        break;
+    }
 
-//        Console.WriteLine();
-//        Console.ForegroundColor = ConsoleColor.White;
-//        Console.WriteLine(response.Content);
-//        Console.ResetColor();
-//        Console.WriteLine();
+    if (command.Equals("reset", StringComparison.OrdinalIgnoreCase))
+    {
+        orchestrator.Reset();
+        logger.Info("Conversation reset.");
+        Console.WriteLine();
+        continue;
+    }
 
-//        logger.Info($"Confidence: {response.Confidence:P0}");
+    if (command.Equals("state", StringComparison.OrdinalIgnoreCase))
+    {
+        ShowStatus(orchestrator.State);
+        continue;
+    }
 
-//        if (response.OutputFiles.Count > 0)
-//            logger.Info($"Generated files: {string.Join(", ", response.OutputFiles.Select(f => f.Name))}");
+    try
+    {
+        OrchestratorResponse response = await orchestrator.ProcessAsync(command);
 
-//        if (response.ModifiedProjectFiles.Count > 0)
-//            logger.Info($"Modified: {string.Join(", ", response.ModifiedProjectFiles)}");
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(response.Message);
+        Console.ResetColor();
+        Console.WriteLine();
 
-//        Console.WriteLine();
-//    }
-//    catch (Exception ex)
-//    {
-//        logger.Error("Failed to process query", ex);
-//    }
+        if (response.CreatedFiles.Count > 0)
+        {
+            logger.Success($"Created in project: {string.Join(", ", response.CreatedFiles)}");
+        }
 
-//}
+        if (response.GeneratedOutputs.Count > 0)
+        {
+            logger.Success($"Generated outputs: {string.Join(", ", response.GeneratedOutputs)}");
+        }
+
+        if (response.ProposedChanges.Count > 0)
+        {
+            ShowProposedChanges(response.ProposedChanges);
+        }
+
+        if (response.NeedsConfirmation)
+        {
+            bool confirmed = await HandleConfirmation(orchestrator, logger);
+            if (confirmed)
+            {
+                Console.WriteLine();
+            }
+        }
+
+        Console.WriteLine();
+    }
+    catch (Exception ex)
+    {
+        logger.Error("Failed to process query", ex);
+        Console.WriteLine();
+    }
+}
+
 return 0;
 
-class Banner
+static void ShowStatus(OrchestratorState state)
 {
-    public static void ShowTheonBanner(string projectPath)
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine("=== Status ===");
+    Console.ResetColor();
+
+    Console.WriteLine($"Conversation messages: {state.ConversationHistory.Count}");
+    Console.WriteLine($"Active contexts: {string.Join(", ", state.ActiveContexts.Keys)}");
+    Console.WriteLine($"Pending changes: {state.GetPendingChanges().Count()}");
+    Console.WriteLine($"Estimated tokens: {state.EstimatedTokens}");
+    Console.WriteLine();
+}
+
+static void ShowProposedChanges(List<ProposedChange> changes)
+{
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("Proposed changes:");
+    Console.ResetColor();
+
+    foreach (ProposedChange change in changes.Where(c => c.Status == ChangeStatus.Pending))
     {
-        string[] ascii =
-        {
+        Console.WriteLine($"  [{change.Id}] {change.ChangeType}: {change.Path}");
+        Console.WriteLine($"       {change.Description}");
+    }
+}
+
+static async Task<bool> HandleConfirmation(IOrchestrator orchestrator, ITheonLogger logger)
+{
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.Write("Apply changes? (y/n/id): ");
+    Console.ResetColor();
+
+    string? confirmation = Console.ReadLine()?.Trim().ToLowerInvariant();
+
+    if (string.IsNullOrEmpty(confirmation) || confirmation == "n" || confirmation == "no")
+    {
+        await orchestrator.ConfirmChangesAsync(false);
+        logger.Info("Changes rejected.");
+        return false;
+    }
+
+    string? changeIds = null;
+    if (confirmation is not "y" and not "yes" and not "all")
+    {
+        changeIds = confirmation;
+    }
+
+    OrchestratorResponse result = await orchestrator.ConfirmChangesAsync(true, changeIds);
+    logger.Success(result.Message);
+    return true;
+}
+
+static void ShowBanner(string projectPath)
+{
+    string[] ascii =
+    [
         "       ████████╗██╗  ██╗███████╗ ██████╗ ███╗   ██╗",
         "       ╚══██╔══╝██║  ██║██╔════╝██╔═══██╗████╗  ██║",
         "          ██║   ███████║█████╗  ██║   ██║██╔██╗ ██║",
         "          ██║   ██╔══██║██╔══╝  ██║   ██║██║╚██╗██║",
         "          ██║   ██║  ██║███████╗╚██████╔╝██║ ╚████║",
         "          ╚═╝   ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝"
-    };
+    ];
 
-        int consoleWidth = Console.WindowWidth;
-        int asciiWidth = ascii[0].Length;
+    int consoleWidth = Console.WindowWidth;
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine(new string('═', consoleWidth));
-        Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine(new string('═', consoleWidth));
+    Console.WriteLine();
 
-        Console.ForegroundColor = ConsoleColor.DarkRed;
-        foreach (string line in ascii)
-        {
-            int pad = (consoleWidth - line.Length) / 2;
-            Console.WriteLine(new string(' ', pad) + line);
-        }
-
-        Console.WriteLine();
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine(new string('═', consoleWidth));
-        Console.WriteLine();
-
-        string subtitle = $"Project: {projectPath}";
-        int subtitlePad = (consoleWidth - subtitle.Length) / 2;
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine(new string(' ', subtitlePad) + subtitle);
-        Console.WriteLine(new string(' ', subtitlePad) + "Type your query to analyze the project.");
-
-        Console.WriteLine();
-        Console.ResetColor();
+    Console.ForegroundColor = ConsoleColor.DarkRed;
+    foreach (string line in ascii)
+    {
+        int pad = Math.Max(0, (consoleWidth - line.Length) / 2);
+        Console.WriteLine(new string(' ', pad) + line);
     }
+
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine(new string('═', consoleWidth));
+    Console.WriteLine();
+
+    string subtitle = $"Project: {projectPath}";
+    int subtitlePad = Math.Max(0, (consoleWidth - subtitle.Length) / 2);
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine(new string(' ', subtitlePad) + subtitle);
+
+    string help = "Commands: exit, reset, state";
+    int helpPad = Math.Max(0, (consoleWidth - help.Length) / 2);
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.WriteLine(new string(' ', helpPad) + help);
+
+    Console.WriteLine();
+    Console.ResetColor();
 }

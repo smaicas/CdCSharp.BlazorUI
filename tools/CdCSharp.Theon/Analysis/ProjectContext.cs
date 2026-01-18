@@ -9,6 +9,7 @@ namespace CdCSharp.Theon.Analysis;
 public interface IProjectContext
 {
     Task<ProjectInfo> GetProjectAsync(CancellationToken ct = default);
+    int GetFileTokens(string path);
 }
 
 public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
@@ -20,6 +21,7 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
     private ProjectInfo? _cachedProject;
     private readonly Dictionary<string, AssemblyInfo> _assembliesByPath = [];
     private readonly Dictionary<string, List<TypeSummary>> _typesByFile = [];
+    private readonly Dictionary<string, FileSummary> _fileSummaries = [];
 
     private static readonly string[] TestIndicators = ["xunit", "nunit", "mstest", "Test.Sdk"];
 
@@ -47,6 +49,15 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         }
     }
 
+    public int GetFileTokens(string path)
+    {
+        if (_fileSummaries.TryGetValue(path, out FileSummary? summary))
+        {
+            return summary.EstimatedTokens;
+        }
+        return 0;
+    }
+
     public void OnFileChanged(string relativePath, FileChangeType changeType)
     {
         _ = Task.Run(async () =>
@@ -71,7 +82,6 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
     {
         _logger.Debug($"File {changeType}: {relativePath}");
 
-        // Si no hay proyecto cargado, no hay nada que actualizar
         if (_cachedProject == null) return;
 
         string ext = Path.GetExtension(relativePath).ToLowerInvariant();
@@ -107,11 +117,12 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         {
             _assembliesByPath[assemblyDir] = newAssembly;
 
-            List<string> oldFiles = _typesByFile.Keys.Where(f => f.StartsWith(assemblyDir)).ToList();
+            List<string> oldFiles = _fileSummaries.Keys.Where(f => f.StartsWith(assemblyDir)).ToList();
             foreach (string file in oldFiles)
             {
-                if (!newAssembly.Files.Contains(file))
+                if (!newAssembly.Files.Any(f => f.Path == file))
                 {
+                    _fileSummaries.Remove(file);
                     _typesByFile.Remove(file);
                 }
             }
@@ -126,6 +137,7 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         if (changeType == FileChangeType.Deleted)
         {
             _typesByFile.Remove(filePath);
+            _fileSummaries.Remove(filePath);
             UpdateAssemblyForFile(filePath);
             _logger.Debug($"Types removed for deleted file: {filePath}");
             return;
@@ -147,13 +159,23 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
             List<TypeSummary> types = ExtractTypes(filePath, content);
             _typesByFile[filePath] = types;
 
+            FileSummary fileSummary = new(
+                filePath,
+                content.Length,
+                EstimateTokens(content));
+            _fileSummaries[filePath] = fileSummary;
+
             UpdateAssemblyForFile(filePath);
-            _logger.Debug($"Types updated for file: {filePath} ({types.Count} types)");
+            _logger.Debug($"File updated: {filePath} ({fileSummary.EstimatedTokens} tokens)");
         }
     }
 
     private Task HandleRazorFileChangeAsync(string filePath, FileChangeType changeType)
     {
+        if (changeType == FileChangeType.Deleted)
+        {
+            _fileSummaries.Remove(filePath);
+        }
         UpdateAssemblyForFile(filePath);
         _logger.Debug($"Razor file {changeType}: {filePath}");
         return Task.CompletedTask;
@@ -169,7 +191,7 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
                 return dir;
 
             string? parent = Path.GetDirectoryName(dir);
-            if (parent == dir) break; // root
+            if (parent == dir) break;
             dir = parent ?? "";
         }
 
@@ -184,14 +206,14 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         AssemblyInfo? assembly = _assembliesByPath.GetValueOrDefault(assemblyDir);
         if (assembly == null) return;
 
-        List<string> files = _fileSystem
-            .EnumerateFiles(assemblyDir, "*.cs")
-            .Concat(_fileSystem.EnumerateFiles(assemblyDir, "*.razor"))
+        List<FileSummary> files = _fileSummaries
+            .Where(kvp => kvp.Key.StartsWith(assemblyDir))
+            .Select(kvp => kvp.Value)
             .ToList();
 
-        List<TypeSummary> types = files
-            .Where(f => f.EndsWith(".cs") && _typesByFile.ContainsKey(f))
-            .SelectMany(f => _typesByFile[f])
+        List<TypeSummary> types = _typesByFile
+            .Where(kvp => kvp.Key.StartsWith(assemblyDir))
+            .SelectMany(kvp => kvp.Value)
             .ToList();
 
         AssemblyInfo updatedAssembly = assembly with
@@ -225,6 +247,7 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
 
         _assembliesByPath.Clear();
         _typesByFile.Clear();
+        _fileSummaries.Clear();
 
         foreach (string csproj in csprojFiles)
         {
@@ -237,7 +260,10 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
             }
         }
 
-        return new ProjectInfo("", "", _assembliesByPath.Values.ToList());
+        ProjectInfo project = new("", "", _assembliesByPath.Values.ToList());
+        _logger.Info($"Project analyzed: {project.Assemblies.Count} assemblies, {project.TotalTokens:N0} total tokens");
+
+        return project;
     }
 
     private async Task<AssemblyInfo?> AnalyzeAssemblyAsync(string csprojPath, CancellationToken ct)
@@ -262,24 +288,41 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         List<string> references = ExtractReferences(csproj);
         bool isTest = references.Any(r => TestIndicators.Any(t => r.Contains(t, StringComparison.OrdinalIgnoreCase)));
 
-        List<string> files = _fileSystem
+        List<string> filePaths = _fileSystem
             .EnumerateFiles(relativePath, "*.cs")
             .Concat(_fileSystem.EnumerateFiles(relativePath, "*.razor"))
             .ToList();
 
+        List<FileSummary> files = [];
         List<TypeSummary> types = [];
+
         if (!isTest)
         {
-            foreach (string file in files.Where(f => f.EndsWith(".cs")))
+            foreach (string file in filePaths)
             {
                 ct.ThrowIfCancellationRequested();
                 string? fileContent = await _fileSystem.ReadFileAsync(file, ct);
                 if (fileContent != null)
                 {
-                    List<TypeSummary> fileTypes = ExtractTypes(file, fileContent);
-                    types.AddRange(fileTypes);
-                    _typesByFile[file] = fileTypes;
+                    int tokens = EstimateTokens(fileContent);
+                    FileSummary fileSummary = new(file, fileContent.Length, tokens);
+                    files.Add(fileSummary);
+                    _fileSummaries[file] = fileSummary;
+
+                    if (file.EndsWith(".cs"))
+                    {
+                        List<TypeSummary> fileTypes = ExtractTypes(file, fileContent);
+                        types.AddRange(fileTypes);
+                        _typesByFile[file] = fileTypes;
+                    }
                 }
+            }
+        }
+        else
+        {
+            foreach (string file in filePaths)
+            {
+                files.Add(new FileSummary(file, 0, 0));
             }
         }
 
@@ -352,6 +395,36 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         return types;
     }
 
+    private static int EstimateTokens(string text)
+    {
+        if (string.IsNullOrEmpty(text)) return 0;
+
+        int tokens = 0;
+        bool inWord = false;
+
+        foreach (char c in text)
+        {
+            if (char.IsLetterOrDigit(c) || c == '_')
+            {
+                if (!inWord)
+                {
+                    tokens++;
+                    inWord = true;
+                }
+            }
+            else
+            {
+                inWord = false;
+                if (!char.IsWhiteSpace(c))
+                {
+                    tokens++;
+                }
+            }
+        }
+
+        return (int)(tokens * 1.25);
+    }
+
     public void Dispose()
     {
         _fileSystem.UnregisterObserver(this);
@@ -366,7 +439,15 @@ public sealed record ProjectInfo(
 {
     public IEnumerable<string> AllFiles => Assemblies
         .Where(a => !a.IsTestProject)
-        .SelectMany(a => a.Files);
+        .SelectMany(a => a.Files.Select(f => f.Path));
+
+    public int TotalTokens => Assemblies
+        .Where(a => !a.IsTestProject)
+        .Sum(a => a.TotalTokens);
+
+    public FileSummary? GetFile(string path) => Assemblies
+        .SelectMany(a => a.Files)
+        .FirstOrDefault(f => f.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 }
 
 public sealed record AssemblyInfo(
@@ -374,8 +455,16 @@ public sealed record AssemblyInfo(
     string RelativePath,
     bool IsTestProject,
     IReadOnlyList<string> References,
-    IReadOnlyList<string> Files,
-    IReadOnlyList<TypeSummary> Types);
+    IReadOnlyList<FileSummary> Files,
+    IReadOnlyList<TypeSummary> Types)
+{
+    public int TotalTokens => Files.Sum(f => f.EstimatedTokens);
+}
+
+public sealed record FileSummary(
+    string Path,
+    int SizeBytes,
+    int EstimatedTokens);
 
 public sealed record TypeSummary(
     string Namespace,
