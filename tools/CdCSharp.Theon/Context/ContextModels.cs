@@ -1,5 +1,7 @@
 ﻿using CdCSharp.Theon.AI;
 
+namespace CdCSharp.Theon.Context;
+
 public sealed record ContextQuery
 {
     public required string Question { get; init; }
@@ -22,6 +24,8 @@ public sealed class ContextState
     public Dictionary<string, string> FileContents { get; } = [];
     public Dictionary<string, object> ToolResults { get; } = [];
     public int EstimatedTokens { get; private set; }
+    public int DelegationDepth { get; private set; }
+    public Stack<string> DelegationChain { get; } = new();
 
     public void AddMessage(Message message)
     {
@@ -55,6 +59,24 @@ public sealed class ContextState
         FileContents.Clear();
         ToolResults.Clear();
         EstimatedTokens = 0;
+        DelegationDepth = 0;
+        DelegationChain.Clear();
+    }
+
+    public void IncrementDelegationDepth(string targetContext)
+    {
+        DelegationDepth++;
+        DelegationChain.Push(targetContext);
+    }
+
+    public void DecrementDelegationDepth()
+    {
+        if (DelegationDepth > 0)
+        {
+            DelegationDepth--;
+            if (DelegationChain.Count > 0)
+                DelegationChain.Pop();
+        }
     }
 
     private static int EstimateTokens(string text)
@@ -73,6 +95,8 @@ public sealed record ContextConfiguration
     public bool CanReadFiles { get; init; } = true;
     public bool CanSearchFiles { get; init; } = true;
     public bool CanListAssemblies { get; init; } = true;
+    public bool CanDelegateToContexts { get; init; } = false;
+    public int MaxDelegationDepth { get; init; } = 2;
 
     public static ContextConfiguration Stateless(string name, string systemPrompt) =>
         new()

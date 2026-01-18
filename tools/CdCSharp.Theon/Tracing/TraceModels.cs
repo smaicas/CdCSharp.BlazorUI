@@ -184,6 +184,12 @@ public sealed class ContextTrace
     [JsonPropertyName("files_loaded")]
     public List<FileLoadTrace> FilesLoaded { get; init; } = [];
 
+    [JsonPropertyName("delegated_contexts")]
+    public List<ContextTrace> DelegatedContexts { get; init; } = [];
+
+    [JsonPropertyName("delegation_depth")]
+    public int DelegationDepth { get; init; }
+
     [JsonPropertyName("total_tokens")]
     public int TotalTokens { get; set; }
 }

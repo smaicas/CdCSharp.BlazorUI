@@ -205,7 +205,8 @@ public sealed class Tracer : ITracer
             {
                 ContextName = contextName,
                 Question = question,
-                InitialFiles = initialFiles?.ToList() ?? []
+                InitialFiles = initialFiles?.ToList() ?? [],
+                DelegationDepth = 0
             };
             _stopwatch = Stopwatch.StartNew();
         }
@@ -294,6 +295,8 @@ public sealed class Tracer : ITracer
 
         public void RecordContextQuery(ContextTrace contextTrace)
         {
+            _trace.DelegatedContexts.Add(contextTrace);
+            _trace.TotalTokens += contextTrace.TotalTokens;
         }
 
         public void SetResult(ExecutionResult result)

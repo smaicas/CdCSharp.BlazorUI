@@ -33,6 +33,7 @@ public sealed class Context : IContext
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
     private readonly ITracer _tracer;
+    private readonly IContextFactory _contextFactory;
     private readonly JsonSerializerOptions _jsonOptions;
 
     public string Name => _config.Name;
@@ -45,7 +46,8 @@ public sealed class Context : IContext
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
-        ITracer tracer)
+        ITracer tracer,
+        IContextFactory contextFactory)
     {
         _config = config;
         _aiClient = aiClient;
@@ -53,6 +55,7 @@ public sealed class Context : IContext
         _fileSystem = fileSystem;
         _logger = logger;
         _tracer = tracer;
+        _contextFactory = contextFactory;
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -283,6 +286,7 @@ public sealed class Context : IContext
                 "read_file" => await ExecuteReadFile(args, tracerScope, ct),
                 "search_files" => await ExecuteSearchFiles(args),
                 "list_assembly_files" => await ExecuteListAssemblyFiles(args),
+                "delegate_to_context" => await ExecuteDelegateToContext(args, tracerScope, ct),
                 _ => JsonSerializer.Serialize(new { error = $"Unknown tool: {toolCall.Function.Name}" })
             };
         }
@@ -351,6 +355,94 @@ public sealed class Context : IContext
         });
     }
 
+    private async Task<string> ExecuteDelegateToContext(
+        Dictionary<string, JsonElement>? args,
+        ITracerScope? tracerScope,
+        CancellationToken ct)
+    {
+        string targetContextName = args?["target_context"].GetString()
+            ?? throw new ArgumentException("target_context is required");
+        string question = args["question"].GetString()
+            ?? throw new ArgumentException("question is required");
+        string? filesArg = args.TryGetValue("relevant_files", out JsonElement f) ? f.GetString() : null;
+
+        if (State.DelegationDepth >= _config.MaxDelegationDepth)
+        {
+            _logger.Warning($"Maximum delegation depth ({_config.MaxDelegationDepth}) reached in context '{_config.Name}'");
+            return JsonSerializer.Serialize(new
+            {
+                error = "Maximum delegation depth reached",
+                max_depth = _config.MaxDelegationDepth,
+                current_chain = string.Join(" → ", State.DelegationChain.Reverse())
+            });
+        }
+
+        if (State.DelegationChain.Contains(targetContextName))
+        {
+            _logger.Warning($"Circular delegation detected: {_config.Name} → {targetContextName}");
+            return JsonSerializer.Serialize(new
+            {
+                error = "Circular delegation detected",
+                chain = string.Join(" → ", State.DelegationChain.Reverse().Append(targetContextName))
+            });
+        }
+
+        try
+        {
+            if (!Enum.TryParse<PredefinedContext>(targetContextName, out PredefinedContext predefinedContext))
+            {
+                return JsonSerializer.Serialize(new { error = $"Unknown context: {targetContextName}" });
+            }
+
+            IContext targetContext = _contextFactory.GetPredefined(predefinedContext);
+
+            State.IncrementDelegationDepth(targetContextName);
+
+            List<string>? fileList = filesArg?.Split(',').Select(f => f.Trim()).ToList();
+
+            ContextQuery query = fileList != null
+                ? ContextQuery.WithFiles(question, fileList.ToArray())
+                : ContextQuery.Simple(question);
+
+            using ITracerScope delegationScope = _tracer.BeginContext(
+                targetContextName,
+                question,
+                fileList);
+
+            _logger.Debug($"Context '{_config.Name}' delegating to '{targetContextName}': {question[..Math.Min(50, question.Length)]}...");
+
+            ContextInfoResponse result = await ((Context)targetContext).AskAsync<ContextInfoResponse>(
+                query,
+                delegationScope,
+                ct);
+
+            ContextTrace contextTrace = delegationScope.GetContextTrace();
+            tracerScope?.RecordContextQuery(contextTrace);
+
+            return JsonSerializer.Serialize(new
+            {
+                delegated_to = targetContextName,
+                question,
+                answer = result.Answer,
+                files_examined = result.FilesExamined,
+                confidence = result.Confidence
+            }, _jsonOptions);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error($"Delegation to '{targetContextName}' failed", ex);
+            return JsonSerializer.Serialize(new
+            {
+                error = $"Delegation failed: {ex.Message}",
+                target_context = targetContextName
+            });
+        }
+        finally
+        {
+            State.DecrementDelegationDepth();
+        }
+    }
+
     private async Task LoadFileContent(string path, ITracerScope? tracerScope, CancellationToken ct)
     {
         if (State.FileContents.ContainsKey(path)) return;
@@ -368,4 +460,16 @@ public sealed class Context : IContext
     {
         return _projectContext.GetFileTokens(path);
     }
+}
+
+public sealed class ContextInfoResponse
+{
+    [System.Text.Json.Serialization.JsonPropertyName("answer")]
+    public string Answer { get; init; } = string.Empty;
+
+    [System.Text.Json.Serialization.JsonPropertyName("files_examined")]
+    public List<string> FilesExamined { get; init; } = [];
+
+    [System.Text.Json.Serialization.JsonPropertyName("confidence")]
+    public float Confidence { get; init; }
 }

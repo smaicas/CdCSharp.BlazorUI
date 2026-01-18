@@ -228,14 +228,25 @@ public static class TraceHtmlGenerator
         StringBuilder sb = new();
 
         sb.AppendLine($"""
-            <div class="context-trace">
-              <div class="context-header">
-                <span>📦</span> Context: {ctx.ContextName}
-              </div>
-              <div style="margin-bottom: 12px; color: var(--text-secondary);">
-                Question: {Encode(ctx.Question)}
-              </div>
-            """);
+        <div class="context-trace">
+          <div class="context-header">
+            <span>📦</span> Context: {ctx.ContextName}
+            {(ctx.DelegationDepth > 0 ? $"<span class=\"badge badge-delegation\">Depth: {ctx.DelegationDepth}</span>" : "")}
+          </div>
+          <div style="margin-bottom: 12px; color: var(--text-secondary);">
+            Question: {Encode(ctx.Question)}
+          </div>
+        """);
+
+        if (ctx.InitialFiles.Count > 0)
+        {
+            sb.AppendLine("<div style=\"margin-bottom: 12px;\"><strong>Initial Files:</strong><ul class=\"file-list\">");
+            foreach (string file in ctx.InitialFiles)
+            {
+                sb.AppendLine($"<li>{file}</li>");
+            }
+            sb.AppendLine("</ul></div>");
+        }
 
         if (ctx.FilesLoaded.Count > 0)
         {
@@ -250,6 +261,19 @@ public static class TraceHtmlGenerator
         foreach (LlmCallTrace llmCall in ctx.LlmCalls)
         {
             sb.AppendLine(RenderLlmCall(llmCall));
+        }
+
+        if (ctx.DelegatedContexts.Count > 0)
+        {
+            sb.AppendLine("<div style=\"margin-top: 16px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; border-left: 3px solid var(--accent-purple);\">");
+            sb.AppendLine("<strong style=\"color: var(--accent-purple);\">🔗 Delegated to Other Contexts:</strong>");
+
+            foreach (ContextTrace delegated in ctx.DelegatedContexts)
+            {
+                sb.AppendLine(RenderContextTrace(delegated));
+            }
+
+            sb.AppendLine("</div>");
         }
 
         sb.AppendLine("</div>");
@@ -620,6 +644,12 @@ pre {
 .expanded > .tool-header .chevron {
   transform: rotate(90deg);
 }
+
+.badge-delegation {
+  background: #581c87;
+  color: #e9d5ff;
+}
+
 </style>
 """;
 

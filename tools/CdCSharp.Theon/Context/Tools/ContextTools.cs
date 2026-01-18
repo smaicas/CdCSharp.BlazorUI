@@ -10,7 +10,7 @@ public static class ContextTools
         Function = new FunctionDefinition
         {
             Name = "read_file",
-            Description = "Read the content of a source file from the project",
+            Description = "Read the complete source code of a file from the project. Use this when you need to examine implementation details, understand algorithms, or analyze specific code patterns.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -19,7 +19,7 @@ public static class ContextTools
                     ["path"] = new()
                     {
                         Type = "string",
-                        Description = "Relative path to the file from project root"
+                        Description = "Relative path to the file from project root (e.g., 'Domain/Entities/User.cs')"
                     }
                 },
                 Required = ["path"],
@@ -34,7 +34,7 @@ public static class ContextTools
         Function = new FunctionDefinition
         {
             Name = "search_files",
-            Description = "Search for files matching a glob pattern",
+            Description = "Search for files matching a glob pattern. Useful for finding all files of a certain type (e.g., all repositories, all controllers, all tests).",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -43,7 +43,7 @@ public static class ContextTools
                     ["pattern"] = new()
                     {
                         Type = "string",
-                        Description = "Glob pattern to match files (e.g., '**/*Repository*.cs')"
+                        Description = "Glob pattern to match files (e.g., '**/*Repository*.cs' for all repository files, '**/Controllers/*.cs' for all controllers)"
                     }
                 },
                 Required = ["pattern"],
@@ -58,7 +58,7 @@ public static class ContextTools
         Function = new FunctionDefinition
         {
             Name = "list_assembly_files",
-            Description = "List all source files belonging to a specific assembly/project",
+            Description = "List all source files and type information for a specific assembly/project. Use this to understand the complete structure of a project.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -67,10 +67,45 @@ public static class ContextTools
                     ["assembly_name"] = new()
                     {
                         Type = "string",
-                        Description = "Name of the assembly (project name without .csproj)"
+                        Description = "Name of the assembly (project name without .csproj extension)"
                     }
                 },
                 Required = ["assembly_name"],
+                AdditionalProperties = false
+            }
+        }
+    };
+
+    public static Tool DelegateToContext => new()
+    {
+        Type = "function",
+        Function = new FunctionDefinition
+        {
+            Name = "delegate_to_context",
+            Description = "Delegate a specific question to another specialized context when you need expertise from a different domain. Use this to collaborate with other contexts rather than making assumptions.",
+            Parameters = new FunctionParameters
+            {
+                Type = "object",
+                Properties = new Dictionary<string, PropertyDefinition>
+                {
+                    ["target_context"] = new()
+                    {
+                        Type = "string",
+                        Description = "Name of the context to consult. Available: CodeExplorer (implementation details, algorithms, patterns), ArchitectureAnalyzer (structure, layers, design), DependencyAnalyzer (type relationships, dependencies)",
+                        Enum = ["CodeExplorer", "ArchitectureAnalyzer", "DependencyAnalyzer"]
+                    },
+                    ["question"] = new()
+                    {
+                        Type = "string",
+                        Description = "Specific, focused question to ask the target context. Be clear and precise."
+                    },
+                    ["relevant_files"] = new()
+                    {
+                        Type = "string",
+                        Description = "Optional: comma-separated list of file paths the target context should examine (e.g., 'Domain/User.cs,Infrastructure/UserRepository.cs')"
+                    }
+                },
+                Required = ["target_context", "question"],
                 AdditionalProperties = false
             }
         }
@@ -88,6 +123,9 @@ public static class ContextTools
 
         if (config.CanListAssemblies)
             tools.Add(ListAssemblyFiles);
+
+        if (config.CanDelegateToContexts)
+            tools.Add(DelegateToContext);
 
         return tools;
     }
