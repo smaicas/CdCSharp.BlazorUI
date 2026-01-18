@@ -32,6 +32,9 @@ public static class ServiceCollectionExtensions
         // Analysis
         services.AddSingleton<IProjectContext, ProjectContext>();
 
+        // SOLUCIÓN 1: Registro de SharedProjectKnowledge
+        services.AddSingleton<SharedProjectKnowledge>();
+
         // Context System
         services.AddSingleton<IContextFactory, ContextFactory>();
 

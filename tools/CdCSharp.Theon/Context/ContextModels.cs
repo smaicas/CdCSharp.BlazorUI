@@ -27,6 +27,11 @@ public sealed class ContextState
     public int DelegationDepth { get; private set; }
     public Stack<string> DelegationChain { get; } = new();
 
+    // SOLUCIÓN 4: Circuit breaker para delegación
+    private readonly HashSet<string> _queriedContexts = [];
+    private readonly Dictionary<string, int> _queryCountByContext = [];
+    private const int MaxQueriesPerContext = 3;
+
     public void AddMessage(Message message)
     {
         History.Add(message);
@@ -61,6 +66,8 @@ public sealed class ContextState
         EstimatedTokens = 0;
         DelegationDepth = 0;
         DelegationChain.Clear();
+        _queriedContexts.Clear();
+        _queryCountByContext.Clear();
     }
 
     public void IncrementDelegationDepth(string targetContext)
@@ -77,6 +84,44 @@ public sealed class ContextState
             if (DelegationChain.Count > 0)
                 DelegationChain.Pop();
         }
+    }
+
+    /// <summary>
+    /// Verifica si se puede delegar a un contexto específico con una pregunta.
+    /// SOLUCIÓN 4: Protección contra loops y queries repetidas.
+    /// </summary>
+    public bool CanDelegateTo(string targetContext, string question)
+    {
+        // Prevenir delegación circular
+        if (DelegationChain.Contains(targetContext))
+        {
+            return false;
+        }
+
+        // Prevenir queries repetidas al mismo contexto
+        string queryKey = $"{targetContext}:{question.GetHashCode()}";
+        if (_queriedContexts.Contains(queryKey))
+        {
+            return false;
+        }
+
+        // Limitar total de queries por contexto
+        if (_queryCountByContext.GetValueOrDefault(targetContext, 0) >= MaxQueriesPerContext)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Registra una delegación exitosa.
+    /// </summary>
+    public void RecordDelegation(string targetContext, string question)
+    {
+        string queryKey = $"{targetContext}:{question.GetHashCode()}";
+        _queriedContexts.Add(queryKey);
+        _queryCountByContext[targetContext] = _queryCountByContext.GetValueOrDefault(targetContext, 0) + 1;
     }
 
     private static int EstimateTokens(string text)
@@ -96,7 +141,10 @@ public sealed record ContextConfiguration
     public bool CanSearchFiles { get; init; } = true;
     public bool CanListAssemblies { get; init; } = true;
     public bool CanDelegateToContexts { get; init; } = false;
-    public int MaxDelegationDepth { get; init; } = 2;
+    public int MaxDelegationDepth { get; init; } = 15;
+
+    // SOLUCIÓN 1: Control de inclusión de estructura del proyecto
+    public bool IncludeProjectStructure { get; init; } = true;
 
     public static ContextConfiguration Stateless(string name, string systemPrompt) =>
         new()

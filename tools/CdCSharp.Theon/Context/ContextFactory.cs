@@ -26,7 +26,9 @@ public sealed class ContextFactory : IContextFactory
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
     private readonly ITracer _tracer;
+    private readonly SharedProjectKnowledge _sharedKnowledge;
 
+    // SOLUCIÓN 5: System prompts mejorados con anti-patrones y árbol de decisión
     private static readonly Dictionary<PredefinedContext, ContextConfiguration> PredefinedConfigs = new()
     {
         [PredefinedContext.CodeExplorer] = new ContextConfiguration
@@ -80,25 +82,6 @@ public sealed class ContextFactory : IContextFactory
                 - Span<T>, Memory<T>, and high-performance techniques
                 - Generic constraints and covariance/contravariance
                 
-                ## Tools at Your Disposal
-                
-                **read_file**: Load source code for detailed examination
-                - Use when you need to see actual implementation
-                - Essential for understanding algorithms and logic
-                
-                **search_files**: Find files matching patterns
-                - Use to discover related implementations
-                - Example: Find all repositories, all services, all validators
-                
-                **list_assembly_files**: Get all files in a specific project
-                - Use to understand project scope and structure
-                - Helpful for mapping all types in an assembly
-                
-                **delegate_to_context**: Consult other specialized contexts
-                - Delegate to DependencyAnalyzer when you need to understand type relationships
-                - Delegate to ArchitectureAnalyzer when you need structural/architectural context
-                - Use when you realize another context has better expertise for a sub-question
-                
                 ## Output Guidelines
                 - Be precise and technical, using correct C# terminology
                 - Distinguish between methods and functions, properties and fields, classes and records
@@ -110,7 +93,8 @@ public sealed class ContextFactory : IContextFactory
             IsStateful = true,
             MaxTokenBudget = 16000,
             CanDelegateToContexts = true,
-            MaxDelegationDepth = 2
+            MaxDelegationDepth = 2,
+            IncludeProjectStructure = true  // SOLUCIÓN 1: Siempre incluir estructura
         },
 
         [PredefinedContext.ArchitectureAnalyzer] = new ContextConfiguration
@@ -168,21 +152,6 @@ public sealed class ContextFactory : IContextFactory
                 - Options pattern for configuration
                 - Background services and hosted services
                 
-                ## Tools at Your Disposal
-                
-                **search_files**: Find all files matching architectural patterns
-                - Example: Find all repositories, all validators, all domain events
-                - Use to verify consistency across layers
-                
-                **list_assembly_files**: Examine entire project structures
-                - Essential for understanding assembly organization
-                - Use to map all types in each layer
-                
-                **delegate_to_context**: Consult other contexts for details
-                - Delegate to CodeExplorer when you need to examine specific implementations
-                - Delegate to DependencyAnalyzer when you need detailed dependency traces
-                - Use to verify your architectural analysis with concrete evidence
-                
                 ## Output Guidelines
                 - Provide clear architectural assessments with evidence
                 - Use textual diagrams (ASCII art, tree structures) when helpful
@@ -195,7 +164,8 @@ public sealed class ContextFactory : IContextFactory
             IsStateful = false,
             MaxTokenBudget = 20000,
             CanDelegateToContexts = true,
-            MaxDelegationDepth = 2
+            MaxDelegationDepth = 2,
+            IncludeProjectStructure = true  // SOLUCIÓN 1
         },
 
         [PredefinedContext.DependencyAnalyzer] = new ContextConfiguration
@@ -251,25 +221,6 @@ public sealed class ContextFactory : IContextFactory
                 - Extension method dependencies (often hidden)
                 - Static dependencies and global state
                 
-                ## Tools at Your Disposal
-                
-                **read_file**: Examine specific files to trace dependencies
-                - Load files to see constructor parameters, using statements
-                - Essential for understanding dependency chains
-                
-                **search_files**: Find all usages of a type or interface
-                - Example: Find all classes that implement IRepository
-                - Use to map all consumers of a service
-                
-                **list_assembly_files**: Get all types in an assembly
-                - Use to map all implementations and dependencies within a project
-                - Essential for assembly-level dependency analysis
-                
-                **delegate_to_context**: Consult other contexts
-                - Delegate to CodeExplorer to understand why a dependency exists
-                - Delegate to ArchitectureAnalyzer to assess if dependency direction violates architecture
-                - Use when you need implementation or architectural context
-                
                 ## Output Guidelines
                 - Provide clear dependency chains with arrows (A → B → C)
                 - Use visual representations (text-based diagrams) when helpful
@@ -282,7 +233,8 @@ public sealed class ContextFactory : IContextFactory
             IsStateful = false,
             MaxTokenBudget = 18000,
             CanDelegateToContexts = true,
-            MaxDelegationDepth = 2
+            MaxDelegationDepth = 2,
+            IncludeProjectStructure = true  // SOLUCIÓN 1
         }
     };
 
@@ -291,20 +243,22 @@ public sealed class ContextFactory : IContextFactory
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
-        ITracer tracer)
+        ITracer tracer,
+        SharedProjectKnowledge sharedKnowledge)
     {
         _aiClient = aiClient;
         _projectContext = projectContext;
         _fileSystem = fileSystem;
         _logger = logger;
         _tracer = tracer;
+        _sharedKnowledge = sharedKnowledge;
     }
 
     public IContext Create(ContextConfiguration config)
     {
         _logger.Debug($"Creating context: {config.Name} (stateful: {config.IsStateful})");
 
-        return new Context(config, _aiClient, _projectContext, _fileSystem, _logger, _tracer, this);
+        return new Context(config, _aiClient, _projectContext, _fileSystem, _logger, _tracer, this, _sharedKnowledge);
     }
 
     public IContext CreateDynamic(string name, string purpose, bool stateful = false)
@@ -317,9 +271,13 @@ public sealed class ContextFactory : IContextFactory
                 
                 Focus on answering questions related to this specific purpose.
                 Use the available tools to explore the codebase as needed.
+                
+                The Project Structure section in your system prompt shows you what assemblies and types exist.
+                Always check it before calling read_file to verify paths.
                 """,
             IsStateful = stateful,
-            MaxTokenBudget = 8000
+            MaxTokenBudget = 8000,
+            IncludeProjectStructure = true  // SOLUCIÓN 1: También para contextos dinámicos
         };
 
         return Create(config);

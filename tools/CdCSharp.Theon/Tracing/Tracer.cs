@@ -80,6 +80,7 @@ public sealed class Tracer : ITracer
                     {
                         Role = m.Role,
                         ContentPreview = Truncate(m.Content, PreviewLength),
+                        Content = m.Content ?? "",
                         ContentLength = m.Content?.Length ?? 0,
                         ToolCallId = m.ToolCallId,
                         HasToolCalls = m.ToolCalls?.Count > 0
@@ -104,6 +105,7 @@ public sealed class Tracer : ITracer
             {
                 FinishReason = choice.FinishReason ?? "unknown",
                 ContentPreview = Truncate(choice.Message.Content, PreviewLength),
+                Content = choice.Message.Content,
                 ContentLength = choice.Message.Content?.Length ?? 0,
                 ToolCalls = choice.Message.ToolCalls?.Select(tc => new ToolCallTrace
                 {
@@ -134,7 +136,8 @@ public sealed class Tracer : ITracer
                 ToolName = toolCall.Function.Name,
                 Arguments = toolCall.Function.Arguments,
                 DurationMs = (long)duration.TotalMilliseconds,
-                ResultPreview = Truncate(result, PreviewLength),
+                ContentPreview = Truncate(result, PreviewLength),
+                Content = result,
                 ResultLength = result.Length,
                 IsError = isError
             };
@@ -277,7 +280,7 @@ public sealed class Tracer : ITracer
                 ToolName = toolCall.Function.Name,
                 Arguments = toolCall.Function.Arguments,
                 DurationMs = (long)duration.TotalMilliseconds,
-                ResultPreview = Truncate(result, 200),
+                ContentPreview = Truncate(result, 200),
                 ResultLength = result.Length,
                 IsError = isError
             });

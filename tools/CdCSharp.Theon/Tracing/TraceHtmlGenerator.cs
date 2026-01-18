@@ -210,7 +210,7 @@ public static class TraceHtmlGenerator
                 </div>
                 <div>
                   <strong>Result:</strong>
-                  <pre style="background: var(--bg-tertiary); padding: 8px; border-radius: 4px; margin-top: 4px; overflow-x: auto;">{Encode(tool.ResultPreview)}</pre>
+                  <pre style="background: var(--bg-tertiary); padding: 8px; border-radius: 4px; margin-top: 4px; overflow-x: auto;">{Encode(tool.ContentPreview)}</pre>
                 </div>
             """);
 
