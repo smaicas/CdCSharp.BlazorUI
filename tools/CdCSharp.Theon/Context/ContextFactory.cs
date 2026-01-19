@@ -28,7 +28,6 @@ public sealed class ContextFactory : IContextFactory
     private readonly ITracer _tracer;
     private readonly SharedProjectKnowledge _sharedKnowledge;
 
-    // SOLUCIÓN 5: System prompts mejorados con anti-patrones y árbol de decisión
     private static readonly Dictionary<PredefinedContext, ContextConfiguration> PredefinedConfigs = new()
     {
         [PredefinedContext.CodeExplorer] = new ContextConfiguration
@@ -94,7 +93,7 @@ public sealed class ContextFactory : IContextFactory
             MaxTokenBudget = 16000,
             CanDelegateToContexts = true,
             MaxDelegationDepth = 2,
-            IncludeProjectStructure = true  // SOLUCIÓN 1: Siempre incluir estructura
+            IncludeProjectStructure = true
         },
 
         [PredefinedContext.ArchitectureAnalyzer] = new ContextConfiguration
@@ -165,7 +164,7 @@ public sealed class ContextFactory : IContextFactory
             MaxTokenBudget = 20000,
             CanDelegateToContexts = true,
             MaxDelegationDepth = 2,
-            IncludeProjectStructure = true  // SOLUCIÓN 1
+            IncludeProjectStructure = true
         },
 
         [PredefinedContext.DependencyAnalyzer] = new ContextConfiguration
@@ -234,7 +233,7 @@ public sealed class ContextFactory : IContextFactory
             MaxTokenBudget = 18000,
             CanDelegateToContexts = true,
             MaxDelegationDepth = 2,
-            IncludeProjectStructure = true  // SOLUCIÓN 1
+            IncludeProjectStructure = true
         }
     };
 
@@ -277,7 +276,7 @@ public sealed class ContextFactory : IContextFactory
                 """,
             IsStateful = stateful,
             MaxTokenBudget = 8000,
-            IncludeProjectStructure = true  // SOLUCIÓN 1: También para contextos dinámicos
+            IncludeProjectStructure = true
         };
 
         return Create(config);

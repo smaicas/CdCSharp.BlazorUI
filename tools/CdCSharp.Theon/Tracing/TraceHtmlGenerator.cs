@@ -34,78 +34,78 @@ public static class TraceHtmlGenerator
     }
 
     private static string GetScripts() => """
-        <script>
-          document.querySelectorAll('.section-header').forEach(header => {
-            header.addEventListener('click', () => {
-              header.parentElement.classList.toggle('expanded');
-            });
-          });
-          
-          document.querySelectorAll('.llm-header, .tool-header').forEach(header => {
-            header.addEventListener('click', (e) => {
-              e.stopPropagation();
-              header.parentElement.classList.toggle('expanded');
-            });
-          });
-          
-          document.querySelectorAll('.section').forEach(s => s.classList.add('expanded'));
-        </script>
-        """;
+<script>
+  document.querySelectorAll('.section-header').forEach(header => {
+    header.addEventListener('click', () => {
+      header.parentElement.classList.toggle('expanded');
+    });
+  });
+
+  document.querySelectorAll('.llm-header, .tool-header').forEach(header => {
+    header.addEventListener('click', (e) => {
+      e.stopPropagation();
+      header.parentElement.classList.toggle('expanded');
+    });
+  });
+
+  document.querySelectorAll('.section').forEach(s => s.classList.add('expanded'));
+</script>
+""";
 
     private static string RenderHeader(ExecutionTrace trace) => $"""
-        <div class="header">
-          <h1>🔍 Execution Trace</h1>
-          <div class="stats">
-            <div class="stat">
-              <div class="stat-value">{trace.DurationMs}ms</div>
-              <div class="stat-label">Duration</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">{trace.TotalTokens:N0}</div>
-              <div class="stat-label">Total Tokens</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">{trace.TotalLlmCalls}</div>
-              <div class="stat-label">LLM Calls</div>
-            </div>
-            <div class="stat">
-              <div class="stat-value">{trace.Orchestrator.ToolExecutions.Count}</div>
-              <div class="stat-label">Tool Executions</div>
-            </div>
-          </div>
-          <div style="margin-top: 12px; color: var(--text-secondary); font-size: 0.85rem;">
-            ID: {trace.Id} | {trace.Timestamp:yyyy-MM-dd HH:mm:ss} UTC
-          </div>
-        </div>
-        """;
+<div class="header">
+  <h1>🔍 Execution Trace</h1>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-value">{trace.DurationMs}ms</div>
+      <div class="stat-label">Duration</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">{trace.TotalTokens:N0}</div>
+      <div class="stat-label">Total Tokens</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">{trace.TotalLlmCalls}</div>
+      <div class="stat-label">LLM Calls</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">{trace.Orchestrator.ToolExecutions.Count}</div>
+      <div class="stat-label">Tool Executions</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;color:var(--text-secondary);font-size:.85rem">
+    ID: {trace.Id} | {trace.Timestamp:yyyy-MM-dd HH:mm:ss} UTC
+  </div>
+</div>
+""";
 
     private static string RenderUserInput(ExecutionTrace trace) => $"""
-        <div class="section expanded">
-          <div class="section-header">
-            <div class="section-icon icon-user">👤</div>
-            <div class="section-title">User Input</div>
-          </div>
-          <div class="section-content">
-            <div class="message user">
-              <div class="message-content">{Encode(trace.UserInput)}</div>
-            </div>
-          </div>
-        </div>
-        """;
+<div class="section expanded">
+  <div class="section-header">
+    <div class="section-icon icon-user">👤</div>
+    <div class="section-title">User Input</div>
+  </div>
+  <div class="section-content">
+    <div class="message user">
+      <div class="message-content">{Encode(trace.UserInput)}</div>
+    </div>
+  </div>
+</div>
+""";
 
     private static string RenderOrchestrator(OrchestratorTrace orchestrator)
     {
         StringBuilder sb = new();
 
         sb.AppendLine("""
-            <div class="section expanded">
-              <div class="section-header">
-                <div class="section-icon icon-orchestrator">🎭</div>
-                <div class="section-title">Orchestrator</div>
-                <span class="chevron">▶</span>
-              </div>
-              <div class="section-content">
-            """);
+<div class="section expanded">
+  <div class="section-header">
+    <div class="section-icon icon-orchestrator">🎭</div>
+    <div class="section-title">Orchestrator</div>
+    <span class="chevron">▶</span>
+  </div>
+  <div class="section-content">
+""");
 
         int toolIndex = 0;
         foreach (LlmCallTrace llmCall in orchestrator.LlmCalls)
@@ -138,33 +138,31 @@ public static class TraceHtmlGenerator
             : "";
 
         sb.AppendLine($"""
-            <div class="llm-call">
-              <div class="llm-header">
-                <div class="section-icon icon-llm">🤖</div>
-                <div style="flex:1">
-                  <strong>LLM Call #{call.Index + 1}</strong>
-                  <span style="color: var(--text-secondary); margin-left: 8px;">{call.Request.Model}</span>
-                </div>
-                <span class="badge badge-duration">{call.DurationMs}ms</span>
-                {tokensInfo}
-                <span class="chevron">▶</span>
-              </div>
-              <div class="llm-content">
-                <h4 style="margin-bottom: 12px; color: var(--accent-blue);">Request ({call.Request.MessageCount} messages)</h4>
-            """);
+<div class="llm-call">
+  <div class="llm-header">
+    <div class="section-icon icon-llm">🤖</div>
+    <div style="flex:1">
+      <strong>LLM Call #{call.Index + 1}</strong>
+      <span style="color:var(--text-secondary);margin-left:8px">{call.Request.Model}</span>
+    </div>
+    <span class="badge badge-duration">{call.DurationMs}ms</span>
+    {tokensInfo}
+    <span class="chevron">▶</span>
+  </div>
+  <div class="llm-content">
+    <h4 style="margin-bottom:12px;color:var(--accent-blue)">Request ({call.Request.MessageCount} messages)</h4>
+""");
 
         foreach (MessageTrace msg in call.Request.Messages)
-        {
             sb.AppendLine(RenderMessage(msg));
-        }
 
         sb.AppendLine($"""
-                <h4 style="margin: 16px 0 12px; color: var(--accent-green);">Response</h4>
-                <div class="message assistant">
-                  <div class="message-role">Finish: {call.Response.FinishReason}</div>
-                  <div class="message-content">{Encode(call.Response.ContentPreview)}</div>
-                </div>
-            """);
+    <h4 style="margin:16px 0 12px;color:var(--accent-green)">Response</h4>
+    <div class="message assistant">
+      <div class="message-role">Finish: {call.Response.FinishReason}</div>
+      <div class="message-content">{Encode(call.Response.Content)}</div>
+    </div>
+""");
 
         if (call.Response.ToolCalls?.Count > 0)
         {
@@ -172,11 +170,11 @@ public static class TraceHtmlGenerator
             foreach (ToolCallTrace tc in call.Response.ToolCalls)
             {
                 sb.AppendLine($"""
-                    <div class="tool-call-item">
-                      <span class="tool-name">{tc.Name}</span>
-                      <div class="tool-args">{Encode(tc.Arguments)}</div>
-                    </div>
-                    """);
+<div class="tool-call-item">
+  <span class="tool-name">{tc.Name}</span>
+  <div class="tool-args">{Encode(tc.Arguments)}</div>
+</div>
+""");
             }
             sb.AppendLine("</div>");
         }
@@ -193,31 +191,23 @@ public static class TraceHtmlGenerator
         string iconClass = tool.IsError ? "icon-error" : "icon-tool";
 
         sb.AppendLine($"""
-            <div class="tool-execution">
-              <div class="tool-header">
-                <div class="section-icon {iconClass}">🔧</div>
-                <div style="flex:1">
-                  <strong>{tool.ToolName}</strong>
-                </div>
-                <span class="badge badge-duration">{tool.DurationMs}ms</span>
-                {errorBadge}
-                <span class="chevron">▶</span>
-              </div>
-              <div class="tool-content">
-                <div style="margin-bottom: 12px;">
-                  <strong>Arguments:</strong>
-                  <pre style="background: var(--bg-tertiary); padding: 8px; border-radius: 4px; margin-top: 4px; overflow-x: auto;">{Encode(tool.Arguments)}</pre>
-                </div>
-                <div>
-                  <strong>Result:</strong>
-                  <pre style="background: var(--bg-tertiary); padding: 8px; border-radius: 4px; margin-top: 4px; overflow-x: auto;">{Encode(tool.ContentPreview)}</pre>
-                </div>
-            """);
+<div class="tool-execution">
+  <div class="tool-header">
+    <div class="section-icon {iconClass}">🔧</div>
+    <div style="flex:1"><strong>{tool.ToolName}</strong></div>
+    <span class="badge badge-duration">{tool.DurationMs}ms</span>
+    {errorBadge}
+    <span class="chevron">▶</span>
+  </div>
+  <div class="tool-content">
+    <strong>Arguments:</strong>
+    <pre>{Encode(tool.Arguments)}</pre>
+    <strong>Result:</strong>
+    <pre>{Encode(tool.Content)}</pre>
+""");
 
         if (tool.ContextTrace != null)
-        {
             sb.AppendLine(RenderContextTrace(tool.ContextTrace));
-        }
 
         sb.AppendLine("</div></div>");
         return sb.ToString();
@@ -228,53 +218,16 @@ public static class TraceHtmlGenerator
         StringBuilder sb = new();
 
         sb.AppendLine($"""
-        <div class="context-trace">
-          <div class="context-header">
-            <span>📦</span> Context: {ctx.ContextName}
-            {(ctx.DelegationDepth > 0 ? $"<span class=\"badge badge-delegation\">Depth: {ctx.DelegationDepth}</span>" : "")}
-          </div>
-          <div style="margin-bottom: 12px; color: var(--text-secondary);">
-            Question: {Encode(ctx.Question)}
-          </div>
-        """);
-
-        if (ctx.InitialFiles.Count > 0)
-        {
-            sb.AppendLine("<div style=\"margin-bottom: 12px;\"><strong>Initial Files:</strong><ul class=\"file-list\">");
-            foreach (string file in ctx.InitialFiles)
-            {
-                sb.AppendLine($"<li>{file}</li>");
-            }
-            sb.AppendLine("</ul></div>");
-        }
-
-        if (ctx.FilesLoaded.Count > 0)
-        {
-            sb.AppendLine("<div style=\"margin-bottom: 12px;\"><strong>Files Loaded:</strong><ul class=\"file-list\">");
-            foreach (FileLoadTrace file in ctx.FilesLoaded)
-            {
-                sb.AppendLine($"<li>{file.Path} ({file.EstimatedTokens} tokens)</li>");
-            }
-            sb.AppendLine("</ul></div>");
-        }
+<div class="context-trace">
+  <div class="context-header">📦 Context: {ctx.ContextName}</div>
+  <div>Question: {Encode(ctx.Question)}</div>
+""");
 
         foreach (LlmCallTrace llmCall in ctx.LlmCalls)
-        {
             sb.AppendLine(RenderLlmCall(llmCall));
-        }
 
-        if (ctx.DelegatedContexts.Count > 0)
-        {
-            sb.AppendLine("<div style=\"margin-top: 16px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; border-left: 3px solid var(--accent-purple);\">");
-            sb.AppendLine("<strong style=\"color: var(--accent-purple);\">🔗 Delegated to Other Contexts:</strong>");
-
-            foreach (ContextTrace delegated in ctx.DelegatedContexts)
-            {
-                sb.AppendLine(RenderContextTrace(delegated));
-            }
-
-            sb.AppendLine("</div>");
-        }
+        foreach (ContextTrace delegated in ctx.DelegatedContexts)
+            sb.AppendLine(RenderContextTrace(delegated));
 
         sb.AppendLine("</div>");
         return sb.ToString();
@@ -283,81 +236,38 @@ public static class TraceHtmlGenerator
     private static string RenderMessage(MessageTrace msg)
     {
         string roleClass = msg.Role.ToLowerInvariant();
-        string toolInfo = !string.IsNullOrEmpty(msg.ToolCallId) ? $" (tool_call_id: {msg.ToolCallId})" : "";
+        string toolInfo = msg.ToolCallId != null ? $" (tool_call_id: {msg.ToolCallId})" : "";
 
         return $"""
-            <div class="message {roleClass}">
-              <div class="message-role">{msg.Role}{toolInfo}</div>
-              <div class="message-content">{Encode(msg.ContentPreview)}</div>
-              {(msg.ContentLength > 200 ? $"<div style=\"color: var(--text-secondary); font-size: 0.8rem; margin-top: 4px;\">... ({msg.ContentLength} chars total)</div>" : "")}
-            </div>
-            """;
+<div class="message {roleClass}">
+  <div class="message-role">{msg.Role}{toolInfo}</div>
+  <div class="message-content">{Encode(msg.Content)}</div>
+</div>
+""";
     }
 
     private static string RenderResult(ExecutionResult result)
     {
-        StringBuilder sb = new();
-
-        string iconClass = result.Success ? "icon-result" : "icon-error";
         string icon = result.Success ? "✅" : "❌";
+        string cls = result.Success ? "icon-result" : "icon-error";
 
-        sb.AppendLine($"""
-            <div class="section expanded">
-              <div class="section-header">
-                <div class="section-icon {iconClass}">{icon}</div>
-                <div class="section-title">Result</div>
-              </div>
-              <div class="section-content">
-                <div class="message assistant">
-                  <div class="message-content">{Encode(result.MessagePreview)}</div>
-                </div>
-            """);
-
-        if (result.CreatedFiles.Count > 0)
-        {
-            sb.AppendLine("<div class=\"result-section\"><strong>Created Files:</strong><ul class=\"file-list\">");
-            foreach (string file in result.CreatedFiles)
-            {
-                sb.AppendLine($"<li>📄 {file}</li>");
-            }
-            sb.AppendLine("</ul></div>");
-        }
-
-        if (result.GeneratedOutputs.Count > 0)
-        {
-            sb.AppendLine("<div class=\"result-section\"><strong>Generated Outputs:</strong><ul class=\"file-list\">");
-            foreach (string file in result.GeneratedOutputs)
-            {
-                sb.AppendLine($"<li>📝 {file}</li>");
-            }
-            sb.AppendLine("</ul></div>");
-        }
-
-        if (result.ProposedChanges.Count > 0)
-        {
-            sb.AppendLine("<div class=\"result-section\"><strong>Proposed Changes:</strong><ul class=\"file-list\">");
-            foreach (ProposedChangeTrace change in result.ProposedChanges)
-            {
-                sb.AppendLine($"<li>[{change.Id}] {change.ChangeType}: {change.Path} - {change.Description}</li>");
-            }
-            sb.AppendLine("</ul></div>");
-        }
-
-        if (!string.IsNullOrEmpty(result.Error))
-        {
-            sb.AppendLine($"""
-                <div class="result-section" style="border: 1px solid var(--accent-red);">
-                  <strong style="color: var(--accent-red);">Error:</strong>
-                  <pre style="margin-top: 8px;">{Encode(result.Error)}</pre>
-                </div>
-                """);
-        }
-
-        sb.AppendLine("</div></div>");
-        return sb.ToString();
+        return $"""
+<div class="section expanded">
+  <div class="section-header">
+    <div class="section-icon {cls}">{icon}</div>
+    <div class="section-title">Result</div>
+  </div>
+  <div class="section-content">
+    <div class="message assistant">
+      <div class="message-content">{Encode(result.MessagePreview)}</div>
+    </div>
+  </div>
+</div>
+""";
     }
 
-    private static string Encode(string? text) => HttpUtility.HtmlEncode(text ?? string.Empty);
+    private static string Encode(string? text) =>
+        HttpUtility.HtmlEncode(text ?? string.Empty);
 
     private static string GetStyles() => """
 <style>

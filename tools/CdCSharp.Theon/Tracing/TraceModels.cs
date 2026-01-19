@@ -79,9 +79,6 @@ public sealed class MessageTrace
     [JsonPropertyName("role")]
     public string Role { get; init; } = string.Empty;
 
-    [JsonPropertyName("content_preview")]
-    public string ContentPreview { get; init; } = string.Empty;
-
     [JsonPropertyName("content")]
     public string Content { get; init; } = string.Empty;
 
@@ -99,9 +96,6 @@ public sealed class LlmResponseTrace
 {
     [JsonPropertyName("finish_reason")]
     public string FinishReason { get; init; } = string.Empty;
-
-    [JsonPropertyName("content_preview")]
-    public string? ContentPreview { get; init; }
 
     [JsonPropertyName("content")]
     public string? Content { get; init; }
@@ -156,9 +150,6 @@ public sealed class ToolExecutionTrace
 
     [JsonPropertyName("duration_ms")]
     public long DurationMs { get; set; }
-
-    [JsonPropertyName("content_preview")]
-    public string ContentPreview { get; set; } = string.Empty;
 
     [JsonPropertyName("content")]
     public string Content { get; set; } = string.Empty;

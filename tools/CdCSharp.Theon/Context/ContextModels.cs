@@ -27,7 +27,6 @@ public sealed class ContextState
     public int DelegationDepth { get; private set; }
     public Stack<string> DelegationChain { get; } = new();
 
-    // SOLUCIÓN 4: Circuit breaker para delegación
     private readonly HashSet<string> _queriedContexts = [];
     private readonly Dictionary<string, int> _queryCountByContext = [];
     private const int MaxQueriesPerContext = 3;
@@ -88,7 +87,6 @@ public sealed class ContextState
 
     /// <summary>
     /// Verifica si se puede delegar a un contexto específico con una pregunta.
-    /// SOLUCIÓN 4: Protección contra loops y queries repetidas.
     /// </summary>
     public bool CanDelegateTo(string targetContext, string question)
     {
@@ -142,8 +140,6 @@ public sealed record ContextConfiguration
     public bool CanListAssemblies { get; init; } = true;
     public bool CanDelegateToContexts { get; init; } = false;
     public int MaxDelegationDepth { get; init; } = 15;
-
-    // SOLUCIÓN 1: Control de inclusión de estructura del proyecto
     public bool IncludeProjectStructure { get; init; } = true;
 
     public static ContextConfiguration Stateless(string name, string systemPrompt) =>

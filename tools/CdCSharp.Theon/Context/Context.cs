@@ -221,19 +221,18 @@ public sealed class Context : IContext
 
     private async Task<string> BuildSystemPrompt()
     {
-        // SOLUCIÓN 1: Incluir estructura compartida del proyecto
         string projectStructure = _config.IncludeProjectStructure
             ? _sharedKnowledge.GetCompactSummary()
             : "Project structure not loaded. Use explore_project_structure to view it.";
 
         string loadedFilesContent = FormatLoadedFiles();
 
-        // SOLUCIÓN 5: Anti-patrones y árbol de decisión
         string antiPatterns = """
             
             ## ⚠️ Common Mistakes to Avoid
             
             ❌ **DON'T** call read_file with a directory path (e.g., "Domain", "Infrastructure")
+            ❌ **DON'T** call read_file patterns (e.g., "*", "*.cs")
             ✅ **DO** use search_files or explore_project_structure first to find specific files
             
             ❌ **DON'T** assume file locations without checking the Project Structure above
@@ -314,7 +313,6 @@ public sealed class Context : IContext
                 toolCall.Function.Arguments,
                 _jsonOptions);
 
-            // SOLUCIÓN 3: Validación proactiva de tool calls
             ToolCallValidation validation = _toolValidator.Validate(toolCall.Function.Name, args);
 
             if (!validation.IsValid)
@@ -378,7 +376,7 @@ public sealed class Context : IContext
     {
         string pattern = args?["pattern"].GetString() ?? throw new ArgumentException("pattern is required");
 
-        List<string> files = _fileSystem.EnumerateFiles(null, pattern).Take(50).ToList();
+        List<string> files = _fileSystem.EnumerateFiles(null, pattern).ToList();
 
         return JsonSerializer.Serialize(new { pattern, files, count = files.Count }, _jsonOptions);
     }
@@ -404,7 +402,6 @@ public sealed class Context : IContext
         }, _jsonOptions);
     }
 
-    // SOLUCIÓN 2: Nueva herramienta explore_project_structure
     private async Task<string> ExecuteExploreProjectStructure(Dictionary<string, JsonElement>? args)
     {
         string detailLevel = args?.TryGetValue("detail_level", out JsonElement level) == true
@@ -440,7 +437,7 @@ public sealed class Context : IContext
             ?? throw new ArgumentException("question is required");
         string? filesArg = args.TryGetValue("relevant_files", out JsonElement f) ? f.GetString() : null;
 
-        // SOLUCIÓN 4: Circuit breaker para delegación
+        // Delegation circuit breaker
         if (!State.CanDelegateTo(targetContextName, question))
         {
             if (State.DelegationDepth >= _config.MaxDelegationDepth)

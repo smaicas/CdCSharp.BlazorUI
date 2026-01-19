@@ -79,7 +79,6 @@ public sealed class Tracer : ITracer
                     Messages = request.Messages.Select(m => new MessageTrace
                     {
                         Role = m.Role,
-                        ContentPreview = Truncate(m.Content, PreviewLength),
                         Content = m.Content ?? "",
                         ContentLength = m.Content?.Length ?? 0,
                         ToolCallId = m.ToolCallId,
@@ -104,7 +103,6 @@ public sealed class Tracer : ITracer
             currentCall.Response = new LlmResponseTrace
             {
                 FinishReason = choice.FinishReason ?? "unknown",
-                ContentPreview = Truncate(choice.Message.Content, PreviewLength),
                 Content = choice.Message.Content,
                 ContentLength = choice.Message.Content?.Length ?? 0,
                 ToolCalls = choice.Message.ToolCalls?.Select(tc => new ToolCallTrace
@@ -136,7 +134,6 @@ public sealed class Tracer : ITracer
                 ToolName = toolCall.Function.Name,
                 Arguments = toolCall.Function.Arguments,
                 DurationMs = (long)duration.TotalMilliseconds,
-                ContentPreview = Truncate(result, PreviewLength),
                 Content = result,
                 ResultLength = result.Length,
                 IsError = isError
@@ -226,7 +223,7 @@ public sealed class Tracer : ITracer
                     Messages = request.Messages.Select(m => new MessageTrace
                     {
                         Role = m.Role,
-                        ContentPreview = Truncate(m.Content, 200),
+                        Content = m.Content,
                         ContentLength = m.Content?.Length ?? 0,
                         ToolCallId = m.ToolCallId,
                         HasToolCalls = m.ToolCalls?.Count > 0
@@ -250,7 +247,7 @@ public sealed class Tracer : ITracer
             currentCall.Response = new LlmResponseTrace
             {
                 FinishReason = choice.FinishReason ?? "unknown",
-                ContentPreview = Truncate(choice.Message.Content, 200),
+                Content = choice.Message.Content,
                 ContentLength = choice.Message.Content?.Length ?? 0,
                 ToolCalls = choice.Message.ToolCalls?.Select(tc => new ToolCallTrace
                 {
@@ -280,7 +277,7 @@ public sealed class Tracer : ITracer
                 ToolName = toolCall.Function.Name,
                 Arguments = toolCall.Function.Arguments,
                 DurationMs = (long)duration.TotalMilliseconds,
-                ContentPreview = Truncate(result, 200),
+                Content = result,
                 ResultLength = result.Length,
                 IsError = isError
             });

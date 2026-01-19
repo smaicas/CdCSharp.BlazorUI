@@ -76,7 +76,6 @@ public static class ContextTools
         }
     };
 
-    // SOLUCIÓN 2: Nueva herramienta explore_project_structure
     public static Tool ExploreProjectStructure => new()
     {
         Type = "function",
@@ -150,7 +149,6 @@ public static class ContextTools
         if (config.CanListAssemblies)
             tools.Add(ListAssemblyFiles);
 
-        // SOLUCIÓN 2: Siempre incluir explore_project_structure
         tools.Add(ExploreProjectStructure);
 
         if (config.CanDelegateToContexts)
