@@ -91,8 +91,12 @@ public sealed class OrchestratorState
         PlanStep? step = CurrentPlan?.Steps.FirstOrDefault(s => s.Order == stepOrder);
         if (step != null)
         {
-            step.Status = PlanStepStatus.Completed;
-            step.Result = result;
+            step.CallCount++;
+            if (step.IsComplete)
+            {
+                step.Status = PlanStepStatus.Completed;
+            }
+            step.Results.Add(result);
         }
     }
 
@@ -102,7 +106,7 @@ public sealed class OrchestratorState
         if (step != null)
         {
             step.Status = PlanStepStatus.Failed;
-            step.Result = error;
+            step.Results.Add(error);
         }
     }
 

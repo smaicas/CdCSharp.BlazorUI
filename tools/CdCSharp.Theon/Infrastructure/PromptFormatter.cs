@@ -135,13 +135,41 @@ public sealed class PromptFormatter
             return string.Empty;
 
         StringBuilder sb = new();
-        sb.AppendLine("## Current Execution Plan");
+        sb.AppendLine("## ⚠️ ACTIVE EXECUTION PLAN - FOLLOW STEPS IN ORDER ⚠️");
         sb.AppendLine($"**Task Types**: {string.Join(", ", plan.TaskTypes)}");
         sb.AppendLine($"**Reasoning**: {plan.Reasoning}");
         sb.AppendLine();
-        sb.AppendLine("### Steps:");
 
-        foreach (PlanStep? step in plan.Steps.OrderBy(s => s.Order))
+        // Find next pending step
+        PlanStep? nextStep = plan.Steps
+            .Where(s => s.Status == PlanStepStatus.Pending)
+            .OrderBy(s => s.Order)
+            .FirstOrDefault();
+
+        if (nextStep != null)
+        {
+            sb.AppendLine("### 🎯 NEXT ACTION REQUIRED:");
+            sb.AppendLine($"**Step {nextStep.Order}/{plan.Steps.Count}**: Query [{nextStep.TargetContext}]");
+            sb.AppendLine($"**Question**: {nextStep.Question}");
+            sb.AppendLine($"**Purpose**: {nextStep.Purpose}");
+            if (nextStep.SuggestedFiles.Count > 0)
+            {
+                sb.AppendLine($"**Files to examine**: {string.Join(", ", nextStep.SuggestedFiles.Take(5))}");
+                if (nextStep.SuggestedFiles.Count > 5)
+                    sb.AppendLine($"   ... and {nextStep.SuggestedFiles.Count - 5} more");
+            }
+            sb.AppendLine();
+            sb.AppendLine("**YOU MUST** call query_context with:");
+            sb.AppendLine($"- context_name: \"{nextStep.TargetContext}\"");
+            sb.AppendLine($"- question: \"{nextStep.Question}\"");
+            if (nextStep.SuggestedFiles.Count > 0)
+                sb.AppendLine($"- files: \"{string.Join(",", nextStep.SuggestedFiles)}\"");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("### All Steps:");
+
+        foreach (PlanStep step in plan.Steps.OrderBy(s => s.Order))
         {
             string status = step.Status switch
             {
@@ -151,22 +179,32 @@ public sealed class PromptFormatter
                 _ => "○"
             };
 
-            sb.AppendLine($"{status} **Step {step.Order}**: [{step.TargetContext}] {step.Purpose}");
+            string highlight = step.Order == nextStep?.Order ? " ← DO THIS NOW" : "";
+
+            // Show progress for multi-call steps
+            string callProgress = step.AllowMultipleCalls
+                ? $" ({step.CallCount}/{step.MaxCalls} calls)"
+                : "";
+
+            sb.AppendLine($"{status} **Step {step.Order}/{plan.Steps.Count}**: [{step.TargetContext}] {step.Purpose}{callProgress}{highlight}");
             sb.AppendLine($"   Question: {step.Question}");
 
             if (step.SuggestedFiles.Count > 0)
             {
-                sb.AppendLine($"   Files: {string.Join(", ", step.SuggestedFiles.Take(5))}");
-                if (step.SuggestedFiles.Count > 5)
-                    sb.AppendLine($"   ... and {step.SuggestedFiles.Count - 5} more");
+                sb.AppendLine($"   Files: {string.Join(", ", step.SuggestedFiles.Take(3))}");
+                if (step.SuggestedFiles.Count > 3)
+                    sb.AppendLine($"   ... and {step.SuggestedFiles.Count - 3} more");
             }
 
-            if (step.Status == PlanStepStatus.Completed && step.Result != null)
+            if (step.Results.Count > 0)
             {
-                string preview = step.Result.Length > 200
-                    ? step.Result[..200] + "..."
-                    : step.Result;
-                sb.AppendLine($"   Result: {preview}");
+                for (int i = 0; i < step.Results.Count; i++)
+                {
+                    string preview = step.Results[i].Length > 100
+                        ? step.Results[i][..100] + "..."
+                        : step.Results[i];
+                    sb.AppendLine($"   ✓ Call {i + 1}: {preview}");
+                }
             }
             sb.AppendLine();
         }
@@ -175,6 +213,15 @@ public sealed class PromptFormatter
         foreach (ExpectedOutput output in plan.ExpectedOutputs)
         {
             sb.AppendLine($"- [{output.Type}] {output.TaskType}: {output.Description}");
+        }
+
+        int completed = plan.Steps.Count(s => s.Status == PlanStepStatus.Completed);
+        sb.AppendLine();
+        sb.AppendLine($"**Progress**: {completed}/{plan.Steps.Count} steps completed");
+        if (completed == plan.Steps.Count)
+        {
+            sb.AppendLine();
+            sb.AppendLine("✅ ALL STEPS COMPLETE - You may now use generate_output_file");
         }
 
         return sb.ToString();

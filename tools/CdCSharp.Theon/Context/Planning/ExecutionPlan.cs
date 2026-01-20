@@ -40,11 +40,20 @@ public sealed class PlanStep
     [JsonPropertyName("contributesTo")]
     public List<string> ContributesTo { get; set; } = [];
 
+    [JsonPropertyName("allowMultipleCalls")]
+    public bool AllowMultipleCalls { get; set; } = false;
+
+    [JsonPropertyName("maxCalls")]
+    public int MaxCalls { get; set; } = 1;
     [JsonIgnore]
-    public PlanStepStatus Status { get; set; } = PlanStepStatus.Pending;
+    public List<string> Results { get; set; } = [];
+    [JsonPropertyName("callCount")]
+    public int CallCount { get; set; } = 0;
+    [JsonIgnore]
+    public bool IsComplete => CallCount >= MaxCalls;
 
     [JsonIgnore]
-    public string? Result { get; set; }
+    public PlanStepStatus Status { get; set; } = PlanStepStatus.Pending;
 }
 
 public sealed class ExpectedOutput

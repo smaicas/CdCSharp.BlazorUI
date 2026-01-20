@@ -400,31 +400,6 @@ public sealed class CreateExecutionPlanHandler : IToolHandler<CreateExecutionPla
                 return $"{acc}\n**{dir}/**\n{files}\n";
             });
     }
-
-    private sealed class ExecutionPlanDto
-    {
-        public List<string>? TaskTypes { get; set; }
-        public string? Reasoning { get; set; }
-        public List<PlanStepDto>? Steps { get; set; }
-        public List<ExpectedOutputDto>? ExpectedOutputs { get; set; }
-    }
-
-    private sealed class PlanStepDto
-    {
-        public int Order { get; set; }
-        public string? TargetContext { get; set; }
-        public string? Question { get; set; }
-        public List<string>? SuggestedFiles { get; set; }
-        public string? Purpose { get; set; }
-        public List<string>? ContributesTo { get; set; }
-    }
-
-    private sealed class ExpectedOutputDto
-    {
-        public string? TaskType { get; set; }
-        public string? Description { get; set; }
-        public string? OutputType { get; set; }
-    }
 }
 
 // ==================== ProposeFileChange ====================
@@ -655,8 +630,6 @@ public sealed class QueryContextHandler : IToolHandler<QueryContextTool, Context
                 success =>
                 {
                     context.Orchestration.State.MarkStepCompleted(step.Order, success.Answer);
-
-                    // ADD THIS LOG CALL:
                     context.Infrastructure.Logger.LogPlanStep(
                         step.Order,
                         plan.Steps.Count,
