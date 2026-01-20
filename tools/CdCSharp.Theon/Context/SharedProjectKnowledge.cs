@@ -4,10 +4,6 @@ using System.Text.RegularExpressions;
 
 namespace CdCSharp.Theon.Context;
 
-/// <summary>
-/// Conocimiento compartido del proyecto accesible por todos los contextos.
-/// Proporciona índices optimizados para búsqueda rápida sin cargar archivos completos.
-/// </summary>
 public sealed class SharedProjectKnowledge
 {
     private readonly IProjectContext _projectContext;
@@ -21,9 +17,6 @@ public sealed class SharedProjectKnowledge
         _projectContext = projectContext;
     }
 
-    /// <summary>
-    /// Obtiene la información completa del proyecto (con cache).
-    /// </summary>
     public async Task<ProjectInfo> GetProjectAsync(CancellationToken ct = default)
     {
         if (_cachedProject == null)
@@ -34,9 +27,6 @@ public sealed class SharedProjectKnowledge
         return _cachedProject;
     }
 
-    /// <summary>
-    /// Índice de archivos por ruta relativa.
-    /// </summary>
     public IReadOnlyDictionary<string, FileSummary> FileIndex
     {
         get
@@ -46,9 +36,6 @@ public sealed class SharedProjectKnowledge
         }
     }
 
-    /// <summary>
-    /// Índice de tipos por nombre completo (Namespace.TypeName).
-    /// </summary>
     public IReadOnlyDictionary<string, List<TypeSummary>> TypeIndex
     {
         get
@@ -58,9 +45,6 @@ public sealed class SharedProjectKnowledge
         }
     }
 
-    /// <summary>
-    /// Índice de ensamblado por archivo.
-    /// </summary>
     public IReadOnlyDictionary<string, AssemblyInfo> AssemblyByFile
     {
         get
@@ -70,29 +54,21 @@ public sealed class SharedProjectKnowledge
         }
     }
 
-    /// <summary>
-    /// Busca archivos por patrón glob simplificado.
-    /// </summary>
     public IEnumerable<string> FindFilesByPattern(string pattern)
     {
         EnsureInitialized();
 
-        // Convertir patrón simple a regex
-        string regexPattern = "^" + System.Text.RegularExpressions.Regex.Escape(pattern)
-            .Replace("\\*\\*/", ".*")  // **/ matches any directory depth
-            .Replace("\\*", "[^/]*")    // * matches anything except /
-            .Replace("\\?", ".")        // ? matches single char
+        string regexPattern = "^" + Regex.Escape(pattern)
+            .Replace("\\*\\*/", ".*")
+            .Replace("\\*", "[^/]*")
+            .Replace("\\?", ".")
             + "$";
 
-        Regex regex = new(regexPattern,
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        Regex regex = new(regexPattern, RegexOptions.IgnoreCase);
 
         return _fileIndex!.Keys.Where(path => regex.IsMatch(path));
     }
 
-    /// <summary>
-    /// Busca tipos por nombre (parcial, case-insensitive).
-    /// </summary>
     public IEnumerable<TypeSummary> FindTypesByName(string namePattern)
     {
         EnsureInitialized();
@@ -104,27 +80,18 @@ public sealed class SharedProjectKnowledge
             .SelectMany(kvp => kvp.Value);
     }
 
-    /// <summary>
-    /// Encuentra el ensamblado que contiene un archivo.
-    /// </summary>
     public AssemblyInfo? FindAssemblyContaining(string filePath)
     {
         EnsureInitialized();
         return _assemblyByFile!.GetValueOrDefault(filePath);
     }
 
-    /// <summary>
-    /// Verifica si un archivo existe en el proyecto.
-    /// </summary>
     public bool FileExists(string path)
     {
         EnsureInitialized();
         return _fileIndex!.ContainsKey(path);
     }
 
-    /// <summary>
-    /// Encuentra archivos similares (útil para sugerencias).
-    /// </summary>
     public IEnumerable<string> FindSimilarFiles(string path, int maxResults = 5)
     {
         EnsureInitialized();
@@ -132,7 +99,6 @@ public sealed class SharedProjectKnowledge
         string fileName = Path.GetFileName(path);
         string directory = Path.GetDirectoryName(path) ?? "";
 
-        // Buscar por similitud de nombre de archivo y directorio
         return _fileIndex!.Keys
             .Select(p => new
             {
@@ -146,7 +112,40 @@ public sealed class SharedProjectKnowledge
     }
 
     /// <summary>
-    /// Obtiene resumen compacto de la estructura del proyecto.
+    /// Returns the file index formatted for inclusion in prompts.
+    /// Shows exact paths and estimated tokens for each file.
+    /// </summary>
+    public string GetFileIndex()
+    {
+        EnsureInitialized();
+
+        StringBuilder sb = new();
+        sb.AppendLine("## File Index (use exact paths with read_file)");
+        sb.AppendLine();
+
+        IEnumerable<IGrouping<string, KeyValuePair<string, FileSummary>>> groupedByDirectory = _fileIndex!
+            .Where(kvp => kvp.Value.EstimatedTokens > 0)
+            .GroupBy(kvp => Path.GetDirectoryName(kvp.Key) ?? "")
+            .OrderBy(g => g.Key);
+
+        foreach (IGrouping<string, KeyValuePair<string, FileSummary>> group in groupedByDirectory)
+        {
+            string dirName = string.IsNullOrEmpty(group.Key) ? "(root)" : group.Key;
+            sb.AppendLine($"**{dirName}/**");
+
+            foreach (KeyValuePair<string, FileSummary> file in group.OrderBy(f => f.Key))
+            {
+                string fileName = Path.GetFileName(file.Key);
+                sb.AppendLine($"  - `{file.Key}` ({file.Value.EstimatedTokens} tokens)");
+            }
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// Returns a compact summary with assembly overview and type counts.
     /// </summary>
     public string GetCompactSummary()
     {
@@ -156,21 +155,19 @@ public sealed class SharedProjectKnowledge
         sb.AppendLine("## Project Structure");
         sb.AppendLine();
 
-        foreach (AssemblyInfo? assembly in _cachedProject!.Assemblies.Where(a => !a.IsTestProject))
+        foreach (AssemblyInfo assembly in _cachedProject!.Assemblies.Where(a => !a.IsTestProject))
         {
-            sb.AppendLine($"📦 **{assembly.Name}** ({assembly.Files.Count} files, {assembly.Types.Count} types)");
+            sb.AppendLine($"**{assembly.Name}** ({assembly.Files.Count} files, {assembly.Types.Count} types, ~{assembly.TotalTokens:N0} tokens)");
 
-            // Top 8 namespaces más poblados
             IEnumerable<IGrouping<string, TypeSummary>> topNamespaces = assembly.Types
                 .GroupBy(t => t.Namespace)
                 .OrderByDescending(g => g.Count())
                 .Take(8);
 
-            foreach (IGrouping<string, TypeSummary>? ns in topNamespaces)
+            foreach (IGrouping<string, TypeSummary> ns in topNamespaces)
             {
-                sb.AppendLine($"   └─ {ns.Key}/ ({ns.Count()} types)");
+                sb.AppendLine($"  - {ns.Key}/ ({ns.Count()} types)");
             }
-
             sb.AppendLine();
         }
 
@@ -178,7 +175,7 @@ public sealed class SharedProjectKnowledge
     }
 
     /// <summary>
-    /// Obtiene resumen detallado con tipos.
+    /// Returns detailed summary with all types listed.
     /// </summary>
     public string GetDetailedSummary()
     {
@@ -188,40 +185,39 @@ public sealed class SharedProjectKnowledge
         sb.AppendLine("## Project Structure (Detailed)");
         sb.AppendLine();
 
-        foreach (AssemblyInfo? assembly in _cachedProject!.Assemblies.Where(a => !a.IsTestProject))
+        foreach (AssemblyInfo assembly in _cachedProject!.Assemblies.Where(a => !a.IsTestProject))
         {
-            sb.AppendLine($"📦 **{assembly.Name}**");
-            sb.AppendLine($"   Path: {assembly.RelativePath}");
-            sb.AppendLine($"   Files: {assembly.Files.Count}, Types: {assembly.Types.Count}");
+            sb.AppendLine($"**{assembly.Name}**");
+            sb.AppendLine($"  Path: {assembly.RelativePath}");
+            sb.AppendLine($"  Files: {assembly.Files.Count}, Types: {assembly.Types.Count}");
             sb.AppendLine();
 
             IOrderedEnumerable<IGrouping<string, TypeSummary>> namespaceGroups = assembly.Types
                 .GroupBy(t => t.Namespace)
                 .OrderBy(g => g.Key);
 
-            foreach (IGrouping<string, TypeSummary>? ns in namespaceGroups)
+            foreach (IGrouping<string, TypeSummary> ns in namespaceGroups)
             {
-                sb.AppendLine($"   **{ns.Key}**");
+                sb.AppendLine($"  **{ns.Key}**");
 
-                foreach (TypeSummary? type in ns.Take(20))
+                foreach (TypeSummary type in ns.Take(20))
                 {
                     string icon = type.Kind switch
                     {
-                        TypeKind.Interface => "🔷",
-                        TypeKind.Class => "📘",
-                        TypeKind.Record => "📗",
-                        TypeKind.Struct => "📙",
-                        TypeKind.Enum => "📊",
-                        _ => "📄"
+                        TypeKind.Interface => "[I]",
+                        TypeKind.Class => "[C]",
+                        TypeKind.Record => "[R]",
+                        TypeKind.Struct => "[S]",
+                        TypeKind.Enum => "[E]",
+                        _ => "[?]"
                     };
-                    sb.AppendLine($"      {icon} {type.Name} ({type.Kind})");
+                    sb.AppendLine($"    {icon} {type.Name}");
                 }
 
                 if (ns.Count() > 20)
                 {
-                    sb.AppendLine($"      ... and {ns.Count() - 20} more types");
+                    sb.AppendLine($"    ... and {ns.Count() - 20} more types");
                 }
-
                 sb.AppendLine();
             }
         }
@@ -229,9 +225,6 @@ public sealed class SharedProjectKnowledge
         return sb.ToString();
     }
 
-    /// <summary>
-    /// Obtiene lista de todos los ensamblados (excluyendo tests).
-    /// </summary>
     public IReadOnlyList<string> GetAssemblyNames()
     {
         EnsureInitialized();
@@ -241,9 +234,12 @@ public sealed class SharedProjectKnowledge
             .ToList();
     }
 
-    /// <summary>
-    /// Invalida el cache cuando el proyecto cambia.
-    /// </summary>
+    public IReadOnlyList<string> GetAllFilePaths()
+    {
+        EnsureInitialized();
+        return _fileIndex!.Keys.ToList();
+    }
+
     public void InvalidateCache()
     {
         _cachedProject = null;
@@ -269,30 +265,24 @@ public sealed class SharedProjectKnowledge
 
         foreach (AssemblyInfo assembly in project.Assemblies)
         {
-            // Índice de archivos
             foreach (FileSummary file in assembly.Files)
             {
                 _fileIndex[file.Path] = file;
                 _assemblyByFile[file.Path] = assembly;
             }
 
-            // Índice de tipos
             foreach (TypeSummary type in assembly.Types)
             {
                 string fullName = $"{type.Namespace}.{type.Name}";
 
                 if (!_typeIndex.ContainsKey(fullName))
-                {
                     _typeIndex[fullName] = [];
-                }
 
                 _typeIndex[fullName].Add(type);
 
-                // También indexar por nombre simple
                 if (!_typeIndex.ContainsKey(type.Name))
-                {
                     _typeIndex[type.Name] = [];
-                }
+
                 _typeIndex[type.Name].Add(type);
             }
         }
@@ -305,24 +295,14 @@ public sealed class SharedProjectKnowledge
         string candidateFileName = Path.GetFileName(candidatePath);
         string candidateDirectory = Path.GetDirectoryName(candidatePath) ?? "";
 
-        // Nombre de archivo coincide exactamente
         if (candidateFileName.Equals(targetFileName, StringComparison.OrdinalIgnoreCase))
-        {
             score += 100;
-        }
-        // Nombre de archivo contiene el target
         else if (candidateFileName.Contains(targetFileName, StringComparison.OrdinalIgnoreCase))
-        {
             score += 50;
-        }
-        // Mismo directorio
         else if (candidateDirectory.Equals(targetDirectory, StringComparison.OrdinalIgnoreCase))
-        {
             score += 30;
-        }
 
-        // Directorio similar (prefijo común)
-        var commonPrefix = GetCommonPrefix(candidateDirectory, targetDirectory);
+        string commonPrefix = GetCommonPrefix(candidateDirectory, targetDirectory);
         score += commonPrefix.Length / 2;
 
         return score;
@@ -333,9 +313,7 @@ public sealed class SharedProjectKnowledge
         int minLen = Math.Min(a.Length, b.Length);
         int i = 0;
         while (i < minLen && char.ToLowerInvariant(a[i]) == char.ToLowerInvariant(b[i]))
-        {
             i++;
-        }
         return a[..i];
     }
 }

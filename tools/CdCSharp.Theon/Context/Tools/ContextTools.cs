@@ -10,7 +10,7 @@ public static class ContextTools
         Function = new FunctionDefinition
         {
             Name = "read_file",
-            Description = "Read the complete source code of a file from the project. Use this when you need to examine implementation details, understand algorithms, or analyze specific code patterns. IMPORTANT: You must provide an exact file path (e.g., 'Domain/Entities/User.cs'), not a directory name.",
+            Description = "Read a file and ADD it to your context permanently. Use exact paths from the File Index. The file will consume your token budget.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -19,7 +19,36 @@ public static class ContextTools
                     ["path"] = new()
                     {
                         Type = "string",
-                        Description = "Exact relative path to the file from project root (e.g., 'Domain/Entities/User.cs'). Must be a complete file path with extension, not a directory."
+                        Description = "Exact file path from the File Index (e.g., 'Context/Context.cs')"
+                    }
+                },
+                Required = ["path"],
+                AdditionalProperties = false
+            }
+        }
+    };
+
+    public static Tool PeekFile => new()
+    {
+        Type = "function",
+        Function = new FunctionDefinition
+        {
+            Name = "peek_file",
+            Description = "View a file's content temporarily WITHOUT adding it to your context. Use this when another context has the file loaded, or when you only need to see it once. Does NOT consume your token budget permanently.",
+            Parameters = new FunctionParameters
+            {
+                Type = "object",
+                Properties = new Dictionary<string, PropertyDefinition>
+                {
+                    ["path"] = new()
+                    {
+                        Type = "string",
+                        Description = "Exact file path to peek"
+                    },
+                    ["source_context"] = new()
+                    {
+                        Type = "string",
+                        Description = "Optional: specific context that has this file loaded. If omitted, searches all contexts then falls back to disk."
                     }
                 },
                 Required = ["path"],
@@ -34,7 +63,7 @@ public static class ContextTools
         Function = new FunctionDefinition
         {
             Name = "search_files",
-            Description = "Search for files matching a glob pattern. Useful for finding all files of a certain type (e.g., all repositories, all controllers, all tests).",
+            Description = "Search for files matching a pattern. Returns matching paths that you can then read or peek.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -43,7 +72,7 @@ public static class ContextTools
                     ["pattern"] = new()
                     {
                         Type = "string",
-                        Description = "Glob pattern to match files (e.g., '**/*Repository*.cs' for all repository files, '**/Controllers/*.cs' for all controllers, 'Domain/**/*.cs' for all files in Domain)"
+                        Description = "Glob pattern (e.g., '**/*Repository*.cs', 'Context/**/*.cs')"
                     }
                 },
                 Required = ["pattern"],
@@ -52,50 +81,35 @@ public static class ContextTools
         }
     };
 
-    public static Tool ListAssemblyFiles => new()
+    public static Tool SpawnClone => new()
     {
         Type = "function",
         Function = new FunctionDefinition
         {
-            Name = "list_assembly_files",
-            Description = "List all source files and type information for a specific assembly/project. Use this to understand the complete structure of a project.",
+            Name = "spawn_clone",
+            Description = "Create a clone of yourself to handle a subset of work. Use when you need to analyze more files than fit in your budget, or to parallelize analysis. The clone has its own budget and persists for future queries.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
                 Properties = new Dictionary<string, PropertyDefinition>
                 {
-                    ["assembly_name"] = new()
+                    ["question"] = new()
                     {
                         Type = "string",
-                        Description = "Name of the assembly (project name without .csproj extension). Check the Project Structure in the system prompt to see available assemblies."
-                    }
-                },
-                Required = ["assembly_name"],
-                AdditionalProperties = false
-            }
-        }
-    };
-
-    public static Tool ExploreProjectStructure => new()
-    {
-        Type = "function",
-        Function = new FunctionDefinition
-        {
-            Name = "explore_project_structure",
-            Description = "Get a detailed overview of the project structure. CALL THIS FIRST if you need to understand what files and types exist before reading specific files. The Project Structure in your system prompt provides a compact summary, but this tool gives you more detail when needed.",
-            Parameters = new FunctionParameters
-            {
-                Type = "object",
-                Properties = new Dictionary<string, PropertyDefinition>
-                {
-                    ["detail_level"] = new()
+                        Description = "Specific question for the clone to answer"
+                    },
+                    ["files"] = new()
                     {
                         Type = "string",
-                        Description = "Level of detail: 'summary' (assemblies and top namespaces only - use for initial orientation), 'types' (include all type names - use when you need to find specific classes/interfaces), 'full' (include member signatures - use when you need detailed API information)",
-                        Enum = ["summary", "types", "full"]
+                        Description = "Comma-separated list of exact file paths the clone should load and analyze"
+                    },
+                    ["purpose"] = new()
+                    {
+                        Type = "string",
+                        Description = "Brief description of why this clone is needed (for tracking)"
                     }
                 },
-                Required = ["detail_level"],
+                Required = ["question", "files"],
                 AdditionalProperties = false
             }
         }
@@ -107,7 +121,7 @@ public static class ContextTools
         Function = new FunctionDefinition
         {
             Name = "delegate_to_context",
-            Description = "Delegate a specific question to another specialized context when you need expertise from a different domain. Use this to collaborate with other contexts rather than making assumptions. IMPORTANT: Only delegate when you genuinely need another perspective - use your own tools (read_file, search_files, explore_project_structure) first.",
+            Description = "Ask a DIFFERENT type of context for its expertise. Use for cross-domain questions. Check 'Active Contexts' in your prompt to see what contexts exist and what files they have loaded.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -116,18 +130,17 @@ public static class ContextTools
                     ["target_context"] = new()
                     {
                         Type = "string",
-                        Description = "Name of the context to consult. Available: CodeExplorer (implementation details, algorithms, patterns), ArchitectureAnalyzer (structure, layers, design), DependencyAnalyzer (type relationships, dependencies)",
-                        Enum = ["CodeExplorer", "ArchitectureAnalyzer", "DependencyAnalyzer"]
+                        Description = "Name of the context to ask (from Active Contexts list)"
                     },
                     ["question"] = new()
                     {
                         Type = "string",
-                        Description = "Specific, focused question to ask the target context. Be clear and precise. Minimum 10 characters. Include relevant file paths when possible."
+                        Description = "Specific question for that context"
                     },
                     ["relevant_files"] = new()
                     {
                         Type = "string",
-                        Description = "Optional: comma-separated list of file paths the target context should examine (e.g., 'Domain/User.cs,Infrastructure/UserRepository.cs')"
+                        Description = "Optional: comma-separated file paths the target should examine"
                     }
                 },
                 Required = ["target_context", "question"],
@@ -141,15 +154,16 @@ public static class ContextTools
         List<Tool> tools = [];
 
         if (config.CanReadFiles)
+        {
             tools.Add(ReadFile);
+            tools.Add(PeekFile);
+        }
 
         if (config.CanSearchFiles)
             tools.Add(SearchFiles);
 
-        if (config.CanListAssemblies)
-            tools.Add(ListAssemblyFiles);
-
-        tools.Add(ExploreProjectStructure);
+        if (config.CanSpawnClones)
+            tools.Add(SpawnClone);
 
         if (config.CanDelegateToContexts)
             tools.Add(DelegateToContext);

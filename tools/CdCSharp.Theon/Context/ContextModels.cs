@@ -11,7 +11,7 @@ public sealed record ContextQuery
     public static ContextQuery Simple(string question) => new() { Question = question };
 
     public static ContextQuery WithFiles(string question, params string[] files) =>
-        new() { Question = question, InitialFiles = files };
+        new() { Question = question, InitialFiles = files.Where(f => !string.IsNullOrWhiteSpace(f)).ToArray() };
 
     public static ContextQuery WithPatterns(string question, params string[] patterns) =>
         new() { Question = question, InitialPatterns = patterns };
@@ -22,7 +22,6 @@ public sealed class ContextState
     public List<Message> History { get; } = [];
     public HashSet<string> LoadedFiles { get; } = [];
     public Dictionary<string, string> FileContents { get; } = [];
-    public Dictionary<string, object> ToolResults { get; } = [];
     public int EstimatedTokens { get; private set; }
     public int DelegationDepth { get; private set; }
     public Stack<string> DelegationChain { get; } = new();
@@ -46,22 +45,14 @@ public sealed class ContextState
         }
     }
 
-    public void CacheToolResult(string toolCallId, object result)
-    {
-        ToolResults[toolCallId] = result;
-    }
-
-    public bool HasCapacityFor(int additionalTokens, int maxTokenBudget)
-    {
-        return EstimatedTokens + additionalTokens <= maxTokenBudget;
-    }
+    public bool HasCapacityFor(int additionalTokens, int maxBudget)
+        => EstimatedTokens + additionalTokens <= maxBudget;
 
     public void Clear()
     {
         History.Clear();
         LoadedFiles.Clear();
         FileContents.Clear();
-        ToolResults.Clear();
         EstimatedTokens = 0;
         DelegationDepth = 0;
         DelegationChain.Clear();
@@ -85,36 +76,21 @@ public sealed class ContextState
         }
     }
 
-    /// <summary>
-    /// Verifica si se puede delegar a un contexto específico con una pregunta.
-    /// </summary>
     public bool CanDelegateTo(string targetContext, string question)
     {
-        // Prevenir delegación circular
         if (DelegationChain.Contains(targetContext))
-        {
             return false;
-        }
 
-        // Prevenir queries repetidas al mismo contexto
         string queryKey = $"{targetContext}:{question.GetHashCode()}";
         if (_queriedContexts.Contains(queryKey))
-        {
             return false;
-        }
 
-        // Limitar total de queries por contexto
         if (_queryCountByContext.GetValueOrDefault(targetContext, 0) >= MaxQueriesPerContext)
-        {
             return false;
-        }
 
         return true;
     }
 
-    /// <summary>
-    /// Registra una delegación exitosa.
-    /// </summary>
     public void RecordDelegation(string targetContext, string question)
     {
         string queryKey = $"{targetContext}:{question.GetHashCode()}";
@@ -123,38 +99,23 @@ public sealed class ContextState
     }
 
     private static int EstimateTokens(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return 0;
-        return (int)(text.Length / 3.5);
-    }
+        => string.IsNullOrEmpty(text) ? 0 : (int)(text.Length / 3.5);
 }
 
 public sealed record ContextConfiguration
 {
     public required string Name { get; init; }
     public required string SystemPrompt { get; init; }
+    public string Model { get; init; } = "default";
+    public string ContextType { get; init; } = "Custom";
+    public string Speciality { get; init; } = "General analysis";
     public bool IsStateful { get; init; } = false;
     public int MaxTokenBudget { get; init; } = 8000;
     public bool CanReadFiles { get; init; } = true;
     public bool CanSearchFiles { get; init; } = true;
-    public bool CanListAssemblies { get; init; } = true;
-    public bool CanDelegateToContexts { get; init; } = false;
-    public int MaxDelegationDepth { get; init; } = 15;
-    public bool IncludeProjectStructure { get; init; } = true;
-
-    public static ContextConfiguration Stateless(string name, string systemPrompt) =>
-        new()
-        {
-            Name = name,
-            SystemPrompt = systemPrompt,
-            IsStateful = false
-        };
-
-    public static ContextConfiguration Stateful(string name, string systemPrompt) =>
-        new()
-        {
-            Name = name,
-            SystemPrompt = systemPrompt,
-            IsStateful = true
-        };
+    public bool CanDelegateToContexts { get; init; } = true;
+    public bool CanSpawnClones { get; init; } = true;
+    public int MaxDelegationDepth { get; init; } = 3;
+    public int MaxCloneDepth { get; init; } = 10;
+    public int MaxClonesPerType { get; init; } = 50;
 }

@@ -10,7 +10,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "query_context",
-            Description = "Query a specialized context to get information about the codebase. Contexts are experts that can read and analyze code.",
+            Description = "Ask a specialized context to analyze code or answer questions. The context will read files and provide analysis.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -19,17 +19,18 @@ public static class OrchestratorTools
                     ["context_name"] = new()
                     {
                         Type = "string",
-                        Description = "Name of the context to query (CodeExplorer, ArchitectureAnalyzer, DependencyAnalyzer, or a custom context name)"
+                        Description = "Context to query: CodeExplorer (code details, patterns), ArchitectureAnalyzer (structure, layers), DependencyAnalyzer (dependencies, DI)",
+                        Enum = ["CodeExplorer", "ArchitectureAnalyzer", "DependencyAnalyzer"]
                     },
                     ["question"] = new()
                     {
                         Type = "string",
-                        Description = "The question to ask the context"
+                        Description = "Specific question for the context. Be detailed about what you need."
                     },
                     ["files"] = new()
                     {
                         Type = "string",
-                        Description = "Optional: comma-separated list of file paths to include in the context scope"
+                        Description = "Optional: comma-separated list of exact file paths the context should examine first (e.g., 'Context/Context.cs,AI/IAIClient.cs')"
                     }
                 },
                 Required = ["context_name", "question"],
@@ -44,7 +45,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "create_dynamic_context",
-            Description = "Create a new specialized context for a specific purpose",
+            Description = "Create a new specialized context for a specific purpose (rarely needed, predefined contexts cover most cases)",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -58,31 +59,15 @@ public static class OrchestratorTools
                     ["purpose"] = new()
                     {
                         Type = "string",
-                        Description = "Description of what this context specializes in"
+                        Description = "What this context specializes in"
                     },
                     ["stateful"] = new()
                     {
                         Type = "string",
-                        Description = "Whether the context should maintain conversation history (true/false)"
+                        Description = "Whether to maintain conversation history (true/false)"
                     }
                 },
                 Required = ["name", "purpose"],
-                AdditionalProperties = false
-            }
-        }
-    };
-
-    public static Tool ListContexts => new()
-    {
-        Type = "function",
-        Function = new FunctionDefinition
-        {
-            Name = "list_contexts",
-            Description = "List all available contexts and their current state",
-            Parameters = new FunctionParameters
-            {
-                Type = "object",
-                Properties = [],
                 AdditionalProperties = false
             }
         }
@@ -94,7 +79,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "propose_file_change",
-            Description = "Propose a change to an existing file. The change will require user confirmation before being applied.",
+            Description = "Propose a change to an existing file. Requires user confirmation.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -113,7 +98,7 @@ public static class OrchestratorTools
                     ["new_content"] = new()
                     {
                         Type = "string",
-                        Description = "The complete new content of the file"
+                        Description = "Complete new content of the file"
                     }
                 },
                 Required = ["path", "description", "new_content"],
@@ -128,7 +113,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "create_project_file",
-            Description = "Create a new source file in the project (e.g., new class, interface). Applied immediately if project modification is enabled.",
+            Description = "Create a new file in the project. Applied immediately if modification is enabled.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -137,17 +122,12 @@ public static class OrchestratorTools
                     ["path"] = new()
                     {
                         Type = "string",
-                        Description = "Relative path for the new file within the project"
+                        Description = "Relative path for the new file"
                     },
                     ["content"] = new()
                     {
                         Type = "string",
                         Description = "Content of the new file"
-                    },
-                    ["description"] = new()
-                    {
-                        Type = "string",
-                        Description = "Brief description of the file's purpose"
                     }
                 },
                 Required = ["path", "content"],
@@ -162,7 +142,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "generate_output_file",
-            Description = "Generate an output file (documentation, report, export, analysis result). Saved to the output folder, not the project. Always allowed.",
+            Description = "Generate a documentation or report file. Saved to the output folder (not the project).",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -171,12 +151,12 @@ public static class OrchestratorTools
                     ["folder"] = new()
                     {
                         Type = "string",
-                        Description = "Subfolder name within the output directory (e.g., 'documentation', 'reports')"
+                        Description = "Subfolder in output directory (e.g., 'documentation', 'reports')"
                     },
                     ["filename"] = new()
                     {
                         Type = "string",
-                        Description = "Name of the output file (e.g., 'api-docs.md', 'analysis.json')"
+                        Description = "Output file name (e.g., 'README.md', 'architecture.md')"
                     },
                     ["content"] = new()
                     {
@@ -196,7 +176,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "apply_pending_changes",
-            Description = "Apply pending file changes that were previously proposed and confirmed by the user",
+            Description = "Apply pending file changes that were confirmed by the user",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -205,7 +185,7 @@ public static class OrchestratorTools
                     ["change_ids"] = new()
                     {
                         Type = "string",
-                        Description = "Comma-separated list of change IDs to apply, or 'all' to apply all pending changes"
+                        Description = "Comma-separated change IDs to apply, or 'all'"
                     }
                 },
                 Required = ["change_ids"],
@@ -218,7 +198,6 @@ public static class OrchestratorTools
     [
         QueryContext,
         CreateDynamicContext,
-        ListContexts,
         ProposeFileChange,
         CreateProjectFile,
         GenerateOutputFile,
