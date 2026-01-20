@@ -18,23 +18,11 @@ public sealed class ContextRegistry
                 ContextType = contextType,
                 Speciality = speciality,
                 MaxBudget = maxBudget,
-                UsedBudget = 0,
                 IsClone = contextName.Contains('#')
             };
 
             if (!_loadedFiles.ContainsKey(contextName))
                 _loadedFiles[contextName] = new(StringComparer.OrdinalIgnoreCase);
-        }
-    }
-
-    public void UpdateBudget(string contextName, int usedBudget)
-    {
-        lock (_lock)
-        {
-            if (_contexts.TryGetValue(contextName, out ContextMetadata? metadata))
-            {
-                _contexts[contextName] = metadata with { UsedBudget = usedBudget };
-            }
         }
     }
 
@@ -46,17 +34,6 @@ public sealed class ContextRegistry
                 _loadedFiles[contextName] = new(StringComparer.OrdinalIgnoreCase);
 
             _loadedFiles[contextName][path] = content;
-        }
-    }
-
-    public void UnregisterFile(string contextName, string path)
-    {
-        lock (_lock)
-        {
-            if (_loadedFiles.TryGetValue(contextName, out Dictionary<string, string>? files))
-            {
-                files.Remove(path);
-            }
         }
     }
 
@@ -95,16 +72,6 @@ public sealed class ContextRegistry
                     return kvp.Key;
             }
             return null;
-        }
-    }
-
-    public IReadOnlyList<string> GetLoadedFilesFor(string contextName)
-    {
-        lock (_lock)
-        {
-            if (_loadedFiles.TryGetValue(contextName, out Dictionary<string, string>? files))
-                return files.Keys.ToList();
-            return [];
         }
     }
 
@@ -166,7 +133,7 @@ public sealed class ContextRegistry
 
                 string cloneIndicator = ctx.IsClone ? " (clone)" : "";
                 sb.AppendLine($"**{ctx.Name}**{cloneIndicator} - {ctx.Speciality}");
-                sb.AppendLine($"  Budget: {ctx.UsedBudget:N0} / {ctx.MaxBudget:N0} tokens");
+                sb.AppendLine($"  Budget: {ctx.MaxBudget:N0} tokens");
 
                 if (_loadedFiles.TryGetValue(ctx.Name, out Dictionary<string, string>? files) && files.Count > 0)
                 {
@@ -191,15 +158,6 @@ public sealed class ContextRegistry
         }
     }
 
-    public void UnregisterContext(string contextName)
-    {
-        lock (_lock)
-        {
-            _contexts.Remove(contextName);
-            _loadedFiles.Remove(contextName);
-        }
-    }
-
     public void Clear()
     {
         lock (_lock)
@@ -216,6 +174,5 @@ public sealed record ContextMetadata
     public required string ContextType { get; init; }
     public required string Speciality { get; init; }
     public required int MaxBudget { get; init; }
-    public required int UsedBudget { get; init; }
     public required bool IsClone { get; init; }
 }

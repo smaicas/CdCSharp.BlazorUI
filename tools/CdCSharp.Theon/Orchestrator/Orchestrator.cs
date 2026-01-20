@@ -1,8 +1,11 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
 using CdCSharp.Theon.Context;
+using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator.Models;
+using CdCSharp.Theon.Tools;
+using CdCSharp.Theon.Tools.Commands;
 using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
@@ -21,59 +24,71 @@ public interface IOrchestrator
 public sealed class Orchestrator : IOrchestrator
 {
     private readonly IAIClient _aiClient;
-    private readonly IContextFactory _contextFactory;
+    private readonly IContextFactory _factory;
     private readonly IProjectContext _projectContext;
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
     private readonly ITracer _tracer;
     private readonly SharedProjectKnowledge _sharedKnowledge;
     private readonly ContextRegistry _registry;
+    private readonly ContextBudgetManager _budgetManager;
+    private readonly PromptFormatter _promptFormatter;
+    private readonly ToolDispatcher _toolDispatcher;
     private readonly TheonOptions _options;
     private readonly JsonSerializerOptions _jsonOptions;
 
     public OrchestratorState State { get; } = new();
 
     private const string SystemPrompt = """
-        You are an orchestrator that coordinates specialized contexts to analyze C# codebases.
+        You are an orchestrator coordinating specialized contexts to analyze C# codebases.
 
         ## Your Role
-        You are a COORDINATOR, not a code analyst. You delegate technical questions to specialists.
+        You COORDINATE experts, you don't analyze code yourself. Delegate technical questions.
 
         ## How to Work
-        1. Identify what expertise the user needs
-        2. Use query_context to ask the appropriate specialist
-        3. Specialists will read files and provide analysis
-        4. Synthesize their responses for the user
-        5. Use generate_output_file to create documentation when requested
+        1. Identify what expertise is needed
+        2. Use query_context to ask specialists
+        3. Specialists read files and provide analysis
+        4. Synthesize their responses
+        5. Use generate_output_file for documentation
 
-        ## Important Rules
-        - ALWAYS use query_context for technical questions - do NOT answer them yourself
-        - When asking a context, be specific about what you need
-        - Contexts can see files loaded by other contexts (via peek_file)
-        - Contexts can spawn clones of themselves for additional capacity
-        - For documentation requests, gather info from contexts FIRST, then generate the file
+        ## Tools Available
+        - query_context: Ask CodeExplorer, ArchitectureAnalyzer, or DependencyAnalyzer
+        - propose_file_change: Propose modifications (requires confirmation)
+        - create_project_file: Create new files immediately
+        - generate_output_file: Generate documentation/reports
+
+        ## Important
+        - ALWAYS delegate technical questions to contexts
+        - Be specific about what you need from each context
+        - Contexts can see each other's loaded files
         """;
 
     public Orchestrator(
         IAIClient aiClient,
-        IContextFactory contextFactory,
+        IContextFactory factory,
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
         ITracer tracer,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
+        ContextBudgetManager budgetManager,
+        PromptFormatter promptFormatter,
         IOptions<TheonOptions> options)
     {
         _aiClient = aiClient;
-        _contextFactory = contextFactory;
+        _factory = factory;
         _projectContext = projectContext;
         _fileSystem = fileSystem;
         _logger = logger;
         _tracer = tracer;
         _sharedKnowledge = sharedKnowledge;
         _registry = registry;
+        _budgetManager = budgetManager;
+        _promptFormatter = promptFormatter;
         _options = options.Value;
+        _toolDispatcher = ToolDispatcher.CreateForOrchestrator();
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -163,14 +178,19 @@ public sealed class Orchestrator : IOrchestrator
     {
         State.Clear();
         _registry.Clear();
+        _budgetManager.Clear();
         InitializePredefinedContexts();
     }
 
     private void InitializePredefinedContexts()
     {
-        State.RegisterContext("CodeExplorer", _contextFactory.GetPredefined(PredefinedContext.CodeExplorer));
-        State.RegisterContext("ArchitectureAnalyzer", _contextFactory.GetPredefined(PredefinedContext.ArchitectureAnalyzer));
-        State.RegisterContext("DependencyAnalyzer", _contextFactory.GetPredefined(PredefinedContext.DependencyAnalyzer));
+        IContextScope codeExplorer = _factory.CreateDelegate("CodeExplorer", "Code analysis");
+        IContextScope architectureAnalyzer = _factory.CreateDelegate("ArchitectureAnalyzer", "Architecture analysis");
+        IContextScope dependencyAnalyzer = _factory.CreateDelegate("DependencyAnalyzer", "Dependency analysis");
+
+        State.RegisterContext("CodeExplorer", codeExplorer);
+        State.RegisterContext("ArchitectureAnalyzer", architectureAnalyzer);
+        State.RegisterContext("DependencyAnalyzer", dependencyAnalyzer);
     }
 
     private async Task<OrchestratorResponse> ExecuteWithToolLoop(ITracerScope tracerScope, CancellationToken ct)
@@ -192,6 +212,7 @@ public sealed class Orchestrator : IOrchestrator
 
             Stopwatch sw = Stopwatch.StartNew();
             ChatCompletionResponse response = await _aiClient.SendAsync(request, ct);
+
             sw.Stop();
 
             tracerScope.RecordLlmResponse(response, sw.Elapsed);
@@ -205,16 +226,11 @@ public sealed class Orchestrator : IOrchestrator
                 foreach (ToolCall toolCall in choice.Message.ToolCalls)
                 {
                     Stopwatch toolSw = Stopwatch.StartNew();
-                    ToolExecutionResult result = await ExecuteTool(toolCall, tracerScope, ct);
+                    string result = await ExecuteTool(toolCall, tracerScope, ct, createdFiles, generatedOutputs, proposedChanges);
                     toolSw.Stop();
 
-                    tracerScope.RecordToolExecution(toolCall, result.Response, toolSw.Elapsed, result.Response.Contains("\"error\""));
-
-                    State.AddToolResult(toolCall.Id, result.Response);
-
-                    if (result.CreatedFile != null) createdFiles.Add(result.CreatedFile);
-                    if (result.GeneratedOutput != null) generatedOutputs.Add(result.GeneratedOutput);
-                    if (result.ProposedChange != null) proposedChanges.Add(result.ProposedChange);
+                    tracerScope.RecordToolExecution(toolCall, result, toolSw.Elapsed, result.Contains("\"error\""));
+                    State.AddToolResult(toolCall.Id, result);
                 }
 
                 continue;
@@ -251,210 +267,175 @@ public sealed class Orchestrator : IOrchestrator
     {
         await _sharedKnowledge.GetProjectAsync();
 
-        string fileIndex = _sharedKnowledge.GetFileIndex();
-        string contextsOverview = _registry.GetContextsOverview();
-        string pendingChanges = FormatPendingChanges();
+        string fileIndex = _promptFormatter.FormatFileIndex();
+        string contextsOverview = _promptFormatter.FormatContextsOverview();
+        string pendingChanges = _promptFormatter.FormatPendingChanges(
+            State.GetPendingChanges().Select(c => (c.Id, c.Path, c.Description)));
 
         string fullSystemPrompt = $"""
-            {SystemPrompt}
+        {SystemPrompt}
 
-            {fileIndex}
+        {fileIndex}
 
-            {contextsOverview}
+        {contextsOverview}
 
-            {(string.IsNullOrEmpty(pendingChanges) ? "" : $"## Pending Changes\n{pendingChanges}")}
-            """;
+        {(string.IsNullOrEmpty(pendingChanges) ? "" : $"## Pending Changes\n{pendingChanges}")}
+        """;
 
         List<Message> messages =
         [
             new() { Role = "system", Content = fullSystemPrompt },
-            .. State.ConversationHistory
+        .. State.ConversationHistory
         ];
 
         return new ChatCompletionRequest
         {
             Model = _options.Llm.Model,
             Messages = messages,
-            Tools = OrchestratorTools.All,
+            Tools = OrchestratorToolDefinitions.All,
             Temperature = 0.5
         };
     }
 
-    private string FormatPendingChanges()
-    {
-        IEnumerable<ProposedChange> pending = State.GetPendingChanges();
-        if (!pending.Any()) return string.Empty;
-        return string.Join("\n", pending.Select(c => $"- [{c.Id}] {c.Path}: {c.Description}"));
-    }
-
-    private async Task<ToolExecutionResult> ExecuteTool(ToolCall toolCall, ITracerScope tracerScope, CancellationToken ct)
+    private async Task<string> ExecuteTool(
+        ToolCall toolCall,
+        ITracerScope tracerScope,
+        CancellationToken ct,
+        List<string> createdFiles,
+        List<string> generatedOutputs,
+        List<ProposedChange> proposedChanges)
     {
         _logger.Debug($"Executing tool: {toolCall.Function.Name}");
 
         try
         {
+            if (toolCall.Function.Name == "query_context")
+            {
+                return await HandleQueryContext(toolCall, tracerScope, ct);
+            }
+
             Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
                 toolCall.Function.Arguments, _jsonOptions);
 
-            return toolCall.Function.Name switch
+            CommandContext commandContext = CreateCommandContext(tracerScope);
+
+            object result = await _toolDispatcher.DispatchAsync(
+                toolCall.Function.Name,
+                args!,
+                null!,
+                commandContext,
+                ct);
+
+            if (result is CreatedFile created)
             {
-                "query_context" => await ExecuteQueryContext(args, tracerScope, ct),
-                "create_dynamic_context" => ExecuteCreateDynamicContext(args),
-                "propose_file_change" => await ExecuteProposeFileChange(args, ct),
-                "create_project_file" => await ExecuteCreateProjectFile(args, ct),
-                "generate_output_file" => await ExecuteGenerateOutputFile(args, ct),
-                "apply_pending_changes" => await ExecuteApplyPendingChanges(args, ct),
-                _ => ToolExecutionResult.Error($"Unknown tool: {toolCall.Function.Name}")
-            };
+                createdFiles.Add(created.Path);
+            }
+            else if (result is GeneratedOutput generated)
+            {
+                generatedOutputs.Add(generated.FullPath);
+            }
+            else if (result is ProposedChange proposed)
+            {
+                proposedChanges.Add(proposed);
+            }
+
+            return commandContext.Infrastructure.Serialize(result);
         }
         catch (Exception ex)
         {
             _logger.Warning($"Tool execution failed: {ex.Message}");
-            return ToolExecutionResult.Error(ex.Message);
+            InfrastructureServices infra = new()
+            {
+                FileSystem = _fileSystem,
+                Logger = _logger,
+                Options = _options
+            };
+            return infra.Serialize(new { error = ex.Message });
         }
     }
 
-    private async Task<ToolExecutionResult> ExecuteQueryContext(
-        Dictionary<string, JsonElement>? args,
-        ITracerScope orchestratorScope,
-        CancellationToken ct)
+    private async Task<string> HandleQueryContext(ToolCall toolCall, ITracerScope tracerScope, CancellationToken ct)
     {
-        string contextName = args?["context_name"].GetString() ?? throw new ArgumentException("context_name required");
-        string question = args["question"].GetString() ?? throw new ArgumentException("question required");
-        string? filesArg = args.TryGetValue("files", out JsonElement f) ? f.GetString() : null;
+        Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+            toolCall.Function.Arguments, _jsonOptions);
 
-        IContext? context = State.GetContext(contextName);
-        if (context == null)
-            return ToolExecutionResult.Error($"Context '{contextName}' not found. Available: {string.Join(", ", State.ActiveContexts.Keys)}");
+        string contextName = args!["context_name"].GetString()!;
+        string question = args["question"].GetString()!;
+        string? filesArg = args.TryGetValue("files", out JsonElement f) ? f.GetString() : null;
 
         List<string>? files = filesArg?
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Where(file => !string.IsNullOrWhiteSpace(file))
             .ToList();
 
+        IContextScope? scope = State.GetContext(contextName);
+        if (scope == null)
+        {
+            InfrastructureServices infra = new()
+            {
+                FileSystem = _fileSystem,
+                Logger = _logger,
+                Options = _options
+            };
+            return infra.Serialize(new { error = $"Context '{contextName}' not found" });
+        }
+
         ContextQuery query = files?.Count > 0
             ? ContextQuery.WithFiles(question, files.ToArray())
             : ContextQuery.Simple(question);
 
         using ITracerScope contextScope = _tracer.BeginContext(contextName, question, files);
+        Result<ContextInfoResponse> result = await scope.QueryAsync<ContextInfoResponse>(query, contextScope, ct);
 
-        _logger.Debug($"Querying context '{contextName}'");
+        tracerScope.RecordContextQuery(contextScope.GetContextTrace());
 
-        ContextInfoResponse result = await ((Context.Context)context).AskAsync<ContextInfoResponse>(query, contextScope, ct);
-
-        ContextTrace contextTrace = contextScope.GetContextTrace();
-        orchestratorScope.RecordContextQuery(contextTrace);
-
-        ContextQueryResult queryResult = new()
+        InfrastructureServices infrastructure = new()
         {
-            ContextName = contextName,
-            Question = question,
-            Answer = result.Answer,
-            FilesExamined = result.FilesExamined
+            FileSystem = _fileSystem,
+            Logger = _logger,
+            Options = _options
         };
 
-        State.AddContextQueryResult(queryResult);
-
-        return ToolExecutionResult.Success(JsonSerializer.Serialize(queryResult, _jsonOptions));
+        return result.Match(
+            success => infrastructure.Serialize(new
+            {
+                context_name = contextName,
+                question,
+                answer = success.Answer,
+                files_examined = success.FilesExamined
+            }),
+            error => infrastructure.Serialize(new { error = error.Message, code = error.Code }));
     }
 
-    private ToolExecutionResult ExecuteCreateDynamicContext(Dictionary<string, JsonElement>? args)
+    private CommandContext CreateCommandContext(ITracerScope tracerScope)
     {
-        string name = args?["name"].GetString() ?? throw new ArgumentException("name required");
-        string purpose = args["purpose"].GetString() ?? throw new ArgumentException("purpose required");
-        bool stateful = args.TryGetValue("stateful", out JsonElement s) && s.GetString() == "true";
-
-        if (State.GetContext(name) != null)
-            return ToolExecutionResult.Error($"Context '{name}' already exists");
-
-        IContext context = _contextFactory.CreateDynamic(name, purpose, stateful);
-        State.RegisterContext(name, context);
-
-        return ToolExecutionResult.Success(JsonSerializer.Serialize(new { created = true, name, purpose, stateful }, _jsonOptions));
-    }
-
-    private async Task<ToolExecutionResult> ExecuteProposeFileChange(Dictionary<string, JsonElement>? args, CancellationToken ct)
-    {
-        string path = args?["path"].GetString() ?? throw new ArgumentException("path required");
-        string description = args["description"].GetString() ?? throw new ArgumentException("description required");
-        string newContent = args["new_content"].GetString() ?? throw new ArgumentException("new_content required");
-
-        string? originalContent = await _fileSystem.ReadFileAsync(path, ct);
-
-        ProposedChange change = new()
+        return new CommandContext
         {
-            Path = path,
-            Description = description,
-            ChangeType = originalContent == null ? ChangeType.Create : ChangeType.Modify,
-            OriginalContent = originalContent,
-            NewContent = newContent,
-            Status = ChangeStatus.Pending
+            Infrastructure = new InfrastructureServices
+            {
+                FileSystem = _fileSystem,
+                Logger = _logger,
+                Options = _options
+            },
+            Knowledge = new ProjectKnowledge
+            {
+                Metadata = _sharedKnowledge,
+                Context = _projectContext
+            },
+            Execution = new ExecutionScope
+            {
+                Tracer = tracerScope,
+                State = null,
+                Config = null,
+                CloneDepth = 0
+            },
+            Orchestration = new OrchestrationCapabilities
+            {
+                Registry = _registry,
+                Factory = _factory,
+                BudgetManager = _budgetManager,
+                State = State
+            }
         };
-
-        State.ProposeChange(change);
-
-        return ToolExecutionResult.WithProposedChange(
-            JsonSerializer.Serialize(new { proposed = true, id = change.Id, path, description }, _jsonOptions),
-            change);
-    }
-
-    private async Task<ToolExecutionResult> ExecuteCreateProjectFile(Dictionary<string, JsonElement>? args, CancellationToken ct)
-    {
-        string path = args?["path"].GetString() ?? throw new ArgumentException("path required");
-        string content = args["content"].GetString() ?? throw new ArgumentException("content required");
-
-        if (!_options.Modification.Enabled)
-            return ToolExecutionResult.Error("Project modification is disabled in configuration");
-
-        string? existing = await _fileSystem.ReadFileAsync(path, ct);
-        if (existing != null)
-            return ToolExecutionResult.Error($"File already exists: {path}. Use propose_file_change instead.");
-
-        bool success = await _fileSystem.WriteProjectFileAsync(path, content, ct);
-        if (!success)
-            return ToolExecutionResult.Error($"Failed to create file: {path}");
-
-        return ToolExecutionResult.WithCreatedFile(
-            JsonSerializer.Serialize(new { created = true, path }, _jsonOptions), path);
-    }
-
-    private async Task<ToolExecutionResult> ExecuteGenerateOutputFile(Dictionary<string, JsonElement>? args, CancellationToken ct)
-    {
-        string folder = args?["folder"].GetString() ?? throw new ArgumentException("folder required");
-        string filename = args["filename"].GetString() ?? throw new ArgumentException("filename required");
-        string content = args["content"].GetString() ?? throw new ArgumentException("content required");
-
-        await _fileSystem.WriteOutputFileAsync(folder, filename, content, ct);
-
-        string outputPath = Path.Combine(_options.ResponsesPath, folder, filename);
-
-        return ToolExecutionResult.WithGeneratedOutput(
-            JsonSerializer.Serialize(new { generated = true, folder, filename, fullPath = outputPath }, _jsonOptions),
-            outputPath);
-    }
-
-    private async Task<ToolExecutionResult> ExecuteApplyPendingChanges(Dictionary<string, JsonElement>? args, CancellationToken ct)
-    {
-        string changeIds = args?["change_ids"].GetString() ?? "all";
-        OrchestratorResponse result = await ConfirmChangesAsync(true, changeIds, ct);
-
-        return ToolExecutionResult.Success(JsonSerializer.Serialize(new
-        {
-            applied = result.ModifiedFiles,
-            count = result.ModifiedFiles.Count
-        }, _jsonOptions));
-    }
-
-    private sealed record ToolExecutionResult(
-        string Response,
-        string? CreatedFile = null,
-        string? GeneratedOutput = null,
-        ProposedChange? ProposedChange = null)
-    {
-        public static ToolExecutionResult Success(string response) => new(response);
-        public static ToolExecutionResult Error(string message) => new(JsonSerializer.Serialize(new { error = message }));
-        public static ToolExecutionResult WithCreatedFile(string response, string path) => new(response, CreatedFile: path);
-        public static ToolExecutionResult WithGeneratedOutput(string response, string path) => new(response, GeneratedOutput: path);
-        public static ToolExecutionResult WithProposedChange(string response, ProposedChange change) => new(response, ProposedChange: change);
     }
 }

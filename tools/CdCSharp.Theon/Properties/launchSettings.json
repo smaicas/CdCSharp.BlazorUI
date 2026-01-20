@@ -1,8 +1,16 @@
 {
   "profiles": {
-    "CdCSharp.Theon": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "SELF": {
       "commandName": "Project",
       "commandLineArgs": "V:\\Work\\CdCSharp\\Projects\\BlazorUI\\tools\\CdCSharp.Theon"
+    },
+    "BLAZORUI": {
+      "commandName": "Project",
+      "commandLineArgs": "V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src"
     }
   }
 }

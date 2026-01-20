@@ -1,8 +1,8 @@
 ﻿using CdCSharp.Theon.AI;
 
-namespace CdCSharp.Theon.Orchestrator;
+namespace CdCSharp.Theon.Tools;
 
-public static class OrchestratorTools
+public static class OrchestratorToolDefinitions
 {
     public static Tool QueryContext => new()
     {
@@ -10,7 +10,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "query_context",
-            Description = "Ask a specialized context to analyze code or answer questions. The context will read files and provide analysis.",
+            Description = "Ask a specialized context to analyze code. The context will read files and provide analysis.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -19,55 +19,21 @@ public static class OrchestratorTools
                     ["context_name"] = new()
                     {
                         Type = "string",
-                        Description = "Context to query: CodeExplorer (code details, patterns), ArchitectureAnalyzer (structure, layers), DependencyAnalyzer (dependencies, DI)",
+                        Description = "Context to query",
                         Enum = ["CodeExplorer", "ArchitectureAnalyzer", "DependencyAnalyzer"]
                     },
                     ["question"] = new()
                     {
                         Type = "string",
-                        Description = "Specific question for the context. Be detailed about what you need."
+                        Description = "Specific question for the context"
                     },
                     ["files"] = new()
                     {
                         Type = "string",
-                        Description = "Optional: comma-separated list of exact file paths the context should examine first (e.g., 'Context/Context.cs,AI/IAIClient.cs')"
+                        Description = "Optional: comma-separated file paths to examine"
                     }
                 },
                 Required = ["context_name", "question"],
-                AdditionalProperties = false
-            }
-        }
-    };
-
-    public static Tool CreateDynamicContext => new()
-    {
-        Type = "function",
-        Function = new FunctionDefinition
-        {
-            Name = "create_dynamic_context",
-            Description = "Create a new specialized context for a specific purpose (rarely needed, predefined contexts cover most cases)",
-            Parameters = new FunctionParameters
-            {
-                Type = "object",
-                Properties = new Dictionary<string, PropertyDefinition>
-                {
-                    ["name"] = new()
-                    {
-                        Type = "string",
-                        Description = "Unique name for the context"
-                    },
-                    ["purpose"] = new()
-                    {
-                        Type = "string",
-                        Description = "What this context specializes in"
-                    },
-                    ["stateful"] = new()
-                    {
-                        Type = "string",
-                        Description = "Whether to maintain conversation history (true/false)"
-                    }
-                },
-                Required = ["name", "purpose"],
                 AdditionalProperties = false
             }
         }
@@ -142,7 +108,7 @@ public static class OrchestratorTools
         Function = new FunctionDefinition
         {
             Name = "generate_output_file",
-            Description = "Generate a documentation or report file. Saved to the output folder (not the project).",
+            Description = "Generate a documentation or report file. Saved to the output folder.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -151,12 +117,12 @@ public static class OrchestratorTools
                     ["folder"] = new()
                     {
                         Type = "string",
-                        Description = "Subfolder in output directory (e.g., 'documentation', 'reports')"
+                        Description = "Subfolder in output directory"
                     },
                     ["filename"] = new()
                     {
                         Type = "string",
-                        Description = "Output file name (e.g., 'README.md', 'architecture.md')"
+                        Description = "Output file name"
                     },
                     ["content"] = new()
                     {
@@ -170,37 +136,11 @@ public static class OrchestratorTools
         }
     };
 
-    public static Tool ApplyPendingChanges => new()
-    {
-        Type = "function",
-        Function = new FunctionDefinition
-        {
-            Name = "apply_pending_changes",
-            Description = "Apply pending file changes that were confirmed by the user",
-            Parameters = new FunctionParameters
-            {
-                Type = "object",
-                Properties = new Dictionary<string, PropertyDefinition>
-                {
-                    ["change_ids"] = new()
-                    {
-                        Type = "string",
-                        Description = "Comma-separated change IDs to apply, or 'all'"
-                    }
-                },
-                Required = ["change_ids"],
-                AdditionalProperties = false
-            }
-        }
-    };
-
     public static List<Tool> All =>
     [
         QueryContext,
-        CreateDynamicContext,
         ProposeFileChange,
         CreateProjectFile,
-        GenerateOutputFile,
-        ApplyPendingChanges
+        GenerateOutputFile
     ];
 }

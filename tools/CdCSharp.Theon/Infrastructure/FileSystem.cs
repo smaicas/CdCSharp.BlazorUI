@@ -147,8 +147,10 @@ public sealed class FileSystem : IFileSystem
         ];
         foreach (string ignoreFilePath in _options.IgnoreFiles)
         {
-            if (!File.Exists(ignoreFilePath)) continue;
-            foreach (string line in File.ReadLines(ignoreFilePath))
+            string currentPath = GetFullPath(ignoreFilePath);
+            if (!File.Exists(currentPath)) continue;
+            _logger.Info($"Found and applying ignore file {Path.GetFileName(currentPath)}");
+            foreach (string line in File.ReadLines(currentPath))
             {
                 string trimmed = line.Trim();
                 if (!string.IsNullOrEmpty(trimmed) && !trimmed.StartsWith('#'))

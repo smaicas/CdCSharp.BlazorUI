@@ -1,4 +1,8 @@
 ﻿using CdCSharp.Theon.AI;
+using CdCSharp.Theon.Analysis;
+using CdCSharp.Theon.Core;
+using CdCSharp.Theon.Infrastructure;
+using CdCSharp.Theon.Tracing;
 
 namespace CdCSharp.Theon.Context;
 
@@ -98,8 +102,8 @@ public sealed class ContextState
         _queryCountByContext[targetContext] = _queryCountByContext.GetValueOrDefault(targetContext, 0) + 1;
     }
 
-    private static int EstimateTokens(string text)
-        => string.IsNullOrEmpty(text) ? 0 : (int)(text.Length / 3.5);
+    private static int EstimateTokens(string text) => TokenEstimator.Estimate(text);
+
 }
 
 public sealed record ContextConfiguration
@@ -118,4 +122,77 @@ public sealed record ContextConfiguration
     public int MaxDelegationDepth { get; init; } = 3;
     public int MaxCloneDepth { get; init; } = 10;
     public int MaxClonesPerType { get; init; } = 50;
+}
+
+public interface IContextScope
+{
+    string Name { get; }
+    string ContextType { get; }
+    ContextConfiguration Configuration { get; }
+
+    Task<Result<TResponse>> QueryAsync<TResponse>(
+        ContextQuery query,
+        ITracerScope? parentScope,
+        CancellationToken ct) where TResponse : class, new();
+}
+
+internal sealed class ContextScope : IContextScope
+{
+    private readonly Context _context;
+
+    public string Name => _context.Name;
+    public string ContextType => _context.Configuration.ContextType;
+    public ContextConfiguration Configuration => _context.Configuration;
+
+    public ContextScope(
+        ContextConfiguration config,
+        IAIClient aiClient,
+        IProjectContext projectContext,
+        IFileSystem fileSystem,
+        ITheonLogger logger,
+        ITracer tracer,
+        IContextFactory factory,
+        SharedProjectKnowledge sharedKnowledge,
+        ContextRegistry registry,
+        PromptFormatter promptFormatter,
+        ContextBudgetManager budgetManager,
+        TheonOptions options,
+        int cloneDepth)
+    {
+        _context = new Context(
+            config,
+            aiClient,
+            projectContext,
+            fileSystem,
+            logger,
+            tracer,
+            factory,
+            sharedKnowledge,
+            registry,
+            promptFormatter,
+            budgetManager,
+            options,
+            cloneDepth);
+    }
+
+    public async Task<Result<TResponse>> QueryAsync<TResponse>(
+        ContextQuery query,
+        ITracerScope? parentScope,
+        CancellationToken ct) where TResponse : class, new()
+    {
+        try
+        {
+            TResponse result = await _context.AskAsync<TResponse>(query, parentScope, ct);
+            return Result<TResponse>.Success(result);
+        }
+        catch (BudgetExhaustedException ex)
+        {
+            return Result<TResponse>.Failure(
+                Error.BudgetExhausted(ex.ContextName, ex.RequestedTokens, ex.MaxTokens - ex.UsedTokens));
+        }
+        catch (Exception ex)
+        {
+            return Result<TResponse>.Failure(Error.Custom("CONTEXT_ERROR", ex.Message));
+        }
+    }
 }

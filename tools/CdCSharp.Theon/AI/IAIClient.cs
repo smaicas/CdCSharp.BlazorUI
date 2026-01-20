@@ -52,10 +52,12 @@ public class LMStudioClient : IAIClient, IDisposable
             string json = JsonSerializer.Serialize(request, _jsonOptions);
             StringContent content = new(json, Encoding.UTF8, "application/json");
 
-            _logger.Debug($"Sending request to {_baseUrl}/v1/chat/completions");
+            string uri = $"/{_options.Llm.CompletionsUrl.TrimStart('/').TrimEnd('/')}";
+
+            _logger.Debug($"Sending request to {_baseUrl}{uri}");
 
             HttpResponseMessage response = await _httpClient.PostAsync(
-                "/v1/chat/completions",
+                uri,
                 content,
                 cancellationToken);
 

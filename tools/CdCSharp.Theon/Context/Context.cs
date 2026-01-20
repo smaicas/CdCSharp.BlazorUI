@@ -1,7 +1,9 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
-using CdCSharp.Theon.Context.Tools;
+using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
+using CdCSharp.Theon.Tools;
+using CdCSharp.Theon.Tools.Commands;
 using CdCSharp.Theon.Tracing;
 using System.Diagnostics;
 using System.Text.Json;
@@ -28,11 +30,14 @@ public sealed class Context : IContext
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
     private readonly ITracer _tracer;
-    private readonly IContextFactory _contextFactory;
+    private readonly IContextFactory _factory;
     private readonly SharedProjectKnowledge _sharedKnowledge;
     private readonly ContextRegistry _registry;
-    private readonly ToolCallValidator _toolValidator;
+    private readonly PromptFormatter _promptFormatter;
+    private readonly ContextBudgetManager _budgetManager;
+    private readonly ToolDispatcher _toolDispatcher;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly TheonOptions _options;
     private readonly int _cloneDepth;
 
     public string Name => _config.Name;
@@ -47,9 +52,12 @@ public sealed class Context : IContext
         IFileSystem fileSystem,
         ITheonLogger logger,
         ITracer tracer,
-        IContextFactory contextFactory,
+        IContextFactory factory,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
+        PromptFormatter promptFormatter,
+        ContextBudgetManager budgetManager,
+        TheonOptions options,
         int cloneDepth = 0)
     {
         _config = config;
@@ -58,11 +66,16 @@ public sealed class Context : IContext
         _fileSystem = fileSystem;
         _logger = logger;
         _tracer = tracer;
-        _contextFactory = contextFactory;
+        _factory = factory;
         _sharedKnowledge = sharedKnowledge;
         _registry = registry;
+        _promptFormatter = promptFormatter;
+        _budgetManager = budgetManager;
+        _options = options;
         _cloneDepth = cloneDepth;
-        _toolValidator = new ToolCallValidator(sharedKnowledge, fileSystem);
+
+        _toolDispatcher = ToolDispatcher.CreateForContext();
+
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -70,12 +83,17 @@ public sealed class Context : IContext
         };
 
         _registry.RegisterContext(config.Name, config.ContextType, config.Speciality, config.MaxTokenBudget);
+        _budgetManager.AllocateBudget(config.Name, config.MaxTokenBudget);
     }
 
-    public Task<TResponse> AskAsync<TResponse>(ContextQuery query, CancellationToken ct = default) where TResponse : class, new()
+    public Task<TResponse> AskAsync<TResponse>(ContextQuery query, CancellationToken ct = default)
+        where TResponse : class, new()
         => AskAsync<TResponse>(query, null, ct);
 
-    internal async Task<TResponse> AskAsync<TResponse>(ContextQuery query, ITracerScope? tracerScope, CancellationToken ct = default) where TResponse : class, new()
+    internal async Task<TResponse> AskAsync<TResponse>(
+        ContextQuery query,
+        ITracerScope? tracerScope,
+        CancellationToken ct = default) where TResponse : class, new()
     {
         if (!IsStateful)
             State.Clear();
@@ -86,10 +104,14 @@ public sealed class Context : IContext
         return await ExecuteWithToolLoop<TResponse>(tracerScope, ct);
     }
 
-    public Task<TResponse> ContinueAsync<TResponse>(string followUpQuestion, CancellationToken ct = default) where TResponse : class, new()
+    public Task<TResponse> ContinueAsync<TResponse>(string followUpQuestion, CancellationToken ct = default)
+        where TResponse : class, new()
         => ContinueAsync<TResponse>(followUpQuestion, null, ct);
 
-    internal async Task<TResponse> ContinueAsync<TResponse>(string followUpQuestion, ITracerScope? tracerScope, CancellationToken ct = default) where TResponse : class, new()
+    internal async Task<TResponse> ContinueAsync<TResponse>(
+        string followUpQuestion,
+        ITracerScope? tracerScope,
+        CancellationToken ct = default) where TResponse : class, new()
     {
         if (!IsStateful)
             throw new InvalidOperationException("Cannot continue a stateless context.");
@@ -101,28 +123,45 @@ public sealed class Context : IContext
     public void Reset()
     {
         State.Clear();
-        _registry.UpdateBudget(_config.Name, 0);
+        BudgetAllocation? allocation = _budgetManager.GetAllocation(_config.Name);
+        allocation?.Reset();
     }
 
     private async Task LoadInitialScope(ContextQuery query, ITracerScope? tracerScope, CancellationToken ct)
     {
         if (query.InitialFiles == null) return;
 
+        CommandContext commandContext = CreateCommandContext(tracerScope);
+
         foreach (string file in query.InitialFiles)
         {
             if (string.IsNullOrWhiteSpace(file)) continue;
-            await LoadFileContent(file, tracerScope, ct);
+
+            LoadFileCommand command = new() { Path = file };
+            Result<LoadedFile> result = await _toolDispatcher.ExecuteCommandAsync(command, commandContext, ct);
+
+            if (!result.IsSuccess)
+            {
+                _logger.Warning($"Failed to load initial file {file}: {result.Error.Message}");
+            }
         }
     }
 
-    private async Task<TResponse> ExecuteWithToolLoop<TResponse>(ITracerScope? tracerScope, CancellationToken ct) where TResponse : class, new()
+    private async Task<TResponse> ExecuteWithToolLoop<TResponse>(ITracerScope? tracerScope, CancellationToken ct)
+        where TResponse : class, new()
     {
         int maxIterations = 15;
 
         for (int i = 0; i < maxIterations; i++)
         {
             ct.ThrowIfCancellationRequested();
-            _registry.UpdateBudget(_config.Name, State.EstimatedTokens);
+
+            BudgetAllocation? allocation = _budgetManager.GetAllocation(_config.Name);
+            if (allocation != null && allocation.Status == BudgetStatus.Exhausted)
+            {
+                _logger.Warning($"[{Name}] Budget exhausted");
+                break;
+            }
 
             ChatCompletionRequest request = await BuildRequest();
             tracerScope?.RecordLlmRequest(request);
@@ -148,11 +187,6 @@ public sealed class Context : IContext
                     State.AddMessage(new Message { Role = "tool", Content = result, ToolCallId = toolCall.Id });
                 }
 
-                if (!State.HasCapacityFor(0, _config.MaxTokenBudget))
-                {
-                    _logger.Warning($"[{Name}] Token budget limit reached");
-                    break;
-                }
                 continue;
             }
 
@@ -211,20 +245,28 @@ public sealed class Context : IContext
         {
             Model = _config.Model,
             Messages = messages,
-            Tools = ContextTools.GetTools(_config),
+            Tools = ContextToolDefinitions.GetTools(_config),
             Temperature = 0.3
         };
     }
 
     private string BuildSystemPrompt()
     {
-        string fileIndex = _sharedKnowledge.GetFileIndex();
-        string contextsOverview = _registry.GetContextsOverview(_config.Name);
-        string loadedFiles = FormatLoadedFiles();
+        string fileIndex = _promptFormatter.FormatFileIndex();
+        string contextsOverview = _promptFormatter.FormatContextsOverview(_config.Name);
 
-        int budgetUsed = State.EstimatedTokens;
-        int budgetMax = _config.MaxTokenBudget;
-        int budgetPercent = budgetMax > 0 ? (budgetUsed * 100 / budgetMax) : 0;
+        BudgetAllocation? allocation = _budgetManager.GetAllocation(_config.Name);
+        int usedTokens = allocation?.UsedTokens ?? 0;
+
+        string status = _promptFormatter.FormatContextStatus(
+            _config.Name,
+            _config.ContextType,
+            usedTokens,
+            _config.MaxTokenBudget,
+            _cloneDepth,
+            _config.MaxCloneDepth);
+
+        string loadedFiles = _promptFormatter.FormatLoadedFiles(State.FileContents);
 
         return $"""
             {_config.SystemPrompt}
@@ -233,24 +275,11 @@ public sealed class Context : IContext
 
             {contextsOverview}
 
-            ## Your Status
-            Context: {_config.Name} ({_config.ContextType})
-            Budget: {budgetUsed:N0} / {budgetMax:N0} tokens ({budgetPercent}% used)
-            Clone Depth: {_cloneDepth} / {_config.MaxCloneDepth}
+            {status}
 
             ## Files in YOUR Context
-            {(State.LoadedFiles.Count > 0 ? loadedFiles : "No files loaded yet.")}
+            {loadedFiles}
             """;
-    }
-
-    private string FormatLoadedFiles()
-    {
-        List<string> sections = [];
-        foreach (KeyValuePair<string, string> kvp in State.FileContents)
-        {
-            sections.Add($"### {kvp.Key}\n```csharp\n{kvp.Value}\n```");
-        }
-        return string.Join("\n\n", sections);
     }
 
     private async Task<string> ExecuteTool(ToolCall toolCall, ITracerScope? tracerScope, CancellationToken ct)
@@ -262,185 +291,87 @@ public sealed class Context : IContext
             Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
                 toolCall.Function.Arguments, _jsonOptions);
 
-            return toolCall.Function.Name switch
+            InfrastructureServices infrastructure = new()
             {
-                "read_file" => await ExecuteReadFile(args, tracerScope, ct),
-                "peek_file" => await ExecutePeekFile(args, ct),
-                "search_files" => ExecuteSearchFiles(args),
-                "spawn_clone" => await ExecuteSpawnClone(args, tracerScope, ct),
-                "delegate_to_context" => await ExecuteDelegateToContext(args, tracerScope, ct),
-                _ => Serialize(new { error = $"Unknown tool: {toolCall.Function.Name}" })
+                FileSystem = _fileSystem,
+                Logger = _logger,
+                Options = _options
             };
+
+            QueryContext queryContext = new()
+            {
+                Infrastructure = infrastructure,
+                Knowledge = new ProjectKnowledge
+                {
+                    Metadata = _sharedKnowledge,
+                    Context = _projectContext
+                },
+                Execution = new ExecutionScope
+                {
+                    Tracer = tracerScope,
+                    State = State,
+                    Config = _config,
+                    CloneDepth = _cloneDepth
+                },
+                Orchestration = new OrchestrationCapabilities
+                {
+                    Registry = _registry,
+                    Factory = _factory,
+                    BudgetManager = _budgetManager,
+                    State = null
+                }
+            };
+
+            CommandContext commandContext = CreateCommandContext(tracerScope);
+
+            object result = await _toolDispatcher.DispatchAsync(toolCall.Function.Name, args!, queryContext, commandContext, ct);
+
+            return infrastructure.Serialize(result);
         }
         catch (Exception ex)
         {
             _logger.Warning($"[{Name}] Tool failed: {ex.Message}");
-            return Serialize(new { error = ex.Message });
+            InfrastructureServices infra = new()
+            {
+                FileSystem = _fileSystem,
+                Logger = _logger,
+                Options = _options
+            };
+            return infra.Serialize(new { error = ex.Message });
         }
     }
 
-    private async Task<string> ExecuteReadFile(Dictionary<string, JsonElement>? args, ITracerScope? tracerScope, CancellationToken ct)
+    private CommandContext CreateCommandContext(ITracerScope? tracerScope)
     {
-        string path = args?["path"].GetString() ?? throw new ArgumentException("path required");
-
-        ToolCallValidation validation = _toolValidator.Validate("read_file", args);
-        if (!validation.IsValid)
-            return Serialize(new { error = validation.ErrorMessage, suggestion = validation.Suggestion, available_files = validation.AvailableOptions?.Take(10) });
-
-        if (State.FileContents.TryGetValue(path, out string? cached))
-            return Serialize(new { path, content = cached, source = "already_loaded" });
-
-        int tokens = EstimateFileTokens(path);
-        if (!State.HasCapacityFor(tokens, _config.MaxTokenBudget))
-            return Serialize(new { error = "Budget exceeded", path, budget_remaining = _config.MaxTokenBudget - State.EstimatedTokens, file_tokens = tokens, suggestion = "Use peek_file or spawn_clone" });
-
-        string? content = await _fileSystem.ReadFileAsync(path, ct);
-        if (content == null)
-            return Serialize(new { error = $"File not found: {path}", similar_files = _sharedKnowledge.FindSimilarFiles(path, 5) });
-
-        State.AddFileContent(path, content);
-        _registry.RegisterLoadedFile(_config.Name, path, content);
-        tracerScope?.RecordFileLoaded(path, content.Length, tokens);
-
-        return Serialize(new { path, content, tokens, permanent = true });
-    }
-
-    private async Task<string> ExecutePeekFile(Dictionary<string, JsonElement>? args, CancellationToken ct)
-    {
-        string path = args?["path"].GetString() ?? throw new ArgumentException("path required");
-        string? sourceContext = args.TryGetValue("source_context", out JsonElement src) ? src.GetString() : null;
-
-        string? content = _registry.PeekFile(path, sourceContext);
-        string source = "registry";
-
-        if (content == null)
+        return new CommandContext
         {
-            content = await _fileSystem.ReadFileAsync(path, ct);
-            source = "disk";
-        }
-        else
-        {
-            source = $"context:{_registry.FindFileOwner(path)}";
-        }
-
-        if (content == null)
-            return Serialize(new { error = $"File not found: {path}", similar_files = _sharedKnowledge.FindSimilarFiles(path, 5) });
-
-        return Serialize(new { path, content, source, ephemeral = true, note = "NOT added to your context" });
+            Infrastructure = new InfrastructureServices
+            {
+                FileSystem = _fileSystem,
+                Logger = _logger,
+                Options = _options
+            },
+            Knowledge = new ProjectKnowledge
+            {
+                Metadata = _sharedKnowledge,
+                Context = _projectContext
+            },
+            Execution = new ExecutionScope
+            {
+                Tracer = tracerScope,
+                State = State,
+                Config = _config,
+                CloneDepth = _cloneDepth
+            },
+            Orchestration = new OrchestrationCapabilities
+            {
+                Registry = _registry,
+                Factory = _factory,
+                BudgetManager = _budgetManager,
+                State = null
+            }
+        };
     }
-
-    private string ExecuteSearchFiles(Dictionary<string, JsonElement>? args)
-    {
-        string pattern = args?["pattern"].GetString() ?? throw new ArgumentException("pattern required");
-
-        ToolCallValidation validation = _toolValidator.Validate("search_files", args);
-        if (!validation.IsValid)
-            return Serialize(new { error = validation.ErrorMessage, suggestion = validation.Suggestion });
-
-        List<string> files = _sharedKnowledge.FindFilesByPattern(pattern).ToList();
-        IReadOnlyDictionary<string, IReadOnlyList<string>> loadedByContexts = _registry.GetAllLoadedFiles();
-        List<string> alreadyLoaded = files.Where(f => loadedByContexts.Values.Any(list => list.Contains(f))).ToList();
-
-        return Serialize(new { pattern, files, count = files.Count, already_loaded_elsewhere = alreadyLoaded.Count > 0 ? alreadyLoaded : null });
-    }
-
-    private async Task<string> ExecuteSpawnClone(Dictionary<string, JsonElement>? args, ITracerScope? tracerScope, CancellationToken ct)
-    {
-        string question = args?["question"].GetString() ?? throw new ArgumentException("question required");
-        string filesArg = args["files"].GetString() ?? throw new ArgumentException("files required");
-        string? purpose = args.TryGetValue("purpose", out JsonElement p) ? p.GetString() : null;
-
-        if (_cloneDepth >= _config.MaxCloneDepth)
-            return Serialize(new { error = $"Max clone depth ({_config.MaxCloneDepth}) reached" });
-
-        if (_registry.GetCloneCount(_config.ContextType) >= _config.MaxClonesPerType)
-            return Serialize(new { error = $"Max clones ({_config.MaxClonesPerType}) for {_config.ContextType} reached" });
-
-        List<string> fileList = filesArg.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Where(f => !string.IsNullOrWhiteSpace(f)).ToList();
-
-        if (fileList.Count == 0)
-            return Serialize(new { error = "No files specified" });
-
-        string cloneName = _registry.GenerateCloneName(_config.ContextType);
-        ContextConfiguration cloneConfig = _config with { Name = cloneName, IsStateful = true };
-
-        Context clone = new(cloneConfig, _aiClient, _projectContext, _fileSystem, _logger, _tracer,
-            _contextFactory, _sharedKnowledge, _registry, _cloneDepth + 1);
-
-        _logger.Debug($"[{Name}] Spawned clone '{cloneName}'");
-
-        using ITracerScope cloneScope = _tracer.BeginContext(cloneName, question, fileList);
-        ContextInfoResponse result = await clone.AskAsync<ContextInfoResponse>(ContextQuery.WithFiles(question, fileList.ToArray()), cloneScope, ct);
-        tracerScope?.RecordContextQuery(cloneScope.GetContextTrace());
-
-        return Serialize(new { clone_name = cloneName, question, answer = result.Answer, files_examined = result.FilesExamined, confidence = result.Confidence });
-    }
-
-    private async Task<string> ExecuteDelegateToContext(Dictionary<string, JsonElement>? args, ITracerScope? tracerScope, CancellationToken ct)
-    {
-        string targetName = args?["target_context"].GetString() ?? throw new ArgumentException("target_context required");
-        string question = args["question"].GetString() ?? throw new ArgumentException("question required");
-        string? filesArg = args.TryGetValue("relevant_files", out JsonElement f) ? f.GetString() : null;
-
-        if (targetName.StartsWith(_config.ContextType))
-            return Serialize(new { error = "Use spawn_clone for same context type", your_type = _config.ContextType });
-
-        if (!State.CanDelegateTo(targetName, question))
-        {
-            if (State.DelegationDepth >= _config.MaxDelegationDepth)
-                return Serialize(new { error = $"Max delegation depth ({_config.MaxDelegationDepth}) reached" });
-            if (State.DelegationChain.Contains(targetName))
-                return Serialize(new { error = "Circular delegation", chain = string.Join(" -> ", State.DelegationChain.Reverse().Append(targetName)) });
-            return Serialize(new { error = "Already asked this context", suggestion = "Use read_file or peek_file" });
-        }
-
-        ContextMetadata? targetMeta = _registry.GetContext(targetName);
-        if (targetMeta == null)
-            return Serialize(new { error = $"Context '{targetName}' not found", available = _registry.GetAllContexts().Select(c => c.Name) });
-
-        if (!Enum.TryParse<PredefinedContext>(targetMeta.ContextType, out PredefinedContext predefined))
-            return Serialize(new { error = $"Unknown context type: {targetMeta.ContextType}" });
-
-        try
-        {
-            State.IncrementDelegationDepth(targetName);
-            State.RecordDelegation(targetName, question);
-
-            IContext target = _contextFactory.GetPredefined(predefined);
-            List<string>? fileList = filesArg?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Where(file => !string.IsNullOrWhiteSpace(file)).ToList();
-
-            ContextQuery query = fileList?.Count > 0 ? ContextQuery.WithFiles(question, fileList.ToArray()) : ContextQuery.Simple(question);
-
-            using ITracerScope scope = _tracer.BeginContext(targetName, question, fileList);
-            ContextInfoResponse result = await ((Context)target).AskAsync<ContextInfoResponse>(query, scope, ct);
-            tracerScope?.RecordContextQuery(scope.GetContextTrace());
-
-            return Serialize(new { delegated_to = targetName, answer = result.Answer, files_examined = result.FilesExamined, confidence = result.Confidence });
-        }
-        finally
-        {
-            State.DecrementDelegationDepth();
-        }
-    }
-
-    private async Task LoadFileContent(string path, ITracerScope? tracerScope, CancellationToken ct)
-    {
-        if (string.IsNullOrWhiteSpace(path) || State.FileContents.ContainsKey(path)) return;
-
-        string? content = await _fileSystem.ReadFileAsync(path, ct);
-        if (content == null) return;
-
-        int tokens = EstimateFileTokens(path);
-        State.AddFileContent(path, content);
-        _registry.RegisterLoadedFile(_config.Name, path, content);
-        tracerScope?.RecordFileLoaded(path, content.Length, tokens);
-    }
-
-    private int EstimateFileTokens(string path) => _projectContext.GetFileTokens(path);
-
-    private string Serialize(object obj) => JsonSerializer.Serialize(obj, _jsonOptions);
 }
 
 public sealed class ContextInfoResponse

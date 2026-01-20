@@ -1,6 +1,7 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
 using CdCSharp.Theon.Context;
+using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator;
 using CdCSharp.Theon.Tracing;
@@ -31,6 +32,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<SharedProjectKnowledge>();
 
         services.AddSingleton<ContextRegistry>();
+        services.AddSingleton<ContextBudgetManager>();
+        services.AddSingleton<PromptFormatter>();
         services.AddSingleton<IContextFactory, ContextFactory>();
 
         services.AddSingleton<ITracer, Tracer>();
@@ -51,12 +54,6 @@ public static class ServiceCollectionExtensions
 
             if (string.IsNullOrWhiteSpace(options.OutputPath))
                 errors.Add("OutputPath is required.");
-
-            if (options.Validation.LowConfidenceThreshold is < 0 or > 1)
-                errors.Add("LowConfidenceThreshold must be between 0 and 1.");
-
-            if (options.Validation.MaxValidationRetries < 0)
-                errors.Add("MaxValidationRetries must be >= 0.");
 
             if (options.Llm.TimeoutSeconds <= 0)
                 errors.Add("TimeoutSeconds must be > 0.");
@@ -81,6 +78,7 @@ public static class ServiceCollectionExtensions
             Directory.CreateDirectory(basePath);
             Directory.CreateDirectory(Path.Combine(basePath, "responses"));
             Directory.CreateDirectory(Path.Combine(basePath, "logs"));
+            Directory.CreateDirectory(Path.Combine(basePath, "traces"));
 
             if (options.Modification.CreateBackup)
             {

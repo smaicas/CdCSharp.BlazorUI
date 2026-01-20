@@ -1,5 +1,6 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
+using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.Options;
@@ -8,9 +9,14 @@ namespace CdCSharp.Theon.Context;
 
 public interface IContextFactory
 {
+    // Métodos públicos - para Orchestrator/usuario
     IContext Create(ContextConfiguration config);
     IContext CreateDynamic(string name, string purpose, bool stateful = false);
     IContext GetPredefined(PredefinedContext context);
+
+    // Métodos internos - para contextos que delegan/clonan
+    IContextScope CreateSibling(ContextConfiguration baseConfig, string purpose, int cloneDepth);
+    IContextScope CreateDelegate(string targetContextType, string purpose);
 }
 
 public enum PredefinedContext
@@ -29,9 +35,10 @@ public sealed class ContextFactory : IContextFactory
     private readonly ITracer _tracer;
     private readonly SharedProjectKnowledge _sharedKnowledge;
     private readonly ContextRegistry _registry;
+    private readonly PromptFormatter _promptFormatter;
+    private readonly ContextBudgetManager _budgetManager;
     private readonly TheonOptions _options;
-
-    private readonly Dictionary<PredefinedContext, ContextConfiguration> _predefinedConfigs;
+    private readonly Dictionary<string, ContextConfiguration> _predefinedConfigs;
 
     public ContextFactory(
         IAIClient aiClient,
@@ -41,6 +48,8 @@ public sealed class ContextFactory : IContextFactory
         ITracer tracer,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
+        PromptFormatter promptFormatter,
+        ContextBudgetManager budgetManager,
         IOptions<TheonOptions> options)
     {
         _aiClient = aiClient;
@@ -50,45 +59,46 @@ public sealed class ContextFactory : IContextFactory
         _tracer = tracer;
         _sharedKnowledge = sharedKnowledge;
         _registry = registry;
+        _promptFormatter = promptFormatter;
+        _budgetManager = budgetManager;
         _options = options.Value;
 
         _predefinedConfigs = BuildPredefinedConfigs();
     }
 
-    private Dictionary<PredefinedContext, ContextConfiguration> BuildPredefinedConfigs()
+    private Dictionary<string, ContextConfiguration> BuildPredefinedConfigs()
     {
         string model = _options.Llm.Model;
 
         return new()
         {
-            [PredefinedContext.CodeExplorer] = new ContextConfiguration
+            ["CodeExplorer"] = new ContextConfiguration
             {
                 Name = "CodeExplorer",
                 Model = model,
                 ContextType = "CodeExplorer",
-                Speciality = "Code implementation, patterns, algorithms, and logic analysis",
+                Speciality = "Code implementation, patterns, algorithms",
                 SystemPrompt = """
-                    You are a C# code analysis expert. Your job is to examine source code and explain how it works.
+                    You are a C# code analysis expert.
 
-                    ## Your Capabilities
-                    - Explain implementation details, algorithms, and logic
-                    - Identify design patterns (Repository, Factory, Strategy, DI, etc.)
-                    - Trace data flow and control flow
-                    - Detect code smells and potential issues
-                    - Analyze async/await patterns, LINQ, and modern C# features
+                    ## Capabilities
+                    - Explain implementation details
+                    - Identify design patterns
+                    - Trace data/control flow
+                    - Detect code smells
+                    - Analyze async/await and LINQ
 
-                    ## How to Work
-                    1. Look at the File Index to see available files
-                    2. Use read_file with EXACT paths to load files into your context
-                    3. Use peek_file to temporarily view files (doesn't use your budget)
-                    4. Use spawn_clone if you need to analyze more files than fit in your budget
-                    5. Provide your analysis when you have enough information
+                    ## Workflow
+                    1. Check File Index for available files
+                    2. Use read_file to load files (consumes budget)
+                    3. Use peek_file for already-loaded files (free)
+                    4. Use create_sub_context if budget exceeded
+                    5. Provide analysis
 
-                    ## Important Rules
-                    - ALWAYS use read_file or peek_file before answering questions about code
-                    - Use EXACT paths from the File Index
-                    - Check "Active Contexts" to see what files other contexts have loaded
-                    - Use peek_file for files already loaded by other contexts
+                    ## Rules
+                    - ALWAYS read/peek files before answering
+                    - Use EXACT paths from File Index
+                    - Check Active Contexts for already-loaded files
                     """,
                 IsStateful = true,
                 MaxTokenBudget = 16000,
@@ -101,33 +111,33 @@ public sealed class ContextFactory : IContextFactory
                 MaxClonesPerType = 50
             },
 
-            [PredefinedContext.ArchitectureAnalyzer] = new ContextConfiguration
+            ["ArchitectureAnalyzer"] = new ContextConfiguration
             {
                 Name = "ArchitectureAnalyzer",
                 Model = model,
                 ContextType = "ArchitectureAnalyzer",
-                Speciality = "Project structure, layers, architectural patterns, and design",
+                Speciality = "Project structure, layers, architectural patterns",
                 SystemPrompt = """
                     You are a software architecture expert for .NET solutions.
 
-                    ## Your Capabilities
-                    - Identify architectural styles (Clean Architecture, Layered, Hexagonal, etc.)
-                    - Evaluate layer separation and boundaries
-                    - Assess dependency flow and coupling
-                    - Detect architectural violations
-                    - Recommend improvements with justifications
+                    ## Capabilities
+                    - Identify architectural styles
+                    - Evaluate layer separation
+                    - Assess dependency flow
+                    - Detect violations
+                    - Recommend improvements
 
-                    ## How to Work
-                    1. Review the File Index to understand project structure
-                    2. Use read_file to load key files (entry points, DI config, interfaces)
-                    3. Use peek_file to view files other contexts have loaded
-                    4. Use spawn_clone for detailed analysis of specific areas
-                    5. Analyze relationships between components
+                    ## Workflow
+                    1. Review File Index for structure
+                    2. Load key files (Program.cs, DI config)
+                    3. Use peek_file for context-loaded files
+                    4. Use create_sub_context for detailed analysis
+                    5. Analyze relationships
 
-                    ## Important Rules
-                    - Use EXACT paths from the File Index
-                    - Start with entry points (Program.cs, ServiceCollectionExtensions.cs)
-                    - Look for interfaces and their implementations
+                    ## Rules
+                    - Use EXACT paths
+                    - Start with entry points
+                    - Look for interfaces and implementations
                     """,
                 IsStateful = false,
                 MaxTokenBudget = 20000,
@@ -140,33 +150,33 @@ public sealed class ContextFactory : IContextFactory
                 MaxClonesPerType = 50
             },
 
-            [PredefinedContext.DependencyAnalyzer] = new ContextConfiguration
+            ["DependencyAnalyzer"] = new ContextConfiguration
             {
                 Name = "DependencyAnalyzer",
                 Model = model,
                 ContextType = "DependencyAnalyzer",
-                Speciality = "Dependencies, DI configuration, coupling, and type relationships",
+                Speciality = "Dependencies, DI configuration, coupling",
                 SystemPrompt = """
-                    You are a dependency analysis expert for C#/.NET projects.
+                    You are a dependency analysis expert for C#/.NET.
 
-                    ## Your Capabilities
-                    - Trace type dependencies and relationships
+                    ## Capabilities
+                    - Trace type dependencies
                     - Identify circular dependencies
                     - Map interface implementations
-                    - Analyze DI container configuration
-                    - Evaluate coupling between components
+                    - Analyze DI containers
+                    - Evaluate coupling
 
-                    ## How to Work
-                    1. Use the File Index to locate relevant files
-                    2. Use read_file to load DI configuration files
-                    3. Use peek_file to view files loaded by other contexts
-                    4. Trace dependencies through constructor injection
-                    5. Use spawn_clone for large dependency graphs
+                    ## Workflow
+                    1. Use File Index to locate files
+                    2. Load DI configuration files
+                    3. Peek files from other contexts
+                    4. Trace through constructors
+                    5. Use create_sub_context for large graphs
 
-                    ## Important Rules
-                    - Use EXACT paths from the File Index
-                    - Focus on interfaces, implementations, and DI registration
-                    - Look for ServiceCollection extensions and Program.cs
+                    ## Rules
+                    - Use EXACT paths
+                    - Focus on interfaces and DI
+                    - Look for ServiceCollection extensions
                     """,
                 IsStateful = false,
                 MaxTokenBudget = 18000,
@@ -183,7 +193,7 @@ public sealed class ContextFactory : IContextFactory
 
     public IContext Create(ContextConfiguration config)
     {
-        _logger.Debug($"Creating context: {config.Name} (type: {config.ContextType}, stateful: {config.IsStateful})");
+        _logger.Debug($"Creating context: {config.Name} (type: {config.ContextType})");
         return new Context(
             config,
             _aiClient,
@@ -193,7 +203,10 @@ public sealed class ContextFactory : IContextFactory
             _tracer,
             this,
             _sharedKnowledge,
-            _registry);
+            _registry,
+            _promptFormatter,
+            _budgetManager,
+            _options);
     }
 
     public IContext CreateDynamic(string name, string purpose, bool stateful = false)
@@ -206,16 +219,16 @@ public sealed class ContextFactory : IContextFactory
             Speciality = purpose,
             SystemPrompt = $"""
                 You are a specialized assistant for: {purpose}
-                
-                ## How to Work
-                1. Check the File Index for available files
-                2. Use read_file with EXACT paths to load files
-                3. Use peek_file to view files other contexts have loaded
-                4. Provide analysis based on the loaded code
 
-                ## Important Rules
-                - Use EXACT paths from the File Index
-                - Check "Active Contexts" for files already loaded
+                ## Workflow
+                1. Check File Index
+                2. Use read_file to load files
+                3. Use peek_file for context-loaded files
+                4. Provide analysis
+
+                ## Rules
+                - Use EXACT paths from File Index
+                - Check Active Contexts
                 """,
             IsStateful = stateful,
             MaxTokenBudget = 8000,
@@ -230,9 +243,59 @@ public sealed class ContextFactory : IContextFactory
 
     public IContext GetPredefined(PredefinedContext context)
     {
-        if (!_predefinedConfigs.TryGetValue(context, out ContextConfiguration? config))
+        string contextType = context.ToString();
+        if (!_predefinedConfigs.TryGetValue(contextType, out ContextConfiguration? config))
             throw new ArgumentException($"Unknown predefined context: {context}");
 
         return Create(config);
+    }
+
+    public IContextScope CreateSibling(ContextConfiguration baseConfig, string purpose, int cloneDepth)
+    {
+        string cloneName = _registry.GenerateCloneName(baseConfig.ContextType);
+
+        ContextConfiguration cloneConfig = baseConfig with
+        {
+            Name = cloneName,
+            IsStateful = true
+        };
+
+        return new ContextScope(
+            cloneConfig,
+            _aiClient,
+            _projectContext,
+            _fileSystem,
+            _logger,
+            _tracer,
+            this,
+            _sharedKnowledge,
+            _registry,
+            _promptFormatter,
+            _budgetManager,
+            _options,
+            cloneDepth);
+    }
+
+    public IContextScope CreateDelegate(string targetContextType, string purpose)
+    {
+        if (!_predefinedConfigs.TryGetValue(targetContextType, out ContextConfiguration? config))
+        {
+            throw new ArgumentException($"Unknown context type: {targetContextType}");
+        }
+
+        return new ContextScope(
+            config,
+            _aiClient,
+            _projectContext,
+            _fileSystem,
+            _logger,
+            _tracer,
+            this,
+            _sharedKnowledge,
+            _registry,
+            _promptFormatter,
+            _budgetManager,
+            _options,
+            cloneDepth: 0);
     }
 }

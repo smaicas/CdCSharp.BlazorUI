@@ -1,5 +1,6 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Context;
+using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator.Models;
 
 namespace CdCSharp.Theon.Orchestrator;
@@ -8,8 +9,7 @@ public sealed class OrchestratorState
 {
     public List<Message> ConversationHistory { get; } = [];
     public Dictionary<string, ProposedChange> PendingChanges { get; } = [];
-    public Dictionary<string, IContext> ActiveContexts { get; } = [];
-    public List<ContextQueryResult> ContextQueryHistory { get; } = [];
+    public Dictionary<string, IContextScope> ActiveContexts { get; } = [];
     public int EstimatedTokens { get; private set; }
 
     public void AddUserMessage(string content)
@@ -66,37 +66,22 @@ public sealed class OrchestratorState
         }
     }
 
-    public void RegisterContext(string name, IContext context)
+    public void RegisterContext(string name, IContextScope scope)
     {
-        ActiveContexts[name] = context;
+        ActiveContexts[name] = scope;
     }
 
-    public IContext? GetContext(string name)
+    public IContextScope? GetContext(string name)
     {
         return ActiveContexts.GetValueOrDefault(name);
-    }
-
-    public void AddContextQueryResult(ContextQueryResult result)
-    {
-        ContextQueryHistory.Add(result);
     }
 
     public void Clear()
     {
         ConversationHistory.Clear();
         PendingChanges.Clear();
-        ContextQueryHistory.Clear();
         EstimatedTokens = 0;
-
-        foreach (IContext context in ActiveContexts.Values)
-        {
-            context.Reset();
-        }
     }
 
-    private static int EstimateTokens(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return 0;
-        return (int)(text.Length / 3.5);
-    }
+    private static int EstimateTokens(string text) => TokenEstimator.Estimate(text);
 }

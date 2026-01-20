@@ -65,18 +65,3 @@ public enum ChangeStatus
     Applied,
     Rejected
 }
-
-public sealed class ContextQueryResult
-{
-    [JsonPropertyName("context_name")]
-    public string ContextName { get; init; } = string.Empty;
-
-    [JsonPropertyName("question")]
-    public string Question { get; init; } = string.Empty;
-
-    [JsonPropertyName("answer")]
-    public string Answer { get; init; } = string.Empty;
-
-    [JsonPropertyName("files_examined")]
-    public List<string> FilesExamined { get; init; } = [];
-}

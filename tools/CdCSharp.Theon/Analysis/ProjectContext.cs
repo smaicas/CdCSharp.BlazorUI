@@ -395,35 +395,7 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         return types;
     }
 
-    private static int EstimateTokens(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return 0;
-
-        int tokens = 0;
-        bool inWord = false;
-
-        foreach (char c in text)
-        {
-            if (char.IsLetterOrDigit(c) || c == '_')
-            {
-                if (!inWord)
-                {
-                    tokens++;
-                    inWord = true;
-                }
-            }
-            else
-            {
-                inWord = false;
-                if (!char.IsWhiteSpace(c))
-                {
-                    tokens++;
-                }
-            }
-        }
-
-        return (int)(tokens * 1.25);
-    }
+    private static int EstimateTokens(string text) => TokenEstimator.Estimate(text);
 
     public void Dispose()
     {
@@ -437,17 +409,9 @@ public sealed record ProjectInfo(
     string RootPath,
     IReadOnlyList<AssemblyInfo> Assemblies)
 {
-    public IEnumerable<string> AllFiles => Assemblies
-        .Where(a => !a.IsTestProject)
-        .SelectMany(a => a.Files.Select(f => f.Path));
-
     public int TotalTokens => Assemblies
         .Where(a => !a.IsTestProject)
         .Sum(a => a.TotalTokens);
-
-    public FileSummary? GetFile(string path) => Assemblies
-        .SelectMany(a => a.Files)
-        .FirstOrDefault(f => f.Path.Equals(path, StringComparison.OrdinalIgnoreCase));
 }
 
 public sealed record AssemblyInfo(
