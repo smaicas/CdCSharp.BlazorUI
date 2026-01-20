@@ -133,6 +133,18 @@ public sealed class ToolDispatcher
             new CreateExecutionPlanHandler());
 
         dispatcher.Register(
+            "query_context",
+            args => new QueryContextTool
+            {
+                ContextName = args["context_name"].GetString()!,
+                Question = args["question"].GetString()!,
+                Files = args.TryGetValue("files", out JsonElement filesElem)
+                    ? filesElem.GetString()
+                    : null
+            },
+            new QueryContextHandler());
+
+        dispatcher.Register(
             "propose_file_change",
             args => new ProposeFileChangeTool
             {

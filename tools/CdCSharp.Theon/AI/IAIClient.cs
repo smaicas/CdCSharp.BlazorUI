@@ -44,17 +44,17 @@ public class LMStudioClient : IAIClient, IDisposable
     }
 
     public async Task<ChatCompletionResponse> SendAsync(
-        ChatCompletionRequest request,
-        CancellationToken cancellationToken = default)
+    ChatCompletionRequest request,
+    CancellationToken cancellationToken = default)
     {
         try
         {
             string json = JsonSerializer.Serialize(request, _jsonOptions);
             StringContent content = new(json, Encoding.UTF8, "application/json");
 
-            string uri = $"/{_options.Llm.CompletionsUrl.TrimStart('/').TrimEnd('/')}";
+            string uri = _options.Llm.CompletionsUrl.TrimStart('/');
 
-            _logger.Debug($"Sending request to {_baseUrl}{uri}");
+            _logger.Debug($"Sending request to {_baseUrl}/{uri}");
 
             HttpResponseMessage response = await _httpClient.PostAsync(
                 uri,
@@ -67,6 +67,11 @@ public class LMStudioClient : IAIClient, IDisposable
             ChatCompletionResponse? result = JsonSerializer.Deserialize<ChatCompletionResponse>(responseJson, _jsonOptions);
 
             return result ?? throw new InvalidOperationException("Failed to deserialize response");
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.Debug("Request cancelled");
+            throw;
         }
         catch (Exception ex)
         {

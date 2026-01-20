@@ -3,7 +3,6 @@ using CdCSharp.Theon.Context;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator;
-using CdCSharp.Theon.Tracing;
 using System.Text.Json;
 
 namespace CdCSharp.Theon.Tools;
@@ -40,7 +39,6 @@ public sealed record ProjectKnowledge
 /// </summary>
 public sealed record ExecutionScope
 {
-    public required ITracerScope? Tracer { get; init; }
     public required ContextState? State { get; init; }
     public required ContextConfiguration? Config { get; init; }
     public required int CloneDepth { get; init; }

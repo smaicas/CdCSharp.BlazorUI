@@ -1,33 +1,62 @@
-﻿namespace CdCSharp.Theon.Context.Planning;
+﻿using System.Text.Json.Serialization;
 
-public sealed record ExecutionPlan
+namespace CdCSharp.Theon.Context.Planning;
+
+public sealed class ExecutionPlan
 {
-    public required List<string> TaskTypes { get; init; }
-    public required string Reasoning { get; init; }
-    public required List<PlanStep> Steps { get; init; }
-    public required List<ExpectedOutput> ExpectedOutputs { get; init; }
+    [JsonPropertyName("taskTypes")]
+    public List<string> TaskTypes { get; set; } = [];
 
+    [JsonPropertyName("reasoning")]
+    public string Reasoning { get; set; } = string.Empty;
+
+    [JsonPropertyName("steps")]
+    public List<PlanStep> Steps { get; set; } = [];
+
+    [JsonPropertyName("expectedOutputs")]
+    public List<ExpectedOutput> ExpectedOutputs { get; set; } = [];
+
+    [JsonIgnore]
     public bool IsValid => Steps.Count > 0;
 }
 
-public sealed record PlanStep
+public sealed class PlanStep
 {
-    public required int Order { get; init; }
-    public required string TargetContext { get; init; }
-    public required string Question { get; init; }
-    public required List<string> SuggestedFiles { get; init; }
-    public required string Purpose { get; init; }
-    public required List<string> ContributesTo { get; init; }
+    [JsonPropertyName("order")]
+    public int Order { get; set; }
 
+    [JsonPropertyName("targetContext")]
+    public string TargetContext { get; set; } = string.Empty;
+
+    [JsonPropertyName("question")]
+    public string Question { get; set; } = string.Empty;
+
+    [JsonPropertyName("suggestedFiles")]
+    public List<string> SuggestedFiles { get; set; } = [];
+
+    [JsonPropertyName("purpose")]
+    public string Purpose { get; set; } = string.Empty;
+
+    [JsonPropertyName("contributesTo")]
+    public List<string> ContributesTo { get; set; } = [];
+
+    [JsonIgnore]
     public PlanStepStatus Status { get; set; } = PlanStepStatus.Pending;
+
+    [JsonIgnore]
     public string? Result { get; set; }
 }
 
-public sealed record ExpectedOutput
+public sealed class ExpectedOutput
 {
-    public required string TaskType { get; init; }
-    public required string Description { get; init; }
-    public required OutputType Type { get; init; }
+    [JsonPropertyName("taskType")]
+    public string TaskType { get; set; } = string.Empty;
+
+    [JsonPropertyName("description")]
+    public string Description { get; set; } = string.Empty;
+
+    [JsonPropertyName("type")]
+    public OutputType Type { get; set; } = OutputType.Documentation;
 }
 
 public enum PlanStepStatus

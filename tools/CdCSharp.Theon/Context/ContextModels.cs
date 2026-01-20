@@ -139,7 +139,6 @@ public interface IContextScope
 
     Task<Result<TResponse>> QueryAsync<TResponse>(
         ContextQuery query,
-        ITracerScope? parentScope,
         CancellationToken ct) where TResponse : class, new();
 }
 
@@ -159,7 +158,6 @@ internal sealed class ContextScope : IContextScope
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
-        ITracer tracer,
         IContextFactory factory,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
@@ -175,7 +173,6 @@ internal sealed class ContextScope : IContextScope
             projectContext,
             fileSystem,
             logger,
-            tracer,
             factory,
             sharedKnowledge,
             registry,
@@ -187,26 +184,26 @@ internal sealed class ContextScope : IContextScope
 
     public async Task<Result<TResponse>> QueryAsync<TResponse>(
     ContextQuery query,
-    ITracerScope? parentScope,
     CancellationToken ct) where TResponse : class, new()
     {
-        // Create a PartialTracer for this context query
-        using PartialTracer partialTracer = new(_fileSystem);
-        partialTracer.SetUserInput($"Context: {Name} | Question: {query.Question}");
-
-        try
+        using (Tracer.Span($"context:{Name}", ContextType, query.Question))
         {
-            TResponse result = await _context.AskAsync<TResponse>(query, parentScope, ct);
-            return Result<TResponse>.Success(result);
-        }
-        catch (BudgetExhaustedException ex)
-        {
-            return Result<TResponse>.Failure(
-                Error.BudgetExhausted(ex.ContextName, ex.RequestedTokens, ex.MaxTokens - ex.UsedTokens));
-        }
-        catch (Exception ex)
-        {
-            return Result<TResponse>.Failure(Error.Custom("CONTEXT_ERROR", ex.Message));
+            try
+            {
+                TResponse result = await _context.AskAsync<TResponse>(query, ct);
+                return Result<TResponse>.Success(result);
+            }
+            catch (BudgetExhaustedException ex)
+            {
+                Tracer.Record(new ErrorEvent("BudgetExhausted", ex.Message, null));
+                return Result<TResponse>.Failure(
+                    Error.BudgetExhausted(ex.ContextName, ex.RequestedTokens, ex.MaxTokens - ex.UsedTokens));
+            }
+            catch (Exception ex)
+            {
+                Tracer.Record(new ErrorEvent(ex.GetType().Name, ex.Message, ex.StackTrace));
+                return Result<TResponse>.Failure(Error.Custom("CONTEXT_ERROR", ex.Message));
+            }
         }
     }
 }

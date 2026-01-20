@@ -1,7 +1,6 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
 using CdCSharp.Theon.Context;
-using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator.Models;
@@ -13,7 +12,7 @@ using System.Text.Json;
 
 namespace CdCSharp.Theon.Orchestrator;
 
-public interface IOrchestrator
+public interface IOrchestrator : IDisposable
 {
     OrchestratorState State { get; }
     Task<OrchestratorResponse> ProcessAsync(string userInput, CancellationToken ct = default);
@@ -28,7 +27,6 @@ public sealed class Orchestrator : IOrchestrator
     private readonly IProjectContext _projectContext;
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
-    private readonly ITracer _tracer;
     private readonly SharedProjectKnowledge _sharedKnowledge;
     private readonly ContextRegistry _registry;
     private readonly ContextBudgetManager _budgetManager;
@@ -37,6 +35,7 @@ public sealed class Orchestrator : IOrchestrator
     private readonly PlanValidator _planValidator;
     private readonly TheonOptions _options;
     private readonly JsonSerializerOptions _jsonOptions;
+    private bool _disposed;
 
     public OrchestratorState State { get; } = new();
 
@@ -86,7 +85,6 @@ public sealed class Orchestrator : IOrchestrator
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
-        ITracer tracer,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
         ContextBudgetManager budgetManager,
@@ -98,7 +96,6 @@ public sealed class Orchestrator : IOrchestrator
         _projectContext = projectContext;
         _fileSystem = fileSystem;
         _logger = logger;
-        _tracer = tracer;
         _sharedKnowledge = sharedKnowledge;
         _registry = registry;
         _budgetManager = budgetManager;
@@ -117,42 +114,39 @@ public sealed class Orchestrator : IOrchestrator
 
     public async Task<OrchestratorResponse> ProcessAsync(string userInput, CancellationToken ct = default)
     {
-        _logger.Debug($"Processing: {userInput[..Math.Min(50, userInput.Length)]}...");
+        ThrowIfDisposed();
+        ct.ThrowIfCancellationRequested();
 
-        using ITracerScope tracerScope = _tracer.BeginOrchestration(userInput);
-
-        State.AddUserMessage(userInput);
+        Tracer.StartSession($"Query: {userInput}");
 
         try
         {
-            OrchestratorResponse response = await ExecuteWithToolLoop(tracerScope, ct);
-
-            tracerScope.SetResult(new ExecutionResult
+            using (Tracer.Span("orchestrator", "Orchestrator", userInput))
             {
-                Success = true,
-                MessagePreview = response.Message.Length > 200 ? response.Message[..200] + "..." : response.Message,
-                CreatedFiles = response.CreatedFiles,
-                GeneratedOutputs = response.GeneratedOutputs,
-                ProposedChanges = response.ProposedChanges.Select(c => new ProposedChangeTrace
-                {
-                    Id = c.Id,
-                    Path = c.Path,
-                    ChangeType = c.ChangeType.ToString(),
-                    Description = c.Description
-                }).ToList()
-            });
-
-            return response;
+                State.AddUserMessage(userInput);
+                OrchestratorResponse response = await ExecuteWithToolLoop(ct);
+                Tracer.EndSession(true, response.Message);
+                return response;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            Tracer.EndSession(false, "Cancelled by user");
+            throw;
         }
         catch (Exception ex)
         {
-            tracerScope.SetResult(new ExecutionResult { Success = false, Error = ex.Message });
+            Tracer.Record(new ErrorEvent(ex.GetType().Name, ex.Message, ex.StackTrace));
+            Tracer.EndSession(false, ex.Message);
             throw;
         }
     }
 
     public async Task<OrchestratorResponse> ConfirmChangesAsync(bool confirm, string? changeIds = null, CancellationToken ct = default)
     {
+        ThrowIfDisposed();
+        ct.ThrowIfCancellationRequested();
+
         IEnumerable<ProposedChange?> changesToProcess = string.IsNullOrEmpty(changeIds) || changeIds == "all"
             ? State.GetPendingChanges()
             : changeIds.Split(',').Select(id => State.GetPendingChange(id.Trim())).Where(c => c != null)!;
@@ -162,6 +156,8 @@ public sealed class Orchestrator : IOrchestrator
 
         foreach (ProposedChange? change in changesToProcess)
         {
+            ct.ThrowIfCancellationRequested();
+
             if (confirm)
             {
                 bool success = await _fileSystem.WriteProjectFileAsync(change.Path, change.NewContent, ct);
@@ -193,10 +189,25 @@ public sealed class Orchestrator : IOrchestrator
 
     public void Reset()
     {
+        ThrowIfDisposed();
         State.Clear();
         _registry.Clear();
         _budgetManager.Clear();
         InitializePredefinedContexts();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        State.Clear();
+        _registry.Clear();
+        _budgetManager.Clear();
+    }
+
+    private void ThrowIfDisposed()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
     }
 
     private void InitializePredefinedContexts()
@@ -210,30 +221,46 @@ public sealed class Orchestrator : IOrchestrator
         State.RegisterContext("DependencyAnalyzer", dependencyAnalyzer);
     }
 
-    private async Task<OrchestratorResponse> ExecuteWithToolLoop(ITracerScope tracerScope, CancellationToken ct)
+    private async Task<OrchestratorResponse> ExecuteWithToolLoop(CancellationToken ct)
     {
+        _logger.Section("Processing Request"); // ADD THIS
+
         List<string> createdFiles = [];
         List<string> generatedOutputs = [];
         List<ProposedChange> proposedChanges = [];
 
         int maxIterations = 30;
-        int iteration = 0;
 
-        while (iteration < maxIterations)
+        for (int iteration = 0; iteration < maxIterations; iteration++)
         {
             ct.ThrowIfCancellationRequested();
-            iteration++;
 
-            ChatCompletionRequest request = await BuildRequest();
-            tracerScope.RecordLlmRequest(request);
+            ChatCompletionRequest request = await BuildRequest(ct);
+
+            string? firstUserMsg = request.Messages.FirstOrDefault(m => m.Role == "user")?.Content;
+
+            // ADD THIS LOG CALL:
+            _logger.LogLlmCall("Orchestrator", request.Messages.Count, request.Tools?.Count);
+
+            // KEEP EXISTING TRACER:
+            Tracer.Record(new LlmRequestEvent(
+                request.Model,
+                request.Messages.Count,
+                request.Tools?.Count ?? 0,
+                firstUserMsg));
 
             Stopwatch sw = Stopwatch.StartNew();
             ChatCompletionResponse response = await _aiClient.SendAsync(request, ct);
             sw.Stop();
 
-            tracerScope.RecordLlmResponse(response, sw.Elapsed);
-
             Choice choice = response.Choices[0];
+
+            // KEEP EXISTING TRACER:
+            Tracer.Record(new LlmResponseEvent(
+                choice.FinishReason,
+                choice.Message.Content,
+                choice.Message.ToolCalls?.Count,
+                sw.Elapsed.TotalMilliseconds));
 
             if (choice.FinishReason == "tool_calls" && choice.Message.ToolCalls?.Count > 0)
             {
@@ -241,11 +268,28 @@ public sealed class Orchestrator : IOrchestrator
 
                 foreach (ToolCall toolCall in choice.Message.ToolCalls)
                 {
+                    ct.ThrowIfCancellationRequested();
+
+                    // ADD LOGGING BEFORE TOOL EXECUTION:
+                    string? toolDetails = ExtractToolDetails(toolCall);
+                    _logger.LogToolCall("Orchestrator", toolCall.Function.Name, toolDetails);
+
+                    // KEEP EXISTING TRACER:
+                    Tracer.Record(new ToolCallEvent(toolCall.Function.Name, toolCall.Function.Arguments));
+
                     Stopwatch toolSw = Stopwatch.StartNew();
-                    string result = await ExecuteTool(toolCall, tracerScope, ct, createdFiles, generatedOutputs, proposedChanges);
+                    string result = await ExecuteTool(toolCall, ct, createdFiles, generatedOutputs, proposedChanges);
                     toolSw.Stop();
 
-                    tracerScope.RecordToolExecution(toolCall, result, toolSw.Elapsed, result.Contains("\"error\""));
+                    bool isError = result.Contains("\"error\"");
+
+                    // ADD LOGGING AFTER TOOL EXECUTION:
+                    string? summary = ExtractToolResultSummary(toolCall.Function.Name, result, isError);
+                    _logger.LogToolResult("Orchestrator", toolCall.Function.Name, !isError, summary);
+
+                    // KEEP EXISTING TRACER:
+                    Tracer.Record(new ToolResultEvent(toolCall.Function.Name, result, isError, toolSw.Elapsed.TotalMilliseconds));
+
                     State.AddToolResult(toolCall.Id, result);
                 }
 
@@ -253,6 +297,8 @@ public sealed class Orchestrator : IOrchestrator
             }
 
             State.AddAssistantMessage(choice.Message);
+
+            _logger.Success("Request completed"); // ADD THIS
 
             return new OrchestratorResponse
             {
@@ -279,9 +325,69 @@ public sealed class Orchestrator : IOrchestrator
         };
     }
 
-    private async Task<ChatCompletionRequest> BuildRequest()
+    private string? ExtractToolDetails(ToolCall toolCall)
     {
-        await _sharedKnowledge.GetProjectAsync();
+        try
+        {
+            Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+                toolCall.Function.Arguments, _jsonOptions);
+
+            return toolCall.Function.Name switch
+            {
+                "query_context" => $"{args?["context_name"]} - {args?["question"].GetString()?[..50]}...",
+                "create_execution_plan" => $"{args?["user_request"].GetString()?[..50]}...",
+                "propose_file_change" => args?["path"].GetString(),
+                "create_project_file" => args?["path"].GetString(),
+                "generate_output_file" => $"{args?["folder"]}/{args?["filename"]}",
+                _ => null
+            };
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private string? ExtractToolResultSummary(string toolName, string result, bool isError)
+    {
+        if (isError)
+        {
+            try
+            {
+                Dictionary<string, JsonElement>? error = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(result);
+                return error?["error"].GetString();
+            }
+            catch
+            {
+                return "Error occurred";
+            }
+        }
+
+        try
+        {
+            Dictionary<string, JsonElement>? data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(result);
+
+            return toolName switch
+            {
+                "create_execution_plan" => $"{data?["steps"].GetArrayLength()} steps created",
+                "query_context" => $"Examined {data?["filesExamined"].GetArrayLength()} files",
+                "generate_output_file" => data?["fullPath"].GetString(),
+                "create_project_file" => data?["path"].GetString(),
+                "propose_file_change" => $"{data?["changeType"]} - {data?["path"].GetString()}",
+                _ => null
+            };
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private async Task<ChatCompletionRequest> BuildRequest(CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        await _sharedKnowledge.GetProjectAsync(ct);
 
         string fileIndex = _promptFormatter.FormatFileIndex();
         string contextsOverview = _promptFormatter.FormatContextsOverview();
@@ -301,7 +407,8 @@ public sealed class Orchestrator : IOrchestrator
             {(string.IsNullOrEmpty(pendingChanges) ? "" : $"## Pending Changes\n{pendingChanges}")}
             """;
 
-        List<Message> messages = [
+        List<Message> messages =
+        [
             new() { Role = "system", Content = fullSystemPrompt },
             .. State.ConversationHistory
         ];
@@ -317,250 +424,26 @@ public sealed class Orchestrator : IOrchestrator
 
     private async Task<string> ExecuteTool(
         ToolCall toolCall,
-        ITracerScope tracerScope,
         CancellationToken ct,
         List<string> createdFiles,
         List<string> generatedOutputs,
         List<ProposedChange> proposedChanges)
     {
-        _logger.Debug($"Executing tool: {toolCall.Function.Name}");
+        Dictionary<string, JsonElement>? args =
+            JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(toolCall.Function.Arguments, _jsonOptions);
 
-        try
-        {
-            // Validate output generation against plan
-            if (toolCall.Function.Name is "generate_output_file" or "create_project_file")
-            {
-                if (State.HasPlan && !State.HasExecutedPlan)
-                {
-                    _logger.Warning("Attempted to generate output before executing plan");
-                    return _promptFormatter.FormatError(
-                        "Cannot generate output before executing plan steps. " +
-                        "Please complete the planned investigation first by calling query_context for each step.");
-                }
+        ToolContext toolContext = CreateToolContext();
 
-                if (State.HasPlan && !_planValidator.CanGenerateOutput(State.CurrentPlan!))
-                {
-                    string progress = _planValidator.GetPlanProgress(State.CurrentPlan!);
-                    return _promptFormatter.FormatError(
-                        $"Cannot generate output yet. Plan progress: {progress}. " +
-                        "Complete all plan steps before generating output.");
-                }
-            }
+        object result = await _toolDispatcher.DispatchAsync(toolCall.Function.Name, args!, toolContext, ct);
 
-            if (toolCall.Function.Name == "query_context")
-            {
-                return await HandleQueryContext(toolCall, tracerScope, ct);
-            }
+        if (result is CreatedFile cf) createdFiles.Add(cf.Path);
+        if (result is GeneratedOutput go) generatedOutputs.Add(go.FullPath);
+        if (result is ProposedChange pc) proposedChanges.Add(pc);
 
-            if (toolCall.Function.Name == "create_execution_plan")
-            {
-                return await HandleCreatePlan(toolCall, tracerScope, ct);
-            }
-
-            Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
-                toolCall.Function.Arguments, _jsonOptions);
-
-            ToolContext toolContext = CreateToolContext(tracerScope);
-
-            object result = await _toolDispatcher.DispatchAsync(
-                toolCall.Function.Name,
-                args!,
-                toolContext,
-                ct);
-
-            if (result is CreatedFile created)
-            {
-                createdFiles.Add(created.Path);
-            }
-            else if (result is GeneratedOutput generated)
-            {
-                generatedOutputs.Add(generated.FullPath);
-            }
-            else if (result is ProposedChange proposed)
-            {
-                proposedChanges.Add(proposed);
-            }
-
-            return toolContext.Infrastructure.Serialize(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.Warning($"Tool execution failed: {ex.Message}");
-            InfrastructureServices infra = new()
-            {
-                FileSystem = _fileSystem,
-                Logger = _logger,
-                Options = _options
-            };
-            return infra.Serialize(new { error = ex.Message });
-        }
+        return toolContext.Infrastructure.Serialize(result);
     }
 
-    private async Task<string> HandleQueryContext(ToolCall toolCall, ITracerScope tracerScope, CancellationToken ct)
-    {
-        Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
-            toolCall.Function.Arguments, _jsonOptions);
-
-        string contextName = args!["context_name"].GetString()!;
-        string question = args["question"].GetString()!;
-        string? filesArg = args.TryGetValue("files", out JsonElement f) ? f.GetString() : null;
-
-        List<string>? files = filesArg?
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Where(file => !string.IsNullOrWhiteSpace(file))
-            .ToList();
-
-        // ENFORCE PLAN ORDER
-        if (State.HasPlan)
-        {
-            Result<PlanStep> validation = _planValidator.ValidateQueryAgainstPlan(
-                State.CurrentPlan!,
-                contextName,
-                files);
-
-            if (!validation.IsSuccess)
-            {
-                _logger.Warning($"Plan validation failed: {validation.Error.Message}");
-                InfrastructureServices infra = new()
-                {
-                    FileSystem = _fileSystem,
-                    Logger = _logger,
-                    Options = _options
-                };
-                return infra.Serialize(new
-                {
-                    error = validation.Error.Message,
-                    code = validation.Error.Code,
-                    plan_progress = _planValidator.GetPlanProgress(State.CurrentPlan!)
-                });
-            }
-        }
-
-        IContextScope? scope = State.GetContext(contextName);
-        if (scope == null)
-        {
-            InfrastructureServices infra = new()
-            {
-                FileSystem = _fileSystem,
-                Logger = _logger,
-                Options = _options
-            };
-            return infra.Serialize(new { error = $"Context '{contextName}' not found" });
-        }
-
-        ContextQuery query = files?.Count > 0
-            ? ContextQuery.WithFiles(question, files.ToArray())
-            : ContextQuery.Simple(question);
-
-        using ITracerScope contextScope = _tracer.BeginContext(contextName, question, files);
-        Result<ContextInfoResponse> result = await scope.QueryAsync<ContextInfoResponse>(query, contextScope, ct);
-
-        tracerScope.RecordContextQuery(contextScope.GetContextTrace());
-
-        // Mark plan step as completed
-        if (State.CurrentPlan != null)
-        {
-            result.Match(
-                success =>
-                {
-                    PlanStep? step = State.CurrentPlan.Steps
-                        .FirstOrDefault(s => s.Status == PlanStepStatus.Pending &&
-                                           s.TargetContext.Equals(contextName, StringComparison.OrdinalIgnoreCase));
-
-                    if (step != null)
-                    {
-                        State.MarkStepCompleted(step.Order, success.Answer);
-                        _logger.Info($"Plan step {step.Order} completed: {step.Purpose}");
-                    }
-                    return true;
-                },
-                error =>
-                {
-                    PlanStep? step = State.CurrentPlan.Steps
-                        .FirstOrDefault(s => s.Status == PlanStepStatus.Pending &&
-                                           s.TargetContext.Equals(contextName, StringComparison.OrdinalIgnoreCase));
-
-                    if (step != null)
-                    {
-                        State.MarkStepFailed(step.Order, error.Message);
-                        _logger.Warning($"Plan step {step.Order} failed: {error.Message}");
-                    }
-                    return false;
-                });
-        }
-
-        InfrastructureServices infrastructure = new()
-        {
-            FileSystem = _fileSystem,
-            Logger = _logger,
-            Options = _options
-        };
-
-        return result.Match(
-            success => infrastructure.Serialize(new
-            {
-                context_name = contextName,
-                question,
-                answer = success.Answer,
-                files_examined = success.FilesExamined,
-                confidence = success.Confidence,
-                plan_progress = State.CurrentPlan != null
-                    ? _planValidator.GetPlanProgress(State.CurrentPlan)
-                    : null
-            }),
-            error => infrastructure.Serialize(new { error = error.Message, code = error.Code }));
-    }
-
-    private async Task<string> HandleCreatePlan(ToolCall toolCall, ITracerScope tracerScope, CancellationToken ct)
-    {
-        Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
-            toolCall.Function.Arguments, _jsonOptions);
-
-        string userRequest = args!["user_request"].GetString()!;
-
-        ToolContext toolContext = CreateToolContext(tracerScope);
-
-        CreateExecutionPlanTool tool = new() { UserRequest = userRequest };
-        CreateExecutionPlanHandler handler = new();
-
-        Result<ExecutionPlan> result = await handler.HandleAsync(tool, toolContext, ct);
-
-        return result.Match(
-            plan =>
-            {
-                State.SetPlan(plan);
-                _logger.Info($"Execution plan created: {plan.Steps.Count} steps for tasks: {string.Join(", ", plan.TaskTypes)}");
-
-                return toolContext.Infrastructure.Serialize(new
-                {
-                    success = true,
-                    plan = new
-                    {
-                        task_types = plan.TaskTypes,
-                        reasoning = plan.Reasoning,
-                        steps = plan.Steps.Select(s => new
-                        {
-                            order = s.Order,
-                            context = s.TargetContext,
-                            question = s.Question,
-                            files = s.SuggestedFiles,
-                            purpose = s.Purpose,
-                            contributes_to = s.ContributesTo
-                        }),
-                        expected_outputs = plan.ExpectedOutputs.Select(o => new
-                        {
-                            task_type = o.TaskType,
-                            description = o.Description,
-                            output_type = o.Type.ToString().ToLowerInvariant()
-                        })
-                    },
-                    message = "Plan created successfully. Now execute each step IN ORDER using query_context with the specified context, question, and files."
-                });
-            },
-            error => toolContext.Infrastructure.Serialize(new { error = error.Message, code = error.Code }));
-    }
-
-    private ToolContext CreateToolContext(ITracerScope tracerScope)
+    private ToolContext CreateToolContext()
     {
         return new ToolContext
         {
@@ -577,7 +460,6 @@ public sealed class Orchestrator : IOrchestrator
             },
             Execution = new ExecutionScope
             {
-                Tracer = tracerScope,
                 State = null,
                 Config = null,
                 CloneDepth = 0

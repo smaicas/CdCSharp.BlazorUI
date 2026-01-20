@@ -3,7 +3,6 @@ using CdCSharp.Theon.Analysis;
 using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
-using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.Options;
 
 namespace CdCSharp.Theon.Context;
@@ -31,7 +30,6 @@ public sealed class ContextFactory : IContextFactory
     private readonly IProjectContext _projectContext;
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
-    private readonly ITracer _tracer;
     private readonly SharedProjectKnowledge _sharedKnowledge;
     private readonly ContextRegistry _registry;
     private readonly PromptFormatter _promptFormatter;
@@ -44,7 +42,6 @@ public sealed class ContextFactory : IContextFactory
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
-        ITracer tracer,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
         PromptFormatter promptFormatter,
@@ -55,7 +52,6 @@ public sealed class ContextFactory : IContextFactory
         _projectContext = projectContext;
         _fileSystem = fileSystem;
         _logger = logger;
-        _tracer = tracer;
         _sharedKnowledge = sharedKnowledge;
         _registry = registry;
         _promptFormatter = promptFormatter;
@@ -199,7 +195,6 @@ public sealed class ContextFactory : IContextFactory
             _projectContext,
             _fileSystem,
             _logger,
-            _tracer,
             this,
             _sharedKnowledge,
             _registry,
@@ -265,7 +260,6 @@ public sealed class ContextFactory : IContextFactory
             _projectContext,
             _fileSystem,
             _logger,
-            _tracer,
             this,
             _sharedKnowledge,
             _registry,
@@ -288,7 +282,6 @@ public sealed class ContextFactory : IContextFactory
             _projectContext,
             _fileSystem,
             _logger,
-            _tracer,
             this,
             _sharedKnowledge,
             _registry,
@@ -310,7 +303,6 @@ public sealed class ContextFactory : IContextFactory
             _projectContext,
             _fileSystem,
             _logger,
-            _tracer,
             this,
             _sharedKnowledge,
             _registry,

@@ -14,7 +14,7 @@ public sealed class TheonOptions
 
 public sealed class LlmOptions
 {
-    public string BaseUrl { get; set; } = "http://localhost:1234/v1";
+    public string BaseUrl { get; set; } = "http://localhost:1234";
     public string CompletionsUrl { get; set; } = "v1/chat/completions";
     public string Model { get; set; } = "openai/gpt-oss-20b";
     public int TimeoutSeconds { get; set; } = 7200;

@@ -4,7 +4,6 @@ using CdCSharp.Theon.Context;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator;
-using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -35,8 +34,6 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ContextBudgetManager>();
         services.AddSingleton<PromptFormatter>();
         services.AddSingleton<IContextFactory, ContextFactory>();
-
-        services.AddSingleton<ITracer, Tracer>();
 
         services.AddSingleton<IOrchestrator, Orchestrator.Orchestrator>();
 

@@ -1,8 +1,9 @@
 ﻿using CdCSharp.Theon.Context;
 using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
+using CdCSharp.Theon.Orchestrator;
 using CdCSharp.Theon.Orchestrator.Models;
-using System.Text.Json;
+using CdCSharp.Theon.Tracing;
 
 namespace CdCSharp.Theon.Tools;
 
@@ -64,7 +65,7 @@ public sealed class PeekFileHandler : IToolHandler<PeekFileTool, FileContent>
 
         // IMPORTANT: Do NOT add to state, do NOT register in registry
         // This is ephemeral - only for next LLM response
-        context.Execution.Tracer?.RecordFileLoaded(tool.Path, content.Length, 0);
+        Tracer.Record(new FileReadEvent(tool.Path, content.Length, 0, IsEphemeral: true));
 
         return Result<FileContent>.Success(
             new FileContent(tool.Path, content, IsEphemeral: true, source));
@@ -134,8 +135,7 @@ public sealed class ReadFileHandler : IToolHandler<ReadFileTool, LoadedFile>
             return Result<LoadedFile>.Failure(Error.FileNotFound(tool.Path));
         }
 
-        // IMPORTANT: Add to state (permanent), register in registry, consume budget
-        context.Execution.State.AddFileContent(tool.Path, content);
+        context.Execution.State!.AddFileContent(tool.Path, content);
         context.Orchestration?.Registry.RegisterLoadedFile(
             context.Execution.Config!.Name,
             tool.Path,
@@ -143,10 +143,24 @@ public sealed class ReadFileHandler : IToolHandler<ReadFileTool, LoadedFile>
         context.Orchestration?.BudgetManager.RecordUsage(
             context.Execution.Config!.Name,
             tokens);
-        context.Execution.Tracer?.RecordFileLoaded(tool.Path, content.Length, tokens);
 
-        context.Infrastructure.Logger.Debug(
-            $"[{context.Execution.Config.Name}] Loaded permanently: {tool.Path} ({tokens} tokens)");
+        // ADD THESE LOG CALLS:
+        context.Infrastructure.Logger.LogFileOperation(
+            "Loaded (permanent)",
+            tool.Path,
+            tokens);
+
+        Tracer.Record(new FileReadEvent(tool.Path, content.Length, tokens, IsEphemeral: false));
+
+        allocation = context.Orchestration?.BudgetManager.GetAllocation(context.Execution.Config!.Name);
+        if (allocation != null)
+        {
+            context.Infrastructure.Logger.LogBudgetStatus(
+                context.Execution.Config!.Name,
+                allocation.UsedTokens,
+                allocation.MaxTokens,
+                allocation.UtilizationPercent);
+        }
 
         return Result<LoadedFile>.Success(
             new LoadedFile(tool.Path, content, tokens, IsPermanent: true));
@@ -284,10 +298,7 @@ public sealed class CreateSubContextHandler : IToolHandler<CreateSubContextTool,
         }
 
         ContextQuery query = ContextQuery.WithFiles(tool.Question, tool.Files.ToArray());
-        Result<ContextInfoResponse> result = await scope.QueryAsync<ContextInfoResponse>(
-            query,
-            context.Execution.Tracer,
-            ct);
+        Result<ContextInfoResponse> result = await scope.QueryAsync<ContextInfoResponse>(query, ct);
 
         return result.Map(r => new SubContextResult(
             scope.Name,
@@ -343,13 +354,35 @@ public sealed class CreateExecutionPlanHandler : IToolHandler<CreateExecutionPla
 
         ContextQuery contextQuery = ContextQuery.Simple(planningPrompt);
 
-        // CRITICAL: The planner context now uses structured output internally
-        Result<ContextInfoResponse> result = await plannerScope.QueryAsync<ContextInfoResponse>(
-            contextQuery,
-            context.Execution.Tracer,
-            ct);
+        Result<ExecutionPlan> result = await plannerScope.QueryAsync<ExecutionPlan>(contextQuery, ct);
 
-        return result.Bind(response => ParsePlan(response.Answer, context));
+        return result.Bind(plan => ValidatePlan(plan, context));
+    }
+
+    private static Result<ExecutionPlan> ValidatePlan(ExecutionPlan plan, ToolContext context)
+    {
+        if (plan.Steps == null || plan.Steps.Count == 0)
+        {
+            return Result<ExecutionPlan>.Failure(
+                Error.Custom("INVALID_PLAN", "Plan must have at least one step"));
+        }
+
+        context.Orchestration!.State!.SetPlan(plan);
+
+        // ADD THESE LOG CALLS:
+        context.Infrastructure.Logger.LogPlanCreated(plan.Steps.Count, plan.TaskTypes);
+
+        foreach (PlanStep? step in plan.Steps.OrderBy(s => s.Order))
+        {
+            context.Infrastructure.Logger.LogPlanStep(
+                step.Order,
+                plan.Steps.Count,
+                "Pending",
+                step.TargetContext,
+                step.Purpose);
+        }
+
+        return Result<ExecutionPlan>.Success(plan);
     }
 
     private static string BuildFileIndex(ToolContext context)
@@ -366,96 +399,6 @@ public sealed class CreateExecutionPlanHandler : IToolHandler<CreateExecutionPla
                     .Select(f => $"  - `{f.Key}` ({f.Value.EstimatedTokens} tokens)"));
                 return $"{acc}\n**{dir}/**\n{files}\n";
             });
-    }
-
-    private static Result<ExecutionPlan> ParsePlan(string content, ToolContext context)
-    {
-        try
-        {
-            // The response should already be structured JSON from the LLM
-            // But we still need to be defensive
-            string trimmed = content.Trim();
-
-            // Remove markdown code fences if present (shouldn't happen with structured output)
-            if (trimmed.StartsWith("```"))
-            {
-                int start = trimmed.IndexOf('{');
-                int end = trimmed.LastIndexOf('}');
-                if (start >= 0 && end > start)
-                {
-                    trimmed = trimmed[start..(end + 1)];
-                }
-            }
-
-            JsonSerializerOptions options = new()
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            ExecutionPlanDto? dto = JsonSerializer.Deserialize<ExecutionPlanDto>(trimmed, options);
-
-            if (dto == null)
-            {
-                context.Infrastructure.Logger.Error("Deserialization returned null");
-                context.Infrastructure.Logger.Debug($"Content: {content}");
-                return Result<ExecutionPlan>.Failure(
-                    Error.Custom("PLAN_PARSE_ERROR", "Failed to deserialize execution plan"));
-            }
-
-            ExecutionPlan plan = MapFromDto(dto);
-
-            if (plan.Steps.Count == 0)
-            {
-                return Result<ExecutionPlan>.Failure(
-                    Error.Custom("INVALID_PLAN", "Plan must have at least one step"));
-            }
-
-            return Result<ExecutionPlan>.Success(plan);
-        }
-        catch (JsonException ex)
-        {
-            context.Infrastructure.Logger.Warning($"Failed to parse plan: {ex.Message}");
-            context.Infrastructure.Logger.Debug($"Content: {content}");
-            context.Infrastructure.Logger.Debug($"Path: {ex.Path} | Line: {ex.LineNumber} | Position: {ex.BytePositionInLine}");
-            return Result<ExecutionPlan>.Failure(
-                Error.Custom("PLAN_PARSE_ERROR", $"Invalid JSON in plan: {ex.Message}"));
-        }
-    }
-
-    private static ExecutionPlan MapFromDto(ExecutionPlanDto dto)
-    {
-        return new ExecutionPlan
-        {
-            TaskTypes = dto.TaskTypes ?? [],
-            Reasoning = dto.Reasoning ?? "",
-            Steps = dto.Steps?.Select(s => new PlanStep
-            {
-                Order = s.Order,
-                TargetContext = s.TargetContext ?? "",
-                Question = s.Question ?? "",
-                SuggestedFiles = s.SuggestedFiles ?? [],
-                Purpose = s.Purpose ?? "",
-                ContributesTo = s.ContributesTo ?? []
-            }).ToList() ?? [],
-            ExpectedOutputs = dto.ExpectedOutputs?.Select(o => new ExpectedOutput
-            {
-                TaskType = o.TaskType ?? "",
-                Description = o.Description ?? "",
-                Type = ParseOutputType(o.OutputType)
-            }).ToList() ?? []
-        };
-    }
-
-    private static OutputType ParseOutputType(string? outputType)
-    {
-        return outputType?.ToLowerInvariant() switch
-        {
-            "documentation" => OutputType.Documentation,
-            "codechange" => OutputType.CodeChange,
-            "analysisreport" => OutputType.AnalysisReport,
-            "projectfile" => OutputType.ProjectFile,
-            _ => OutputType.Documentation
-        };
     }
 
     private sealed class ExecutionPlanDto
@@ -605,5 +548,176 @@ public sealed class GenerateOutputFileHandler : IToolHandler<GenerateOutputFileT
             tool.Filename);
 
         return Result<GeneratedOutput>.Success(new GeneratedOutput(outputPath));
+    }
+}
+
+public sealed record QueryContextTool : ITool<ContextQueryResult>
+{
+    public string ToolName => "query_context";
+    public bool RequiresConfirmation => false;
+    public bool IsReadOnly => true;
+
+    public required string ContextName { get; init; }
+    public required string Question { get; init; }
+    public string? Files { get; init; }
+}
+
+public sealed record ContextQueryResult(
+    string ContextName,
+    string Question,
+    string Answer,
+    List<string> FilesExamined,
+    float Confidence);
+
+public sealed class QueryContextHandler : IToolHandler<QueryContextTool, ContextQueryResult>
+{
+    public async Task<Result<ContextQueryResult>> HandleAsync(
+    QueryContextTool tool,
+    ToolContext context,
+    CancellationToken ct)
+    {
+        if (context.Orchestration?.State == null)
+        {
+            return Result<ContextQueryResult>.Failure(
+                Error.Custom("NOT_IN_ORCHESTRATOR", "query_context can only be used from orchestrator"));
+        }
+
+        // ADD THIS LOG CALL:
+        context.Infrastructure.Logger.LogContextQuery(
+            "Orchestrator",
+            tool.ContextName,
+            tool.Question);
+
+        if (context.Orchestration.State.HasPlan)
+        {
+            ExecutionPlan plan = context.Orchestration.State.CurrentPlan!;
+
+            List<string>? requestedFiles = null;
+            if (!string.IsNullOrWhiteSpace(tool.Files))
+            {
+                requestedFiles = tool.Files
+                    .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
+
+            PlanValidator validator = new();
+            Result<PlanStep> validation = validator.ValidateQueryAgainstPlan(
+                plan,
+                tool.ContextName,
+                requestedFiles);
+
+            if (!validation.IsSuccess)
+            {
+                return Result<ContextQueryResult>.Failure(validation.Error);
+            }
+
+            PlanStep step = validation.Value;
+
+            // ADD THIS LOG CALL:
+            context.Infrastructure.Logger.LogPlanStep(
+                step.Order,
+                plan.Steps.Count,
+                "InProgress",
+                step.TargetContext,
+                step.Purpose);
+
+            step.Status = PlanStepStatus.InProgress;
+
+            IContextScope? scope = context.Orchestration.State.GetContext(tool.ContextName);
+            if (scope == null)
+            {
+                scope = context.Orchestration.Factory.CreateDelegate(
+                    tool.ContextName,
+                    tool.Question);
+                context.Orchestration.State.RegisterContext(tool.ContextName, scope);
+            }
+
+            List<string> filesToLoad = step.SuggestedFiles.ToList();
+
+            if (requestedFiles != null)
+            {
+                foreach (string file in requestedFiles)
+                {
+                    if (!filesToLoad.Contains(file, StringComparer.OrdinalIgnoreCase))
+                    {
+                        filesToLoad.Add(file);
+                    }
+                }
+            }
+
+            ContextQuery query = filesToLoad.Count > 0
+                ? ContextQuery.WithFiles(tool.Question, filesToLoad.ToArray())
+                : ContextQuery.Simple(tool.Question);
+
+            Result<ContextInfoResponse> result = await scope.QueryAsync<ContextInfoResponse>(query, ct);
+
+            return result.Match(
+                success =>
+                {
+                    context.Orchestration.State.MarkStepCompleted(step.Order, success.Answer);
+
+                    // ADD THIS LOG CALL:
+                    context.Infrastructure.Logger.LogPlanStep(
+                        step.Order,
+                        plan.Steps.Count,
+                        "Completed",
+                        step.TargetContext,
+                        step.Purpose);
+
+                    return Result<ContextQueryResult>.Success(new ContextQueryResult(
+                        tool.ContextName,
+                        tool.Question,
+                        success.Answer,
+                        success.FilesExamined,
+                        success.Confidence));
+                },
+                error =>
+                {
+                    context.Orchestration.State.MarkStepFailed(step.Order, error.Message);
+
+                    // ADD THIS LOG CALL:
+                    context.Infrastructure.Logger.LogPlanStep(
+                        step.Order,
+                        plan.Steps.Count,
+                        "Failed",
+                        step.TargetContext,
+                        step.Purpose);
+
+                    return Result<ContextQueryResult>.Failure(error);
+                });
+        }
+        else
+        {
+            // No plan - allow direct query (for simple questions)
+            IContextScope? scope = context.Orchestration.State.GetContext(tool.ContextName);
+            if (scope == null)
+            {
+                scope = context.Orchestration.Factory.CreateDelegate(
+                    tool.ContextName,
+                    tool.Question);
+                context.Orchestration.State.RegisterContext(tool.ContextName, scope);
+            }
+
+            List<string>? files = null;
+            if (!string.IsNullOrWhiteSpace(tool.Files))
+            {
+                files = tool.Files
+                    .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
+
+            ContextQuery query = files != null && files.Count > 0
+                ? ContextQuery.WithFiles(tool.Question, files.ToArray())
+                : ContextQuery.Simple(tool.Question);
+
+            Result<ContextInfoResponse> result = await scope.QueryAsync<ContextInfoResponse>(query, ct);
+
+            return result.Map(r => new ContextQueryResult(
+                tool.ContextName,
+                tool.Question,
+                r.Answer,
+                r.FilesExamined,
+                r.Confidence));
+        }
     }
 }

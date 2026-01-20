@@ -3,7 +3,9 @@ using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator;
 using CdCSharp.Theon.Orchestrator.Models;
+using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 string projectPath = args.Length > 0 ? args[0] : Directory.GetCurrentDirectory();
 
@@ -22,6 +24,28 @@ await using ServiceProvider provider = services.BuildServiceProvider();
 
 ITheonLogger logger = provider.GetRequiredService<ITheonLogger>();
 IOrchestrator orchestrator = provider.GetRequiredService<IOrchestrator>();
+TheonOptions options = provider.GetRequiredService<IOptions<TheonOptions>>().Value;
+
+string tracesPath = Path.IsPathRooted(options.OutputPath)
+    ? options.OutputPath
+    : Path.Combine(options.ProjectPath, options.OutputPath);
+Tracer.Configure(tracesPath);
+
+using CancellationTokenSource cts = new();
+
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+    logger.Warning("Cancellation requested...");
+    cts.Cancel();
+    Tracer.FlushSession();
+};
+
+AppDomain.CurrentDomain.ProcessExit += (_, _) =>
+{
+    Tracer.FlushSession();
+    orchestrator.Dispose();
+};
 
 if (provider.GetRequiredService<IAIClient>() is LMStudioClient lmClient)
 {
@@ -32,13 +56,24 @@ logger.Section("Ready");
 logger.Info("Type your query or 'exit' to quit.");
 Console.WriteLine();
 
-while (true)
+while (!cts.Token.IsCancellationRequested)
 {
     Console.ForegroundColor = ConsoleColor.Green;
     Console.Write("> ");
     Console.ResetColor();
 
-    string? input = Console.ReadLine();
+    string? input;
+    try
+    {
+        input = Console.ReadLine();
+    }
+    catch (OperationCanceledException)
+    {
+        break;
+    }
+
+    if (input == null || cts.Token.IsCancellationRequested)
+        break;
 
     if (string.IsNullOrWhiteSpace(input))
         continue;
@@ -68,7 +103,7 @@ while (true)
 
     try
     {
-        OrchestratorResponse response = await orchestrator.ProcessAsync(command);
+        OrchestratorResponse response = await orchestrator.ProcessAsync(command, cts.Token);
 
         Console.WriteLine();
         Console.ForegroundColor = ConsoleColor.White;
@@ -93,13 +128,18 @@ while (true)
 
         if (response.NeedsConfirmation)
         {
-            bool confirmed = await HandleConfirmation(orchestrator, logger);
+            bool confirmed = await HandleConfirmation(orchestrator, logger, cts.Token);
             if (confirmed)
             {
                 Console.WriteLine();
             }
         }
 
+        Console.WriteLine();
+    }
+    catch (OperationCanceledException)
+    {
+        logger.Warning("Operation cancelled.");
         Console.WriteLine();
     }
     catch (Exception ex)
@@ -138,7 +178,7 @@ static void ShowProposedChanges(List<ProposedChange> changes)
     }
 }
 
-static async Task<bool> HandleConfirmation(IOrchestrator orchestrator, ITheonLogger logger)
+static async Task<bool> HandleConfirmation(IOrchestrator orchestrator, ITheonLogger logger, CancellationToken ct)
 {
     Console.WriteLine();
     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -147,9 +187,12 @@ static async Task<bool> HandleConfirmation(IOrchestrator orchestrator, ITheonLog
 
     string? confirmation = Console.ReadLine()?.Trim().ToLowerInvariant();
 
+    if (ct.IsCancellationRequested)
+        return false;
+
     if (string.IsNullOrEmpty(confirmation) || confirmation == "n" || confirmation == "no")
     {
-        await orchestrator.ConfirmChangesAsync(false);
+        await orchestrator.ConfirmChangesAsync(false, ct: ct);
         logger.Info("Changes rejected.");
         return false;
     }
@@ -160,7 +203,7 @@ static async Task<bool> HandleConfirmation(IOrchestrator orchestrator, ITheonLog
         changeIds = confirmation;
     }
 
-    OrchestratorResponse result = await orchestrator.ConfirmChangesAsync(true, changeIds);
+    OrchestratorResponse result = await orchestrator.ConfirmChangesAsync(true, changeIds, ct);
     logger.Success(result.Message);
     return true;
 }

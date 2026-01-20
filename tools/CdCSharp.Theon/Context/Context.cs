@@ -18,7 +18,9 @@ public interface IContext
     ContextConfiguration Configuration { get; }
 
     Task<TResponse> AskAsync<TResponse>(ContextQuery query, CancellationToken ct = default) where TResponse : class, new();
+
     Task<TResponse> ContinueAsync<TResponse>(string followUpQuestion, CancellationToken ct = default) where TResponse : class, new();
+
     void Reset();
 }
 
@@ -28,7 +30,6 @@ public sealed class Context : IContext
     private readonly IProjectContext _projectContext;
     private readonly IFileSystem _fileSystem;
     private readonly ITheonLogger _logger;
-    private readonly ITracer _tracer;
     private readonly IContextFactory _factory;
     private readonly SharedProjectKnowledge _sharedKnowledge;
     private readonly ContextRegistry _registry;
@@ -39,18 +40,12 @@ public sealed class Context : IContext
     private readonly TheonOptions _options;
     private readonly int _cloneDepth;
 
-    public string Name => Configuration.Name;
-    public bool IsStateful => Configuration.IsStateful;
-    public ContextState State { get; } = new();
-    public ContextConfiguration Configuration { get; }
-
     public Context(
         ContextConfiguration config,
         IAIClient aiClient,
         IProjectContext projectContext,
         IFileSystem fileSystem,
         ITheonLogger logger,
-        ITracer tracer,
         IContextFactory factory,
         SharedProjectKnowledge sharedKnowledge,
         ContextRegistry registry,
@@ -64,7 +59,6 @@ public sealed class Context : IContext
         _projectContext = projectContext;
         _fileSystem = fileSystem;
         _logger = logger;
-        _tracer = tracer;
         _factory = factory;
         _sharedKnowledge = sharedKnowledge;
         _registry = registry;
@@ -86,39 +80,33 @@ public sealed class Context : IContext
         _budgetManager.AllocateBudget(config.Name, config.MaxTokenBudget);
     }
 
-    public Task<TResponse> AskAsync<TResponse>(ContextQuery query, CancellationToken ct = default)
-        where TResponse : class, new()
-        => AskAsync<TResponse>(query, null, ct);
+    public string Name => Configuration.Name;
+    public bool IsStateful => Configuration.IsStateful;
+    public ContextState State { get; } = new();
+    public ContextConfiguration Configuration { get; }
 
-    internal async Task<TResponse> AskAsync<TResponse>(
-        ContextQuery query,
-        ITracerScope? tracerScope,
-        CancellationToken ct = default) where TResponse : class, new()
+    public async Task<TResponse> AskAsync<TResponse>(
+    ContextQuery query,
+    CancellationToken ct = default) where TResponse : class, new()
     {
         if (!IsStateful)
             State.Clear();
 
-        // Note: We don't load InitialFiles here anymore
-        // Contexts should use peek_file or read_file explicitly
+        // Note: We don't load InitialFiles here anymore Contexts should use peek_file or read_file explicitly
         State.AddMessage(new Message { Role = "user", Content = query.Question });
 
-        return await ExecuteWithToolLoop<TResponse>(tracerScope, ct);
+        return await ExecuteWithToolLoop<TResponse>(ct);
     }
 
-    public Task<TResponse> ContinueAsync<TResponse>(string followUpQuestion, CancellationToken ct = default)
-        where TResponse : class, new()
-        => ContinueAsync<TResponse>(followUpQuestion, null, ct);
-
-    internal async Task<TResponse> ContinueAsync<TResponse>(
+    public async Task<TResponse> ContinueAsync<TResponse>(
         string followUpQuestion,
-        ITracerScope? tracerScope,
         CancellationToken ct = default) where TResponse : class, new()
     {
         if (!IsStateful)
             throw new InvalidOperationException("Cannot continue a stateless context.");
 
         State.AddMessage(new Message { Role = "user", Content = followUpQuestion });
-        return await ExecuteWithToolLoop<TResponse>(tracerScope, ct);
+        return await ExecuteWithToolLoop<TResponse>(ct);
     }
 
     public void Reset()
@@ -128,11 +116,13 @@ public sealed class Context : IContext
         allocation?.Reset();
     }
 
-    private async Task<TResponse> ExecuteWithToolLoop<TResponse>(ITracerScope? tracerScope, CancellationToken ct)
-        where TResponse : class, new()
+    private async Task<TResponse> ExecuteWithToolLoop<TResponse>(CancellationToken ct)
+    where TResponse : class, new()
     {
+        ct.ThrowIfCancellationRequested();
+
         int maxIterations = 15;
-        Dictionary<string, string> ephemeralFiles = []; // Peeked files for next request only
+        Dictionary<string, string> ephemeralFiles = [];
 
         for (int i = 0; i < maxIterations; i++)
         {
@@ -145,17 +135,32 @@ public sealed class Context : IContext
                 break;
             }
 
-            ChatCompletionRequest request = await BuildRequest<TResponse>(ephemeralFiles);
-            tracerScope?.RecordLlmRequest(request);
+            ChatCompletionRequest request = await BuildRequest<TResponse>(ephemeralFiles, ct);
+
+            string? firstUserMsg = request.Messages.FirstOrDefault(m => m.Role == "user")?.Content;
+
+            // ADD THIS LOG CALL:
+            _logger.LogLlmCall(Configuration.Name, request.Messages.Count, request.Tools?.Count);
+
+            // KEEP EXISTING TRACER:
+            Tracer.Record(new LlmRequestEvent(
+                request.Model,
+                request.Messages.Count,
+                request.Tools?.Count ?? 0,
+                firstUserMsg));
 
             Stopwatch sw = Stopwatch.StartNew();
             ChatCompletionResponse response = await _aiClient.SendAsync(request, ct);
             sw.Stop();
-            tracerScope?.RecordLlmResponse(response, sw.Elapsed);
 
             Choice choice = response.Choices[0];
 
-            // Clear ephemeral files after each request
+            Tracer.Record(new LlmResponseEvent(
+                choice.FinishReason,
+                choice.Message.Content,
+                choice.Message.ToolCalls?.Count,
+                sw.Elapsed.TotalMilliseconds));
+
             ephemeralFiles.Clear();
 
             if (choice.FinishReason == "tool_calls" && choice.Message.ToolCalls?.Count > 0)
@@ -164,18 +169,23 @@ public sealed class Context : IContext
 
                 foreach (ToolCall toolCall in choice.Message.ToolCalls)
                 {
+                    ct.ThrowIfCancellationRequested();
+
+                    Tracer.Record(new ToolCallEvent(toolCall.Function.Name, toolCall.Function.Arguments));
+
                     Stopwatch toolSw = Stopwatch.StartNew();
-                    string result = await ExecuteTool(toolCall, tracerScope, ephemeralFiles, ct);
+                    string result = await ExecuteTool(toolCall, ephemeralFiles, ct);
                     toolSw.Stop();
 
-                    tracerScope?.RecordToolExecution(toolCall, result, toolSw.Elapsed, result.Contains("\"error\""));
+                    bool isError = result.Contains("\"error\"");
+                    Tracer.Record(new ToolResultEvent(toolCall.Function.Name, result, isError, toolSw.Elapsed.TotalMilliseconds));
+
                     State.AddMessage(new Message { Role = "tool", Content = result, ToolCallId = toolCall.Id });
                 }
 
                 continue;
             }
 
-            // Final response - use structured output
             State.AddMessage(choice.Message);
             return ParseStructuredResponse<TResponse>(choice.Message.Content);
         }
@@ -192,9 +202,21 @@ public sealed class Context : IContext
             return new TResponse();
         }
 
+        string trimmed = content.Trim();
+
+        if (trimmed.StartsWith("```"))
+        {
+            int jsonStart = trimmed.IndexOf('{');
+            int jsonEnd = trimmed.LastIndexOf('}');
+            if (jsonStart >= 0 && jsonEnd > jsonStart)
+            {
+                trimmed = trimmed[jsonStart..(jsonEnd + 1)];
+            }
+        }
+
         try
         {
-            TResponse? parsed = JsonSerializer.Deserialize<TResponse>(content, _jsonOptions);
+            TResponse? parsed = JsonSerializer.Deserialize<TResponse>(trimmed, _jsonOptions);
             if (parsed != null)
                 return parsed;
 
@@ -204,14 +226,18 @@ public sealed class Context : IContext
         catch (JsonException ex)
         {
             _logger.Warning($"[{Name}] JSON parsing error: {ex.Message}");
-            _logger.Debug($"Content: {content}");
+            _logger.Debug($"Content: {trimmed}");
             return new TResponse();
         }
     }
 
-    private async Task<ChatCompletionRequest> BuildRequest<TResponse>(Dictionary<string, string> ephemeralFiles)
+    private async Task<ChatCompletionRequest> BuildRequest<TResponse>(
+        Dictionary<string, string> ephemeralFiles,
+        CancellationToken ct)
     {
-        await _sharedKnowledge.GetProjectAsync();
+        ct.ThrowIfCancellationRequested();
+
+        await _sharedKnowledge.GetProjectAsync(ct);
 
         string systemPrompt = BuildSystemPrompt(ephemeralFiles);
 
@@ -321,7 +347,6 @@ public sealed class Context : IContext
 
     private async Task<string> ExecuteTool(
         ToolCall toolCall,
-        ITracerScope? tracerScope,
         Dictionary<string, string> ephemeralFiles,
         CancellationToken ct)
     {
@@ -332,7 +357,7 @@ public sealed class Context : IContext
             Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
                 toolCall.Function.Arguments, _jsonOptions);
 
-            ToolContext toolContext = CreateToolContext(tracerScope);
+            ToolContext toolContext = CreateToolContext();
             object result = await _toolDispatcher.DispatchAsync(toolCall.Function.Name, args!, toolContext, ct);
 
             // Handle ephemeral files from peek_file
@@ -357,7 +382,7 @@ public sealed class Context : IContext
         }
     }
 
-    private ToolContext CreateToolContext(ITracerScope? tracerScope)
+    private ToolContext CreateToolContext()
     {
         return new ToolContext
         {
@@ -374,7 +399,6 @@ public sealed class Context : IContext
             },
             Execution = new ExecutionScope
             {
-                Tracer = tracerScope,
                 State = State,
                 Config = Configuration,
                 CloneDepth = _cloneDepth
