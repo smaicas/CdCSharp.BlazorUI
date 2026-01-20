@@ -4,6 +4,30 @@ namespace CdCSharp.Theon.Tools;
 
 public static class OrchestratorToolDefinitions
 {
+    public static Tool CreateExecutionPlan => new()
+    {
+        Type = "function",
+        Function = new FunctionDefinition
+        {
+            Name = "create_execution_plan",
+            Description = "Create a detailed execution plan before performing complex tasks. MUST be called before generating documentation, analysis reports, or any comprehensive output. The plan ensures thorough investigation of the codebase.",
+            Parameters = new FunctionParameters
+            {
+                Type = "object",
+                Properties = new Dictionary<string, PropertyDefinition>
+                {
+                    ["user_request"] = new()
+                    {
+                        Type = "string",
+                        Description = "The original user request to plan for"
+                    }
+                },
+                Required = ["user_request"],
+                AdditionalProperties = false
+            }
+        }
+    };
+
     public static Tool QueryContext => new()
     {
         Type = "function",
@@ -108,7 +132,7 @@ public static class OrchestratorToolDefinitions
         Function = new FunctionDefinition
         {
             Name = "generate_output_file",
-            Description = "Generate a documentation or report file. Saved to the output folder.",
+            Description = "Generate a documentation or report file. Saved to the output folder. Can only be used AFTER executing plan steps.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -138,6 +162,7 @@ public static class OrchestratorToolDefinitions
 
     public static List<Tool> All =>
     [
+        CreateExecutionPlan,
         QueryContext,
         ProposeFileChange,
         CreateProjectFile,

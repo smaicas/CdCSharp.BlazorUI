@@ -30,6 +30,11 @@ public sealed class FileSystem : IFileSystem
     private readonly List<IFileSystemObserver> _observers = [];
     private readonly object _observersLock = new();
 
+    // Debouncing mechanism for file changes
+    private readonly Dictionary<string, (FileChangeType Type, Timer Timer)> _pendingChanges = [];
+    private readonly object _changesLock = new();
+    private const int DebounceDelayMs = 500;
+
     public FileSystem(TheonOptions options, ITheonLogger logger)
     {
         _options = options;
@@ -44,6 +49,7 @@ public sealed class FileSystem : IFileSystem
             if (!_observers.Contains(observer))
             {
                 _observers.Add(observer);
+                _logger.Debug($"Observer registered: {observer.GetType().Name}");
             }
         }
     }
@@ -53,6 +59,7 @@ public sealed class FileSystem : IFileSystem
         lock (_observersLock)
         {
             _observers.Remove(observer);
+            _logger.Debug($"Observer unregistered: {observer.GetType().Name}");
         }
     }
 
@@ -72,11 +79,14 @@ public sealed class FileSystem : IFileSystem
         string responsesPath = Path.IsPathRooted(_options.ResponsesPath)
             ? _options.ResponsesPath
             : GetFullPath(_options.ResponsesPath);
+
         string folderPath = Path.Combine(responsesPath, responseFolder);
         Directory.CreateDirectory(folderPath);
+
         string filePath = Path.Combine(folderPath, fileName);
         string? dir = Path.GetDirectoryName(filePath);
         if (dir != null) Directory.CreateDirectory(dir);
+
         await File.WriteAllTextAsync(filePath, content, ct);
         _logger.Debug($"Output file written: {fileName}");
     }
@@ -105,7 +115,7 @@ public sealed class FileSystem : IFileSystem
         _logger.Info($"Project file {(exists ? "modified" : "created")}: {relativePath}");
 
         FileChangeType changeType = exists ? FileChangeType.Modified : FileChangeType.Created;
-        NotifyObservers(relativePath, changeType);
+        NotifyObserversDebounced(relativePath, changeType);
 
         return true;
     }
@@ -115,8 +125,10 @@ public sealed class FileSystem : IFileSystem
         string basePath = relativePath == null
             ? _options.ProjectPath
             : GetFullPath(relativePath);
+
         if (!Directory.Exists(basePath))
             return [];
+
         return Directory.EnumerateFiles(basePath, pattern, SearchOption.AllDirectories)
             .Where(f => !IsIgnored(f))
             .Select(f => Path.GetRelativePath(_options.ProjectPath, f));
@@ -129,12 +141,16 @@ public sealed class FileSystem : IFileSystem
         string backupsPath = Path.IsPathRooted(_options.BackupsPath)
             ? _options.BackupsPath
             : GetFullPath(_options.BackupsPath);
+
         Directory.CreateDirectory(backupsPath);
+
         string fileName = Path.GetFileName(relativePath);
         string backupName = $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.Now:yyyyMMdd_HHmmss}{Path.GetExtension(fileName)}";
         string backupPath = Path.Combine(backupsPath, backupName);
+
         string content = await File.ReadAllTextAsync(GetFullPath(relativePath), ct);
         await File.WriteAllTextAsync(backupPath, content, ct);
+
         _logger.Debug($"Backup created: {backupName}");
     }
 
@@ -145,11 +161,14 @@ public sealed class FileSystem : IFileSystem
             "bin/", "obj/", ".vs/", ".vscode/", ".idea/", ".git/",
             "node_modules/", "packages/", "TestResults/", ".theon/"
         ];
+
         foreach (string ignoreFilePath in _options.IgnoreFiles)
         {
             string currentPath = GetFullPath(ignoreFilePath);
             if (!File.Exists(currentPath)) continue;
+
             _logger.Info($"Found and applying ignore file {Path.GetFileName(currentPath)}");
+
             foreach (string line in File.ReadLines(currentPath))
             {
                 string trimmed = line.Trim();
@@ -159,19 +178,64 @@ public sealed class FileSystem : IFileSystem
                 }
             }
         }
+
         return patterns;
     }
 
     private bool IsIgnored(string path) => _ignoredPatterns.Any(path.Contains);
 
-    private void NotifyObservers(string relativePath, FileChangeType changeType)
+    /// <summary>
+    /// Debounced notification to prevent rapid-fire events.
+    /// Multiple changes to the same file within the debounce window are collapsed.
+    /// </summary>
+    private void NotifyObserversDebounced(string relativePath, FileChangeType changeType)
     {
+        lock (_changesLock)
+        {
+            // Cancel existing timer if present
+            if (_pendingChanges.TryGetValue(relativePath, out (FileChangeType Type, Timer Timer) existing))
+            {
+                existing.Timer.Dispose();
+            }
+
+            // Create new timer
+            Timer timer = new(
+                _ => ProcessFileChange(relativePath, changeType),
+                null,
+                DebounceDelayMs,
+                Timeout.Infinite);
+
+            _pendingChanges[relativePath] = (changeType, timer);
+        }
+    }
+
+    /// <summary>
+    /// Process file change after debounce delay.
+    /// Thread-safe: locks to get observers, then notifies outside lock to avoid deadlocks.
+    /// </summary>
+    private void ProcessFileChange(string relativePath, FileChangeType changeType)
+    {
+        lock (_changesLock)
+        {
+            if (_pendingChanges.TryGetValue(relativePath, out (FileChangeType Type, Timer Timer) pending))
+            {
+                pending.Timer.Dispose();
+                _pendingChanges.Remove(relativePath);
+            }
+        }
+
         List<IFileSystemObserver> observersCopy;
         lock (_observersLock)
         {
             observersCopy = [.. _observers];
         }
 
+        if (observersCopy.Count == 0)
+            return;
+
+        _logger.Debug($"Notifying {observersCopy.Count} observers of {changeType}: {relativePath}");
+
+        // Notify outside lock to prevent deadlocks
         foreach (IFileSystemObserver observer in observersCopy)
         {
             try
@@ -180,7 +244,7 @@ public sealed class FileSystem : IFileSystem
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Observer notification failed: {ex.Message}");
+                _logger.Error($"Observer notification failed for {observer.GetType().Name}", ex);
             }
         }
     }

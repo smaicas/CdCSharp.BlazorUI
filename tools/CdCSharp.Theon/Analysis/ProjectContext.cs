@@ -58,22 +58,30 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
         return 0;
     }
 
+    /// <summary>
+    /// Thread-safe observer callback for file changes.
+    /// Enqueues changes and processes them asynchronously with proper locking.
+    /// </summary>
     public void OnFileChanged(string relativePath, FileChangeType changeType)
     {
+        // Process asynchronously to avoid blocking the caller
         _ = Task.Run(async () =>
         {
-            await _lock.WaitAsync();
             try
             {
-                await HandleFileChangeAsync(relativePath, changeType);
+                await _lock.WaitAsync();
+                try
+                {
+                    await HandleFileChangeAsync(relativePath, changeType);
+                }
+                finally
+                {
+                    _lock.Release();
+                }
             }
             catch (Exception ex)
             {
-                _logger.Warning($"Error handling file change: {ex.Message}");
-            }
-            finally
-            {
-                _lock.Release();
+                _logger.Error($"Error handling file change for {relativePath}", ex);
             }
         });
     }
@@ -293,8 +301,8 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
             .Concat(_fileSystem.EnumerateFiles(relativePath, "*.razor"))
             .ToList();
 
-        List<FileSummary> files = [];
-        List<TypeSummary> types = [];
+        List<FileSummary> files = new();
+        List<TypeSummary> types = new();
 
         if (!isTest)
         {
@@ -331,16 +339,16 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
 
     private static List<string> ExtractReferences(XDocument csproj)
     {
-        List<string> refs = [];
+        List<string> refs = new();
 
-        foreach (XElement pkg in csproj.Descendants().Where(e => e.Name.LocalName == "PackageReference"))
+        foreach (XElement? pkg in csproj.Descendants().Where(e => e.Name.LocalName == "PackageReference"))
         {
             string? include = pkg.Attribute("Include")?.Value;
             if (!string.IsNullOrEmpty(include))
                 refs.Add(include);
         }
 
-        foreach (XElement proj in csproj.Descendants().Where(e => e.Name.LocalName == "ProjectReference"))
+        foreach (XElement? proj in csproj.Descendants().Where(e => e.Name.LocalName == "ProjectReference"))
         {
             string? include = proj.Attribute("Include")?.Value;
             if (!string.IsNullOrEmpty(include))
@@ -352,7 +360,7 @@ public class ProjectContext : IProjectContext, IFileSystemObserver, IDisposable
 
     private List<TypeSummary> ExtractTypes(string filePath, string content)
     {
-        List<TypeSummary> types = [];
+        List<TypeSummary> types = new();
 
         try
         {

@@ -1,9 +1,9 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
+using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Tools;
-using CdCSharp.Theon.Tools.Commands;
 using CdCSharp.Theon.Tracing;
 using System.Diagnostics;
 using System.Text.Json;
@@ -24,7 +24,6 @@ public interface IContext
 
 public sealed class Context : IContext
 {
-    private readonly ContextConfiguration _config;
     private readonly IAIClient _aiClient;
     private readonly IProjectContext _projectContext;
     private readonly IFileSystem _fileSystem;
@@ -40,10 +39,10 @@ public sealed class Context : IContext
     private readonly TheonOptions _options;
     private readonly int _cloneDepth;
 
-    public string Name => _config.Name;
-    public bool IsStateful => _config.IsStateful;
+    public string Name => Configuration.Name;
+    public bool IsStateful => Configuration.IsStateful;
     public ContextState State { get; } = new();
-    public ContextConfiguration Configuration => _config;
+    public ContextConfiguration Configuration { get; }
 
     public Context(
         ContextConfiguration config,
@@ -60,7 +59,7 @@ public sealed class Context : IContext
         TheonOptions options,
         int cloneDepth = 0)
     {
-        _config = config;
+        Configuration = config;
         _aiClient = aiClient;
         _projectContext = projectContext;
         _fileSystem = fileSystem;
@@ -78,6 +77,7 @@ public sealed class Context : IContext
 
         _jsonOptions = new JsonSerializerOptions
         {
+            PropertyNameCaseInsensitive = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = false
         };
@@ -98,7 +98,8 @@ public sealed class Context : IContext
         if (!IsStateful)
             State.Clear();
 
-        await LoadInitialScope(query, tracerScope, ct);
+        // Note: We don't load InitialFiles here anymore
+        // Contexts should use peek_file or read_file explicitly
         State.AddMessage(new Message { Role = "user", Content = query.Question });
 
         return await ExecuteWithToolLoop<TResponse>(tracerScope, ct);
@@ -123,47 +124,28 @@ public sealed class Context : IContext
     public void Reset()
     {
         State.Clear();
-        BudgetAllocation? allocation = _budgetManager.GetAllocation(_config.Name);
+        BudgetAllocation? allocation = _budgetManager.GetAllocation(Configuration.Name);
         allocation?.Reset();
-    }
-
-    private async Task LoadInitialScope(ContextQuery query, ITracerScope? tracerScope, CancellationToken ct)
-    {
-        if (query.InitialFiles == null) return;
-
-        CommandContext commandContext = CreateCommandContext(tracerScope);
-
-        foreach (string file in query.InitialFiles)
-        {
-            if (string.IsNullOrWhiteSpace(file)) continue;
-
-            LoadFileCommand command = new() { Path = file };
-            Result<LoadedFile> result = await _toolDispatcher.ExecuteCommandAsync(command, commandContext, ct);
-
-            if (!result.IsSuccess)
-            {
-                _logger.Warning($"Failed to load initial file {file}: {result.Error.Message}");
-            }
-        }
     }
 
     private async Task<TResponse> ExecuteWithToolLoop<TResponse>(ITracerScope? tracerScope, CancellationToken ct)
         where TResponse : class, new()
     {
         int maxIterations = 15;
+        Dictionary<string, string> ephemeralFiles = []; // Peeked files for next request only
 
         for (int i = 0; i < maxIterations; i++)
         {
             ct.ThrowIfCancellationRequested();
 
-            BudgetAllocation? allocation = _budgetManager.GetAllocation(_config.Name);
+            BudgetAllocation? allocation = _budgetManager.GetAllocation(Configuration.Name);
             if (allocation != null && allocation.Status == BudgetStatus.Exhausted)
             {
                 _logger.Warning($"[{Name}] Budget exhausted");
                 break;
             }
 
-            ChatCompletionRequest request = await BuildRequest();
+            ChatCompletionRequest request = await BuildRequest<TResponse>(ephemeralFiles);
             tracerScope?.RecordLlmRequest(request);
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -173,6 +155,9 @@ public sealed class Context : IContext
 
             Choice choice = response.Choices[0];
 
+            // Clear ephemeral files after each request
+            ephemeralFiles.Clear();
+
             if (choice.FinishReason == "tool_calls" && choice.Message.ToolCalls?.Count > 0)
             {
                 State.AddMessage(choice.Message);
@@ -180,7 +165,7 @@ public sealed class Context : IContext
                 foreach (ToolCall toolCall in choice.Message.ToolCalls)
                 {
                     Stopwatch toolSw = Stopwatch.StartNew();
-                    string result = await ExecuteTool(toolCall, tracerScope, ct);
+                    string result = await ExecuteTool(toolCall, tracerScope, ephemeralFiles, ct);
                     toolSw.Stop();
 
                     tracerScope?.RecordToolExecution(toolCall, result, toolSw.Elapsed, result.Contains("\"error\""));
@@ -190,86 +175,136 @@ public sealed class Context : IContext
                 continue;
             }
 
+            // Final response - use structured output
             State.AddMessage(choice.Message);
-            return ParseFinalResponse<TResponse>(choice.Message.Content);
+            return ParseStructuredResponse<TResponse>(choice.Message.Content);
         }
 
         _logger.Warning($"[{Name}] Max iterations reached");
         return new TResponse();
     }
 
-    private TResponse ParseFinalResponse<TResponse>(string? content) where TResponse : class, new()
+    private TResponse ParseStructuredResponse<TResponse>(string? content) where TResponse : class, new()
     {
         if (string.IsNullOrWhiteSpace(content))
-            return CreateDefaultResponse<TResponse>(string.Empty);
+        {
+            _logger.Warning($"[{Name}] Empty response from LLM");
+            return new TResponse();
+        }
 
         try
         {
-            string trimmed = content.Trim();
-            if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
-            {
-                TResponse? parsed = JsonSerializer.Deserialize<TResponse>(trimmed, _jsonOptions);
-                if (parsed != null) return parsed;
-            }
-            return CreateDefaultResponse<TResponse>(content);
+            TResponse? parsed = JsonSerializer.Deserialize<TResponse>(content, _jsonOptions);
+            if (parsed != null)
+                return parsed;
+
+            _logger.Warning($"[{Name}] Failed to deserialize response");
+            return new TResponse();
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
-            return CreateDefaultResponse<TResponse>(content);
+            _logger.Warning($"[{Name}] JSON parsing error: {ex.Message}");
+            _logger.Debug($"Content: {content}");
+            return new TResponse();
         }
     }
 
-    private TResponse CreateDefaultResponse<TResponse>(string content) where TResponse : class, new()
-    {
-        if (typeof(TResponse) == typeof(ContextInfoResponse))
-        {
-            return (new ContextInfoResponse
-            {
-                Answer = content,
-                FilesExamined = State.LoadedFiles.ToList(),
-                Confidence = string.IsNullOrEmpty(content) ? 0.5f : 0.8f
-            } as TResponse)!;
-        }
-        return new TResponse();
-    }
-
-    private async Task<ChatCompletionRequest> BuildRequest()
+    private async Task<ChatCompletionRequest> BuildRequest<TResponse>(Dictionary<string, string> ephemeralFiles)
     {
         await _sharedKnowledge.GetProjectAsync();
 
-        string systemPrompt = BuildSystemPrompt();
+        string systemPrompt = BuildSystemPrompt(ephemeralFiles);
 
-        List<Message> messages = [new() { Role = "system", Content = systemPrompt }, .. State.History];
+        List<Message> messages = [
+            new() { Role = "system", Content = systemPrompt },
+        .. State.History.ToArray()
+        ];
 
-        return new ChatCompletionRequest
+        ChatCompletionRequest request = new()
         {
-            Model = _config.Model,
+            Model = Configuration.Model,
             Messages = messages,
-            Tools = ContextToolDefinitions.GetTools(_config),
+            Tools = ContextToolDefinitions.GetTools(Configuration),
             Temperature = 0.3
         };
+
+        // CRITICAL: Add structured output based on response type
+        object? schema = GetResponseSchema<TResponse>();
+        if (schema != null)
+        {
+            request.ResponseFormat = new ResponseFormat
+            {
+                Type = "json_schema",
+                JsonSchema = new JsonSchema
+                {
+                    Name = GetSchemaName<TResponse>(),
+                    Strict = "true",
+                    Schema = schema
+                }
+            };
+        }
+
+        return request;
     }
 
-    private string BuildSystemPrompt()
+    private object? GetResponseSchema<TResponse>()
+    {
+        // For Planner, use the ExecutionPlan schema
+        if (Configuration.ContextType == "Planner")
+        {
+            return PlannerContextConfiguration.GetResponseSchema(
+                _registry.GetAllContexts());
+        }
+
+        // For standard contexts, use ContextInfoResponse
+        if (typeof(TResponse) == typeof(ContextInfoResponse))
+        {
+            return ResponseSchemas.GetSchemaFor<TResponse>();
+        }
+
+        return null;
+    }
+
+    private bool ShouldUseStructuredOutput<TResponse>()
+    {
+        // Use structured output for known response types
+        return typeof(TResponse) == typeof(ContextInfoResponse);
+    }
+
+    private string GetSchemaName<TResponse>()
+    {
+        if (Configuration.ContextType == "Planner")
+            return "execution_plan";
+
+        if (typeof(TResponse) == typeof(ContextInfoResponse))
+            return "context_info_response";
+
+        return "generic_response";
+    }
+
+    private string BuildSystemPrompt(Dictionary<string, string> ephemeralFiles)
     {
         string fileIndex = _promptFormatter.FormatFileIndex();
-        string contextsOverview = _promptFormatter.FormatContextsOverview(_config.Name);
+        string contextsOverview = _promptFormatter.FormatContextsOverview(Configuration.Name);
 
-        BudgetAllocation? allocation = _budgetManager.GetAllocation(_config.Name);
+        BudgetAllocation? allocation = _budgetManager.GetAllocation(Configuration.Name);
         int usedTokens = allocation?.UsedTokens ?? 0;
 
         string status = _promptFormatter.FormatContextStatus(
-            _config.Name,
-            _config.ContextType,
+            Configuration.Name,
+            Configuration.ContextType,
             usedTokens,
-            _config.MaxTokenBudget,
+            Configuration.MaxTokenBudget,
             _cloneDepth,
-            _config.MaxCloneDepth);
+            Configuration.MaxCloneDepth);
 
         string loadedFiles = _promptFormatter.FormatLoadedFiles(State.FileContents);
+        string peekedFiles = ephemeralFiles.Count > 0
+            ? _promptFormatter.FormatPeekedFiles(ephemeralFiles)
+            : "";
 
         return $"""
-            {_config.SystemPrompt}
+            {Configuration.SystemPrompt}
 
             {fileIndex}
 
@@ -277,12 +312,18 @@ public sealed class Context : IContext
 
             {status}
 
-            ## Files in YOUR Context
+            ## Files in YOUR Context (Permanent)
             {loadedFiles}
+
+            {peekedFiles}
             """;
     }
 
-    private async Task<string> ExecuteTool(ToolCall toolCall, ITracerScope? tracerScope, CancellationToken ct)
+    private async Task<string> ExecuteTool(
+        ToolCall toolCall,
+        ITracerScope? tracerScope,
+        Dictionary<string, string> ephemeralFiles,
+        CancellationToken ct)
     {
         _logger.Debug($"[{Name}] Tool: {toolCall.Function.Name}");
 
@@ -291,42 +332,17 @@ public sealed class Context : IContext
             Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
                 toolCall.Function.Arguments, _jsonOptions);
 
-            InfrastructureServices infrastructure = new()
+            ToolContext toolContext = CreateToolContext(tracerScope);
+            object result = await _toolDispatcher.DispatchAsync(toolCall.Function.Name, args!, toolContext, ct);
+
+            // Handle ephemeral files from peek_file
+            if (result is FileContent fc && fc.IsEphemeral)
             {
-                FileSystem = _fileSystem,
-                Logger = _logger,
-                Options = _options
-            };
+                ephemeralFiles[fc.Path] = fc.Content;
+                _logger.Debug($"[{Name}] Added ephemeral file: {fc.Path}");
+            }
 
-            QueryContext queryContext = new()
-            {
-                Infrastructure = infrastructure,
-                Knowledge = new ProjectKnowledge
-                {
-                    Metadata = _sharedKnowledge,
-                    Context = _projectContext
-                },
-                Execution = new ExecutionScope
-                {
-                    Tracer = tracerScope,
-                    State = State,
-                    Config = _config,
-                    CloneDepth = _cloneDepth
-                },
-                Orchestration = new OrchestrationCapabilities
-                {
-                    Registry = _registry,
-                    Factory = _factory,
-                    BudgetManager = _budgetManager,
-                    State = null
-                }
-            };
-
-            CommandContext commandContext = CreateCommandContext(tracerScope);
-
-            object result = await _toolDispatcher.DispatchAsync(toolCall.Function.Name, args!, queryContext, commandContext, ct);
-
-            return infrastructure.Serialize(result);
+            return toolContext.Infrastructure.Serialize(result);
         }
         catch (Exception ex)
         {
@@ -341,9 +357,9 @@ public sealed class Context : IContext
         }
     }
 
-    private CommandContext CreateCommandContext(ITracerScope? tracerScope)
+    private ToolContext CreateToolContext(ITracerScope? tracerScope)
     {
-        return new CommandContext
+        return new ToolContext
         {
             Infrastructure = new InfrastructureServices
             {
@@ -360,7 +376,7 @@ public sealed class Context : IContext
             {
                 Tracer = tracerScope,
                 State = State,
-                Config = _config,
+                Config = Configuration,
                 CloneDepth = _cloneDepth
             },
             Orchestration = new OrchestrationCapabilities
@@ -372,16 +388,4 @@ public sealed class Context : IContext
             }
         };
     }
-}
-
-public sealed class ContextInfoResponse
-{
-    [System.Text.Json.Serialization.JsonPropertyName("answer")]
-    public string Answer { get; init; } = string.Empty;
-
-    [System.Text.Json.Serialization.JsonPropertyName("files_examined")]
-    public List<string> FilesExamined { get; init; } = [];
-
-    [System.Text.Json.Serialization.JsonPropertyName("confidence")]
-    public float Confidence { get; init; }
 }

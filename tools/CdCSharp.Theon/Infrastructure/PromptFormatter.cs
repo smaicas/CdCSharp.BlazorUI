@@ -1,7 +1,9 @@
 ﻿using CdCSharp.Theon.Analysis;
 using CdCSharp.Theon.Context;
+using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
 using System.Text;
+using System.Text.Json;
 
 namespace CdCSharp.Theon.Infrastructure;
 
@@ -24,15 +26,15 @@ public sealed class PromptFormatter
     public string FormatFileIndex()
     {
         StringBuilder sb = new();
-        sb.AppendLine("## File Index (use exact paths with read_file)");
+        sb.AppendLine("## File Index (use exact paths with tools)");
         sb.AppendLine();
 
-        IEnumerable<IGrouping<string, KeyValuePair<string, FileSummary>>> groupedByDirectory = _knowledge.FileIndex
+        IOrderedEnumerable<IGrouping<string, KeyValuePair<string, FileSummary>>> groupedByDirectory = _knowledge.FileIndex
             .Where(kvp => kvp.Value.EstimatedTokens > 0)
             .GroupBy(kvp => Path.GetDirectoryName(kvp.Key) ?? "")
             .OrderBy(g => g.Key);
 
-        foreach (IGrouping<string, KeyValuePair<string, FileSummary>> group in groupedByDirectory)
+        foreach (IGrouping<string, KeyValuePair<string, FileSummary>>? group in groupedByDirectory)
         {
             string dirName = string.IsNullOrEmpty(group.Key) ? "(root)" : group.Key;
             sb.AppendLine($"**{dirName}/**");
@@ -76,9 +78,12 @@ public sealed class PromptFormatter
     public string FormatLoadedFiles(IReadOnlyDictionary<string, string> fileContents)
     {
         if (fileContents.Count == 0)
-            return "No files loaded yet.";
+            return "No files loaded permanently yet. Use `read_file` to load files into your context.";
 
         StringBuilder sb = new();
+        sb.AppendLine("These files are PERMANENTLY loaded in your context:");
+        sb.AppendLine();
+
         foreach (KeyValuePair<string, string> kvp in fileContents)
         {
             sb.AppendLine($"### {kvp.Key}");
@@ -87,6 +92,31 @@ public sealed class PromptFormatter
             sb.AppendLine("```");
             sb.AppendLine();
         }
+
+        return sb.ToString().TrimEnd();
+    }
+
+    public string FormatPeekedFiles(IReadOnlyDictionary<string, string> peekedFiles)
+    {
+        if (peekedFiles.Count == 0)
+            return string.Empty;
+
+        StringBuilder sb = new();
+        sb.AppendLine("## Peeked Files (EPHEMERAL - only for this response)");
+        sb.AppendLine();
+        sb.AppendLine("These files were peeked and are available ONLY for generating this response.");
+        sb.AppendLine("They will NOT be available in future responses unless you peek them again.");
+        sb.AppendLine();
+
+        foreach (KeyValuePair<string, string> kvp in peekedFiles)
+        {
+            sb.AppendLine($"### {kvp.Key} (ephemeral)");
+            sb.AppendLine("```csharp");
+            sb.AppendLine(kvp.Value);
+            sb.AppendLine("```");
+            sb.AppendLine();
+        }
+
         return sb.ToString().TrimEnd();
     }
 
@@ -97,5 +127,61 @@ public sealed class PromptFormatter
             return string.Empty;
 
         return string.Join("\n", list.Select(c => $"- [{c.Id}] {c.Path}: {c.Description}"));
+    }
+
+    public string FormatPlanStatus(ExecutionPlan? plan)
+    {
+        if (plan == null)
+            return string.Empty;
+
+        StringBuilder sb = new();
+        sb.AppendLine("## Current Execution Plan");
+        sb.AppendLine($"**Task Types**: {string.Join(", ", plan.TaskTypes)}");
+        sb.AppendLine($"**Reasoning**: {plan.Reasoning}");
+        sb.AppendLine();
+        sb.AppendLine("### Steps:");
+
+        foreach (PlanStep? step in plan.Steps.OrderBy(s => s.Order))
+        {
+            string status = step.Status switch
+            {
+                PlanStepStatus.Completed => "✓",
+                PlanStepStatus.InProgress => "→",
+                PlanStepStatus.Failed => "✗",
+                _ => "○"
+            };
+
+            sb.AppendLine($"{status} **Step {step.Order}**: [{step.TargetContext}] {step.Purpose}");
+            sb.AppendLine($"   Question: {step.Question}");
+
+            if (step.SuggestedFiles.Count > 0)
+            {
+                sb.AppendLine($"   Files: {string.Join(", ", step.SuggestedFiles.Take(5))}");
+                if (step.SuggestedFiles.Count > 5)
+                    sb.AppendLine($"   ... and {step.SuggestedFiles.Count - 5} more");
+            }
+
+            if (step.Status == PlanStepStatus.Completed && step.Result != null)
+            {
+                string preview = step.Result.Length > 200
+                    ? step.Result[..200] + "..."
+                    : step.Result;
+                sb.AppendLine($"   Result: {preview}");
+            }
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("### Expected Outputs:");
+        foreach (ExpectedOutput output in plan.ExpectedOutputs)
+        {
+            sb.AppendLine($"- [{output.Type}] {output.TaskType}: {output.Description}");
+        }
+
+        return sb.ToString();
+    }
+
+    public string FormatError(string message)
+    {
+        return JsonSerializer.Serialize(new { error = message });
     }
 }

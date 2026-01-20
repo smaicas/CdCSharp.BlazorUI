@@ -10,7 +10,7 @@ public static class ContextToolDefinitions
         Function = new FunctionDefinition
         {
             Name = "read_file",
-            Description = "Load a file into your context permanently. Uses your token budget. Use exact paths from File Index.",
+            Description = "Load a file PERMANENTLY into your context. Uses your token budget. File will be available for ALL future responses. Use exact paths from File Index.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -34,7 +34,7 @@ public static class ContextToolDefinitions
         Function = new FunctionDefinition
         {
             Name = "peek_file",
-            Description = "View a file temporarily WITHOUT consuming your budget. Ideal for files already loaded by other contexts.",
+            Description = "View a file TEMPORARILY for ONLY the next response. Does NOT consume budget. Does NOT persist in context. Ideal for quick inspection or files already loaded by other contexts.",
             Parameters = new FunctionParameters
             {
                 Type = "object",
@@ -48,7 +48,7 @@ public static class ContextToolDefinitions
                     ["source_context"] = new()
                     {
                         Type = "string",
-                        Description = "Optional: context that has this file loaded"
+                        Description = "Optional: context that has this file loaded (faster)"
                     }
                 },
                 Required = ["path"],
@@ -124,19 +124,27 @@ public static class ContextToolDefinitions
 
     public static List<Tool> GetTools(ContextConfiguration config)
     {
-        List<Tool> tools = [];
+        List<Tool> tools = new();
+
+        if (config.CanPeekFiles)
+        {
+            tools.Add(PeekFile);
+        }
 
         if (config.CanReadFiles)
         {
             tools.Add(ReadFile);
-            tools.Add(PeekFile);
         }
 
         if (config.CanSearchFiles)
+        {
             tools.Add(SearchFiles);
+        }
 
         if (config.CanSpawnClones || config.CanDelegateToContexts)
+        {
             tools.Add(CreateSubContext);
+        }
 
         return tools;
     }

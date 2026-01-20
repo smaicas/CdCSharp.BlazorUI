@@ -1,11 +1,11 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
 using CdCSharp.Theon.Context;
+using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator.Models;
 using CdCSharp.Theon.Tools;
-using CdCSharp.Theon.Tools.Commands;
 using CdCSharp.Theon.Tracing;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
@@ -34,6 +34,7 @@ public sealed class Orchestrator : IOrchestrator
     private readonly ContextBudgetManager _budgetManager;
     private readonly PromptFormatter _promptFormatter;
     private readonly ToolDispatcher _toolDispatcher;
+    private readonly PlanValidator _planValidator;
     private readonly TheonOptions _options;
     private readonly JsonSerializerOptions _jsonOptions;
 
@@ -43,25 +44,40 @@ public sealed class Orchestrator : IOrchestrator
         You are an orchestrator coordinating specialized contexts to analyze C# codebases.
 
         ## Your Role
-        You COORDINATE experts, you don't analyze code yourself. Delegate technical questions.
+        You COORDINATE experts, you don't analyze code yourself. You MUST plan before acting on complex tasks.
 
-        ## How to Work
-        1. Identify what expertise is needed
-        2. Use query_context to ask specialists
-        3. Specialists read files and provide analysis
-        4. Synthesize their responses
-        5. Use generate_output_file for documentation
+        ## CRITICAL WORKFLOW
+        1. **ALWAYS start with create_execution_plan** for any non-trivial request (documentation, analysis, refactoring)
+        2. Execute each step of the plan IN ORDER using query_context
+        3. The system ENFORCES plan order - you cannot skip steps
+        4. Collect all information before generating output
+        5. Use generate_output_file only AFTER completing ALL plan steps
 
         ## Tools Available
-        - query_context: Ask CodeExplorer, ArchitectureAnalyzer, or DependencyAnalyzer
-        - propose_file_change: Propose modifications (requires confirmation)
-        - create_project_file: Create new files immediately
-        - generate_output_file: Generate documentation/reports
+        - **create_execution_plan**: MUST call first for documentation, analysis, or comprehensive tasks
+        - **query_context**: Ask CodeExplorer, ArchitectureAnalyzer, or DependencyAnalyzer
+        - **propose_file_change**: Propose modifications (requires confirmation)
+        - **create_project_file**: Create new files immediately
+        - **generate_output_file**: Generate documentation/reports (only after plan execution)
+
+        ## Planning Rules
+        - Simple questions (e.g., "what does X do?") → can skip planning, use query_context directly
+        - Documentation requests → MUST plan first
+        - Analysis requests → MUST plan first
+        - Refactoring requests → MUST plan first
+        - Any request involving multiple files or comprehensive output → MUST plan first
+
+        ## Executing a Plan
+        When you have a plan:
+        1. Query contexts IN THE EXACT ORDER specified by the plan
+        2. Include the files suggested in each step
+        3. The system will reject out-of-order queries
+        4. After all steps complete, synthesize results and generate output
 
         ## Important
-        - ALWAYS delegate technical questions to contexts
-        - Be specific about what you need from each context
-        - Contexts can see each other's loaded files
+        - NEVER generate documentation without first consulting specialists through the plan
+        - NEVER skip plan steps - the system enforces order
+        - Follow the plan exactly as created
         """;
 
     public Orchestrator(
@@ -89,6 +105,7 @@ public sealed class Orchestrator : IOrchestrator
         _promptFormatter = promptFormatter;
         _options = options.Value;
         _toolDispatcher = ToolDispatcher.CreateForOrchestrator();
+        _planValidator = new PlanValidator();
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -136,14 +153,14 @@ public sealed class Orchestrator : IOrchestrator
 
     public async Task<OrchestratorResponse> ConfirmChangesAsync(bool confirm, string? changeIds = null, CancellationToken ct = default)
     {
-        IEnumerable<ProposedChange> changesToProcess = string.IsNullOrEmpty(changeIds) || changeIds == "all"
+        IEnumerable<ProposedChange?> changesToProcess = string.IsNullOrEmpty(changeIds) || changeIds == "all"
             ? State.GetPendingChanges()
             : changeIds.Split(',').Select(id => State.GetPendingChange(id.Trim())).Where(c => c != null)!;
 
         List<string> applied = [];
         List<string> rejected = [];
 
-        foreach (ProposedChange change in changesToProcess)
+        foreach (ProposedChange? change in changesToProcess)
         {
             if (confirm)
             {
@@ -199,7 +216,7 @@ public sealed class Orchestrator : IOrchestrator
         List<string> generatedOutputs = [];
         List<ProposedChange> proposedChanges = [];
 
-        int maxIterations = 20;
+        int maxIterations = 30;
         int iteration = 0;
 
         while (iteration < maxIterations)
@@ -212,7 +229,6 @@ public sealed class Orchestrator : IOrchestrator
 
             Stopwatch sw = Stopwatch.StartNew();
             ChatCompletionResponse response = await _aiClient.SendAsync(request, ct);
-
             sw.Stop();
 
             tracerScope.RecordLlmResponse(response, sw.Elapsed);
@@ -271,21 +287,23 @@ public sealed class Orchestrator : IOrchestrator
         string contextsOverview = _promptFormatter.FormatContextsOverview();
         string pendingChanges = _promptFormatter.FormatPendingChanges(
             State.GetPendingChanges().Select(c => (c.Id, c.Path, c.Description)));
+        string planStatus = _promptFormatter.FormatPlanStatus(State.CurrentPlan);
 
         string fullSystemPrompt = $"""
-        {SystemPrompt}
+            {SystemPrompt}
 
-        {fileIndex}
+            {fileIndex}
 
-        {contextsOverview}
+            {contextsOverview}
 
-        {(string.IsNullOrEmpty(pendingChanges) ? "" : $"## Pending Changes\n{pendingChanges}")}
-        """;
+            {(string.IsNullOrEmpty(planStatus) ? "" : planStatus)}
 
-        List<Message> messages =
-        [
+            {(string.IsNullOrEmpty(pendingChanges) ? "" : $"## Pending Changes\n{pendingChanges}")}
+            """;
+
+        List<Message> messages = [
             new() { Role = "system", Content = fullSystemPrompt },
-        .. State.ConversationHistory
+            .. State.ConversationHistory
         ];
 
         return new ChatCompletionRequest
@@ -309,21 +327,45 @@ public sealed class Orchestrator : IOrchestrator
 
         try
         {
+            // Validate output generation against plan
+            if (toolCall.Function.Name is "generate_output_file" or "create_project_file")
+            {
+                if (State.HasPlan && !State.HasExecutedPlan)
+                {
+                    _logger.Warning("Attempted to generate output before executing plan");
+                    return _promptFormatter.FormatError(
+                        "Cannot generate output before executing plan steps. " +
+                        "Please complete the planned investigation first by calling query_context for each step.");
+                }
+
+                if (State.HasPlan && !_planValidator.CanGenerateOutput(State.CurrentPlan!))
+                {
+                    string progress = _planValidator.GetPlanProgress(State.CurrentPlan!);
+                    return _promptFormatter.FormatError(
+                        $"Cannot generate output yet. Plan progress: {progress}. " +
+                        "Complete all plan steps before generating output.");
+                }
+            }
+
             if (toolCall.Function.Name == "query_context")
             {
                 return await HandleQueryContext(toolCall, tracerScope, ct);
             }
 
+            if (toolCall.Function.Name == "create_execution_plan")
+            {
+                return await HandleCreatePlan(toolCall, tracerScope, ct);
+            }
+
             Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
                 toolCall.Function.Arguments, _jsonOptions);
 
-            CommandContext commandContext = CreateCommandContext(tracerScope);
+            ToolContext toolContext = CreateToolContext(tracerScope);
 
             object result = await _toolDispatcher.DispatchAsync(
                 toolCall.Function.Name,
                 args!,
-                null!,
-                commandContext,
+                toolContext,
                 ct);
 
             if (result is CreatedFile created)
@@ -339,7 +381,7 @@ public sealed class Orchestrator : IOrchestrator
                 proposedChanges.Add(proposed);
             }
 
-            return commandContext.Infrastructure.Serialize(result);
+            return toolContext.Infrastructure.Serialize(result);
         }
         catch (Exception ex)
         {
@@ -368,6 +410,32 @@ public sealed class Orchestrator : IOrchestrator
             .Where(file => !string.IsNullOrWhiteSpace(file))
             .ToList();
 
+        // ENFORCE PLAN ORDER
+        if (State.HasPlan)
+        {
+            Result<PlanStep> validation = _planValidator.ValidateQueryAgainstPlan(
+                State.CurrentPlan!,
+                contextName,
+                files);
+
+            if (!validation.IsSuccess)
+            {
+                _logger.Warning($"Plan validation failed: {validation.Error.Message}");
+                InfrastructureServices infra = new()
+                {
+                    FileSystem = _fileSystem,
+                    Logger = _logger,
+                    Options = _options
+                };
+                return infra.Serialize(new
+                {
+                    error = validation.Error.Message,
+                    code = validation.Error.Code,
+                    plan_progress = _planValidator.GetPlanProgress(State.CurrentPlan!)
+                });
+            }
+        }
+
         IContextScope? scope = State.GetContext(contextName);
         if (scope == null)
         {
@@ -389,6 +457,38 @@ public sealed class Orchestrator : IOrchestrator
 
         tracerScope.RecordContextQuery(contextScope.GetContextTrace());
 
+        // Mark plan step as completed
+        if (State.CurrentPlan != null)
+        {
+            result.Match(
+                success =>
+                {
+                    PlanStep? step = State.CurrentPlan.Steps
+                        .FirstOrDefault(s => s.Status == PlanStepStatus.Pending &&
+                                           s.TargetContext.Equals(contextName, StringComparison.OrdinalIgnoreCase));
+
+                    if (step != null)
+                    {
+                        State.MarkStepCompleted(step.Order, success.Answer);
+                        _logger.Info($"Plan step {step.Order} completed: {step.Purpose}");
+                    }
+                    return true;
+                },
+                error =>
+                {
+                    PlanStep? step = State.CurrentPlan.Steps
+                        .FirstOrDefault(s => s.Status == PlanStepStatus.Pending &&
+                                           s.TargetContext.Equals(contextName, StringComparison.OrdinalIgnoreCase));
+
+                    if (step != null)
+                    {
+                        State.MarkStepFailed(step.Order, error.Message);
+                        _logger.Warning($"Plan step {step.Order} failed: {error.Message}");
+                    }
+                    return false;
+                });
+        }
+
         InfrastructureServices infrastructure = new()
         {
             FileSystem = _fileSystem,
@@ -402,14 +502,67 @@ public sealed class Orchestrator : IOrchestrator
                 context_name = contextName,
                 question,
                 answer = success.Answer,
-                files_examined = success.FilesExamined
+                files_examined = success.FilesExamined,
+                confidence = success.Confidence,
+                plan_progress = State.CurrentPlan != null
+                    ? _planValidator.GetPlanProgress(State.CurrentPlan)
+                    : null
             }),
             error => infrastructure.Serialize(new { error = error.Message, code = error.Code }));
     }
 
-    private CommandContext CreateCommandContext(ITracerScope tracerScope)
+    private async Task<string> HandleCreatePlan(ToolCall toolCall, ITracerScope tracerScope, CancellationToken ct)
     {
-        return new CommandContext
+        Dictionary<string, JsonElement>? args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+            toolCall.Function.Arguments, _jsonOptions);
+
+        string userRequest = args!["user_request"].GetString()!;
+
+        ToolContext toolContext = CreateToolContext(tracerScope);
+
+        CreateExecutionPlanTool tool = new() { UserRequest = userRequest };
+        CreateExecutionPlanHandler handler = new();
+
+        Result<ExecutionPlan> result = await handler.HandleAsync(tool, toolContext, ct);
+
+        return result.Match(
+            plan =>
+            {
+                State.SetPlan(plan);
+                _logger.Info($"Execution plan created: {plan.Steps.Count} steps for tasks: {string.Join(", ", plan.TaskTypes)}");
+
+                return toolContext.Infrastructure.Serialize(new
+                {
+                    success = true,
+                    plan = new
+                    {
+                        task_types = plan.TaskTypes,
+                        reasoning = plan.Reasoning,
+                        steps = plan.Steps.Select(s => new
+                        {
+                            order = s.Order,
+                            context = s.TargetContext,
+                            question = s.Question,
+                            files = s.SuggestedFiles,
+                            purpose = s.Purpose,
+                            contributes_to = s.ContributesTo
+                        }),
+                        expected_outputs = plan.ExpectedOutputs.Select(o => new
+                        {
+                            task_type = o.TaskType,
+                            description = o.Description,
+                            output_type = o.Type.ToString().ToLowerInvariant()
+                        })
+                    },
+                    message = "Plan created successfully. Now execute each step IN ORDER using query_context with the specified context, question, and files."
+                });
+            },
+            error => toolContext.Infrastructure.Serialize(new { error = error.Message, code = error.Code }));
+    }
+
+    private ToolContext CreateToolContext(ITracerScope tracerScope)
+    {
+        return new ToolContext
         {
             Infrastructure = new InfrastructureServices
             {

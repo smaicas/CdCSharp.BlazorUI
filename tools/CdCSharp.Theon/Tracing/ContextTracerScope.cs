@@ -9,6 +9,8 @@ internal sealed class ContextTracerScope : ITracerScope
     private readonly Stopwatch _stopwatch;
     private int _llmCallIndex;
 
+    public string TraceId => throw new NotImplementedException();
+
     public ContextTracerScope(string contextName, string question, IReadOnlyList<string>? initialFiles)
     {
         _trace = new ContextTrace

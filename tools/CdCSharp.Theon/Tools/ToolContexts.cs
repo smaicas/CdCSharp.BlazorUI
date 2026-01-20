@@ -8,6 +8,9 @@ using System.Text.Json;
 
 namespace CdCSharp.Theon.Tools;
 
+/// <summary>
+/// Infrastructure services available to all tools.
+/// </summary>
 public sealed record InfrastructureServices
 {
     public required IFileSystem FileSystem { get; init; }
@@ -23,12 +26,18 @@ public sealed record InfrastructureServices
     public string Serialize(object obj) => JsonSerializer.Serialize(obj, JsonOptions);
 }
 
+/// <summary>
+/// Project-level knowledge and analysis.
+/// </summary>
 public sealed record ProjectKnowledge
 {
     public required SharedProjectKnowledge Metadata { get; init; }
     public required IProjectContext Context { get; init; }
 }
 
+/// <summary>
+/// Execution context including tracing and state.
+/// </summary>
 public sealed record ExecutionScope
 {
     public required ITracerScope? Tracer { get; init; }
@@ -36,24 +45,14 @@ public sealed record ExecutionScope
     public required ContextConfiguration? Config { get; init; }
     public required int CloneDepth { get; init; }
 }
+
+/// <summary>
+/// Orchestration capabilities for managing contexts.
+/// </summary>
 public sealed record OrchestrationCapabilities
 {
     public required ContextRegistry Registry { get; init; }
     public required IContextFactory Factory { get; init; }
     public required ContextBudgetManager BudgetManager { get; init; }
     public required OrchestratorState? State { get; init; }
-}
-public sealed record QueryContext
-{
-    public required InfrastructureServices Infrastructure { get; init; }
-    public required ProjectKnowledge Knowledge { get; init; }
-    public required ExecutionScope Execution { get; init; }
-    public OrchestrationCapabilities? Orchestration { get; init; }
-}
-public sealed record CommandContext
-{
-    public required InfrastructureServices Infrastructure { get; init; }
-    public required ProjectKnowledge Knowledge { get; init; }
-    public required ExecutionScope Execution { get; init; }
-    public required OrchestrationCapabilities? Orchestration { get; init; }
 }

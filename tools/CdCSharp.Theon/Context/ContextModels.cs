@@ -115,10 +115,17 @@ public sealed record ContextConfiguration
     public string Speciality { get; init; } = "General analysis";
     public bool IsStateful { get; init; } = false;
     public int MaxTokenBudget { get; init; } = 8000;
+
+    // File access capabilities
     public bool CanReadFiles { get; init; } = true;
+    public bool CanPeekFiles { get; init; } = true;
     public bool CanSearchFiles { get; init; } = true;
+
+    // Context management capabilities
     public bool CanDelegateToContexts { get; init; } = true;
     public bool CanSpawnClones { get; init; } = true;
+
+    // Limits
     public int MaxDelegationDepth { get; init; } = 3;
     public int MaxCloneDepth { get; init; } = 10;
     public int MaxClonesPerType { get; init; } = 50;
@@ -144,6 +151,8 @@ internal sealed class ContextScope : IContextScope
     public string ContextType => _context.Configuration.ContextType;
     public ContextConfiguration Configuration => _context.Configuration;
 
+    private readonly IFileSystem _fileSystem;
+
     public ContextScope(
         ContextConfiguration config,
         IAIClient aiClient,
@@ -159,6 +168,7 @@ internal sealed class ContextScope : IContextScope
         TheonOptions options,
         int cloneDepth)
     {
+        _fileSystem = fileSystem;
         _context = new Context(
             config,
             aiClient,
@@ -176,10 +186,14 @@ internal sealed class ContextScope : IContextScope
     }
 
     public async Task<Result<TResponse>> QueryAsync<TResponse>(
-        ContextQuery query,
-        ITracerScope? parentScope,
-        CancellationToken ct) where TResponse : class, new()
+    ContextQuery query,
+    ITracerScope? parentScope,
+    CancellationToken ct) where TResponse : class, new()
     {
+        // Create a PartialTracer for this context query
+        using PartialTracer partialTracer = new(_fileSystem);
+        partialTracer.SetUserInput($"Context: {Name} | Question: {query.Question}");
+
         try
         {
             TResponse result = await _context.AskAsync<TResponse>(query, parentScope, ct);

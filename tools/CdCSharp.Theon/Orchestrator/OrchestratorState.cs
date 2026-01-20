@@ -1,5 +1,6 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Context;
+using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Orchestrator.Models;
 
@@ -11,6 +12,10 @@ public sealed class OrchestratorState
     public Dictionary<string, ProposedChange> PendingChanges { get; } = [];
     public Dictionary<string, IContextScope> ActiveContexts { get; } = [];
     public int EstimatedTokens { get; private set; }
+    public ExecutionPlan? CurrentPlan { get; private set; }
+
+    public bool HasExecutedPlan => CurrentPlan?.Steps.Any(s => s.Status == PlanStepStatus.Completed) ?? false;
+    public bool HasPlan => CurrentPlan != null;
 
     public void AddUserMessage(string content)
     {
@@ -76,11 +81,45 @@ public sealed class OrchestratorState
         return ActiveContexts.GetValueOrDefault(name);
     }
 
+    public void SetPlan(ExecutionPlan plan)
+    {
+        CurrentPlan = plan;
+    }
+
+    public void MarkStepCompleted(int stepOrder, string result)
+    {
+        PlanStep? step = CurrentPlan?.Steps.FirstOrDefault(s => s.Order == stepOrder);
+        if (step != null)
+        {
+            step.Status = PlanStepStatus.Completed;
+            step.Result = result;
+        }
+    }
+
+    public void MarkStepFailed(int stepOrder, string error)
+    {
+        PlanStep? step = CurrentPlan?.Steps.FirstOrDefault(s => s.Order == stepOrder);
+        if (step != null)
+        {
+            step.Status = PlanStepStatus.Failed;
+            step.Result = error;
+        }
+    }
+
+    public PlanStep? GetNextPendingStep()
+    {
+        return CurrentPlan?.Steps
+            .Where(s => s.Status == PlanStepStatus.Pending)
+            .OrderBy(s => s.Order)
+            .FirstOrDefault();
+    }
+
     public void Clear()
     {
         ConversationHistory.Clear();
         PendingChanges.Clear();
         EstimatedTokens = 0;
+        CurrentPlan = null;
     }
 
     private static int EstimateTokens(string text) => TokenEstimator.Estimate(text);

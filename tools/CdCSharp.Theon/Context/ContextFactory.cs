@@ -1,5 +1,6 @@
 ﻿using CdCSharp.Theon.AI;
 using CdCSharp.Theon.Analysis;
+using CdCSharp.Theon.Context.Planning;
 using CdCSharp.Theon.Core;
 using CdCSharp.Theon.Infrastructure;
 using CdCSharp.Theon.Tracing;
@@ -9,14 +10,12 @@ namespace CdCSharp.Theon.Context;
 
 public interface IContextFactory
 {
-    // Métodos públicos - para Orchestrator/usuario
     IContext Create(ContextConfiguration config);
     IContext CreateDynamic(string name, string purpose, bool stateful = false);
     IContext GetPredefined(PredefinedContext context);
-
-    // Métodos internos - para contextos que delegan/clonan
     IContextScope CreateSibling(ContextConfiguration baseConfig, string purpose, int cloneDepth);
     IContextScope CreateDelegate(string targetContextType, string purpose);
+    IContextScope CreatePlanner(IReadOnlyList<ContextMetadata> availableContexts);
 }
 
 public enum PredefinedContext
@@ -282,6 +281,28 @@ public sealed class ContextFactory : IContextFactory
         {
             throw new ArgumentException($"Unknown context type: {targetContextType}");
         }
+
+        return new ContextScope(
+            config,
+            _aiClient,
+            _projectContext,
+            _fileSystem,
+            _logger,
+            _tracer,
+            this,
+            _sharedKnowledge,
+            _registry,
+            _promptFormatter,
+            _budgetManager,
+            _options,
+            cloneDepth: 0);
+    }
+
+    public IContextScope CreatePlanner(IReadOnlyList<ContextMetadata> availableContexts)
+    {
+        ContextConfiguration config = PlannerContextConfiguration.Create(
+            _options.Llm.Model,
+            availableContexts);
 
         return new ContextScope(
             config,

@@ -1,42 +1,24 @@
 ﻿using CdCSharp.Theon.Core;
-using CdCSharp.Theon.Tools.Commands;
-using CdCSharp.Theon.Tools.Queries;
 using System.Text.Json;
 
 namespace CdCSharp.Theon.Tools;
 
 public sealed class ToolDispatcher
 {
-    private readonly Dictionary<string, Func<Dictionary<string, JsonElement>, QueryContext, CommandContext, CancellationToken, Task<object>>> _handlers = [];
+    private readonly Dictionary<string, Func<Dictionary<string, JsonElement>, ToolContext, CancellationToken, Task<object>>> _handlers = [];
 
     private ToolDispatcher() { }
 
-    public void RegisterQuery<TQuery, TResult>(
+    public void Register<TTool, TResult>(
         string toolName,
-        Func<Dictionary<string, JsonElement>, TQuery> argsMapper,
-        IQueryHandler<TQuery, TResult> handler)
-        where TQuery : IToolQuery<TResult>
+        Func<Dictionary<string, JsonElement>, TTool> argsMapper,
+        IToolHandler<TTool, TResult> handler)
+        where TTool : ITool<TResult>
     {
-        _handlers[toolName] = async (args, queryCtx, _, ct) =>
+        _handlers[toolName] = async (args, context, ct) =>
         {
-            TQuery query = argsMapper(args);
-            Result<TResult> result = await handler.HandleAsync(query, queryCtx, ct);
-            return result.Match<object>(
-                success => success!,
-                error => new { error = error.Message, code = error.Code, metadata = error.Metadata });
-        };
-    }
-
-    public void RegisterCommand<TCommand, TResult>(
-        string toolName,
-        Func<Dictionary<string, JsonElement>, TCommand> argsMapper,
-        ICommandHandler<TCommand, TResult> handler)
-        where TCommand : IToolCommand<TResult>
-    {
-        _handlers[toolName] = async (args, _, commandCtx, ct) =>
-        {
-            TCommand command = argsMapper(args);
-            Result<TResult> result = await handler.HandleAsync(command, commandCtx, ct);
+            TTool tool = argsMapper(args);
+            Result<TResult> result = await handler.HandleAsync(tool, context, ct);
             return result.Match<object>(
                 success => success!,
                 error => new { error = error.Message, code = error.Code, metadata = error.Metadata });
@@ -46,95 +28,94 @@ public sealed class ToolDispatcher
     public async Task<object> DispatchAsync(
         string toolName,
         Dictionary<string, JsonElement> args,
-        QueryContext queryContext,
-        CommandContext commandContext,
+        ToolContext context,
         CancellationToken ct)
     {
-        if (!_handlers.TryGetValue(toolName, out Func<Dictionary<string, JsonElement>, QueryContext, CommandContext, CancellationToken, Task<object>>? handler))
+        if (!_handlers.TryGetValue(toolName, out Func<Dictionary<string, JsonElement>, ToolContext, CancellationToken, Task<object>>? handler))
         {
             return new { error = $"Unknown tool: {toolName}" };
         }
 
-        return await handler(args, queryContext, commandContext, ct);
+        return await handler(args, context, ct);
     }
 
-    public async Task<Result<TResult>> ExecuteQueryAsync<TResult>(
-        IToolQuery<TResult> query,
-        QueryContext context,
+    public async Task<Result<TResult>> ExecuteAsync<TResult>(
+        ITool<TResult> tool,
+        ToolContext context,
         CancellationToken ct)
     {
-        IQueryHandler<IToolQuery<TResult>, TResult>? handler = GetQueryHandler<TResult>(query.ToolName);
-        if (handler == null)
+        if (!_handlers.TryGetValue(tool.ToolName, out Func<Dictionary<string, JsonElement>, ToolContext, CancellationToken, Task<object>>? handler))
         {
-            return Result<TResult>.Failure(Error.UnknownTool(query.ToolName));
+            return Result<TResult>.Failure(Error.UnknownTool(tool.ToolName));
         }
 
-        return await handler.HandleAsync(query, context, ct);
-    }
-
-    public async Task<Result<TResult>> ExecuteCommandAsync<TResult>(
-        IToolCommand<TResult> command,
-        CommandContext context,
-        CancellationToken ct)
-    {
-        ICommandHandler<IToolCommand<TResult>, TResult>? handler = GetCommandHandler<TResult>(command.ToolName);
-        if (handler == null)
+        try
         {
-            return Result<TResult>.Failure(Error.UnknownTool(command.ToolName));
+            object result = await handler(
+                [],
+                context,
+                ct);
+
+            if (result is TResult typedResult)
+            {
+                return Result<TResult>.Success(typedResult);
+            }
+
+            return Result<TResult>.Failure(
+                Error.Custom("TYPE_MISMATCH", $"Tool returned unexpected type"));
         }
-
-        return await handler.HandleAsync(command, context, ct);
-    }
-
-    private IQueryHandler<IToolQuery<TResult>, TResult>? GetQueryHandler<TResult>(string toolName)
-    {
-        return null;
-    }
-
-    private ICommandHandler<IToolCommand<TResult>, TResult>? GetCommandHandler<TResult>(string toolName)
-    {
-        return null;
+        catch (Exception ex)
+        {
+            return Result<TResult>.Failure(
+                Error.Custom("TOOL_EXECUTION_ERROR", ex.Message));
+        }
     }
 
     public static ToolDispatcher CreateForContext()
     {
         ToolDispatcher dispatcher = new();
 
-        dispatcher.RegisterQuery(
+        dispatcher.Register(
             "peek_file",
-            args => new PeekFileQuery
+            args => new PeekFileTool
             {
                 Path = args["path"].GetString()!,
                 SourceContext = args.TryGetValue("source_context", out JsonElement src) ? src.GetString() : null
             },
-            new PeekFileQueryHandler());
+            new PeekFileHandler());
 
-        dispatcher.RegisterQuery(
-            "search_files",
-            args => new SearchFilesQuery
-            {
-                Pattern = args["pattern"].GetString()!
-            },
-            new SearchFilesQueryHandler());
-
-        dispatcher.RegisterCommand(
+        dispatcher.Register(
             "read_file",
-            args => new LoadFileCommand
+            args => new ReadFileTool
             {
                 Path = args["path"].GetString()!
             },
-            new LoadFileCommandHandler());
+            new ReadFileHandler());
 
-        dispatcher.RegisterCommand(
-            "create_sub_context",
-            args => new CreateSubContextCommand
+        dispatcher.Register(
+            "search_files",
+            args => new SearchFilesTool
             {
-                ContextType = args["context_type"].GetString() == "clone" ? SubContextType.Clone : SubContextType.Delegate,
-                Question = args["question"].GetString()!,
-                Files = args["files"].GetString()!.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).ToList(),
-                TargetContextType = args.TryGetValue("target_type", out JsonElement target) ? target.GetString() : null
+                Pattern = args["pattern"].GetString()!
             },
-            new CreateSubContextCommandHandler());
+            new SearchFilesHandler());
+
+        dispatcher.Register(
+            "create_sub_context",
+            args => new CreateSubContextTool
+            {
+                ContextType = args["context_type"].GetString() == "clone"
+                    ? SubContextType.Clone
+                    : SubContextType.Delegate,
+                Question = args["question"].GetString()!,
+                Files = args["files"].GetString()!
+                    .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+                    .ToList(),
+                TargetContextType = args.TryGetValue("target_type", out JsonElement target)
+                    ? target.GetString()
+                    : null
+            },
+            new CreateSubContextHandler());
 
         return dispatcher;
     }
@@ -143,34 +124,42 @@ public sealed class ToolDispatcher
     {
         ToolDispatcher dispatcher = new();
 
-        dispatcher.RegisterCommand(
+        dispatcher.Register(
+            "create_execution_plan",
+            args => new CreateExecutionPlanTool
+            {
+                UserRequest = args["user_request"].GetString()!
+            },
+            new CreateExecutionPlanHandler());
+
+        dispatcher.Register(
             "propose_file_change",
-            args => new ProposeFileChangeCommand
+            args => new ProposeFileChangeTool
             {
                 Path = args["path"].GetString()!,
                 Description = args["description"].GetString()!,
                 NewContent = args["new_content"].GetString()!
             },
-            new ProposeFileChangeCommandHandler());
+            new ProposeFileChangeHandler());
 
-        dispatcher.RegisterCommand(
+        dispatcher.Register(
             "create_project_file",
-            args => new CreateProjectFileCommand
+            args => new CreateProjectFileTool
             {
                 Path = args["path"].GetString()!,
                 Content = args["content"].GetString()!
             },
-            new CreateProjectFileCommandHandler());
+            new CreateProjectFileHandler());
 
-        dispatcher.RegisterCommand(
+        dispatcher.Register(
             "generate_output_file",
-            args => new GenerateOutputFileCommand
+            args => new GenerateOutputFileTool
             {
                 Folder = args["folder"].GetString()!,
                 Filename = args["filename"].GetString()!,
                 Content = args["content"].GetString()!
             },
-            new GenerateOutputFileCommandHandler());
+            new GenerateOutputFileHandler());
 
         return dispatcher;
     }

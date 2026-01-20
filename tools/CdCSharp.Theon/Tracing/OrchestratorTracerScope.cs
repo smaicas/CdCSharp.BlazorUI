@@ -11,7 +11,10 @@ internal sealed class OrchestratorTracerScope : ITracerScope
     private readonly Stopwatch _stopwatch;
     private readonly IFileSystem _fileSystem;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly PartialTracer _partialTracer;
     private int _llmCallIndex;
+
+    public string TraceId => _trace.Id;
 
     public OrchestratorTracerScope(string userInput, IFileSystem fileSystem, JsonSerializerOptions jsonOptions)
     {
@@ -19,6 +22,8 @@ internal sealed class OrchestratorTracerScope : ITracerScope
         _stopwatch = Stopwatch.StartNew();
         _fileSystem = fileSystem;
         _jsonOptions = jsonOptions;
+        _partialTracer = new PartialTracer(fileSystem);
+        _partialTracer.SetUserInput(userInput);
     }
 
     public void RecordLlmRequest(ChatCompletionRequest request)
@@ -78,6 +83,21 @@ internal sealed class OrchestratorTracerScope : ITracerScope
             _trace.TotalTokens += response.Usage.TotalTokens;
         }
         _trace.TotalLlmCalls++;
+
+        // Write partial trace
+        _partialTracer.RecordLlmCall(
+            // Reconstruct request from trace
+            new ChatCompletionRequest
+            {
+                Model = currentCall.Request.Model,
+                Messages = currentCall.Request.Messages.Select(m => new Message
+                {
+                    Role = m.Role,
+                    Content = m.Content
+                }).ToList()
+            },
+            response,
+            duration);
     }
 
     public void RecordToolExecution(ToolCall toolCall, string result, TimeSpan duration, bool isError = false)
@@ -94,10 +114,20 @@ internal sealed class OrchestratorTracerScope : ITracerScope
         };
 
         _trace.Orchestrator.ToolExecutions.Add(execution);
+
+        // Write partial trace
+        _partialTracer.RecordToolExecution(
+            toolCall.Id,
+            toolCall.Function.Name,
+            toolCall.Function.Arguments,
+            result,
+            duration,
+            isError);
     }
 
     public void RecordFileLoaded(string path, int sizeBytes, int estimatedTokens)
     {
+        // Not implemented for orchestrator
     }
 
     public void RecordContextQuery(ContextTrace contextTrace)
@@ -130,6 +160,10 @@ internal sealed class OrchestratorTracerScope : ITracerScope
         _stopwatch.Stop();
         _trace.DurationMs = _stopwatch.ElapsedMilliseconds;
 
+        // Dispose partial tracer first (writes final state)
+        _partialTracer.Dispose();
+
+        // Then write full trace to responses/traces
         string json = JsonSerializer.Serialize(_trace, _jsonOptions);
         string jsonFilename = $"trace_{_trace.Id}.json";
         _fileSystem.WriteOutputFileAsync("traces", jsonFilename, json).GetAwaiter().GetResult();
