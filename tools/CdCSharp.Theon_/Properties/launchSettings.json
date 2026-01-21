@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "CdCSharp.Theon": {
-      "commandName": "Project",
-      "commandLineArgs": "V:\\Work\\CdCSharp\\Projects\\BlazorUI\\tools\\CdCSharp.Theon"
-    }
-  }
-}
