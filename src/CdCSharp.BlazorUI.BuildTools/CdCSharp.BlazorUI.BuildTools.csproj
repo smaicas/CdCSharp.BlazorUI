@@ -12,8 +12,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CdCSharp.BuildTools" Version="1.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
-		<ProjectReference Include="..\CdCSharp.BuildTools\CdCSharp.BuildTools.csproj" />
 	</ItemGroup>
 
 </Project>

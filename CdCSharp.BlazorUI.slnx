@@ -1,8 +1,5 @@
 <Solution>
-  <Folder Name="/docs/">
-    <Project Path="docs/CdCSharp.DocGen.Cli/CdCSharp.DocGen.Cli.csproj" Id="2bc61da2-677f-4ec0-92d0-1435ff75a4bb" />
-    <Project Path="docs/CdCSharp.DocGen.Core/CdCSharp.DocGen.Core.csproj" Id="6d3bfbff-7721-4711-a483-e8122f0bf4b3" />
-  </Folder>
+  <Folder Name="/docs/" />
   <Folder Name="/samples/">
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/samples/CdCSharp.BlazorUI.AppTest.Wasm/CdCSharp.BlazorUI.AppTest.Wasm.csproj" Id="0fdf0470-1472-4082-98f6-08ce7101e926" />
@@ -13,7 +10,6 @@
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/test/CdCSharp.BlazorUI.Tests.Integration/CdCSharp.BlazorUI.Tests.Integration.csproj" Id="adba42f4-5632-4ee9-8656-917fa72c6c0a" />
   </Folder>
   <Folder Name="/tools/">
-    <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BuildTools/CdCSharp.BuildTools.csproj" Id="8aeb7127-cc55-402f-83ba-5adfb14df610" />
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/tools/CdCSharp.BlazorUI.Tools.MaterialIconsScrapper/CdCSharp.BlazorUI.Tools.MaterialIconsScrapper.csproj" Id="73368505-fddd-4ba4-8b73-723fccc1eec5" />
   </Folder>
   <Folder Name="/_publish/">
