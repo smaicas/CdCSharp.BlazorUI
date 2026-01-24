@@ -191,60 +191,64 @@ bui-component[{{inputBase}}] .{{addon}} {
     align-self: stretch;
     flex-shrink: 0;
     gap: 0.25rem;
-    min-width: calc(2.5rem * {{V(sizeMult, "1")}});
+    width: calc(2.5rem * {{V(sizeMult, "1")}});
     margin: 0;
-    padding-inline: calc(0.5rem * {{V(sizeMult, "1")}});
+    padding: 0;
     border: none;
+    border-inline-start: 1px solid var(--palette-border);
+    border-radius: 0;
     background: transparent;
     color: var(--_input-label-color);
+    overflow: hidden;
     transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+/* Outlined variant: adjust for fieldset offset */
+bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addon}} {
+    margin-block-start: 0.1em;
+    border-start-end-radius: var(--_input-radius);
+    border-end-end-radius: var(--_input-radius);
+}
+
+/* Filled variant: match wrapper radius */
+bui-component[{{inputBase}}][{{variant}}="filled"] .{{addon}} {
+    border-start-end-radius: 4px;
 }
 
 /* === ADDON PREFIX === */
 
 bui-component[{{inputBase}}] .{{addonPrefix}} {
     order: -1;
+    border-inline-start: none;
     border-inline-end: 1px solid var(--palette-border);
 }
 
 bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonPrefix}} {
-    margin-block-start: 0.1em;
+    border-radius: 0;
     border-start-start-radius: var(--_input-radius);
     border-end-start-radius: var(--_input-radius);
 }
 
 bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonPrefix}} {
+    border-radius: 0;
     border-start-start-radius: 4px;
 }
 
 bui-component[{{inputBase}}]:has(.{{addonPrefix}}) {
-    --_addon-offset: 3rem;
+    --_addon-offset: 2.5rem;
 }
 
 /* === ADDON SUFFIX === */
 
 bui-component[{{inputBase}}] .{{addonSuffix}} {
-    border-inline-start: 1px solid var(--palette-border);
-}
-
-bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonSuffix}} {
-    margin-block-start: 0.1em;
-    border-start-end-radius: var(--_input-radius);
-    border-end-end-radius: var(--_input-radius);
-}
-
-bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonSuffix}} {
-    border-start-end-radius: 4px;
+    /* Uses base addon styles, positioned after field by default */
 }
 
 /* === ADDON BUTTON (interactive) === */
 
 bui-component[{{inputBase}}] .{{addonBtn}} {
-    min-width: calc(3rem * {{V(sizeMult, "1")}});
-    padding: 0;
-    border-inline-start: 1px solid var(--palette-border);
+    width: calc(3rem * {{V(sizeMult, "1")}});
     cursor: pointer;
-    overflow: hidden;
 }
 
 bui-component[{{inputBase}}] .{{addonBtn}}:hover:not(:disabled) {
@@ -254,16 +258,6 @@ bui-component[{{inputBase}}] .{{addonBtn}}:hover:not(:disabled) {
 bui-component[{{inputBase}}] .{{addonBtn}}:disabled {
     cursor: not-allowed;
     opacity: 0.5;
-}
-
-bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonBtn}} {
-    margin-block-start: 0.1em;
-    border-start-end-radius: var(--_input-radius);
-    border-end-end-radius: var(--_input-radius);
-}
-
-bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonBtn}} {
-    border-start-end-radius: 4px;
 }
 
 bui-component[{{inputBase}}]:focus-within .{{addonBtn}} {
@@ -397,13 +391,11 @@ bui-component[{{inputBase}}][{{variant}}="standard"] .{{validation}} {
    KEYBOARD FOCUS INDICATORS
    ======================================== */
 
-/* Outline para Outlined variant - solo con teclado */
 bui-component[{{inputBase}}][{{variant}}="outlined"][data-keyboard-focus="true"] .{{fieldset}} {
     outline: 2px solid var(--palette-highlight);
     outline-offset: 2px;
 }
 
-/* Outline para Filled y Standard variants - solo con teclado */
 bui-component[{{inputBase}}]:not([{{variant}}="outlined"])[data-keyboard-focus="true"] .{{wrapper}} {
     outline: 2px solid var(--palette-highlight);
     outline-offset: 2px;
