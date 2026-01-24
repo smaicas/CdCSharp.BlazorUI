@@ -151,13 +151,5 @@ bui-component[data-bui-transitions~="bui-transition-disabled-fade"]:has(:disable
     opacity: var(--bui-transition-disabled-opacity, 0.5);
     cursor: not-allowed;
 }
-
-/* === REDUCED MOTION === */
-
-@media (prefers-reduced-motion: reduce) {
-    bui-component[data-bui-transitions] {
-        transition: none;
-    }
-}
 """;
 }

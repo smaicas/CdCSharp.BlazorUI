@@ -191,22 +191,6 @@
                    readonly="@ReadOnly"
                    required="@Required" />
 
-            @if (HasSuffix)
-            {
-
-                @if (!string.IsNullOrWhiteSpace(SuffixText))
-                {
-                    <span class="bui-input__suffix-txt">@SuffixText</span>
-                }
-                @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-                {
-                    <span class="bui-input__suffix-svg">
-                        <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-                    </span>
-                }
-
-            }
-
             @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Right)
             {
                 @RenderStepButtons()

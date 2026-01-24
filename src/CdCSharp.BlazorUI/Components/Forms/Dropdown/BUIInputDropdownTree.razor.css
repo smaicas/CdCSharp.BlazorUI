@@ -1,9 +1,4 @@
-﻿/* ========================================
-   BUIInputDropdownTree - Isolated CSS
-   Specific styles for tree dropdown content
-   ======================================== */
-
-::deep .bui-dropdown__tree-content {
+﻿::deep .bui-dropdown__tree-content {
     padding: calc(0.5rem * var(--bui-size-multiplier, 1));
 }
 

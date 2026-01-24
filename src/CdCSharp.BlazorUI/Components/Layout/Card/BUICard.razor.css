@@ -3,11 +3,11 @@ bui-component[data-bui-component="card"] {
     display: block;
     width: 100%;
     /* CSS Variables */
-    --bui-card-padding: 1rem;
-    --bui-card-header-padding: 1rem;
-    --bui-card-content-padding: 1rem;
-    --bui-card-actions-padding: 0.5rem 1rem;
-    --bui-card-media-height: 200px;
+    --_card-padding: 1rem;
+    --_card-header-padding: 1rem;
+    --_card-content-padding: 1rem;
+    --_card-actions-padding: 0.5rem 1rem;
+    --_card-media-height: 200px;
 }
 
     /* Card Container */
@@ -23,7 +23,7 @@ bui-component[data-bui-component="card"] {
 
     /* Header */
     bui-component[data-bui-component="card"] .bui-card__header {
-        padding: var(--bui-card-header-padding);
+        padding: var(--_card-header-padding);
     }
 
     bui-component[data-bui-component="card"] .bui-card__title {
@@ -44,7 +44,7 @@ bui-component[data-bui-component="card"] {
     /* Media */
     bui-component[data-bui-component="card"] .bui-card__media {
         width: 100%;
-        height: var(--bui-card-media-height);
+        height: var(--_card-media-height);
         overflow: hidden;
         position: relative;
         background: rgba(0, 0, 0, 0.04);
@@ -58,13 +58,13 @@ bui-component[data-bui-component="card"] {
 
     /* Content */
     bui-component[data-bui-component="card"] .bui-card__content {
-        padding: var(--bui-card-content-padding);
+        padding: var(--_card-content-padding);
         flex: 1;
     }
 
     /* Actions */
     bui-component[data-bui-component="card"] .bui-card__actions {
-        padding: var(--bui-card-actions-padding);
+        padding: var(--_card-actions-padding);
         display: flex;
         align-items: center;
         gap: var(--bui-density-gap);

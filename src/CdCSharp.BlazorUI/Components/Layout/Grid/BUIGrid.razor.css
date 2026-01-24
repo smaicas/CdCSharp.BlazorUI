@@ -1,6 +1,4 @@
-﻿/* BUIGrid.razor.css - Flexbox Production Ready */
-
-bui-component[data-bui-component="grid"] {
+﻿bui-component[data-bui-component="grid"] {
     --columns: 12;
     --gap: 1rem;
     display: flex;

@@ -156,5 +156,15 @@ public class BaseComponentGenerator : IAssetGenerator
         opacity: 0;
     }
 }
+
+/* ========================================
+   ACCESSIBILITY: REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    {{FeatureDefinitions.Tags.Component}} {
+        animation: none !important;
+    }
+}
 """;
 }

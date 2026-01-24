@@ -257,14 +257,3 @@ bui-component[data-bui-component="toast"][data-bui-animation="slide-fade"][data-
         transform: translateY(20px);
     }
 }
-
-/* ========== Reduced motion ========== */
-@media (prefers-reduced-motion: reduce) {
-    bui-component[data-bui-component="toast"] {
-        animation: none !important;
-    }
-
-        bui-component[data-bui-component="toast"][data-bui-closing="true"] {
-            opacity: 0;
-        }
-}

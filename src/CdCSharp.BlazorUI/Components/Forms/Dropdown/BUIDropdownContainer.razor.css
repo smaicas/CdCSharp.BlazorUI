@@ -1,9 +1,4 @@
-﻿/* ========================================
-   BUIDropdownContainer - Isolated CSS
-   Extends Input Family with dropdown-specific styles
-   ======================================== */
-
-/* === TRIGGER BUTTON === */
+﻿/* === TRIGGER BUTTON === */
 
 bui-component[data-bui-component="dropdown-container"] .bui-dropdown__trigger {
     display: flex;

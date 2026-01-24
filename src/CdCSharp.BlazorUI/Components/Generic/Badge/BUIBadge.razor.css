@@ -1,14 +1,14 @@
 ﻿/* Base Badge Styles */
 bui-component[data-bui-component="badge"] {
-    --bui-badge-padding-x: 0.5rem;
-    --bui-badge-padding-y: 0.25rem;
-    --bui-badge-font-size: 0.75rem;
-    --bui-badge-font-weight: 600;
-    --bui-badge-border-radius: 4px;
-    --bui-badge-bg: var(--palette-primary);
-    --bui-badge-color: var(--palette-primarycontrast);
-    --bui-badge-border-color: transparent;
-    --bui-badge-border-width: 1px;
+    --_badge-padding-x: 0.5rem;
+    --_badge-padding-y: 0.25rem;
+    --_badge-font-size: 0.75rem;
+    --_badge-font-weight: 600;
+    --_badge-border-radius: 4px;
+    --_badge-bg: var(--palette-primary);
+    --_badge-color: var(--palette-primarycontrast);
+    --_badge-border-color: transparent;
+    --_badge-border-width: 1px;
     display: inline-flex;
     vertical-align: middle;
 }
@@ -17,40 +17,40 @@ bui-component[data-bui-component="badge"] {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: var(--bui-density-gap);
-        padding: var(--bui-badge-padding-y) var(--bui-badge-padding-x);
-        font-size: var(--bui-badge-font-size);
-        font-weight: var(--bui-badge-font-weight);
+        gap: var(--_bui-density-gap);
+        padding: var(--_badge-padding-y) var(--_badge-padding-x);
+        font-size: var(--_badge-font-size);
+        font-weight: var(--_badge-font-weight);
         line-height: 1;
-        border-radius: var(--bui-badge-border-radius);
+        border-radius: var(--_badge-border-radius);
         white-space: nowrap;
-        background-color: var(--bui-badge-bg);
-        color: var(--bui-badge-color);
-        border: var(--bui-badge-border-width) solid var(--bui-badge-border-color);
+        background-color: var(--_badge-bg);
+        color: var(--_badge-color);
+        border: var(--_badge-border-width) solid var(--_badge-border-color);
         box-sizing: border-box;
     }
 
     /* Sizes */
     bui-component[data-bui-component="badge"][data-bui-size="small"] {
-        --bui-badge-padding-x: 0.375rem;
-        --bui-badge-padding-y: 0.125rem;
-        --bui-badge-font-size: 0.625rem;
+        --_badge-padding-x: 0.375rem;
+        --_badge-padding-y: 0.125rem;
+        --_badge-font-size: 0.625rem;
     }
 
     bui-component[data-bui-component="badge"][data-bui-size="large"] {
-        --bui-badge-padding-x: 0.75rem;
-        --bui-badge-padding-y: 0.375rem;
-        --bui-badge-font-size: 0.875rem;
+        --_badge-padding-x: 0.75rem;
+        --_badge-padding-y: 0.375rem;
+        --_badge-font-size: 0.875rem;
     }
 
     /* Pill Shape */
     bui-component[data-bui-component="badge"][data-bui-pill="true"] {
-        --bui-badge-border-radius: 999px;
+        --_badge-border-radius: 999px;
     }
 
     /* Rounded */
     bui-component[data-bui-component="badge"][data-bui-rounded="true"] {
-        --bui-badge-border-radius: 8px;
+        --_badge-border-radius: 8px;
     }
 
     /* Icon */
@@ -59,43 +59,43 @@ bui-component[data-bui-component="badge"] {
     }
 
     bui-component[data-bui-component="badge"] .bui-badge__text {
-        max-width: var(--bui-badge-max-content, none);
+        max-width: var(--_badge-max-content, none);
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     /* Variant: Filled (default) */
     bui-component[data-bui-component="badge"][data-bui-variant="filled"] .bui-badge {
-        background-color: var(--bui-badge-bg);
-        color: var(--bui-badge-color);
+        background-color: var(--_badge-bg);
+        color: var(--_badge-color);
     }
 
     /* Variant: Outlined */
     bui-component[data-bui-component="badge"][data-bui-variant="outlined"] {
-        --bui-badge-bg: transparent;
-        --bui-badge-color: var(--palette-primary);
-        --bui-badge-border-color: currentColor;
+        --_badge-bg: transparent;
+        --_badge-color: var(--palette-primary);
+        --_badge-border-color: currentColor;
     }
 
         bui-component[data-bui-component="badge"][data-bui-variant="outlined"] .bui-badge {
-            background-color: var(--bui-badge-bg);
-            color: var(--bui-badge-color);
-            border-color: var(--bui-badge-border-color);
+            background-color: var(--_badge-bg);
+            color: var(--_badge-color);
+            border-color: var(--_badge-border-color);
         }
 
     /* Variant: Soft */
     bui-component[data-bui-component="badge"][data-bui-variant="soft"] {
-        --bui-badge-bg: rgba(25, 118, 210, 0.12);
-        --bui-badge-color: var(--palette-primary);
+        --_badge-bg: rgba(25, 118, 210, 0.12);
+        --_badge-color: var(--palette-primary);
     }
 
 [data-theme="dark"] bui-component[data-bui-component="badge"][data-bui-variant="soft"] {
-    --bui-badge-bg: rgba(25, 118, 210, 0.24);
+    --_badge-bg: rgba(25, 118, 210, 0.24);
 }
 
 bui-component[data-bui-component="badge"][data-bui-variant="soft"] .bui-badge {
-    background-color: var(--bui-badge-bg);
-    color: var(--bui-badge-color);
+    background-color: var(--_badge-bg);
+    color: var(--_badge-color);
 }
 
 /* Variant: Dot */
@@ -104,7 +104,7 @@ bui-component[data-bui-component="badge"][data-bui-dot="true"] .bui-badge__dot {
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
-    background-color: var(--bui-badge-bg);
+    background-color: var(--_badge-bg);
     flex-shrink: 0;
 }
 
@@ -146,8 +146,8 @@ bui-component[data-bui-component="badge"] .bui-badge__notification {
     font-weight: 600;
     line-height: 1;
     border-radius: 999px;
-    background-color: var(--bui-badge-bg);
-    color: var(--bui-badge-color);
+    background-color: var(--_badge-bg);
+    color: var(--_badge-color);
     white-space: nowrap;
     box-shadow: 0 0 0 2px var(--palette-surface);
     pointer-events: none;
@@ -203,7 +203,7 @@ bui-component[data-bui-component="badge"][data-bui-anchor="true"][data-bui-dot="
     width: 0.625rem;
     height: 0.625rem;
     border-radius: 50%;
-    background-color: var(--bui-badge-bg);
+    background-color: var(--_badge-bg);
     box-shadow: 0 0 0 2px var(--palette-surface);
 }
 
@@ -229,27 +229,27 @@ bui-component[data-bui-component="badge"][data-bui-anchor="true"][data-bui-badge
 
 /* Color Customization */
 bui-component[data-bui-component="badge"] .bui-badge {
-    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
-    color: var(--bui-inline-color, var(--bui-badge-color));
+    background-color: var(--_bui-inline-background-color, var(--_badge-bg));
+    color: var(--_bui-inline-color, var(--_badge-color));
 }
 
 bui-component[data-bui-component="badge"][data-bui-variant="outlined"] .bui-badge {
     background-color: transparent;
-    color: var(--bui-inline-color, var(--bui-inline-background-color, var(--palette-primary)));
+    color: var(--_bui-inline-color, var(--_bui-inline-background-color, var(--palette-primary)));
     border-color: currentColor;
 }
 
 bui-component[data-bui-component="badge"][data-bui-variant="soft"] .bui-badge {
-    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
-    color: var(--bui-inline-color, var(--bui-badge-color));
+    background-color: var(--_bui-inline-background-color, var(--_badge-bg));
+    color: var(--_bui-inline-color, var(--_badge-color));
 }
 
 /* Notification Badge with Custom Colors */
 bui-component[data-bui-component="badge"] .bui-badge__notification {
-    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
-    color: var(--bui-inline-color, var(--bui-badge-color));
+    background-color: var(--_bui-inline-background-color, var(--_badge-bg));
+    color: var(--_bui-inline-color, var(--_badge-color));
 }
 
 bui-component[data-bui-component="badge"] .bui-badge__dot {
-    background-color: var(--bui-inline-background-color, var(--bui-badge-bg));
+    background-color: var(--_bui-inline-background-color, var(--_badge-bg));
 }

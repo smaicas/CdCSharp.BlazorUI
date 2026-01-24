@@ -1,11 +1,4 @@
-﻿/* 
- * BUISwitch.razor.css
- * 
- * Shared styles for both BUISwitch and BUIInputSwitch
- * BUIInputSwitch composes BUISwitch internally, so these styles apply to both
- */
-
-/* ============================================
+﻿/* ============================================
  * COMPONENT CONTAINER
  * ============================================ */
 

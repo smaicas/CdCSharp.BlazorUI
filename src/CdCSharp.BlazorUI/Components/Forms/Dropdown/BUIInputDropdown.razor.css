@@ -1,9 +1,4 @@
-﻿/* ========================================
-   BUIInputDropdown - Isolated CSS
-   Specific styles for flat dropdown options
-   ======================================== */
-
-/* === SEARCH INPUT === */
+﻿/* === SEARCH INPUT === */
 
 ::deep .bui-dropdown__search {
     padding: calc(0.5rem * var(--bui-size-multiplier, 1));

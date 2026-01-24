@@ -269,10 +269,3 @@
 .bui-tooltip[data-bui-permanent="true"] .bui-tooltip__content {
     padding-right: 1.75rem;
 }
-
-/* ========== Reduced motion ========== */
-@media (prefers-reduced-motion: reduce) {
-    .bui-tooltip {
-        animation: none !important;
-    }
-}

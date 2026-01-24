@@ -1,6 +1,4 @@
-﻿/* BUIInputRadio.razor.css */
-
-bui-component[data-bui-component="input-radio"] {
+﻿bui-component[data-bui-component="input-radio"] {
     --_color: var(--bui-inline-color, var(--palette-primary));
     --_size: calc(1.25rem * var(--bui-size-multiplier, 1));
     --_gap: var(--bui-density-gap, 0.5rem);

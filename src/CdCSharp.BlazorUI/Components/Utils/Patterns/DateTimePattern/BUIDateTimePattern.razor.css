@@ -1,12 +1,4 @@
-﻿/* ========================================
-   BUIDateTimePattern Component Styles
-   
-   This is a helper component for BUIInputDateTime.
-   The .bui-pattern container receives .bui-input__field
-   class from parent, inheriting input-family styles.
-   ======================================== */
-
-.bui-pattern {
+﻿.bui-pattern {
     display: inline-flex;
     align-items: center;
     flex: 1;

@@ -105,20 +105,6 @@
                 <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
-                @if (HasPrefix)
-                {
-                    @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-                    {
-                        <span class="bui-input__prefix-svg">
-                            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-                        </span>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(PrefixText))
-                    {
-                        <span class="bui-input__prefix-txt">@PrefixText</span>
-                    }
-                }
-
                 <BUIDateTimePattern @key="@_patternKey"
                                     @ref="_patternRef"
                                     Id="@_inputId"
@@ -130,20 +116,6 @@
                                     OnFocus="HandleFocus"
                                     OnBlur="HandleBlur"
                                     OnDirtyStateChanged="HandleDirtyChanged" />
-
-                @if (HasSuffix)
-                {
-                    @if (!string.IsNullOrWhiteSpace(SuffixText))
-                    {
-                        <span class="bui-input__suffix-txt">@SuffixText</span>
-                    }
-                    @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-                    {
-                        <span class="bui-input__suffix-svg">
-                            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-                        </span>
-                    }
-                }
 
                 @if (CanClear && !ReadOnly)
                 {
