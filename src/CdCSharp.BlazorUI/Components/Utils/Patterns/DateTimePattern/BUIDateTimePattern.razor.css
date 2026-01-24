@@ -1,7 +1,8 @@
 ﻿.bui-pattern {
     display: inline-flex;
     align-items: center;
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 6ch;
     font-family: var(--bui-font-mono);
     cursor: text;
     min-height: 1.5em;
@@ -11,8 +12,9 @@
         outline: none;
     }
 
-    .bui-pattern:empty {
-        min-width: 100%;
+    .bui-pattern:empty::before {
+        content: '\00a0';
+        visibility: hidden;
     }
 
 .bui-pattern__editable {
@@ -27,7 +29,6 @@
         background: color-mix(in srgb, var(--palette-primary) 15%, transparent);
     }
 
-/* Show placeholder styling when no value */
 .bui-pattern[data-has-value="false"] .bui-pattern__editable,
 .bui-pattern[data-has-value="false"] .bui-pattern__separator,
 .bui-pattern[data-has-value="false"] .bui-pattern__toggle {

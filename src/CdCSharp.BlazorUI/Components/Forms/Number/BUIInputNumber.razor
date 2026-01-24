@@ -108,8 +108,6 @@
     private string NegativeSign => NumberFormat.NegativeSign;
     private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
     private bool IsFloated => _isFocused || HasValue;
-    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
-    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
     public BUIInputNumber()
     {

@@ -2,14 +2,13 @@
 
 @if (Loading)
 {
-    <div class="bui-input__loading">
+    <span class="bui-input__addon">
         <BUILoadingIndicator Variant="@LoadingIndicatorVariant" Size="Size" />
-    </div>
+    </span>
 }
 
 @code {
     [Parameter] public bool Loading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-
 }

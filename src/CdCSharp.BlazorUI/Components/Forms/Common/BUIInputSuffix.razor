@@ -2,16 +2,16 @@
 
 @if (HasSuffix)
 {
-    @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-    {
-        <span class="bui-input__prefix-svg">
+    <span class="bui-input__addon">
+        @if (!string.IsNullOrWhiteSpace(SuffixIcon))
+        {
             <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-        </span>
-    }
-    @if (!string.IsNullOrWhiteSpace(SuffixText))
-    {
-        <span class="bui-input__prefix-txt">@SuffixText</span>
-    }
+        }
+        @if (!string.IsNullOrWhiteSpace(SuffixText))
+        {
+            <span>@SuffixText</span>
+        }
+    </span>
 }
 
 @code {

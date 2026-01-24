@@ -67,19 +67,19 @@ public static class FeatureDefinitions
         /// </summary>
         public static class Input
         {
+            public const string Wrapper = "bui-input__wrapper";
             public const string Field = "bui-input__field";
             public const string Fieldset = "bui-input__fieldset";
-            public const string HelperText = "bui-input__helper-text";
-            public const string Label = "bui-input__label";
             public const string Legend = "bui-input__legend";
-            public const string Loading = "bui-input__loading";
+            public const string Label = "bui-input__label";
             public const string Required = "bui-input__required";
+            public const string HelperText = "bui-input__helper-text";
             public const string Validation = "bui-input__validation";
-            public const string Wrapper = "bui-input__wrapper";
-            public const string PrefixTxt = "bui-input__prefix-txt";
-            public const string PrefixSvg = "bui-input__prefix-svg";
-            public const string SuffixTxt = "bui-input__suffix-txt";
-            public const string SuffixSvg = "bui-input__suffix-svg";
+
+            public const string Addon = "bui-input__addon";
+            public const string AddonBtn = "bui-input__addon--btn";
+            public const string AddonPrefix = "bui-input__addon--prefix";
+            public const string AddonSuffix = "bui-input__addon--suffix";
         }
 
         /// <summary>

@@ -11,6 +11,9 @@
 <h2>With Label</h2>
 <ComponentDemo Definition="@WithLabelDemo" />
 
+<h2>Variants Demo</h2>
+<ComponentDemo Definition="@VariantsDemo" />
+
 <h2>Display Modes</h2>
 <ComponentDemo Definition="@DisplayModesDemo" />
 
@@ -68,6 +71,27 @@
     private RenderFragment RenderWithLabel() => __builder =>
     {
         <BUIInputColor @bind-Value="_labelValue" Label="Select Color" HelperText="Choose your preferred color" />
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_labelValue" Variant="BUIInputVariant.Filled" Label="Select Color" HelperText="Choose your preferred color" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_labelValue" Variant="BUIInputVariant.Outlined" Label="Select Color" HelperText="Choose your preferred color" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputColor @bind-Value="_labelValue" Variant="BUIInputVariant.Standard" Label="Select Color" HelperText="Choose your preferred color" />
+            </BUIGridItem>
+        </BUIGrid>
     };
 
     private ComponentDemoDefinition DisplayModesDemo => new()

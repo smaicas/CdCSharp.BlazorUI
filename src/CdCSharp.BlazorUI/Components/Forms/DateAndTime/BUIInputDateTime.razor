@@ -82,8 +82,6 @@
     private bool HasValue => CurrentValue != null;
     private bool CanClear => _isDirty;
     private bool IsFloated => _isFocused || HasValue || _isDirty;
-    private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
-    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
@@ -120,7 +118,7 @@
                 @if (CanClear && !ReadOnly)
                 {
                     <button type="button"
-                            class="bui-input-datetime__action-btn"
+                            class="bui-input__addon bui-input__addon--btn"
                             @onclick="Clear"
                             @onclick:preventDefault="true"
                             @onclick:stopPropagation="true"
@@ -130,7 +128,7 @@
                 }
 
                 <button type="button"
-                        class="bui-input-datetime__action-btn"
+                        class="bui-input__addon bui-input__addon--btn"
                         @onclick="OpenPicker"
                         @onclick:preventDefault="true"
                         @onclick:stopPropagation="true"
@@ -266,6 +264,12 @@
             TimeValue = TimeOnly.FromDateTime(dto.DateTime);
         }
     }
+
+    private string GetPickerIcon() => UnderlyingType switch
+    {
+        Type t when t == typeof(TimeOnly) => BUIIcons.MaterialIconsOutlined.i_schedule,
+        _ => BUIIcons.MaterialIconsOutlined.i_calendar_today
+    };
 
     private void OpenPicker()
     {

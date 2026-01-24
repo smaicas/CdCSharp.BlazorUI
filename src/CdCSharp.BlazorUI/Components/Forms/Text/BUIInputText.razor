@@ -71,7 +71,6 @@
 
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
     private bool IsFloated => _isFocused || HasValue;
-    private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
 
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 

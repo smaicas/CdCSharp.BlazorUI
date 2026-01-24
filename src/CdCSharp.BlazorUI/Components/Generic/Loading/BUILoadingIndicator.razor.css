@@ -1,46 +1,50 @@
 ﻿bui-component[data-bui-component="loading-indicator"] {
+    --_loading-size: 1.5rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    width: var(--_loading-size);
+    height: var(--_loading-size);
+    color: currentColor;
 }
 
-    /* Size modifiers */
-    bui-component[data-bui-component="loading-indicator"][data-bui-size="small"] {
-        width: 1rem;
-        height: 1rem;
-    }
+    /* === SIZES === */
 
-    bui-component[data-bui-component="loading-indicator"][data-bui-size="medium"] {
-        width: 1.5rem;
-        height: 1.5rem;
+    bui-component[data-bui-component="loading-indicator"][data-bui-size="small"] {
+        --_loading-size: 1rem;
     }
 
     bui-component[data-bui-component="loading-indicator"][data-bui-size="large"] {
-        width: 2rem;
-        height: 2rem;
+        --_loading-size: 2rem;
     }
 
-/* Spinner Variant */
-bui-component[data-bui-variant="spinner"] .bui-loading-spinner {
-    width: 100%;
-    height: 100%;
-    animation: bui-loading-spinner-rotate 2s linear infinite;
+    /* === COMMON SVG === */
+
+    bui-component[data-bui-component="loading-indicator"] svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    bui-component[data-bui-component="loading-indicator"] circle {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 4;
+        stroke-linecap: round;
+    }
+
+/* === SPINNER === */
+
+bui-component[data-bui-variant="spinner"] svg {
+    animation: loading-rotate 2s linear infinite;
 }
 
 bui-component[data-bui-variant="spinner"] circle {
     stroke-dasharray: 1, 200;
-    stroke-dashoffset: 0;
-    animation: bui-loading-spinner-dash 1.5s ease-in-out infinite;
-    stroke-linecap: round;
+    animation: loading-spinner-dash 1.5s ease-in-out infinite;
 }
 
-@keyframes bui-loading-spinner-rotate {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-@keyframes bui-loading-spinner-dash {
+@keyframes loading-spinner-dash {
     0% {
         stroke-dasharray: 1, 200;
         stroke-dashoffset: 0;
@@ -57,69 +61,65 @@ bui-component[data-bui-variant="spinner"] circle {
     }
 }
 
-/* Linear Variant */
-bui-component[data-bui-variant="linearindeterminate"] .bui-loading-linear {
-    width: 100%;
-    height: 4px;
-    background-color: currentColor;
-    opacity: 0.2;
-    overflow: hidden;
-    position: relative;
-}
+/* === CIRCULAR PROGRESS === */
 
-bui-component[data-bui-variant="linearindeterminate"] .bui-loading-linear__bar {
-    height: 100%;
-    background-color: currentColor;
-    animation: bui-loading-linear 2s ease-in-out infinite;
-}
-
-@keyframes bui-loading-linear {
-    0% {
-        transform: translateX(-100%);
-        width: 100%;
-    }
-
-    50% {
-        transform: translateX(100%);
-        width: 100%;
-    }
-
-    100% {
-        transform: translateX(-100%);
-        width: 100%;
-    }
-}
-
-/* Circular Progress Variant */
-bui-component[data-bui-variant="circularprogress"] .bui-loading-circular {
-    width: 100%;
-    height: 100%;
-    animation: bui-loading-circular-rotate 1s linear infinite;
+bui-component[data-bui-variant="circularprogress"] svg {
+    animation: loading-rotate 1s linear infinite;
 }
 
 bui-component[data-bui-variant="circularprogress"] circle {
     stroke-dasharray: 80, 200;
-    stroke-dashoffset: 0;
-    stroke-linecap: round;
 }
 
-@keyframes bui-loading-circular-rotate {
+@keyframes loading-rotate {
     100% {
         transform: rotate(360deg);
     }
 }
 
-/* Dots Variant */
+/* === LINEAR === */
+
+bui-component[data-bui-variant="linearindeterminate"] {
+    width: 100%;
+    height: 4px;
+}
+
+    bui-component[data-bui-variant="linearindeterminate"] .bui-loading-linear {
+        width: 100%;
+        height: 100%;
+        background: currentColor;
+        opacity: 0.2;
+        overflow: hidden;
+    }
+
+    bui-component[data-bui-variant="linearindeterminate"] .bui-loading-linear__bar {
+        height: 100%;
+        background: currentColor;
+        animation: loading-linear 2s ease-in-out infinite;
+    }
+
+@keyframes loading-linear {
+    0%, 100% {
+        transform: translateX(-100%);
+    }
+
+    50% {
+        transform: translateX(100%);
+    }
+}
+
+/* === DOTS === */
+
 bui-component[data-bui-variant="dots"] {
-    gap: 0.25em;
+    gap: calc(var(--_loading-size) * 0.15);
 }
 
     bui-component[data-bui-variant="dots"] .bui-loading-dot {
-        width: 0.25em;
-        height: 0.25em;
-        background-color: currentColor;
+        width: calc(var(--_loading-size) * 0.25);
+        height: calc(var(--_loading-size) * 0.25);
+        background: currentColor;
         border-radius: 50%;
-        animation: bui-loading-dots 1.4s ease-in-out infinite;
+        animation: loading-dots 1.4s ease-in-out infinite;
     }
 
         bui-component[data-bui-variant="dots"] .bui-loading-dot:nth-child(1) {
@@ -130,7 +130,7 @@ bui-component[data-bui-variant="dots"] {
             animation-delay: -0.16s;
         }
 
-@keyframes bui-loading-dots {
+@keyframes loading-dots {
     0%, 80%, 100% {
         transform: scale(0);
         opacity: 0.5;
@@ -142,16 +142,17 @@ bui-component[data-bui-variant="dots"] {
     }
 }
 
-/* Pulse Variant */
+/* === PULSE === */
+
 bui-component[data-bui-variant="pulse"] .bui-loading-pulse {
     width: 100%;
     height: 100%;
-    background-color: currentColor;
+    background: currentColor;
     border-radius: 50%;
-    animation: bui-loading-pulse 1.5s ease-out infinite;
+    animation: loading-pulse 1.5s ease-out infinite;
 }
 
-@keyframes bui-loading-pulse {
+@keyframes loading-pulse {
     0% {
         transform: scale(0);
         opacity: 1;

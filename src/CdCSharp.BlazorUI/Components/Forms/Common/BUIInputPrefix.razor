@@ -2,16 +2,16 @@
 
 @if (HasPrefix)
 {
-    @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-    {
-        <span class="bui-input__prefix-svg">
+    <span class="bui-input__addon bui-input__addon--prefix">
+        @if (!string.IsNullOrWhiteSpace(PrefixIcon))
+        {
             <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-        </span>
-    }
-    @if (!string.IsNullOrWhiteSpace(PrefixText))
-    {
-        <span class="bui-input__prefix-txt">@PrefixText</span>
-    }
+        }
+        @if (!string.IsNullOrWhiteSpace(PrefixText))
+        {
+            <span>@PrefixText</span>
+        }
+    </span>
 }
 
 @code {
