@@ -214,6 +214,30 @@ bui-component[{{picker}}] .{{preview}} > div {
     width: 100%;
     height: 100%;
 }
+
+/* ========================================
+   KEYBOARD FOCUS INDICATORS
+   ======================================== */
+
+bui-component[data-bui-picker-base] .bui-picker__btn:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: -2px;
+}
+
+bui-component[data-bui-picker-base] .bui-picker__cell:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: -2px;
+}
+
+bui-component[data-bui-picker-base] .bui-picker__input:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}
+
+/* Slider focus - box-shadow instead of outline due to overflow:hidden */
+bui-component[{{picker}}] .{{slider}}:focus-within {
+    box-shadow: 0 0 0 2px var(--palette-surface), 0 0 0 4px var(--palette-highlight);
+}
 """;
     }
 }

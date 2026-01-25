@@ -28,33 +28,6 @@ bui-component[data-bui-component="toast"] .bui-toast__content {
     word-wrap: break-word;
 }
 
-/* Close button */
-bui-component[data-bui-component="toast"] .bui-toast__close {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    color: inherit;
-    opacity: 0.5;
-    cursor: pointer;
-    transition: opacity 150ms ease, background-color 150ms ease;
-}
-
-    bui-component[data-bui-component="toast"] .bui-toast__close:hover {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.05);
-    }
-
-[data-theme="dark"] bui-component[data-bui-component="toast"] .bui-toast__close:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
 /* Progress bar */
 bui-component[data-bui-component="toast"] .bui-toast__progress {
     position: absolute;

@@ -9,7 +9,10 @@
 <bui-component @attributes="ComputedAttributes">
     <BUIDraggable OnDrag="HandleSelectionDrag" OnDragEnd="HandleSelectionDrag">
         <div @ref="_selectionRef"
+             tabindex="0"
              class="bui-colorpicker__selection"
+             @onkeydown="HandleSelectionKeyDown"
+             @onkeydown:preventDefault="_preventKeyDown"
              style="width:@(SelectionWidth)px; height:@(SelectionHeight)px; background-color:@GetHueColor();">
             <div class="bui-colorpicker__selection-gradient">
                 <span @ref="_handlerRef" class="bui-colorpicker__handler"></span>
@@ -71,6 +74,7 @@
     private HsvColor _hsvColor = new(0, 1, 1);
     private byte _alpha = 255;
     private bool _isInitialized;
+    private bool _preventKeyDown = false;
 
     [Inject] private IColorPickerJsInterop JsInterop { get; set; } = default!;
 
@@ -170,6 +174,46 @@
     };
 
     private async Task HandleRevert() => await OnRevert.InvokeAsync();
+
+    private async Task HandleSelectionKeyDown(KeyboardEventArgs e)
+    {
+        _preventKeyDown = false;
+
+        const double step = 0.02;
+        const double fineStep = 0.005;
+
+        double delta = e.ShiftKey ? fineStep : step;
+        HsvColor newColor = _hsvColor;
+
+        switch (e.Key)
+        {
+            case "ArrowRight":
+                newColor = _hsvColor.WithSaturation(Math.Min(1, _hsvColor.Saturation + delta));
+                _preventKeyDown = true;
+                break;
+            case "ArrowLeft":
+                newColor = _hsvColor.WithSaturation(Math.Max(0, _hsvColor.Saturation - delta));
+                _preventKeyDown = true;
+                break;
+            case "ArrowUp":
+                newColor = _hsvColor.WithValue(Math.Min(1, _hsvColor.Value + delta));
+                _preventKeyDown = true;
+                break;
+            case "ArrowDown":
+                newColor = _hsvColor.WithValue(Math.Max(0, _hsvColor.Value - delta));
+                _preventKeyDown = true;
+                break;
+            default:
+                return;
+        }
+
+        if (newColor != _hsvColor)
+        {
+            _hsvColor = newColor;
+            await UpdateHandlerPosition();
+            await NotifyColorChanged();
+        }
+    }
 
     private async Task UpdateHandlerPosition()
     {

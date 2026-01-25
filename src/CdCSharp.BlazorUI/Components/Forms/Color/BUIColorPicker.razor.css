@@ -35,3 +35,9 @@
     background-position: 0 0, 0 0, 0 4px, 4px -4px, -4px 0;
     background-color: var(--palette-background);
 }
+
+/* Color canvas selector focus */
+.bui-colorpicker__selection:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}

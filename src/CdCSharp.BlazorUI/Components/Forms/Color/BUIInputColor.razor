@@ -111,7 +111,8 @@
     private RenderFragment RenderInput() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
+                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
+                       @onkeydown="HandleKeyDown">
 
             <div class="bui-input__wrapper">
 
@@ -237,6 +238,14 @@
     {
         _isFocused = false;
         _isDirty = false;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (_isOpen && e.Key == "Escape")
+        {
+            ClosePicker();
+        }
     }
 
     private void HandleInputChange(ChangeEventArgs e)

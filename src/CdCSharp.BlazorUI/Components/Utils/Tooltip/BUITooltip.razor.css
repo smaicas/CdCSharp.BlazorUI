@@ -239,32 +239,6 @@
     }
 }
 
-/* ========== Close button (Permanent) ========== */
-.bui-tooltip__close {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: transparent;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    padding: 2px;
-    line-height: 0;
-    opacity: 0.7;
-    transition: opacity 150ms ease;
-    border-radius: 2px;
-}
-
-    .bui-tooltip__close:hover {
-        opacity: 1;
-        background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .bui-tooltip__close:focus-visible {
-        outline: 2px solid currentColor;
-        outline-offset: 1px;
-    }
-
 /* Adjust content padding when close button is present */
 .bui-tooltip[data-bui-permanent="true"] .bui-tooltip__content {
     padding-right: 1.75rem;

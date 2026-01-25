@@ -57,29 +57,6 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__filter-input {
         border-color: var(--palette-primary);
     }
 
-bui-component[data-bui-component="data-grid"] .bui-datagrid__filter-clear {
-    position: absolute;
-    right: 0.25rem;
-    top: 50%;
-    transform: translateY(-50%);
-    padding: 0.25rem;
-    border: none;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.6;
-    transition: opacity 200ms ease, background-color 200ms ease;
-}
-
-    bui-component[data-bui-component="data-grid"] .bui-datagrid__filter-clear:hover {
-        opacity: 1;
-        background: var(--_datagrid-hover-bg);
-    }
-
 /* Selection Info */
 bui-component[data-bui-component="data-grid"] .bui-datagrid__selection-info {
     display: flex;
@@ -88,21 +65,6 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__selection-info {
     font-size: 0.875rem;
     color: var(--palette-primary);
 }
-
-bui-component[data-bui-component="data-grid"] .bui-datagrid__clear-selection {
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--palette-primary);
-    background: transparent;
-    color: var(--palette-primary);
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: background-color 200ms ease;
-}
-
-    bui-component[data-bui-component="data-grid"] .bui-datagrid__clear-selection:hover {
-        background: var(--_datagrid-hover-bg);
-    }
 
 /* Page Size Selector */
 bui-component[data-bui-component="data-grid"] .bui-datagrid__page-size {
@@ -335,12 +297,12 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__footer {
 
 /* Accessibility */
 bui-component[data-bui-component="data-grid"] .bui-datagrid__row--clickable:focus-visible {
-    outline: 2px solid var(--palette-primary);
+    outline: 2px solid var(--palette-highlight);
     outline-offset: -2px;
 }
 
 bui-component[data-bui-component="data-grid"] .bui-datagrid__header-cell--sortable:focus-visible {
-    outline: 2px solid var(--palette-primary);
+    outline: 2px solid var(--palette-highlight);
     outline-offset: -2px;
 }
 

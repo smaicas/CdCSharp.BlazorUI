@@ -29,7 +29,7 @@
                         @if (!string.IsNullOrEmpty(_state.FilterText))
                         {
                             <button type="button"
-                                    class="bui-datagrid__filter-clear"
+                                    class="bui-icon-btn bui-icon-btn--sm"
                                     @onclick="ClearFilter"
                                     aria-label="Clear filter">
                                 <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_close" Size="SizeEnum.Small" />
@@ -45,7 +45,7 @@
                     <div class="bui-datagrid__selection-info">
                         @_state.SelectedItems.Count selected
                         <button type="button"
-                                class="bui-datagrid__clear-selection"
+                                class="bui-action-btn"
                                 @onclick="ClearSelection">
                             Clear
                         </button>

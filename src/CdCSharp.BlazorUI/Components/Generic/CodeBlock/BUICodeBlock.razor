@@ -14,7 +14,7 @@
             @(Title ?? Language.ToString().ToUpperInvariant())
         </span>
 
-        <button class="bui-code-block__copy"
+        <button class="bui-action-btn"
                 @onclick="CopyAsync"
                 disabled="@_copied">
             @(_copied ? "✓ Copied" : "Copy")

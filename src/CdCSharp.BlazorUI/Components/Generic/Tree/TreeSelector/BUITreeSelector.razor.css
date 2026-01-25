@@ -181,14 +181,10 @@ bui-component[data-bui-component="tree-selector"] .bui-tree-selector__children--
     }
 }
 
-bui-component[data-bui-component="tree-selector"] .bui-tree-selector__node-content:focus-visible {
-    outline: 2px solid var(--palette-primary, #1976d2);
-    outline-offset: 2px;
-}
-
+bui-component[data-bui-component="tree-selector"] .bui-tree-selector__node-content:focus-visible,
 bui-component[data-bui-component="tree-selector"] .bui-tree-selector__expander:focus-visible {
-    outline: 2px solid var(--palette-primary, #1976d2);
-    outline-offset: 1px;
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
 }
 
 bui-component[data-bui-component="tree-selector"][data-bui-show-checkboxes="false"] .bui-tree-selector__checkbox {

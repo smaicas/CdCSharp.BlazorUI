@@ -80,7 +80,7 @@
 
     /* Focus */
     bui-component[data-bui-component="input-radio"] .bui-radio__input:focus-visible + .bui-radio__box {
-        outline: 2px solid var(--_color);
+        outline: 2px solid var(--palette-highlight);
         outline-offset: 2px;
         border-radius: 50%;
     }

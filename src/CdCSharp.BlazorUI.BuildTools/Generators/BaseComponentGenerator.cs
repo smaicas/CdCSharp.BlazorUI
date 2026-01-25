@@ -44,6 +44,80 @@ public class BaseComponentGenerator : IAssetGenerator
     line-height: inherit;
     gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}}, 0.5rem);
 }
+
+/* ========================================
+   GENERIC BUTTONS
+   ======================================== */
+
+.bui-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    height: 1.75rem;
+    padding-inline: 0.5rem;
+    border: 1px solid var(--palette-border);
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.bui-action-btn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+    border-color: color-mix(in srgb, var(--palette-surfacecontrast) 20%, transparent);
+}
+
+.bui-action-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.bui-action-btn:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}
+
+.bui-action-btn--sm { height: 1.5rem; font-size: 0.625rem; padding-inline: 0.375rem; }
+.bui-action-btn--lg { height: 2rem; font-size: 0.875rem; padding-inline: 0.75rem; }
+
+.bui-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 150ms ease, background-color 150ms ease;
+}
+
+.bui-icon-btn:hover:not(:disabled) {
+    opacity: 1;
+    background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+}
+
+.bui-icon-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+
+.bui-icon-btn:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}
+
+.bui-icon-btn--sm { width: 1.5rem; height: 1.5rem; }
+.bui-icon-btn--lg { width: 2.5rem; height: 2.5rem; }
+
 """;
 
     private static string GetDensitySystem() => $$"""
@@ -158,6 +232,21 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 
 /* ========================================
+   KEYBOARD FOCUS INDICATORS (Universal)
+   ======================================== */
+
+/* Universal button focus inside bui-component */
+bui-component button:focus-visible {
+    outline: 2px solid var(--palette-highlight);
+    outline-offset: 2px;
+}
+
+/* Close buttons (negative offset for internal buttons) */
+bui-component [class*="__close"]:focus-visible {
+    outline-offset: -2px;
+}
+
+/* ========================================
    ACCESSIBILITY: REDUCED MOTION
    ======================================== */
 
@@ -166,5 +255,6 @@ public class BaseComponentGenerator : IAssetGenerator
         animation: none !important;
     }
 }
+
 """;
 }
