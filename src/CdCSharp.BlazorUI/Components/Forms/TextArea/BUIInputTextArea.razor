@@ -26,8 +26,6 @@
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
     private bool _jsInitialized;
     private bool _isFocused;
-    private bool _keyboardFocus;
-    private bool _mouseDownFlag;
     private bool _isDirty;
 
     // IHasSize
@@ -104,12 +102,11 @@
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
                        data-bui-resize="@Resize.ToString().ToLowerInvariant()"
-                       data-bui-autoresize="@AutoResize.ToString().ToLowerInvariant()"
-                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+                       data-bui-autoresize="@AutoResize.ToString().ToLowerInvariant()">
 
             <div class="bui-input__wrapper">
 
-                <BUIFloatingLabel Label="@Label" For="@_textareaId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_textareaId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <textarea @ref="_textareaRef"
@@ -126,8 +123,6 @@
                           @oninput="HandleInput"
                           @onfocus="HandleFocus"
                           @onblur="HandleBlur"
-                          @onmousedown="HandleMouseDown"
-                          @onkeydown="HandleKeyDown"
                           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                           aria-describedby="@_helperTextId"
                           aria-invalid="@IsError.ToString().ToLowerInvariant()"
@@ -154,21 +149,14 @@
         </bui-component>
     };
 
-    private void HandleMouseDown(MouseEventArgs e) => _mouseDownFlag = true;
-
-    private void HandleKeyDown(KeyboardEventArgs e) => _mouseDownFlag = false;
-
     private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
-        _keyboardFocus = !_mouseDownFlag;
     }
 
     private void HandleBlur(FocusEventArgs e)
     {
         _isFocused = false;
-        _keyboardFocus = false;
-        _mouseDownFlag = false;
         _isDirty = false;
     }
 

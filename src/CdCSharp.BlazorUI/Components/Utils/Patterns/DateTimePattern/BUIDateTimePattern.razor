@@ -15,9 +15,10 @@
      data-pattern-id="@ComponentId"
      data-has-value="@HasValue.ToString().ToLowerInvariant()"
      tabindex="0"
+     @onfocus="HandleContainerFocus"
      @onfocusin="HandleFocusIn"
      @onfocusout="HandleFocusOut">
-    @if (ShowPlaceholder)
+    @if (ShowPattern)
     {
         @foreach (SpanState span in _patternState.Spans)
         {
@@ -55,7 +56,7 @@
 
     [Parameter] public string? Id { get; set; }
     [Parameter] public string? ContainerClass { get; set; }
-    [Parameter] public bool ShowPlaceholder { get; set; }
+    [Parameter] public bool ShowPattern { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnFocus { get; set; }
     [Parameter] public EventCallback<FocusEventArgs> OnBlur { get; set; }
 
@@ -88,6 +89,21 @@
             _hasFocus = false;
             await OnBlur.InvokeAsync(e);
         }
+    }
+    private async Task HandleContainerFocus(FocusEventArgs e)
+    {
+        if (!_hasFocus)
+        {
+            _hasFocus = true;
+            await OnFocus.InvokeAsync(e);
+
+            // HACK: Ensure that the component is fully rendered before focusing the first editable span
+            await Task.Yield();
+            StateHasChanged();
+            await Task.Yield();
+        }
+
+        await Js.FocusFirstEditableAsync(ComponentId);
     }
 
     protected override PatternState CreatePatternState()

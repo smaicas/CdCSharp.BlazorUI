@@ -454,15 +454,16 @@ bui-component[{{inputBase}}][{{variant}}="standard"] .{{validation}} {
    KEYBOARD FOCUS INDICATORS
    ======================================== */
 
-bui-component[{{inputBase}}][{{variant}}="outlined"][data-keyboard-focus="true"] .{{outline}} {
+/* Keyboard focus on main field -> outline on wrapper */
+bui-component[data-bui-input-base]:has(.bui-input__field:focus-visible) .bui-input__wrapper {
     outline: 2px solid var(--palette-highlight);
     outline-offset: 2px;
-    border-radius: var(--_input-radius);
 }
 
-bui-component[{{inputBase}}]:not([{{variant}}="outlined"])[data-keyboard-focus="true"] .{{wrapper}} {
+/* Keyboard focus on addon buttons -> individual outline */
+bui-component[data-bui-input-base] .bui-input__addon--btn:focus-visible {
     outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
+    outline-offset: -2px;
 }
 """;
     }

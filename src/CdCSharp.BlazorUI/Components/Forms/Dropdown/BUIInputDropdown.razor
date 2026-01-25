@@ -291,9 +291,22 @@
                 StateHasChanged();
                 break;
 
+            case " ":
+                if (_focusedIndex >= 0 && _focusedIndex < filtered.Count)
+                {
+                    await SelectOptionAsync(filtered[_focusedIndex]);
+                }
+                break;
+
             case "Enter":
                 if (_focusedIndex >= 0 && _focusedIndex < filtered.Count)
+                {
                     await SelectOptionAsync(filtered[_focusedIndex]);
+                }
+                if (_container != null)
+                {
+                    await _container.CloseAsync();
+                }
                 break;
 
             case "Home":
@@ -304,6 +317,13 @@
             case "End":
                 _focusedIndex = filtered.Count - 1;
                 StateHasChanged();
+                break;
+
+            case "a" when args.CtrlKey && _selectionState.IsMultiple:
+                if (args.ShiftKey)
+                    await DeselectAll();
+                else
+                    await SelectAll();
                 break;
         }
     }

@@ -82,6 +82,17 @@
     outline-offset: -2px;
 }
 
+    ::deep .bui-dropdown__option--focused:not(.bui-dropdown__option--selected) {
+        background-color: color-mix(in srgb, var(--palette-primary) 15%, transparent);
+        outline: 2px solid var(--palette-highlight);
+        outline-offset: -2px;
+    }
+
+    ::deep .bui-dropdown__option--focused.bui-dropdown__option--selected {
+        outline: 2px solid var(--palette-highlight);
+        outline-offset: -2px;
+    }
+
 ::deep .bui-dropdown__option--disabled {
     opacity: var(--bui-opacity-disabled);
     cursor: not-allowed;

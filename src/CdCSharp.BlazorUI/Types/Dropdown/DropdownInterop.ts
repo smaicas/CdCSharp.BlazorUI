@@ -1,3 +1,16 @@
+//  ARIA APG Combobox Pattern
+//  Tecla Comportamiento
+//  Space(en trigger) Abre el menú
+//  Enter(en trigger) Abre el menú
+//  Arrow Down Abre el menú(si cerrado) o navega a siguiente opción
+//  Arrow Up Navega a opción anterior
+//  Home Navega a primera opción
+//  End Navega a última opción
+//  Enter(en menú abierto) Selecciona opción activa y cierra
+//  Space(en menú abierto) Selecciona opción activa(NO cierra en multiselect, SÍ cierra en single)
+//  Escape Cierra sin seleccionar
+//  Tab Cierra el menú y mueve focus al siguiente elemento
+
 interface DropdownCallbacksRelay {
     invokeMethodAsync(methodName: string, ...args: unknown[]): Promise<unknown>;
 }
@@ -46,7 +59,20 @@ export function initialize(
         const container = triggerElement.closest('[data-bui-component="dropdown-container"]');
         if (!container?.contains(document.activeElement)) return;
 
+        const isOpen = container.getAttribute('data-bui-dropdown-open') === 'true';
         const relevantKeys = ['Escape', 'ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Home', 'End'];
+
+        if (e.key === ' ' && isOpen) {
+            e.preventDefault();
+            dotnetRef.invokeMethodAsync('OnKeyDown', e.key, e.shiftKey, e.ctrlKey);
+            return;
+        }
+
+        if (e.key.toLowerCase() === 'a' && e.ctrlKey && isOpen) {
+            e.preventDefault();
+            dotnetRef.invokeMethodAsync('OnKeyDown', e.key.toLowerCase(), e.shiftKey, e.ctrlKey);
+            return;
+        }
 
         if (relevantKeys.includes(e.key)) {
             e.preventDefault();

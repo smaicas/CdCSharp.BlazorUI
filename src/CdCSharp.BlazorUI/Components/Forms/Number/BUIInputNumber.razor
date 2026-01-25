@@ -35,8 +35,6 @@
 
     private string _displayText = string.Empty;
     private bool _isFocused = false;
-    private bool _keyboardFocus;
-    private bool _mouseDownFlag;
     private bool _isDirty;
 
     // IHasSize
@@ -152,14 +150,13 @@
 {
     <bui-component @attributes="ComputedAttributes"
                    data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
-                   data-bui-button-placement="@ButtonPlacement.ToString().ToLowerInvariant()"
-                   data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+                   data-bui-button-placement="@ButtonPlacement.ToString().ToLowerInvariant()">
 
         <div class="bui-input__wrapper">
 
-            <BUIFloatingLabel Label="@Label"
-                              For="@_inputId"
-                              Required="@Required" />
+            <BUIInputOutline Label="@Label"
+                             For="@_inputId"
+                             Required="@Required" />
 
             @if (ShowStepButtons && ButtonPlacement == StepButtonPlacement.Left)
             {
@@ -180,7 +177,6 @@
                    @onwheel="HandleWheel"
                    @onfocus="HandleFocus"
                    @onblur="HandleBlur"
-                   @onmousedown="HandleMouseDown"
                    aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                    aria-describedby="@_helperTextId"
                    aria-invalid="@IsError.ToString().ToLower()"
@@ -217,35 +213,34 @@
 };
 
     private RenderFragment RenderStepButtons() => __builder =>
-    {
-        <div class="bui-input__step-buttons">
-            <button type="button"
-                    class="bui-input__step-btn bui-input__step-btn--increment"
-                    @onmousedown="StartIncrement"
-                    @onmouseup="StopIncrement"
-                    @onmouseleave="StopIncrement"
-                    @onclick:preventDefault="true"
-                    disabled="@(Disabled || IsAtMax())"
-                    aria-label="Increment">
-                <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
-            </button>
-            <button type="button"
-                    class="bui-input__step-btn bui-input__step-btn--decrement"
-                    @onmousedown="StartDecrement"
-                    @onmouseup="StopDecrement"
-                    @onmouseleave="StopDecrement"
-                    @onclick:preventDefault="true"
-                    disabled="@(Disabled || IsAtMin())"
-                    aria-label="Decrement">
-                <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
-            </button>
-        </div>
-    };
-
-    private void HandleMouseDown(MouseEventArgs e)
-    {
-        _mouseDownFlag = true;
-    }
+{
+    <div class="bui-input__step-buttons">
+        <button type="button"
+                class="bui-input__step-btn bui-input__step-btn--increment"
+                @onmousedown="StartIncrement"
+                @onmouseup="StopIncrement"
+                @onmouseleave="StopIncrement"
+                @onkeydown="HandleIncrementKeyDown"
+                @onkeydown:preventDefault="_preventStepKeyDown"
+                @onkeyup="HandleIncrementKeyUp"
+                disabled="@(Disabled || IsAtMax())"
+                aria-label="Increment">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
+        </button>
+        <button type="button"
+                class="bui-input__step-btn bui-input__step-btn--decrement"
+                @onmousedown="StartDecrement"
+                @onmouseup="StopDecrement"
+                @onmouseleave="StopDecrement"
+                @onkeydown="HandleDecrementKeyDown"
+                @onkeydown:preventDefault="_preventStepKeyDown"
+                @onkeyup="HandleDecrementKeyUp"
+                disabled="@(Disabled || IsAtMin())"
+                aria-label="Decrement">
+            <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
+        </button>
+    </div>
+};
 
     private string FormatValueForDisplay(TValue? value)
     {
@@ -313,7 +308,6 @@
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
         _preventKeyDown = false;
-        _mouseDownFlag = false;
 
         if (Disabled || ReadOnly) return;
 
@@ -368,7 +362,6 @@
     private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
-        _keyboardFocus = !_mouseDownFlag;
 
         if (CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default))
         {
@@ -387,8 +380,6 @@
     private void HandleBlur(FocusEventArgs e)
     {
         _isFocused = false;
-        _keyboardFocus = false;
-        _mouseDownFlag = false;
         _isDirty = false;
 
         if (!string.IsNullOrWhiteSpace(_displayText))
@@ -451,6 +442,72 @@
 
     private void StopDecrement(MouseEventArgs e)
     {
+        _isDecrementing = false;
+        _accelerationCts?.Cancel();
+        _accelerationCts?.Dispose();
+        _accelerationCts = null;
+    }
+
+    private bool _preventStepKeyDown = false;
+
+    private void HandleIncrementKeyDown(KeyboardEventArgs e)
+    {
+        _preventStepKeyDown = false;
+
+        if (e.Key != " " && e.Key != "Enter") return;
+
+        _preventStepKeyDown = true;
+
+        if (e.Repeat) return;
+
+        if (Disabled || IsAtMax()) return;
+
+        _isIncrementing = true;
+        _ = IncrementValue();
+
+        if (EnableAcceleration)
+        {
+            _accelerationCts = new CancellationTokenSource();
+            _ = RunAcceleratedAction(IncrementValue, _accelerationCts.Token);
+        }
+    }
+
+    private void HandleIncrementKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key != " " && e.Key != "Enter") return;
+
+        _isIncrementing = false;
+        _accelerationCts?.Cancel();
+        _accelerationCts?.Dispose();
+        _accelerationCts = null;
+    }
+
+    private void HandleDecrementKeyDown(KeyboardEventArgs e)
+    {
+        _preventStepKeyDown = false;
+
+        if (e.Key != " " && e.Key != "Enter") return;
+
+        _preventStepKeyDown = true;
+
+        if (e.Repeat) return;
+
+        if (Disabled || IsAtMin()) return;
+
+        _isDecrementing = true;
+        _ = DecrementValue();
+
+        if (EnableAcceleration)
+        {
+            _accelerationCts = new CancellationTokenSource();
+            _ = RunAcceleratedAction(DecrementValue, _accelerationCts.Token);
+        }
+    }
+
+    private void HandleDecrementKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key != " " && e.Key != "Enter") return;
+
         _isDecrementing = false;
         _accelerationCts?.Cancel();
         _accelerationCts?.Dispose();

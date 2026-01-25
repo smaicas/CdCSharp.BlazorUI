@@ -30,8 +30,6 @@
     private bool _jsInitialized;
     private DropdownPlacement _computedPlacement;
     private bool _isFocused;
-    private bool _keyboardFocus;
-    private bool _mouseDownFlag;
 
     [Inject] private IDropdownJsInterop JsInterop { get; set; } = default!;
 
@@ -108,12 +106,11 @@
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
                        data-bui-dropdown-open="@IsOpen.ToString().ToLowerInvariant()"
-                       data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()"
-                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+                       data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()">
 
             <div class="bui-input__wrapper" @ref="_triggerElement">
 
-                <BUIFloatingLabel Label="@Label" For="@_componentId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_componentId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <button id="@_componentId"
@@ -122,8 +119,6 @@
                         @onclick="ToggleAsync"
                         @onfocus="HandleFocus"
                         @onblur="HandleBlur"
-                        @onmousedown="HandleMouseDown"
-                        @onkeydown="HandleKeyDown"
                         disabled="@IsDisabled"
                         aria-expanded="@IsOpen.ToString().ToLowerInvariant()"
                         aria-haspopup="@AriaRole">
@@ -246,21 +241,14 @@
         await OnClosed.InvokeAsync();
     }
 
-    private void HandleMouseDown(MouseEventArgs e) => _mouseDownFlag = true;
-
-    private void HandleKeyDown(KeyboardEventArgs e) => _mouseDownFlag = false;
-
     private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
-        _keyboardFocus = !_mouseDownFlag;
     }
 
     private void HandleBlur(FocusEventArgs e)
     {
         _isFocused = false;
-        _keyboardFocus = false;
-        _mouseDownFlag = false;
     }
 
     Task IDropdownJsCallback.OnClickOutside() => CloseAsync();
@@ -284,13 +272,23 @@
                 break;
 
             case "ArrowUp":
-            case "Enter":
             case "Home":
             case "End":
                 if (IsOpen)
                     await OnKeyboardNavigation.InvokeAsync(args);
-                else if (key == "Enter")
+                break;
+
+            case "Enter":
+            case " ":
+                if (IsOpen)
+                    await OnKeyboardNavigation.InvokeAsync(args);
+                else
                     await OpenAsync();
+                break;
+
+            case "a":
+                if (IsOpen && ctrlKey)
+                    await OnKeyboardNavigation.InvokeAsync(args);
                 break;
 
             default:

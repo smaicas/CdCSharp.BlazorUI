@@ -25,8 +25,6 @@
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
     private bool _isOpen;
     private bool _isFocused;
-    private bool _keyboardFocus;
-    private bool _mouseDownFlag;
     private bool _isDirty;
     private CssColor? _initialValue;
     private CssColor? _valueBeforeOpen;
@@ -113,8 +111,7 @@
     private RenderFragment RenderInput() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
-                       data-keyboard-focus="@_keyboardFocus.ToString().ToLowerInvariant()">
+                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
 
             <div class="bui-input__wrapper">
 
@@ -131,8 +128,6 @@
                        @onchange="HandleInputChange"
                        @onfocus="HandleFocus"
                        @onblur="HandleBlur"
-                       @onmousedown="HandleMouseDown"
-                       @onkeydown="HandleKeyDown"
                        aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                        aria-describedby="@_helperTextId"
                        aria-invalid="@IsError.ToString().ToLowerInvariant()"
@@ -233,21 +228,14 @@
         </bui-component>
     };
 
-    private void HandleMouseDown(MouseEventArgs e) => _mouseDownFlag = true;
-
-    private void HandleKeyDown(KeyboardEventArgs e) => _mouseDownFlag = false;
-
     private void HandleFocus(FocusEventArgs e)
     {
         _isFocused = true;
-        _keyboardFocus = !_mouseDownFlag;
     }
 
     private void HandleBlur(FocusEventArgs e)
     {
         _isFocused = false;
-        _keyboardFocus = false;
-        _mouseDownFlag = false;
         _isDirty = false;
     }
 
