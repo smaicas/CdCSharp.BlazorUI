@@ -60,8 +60,10 @@ bui-component[{{inputBase}}] {
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-width: var(--_input-min-width);
     gap: 0.25rem;
 
+    --_input-min-width: 200px;
     --_input-h: calc(3.5rem * {{V(sizeMult, "1")}});
     --_input-px: calc(1rem * {{V(sizeMult, "1")}});
     --_input-py: calc(1rem * {{V(sizeMult, "1")}});
