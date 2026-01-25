@@ -1,0 +1,24 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
+
+<div class="bui-input__outline" aria-hidden="true">
+    <span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch">
+        @if (!string.IsNullOrWhiteSpace(Label))
+        {
+            <label for="@For" class="bui-input__label">
+                @Label
+                @if (Required)
+                {
+                    <span class="bui-input__required">*</span>
+                }
+            </label>
+        }
+    </span>
+    <span class="bui-input__outline-trailing"></span>
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? For { get; set; }
+    [Parameter] public bool Required { get; set; }
+}

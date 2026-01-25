@@ -27,7 +27,9 @@
     private bool _isFocused;
     private bool _keyboardFocus;
     private bool _mouseDownFlag;
-    private CssColor? _colorBeforeOpen;
+    private bool _isDirty;
+    private CssColor? _initialValue;
+    private CssColor? _valueBeforeOpen;
 
     [Inject] private IClipboardJsInterop ClipboardJs { get; set; } = default!;
 
@@ -81,8 +83,24 @@
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
     private bool HasValue => CurrentValue != null;
-    private bool IsFloated => _isFocused || HasValue;
+    private bool IsFloated => _isFocused || HasValue || _isDirty;
     private string DisplayValue => CurrentValue?.ToString(GetDisplayFormat()) ?? "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _initialValue = Value;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (!_isFocused && !_isOpen && !EqualityComparer<CssColor>.Default.Equals(Value, CurrentValue))
+        {
+            _initialValue = Value;
+        }
+    }
 
     protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputColor, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<BUIInputVariant, Func<BUIInputColor, RenderFragment>>
@@ -100,7 +118,7 @@
 
             <div class="bui-input__wrapper">
 
-                <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <input type="text"
@@ -131,7 +149,7 @@
                     </button>
                 }
 
-                @if (Clearable && HasValue && !Disabled)
+                @if (Clearable && (HasValue || _isDirty) && !Disabled)
                 {
                     <button type="button"
                             class="bui-input__addon bui-input__addon--btn"
@@ -153,7 +171,7 @@
                         </div>
                     </div>
                 </button>
-                
+
                 <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
                 <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
 
@@ -230,6 +248,7 @@
         _isFocused = false;
         _keyboardFocus = false;
         _mouseDownFlag = false;
+        _isDirty = false;
     }
 
     private void HandleInputChange(ChangeEventArgs e)
@@ -237,28 +256,32 @@
         if (!InputEditable) return;
 
         string? value = e.Value?.ToString();
+
         if (string.IsNullOrWhiteSpace(value))
         {
             CurrentValue = null!;
+            _isDirty = false;
             return;
         }
 
         try
         {
             CurrentValue = new CssColor(value);
+            _isDirty = false;
         }
         catch
         {
+            _isDirty = true;
         }
     }
 
     private void TogglePicker()
     {
-        if (Disabled) return;
+        if (IsDisabled || IsReadOnly) return;
 
         if (!_isOpen)
         {
-            _colorBeforeOpen = CurrentValue;
+            _valueBeforeOpen = CurrentValue;
         }
         _isOpen = !_isOpen;
     }
@@ -267,14 +290,14 @@
 
     private void HandleRevert()
     {
-        CurrentValue = _colorBeforeOpen!;
+        CurrentValue = _valueBeforeOpen!;
         ClosePicker();
     }
 
     private void Clear()
     {
-        CurrentValue = null!;
-        _colorBeforeOpen = null;
+        CurrentValue = _initialValue!;
+        _isDirty = false;
     }
 
     private async Task CopyToClipboard()

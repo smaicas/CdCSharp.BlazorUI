@@ -37,6 +37,7 @@
     private bool _isFocused = false;
     private bool _keyboardFocus;
     private bool _mouseDownFlag;
+    private bool _isDirty;
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
@@ -107,7 +108,7 @@
     private char GroupSeparator => NumberFormat.NumberGroupSeparator[0];
     private string NegativeSign => NumberFormat.NegativeSign;
     private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
-    private bool IsFloated => _isFocused || HasValue;
+    private bool IsFloated => _isFocused || HasValue || _isDirty;
 
     public BUIInputNumber()
     {
@@ -272,16 +273,17 @@
     {
         if (Disabled || ReadOnly) return;
 
-        string? input = e.Value?.ToString() ?? string.Empty;
-        _displayText = input;
+        string? inputValue = e.Value?.ToString() ?? string.Empty;
+        _isDirty = !string.IsNullOrEmpty(inputValue);
+        _displayText = inputValue;
 
-        if (string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(inputValue))
         {
             CurrentValue = default;
             return;
         }
 
-        if (TryParseInput(input, out TValue? parsed))
+        if (TryParseInput(inputValue, out TValue? parsed))
         {
             TValue? clamped = ClampValue(parsed);
             if (!EqualityComparer<TValue>.Default.Equals(CurrentValue, clamped))
@@ -387,6 +389,7 @@
         _isFocused = false;
         _keyboardFocus = false;
         _mouseDownFlag = false;
+        _isDirty = false;
 
         if (!string.IsNullOrWhiteSpace(_displayText))
         {

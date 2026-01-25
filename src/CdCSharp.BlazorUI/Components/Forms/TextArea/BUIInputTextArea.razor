@@ -28,6 +28,7 @@
     private bool _isFocused;
     private bool _keyboardFocus;
     private bool _mouseDownFlag;
+    private bool _isDirty;
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
@@ -77,7 +78,7 @@
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
-    private bool IsFloated => _isFocused || HasValue;
+    private bool IsFloated => _isFocused || HasValue || _isDirty;
 
     protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputTextArea, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<BUIInputVariant, Func<BUIInputTextArea, RenderFragment>>
@@ -168,6 +169,7 @@
         _isFocused = false;
         _keyboardFocus = false;
         _mouseDownFlag = false;
+        _isDirty = false;
     }
 
     private async Task HandleChange(ChangeEventArgs e)
@@ -177,14 +179,17 @@
 
     private async Task HandleInput(ChangeEventArgs e)
     {
+        string inputValue = e.Value?.ToString() ?? string.Empty;
+        _isDirty = !string.IsNullOrEmpty(inputValue);
+
         if (UpdateOnInput)
         {
-            CurrentValueAsString = e.Value?.ToString() ?? string.Empty;
+            CurrentValueAsString = inputValue;
         }
 
         if (OnInput.HasDelegate)
         {
-            await OnInput.InvokeAsync(e.Value?.ToString() ?? string.Empty);
+            await OnInput.InvokeAsync(inputValue);
         }
     }
 

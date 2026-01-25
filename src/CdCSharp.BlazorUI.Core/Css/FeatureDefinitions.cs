@@ -69,8 +69,6 @@ public static class FeatureDefinitions
         {
             public const string Wrapper = "bui-input__wrapper";
             public const string Field = "bui-input__field";
-            public const string Fieldset = "bui-input__fieldset";
-            public const string Legend = "bui-input__legend";
             public const string Label = "bui-input__label";
             public const string Required = "bui-input__required";
             public const string HelperText = "bui-input__helper-text";
@@ -80,6 +78,11 @@ public static class FeatureDefinitions
             public const string AddonBtn = "bui-input__addon--btn";
             public const string AddonPrefix = "bui-input__addon--prefix";
             public const string AddonSuffix = "bui-input__addon--suffix";
+
+            public const string Outline = "bui-input__outline";
+            public const string OutlineLeading = "bui-input__outline-leading";
+            public const string OutlineNotch = "bui-input__outline-notch";
+            public const string OutlineTrailing = "bui-input__outline-trailing";
         }
 
         /// <summary>

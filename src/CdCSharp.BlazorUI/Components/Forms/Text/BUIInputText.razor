@@ -25,6 +25,7 @@
     private bool _isFocused;
     private bool _keyboardFocus;
     private bool _mouseDownFlag;
+    private bool _isDirty;
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
@@ -70,7 +71,7 @@
     public ElementReference GetRippleContainer() => _inputContainer;
 
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
-    private bool IsFloated => _isFocused || HasValue;
+    private bool IsFloated => _isFocused || HasValue || _isDirty;
 
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
@@ -90,7 +91,7 @@
 
             <div class="bui-input__wrapper" @ref="_inputContainer">
 
-                <BUIFloatingLabel Label="@Label" For="@_inputId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <input type="text"
@@ -140,14 +141,17 @@
 
     private async Task HandleInput(ChangeEventArgs e)
     {
+        string inputValue = e.Value?.ToString() ?? string.Empty;
+        _isDirty = !string.IsNullOrEmpty(inputValue);
+
         if (UpdateOnInput)
         {
-            CurrentValueAsString = e.Value?.ToString() ?? string.Empty;
+            CurrentValueAsString = inputValue;
         }
 
         if (OnInput.HasDelegate)
         {
-            await OnInput.InvokeAsync(e.Value?.ToString() ?? string.Empty);
+            await OnInput.InvokeAsync(inputValue);
         }
     }
 
@@ -172,6 +176,7 @@
         _isFocused = false;
         _keyboardFocus = false;
         _mouseDownFlag = false;
+        _isDirty = false;
     }
 
     protected override bool TryParseValueFromString(string? value, out string? result, out string validationErrorMessage)
