@@ -28,8 +28,8 @@
         }
 
         bui-component[data-bui-component="theme-selector"] button:focus-visible {
-            outline: 2px solid var(--palette-highlight);
-            outline-offset: 2px;
+            outline: var(--bui-highlight-outline);
+            outline-offset: var(--bui-highlight-outline-offset);
         }
 
     /* Default variant */

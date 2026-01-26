@@ -48,7 +48,7 @@
         }
 
         bui-component[data-bui-component="input-number"] .bui-input__step-btn:focus-visible {
-            outline: 2px solid var(--palette-highlight);
-            outline-offset: -2px;
+            outline: var(--bui-highlight-outline);
+            outline-offset: var(--bui-highlight-outline-offset);
             opacity: 1;
         }

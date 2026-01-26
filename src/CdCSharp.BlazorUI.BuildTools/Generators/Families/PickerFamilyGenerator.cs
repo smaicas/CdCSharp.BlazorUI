@@ -220,18 +220,18 @@ bui-component[{{picker}}] .{{preview}} > div {
    ======================================== */
 
 bui-component[data-bui-picker-base] .bui-picker__btn:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: -2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 bui-component[data-bui-picker-base] .bui-picker__cell:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: -2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 bui-component[data-bui-picker-base] .bui-picker__input:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 /* Slider focus - box-shadow instead of outline due to overflow:hidden */

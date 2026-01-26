@@ -77,7 +77,7 @@ a:hover { text-decoration: underline; }
 
 a:focus-visible {
     outline: 2px solid var(--palette-primary);
-    outline-offset: 2px;
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 /* ========================================

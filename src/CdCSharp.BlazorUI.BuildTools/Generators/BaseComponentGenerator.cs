@@ -77,8 +77,20 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 
 .bui-action-btn:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
+}
+
+.bui-action-btn--active {
+    background: var(--palette-primary);
+    color: var(--palette-primarycontrast);
+    border-color: var(--palette-primary);
+}
+
+.bui-action-btn--active:hover:not(:disabled) {
+    background: var(--palette-primary);
+    border-color: var(--palette-primary);
+    filter: brightness(1.1);
 }
 
 .bui-action-btn--sm { height: 1.5rem; font-size: 0.625rem; padding-inline: 0.375rem; }
@@ -111,12 +123,66 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 
 .bui-icon-btn:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 .bui-icon-btn--sm { width: 1.5rem; height: 1.5rem; }
 .bui-icon-btn--lg { width: 2.5rem; height: 2.5rem; }
+
+/* ========================================
+   SIMPLE INPUTS & SELECTS
+   For use in toolbars, filters, etc.
+   ======================================== */
+
+.bui-simple-input {
+    height: 2rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--palette-border);
+    border-radius: 4px;
+    background: var(--palette-surface);
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 150ms ease;
+}
+
+.bui-simple-input:focus {
+    border-color: var(--palette-primary);
+}
+
+.bui-simple-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.bui-simple-input::placeholder {
+    opacity: var(--bui-opacity-placeholder);
+}
+
+.bui-simple-select {
+    height: 2rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--palette-border);
+    border-radius: 4px;
+    background: var(--palette-surface);
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 150ms ease;
+}
+
+.bui-simple-select:focus {
+    border-color: var(--palette-primary);
+}
+
+.bui-simple-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
 
 """;
 
@@ -237,13 +303,13 @@ public class BaseComponentGenerator : IAssetGenerator
 
 /* Universal button focus inside bui-component */
 bui-component button:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 /* Close buttons (negative offset for internal buttons) */
 bui-component [class*="__close"]:focus-visible {
-    outline-offset: -2px;
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 
 /* ========================================

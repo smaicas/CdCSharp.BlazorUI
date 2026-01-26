@@ -18,25 +18,6 @@ public static class FeatureDefinitions
         }
 
         /// <summary>
-        /// Input family specific variables. Used by: InputFamilyGenerator for shared input styles.
-        /// </summary>
-        public static class Input
-        {
-            public const string Background = "--input-bg";
-            public const string BorderColor = "--input-border-color";
-            public const string BorderRadius = "--input-border-radius";
-            public const string BorderWidth = "--input-border-width";
-            public const string Height = "--input-height";
-            public const string LabelColor = "--input-label-color";
-            public const string LabelErrorColor = "--input-label-error-color";
-            public const string LabelFocusColor = "--input-label-focus-color";
-            public const string LabelScale = "--input-label-scale";
-            public const string PaddingX = "--input-padding-x";
-            public const string PaddingY = "--input-padding-y";
-            public const string Transition = "--input-transition";
-        }
-
-        /// <summary>
         /// Size-related variables set by [data-bui-size]. Only the multiplier is set globally;
         /// components use it in their isolated CSS.
         /// </summary>

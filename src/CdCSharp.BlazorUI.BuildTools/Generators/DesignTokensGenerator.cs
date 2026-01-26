@@ -19,21 +19,6 @@ public class DesignTokensGenerator : IAssetGenerator
     public async Task<string> GetContent()
     {
         return $$"""
-/* ========================================
-   Design Tokens
-   Auto-generated - Do not edit manually
-
-   Core system values:
-   - Z-index layers
-   - Opacity states
-
-   NOT included (handled elsewhere):
-   - Typography (TypographyGenerator)
-   - Border radius (BorderStyle system)
-   - Transitions (BUITransitions system)
-   - Shadows (Elevation system)
-   ======================================== */
-
 :root {
     /* ========================================
        Z-INDEX SCALE
@@ -54,6 +39,13 @@ public class DesignTokensGenerator : IAssetGenerator
     {{FeatureDefinitions.Tokens.Opacity.Disabled}}: {{FeatureDefinitions.Tokens.Opacity.DisabledValue}};
     {{FeatureDefinitions.Tokens.Opacity.Placeholder}}: {{FeatureDefinitions.Tokens.Opacity.PlaceholderValue}};
     {{FeatureDefinitions.Tokens.Opacity.Hover}}: {{FeatureDefinitions.Tokens.Opacity.HoverValue}};
+
+    /* ========================================
+       OUTLINE HIGHLIGHT
+       Focus indicator for accessibility.
+       ======================================== */
+       --bui-highlight-outline: 2px solid var(--palette-highlight);
+       --bui-highlight-outline-offset: 0px;
 }
 """;
     }

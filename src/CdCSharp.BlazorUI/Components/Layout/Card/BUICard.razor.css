@@ -149,6 +149,6 @@ bui-component[data-bui-component="card"][data-bui-media-position="bottom"] .bui-
 
 /* Accessibility */
 bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }

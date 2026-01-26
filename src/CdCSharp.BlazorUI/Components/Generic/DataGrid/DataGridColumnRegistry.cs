@@ -2,6 +2,7 @@
 
 internal interface IDataGridColumnRegistry<TItem>
 {
+    IReadOnlyList<DataGridColumnRegistration<TItem>> Columns { get; }
     void RegisterColumn(DataGridColumnRegistration<TItem> column);
 }
 
@@ -11,8 +12,7 @@ internal sealed class DataGridColumnRegistry<TItem> : IDataGridColumnRegistry<TI
 
     public void Clear() => _columns.Clear();
 
-    public IReadOnlyList<DataGridColumnRegistration<TItem>> GetColumns()
-        => _columns.ToList();
+    public IReadOnlyList<DataGridColumnRegistration<TItem>> Columns => _columns;
 
     public void RegisterColumn(DataGridColumnRegistration<TItem> column)
                 => _columns.Add(column);

@@ -56,8 +56,8 @@
 
     /* Focus */
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox__input:focus-visible + .bui-checkbox__box {
-        outline: 2px solid var(--palette-highlight);
-        outline-offset: 2px;
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
         border-radius: 4px;
     }
 

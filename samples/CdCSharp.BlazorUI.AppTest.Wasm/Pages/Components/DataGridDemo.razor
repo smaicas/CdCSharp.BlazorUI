@@ -6,45 +6,168 @@
 <h1>BUIDataGrid</h1>
 
 <h2>Basic Usage</h2>
+<p>Simple data grid with typed columns.</p>
 <ComponentDemo Definition="@BasicUsageDemo" />
 
-<h2>With Selection</h2>
-<ComponentDemo Definition="@SelectionDemo" />
+<h2>Single Selection</h2>
+<p>Radio button selection for single item.</p>
+<ComponentDemo Definition="@SingleSelectionDemo" />
 
-<h2>Sortable</h2>
+<h2>Multiple Selection</h2>
+<p>Checkbox selection with select all functionality.</p>
+<ComponentDemo Definition="@MultipleSelectionDemo" />
+
+<h2>Sortable Columns</h2>
+<p>Click on column headers to sort. Supports ascending/descending toggle.</p>
 <ComponentDemo Definition="@SortableDemo" />
 
+<h2>Default Sort</h2>
+<p>Grid initialized with default sort column and direction.</p>
+<ComponentDemo Definition="@DefaultSortDemo" />
+
 <h2>Filterable</h2>
+<p>Global text filter across filterable columns.</p>
 <ComponentDemo Definition="@FilterableDemo" />
 
-<h2>With Pagination</h2>
+<h2>Pagination</h2>
+<p>Paginated data with page size selector.</p>
 <ComponentDemo Definition="@PaginationDemo" />
 
+<h2>Combined Features</h2>
+<p>Sort + Filter + Pagination + Selection all together.</p>
+<ComponentDemo Definition="@CombinedDemo" />
+
+<h2>Row Click Handler</h2>
+<p>Clickable rows with event callback.</p>
+<ComponentDemo Definition="@RowClickDemo" />
+
+<h2>Keyboard Navigation</h2>
+<p>Tab to navigate rows, Enter/Space to select or click.</p>
+<ComponentDemo Definition="@KeyboardDemo" />
+
+<h2>Custom Cell Templates</h2>
+<p>Using RenderFragment for custom cell rendering.</p>
+<ComponentDemo Definition="@CustomTemplateDemo" />
+
+<h2>Column Alignment</h2>
+<p>Left, center, and right aligned columns.</p>
+<ComponentDemo Definition="@AlignmentDemo" />
+
+<h2>Column Width</h2>
+<p>Fixed and flexible column widths.</p>
+<ComponentDemo Definition="@ColumnWidthDemo" />
+
+<h2>Column Formatting</h2>
+<p>Format strings for dates, numbers, and percentages.</p>
+<ComponentDemo Definition="@FormattingDemo" />
+
+<h2>Column Visibility</h2>
+<p>Show/hide columns dynamically.</p>
+<ComponentDemo Definition="@VisibilityDemo" />
+
 <h2>Table Variants</h2>
+<p>Default, Bordered, Striped styles.</p>
 <ComponentDemo Definition="@VariantsDemo" />
 
-<h2>Hoverable</h2>
+<h2>Hoverable Rows</h2>
+<p>Highlight rows on hover.</p>
 <ComponentDemo Definition="@HoverableDemo" />
 
-<h2>Density</h2>
+<h2>Density Options</h2>
+<p>Compact, Standard, and Comfortable spacing.</p>
 <ComponentDemo Definition="@DensityDemo" />
 
 <h2>Fixed Header</h2>
+<p>Sticky header when scrolling.</p>
 <ComponentDemo Definition="@FixedHeaderDemo" />
+
+<h2>Empty State (Default)</h2>
+<p>Default empty message when no data.</p>
+<ComponentDemo Definition="@EmptyStateDemo" />
+
+<h2>Empty State (Custom)</h2>
+<p>Custom content for empty state.</p>
+<ComponentDemo Definition="@CustomEmptyDemo" />
+
+<h2>Footer Template</h2>
+<p>Summary rows in table footer.</p>
+<ComponentDemo Definition="@FooterDemo" />
+
+<h2>Caption</h2>
+<p>Accessible table caption.</p>
+<ComponentDemo Definition="@CaptionDemo" />
+
+<h2>Aria Label</h2>
+<p>Custom aria-label for accessibility.</p>
+<ComponentDemo Definition="@AriaLabelDemo" />
+
+<h2>Events: OnSort</h2>
+<p>Callback when sort changes.</p>
+<ComponentDemo Definition="@OnSortDemo" />
+
+<h2>Events: OnFilter</h2>
+<p>Callback when filter changes.</p>
+<ComponentDemo Definition="@OnFilterDemo" />
+
+<h2>Events: OnPageChange</h2>
+<p>Callback when page or page size changes.</p>
+<ComponentDemo Definition="@OnPageChangeDemo" />
+
+<h2>Responsive Variants</h2>
+<p>Different variants per breakpoint.</p>
+<ComponentDemo Definition="@ResponsiveVariantsDemo" />
+
+<h2>Programmatic Control</h2>
+<p>Control grid via methods: SortBy, Filter, GoToPage.</p>
+<ComponentDemo Definition="@ProgrammaticDemo" />
 
 @code {
     private List<Person> _basicData = GenerateSampleData();
-    private List<Person> _selectionData = GenerateSampleData();
-    private HashSet<Person> _selectedItems = new();
+    private List<Person> _singleSelectionData = GenerateSampleData();
+    private List<Person> _multipleSelectionData = GenerateSampleData();
+    private HashSet<Person> _singleSelected = new();
+    private HashSet<Person> _multipleSelected = new();
     private List<Person> _sortableData = GenerateSampleData();
+    private List<Person> _defaultSortData = GenerateSampleData();
     private List<Person> _filterableData = GenerateSampleData();
     private List<Person> _paginationData = GenerateLargeDataset();
+    private List<Person> _combinedData = GenerateLargeDataset();
+    private HashSet<Person> _combinedSelected = new();
+    private List<Person> _rowClickData = GenerateSampleData();
+    private List<Person> _keyboardData = GenerateSampleData();
+    private HashSet<Person> _keyboardSelected = new();
+    private List<Person> _templateData = GenerateSampleData();
+    private List<Product> _alignmentData = GenerateProductData();
+    private List<Product> _widthData = GenerateProductData();
+    private List<Order> _formattingData = GenerateOrderData();
+    private List<Person> _visibilityData = GenerateSampleData();
+    private bool _showEmailColumn = true;
+    private bool _showAgeColumn = true;
     private List<Person> _variantData = GenerateSampleData();
     private List<Person> _hoverableData = GenerateSampleData();
     private List<Person> _compactData = GenerateSampleData();
     private List<Person> _standardData = GenerateSampleData();
     private List<Person> _comfortableData = GenerateSampleData();
     private List<Person> _fixedData = GenerateLargeDataset();
+    private List<Person> _emptyData = new();
+    private List<Person> _footerData = GenerateSampleData();
+    private List<Person> _captionData = GenerateSampleData();
+    private List<Person> _ariaData = GenerateSampleData();
+    private List<Person> _onSortData = GenerateSampleData();
+    private List<Person> _onFilterData = GenerateSampleData();
+    private List<Person> _onPageData = GenerateLargeDataset();
+    private List<Person> _responsiveData = GenerateSampleData();
+    private List<Person> _programmaticData = GenerateLargeDataset();
+
+    private string _lastClickedPerson = "None";
+    private string _lastKeyboardAction = "None";
+    private string _lastSortEvent = "None";
+    private string _lastFilterEvent = "None";
+    private string _lastPageEvent = "None";
+
+    private BUIDataGrid<Person>? _programmaticGrid;
+
+    #region Basic Usage
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -64,26 +187,78 @@
         </BUIDataGrid>
     };
 
-    private ComponentDemoDefinition SelectionDemo => new()
+    #endregion
+
+    #region Single Selection
+
+    private ComponentDemoDefinition SingleSelectionDemo => new()
     {
-        Demo = RenderSelection(),
+        Demo = RenderSingleSelection(),
         Code = """ """
     };
 
-    private RenderFragment RenderSelection() => __builder =>
+    private RenderFragment RenderSingleSelection() => __builder =>
     {
-        <BUIDataGrid Items="_selectionData" 
-                     SelectionMode="SelectionMode.Multiple"
-                     SelectedItems="_selectedItems"
-                     SelectedItemsChanged="@((HashSet<Person> items) => _selectedItems = items)">
-            <Columns>
-                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" />
-            </Columns>
-        </BUIDataGrid>
+        <div>
+            <p><strong>Selected:</strong> @(_singleSelected.FirstOrDefault()?.Name ?? "None")</p>
+            <BUIDataGrid TItem="Person"
+                         Items="_singleSelectionData"
+                         SelectionMode="SelectionMode.Single"
+                         SelectedItems="_singleSelected"
+                         SelectedItemsChanged="OnSingleSelectionChanged">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
     };
+
+    private void OnSingleSelectionChanged(HashSet<Person> items)
+    {
+        _singleSelected = items;
+        StateHasChanged();
+    }
+    #endregion
+
+    #region Multiple Selection
+
+    private ComponentDemoDefinition MultipleSelectionDemo => new()
+    {
+        Demo = RenderMultipleSelection(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMultipleSelection() => __builder =>
+    {
+        <div>
+            <p><strong>Selected count:</strong> @_multipleSelected.Count</p>
+            <p><strong>Selected:</strong> @string.Join(", ", _multipleSelected.Select(p => p.Name))</p>
+            <BUIDataGrid TItem="Person"
+                         Items="_multipleSelectionData"
+                         SelectionMode="SelectionMode.Multiple"
+                         SelectedItems="_multipleSelected"
+                         SelectedItemsChanged="OnMultipleSelectionChanged">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void OnMultipleSelectionChanged(HashSet<Person> items)
+    {
+        _multipleSelected = items;
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Sortable
 
     private ComponentDemoDefinition SortableDemo => new()
     {
@@ -93,18 +268,43 @@
 
     private RenderFragment RenderSortable() => __builder =>
     {
-        <BUIDataGrid Items="_sortableData" 
-                     Sortable="true"
-                     DefaultSortColumn="Name"
-                     DefaultSortDirection="SortDirection.Ascending">
+        <BUIDataGrid Items="_sortableData" Sortable="true">
             <Columns>
                 <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Sortable="true" />
                 <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Sortable="true" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" Sortable="true" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email (Not Sortable)" Sortable="false" />
                 <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Sortable="true" />
             </Columns>
         </BUIDataGrid>
     };
+
+    #endregion
+
+    #region Default Sort
+
+    private ComponentDemoDefinition DefaultSortDemo => new()
+    {
+        Demo = RenderDefaultSort(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDefaultSort() => __builder =>
+    {
+        <BUIDataGrid Items="_defaultSortData"
+                     Sortable="true"
+                     DefaultSortColumn="Age"
+                     DefaultSortDirection="SortDirection.Descending">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Sortable="true" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Sortable="true" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age (Default Sort Desc)" Sortable="true" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Filterable
 
     private ComponentDemoDefinition FilterableDemo => new()
     {
@@ -114,9 +314,9 @@
 
     private RenderFragment RenderFilterable() => __builder =>
     {
-        <BUIDataGrid Items="_filterableData" 
+        <BUIDataGrid Items="_filterableData"
                      Filterable="true"
-                     FilterPlaceholder="Search...">
+                     FilterPlaceholder="Type to search...">
             <Columns>
                 <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Filterable="true" />
                 <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Filterable="true" />
@@ -126,6 +326,10 @@
         </BUIDataGrid>
     };
 
+    #endregion
+
+    #region Pagination
+
     private ComponentDemoDefinition PaginationDemo => new()
     {
         Demo = RenderPagination(),
@@ -134,9 +338,10 @@
 
     private RenderFragment RenderPagination() => __builder =>
     {
-        <BUIDataGrid Items="_paginationData" 
+        <BUIDataGrid Items="_paginationData"
                      PageSize="5"
-                     ShowPageSizeSelector="true">
+                     ShowPageSizeSelector="true"
+                     PageSizeOptions="@(new[] { 5, 10, 25, 50 })">
             <Columns>
                 <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
                 <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
@@ -145,6 +350,277 @@
             </Columns>
         </BUIDataGrid>
     };
+
+    #endregion
+
+    #region Combined
+
+    private ComponentDemoDefinition CombinedDemo => new()
+    {
+        Demo = RenderCombined(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCombined() => __builder =>
+    {
+        <div>
+            <p><strong>Selected:</strong> @_combinedSelected.Count items</p>
+            <BUIDataGrid TItem="Person"
+                         Items="_combinedData"
+                         Sortable="true"
+                         Filterable="true"
+                         FilterPlaceholder="Search..."
+                         PageSize="10"
+                         ShowPageSizeSelector="true"
+                         PageSizeOptions="@(new[] { 5, 10, 25 })"
+                         SelectionMode="SelectionMode.Multiple"
+                         SelectedItems="_combinedSelected"
+                         SelectedItemsChanged="OnCombinedSelectionChanged"
+                         Hoverable="true">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Sortable="true" Filterable="true" Width="80px" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Sortable="true" Filterable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" Sortable="true" Filterable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Sortable="true" Filterable="true" Width="100px"   Align="TableColumnAlign.Right" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void OnCombinedSelectionChanged(HashSet<Person> items)
+    {
+        _combinedSelected = items;
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Row Click
+
+    private ComponentDemoDefinition RowClickDemo => new()
+    {
+        Demo = RenderRowClick(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRowClick() => __builder =>
+    {
+        <div>
+            <p><strong>Last clicked:</strong> @_lastClickedPerson</p>
+            <BUIDataGrid TItem="Person"
+                         Items="_rowClickData"
+                         OnRowClick="HandleRowClick"
+                         Hoverable="true">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void HandleRowClick(Person person)
+    {
+        _lastClickedPerson = $"{person.Name} (ID: {person.Id}) at {DateTime.Now:HH:mm:ss}";
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Keyboard Navigation
+
+    private ComponentDemoDefinition KeyboardDemo => new()
+    {
+        Demo = RenderKeyboard(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderKeyboard() => __builder =>
+    {
+        <div>
+            <p><strong>Instructions:</strong> Use Tab to navigate rows. Press Enter or Space to select.</p>
+            <p><strong>Last action:</strong> @_lastKeyboardAction</p>
+            <p><strong>Selected:</strong> @(_keyboardSelected.FirstOrDefault()?.Name ?? "None")</p>
+            <BUIDataGrid TItem="Person"
+                         Items="_keyboardData"
+                         SelectionMode="SelectionMode.Single"
+                         SelectedItems="_keyboardSelected"
+                         SelectedItemsChanged="OnKeyboardSelectionChanged"
+                         Hoverable="true">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void OnKeyboardSelectionChanged(HashSet<Person> items)
+    {
+        _keyboardSelected = items;
+        _lastKeyboardAction = $"Selected via keyboard: {items.FirstOrDefault()?.Name} at {DateTime.Now:HH:mm:ss}";
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Custom Template
+
+    private ComponentDemoDefinition CustomTemplateDemo => new()
+    {
+        Demo = RenderCustomTemplate(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomTemplate() => __builder =>
+    {
+        <BUIDataGrid Items="_templateData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Width="60px" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataGridColumn TItem="Person" Header="Status" Width="120px" Align="TableColumnAlign.Center">
+                    <Template Context="person">
+                        @if (person.Age >= 30)
+                        {
+                            <span style="color: var(--palette-success); font-weight: 500;">● Senior</span>
+                        }
+                        else
+                        {
+                            <span style="color: var(--palette-warning); font-weight: 500;">○ Junior</span>
+                        }
+                    </Template>
+                </BUIDataGridColumn>
+                <BUIDataGridColumn TItem="Person" Header="Progress" Width="150px">
+                    <Template Context="person">
+                        <div style="background: var(--palette-border); border-radius: 4px; height: 8px; overflow: hidden;">
+                            <div style="background: var(--palette-primary); height: 100%; width: @(person.Age * 2)%;"></div>
+                        </div>
+                    </Template>
+                </BUIDataGridColumn>
+                <BUIDataGridColumn TItem="Person" Header="Actions" Width="180px" Align="TableColumnAlign.Center">
+                    <Template Context="person">
+                        <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                            <button class="bui-action-btn" @onclick="() => HandleView(person)" @onclick:stopPropagation="true">View</button>
+                            <button class="bui-action-btn" @onclick="() => HandleEdit(person)" @onclick:stopPropagation="true">Edit</button>
+                            <button class="bui-action-btn" @onclick="() => HandleDelete(person)" @onclick:stopPropagation="true">Delete</button>
+                        </div>
+                    </Template>
+                </BUIDataGridColumn>
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    private void HandleView(Person p) => _lastClickedPerson = $"View: {p.Name}";
+    private void HandleEdit(Person p) => _lastClickedPerson = $"Edit: {p.Name}";
+    private void HandleDelete(Person p) => _lastClickedPerson = $"Delete: {p.Name}";
+
+    #endregion
+
+    #region Alignment
+
+    private ComponentDemoDefinition AlignmentDemo => new()
+    {
+        Demo = RenderAlignment(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderAlignment() => __builder =>
+    {
+        <BUIDataGrid Items="_alignmentData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Product" TValue="int" Property="@(p => p.Id)" Header="ID" Align="TableColumnAlign.Left" Width="80px" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="string" Property="@(p => p.Name)" Header="Product (Left)" Align="TableColumnAlign.Left" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="string" Property="@(p => p.Category)" Header="Category (Center)" Align="TableColumnAlign.Center" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="decimal" Property="@(p => p.Price)" Header="Price (Right)" Align="TableColumnAlign.Right" Format="C2" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="int" Property="@(p => p.Stock)" Header="Stock (Right)" Align="TableColumnAlign.Right" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Column Width
+
+    private ComponentDemoDefinition ColumnWidthDemo => new()
+    {
+        Demo = RenderColumnWidth(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderColumnWidth() => __builder =>
+    {
+        <BUIDataGrid Items="_widthData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Product" TValue="int" Property="@(p => p.Id)" Header="ID (60px)" Width="60px" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="string" Property="@(p => p.Name)" Header="Name (200px)" Width="200px" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="string" Property="@(p => p.Category)" Header="Category (Auto)" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="decimal" Property="@(p => p.Price)" Header="Price (100px)" Width="100px" Align="TableColumnAlign.Right" Format="C2" />
+                <BUIDataGridColumnTyped TItem="Product" TValue="int" Property="@(p => p.Stock)" Header="Stock (80px)" Width="80px" Align="TableColumnAlign.Right" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Formatting
+
+    private ComponentDemoDefinition FormattingDemo => new()
+    {
+        Demo = RenderFormatting(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderFormatting() => __builder =>
+    {
+        <BUIDataGrid Items="_formattingData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Order" TValue="int" Property="@(o => o.Id)" Header="Order # (D5)" Format="D5" Width="100px" />
+                <BUIDataGridColumnTyped TItem="Order" TValue="string" Property="@(o => o.Customer)" Header="Customer" />
+                <BUIDataGridColumnTyped TItem="Order" TValue="DateTime" Property="@(o => o.Date)" Header="Date (d)" Format="d" Width="120px" />
+                <BUIDataGridColumnTyped TItem="Order" TValue="DateTime" Property="@(o => o.Date)" Header="Date (D)" Format="D" Width="200px" />
+                <BUIDataGridColumnTyped TItem="Order" TValue="decimal" Property="@(o => o.Total)" Header="Total (C2)" Format="C2" Align="TableColumnAlign.Right" Width="120px" />
+                <BUIDataGridColumnTyped TItem="Order" TValue="double" Property="@(o => o.Discount)" Header="Discount (P0)" Format="P0" Align="TableColumnAlign.Right" Width="100px" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Visibility
+
+    private ComponentDemoDefinition VisibilityDemo => new()
+    {
+        Demo = RenderVisibility(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderVisibility() => __builder =>
+    {
+        <div>
+            <div style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+                <label>
+                    <input type="checkbox" @bind="_showEmailColumn" /> Show Email Column
+                </label>
+                <label>
+                    <input type="checkbox" @bind="_showAgeColumn" /> Show Age Column
+                </label>
+            </div>
+            <BUIDataGrid Items="_visibilityData">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" Visible="_showEmailColumn" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Visible="_showAgeColumn" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    #endregion
+
+    #region Variants
 
     private ComponentDemoDefinition VariantsDemo => new()
     {
@@ -155,8 +631,17 @@
     private RenderFragment RenderVariants() => __builder =>
     {
         <BUIGrid Gap="2rem">
-            <BUIGridItem>
-                <h3>Bordered</h3>
+            <BUIGridItem Xs="12" Md="6">
+                <h4>Default</h4>
+                <BUIDataGrid Items="_variantData" Variant="TableVariant.Default">
+                    <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                    </Columns>
+                </BUIDataGrid>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <h4>Bordered</h4>
                 <BUIDataGrid Items="_variantData" Variant="TableVariant.Bordered">
                     <Columns>
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
@@ -164,9 +649,18 @@
                     </Columns>
                 </BUIDataGrid>
             </BUIGridItem>
-            <BUIGridItem>
-                <h3>Striped</h3>
+            <BUIGridItem Xs="12" Md="6">
+                <h4>Striped</h4>
                 <BUIDataGrid Items="_variantData" Variant="TableVariant.Striped">
+                    <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                    </Columns>
+                </BUIDataGrid>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <h4>Cards</h4>
+                <BUIDataGrid Items="_variantData" Variant="TableVariant.Cards">
                     <Columns>
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
@@ -176,6 +670,10 @@
         </BUIGrid>
     };
 
+    #endregion
+
+    #region Hoverable
+
     private ComponentDemoDefinition HoverableDemo => new()
     {
         Demo = RenderHoverable(),
@@ -184,15 +682,32 @@
 
     private RenderFragment RenderHoverable() => __builder =>
     {
-        <BUIDataGrid Items="_hoverableData" Hoverable="true">
-            <Columns>
-                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
-                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" />
-            </Columns>
-        </BUIDataGrid>
+        <BUIGrid Gap="2rem">
+            <BUIGridItem Xs="12" Md="6">
+                <h4>Hoverable = true</h4>
+                <BUIDataGrid Items="_hoverableData" Hoverable="true">
+                    <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                    </Columns>
+                </BUIDataGrid>
+            </BUIGridItem>
+            <BUIGridItem Xs="12" Md="6">
+                <h4>Hoverable = false</h4>
+                <BUIDataGrid Items="_hoverableData" Hoverable="false">
+                    <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                        <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                    </Columns>
+                </BUIDataGrid>
+            </BUIGridItem>
+        </BUIGrid>
     };
+
+    #endregion
+    #region Density
 
     private ComponentDemoDefinition DensityDemo => new()
     {
@@ -203,28 +718,31 @@
     private RenderFragment RenderDensity() => __builder =>
     {
         <BUIGrid Gap="2rem">
-            <BUIGridItem>
-                <h3>Compact</h3>
+            <BUIGridItem Xs="12">
+                <h4>Compact</h4>
                 <BUIDataGrid Items="_compactData" Density="DensityEnum.Compact">
                     <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
                     </Columns>
                 </BUIDataGrid>
             </BUIGridItem>
-            <BUIGridItem>
-                <h3>Standard (Default)</h3>
+            <BUIGridItem Xs="12">
+                <h4>Standard</h4>
                 <BUIDataGrid Items="_standardData" Density="DensityEnum.Standard">
                     <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
                     </Columns>
                 </BUIDataGrid>
             </BUIGridItem>
-            <BUIGridItem>
-                <h3>Comfortable</h3>
+            <BUIGridItem Xs="12">
+                <h4>Comfortable</h4>
                 <BUIDataGrid Items="_comfortableData" Density="DensityEnum.Comfortable">
                     <Columns>
+                        <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
                         <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
                     </Columns>
@@ -232,6 +750,10 @@
             </BUIGridItem>
         </BUIGrid>
     };
+
+    #endregion
+
+    #region Fixed Header
 
     private ComponentDemoDefinition FixedHeaderDemo => new()
     {
@@ -241,9 +763,117 @@
 
     private RenderFragment RenderFixedHeader() => __builder =>
     {
-        <BUIDataGrid Items="_fixedData" 
+        <BUIDataGrid Items="_fixedData"
                      FixedHeader="true"
-                     Height="400px">
+                     Height="300px"
+                     Hoverable="true">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Width="80px" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Width="80px" Align="TableColumnAlign.Right" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Empty State
+
+    private ComponentDemoDefinition EmptyStateDemo => new()
+    {
+        Demo = RenderEmptyState(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderEmptyState() => __builder =>
+    {
+        <BUIDataGrid Items="_emptyData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Custom Empty
+
+    private ComponentDemoDefinition CustomEmptyDemo => new()
+    {
+        Demo = RenderCustomEmpty(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomEmpty() => __builder =>
+    {
+        <BUIDataGrid Items="_emptyData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+            </Columns>
+            <EmptyContent>
+                <div style="text-align: center; padding: 3rem;">
+                    <div style="font-size: 4rem; opacity: 0.3;">🔍</div>
+                    <h3 style="margin: 1rem 0 0.5rem;">No records found</h3>
+                    <p style="opacity: 0.6;">Try adjusting your search criteria or add new records.</p>
+                    <button class="bui-action-btn" style="margin-top: 1rem;">Add New Record</button>
+                </div>
+            </EmptyContent>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Footer
+
+    private ComponentDemoDefinition FooterDemo => new()
+    {
+        Demo = RenderFooter(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderFooter() => __builder =>
+    {
+        <BUIDataGrid Items="_footerData">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Width="80px" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Width="100px" Align="TableColumnAlign.Right" />
+            </Columns>
+            <FooterTemplate>
+                <tr>
+                    <td colspan="2" style="text-align: right; font-weight: 600;">Total Records:</td>
+                    <td style="text-align: right; font-weight: 600;">@_footerData.Count</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right; font-weight: 600;">Average Age:</td>
+                    <td style="text-align: right; font-weight: 600;">@(_footerData.Any() ? _footerData.Average(p => p.Age).ToString("F1") : "0")</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align: right; font-weight: 600;">Total Age:</td>
+                    <td style="text-align: right; font-weight: 600;">@_footerData.Sum(p => p.Age)</td>
+                </tr>
+            </FooterTemplate>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region Caption
+
+    private ComponentDemoDefinition CaptionDemo => new()
+    {
+        Demo = RenderCaption(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCaption() => __builder =>
+    {
+        <BUIDataGrid Items="_captionData" Caption="Employee Directory - Q4 2024">
             <Columns>
                 <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
                 <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
@@ -253,33 +883,247 @@
         </BUIDataGrid>
     };
 
-    private static List<Person> GenerateSampleData()
+    #endregion
+
+    #region Aria Label
+
+    private ComponentDemoDefinition AriaLabelDemo => new()
     {
-        return new List<Person>
-        {
-            new Person { Id = 1, Name = "John Doe", Email = "john@example.com", Age = 30 },
-            new Person { Id = 2, Name = "Jane Smith", Email = "jane@example.com", Age = 25 },
-            new Person { Id = 3, Name = "Bob Johnson", Email = "bob@example.com", Age = 35 },
-            new Person { Id = 4, Name = "Alice Williams", Email = "alice@example.com", Age = 28 },
-            new Person { Id = 5, Name = "Charlie Brown", Email = "charlie@example.com", Age = 42 }
-        };
+        Demo = RenderAriaLabel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderAriaLabel() => __builder =>
+    {
+        <BUIDataGrid Items="_ariaData" AriaLabel="Employee data table with sortable columns">
+            <Columns>
+                <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    #endregion
+
+    #region OnSort Event
+
+    private ComponentDemoDefinition OnSortDemo => new()
+    {
+        Demo = RenderOnSort(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderOnSort() => __builder =>
+    {
+        <div>
+            <p><strong>Last sort event:</strong> @_lastSortEvent</p>
+            <BUIDataGrid Items="_onSortData"
+                         Sortable="true"
+                         OnSort="HandleSortEvent">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Sortable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Sortable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Sortable="true" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void HandleSortEvent(DataGridSortEventArgs e)
+    {
+        _lastSortEvent = $"Column: {e.ColumnName}, Direction: {e.Direction} at {DateTime.Now:HH:mm:ss}";
+        StateHasChanged();
     }
+
+    #endregion
+
+    #region OnFilter Event
+
+    private ComponentDemoDefinition OnFilterDemo => new()
+    {
+        Demo = RenderOnFilter(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderOnFilter() => __builder =>
+    {
+        <div>
+            <p><strong>Last filter event:</strong> @_lastFilterEvent</p>
+            <BUIDataGrid Items="_onFilterData"
+                         Filterable="true"
+                         OnFilter="HandleFilterEvent">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Filterable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Filterable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" Filterable="true" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void HandleFilterEvent(DataGridFilterEventArgs e)
+    {
+        _lastFilterEvent = $"Filter: '{e.FilterText}' at {DateTime.Now:HH:mm:ss}";
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region OnPageChange Event
+
+    private ComponentDemoDefinition OnPageChangeDemo => new()
+    {
+        Demo = RenderOnPageChange(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderOnPageChange() => __builder =>
+    {
+        <div>
+            <p><strong>Last page event:</strong> @_lastPageEvent</p>
+            <BUIDataGrid Items="_onPageData"
+                         PageSize="10"
+                         ShowPageSizeSelector="true"
+                         OnPageChange="HandlePageEvent">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private void HandlePageEvent(DataGridPageChangeEventArgs e)
+    {
+        _lastPageEvent = $"Page: {e.Page}, PageSize: {e.PageSize} at {DateTime.Now:HH:mm:ss}";
+        StateHasChanged();
+    }
+
+    #endregion
+
+    #region Responsive Variants
+
+    private ComponentDemoDefinition ResponsiveVariantsDemo => new()
+    {
+        Demo = RenderResponsiveVariants(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderResponsiveVariants() => __builder =>
+    {
+        <div>
+            <p><strong>Note:</strong> Resize window to see variant changes. Cards on mobile, Striped on tablet, Default on desktop.</p>
+            <BUIDataGrid Items="_responsiveData"
+                         VariantXs="TableVariant.Cards"
+                         VariantSm="TableVariant.Cards"
+                         VariantMd="TableVariant.Striped"
+                         VariantLg="TableVariant.Default"
+                         VariantXl="TableVariant.Default">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    #endregion
+
+    #region Programmatic Control
+
+    private ComponentDemoDefinition ProgrammaticDemo => new()
+    {
+        Demo = RenderProgrammatic(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderProgrammatic() => __builder =>
+    {
+        <div>
+            <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button class="bui-action-btn" @onclick="@(() => _programmaticGrid?.SortBy(" Name", SortDirection.Ascending))">Sort by Name (Asc)</button>
+                <button class="bui-action-btn" @onclick="@(() => _programmaticGrid?.SortBy(" Age", SortDirection.Descending))">Sort by Age (Desc)</button>
+                <button class="bui-action-btn" @onclick="@(() => _programmaticGrid?.Filter(" John"))">Filter "John"</button>
+                <button class="bui-action-btn" @onclick="@(() => _programmaticGrid?.Filter(" "))">Clear Filter</button>
+                <button class="bui-action-btn" @onclick="@(() => _programmaticGrid?.GoToPage(1))">Go to Page 1</button>
+                <button class="bui-action-btn" @onclick="@(() => _programmaticGrid?.GoToPage(3))">Go to Page 3</button>
+            </div>
+            <BUIDataGrid @ref="_programmaticGrid"
+                         Items="_programmaticData"
+                         Sortable="true"
+                         Filterable="true"
+                         PageSize="10"
+                         ShowPageSizeSelector="true"
+                         Hoverable="true">
+                <Columns>
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Id)" Header="ID" Sortable="true" Filterable="true" Width="80px" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Name)" Header="Name" Sortable="true" Filterable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="string" Property="@(p => p.Email)" Header="Email" Sortable="true" Filterable="true" />
+                    <BUIDataGridColumnTyped TItem="Person" TValue="int" Property="@(p => p.Age)" Header="Age" Sortable="true" Filterable="true" Width="80px" Align="TableColumnAlign.Right" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    #endregion
+
+    #region Data Generation
+
+    private static List<Person> GenerateSampleData() => new()
+{
+    new Person { Id = 1, Name = "John Doe", Email = "john@example.com", Age = 30 },
+    new Person { Id = 2, Name = "Jane Smith", Email = "jane@example.com", Age = 25 },
+    new Person { Id = 3, Name = "Bob Johnson", Email = "bob@example.com", Age = 35 },
+    new Person { Id = 4, Name = "Alice Williams", Email = "alice@example.com", Age = 28 },
+    new Person { Id = 5, Name = "Charlie Brown", Email = "charlie@example.com", Age = 42 }
+};
 
     private static List<Person> GenerateLargeDataset()
     {
-        var data = new List<Person>();
+        List<Person> data = new();
+        string[] firstNames = { "John", "Jane", "Bob", "Alice", "Charlie", "Diana", "Edward", "Fiona", "George", "Hannah" };
+        string[] lastNames = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Martinez", "Wilson" };
+
         for (int i = 1; i <= 50; i++)
         {
+            string firstName = firstNames[(i - 1) % firstNames.Length];
+            string lastName = lastNames[(i - 1) % lastNames.Length];
             data.Add(new Person
             {
                 Id = i,
-                Name = $"Person {i}",
-                Email = $"person{i}@example.com",
-                Age = 20 + (i % 50)
+                Name = $"{firstName} {lastName}",
+                Email = $"{firstName.ToLower()}.{lastName.ToLower()}@example.com",
+                Age = 20 + (i % 45)
             });
         }
         return data;
     }
+
+    private static List<Product> GenerateProductData() => new()
+{
+    new Product { Id = 1, Name = "Laptop Pro", Category = "Electronics", Price = 1299.99m, Stock = 45 },
+    new Product { Id = 2, Name = "Wireless Mouse", Category = "Accessories", Price = 29.99m, Stock = 150 },
+    new Product { Id = 3, Name = "USB-C Hub", Category = "Accessories", Price = 49.99m, Stock = 80 },
+    new Product { Id = 4, Name = "Monitor 27\"", Category = "Electronics", Price = 399.99m, Stock = 25 },
+    new Product { Id = 5, Name = "Keyboard", Category = "Accessories", Price = 79.99m, Stock = 100 }
+};
+
+    private static List<Order> GenerateOrderData() => new()
+{
+    new Order { Id = 1, Customer = "Acme Corp", Date = DateTime.Now.AddDays(-5), Total = 1500.00m, Discount = 0.10 },
+    new Order { Id = 2, Customer = "Tech Inc", Date = DateTime.Now.AddDays(-3), Total = 2750.50m, Discount = 0.15 },
+    new Order { Id = 3, Customer = "Global Ltd", Date = DateTime.Now.AddDays(-1), Total = 890.25m, Discount = 0.05 },
+    new Order { Id = 4, Customer = "StartUp Co", Date = DateTime.Now, Total = 450.00m, Discount = 0.00 },
+    new Order { Id = 5, Customer = "Enterprise", Date = DateTime.Now.AddDays(-10), Total = 5200.00m, Discount = 0.20 }
+};
+
+    #endregion
+
+    #region Models
 
     public class Person
     {
@@ -288,4 +1132,26 @@
         public string Email { get; set; } = "";
         public int Age { get; set; }
     }
+
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Category { get; set; } = "";
+        public decimal Price { get; set; }
+        public int Stock { get; set; }
+    }
+
+    public class Order
+    {
+        public int Id { get; set; }
+        public string Customer { get; set; } = "";
+        public DateTime Date { get; set; }
+        public decimal Total { get; set; }
+        public double Discount { get; set; }
+    }
+
+    #endregion
+
+
 }

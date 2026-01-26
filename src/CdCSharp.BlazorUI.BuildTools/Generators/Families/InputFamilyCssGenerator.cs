@@ -73,7 +73,7 @@ bui-component[{{inputBase}}] {
     --_input-floated-size: calc(1rem * var(--_input-scale) * {{V(sizeMult, "1")}});
 
     --_input-label-color: var(--palette-surfacecontrast);
-    --_input-focus-color: var(--palette-primary);
+    --_input-focus-color: var(--palette-highlight);
     --_input-error-color: var(--palette-error);
 
     --_input-border-color: {{V(inlineBorder, "var(--palette-border)")}};
@@ -456,16 +456,10 @@ bui-component[{{inputBase}}][{{variant}}="standard"] .{{validation}} {
    KEYBOARD FOCUS INDICATORS
    ======================================== */
 
-/* Keyboard focus on main field -> outline on wrapper */
-bui-component[data-bui-input-base]:has(.bui-input__field:focus-visible) .bui-input__wrapper {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: 2px;
-}
-
-/* Keyboard focus on addon buttons -> individual outline */
+/* Addon buttons retain focus-visible outline (transitional focus) */
 bui-component[data-bui-input-base] .bui-input__addon--btn:focus-visible {
-    outline: 2px solid var(--palette-highlight);
-    outline-offset: -2px;
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 """;
     }

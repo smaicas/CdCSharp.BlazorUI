@@ -1,11 +1,11 @@
 ﻿bui-component[data-bui-component="code-block"] {
+    --_code-block-radius: 8px;
     display: flex;
     flex-direction: column;
     gap: 0;
-    border-radius: var(--bui-radius-md);
+    border-radius: var(--_code-block-radius);
     border: 1px solid var(--palette-border);
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
     bui-component[data-bui-component="code-block"] .bui-code-block__header {
@@ -13,7 +13,7 @@
         justify-content: space-between;
         align-items: center;
         background: var(--palette-surface);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid var(--palette-border);
         width: 100%;
     }
 
@@ -26,7 +26,7 @@
         padding: 0;
         width: 100%;
         overflow-x: auto;
-        font-family: var(--bui-font-monospace, ui-monospace, monospace);
+        font-family: var(--bui-font-mono);
     }
 
     /* Size variations */
