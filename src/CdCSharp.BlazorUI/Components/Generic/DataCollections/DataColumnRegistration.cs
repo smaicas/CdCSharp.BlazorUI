@@ -2,9 +2,9 @@
 
 namespace CdCSharp.BlazorUI.Components;
 
-public sealed class DataGridColumnRegistration<TItem>
+public sealed class DataColumnRegistration<TItem>
 {
-    public TableColumnAlign Align { get; init; } = TableColumnAlign.Left;
+    public ColumnAlign Align { get; init; } = ColumnAlign.Left;
     public string? CellClass { get; init; }
     public Func<TItem, TItem, int>? CustomComparer { get; init; }
     public Func<TItem, string, bool>? CustomFilter { get; init; }

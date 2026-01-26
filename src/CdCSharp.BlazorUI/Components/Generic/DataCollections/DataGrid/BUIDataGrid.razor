@@ -1,0 +1,286 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+@namespace CdCSharp.BlazorUI.Components
+
+@typeparam TItem
+@inherits BUIDataCollectionBase<TItem, BUIDataGrid<TItem>, DataGridVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+<CascadingValue Value="@((IDataColumnRegistry<TItem>)ColumnRegistry)" Name="DataColumnRegistry">
+    @Columns
+</CascadingValue>
+
+<bui-component @attributes="ComputedAttributes">
+    @if (ColumnsBuilt)
+    {
+        @if (Filterable || ShowPageSizeSelector)
+        {
+            <div class="bui-dc__toolbar">
+                @if (Filterable)
+                {
+                    <div class="bui-dc__filter">
+                        <input type="text"
+                               class="bui-simple-input"
+                               placeholder="@FilterPlaceholder"
+                               value="@State.FilterText"
+                               aria-label="@FilterPlaceholder"
+                               @oninput="HandleFilterChange" />
+                        @if (!string.IsNullOrEmpty(State.FilterText))
+                        {
+                            <button type="button"
+                                    class="bui-icon-btn"
+                                    @onclick="ClearFilter"
+                                    aria-label="Clear filter">
+                                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
+                            </button>
+                        }
+                    </div>
+                }
+
+                <div class="bui-dc__toolbar-spacer"></div>
+
+                @if (SelectionMode != SelectionMode.None && State.SelectedItems.Any())
+                {
+                    <div class="bui-dc__selection-info">
+                        <span>@State.SelectedItems.Count selected</span>
+                        <button type="button" class="bui-action-btn" @onclick="ClearSelection">
+                            Clear
+                        </button>
+                    </div>
+                }
+
+                @if (ShowPageSizeSelector)
+                {
+                    <div class="bui-dc__page-size">
+                        <label>Show</label>
+                        <select class="bui-simple-select"
+                                value="@State.PageSize"
+                                @onchange="HandlePageSizeChange"
+                                aria-label="Items per page">
+                            @foreach (int size in PageSizeOptions)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </select>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (Loading && LoadingContent != null)
+        {
+            <div class="bui-dc__loading">
+                @LoadingContent
+            </div>
+        }
+        else
+        {
+            <div class="bui-datagrid__container" style="@GetContainerStyle()">
+                <table class="bui-datagrid__table" role="grid" aria-rowcount="@FilteredItems.Count">
+                    <thead class="bui-datagrid__header">
+                        <tr role="row">
+                            @if (SelectionMode != SelectionMode.None)
+                            {
+                                <th class="bui-datagrid__select-cell" role="columnheader" scope="col">
+                                    @if (SelectionMode == SelectionMode.Multiple)
+                                    {
+                                        <input type="checkbox"
+                                               class="bui-dc__checkbox"
+                                               checked="@IsAllSelected()"
+                                               @onchange="HandleSelectAll"
+                                               aria-label="Select all rows" />
+                                    }
+                                </th>
+                            }
+                            @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
+                            {
+                                <th class="bui-datagrid__header-cell @GetAlignClass(col.Align, "bui-datagrid__cell") @col.HeaderClass"
+                                    style="@(col.Width != null ? $"width: {col.Width}" : null)"
+                                    role="columnheader"
+                                    scope="col"
+                                    aria-sort="@GetAriaSort(col)">
+                                    @if (col.Sortable && Sortable)
+                                    {
+                                        <button type="button"
+                                                class="bui-datagrid__sort-btn"
+                                                @onclick="() => HandleSort(col)">
+                                            <span>@col.Header</span>
+                                            <span class="bui-datagrid__sort-icon" aria-hidden="true">
+                                                @if (State.SortColumn == col.Header)
+                                                {
+                                                    @if (State.SortDirection == SortDirection.Ascending)
+                                                    {
+                                                        <BUISvgIcon Icon="@BUIIcons.UI.ArrowUpward" Size="SizeEnum.Small" />
+                                                    }
+                                                    else if (State.SortDirection == SortDirection.Descending)
+                                                    {
+                                                        <BUISvgIcon Icon="@BUIIcons.UI.ArrowDownward" Size="SizeEnum.Small" />
+                                                    }
+                                                }
+                                            </span>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        @col.Header
+                                    }
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (EnableVirtualization && !string.IsNullOrEmpty(Height))
+                        {
+                            <Virtualize Items="@ProcessedItems" Context="item">
+                                @RenderRow(item)
+                            </Virtualize>
+                        }
+                        else if (ProcessedItems.Any())
+                        {
+                            @foreach (TItem item in ProcessedItems)
+                            {
+                                @RenderRow(item)
+                            }
+                        }
+                        else
+                        {
+                            <tr class="bui-datagrid__empty-row" role="row">
+                                <td colspan="@(RegisteredColumns.Count(c => c.Visible) + (SelectionMode != SelectionMode.None ? 1 : 0))"
+                                    class="bui-datagrid__empty-cell">
+                                    @if (EmptyContent != null)
+                                    {
+                                        @EmptyContent
+                                    }
+                                    else
+                                    {
+                                        <div class="bui-dc__empty">
+                                            <span class="bui-dc__empty-icon">📋</span>
+                                            <p class="bui-dc__empty-text">No data available</p>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                    @if (FooterTemplate != null)
+                    {
+                        <tfoot class="bui-datagrid__footer">
+                            @FooterTemplate
+                        </tfoot>
+                    }
+                </table>
+            </div>
+        }
+
+        @if (PageSize.HasValue && FilteredItems.Any())
+        {
+            <div class="bui-dc__pagination">
+                <div class="bui-dc__pagination-info">
+                    Showing @PaginationStart to @PaginationEnd of @FilteredItems.Count
+                </div>
+
+                <div class="bui-dc__pagination-controls">
+                    <button type="button"
+                            class="bui-action-btn"
+                            disabled="@(State.CurrentPage == 1)"
+                            @onclick="() => ChangePage(State.CurrentPage - 1)"
+                            aria-label="Previous page">
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
+                    </button>
+
+                    @foreach (int currentPage in GetVisiblePages())
+                    {
+                        <button type="button"
+                                class="bui-action-btn @(State.CurrentPage == currentPage ? "bui-action-btn--active" : "")"
+                                @onclick="() => ChangePage(currentPage)"
+                                aria-label="@($"Page {currentPage}")"
+                                aria-current="@(State.CurrentPage == currentPage ? "page" : null)">
+                            @currentPage
+                        </button>
+                    }
+
+                    <button type="button"
+                            class="bui-action-btn"
+                            disabled="@(State.CurrentPage == TotalPages)"
+                            @onclick="() => ChangePage(State.CurrentPage + 1)"
+                            aria-label="Next page">
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</bui-component>
+
+@code {
+    [Parameter] public bool FixedHeader { get; set; }
+    [Parameter] public RenderFragment<TItem>? RowTemplate { get; set; }
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
+
+    public override DataGridVariant DefaultVariant => DataGridVariant.Default;
+
+    protected override IReadOnlyDictionary<DataGridVariant, Func<BUIDataGrid<TItem>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<DataGridVariant, Func<BUIDataGrid<TItem>, RenderFragment>>();
+
+    private RenderFragment RenderRow(TItem item) => __builder =>
+    {
+        bool isSelected = State.IsSelected(item);
+
+        <tr class="bui-datagrid__row @(isSelected ? "bui-datagrid__row--selected" : "") @(IsInteractiveRow ? "bui-datagrid__row--interactive" : "")"
+            role="row"
+            tabindex="@(IsInteractiveRow ? 0 : -1)"
+            @onclick="() => HandleRowClick(item)"
+            @onkeydown="e => HandleRowKeyDown(e, item)"
+            @onkeydown:preventDefault="PreventRowKeyDown">
+
+            @if (SelectionMode != SelectionMode.None)
+            {
+                <td class="bui-datagrid__select-cell" role="gridcell" @onclick:stopPropagation="true">
+                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
+                           class="bui-dc__checkbox"
+                           checked="@isSelected"
+                           tabindex="-1"
+                           @onchange="() => HandleSelectRow(item)"
+                           aria-label="Select row" />
+                </td>
+            }
+
+            @if (RowTemplate != null)
+            {
+                @RowTemplate(item)
+            }
+            else
+            {
+                @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
+                {
+                    <td class="bui-datagrid__cell @GetAlignClass(col.Align, "bui-datagrid__cell") @col.CellClass" role="gridcell">
+                        @if (col.Template != null)
+                        {
+                            @col.Template(item)
+                        }
+                        else if (col.ValueSelector != null)
+                        {
+                            @FormatValue(col.ValueSelector(item), col.Format)
+                        }
+                    </td>
+                }
+            }
+        </tr>
+    };
+
+    private string GetContainerStyle()
+    {
+        if (EnableVirtualization && !string.IsNullOrEmpty(Height))
+            return $"max-height: {Height}; overflow-y: auto;";
+
+        if (FixedHeader && !string.IsNullOrEmpty(Height))
+            return $"max-height: {Height}; overflow-y: auto;";
+
+        return string.Empty;
+    }
+}

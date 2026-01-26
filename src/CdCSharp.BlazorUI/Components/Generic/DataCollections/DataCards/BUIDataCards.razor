@@ -1,0 +1,329 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+@namespace CdCSharp.BlazorUI.Components
+
+@typeparam TItem
+@inherits BUIDataCollectionBase<TItem, BUIDataCards<TItem>, DataCardsVariant>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+<CascadingValue Value="@((IDataColumnRegistry<TItem>)ColumnRegistry)" Name="DataColumnRegistry">
+    @Columns
+</CascadingValue>
+
+<bui-component @attributes="ComputedAttributes">
+    @if (ColumnsBuilt)
+    {
+        @if (Filterable || ShowPageSizeSelector || (Sortable && SortableColumns.Any()))
+        {
+            <div class="bui-dc__toolbar">
+                @if (Filterable)
+                {
+                    <div class="bui-dc__filter">
+                        <input type="text"
+                               class="bui-simple-input"
+                               placeholder="@FilterPlaceholder"
+                               value="@State.FilterText"
+                               aria-label="@FilterPlaceholder"
+                               @oninput="HandleFilterChange" />
+                        @if (!string.IsNullOrEmpty(State.FilterText))
+                        {
+                            <button type="button"
+                                    class="bui-icon-btn"
+                                    @onclick="ClearFilter"
+                                    aria-label="Clear filter">
+                                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
+                            </button>
+                        }
+                    </div>
+                }
+
+                <div class="bui-dc__toolbar-spacer"></div>
+
+                @if (SelectionMode != SelectionMode.None && State.SelectedItems.Any())
+                {
+                    <div class="bui-dc__selection-info">
+                        <span>@State.SelectedItems.Count selected</span>
+                        <button type="button" class="bui-action-btn" @onclick="ClearSelection">
+                            Clear
+                        </button>
+                    </div>
+                }
+
+                @if (Sortable && SortableColumns.Any())
+                {
+                    <div class="bui-datacards__sort">
+                        <label>Sort by</label>
+                        <select class="bui-simple-select bui-simple-select"
+                                value="@State.SortColumn"
+                                @onchange="HandleSortChange"
+                                aria-label="Sort by column">
+                            <option value="">None</option>
+                            @foreach (DataColumnRegistration<TItem> col in SortableColumns)
+                            {
+                                <option value="@col.Header">@col.Header</option>
+                            }
+                        </select>
+                        @if (!string.IsNullOrEmpty(State.SortColumn))
+                        {
+                            <button type="button"
+                                    class="bui-action-btn"
+                                    @onclick="ToggleSortDirection"
+                                    aria-label="Toggle sort direction">
+                                @if (State.SortDirection == SortDirection.Ascending)
+                                {
+                                    <BUISvgIcon Icon="@BUIIcons.UI.ArrowUpward" Size="SizeEnum.Small" />
+                                }
+                                else
+                                {
+                                    <BUISvgIcon Icon="@BUIIcons.UI.ArrowDownward" Size="SizeEnum.Small" />
+                                }
+                            </button>
+                        }
+                    </div>
+                }
+
+                @if (ShowPageSizeSelector)
+                {
+                    <div class="bui-dc__page-size">
+                        <label>Show</label>
+                        <select class="bui-simple-select"
+                                value="@State.PageSize"
+                                @onchange="HandlePageSizeChange"
+                                aria-label="Items per page">
+                            @foreach (int size in PageSizeOptions)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </select>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (Loading && LoadingContent != null)
+        {
+            <div class="bui-dc__loading">
+                @LoadingContent
+            </div>
+        }
+        else if (ProcessedItems.Any())
+        {
+            <div class="bui-datacards__grid"
+                 style="@GetGridStyle()"
+                 role="list">
+                @if (EnableVirtualization && !string.IsNullOrEmpty(Height))
+                {
+                    <Virtualize Items="@ProcessedItems" Context="item">
+                        @RenderCard(item)
+                    </Virtualize>
+                }
+                else
+                {
+                    @foreach (TItem item in ProcessedItems)
+                    {
+                        @RenderCard(item)
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            @if (EmptyContent != null)
+            {
+                @EmptyContent
+            }
+            else
+            {
+                <div class="bui-dc__empty">
+                    <span class="bui-dc__empty-icon">📋</span>
+                    <p class="bui-dc__empty-text">No data available</p>
+                </div>
+            }
+        }
+
+        @if (PageSize.HasValue && FilteredItems.Any())
+        {
+            <div class="bui-dc__pagination">
+                <div class="bui-dc__pagination-info">
+                    Showing @PaginationStart to @PaginationEnd of @FilteredItems.Count
+                </div>
+
+                <div class="bui-dc__pagination-controls">
+                    <button type="button"
+                            class="bui-action-btn"
+                            disabled="@(State.CurrentPage == 1)"
+                            @onclick="() => ChangePage(State.CurrentPage - 1)"
+                            aria-label="Previous page">
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
+                    </button>
+
+                    @foreach (int currentPage in GetVisiblePages())
+                    {
+                        <button type="button"
+                                class="bui-action-btn @(State.CurrentPage == currentPage ? "bui-action-btn--active" : "")"
+                                @onclick="() => ChangePage(currentPage)"
+                                aria-label="@($"Page {currentPage}")"
+                                aria-current="@(State.CurrentPage == currentPage ? "page" : null)">
+                            @currentPage
+                        </button>
+                    }
+
+                    <button type="button"
+                            class="bui-action-btn"
+                            disabled="@(State.CurrentPage == TotalPages)"
+                            @onclick="() => ChangePage(State.CurrentPage + 1)"
+                            aria-label="Next page">
+                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
+                    </button>
+                </div>
+            </div>
+        }
+    }
+</bui-component>
+
+@code {
+    [Parameter] public int ColumnsCount { get; set; } = 3;
+    [Parameter] public string Gap { get; set; } = "1rem";
+    [Parameter] public string? MinCardWidth { get; set; } = "280px";
+    [Parameter] public RenderFragment<TItem>? CardTemplate { get; set; }
+    [Parameter] public RenderFragment<TItem>? CardHeaderTemplate { get; set; }
+    [Parameter] public RenderFragment<TItem>? CardFooterTemplate { get; set; }
+
+    public override DataCardsVariant DefaultVariant => DataCardsVariant.Default;
+
+    protected override IReadOnlyDictionary<DataCardsVariant, Func<BUIDataCards<TItem>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<DataCardsVariant, Func<BUIDataCards<TItem>, RenderFragment>>();
+
+    private IEnumerable<DataColumnRegistration<TItem>> SortableColumns =>
+        RegisteredColumns.Where(c => c.Sortable && c.ValueSelector != null);
+
+    private RenderFragment RenderCard(TItem item) => __builder =>
+    {
+        bool isSelected = State.IsSelected(item);
+
+        <article class="bui-datacards__card @(isSelected ? "bui-datacards__card--selected" : "") @(IsInteractiveRow ? "bui-datacards__card--interactive" : "")"
+                 role="listitem"
+                 tabindex="@(IsInteractiveRow ? 0 : -1)"
+                 @onclick="() => HandleRowClick(item)"
+                 @onkeydown="e => HandleRowKeyDown(e, item)"
+                 @onkeydown:preventDefault="PreventRowKeyDown">
+
+            @if (SelectionMode != SelectionMode.None)
+            {
+                <div class="bui-datacards__card-select" @onclick:stopPropagation="true">
+                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
+                           class="bui-dc__checkbox"
+                           checked="@isSelected"
+                           tabindex="-1"
+                           @onchange="() => HandleSelectRow(item)"
+                           aria-label="Select item" />
+                </div>
+            }
+
+            @if (CardTemplate != null)
+            {
+                @CardTemplate(item)
+            }
+            else
+            {
+                @if (CardHeaderTemplate != null)
+                {
+                    <header class="bui-datacards__card-header">
+                        @CardHeaderTemplate(item)
+                    </header>
+                }
+
+                <div class="bui-datacards__card-body">
+                    @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
+                    {
+                        <div class="bui-datacards__field">
+                            <span class="bui-datacards__field-label">@col.Header</span>
+                            <span class="bui-datacards__field-value">
+                                @if (col.Template != null)
+                                {
+                                    @col.Template(item)
+                                }
+                                else if (col.ValueSelector != null)
+                                {
+                                    @FormatValue(col.ValueSelector(item), col.Format)
+                                }
+                            </span>
+                        </div>
+                    }
+                </div>
+
+                @if (CardFooterTemplate != null)
+                {
+                    <footer class="bui-datacards__card-footer">
+                        @CardFooterTemplate(item)
+                    </footer>
+                }
+            }
+        </article>
+    };
+
+    private string GetGridStyle()
+    {
+        List<string> styles = [$"gap: {Gap}"];
+
+        if (!string.IsNullOrEmpty(MinCardWidth))
+        {
+            styles.Add($"grid-template-columns: repeat(auto-fill, minmax({MinCardWidth}, 1fr))");
+        }
+        else
+        {
+            styles.Add($"grid-template-columns: repeat({ColumnsCount}, 1fr)");
+        }
+
+        if (!string.IsNullOrEmpty(Height))
+        {
+            styles.Add($"max-height: {Height}");
+            styles.Add("overflow-y: auto");
+        }
+
+        return string.Join("; ", styles);
+    }
+
+    private async Task HandleSortChange(ChangeEventArgs e)
+    {
+        string? columnName = e.Value?.ToString();
+
+        if (string.IsNullOrEmpty(columnName))
+        {
+            State.SortColumn = null;
+            State.SortDirection = SortDirection.None;
+        }
+        else
+        {
+            State.SortColumn = columnName;
+            if (State.SortDirection == SortDirection.None)
+            {
+                State.SortDirection = SortDirection.Ascending;
+            }
+        }
+
+        State.ResetPagination();
+        ProcessData();
+
+        if (OnSort.HasDelegate && !string.IsNullOrEmpty(State.SortColumn))
+        {
+            await OnSort.InvokeAsync(new DataCollectionSortEventArgs
+            {
+                ColumnName = State.SortColumn,
+                Direction = State.SortDirection
+            });
+        }
+    }
+
+    private void ToggleSortDirection()
+    {
+        State.SortDirection = State.SortDirection == SortDirection.Ascending
+            ? SortDirection.Descending
+            : SortDirection.Ascending;
+        ProcessData();
+    }
+}

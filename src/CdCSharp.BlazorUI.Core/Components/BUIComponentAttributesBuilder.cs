@@ -183,6 +183,11 @@ internal sealed class BUIComponentAttributesBuilder
         {
             ComputedAttributes[FeatureDefinitions.DataAttributes.PickerBase] = "true";
         }
+
+        if (component is IDataCollectionFamilyComponent)
+        {
+            ComputedAttributes[FeatureDefinitions.DataAttributes.DataCollectionBase] = "true";
+        }
     }
 
     private void BuildFullWidth(ComponentBase component)

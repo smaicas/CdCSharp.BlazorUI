@@ -24,15 +24,7 @@ public enum SortDirection
     Descending
 }
 
-public enum TableVariant
-{
-    Default,
-    Striped,
-    Bordered,
-    Cards,
-}
-
-public enum TableColumnAlign
+public enum ColumnAlign
 {
     Left,
     Center,

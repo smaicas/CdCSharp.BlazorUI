@@ -1,0 +1,68 @@
+﻿@namespace CdCSharp.BlazorUI.Components
+@typeparam TItem
+
+@using System.Linq.Expressions
+
+@code {
+    private bool _registered;
+    private Func<TItem, object?>? _compiledSelector;
+    private string? _propertyName;
+
+    [Parameter] public ColumnAlign Align { get; set; } = ColumnAlign.Left;
+    [Parameter] public string? CellClass { get; set; }
+    [Parameter] public Func<TItem, TItem, int>? CustomComparer { get; set; }
+    [Parameter] public Func<TItem, string, bool>? CustomFilter { get; set; }
+    [Parameter] public bool Filterable { get; set; }
+    [Parameter] public string? Format { get; set; }
+    [Parameter] public string? Header { get; set; }
+    [Parameter] public string? HeaderClass { get; set; }
+    [Parameter] public Expression<Func<TItem, object?>>? Property { get; set; }
+    [Parameter] public bool Sortable { get; set; }
+    [Parameter] public RenderFragment<TItem>? Template { get; set; }
+    [Parameter] public bool Visible { get; set; } = true;
+    [Parameter] public string? Width { get; set; }
+
+    [CascadingParameter(Name = "DataColumnRegistry")]
+    internal IDataColumnRegistry<TItem>? Registry { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Property != null)
+        {
+            Func<TItem, object?> compiled = Property.Compile();
+            _compiledSelector = compiled;
+
+            if (Property.Body is MemberExpression memberExpr)
+            {
+                _propertyName = memberExpr.Member.Name;
+            }
+            else if (Property.Body is UnaryExpression { Operand: MemberExpression innerMember })
+            {
+                _propertyName = innerMember.Member.Name;
+            }
+        }
+
+        if (Registry != null && !_registered)
+        {
+            DataColumnRegistration<TItem> registration = new()
+            {
+                Header = Header ?? _propertyName,
+                ValueSelector = _compiledSelector,
+                Template = Template,
+                Format = Format,
+                Align = Align,
+                Width = Width,
+                HeaderClass = HeaderClass,
+                CellClass = CellClass,
+                Visible = Visible,
+                Sortable = Sortable,
+                Filterable = Filterable,
+                CustomComparer = CustomComparer,
+                CustomFilter = CustomFilter
+            };
+
+            Registry.RegisterColumn(registration);
+            _registered = true;
+        }
+    }
+}

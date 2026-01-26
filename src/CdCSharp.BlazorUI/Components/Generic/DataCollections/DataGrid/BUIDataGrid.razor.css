@@ -1,0 +1,202 @@
+﻿/* ========================================
+   BUIDataGrid - Table-specific styles
+   ======================================== */
+
+/* Container */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__container {
+    overflow-x: auto;
+    position: relative;
+}
+
+    bui-component[data-bui-component="data-grid"] .bui-datagrid__container[style*="overflow-y"] .bui-datagrid__header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: var(--_dc-header-bg);
+    }
+
+/* Table */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--palette-surface);
+    color: var(--palette-surfacecontrast);
+}
+
+/* Header */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__header {
+    background: var(--_dc-header-bg);
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__header-cell {
+    padding: var(--_dc-padding-y) var(--_dc-padding-x);
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--_dc-border-color);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* Sort Button */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__sort-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    gap: 0.5rem;
+}
+
+    bui-component[data-bui-component="data-grid"] .bui-datagrid__sort-btn:hover {
+        color: var(--palette-primary);
+    }
+
+    bui-component[data-bui-component="data-grid"] .bui-datagrid__sort-btn:focus-visible {
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
+    }
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__sort-icon {
+    display: flex;
+    align-items: center;
+    min-width: 1rem;
+}
+
+/* Rows */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__row {
+    border-bottom: 1px solid var(--_dc-border-color);
+    transition: background-color 150ms ease;
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
+    background: var(--_dc-hover-bg);
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__row--selected {
+    background: var(--_dc-selected-bg);
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__row--interactive {
+    cursor: pointer;
+}
+
+    bui-component[data-bui-component="data-grid"] .bui-datagrid__row--interactive:focus-visible {
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
+    }
+
+/* Cells */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__cell {
+    padding: var(--_dc-padding-y) var(--_dc-padding-x);
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__cell--center,
+bui-component[data-bui-component="data-grid"] .bui-datagrid__header-cell.bui-datagrid__cell--center {
+    text-align: center;
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__cell--right,
+bui-component[data-bui-component="data-grid"] .bui-datagrid__header-cell.bui-datagrid__cell--right {
+    text-align: right;
+}
+
+/* Select Cell */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__select-cell {
+    width: 3rem;
+    padding: var(--_dc-padding-y) var(--_dc-padding-x);
+    text-align: center;
+}
+
+/* Empty Row */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__empty-row {
+    background: transparent;
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__empty-cell {
+    padding: calc(var(--_dc-padding-y) * 3) var(--_dc-padding-x);
+    text-align: center;
+    border-bottom: none;
+}
+
+/* Footer */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__footer {
+    background: var(--_dc-header-bg);
+    border-top: 2px solid var(--_dc-border-color);
+}
+
+    bui-component[data-bui-component="data-grid"] .bui-datagrid__footer td {
+        padding: var(--_dc-padding-y) var(--_dc-padding-x);
+        font-weight: 600;
+    }
+
+/* ========================================
+   VARIANT: Striped
+   ======================================== */
+bui-component[data-bui-component="data-grid"][data-bui-variant="striped"] .bui-datagrid__row:nth-child(even) {
+    background: var(--_dc-header-bg);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="striped"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
+    background: var(--_dc-hover-bg);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="striped"] .bui-datagrid__row--selected {
+    background: var(--_dc-selected-bg);
+}
+
+/* ========================================
+   VARIANT: Bordered
+   ======================================== */
+bui-component[data-bui-component="data-grid"][data-bui-variant="bordered"] .bui-datagrid__table {
+    border: 1px solid var(--_dc-border-color);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="bordered"] .bui-datagrid__header-cell,
+bui-component[data-bui-component="data-grid"][data-bui-variant="bordered"] .bui-datagrid__cell,
+bui-component[data-bui-component="data-grid"][data-bui-variant="bordered"] .bui-datagrid__select-cell {
+    border: 1px solid var(--_dc-border-color);
+}
+
+/* ========================================
+   VARIANT: StripedBordered
+   ======================================== */
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__table {
+    border: 1px solid var(--_dc-border-color);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__header-cell,
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__cell,
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__select-cell {
+    border: 1px solid var(--_dc-border-color);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__row:nth-child(even) {
+    background: var(--_dc-header-bg);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
+    background: var(--_dc-hover-bg);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__row--selected {
+    background: var(--_dc-selected-bg);
+}
+
+/* ========================================
+   DENSITY
+   ======================================== */
+bui-component[data-bui-component="data-grid"][data-bui-density="compact"] {
+    --_dc-padding-x: 0.5rem;
+    --_dc-padding-y: 0.375rem;
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-density="comfortable"] {
+    --_dc-padding-x: 1.5rem;
+    --_dc-padding-y: 1rem;
+}

@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-internal sealed class DataGridState<TItem>
+public sealed class DataCollectionState<TItem>
 {
     private readonly HashSet<TItem> _selectedItems = [];
 
@@ -11,22 +11,15 @@ internal sealed class DataGridState<TItem>
     public string? SortColumn { get; set; }
     public SortDirection SortDirection { get; set; } = SortDirection.None;
 
-    public void ClearSelection()
-    {
-        _selectedItems.Clear();
-    }
+    public void ClearSelection() => _selectedItems.Clear();
 
     public bool IsSelected(TItem item) => _selectedItems.Contains(item);
 
-    public void ResetPagination()
-    {
-        CurrentPage = 1;
-    }
+    public void ResetPagination() => CurrentPage = 1;
 
     public void SelectAll(IEnumerable<TItem> items)
     {
-        _selectedItems.Clear();
-        foreach (TItem? item in items)
+        foreach (TItem item in items)
         {
             _selectedItems.Add(item);
         }
@@ -37,14 +30,15 @@ internal sealed class DataGridState<TItem>
         if (mode == SelectionMode.Single)
         {
             _selectedItems.Clear();
-            _selectedItems.Add(item);
         }
-        else if (mode == SelectionMode.Multiple)
+
+        if (_selectedItems.Contains(item))
         {
-            if (_selectedItems.Contains(item))
-                _selectedItems.Remove(item);
-            else
-                _selectedItems.Add(item);
+            _selectedItems.Remove(item);
+        }
+        else
+        {
+            _selectedItems.Add(item);
         }
     }
 
@@ -57,7 +51,7 @@ internal sealed class DataGridState<TItem>
                 SortDirection.None => SortDirection.Ascending,
                 SortDirection.Ascending => SortDirection.Descending,
                 SortDirection.Descending => SortDirection.None,
-                _ => SortDirection.None
+                _ => SortDirection.Ascending
             };
 
             if (SortDirection == SortDirection.None)

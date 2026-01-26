@@ -29,6 +29,7 @@ public class BuildTemplates
 /* 4. Family-based Shared Styles */
 @import './_input-family.css';
 @import './_picker-family.css';
+@import './_data-collection-family.css';
 
 """;
 

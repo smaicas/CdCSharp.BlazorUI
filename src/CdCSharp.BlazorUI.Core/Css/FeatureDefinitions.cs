@@ -135,6 +135,11 @@ public static class FeatureDefinitions
         /// </summary>
         public const string PickerBase = "data-bui-picker";
 
+        /// <summary>
+        /// Marks component as part of data collection family for shared styles.
+        /// </summary>
+        public const string DataCollectionBase = "data-bui-data-collection";
+
         // --- State attributes ---
         /// <summary>
         /// Component is in loading state.
