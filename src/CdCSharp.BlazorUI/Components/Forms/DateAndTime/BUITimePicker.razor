@@ -1,54 +1,54 @@
-﻿@using System.Globalization
-@namespace CdCSharp.BlazorUI.Components.Forms
+﻿@namespace CdCSharp.BlazorUI.Components
+@using System.Globalization
 
-@inherits BUIComponentBase
-@implements IHasSize
-@implements IHasDensity
-@implements IPickerFamilyComponent
+<bui-component data-bui-component="time-picker"
+               data-bui-picker-base="true"
+               data-bui-size="@Size.ToString().ToLowerInvariant()">
 
-<bui-component @attributes="ComputedAttributes">
     <div class="bui-picker__row">
-        <button type="button" class="bui-picker__btn" @onclick="ToggleFormat">
+        <_BUIButton Size="Size" OnClick="ToggleFormat">
             @(Format == "24" ? "24h" : "12h")
-        </button>
+        </_BUIButton>
 
         <div class="bui-picker__row" style="flex:1; justify-content:center;">
             <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
-                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="IncrementHour">
-                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
-                </button>
-                <input type="text"
-                       class="bui-picker__input"
-                       value="@DisplayHour.ToString("00")"
-                       @onchange="OnHourInput"
-                       maxlength="2" />
-                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="DecrementHour">
-                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
-                </button>
+                <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
+                                     Size="SizeEnum.Small"
+                                     AriaLabel="Increment hour"
+                                     OnClick="IncrementHourClicked" />
+                <_BUISimpleInput Value="@DisplayHour.ToString("00")"
+                                          Size="Size"
+                                          ValueChanged="OnHourInputChanged"
+                                          maxlength="2" />
+                <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
+                                     Size="SizeEnum.Small"
+                                     AriaLabel="Decrement hour"
+                                     OnClick="DecrementHourClicked" />
             </div>
 
             <span class="bui-picker__separator">:</span>
 
             <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
-                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="IncrementMinute">
-                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
-                </button>
-                <input type="text"
-                       class="bui-picker__input"
-                       value="@Minute.ToString("00")"
-                       @onchange="OnMinuteInput"
-                       maxlength="2" />
-                <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="DecrementMinute">
-                    <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
-                </button>
+                <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
+                                     Size="SizeEnum.Small"
+                                     AriaLabel="Increment minute"
+                                     OnClick="IncrementMinuteClicked" />
+                <_BUISimpleInput Value="@Minute.ToString("00")"
+                                          Size="Size"
+                                          ValueChanged="OnMinuteInputChanged"
+                                          maxlength="2" />
+                <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
+                                     Size="SizeEnum.Small"
+                                     AriaLabel="Decrement minute"
+                                     OnClick="DecrementMinuteClicked" />
             </div>
         </div>
 
         @if (Format == "12")
         {
-            <button type="button" class="bui-picker__btn" @onclick="ToggleAmPm">
+            <_BUIButton Size="Size" OnClick="ToggleAmPmClicked">
                 @AmPm
-            </button>
+            </_BUIButton>
         }
     </div>
 </bui-component>
@@ -83,50 +83,58 @@
         }
     }
 
-    private async Task UpdateValue() => await ValueChanged.InvokeAsync(new TimeOnly(Hour, Minute));
+    private async Task IncrementHourClicked(MouseEventArgs e) => await UpdateHour((Hour + 1) % 24);
+    private async Task DecrementHourClicked(MouseEventArgs e) => await UpdateHour((Hour + 23) % 24);
+    private async Task IncrementMinuteClicked(MouseEventArgs e) => await UpdateMinute((Minute + 1) % 60);
+    private async Task DecrementMinuteClicked(MouseEventArgs e) => await UpdateMinute((Minute + 59) % 60);
 
-    private void OnHourInput(ChangeEventArgs e)
+    private async Task OnHourInputChanged(string? value)
     {
-        if (!int.TryParse(e.Value?.ToString(), out int h)) return;
-        if (Format == "24") Hour = Math.Clamp(h, 0, 23);
-        else { h = Math.Clamp(h, 1, 12); Hour = AmPm == "PM" ? (h % 12) + 12 : h % 12; }
-        _ = UpdateValue();
+        if (int.TryParse(value, out int h) && h >= 0 && h < 24)
+            await UpdateHour(h);
     }
 
-    private void OnMinuteInput(ChangeEventArgs e)
+    private async Task OnMinuteInputChanged(string? value)
     {
-        if (!int.TryParse(e.Value?.ToString(), out int m)) return;
-        Minute = Math.Clamp(m, 0, 59);
-        _ = UpdateValue();
+        if (int.TryParse(value, out int m) && m >= 0 && m < 60)
+            await UpdateMinute(m);
     }
 
-    private void ToggleFormat()
+    private async Task UpdateHour(int newHour)
+    {
+        Hour = newHour;
+        AmPm = Hour >= 12 ? "PM" : "AM";
+        await NotifyValueChanged();
+    }
+
+    private async Task UpdateMinute(int newMinute)
+    {
+        Minute = newMinute;
+        await NotifyValueChanged();
+    }
+
+    private async Task NotifyValueChanged()
+    {
+        await ValueChanged.InvokeAsync(new TimeOnly(Hour, Minute));
+    }
+
+    private void ToggleFormat(MouseEventArgs e)
     {
         Format = Format == "24" ? "12" : "24";
-        if (Format == "12") AmPm = Hour >= 12 ? "PM" : "AM";
     }
 
-    private void ToggleAmPm()
+    private async Task ToggleAmPmClicked(MouseEventArgs e)
     {
-        if (AmPm == "AM") { AmPm = "PM"; if (Hour < 12) Hour += 12; }
-        else { AmPm = "AM"; if (Hour >= 12) Hour -= 12; }
-        _ = UpdateValue();
+        if (AmPm == "AM")
+        {
+            AmPm = "PM";
+            if (Hour < 12) Hour += 12;
+        }
+        else
+        {
+            AmPm = "AM";
+            if (Hour >= 12) Hour -= 12;
+        }
+        await NotifyValueChanged();
     }
-
-    private void IncrementHour()
-    {
-        if (Format == "24") Hour = (Hour + 1) % 24;
-        else { int d = DisplayHour % 12 + 1; Hour = AmPm == "PM" ? (d % 12) + 12 : d % 12; }
-        _ = UpdateValue();
-    }
-
-    private void DecrementHour()
-    {
-        if (Format == "24") Hour = (Hour + 23) % 24;
-        else { int d = DisplayHour == 1 ? 12 : DisplayHour - 1; Hour = AmPm == "PM" ? (d % 12) + 12 : d % 12; }
-        _ = UpdateValue();
-    }
-
-    private void IncrementMinute() { Minute = (Minute + 1) % 60; _ = UpdateValue(); }
-    private void DecrementMinute() { Minute = (Minute + 59) % 60; _ = UpdateValue(); }
 }

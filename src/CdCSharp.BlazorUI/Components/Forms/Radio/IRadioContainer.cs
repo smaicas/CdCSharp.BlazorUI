@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Components.Forms.Radio;
+namespace CdCSharp.BlazorUI.Components.Forms;
 
 public interface IRadioContainer
 {

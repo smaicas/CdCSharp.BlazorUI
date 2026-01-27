@@ -37,11 +37,9 @@
 
                     @if (Closable)
                     {
-                        <button type="button"
-                                class="bui-icon-btn"
-                                @onclick="CloseAsync">
-                            <BUISvgIcon Icon="@BUIIcons.UI.Close" />
-                        </button>
+                        <_BUIButton Icon="@BUIIcons.UI.Close"
+                                    AriaLabel="Close"
+                                    OnClick="CloseAsync" />
                     }
                 </div>
             }

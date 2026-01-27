@@ -1,0 +1,88 @@
+﻿/* Internal Button - Unified icon/action button */
+
+._bui-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    height: 1.75rem;
+    padding-inline: 0.5rem;
+    border: 1px solid var(--palette-border);
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+    ._bui-btn:hover:not(:disabled) {
+        background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+        border-color: color-mix(in srgb, var(--palette-surfacecontrast) 20%, transparent);
+    }
+
+    ._bui-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    ._bui-btn:focus-visible {
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
+    }
+
+/* Active state */
+._bui-btn--active {
+    background: var(--palette-primary);
+    color: var(--palette-primarycontrast);
+    border-color: var(--palette-primary);
+}
+
+    ._bui-btn--active:hover:not(:disabled) {
+        background: var(--palette-primary);
+        border-color: var(--palette-primary);
+        filter: brightness(1.1);
+    }
+
+/* Icon-only variant */
+._bui-btn--icon {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    opacity: 0.6;
+}
+
+    ._bui-btn--icon:hover:not(:disabled) {
+        opacity: 1;
+        background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+    }
+
+    ._bui-btn--icon:disabled {
+        opacity: 0.3;
+    }
+
+/* Sizes */
+._bui-btn--sm {
+    height: 1.5rem;
+    font-size: 0.625rem;
+    padding-inline: 0.375rem;
+}
+
+    ._bui-btn--sm._bui-btn--icon {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+._bui-btn--lg {
+    height: 2rem;
+    font-size: 0.875rem;
+    padding-inline: 0.75rem;
+}
+
+    ._bui-btn--lg._bui-btn--icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }

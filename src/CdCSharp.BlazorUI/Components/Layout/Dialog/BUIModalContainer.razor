@@ -13,22 +13,18 @@
                     <h2 class="bui-modal-dialog__title">@dialogOpts.Title</h2>
                     @if (Modal.Options.Closable)
                     {
-                        <button type="button"
-                                class="bui-icon-btn"
-                                @onclick="HandleClose">
-                            <BUISvgIcon Icon="@BUIIcons.UI.Close" />
-                        </button>
+                        <_BUIButton Icon="@BUIIcons.UI.Close"
+                                    AriaLabel="Close"
+                                    OnClick="HandleClose" />
                     }
                 </div>
             }
             else if (Modal.Options.Closable)
             {
                 <div class="bui-modal-dialog__header bui-modal-dialog__header--close-only">
-                    <button type="button"
-                            class="bui-icon-btn"
-                            @onclick="HandleClose">
-                        <BUISvgIcon Icon="@BUIIcons.UI.Close" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.Close"
+                                AriaLabel="Close"
+                                OnClick="HandleClose" />
                 </div>
             }
 
@@ -43,11 +39,9 @@
             @if (Modal.Options.Closable)
             {
                 <div class="bui-modal-drawer__header">
-                    <button type="button"
-                            class="bui-icon-btn"
-                            @onclick="HandleClose">
-                        <BUISvgIcon Icon="@BUIIcons.UI.Close" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.Close"
+                                AriaLabel="Close"
+                                OnClick="HandleClose" />
                 </div>
             }
 

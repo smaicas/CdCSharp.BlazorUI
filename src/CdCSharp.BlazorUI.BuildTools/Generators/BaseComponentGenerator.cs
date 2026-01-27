@@ -44,146 +44,6 @@ public class BaseComponentGenerator : IAssetGenerator
     line-height: inherit;
     gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}}, 0.5rem);
 }
-
-/* ========================================
-   GENERIC BUTTONS
-   ======================================== */
-
-.bui-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    height: 1.75rem;
-    padding-inline: 0.5rem;
-    border: 1px solid var(--palette-border);
-    border-radius: 4px;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: background-color 150ms ease, border-color 150ms ease;
-}
-
-.bui-action-btn:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
-    border-color: color-mix(in srgb, var(--palette-surfacecontrast) 20%, transparent);
-}
-
-.bui-action-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.bui-action-btn:focus-visible {
-    outline: var(--bui-highlight-outline);
-    outline-offset: var(--bui-highlight-outline-offset);
-}
-
-.bui-action-btn--active {
-    background: var(--palette-primary);
-    color: var(--palette-primarycontrast);
-    border-color: var(--palette-primary);
-}
-
-.bui-action-btn--active:hover:not(:disabled) {
-    background: var(--palette-primary);
-    border-color: var(--palette-primary);
-    filter: brightness(1.1);
-}
-
-.bui-action-btn--sm { height: 1.5rem; font-size: 0.625rem; padding-inline: 0.375rem; }
-.bui-action-btn--lg { height: 2rem; font-size: 0.875rem; padding-inline: 0.75rem; }
-
-.bui-icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-    border: none;
-    border-radius: 4px;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 150ms ease, background-color 150ms ease;
-}
-
-.bui-icon-btn:hover:not(:disabled) {
-    opacity: 1;
-    background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
-}
-
-.bui-icon-btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.3;
-}
-
-.bui-icon-btn:focus-visible {
-    outline: var(--bui-highlight-outline);
-    outline-offset: var(--bui-highlight-outline-offset);
-}
-
-.bui-icon-btn--sm { width: 1.5rem; height: 1.5rem; }
-.bui-icon-btn--lg { width: 2.5rem; height: 2.5rem; }
-
-/* ========================================
-   SIMPLE INPUTS & SELECTS
-   For use in toolbars, filters, etc.
-   ======================================== */
-
-.bui-simple-input {
-    height: 2rem;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--palette-border);
-    border-radius: 4px;
-    background: var(--palette-surface);
-    color: inherit;
-    font: inherit;
-    font-size: 0.875rem;
-    outline: none;
-    transition: border-color 150ms ease;
-}
-
-.bui-simple-input:focus {
-    border-color: var(--palette-primary);
-}
-
-.bui-simple-input:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.bui-simple-input::placeholder {
-    opacity: var(--bui-opacity-placeholder);
-}
-
-.bui-simple-select {
-    height: 2rem;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--palette-border);
-    border-radius: 4px;
-    background: var(--palette-surface);
-    color: inherit;
-    font: inherit;
-    font-size: 0.875rem;
-    cursor: pointer;
-    outline: none;
-    transition: border-color 150ms ease;
-}
-
-.bui-simple-select:focus {
-    border-color: var(--palette-primary);
-}
-
-.bui-simple-select:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
 """;
 
     private static string GetDensitySystem() => $$"""
@@ -192,66 +52,48 @@ public class BaseComponentGenerator : IAssetGenerator
    Affects spacing between elements.
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Compact}}"] {
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="compact"] {
     {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.25rem;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Standard}}"] {
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="standard"] {
     {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.5rem;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="{{FeatureDefinitions.Values.Density.Comfortable}}"] {
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="comfortable"] {
     {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.75rem;
-}
-""";
-
-    private static string GetShadowSystem() => $$"""
-/* ========================================
-   SHADOW SYSTEM
-   Activated by data-bui-shadow attribute.
-   Values provided via inline CSS variables.
-   ======================================== */
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Shadow}}] {
-    box-shadow: var({{FeatureDefinitions.InlineVariables.Shadow}});
 }
 """;
 
     private static string GetSizeSystem() => $$"""
 /* ========================================
    SIZE SYSTEM
-   Only sets the multiplier.
-   Components use calc() with multiplier
-   in their isolated CSS files.
+   Uses CSS variable for consistent scaling.
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.Values.Size.Small}}"] {
-    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 0.85;
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="small"] {
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 0.75;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.Values.Size.Medium}}"] {
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="medium"] {
     {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 1;
 }
 
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="{{FeatureDefinitions.Values.Size.Large}}"] {
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="large"] {
     {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 1.25;
 }
 """;
 
     private static string GetStateStyles() => $$"""
 /* ========================================
-   UNIVERSAL STATES
+   STATE STYLES
+   Disabled, loading, error, etc.
    ======================================== */
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Disabled}}="true"] {
-    opacity: var({{FeatureDefinitions.Tokens.Opacity.Disabled}});
+    opacity: var(--bui-opacity-disabled, 0.5);
     pointer-events: none;
     cursor: not-allowed;
-}
-
-{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Loading}}="true"] {
-    pointer-events: none;
-    position: relative;
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {
@@ -259,68 +101,35 @@ public class BaseComponentGenerator : IAssetGenerator
 }
 """;
 
+    private static string GetShadowSystem() => $$"""
+/* ========================================
+   SHADOW SYSTEM
+   ======================================== */
+
+{{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Shadow}}="true"] {
+    box-shadow: var({{FeatureDefinitions.InlineVariables.Shadow}});
+}
+""";
+
     private static string GetUtilities() => $$"""
 /* ========================================
-   UTILITIES
+   UTILITY CLASSES
    ======================================== */
 
-{{FeatureDefinitions.Tags.Component}} .{{FeatureDefinitions.CssClasses.SrOnly}} {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+.bui-field__required {
+    color: var(--palette-error, #d32f2f);
+    margin-inline-start: 0.25em;
 }
 
-/* ========================================
-   RIPPLE EFFECT
-   ======================================== */
-
-.{{FeatureDefinitions.CssClasses.Ripple}} {
-    position: absolute;
-    border-radius: 50%;
-    transform: scale(0);
-    pointer-events: none;
-    background-color: var({{FeatureDefinitions.InlineVariables.RippleColor}}, var(--palette-white));
-    opacity: 0.3;
-    animation: bui-ripple var({{FeatureDefinitions.InlineVariables.RippleDuration}}, 500ms) linear forwards;
+.bui-field__validation {
+    font-size: 0.75rem;
+    color: var(--palette-error, #d32f2f);
 }
 
-@keyframes bui-ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
+.bui-field__helper {
+    font-size: 0.75rem;
+    color: var(--palette-surfacecontrast);
+    opacity: 0.7;
 }
-
-/* ========================================
-   KEYBOARD FOCUS INDICATORS (Universal)
-   ======================================== */
-
-/* Universal button focus inside bui-component */
-bui-component button:focus-visible {
-    outline: var(--bui-highlight-outline);
-    outline-offset: var(--bui-highlight-outline-offset);
-}
-
-/* Close buttons (negative offset for internal buttons) */
-bui-component [class*="__close"]:focus-visible {
-    outline-offset: var(--bui-highlight-outline-offset);
-}
-
-/* ========================================
-   ACCESSIBILITY: REDUCED MOTION
-   ======================================== */
-
-@media (prefers-reduced-motion: reduce) {
-    {{FeatureDefinitions.Tags.Component}} {
-        animation: none !important;
-    }
-}
-
 """;
 }

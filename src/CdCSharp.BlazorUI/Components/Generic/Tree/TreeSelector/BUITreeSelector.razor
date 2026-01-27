@@ -208,7 +208,7 @@
         bool isExpanded = _tree.IsExpanded(node.Key);
         bool isLoading = _tree.IsLoading(node.Key);
         bool isSelected = IsSelected(node.Key);
-
+    
         <div class="bui-tree-selector__node @(node.IsDisabled ? "bui-tree-selector__node--disabled" : "") @(isSelected ? "bui-tree-selector__node--selected" : "")"
              role="treeitem"
              aria-expanded="@(node.HasChildren? isExpanded.ToString().ToLowerInvariant() : null)"
@@ -216,47 +216,36 @@
              aria-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
              data-depth="@node.Depth"
              data-key="@node.Key">
-
+    
             <div class="bui-tree-selector__node-content"
                  style="padding-left: calc(@(node.Depth) * var(--bui-tree-selector-indent, 1.5rem))"
                  @onclick="() => HandleNodeClickAsync(node)"
                  @onclick:stopPropagation="true">
-
+    
                 @if (node.HasChildren)
                 {
-                    <button type="button"
-                            class="bui-tree-selector__expander @(isExpanded ? "bui-tree-selector__expander--expanded" : "")"
-                            @onclick="() => ToggleExpandAsync(node)"
-                            @onclick:stopPropagation="true"
-                            disabled="@node.IsDisabled"
-                            aria-label="@(isExpanded ? "Collapse" : "Expand")">
-                        @if (isLoading)
-                        {
-                            <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="Size" />
-                        }
-                        else
-                        {
-                            <BUISvgIcon Icon="@(isExpanded? CollapseIcon : ExpandIcon)" Size="Size" />
-                        }
-                    </button>
+                    <_BUIButton Icon="@ExpandIcon"
+                                         IconRotation="@(isExpanded ? 90 : 0)"
+                                         Loading="@isLoading"
+                                         Size="Size"
+                                         Disabled="node.IsDisabled"
+                                         AriaLabel="@(isExpanded ? "Collapse" : "Expand")"
+                                         OnClick="() => ToggleExpandAsync(node)"
+                                        OnClickStopPropagation="true"
+                                         class="bui-tree-selector__expander" />
                 }
                 else
                 {
                     <span class="bui-tree-selector__expander-placeholder"></span>
                 }
-
+    
                 @if (ShowCheckboxes)
                 {
-                    <span class="bui-tree-selector__checkbox @(isSelected ? "bui-tree-selector__checkbox--checked" : "")"
-                          @onclick="() => ToggleSelectionAsync(node.Key)"
-                          @onclick:stopPropagation="true">
-                        @if (isSelected)
-                        {
-                            <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="Size" />
-                        }
-                    </span>
+                    <_BUICheckMark Checked="@isSelected"
+                                   Size="Size"
+                                   Disabled="node.IsDisabled" />
                 }
-
+    
                 <div class="bui-tree-selector__node-label">
                     @if (_isDeclarativeMode && node.CustomContent != null)
                     {
@@ -272,7 +261,7 @@
                     }
                 </div>
             </div>
-
+    
             @if (node.HasChildren && isExpanded)
             {
                 <div class="bui-tree-selector__children @(AnimateExpand ? "bui-tree-selector__children--animated" : "")"

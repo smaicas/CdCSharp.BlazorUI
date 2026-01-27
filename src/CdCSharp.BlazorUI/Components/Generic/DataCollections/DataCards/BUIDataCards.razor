@@ -23,20 +23,17 @@
                 @if (Filterable)
                 {
                     <div class="bui-dc__filter">
-                        <input type="text"
-                               class="bui-simple-input"
-                               placeholder="@FilterPlaceholder"
-                               value="@State.FilterText"
-                               aria-label="@FilterPlaceholder"
-                               @oninput="HandleFilterChange" />
+                        <_BUISimpleInput Value="@State.FilterText"
+                                         Placeholder="@FilterPlaceholder"
+                                         AriaLabel="@FilterPlaceholder"
+                                         UpdateOnInput="true"
+                                         OnInput="HandleFilterInputChange" />
                         @if (!string.IsNullOrEmpty(State.FilterText))
                         {
-                            <button type="button"
-                                    class="bui-icon-btn"
-                                    @onclick="ClearFilter"
-                                    aria-label="Clear filter">
-                                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
-                            </button>
+                            <_BUIButton Icon="@BUIIcons.UI.Close"
+                                        Size="SizeEnum.Small"
+                                        AriaLabel="Clear filter"
+                                        OnClick="ClearFilterClicked" />
                         }
                     </div>
                 }
@@ -47,9 +44,9 @@
                 {
                     <div class="bui-dc__selection-info">
                         <span>@State.SelectedItems.Count selected</span>
-                        <button type="button" class="bui-action-btn" @onclick="ClearSelection">
+                        <_BUIButton OnClick="ClearSelectionClicked">
                             Clear
-                        </button>
+                        </_BUIButton>
                     </div>
                 }
 
@@ -57,31 +54,21 @@
                 {
                     <div class="bui-datacards__sort">
                         <label>Sort by</label>
-                        <select class="bui-simple-select bui-simple-select"
-                                value="@State.SortColumn"
-                                @onchange="HandleSortChange"
-                                aria-label="Sort by column">
+                        <_BUISimpleSelect Value="@State.SortColumn"
+                                          AriaLabel="Sort by column"
+                                          ValueChanged="HandleSortSelectChange">
                             <option value="">None</option>
                             @foreach (DataColumnRegistration<TItem> col in SortableColumns)
                             {
                                 <option value="@col.Header">@col.Header</option>
                             }
-                        </select>
+                        </_BUISimpleSelect>
                         @if (!string.IsNullOrEmpty(State.SortColumn))
                         {
-                            <button type="button"
-                                    class="bui-action-btn"
-                                    @onclick="ToggleSortDirection"
-                                    aria-label="Toggle sort direction">
-                                @if (State.SortDirection == SortDirection.Ascending)
-                                {
-                                    <BUISvgIcon Icon="@BUIIcons.UI.ArrowUpward" Size="SizeEnum.Small" />
-                                }
-                                else
-                                {
-                                    <BUISvgIcon Icon="@BUIIcons.UI.ArrowDownward" Size="SizeEnum.Small" />
-                                }
-                            </button>
+                            <_BUIButton Icon="@(State.SortDirection == SortDirection.Ascending ? BUIIcons.UI.ArrowUpward : BUIIcons.UI.ArrowDownward)"
+                                        Size="SizeEnum.Small"
+                                        AriaLabel="Toggle sort direction"
+                                        OnClick="ToggleSortDirectionClicked" />
                         }
                     </div>
                 }
@@ -90,15 +77,14 @@
                 {
                     <div class="bui-dc__page-size">
                         <label>Show</label>
-                        <select class="bui-simple-select"
-                                value="@State.PageSize"
-                                @onchange="HandlePageSizeChange"
-                                aria-label="Items per page">
+                        <_BUISimpleSelect Value="@State.PageSize.ToString()"
+                                          AriaLabel="Items per page"
+                                          ValueChanged="HandlePageSizeSelectChange">
                             @foreach (int size in PageSizeOptions)
                             {
                                 <option value="@size">@size</option>
                             }
-                        </select>
+                        </_BUISimpleSelect>
                     </div>
                 }
             </div>
@@ -153,32 +139,26 @@
                 </div>
 
                 <div class="bui-dc__pagination-controls">
-                    <button type="button"
-                            class="bui-action-btn"
-                            disabled="@(State.CurrentPage == 1)"
-                            @onclick="() => ChangePage(State.CurrentPage - 1)"
-                            aria-label="Previous page">
-                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
+                                Size="SizeEnum.Small"
+                                Disabled="@(State.CurrentPage == 1)"
+                                AriaLabel="Previous page"
+                                OnClick="() => ChangePage(State.CurrentPage - 1)" />
 
                     @foreach (int currentPage in GetVisiblePages())
                     {
-                        <button type="button"
-                                class="bui-action-btn @(State.CurrentPage == currentPage ? "bui-action-btn--active" : "")"
-                                @onclick="() => ChangePage(currentPage)"
-                                aria-label="@($"Page {currentPage}")"
-                                aria-current="@(State.CurrentPage == currentPage ? "page" : null)">
+                        <_BUIButton Active="@(State.CurrentPage == currentPage)"
+                                    AriaLabel="@($"Page {currentPage}")"
+                                    OnClick="() => ChangePage(currentPage)">
                             @currentPage
-                        </button>
+                        </_BUIButton>
                     }
 
-                    <button type="button"
-                            class="bui-action-btn"
-                            disabled="@(State.CurrentPage == TotalPages)"
-                            @onclick="() => ChangePage(State.CurrentPage + 1)"
-                            aria-label="Next page">
-                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
+                                Size="SizeEnum.Small"
+                                Disabled="@(State.CurrentPage == TotalPages)"
+                                AriaLabel="Next page"
+                                OnClick="() => ChangePage(State.CurrentPage + 1)" />
                 </div>
             </div>
         }
@@ -204,26 +184,23 @@
     private RenderFragment RenderCard(TItem item) => __builder =>
     {
         bool isSelected = State.IsSelected(item);
-
+    
         <article class="bui-datacards__card @(isSelected ? "bui-datacards__card--selected" : "") @(IsInteractiveRow ? "bui-datacards__card--interactive" : "")"
-                 role="listitem"
+                 role="@(SelectionMode != SelectionMode.None ? (SelectionMode == SelectionMode.Single ? "radio" : "checkbox") : "listitem")"
+                 aria-checked="@(SelectionMode != SelectionMode.None ? isSelected.ToString().ToLowerInvariant() : null)"
                  tabindex="@(IsInteractiveRow ? 0 : -1)"
-                 @onclick="() => HandleRowClick(item)"
                  @onkeydown="e => HandleRowKeyDown(e, item)"
                  @onkeydown:preventDefault="PreventRowKeyDown">
-
+    
             @if (SelectionMode != SelectionMode.None)
             {
-                <div class="bui-datacards__card-select" @onclick:stopPropagation="true">
-                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
-                           class="bui-dc__checkbox"
-                           checked="@isSelected"
-                           tabindex="-1"
-                           @onchange="() => HandleSelectRow(item)"
-                           aria-label="Select item" />
+                <div class="bui-datacards__card-select">
+                    <_BUICheckMark Checked="@isSelected"
+                                   Mode="@(SelectionMode == SelectionMode.Single ? _BUICheckMark.CheckMarkMode.Radio : _BUICheckMark.CheckMarkMode.Checkbox)"
+                                   Size="SizeEnum.Small" />
                 </div>
             }
-
+    
             @if (CardTemplate != null)
             {
                 @CardTemplate(item)
@@ -236,7 +213,7 @@
                         @CardHeaderTemplate(item)
                     </header>
                 }
-
+    
                 <div class="bui-datacards__card-body">
                     @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
                     {
@@ -255,7 +232,7 @@
                         </div>
                     }
                 </div>
-
+    
                 @if (CardFooterTemplate != null)
                 {
                     <footer class="bui-datacards__card-footer">
@@ -325,5 +302,27 @@
             ? SortDirection.Descending
             : SortDirection.Ascending;
         ProcessData();
+    }
+
+    private async Task HandleFilterInputChange(string? value)
+    {
+        await HandleFilterChange(new ChangeEventArgs { Value = value });
+    }
+
+    private async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
+    private async Task ClearSelectionClicked(MouseEventArgs e) => ClearSelection();
+    private async Task ToggleSortDirectionClicked(MouseEventArgs e) => ToggleSortDirection();
+
+    private async Task HandleSortSelectChange(string? value)
+    {
+        await HandleSortChange(new ChangeEventArgs { Value = value });
+    }
+
+    private async Task HandlePageSizeSelectChange(string? value)
+    {
+        if (int.TryParse(value, out int size))
+        {
+            await HandlePageSizeChange(new ChangeEventArgs { Value = size });
+        }
     }
 }

@@ -1,0 +1,67 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Internal
+
+<span class="@ComputedClass"
+      role="@(Mode == CheckMarkMode.Radio ? "radio" : "checkbox")"
+      aria-checked="@AriaChecked"
+      aria-disabled="@Disabled.ToString().ToLowerInvariant()">
+    <BUISvgIcon Icon="@CurrentIcon" Size="Size" />
+</span>
+
+@code {
+    [Parameter] public bool? Checked { get; set; }
+    [Parameter] public CheckMarkMode Mode { get; set; } = CheckMarkMode.Checkbox;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string? CheckedIcon { get; set; }
+    [Parameter] public string? UncheckedIcon { get; set; }
+    [Parameter] public string? IndeterminateIcon { get; set; }
+
+    private bool IsChecked => Checked == true;
+    private bool IsIndeterminate => Checked == null && Mode == CheckMarkMode.Checkbox;
+
+    private string AriaChecked => IsIndeterminate ? "mixed" : Checked?.ToString().ToLowerInvariant() ?? "false";
+
+    private string ComputedClass
+    {
+        get
+        {
+            List<string> classes = ["_bui-checkmark"];
+
+            if (IsChecked)
+                classes.Add("_bui-checkmark--checked");
+            else if (IsIndeterminate)
+                classes.Add("_bui-checkmark--indeterminate");
+
+            if (Disabled)
+                classes.Add("_bui-checkmark--disabled");
+
+            return string.Join(" ", classes);
+        }
+    }
+
+    private string CurrentIcon
+    {
+        get
+        {
+            if (IsIndeterminate)
+                return IndeterminateIcon ?? BUIIcons.MaterialIconsOutlined.i_indeterminate_check_box;
+
+            if (IsChecked)
+            {
+                return Mode == CheckMarkMode.Radio
+                    ? (CheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_checked)
+                    : (CheckedIcon ?? BUIIcons.MaterialIconsRound.i_check_box);
+            }
+
+            return Mode == CheckMarkMode.Radio
+                ? (UncheckedIcon ?? BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked)
+                : (UncheckedIcon ?? BUIIcons.MaterialIconsRound.i_check_box_outline_blank);
+        }
+    }
+
+    public enum CheckMarkMode
+    {
+        Checkbox,
+        Radio
+    }
+}

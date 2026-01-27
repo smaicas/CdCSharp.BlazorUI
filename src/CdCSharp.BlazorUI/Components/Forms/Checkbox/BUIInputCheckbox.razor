@@ -1,44 +1,39 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Forms
-
-@typeparam TValue
-
 @inherits BUIInputComponentBase<TValue, BUIInputCheckbox<TValue>, BUIInputCheckboxVariant>
 @implements IHasSize
 @implements IHasColor
-@implements IHasDensity
+@typeparam TValue
 
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
-    private string _inputId = $"bui-checkbox-{Guid.NewGuid():N}";
-
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public CssColor? Color { get; set; }
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
-    [Parameter] public string? UncheckedIcon { get; set; }
     [Parameter] public string? CheckedIcon { get; set; }
+    [Parameter] public string? UncheckedIcon { get; set; }
     [Parameter] public string? IndeterminateIcon { get; set; }
+
+    private readonly string _inputId = $"bui-checkbox-{Guid.NewGuid():N}";
+
+    private bool IsChecked => GetCheckedState();
+    private bool IsIndeterminate => GetIndeterminateState();
 
     public override BUIInputCheckboxVariant DefaultVariant => BUIInputCheckboxVariant.Default;
 
     protected override IReadOnlyDictionary<BUIInputCheckboxVariant, Func<BUIInputCheckbox<TValue>, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<BUIInputCheckboxVariant, Func<BUIInputCheckbox<TValue>, RenderFragment>>
         {
-            [BUIInputCheckboxVariant.Default] = c => c.RenderDefault()
+            [BUIInputCheckboxVariant.Default] = c => c.RenderDefault(),
         };
-
-    protected bool IsChecked => GetCheckedState();
-    protected bool IsIndeterminate => GetIndeterminateState();
 
     protected override void OnInitialized()
     {
         Type valueType = typeof(TValue);
-        Type underlyingType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+        Type? underlyingType = Nullable.GetUnderlyingType(valueType) ?? valueType;
 
         if (underlyingType != typeof(bool))
             throw new InvalidOperationException(
@@ -96,10 +91,6 @@
 
     private bool GetIndeterminateState() => typeof(TValue) == typeof(bool?) && CurrentValue is null;
 
-    private string GetUncheckedIcon() => UncheckedIcon ?? BUIIcons.MaterialIconsRound.i_check_box_outline_blank;
-    private string GetCheckedIcon() => CheckedIcon ?? BUIIcons.MaterialIconsRound.i_check_box;
-    private string GetIndeterminateIcon() => IndeterminateIcon ?? BUIIcons.MaterialIconsOutlined.i_indeterminate_check_box;
-
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
         base.BuildComponentDataAttributes(dataAttributes);
@@ -111,33 +102,25 @@
     private RenderFragment RenderDefault() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes">
-            <label class="bui-checkbox" @onclick="HandleClick" @onclick:preventDefault="true">
-                <input type="checkbox"
-                       id="@_inputId"
-                       checked="@IsChecked"
-                       disabled="@IsDisabled"
-                       required="@Required"
-                       aria-checked="@(IsIndeterminate ? "mixed" : IsChecked.ToString().ToLower())"
-                       class="bui-checkbox__input" />
+            <div class="bui-checkbox"
+                 role="checkbox"
+                 aria-checked="@(IsIndeterminate ? "mixed" : IsChecked.ToString().ToLowerInvariant())"
+                 aria-disabled="@IsDisabled.ToString().ToLowerInvariant()"
+                 aria-labelledby="@(string.IsNullOrWhiteSpace(Label) ? null : $"{_inputId}-label")"
+                 tabindex="@(IsDisabled ? -1 : 0)"
+                 @onclick="HandleClick"
+                 @onkeydown="HandleKeyDown">
 
-                <span class="bui-checkbox__box" aria-hidden="true">
-                    @if (IsChecked)
-                    {
-                        <BUISvgIcon Icon="@GetCheckedIcon()" Size="Size" />
-                    }
-                    else if (IsIndeterminate)
-                    {
-                        <BUISvgIcon Icon="@GetIndeterminateIcon()" Size="Size" />
-                    }
-                    else
-                    {
-                        <BUISvgIcon Icon="@GetUncheckedIcon()" Size="Size" />
-                    }
-                </span>
+                <_BUICheckMark Checked="@(IsIndeterminate ? null : IsChecked)"
+                                        Size="Size"
+                                        Disabled="IsDisabled"
+                                        CheckedIcon="@CheckedIcon"
+                                        UncheckedIcon="@UncheckedIcon"
+                                        IndeterminateIcon="@IndeterminateIcon" />
 
                 @if (!string.IsNullOrWhiteSpace(Label))
                 {
-                    <span class="bui-checkbox__label">
+                    <span id="@($"{_inputId}-label")" class="bui-checkbox__label">
                         @Label
                         @if (Required)
                         {
@@ -145,7 +128,7 @@
                         }
                     </span>
                 }
-            </label>
+            </div>
 
             @if (IsError && EditContext != null && ValueExpression != null)
             {
@@ -180,6 +163,14 @@
                 true => false
             };
             CurrentValue = (TValue)(object?)next!;
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == " " || e.Key == "Enter")
+        {
+            await HandleClick(new MouseEventArgs());
         }
     }
 }

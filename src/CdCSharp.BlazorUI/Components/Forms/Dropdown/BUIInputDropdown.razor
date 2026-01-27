@@ -43,91 +43,84 @@
                       OnOpened="@HandleOpenedAsync"
                       OnClosed="@HandleClosed"
                       OnKeyboardNavigation="@HandleKeyboardNavigation">
-    <MenuContent>
-        @if (Searchable)
+   <MenuContent>
+    @if (Searchable)
+    {
+        <div class="bui-dropdown__search">
+            <_BUISimpleInput Value="@_searchText"
+                                      Placeholder="@SearchPlaceholder"
+                                      Size="Size"
+                                      UpdateOnInput="true"
+                                      OnInput="OnSearchInputChanged"
+                                      @onclick:stopPropagation="true" />
+        </div>
+    }
+
+    @if (_selectionState.IsMultiple && ShowSelectAll && _options.Count > 0)
+    {
+        <div class="bui-dropdown__select-all">
+            <_BUIButton Size="Size" OnClick="SelectAllClicked" OnClickStopPropagation="true">
+                @SelectAllText
+            </_BUIButton>
+            <_BUIButton Size="Size" OnClick="DeselectAllClicked" OnClickStopPropagation="true">
+                @DeselectAllText
+            </_BUIButton>
+        </div>
+    }
+
+    <div class="bui-dropdown__items">
+        @{
+            List<ISelectionOption> filteredOptions = GetFilteredOptions();
+        }
+
+        @foreach (ISelectionOption option in filteredOptions)
         {
-            <div class="bui-dropdown__search">
-                <input type="text"
-                       class="bui-dropdown__search-input"
-                       placeholder="@SearchPlaceholder"
-                       value="@_searchText"
-                       @oninput="OnSearchInput"
-                       @onclick:stopPropagation="true" />
+            bool isSelected = _selectionState.IsSelected(option.Value);
+            bool isFocused = _focusedIndex >= 0 && filteredOptions.ElementAtOrDefault(_focusedIndex) == option;
+
+            <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(isFocused ? "bui-dropdown__option--focused" : "") @(option.IsDisabled ? "bui-dropdown__option--disabled" : "")"
+                 role="option"
+                 aria-selected="@isSelected.ToString().ToLowerInvariant()"
+                 aria-disabled="@(option.IsDisabled ? "true" : null)"
+                 tabindex="@(option.IsDisabled ? -1 : 0)"
+                 @onclick="() => SelectOptionAsync(option)"
+                 @onclick:stopPropagation="true">
+
+                @if (_selectionState.IsMultiple)
+                {
+                    <_BUICheckMark Checked="@isSelected"
+                                            Size="Size"
+                                            Disabled="option.IsDisabled" />
+                }
+
+                <span class="bui-dropdown__option-content">
+                    @option.Content
+                </span>
             </div>
         }
 
-        @if (_selectionState.IsMultiple && ShowSelectAll && _options.Count > 0)
+        @if (filteredOptions.Count == 0)
         {
-            <div class="bui-dropdown__select-all">
-                <button type="button"
-                        class="bui-action-btn"
-                        @onclick="SelectAll"
-                        @onclick:stopPropagation="true">
-                    @SelectAllText
-                </button>
-                <button type="button"
-                        class="bui-action-btn"
-                        @onclick="DeselectAll"
-                        @onclick:stopPropagation="true">
-                    @DeselectAllText
-                </button>
-            </div>
-        }
-
-        <div class="bui-dropdown__items">
-            @{
-                List<ISelectionOption> filteredOptions = GetFilteredOptions();
-            }
-
-            @foreach (ISelectionOption option in filteredOptions)
-            {
-                bool isSelected = _selectionState.IsSelected(option.Value);
-                bool isFocused = _focusedIndex >= 0 && filteredOptions.ElementAtOrDefault(_focusedIndex) == option;
-
-                <div class="bui-dropdown__option @(isSelected ? "bui-dropdown__option--selected" : "") @(isFocused ? "bui-dropdown__option--focused" : "") @(option.IsDisabled ? "bui-dropdown__option--disabled" : "")"
-                     role="option"
-                     aria-selected="@isSelected.ToString().ToLowerInvariant()"
-                     aria-disabled="@(option.IsDisabled ? "true" : null)"
-                     tabindex="@(option.IsDisabled ? -1 : 0)"
-                     @onclick="() => SelectOptionAsync(option)"
-                     @onclick:stopPropagation="true">
-
-                    @if (_selectionState.IsMultiple)
+            <div class="bui-dropdown__no-options">
+                @if (string.IsNullOrWhiteSpace(_searchText))
+                {
+                    @(NoOptionsTemplate ?? _defaultNoOptionsTemplate)
+                }
+                else
+                {
+                    @if (NoResultsTemplate != null)
                     {
-                        <span class="bui-dropdown__checkbox">
-                            <BUISvgIcon Icon="@(isSelected? BUIIcons.MaterialIconsRound.i_check_box : BUIIcons.MaterialIconsRound.i_check_box_outline_blank)"
-                                        Size="@Size" />
-                        </span>
-                    }
-
-                    <span class="bui-dropdown__option-content">
-                        @option.Content
-                    </span>
-                </div>
-            }
-
-            @if (filteredOptions.Count == 0)
-            {
-                <div class="bui-dropdown__no-options">
-                    @if (string.IsNullOrWhiteSpace(_searchText))
-                    {
-                        @(NoOptionsTemplate ?? _defaultNoOptionsTemplate)
+                        @NoResultsTemplate(new NoResultsContext(_searchText, _options.Count))
                     }
                     else
                     {
-                        @if (NoResultsTemplate != null)
-                        {
-                            @NoResultsTemplate(new NoResultsContext(_searchText, _options.Count))
-                        }
-                        else
-                        {
-                            <span>No results for "@_searchText"</span>
-                        }
+                        <span>No results for "@_searchText"</span>
                     }
-                </div>
-            }
-        </div>
-    </MenuContent>
+                }
+            </div>
+        }
+    </div>
+</MenuContent>
 </BUIDropdownContainer>
 
 @code {
@@ -258,6 +251,14 @@
         _selectionState.SetValue(value);
         await ValueChanged.InvokeAsync(value);
     }
+    private async Task OnSearchInputChanged(string? value)
+    {
+        _searchText = value ?? string.Empty;
+        _focusedIndex = -1;
+    }
+
+    private async Task SelectAllClicked(MouseEventArgs e) => await SelectAll();
+    private async Task DeselectAllClicked(MouseEventArgs e) => await DeselectAll();
 
     private async Task HandleOpenedAsync()
     {
