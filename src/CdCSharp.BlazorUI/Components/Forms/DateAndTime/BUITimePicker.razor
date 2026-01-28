@@ -1,27 +1,26 @@
-﻿@namespace CdCSharp.BlazorUI.Components
+﻿@namespace CdCSharp.BlazorUI.Components.Forms
 @using System.Globalization
 
-<bui-component data-bui-component="time-picker"
-               data-bui-picker-base="true"
-               data-bui-size="@Size.ToString().ToLowerInvariant()">
+@inherits BUIComponentBase
+@implements IHasSize
+@implements IHasDensity
+@implements IPickerFamilyComponent
 
+<bui-component @attributes="ComputedAttributes">
     <div class="bui-picker__row">
-        <_BUIButton Size="Size" OnClick="ToggleFormat">
+        <_BUIButton Size="Size" OnClick="ToggleFormatClicked">
             @(Format == "24" ? "24h" : "12h")
         </_BUIButton>
 
         <div class="bui-picker__row" style="flex:1; justify-content:center;">
             <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
                 <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
-                                     Size="SizeEnum.Small"
                                      AriaLabel="Increment hour"
                                      OnClick="IncrementHourClicked" />
                 <_BUISimpleInput Value="@DisplayHour.ToString("00")"
-                                          Size="Size"
                                           ValueChanged="OnHourInputChanged"
                                           maxlength="2" />
                 <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
-                                     Size="SizeEnum.Small"
                                      AriaLabel="Decrement hour"
                                      OnClick="DecrementHourClicked" />
             </div>
@@ -30,15 +29,12 @@
 
             <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
                 <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
-                                     Size="SizeEnum.Small"
                                      AriaLabel="Increment minute"
                                      OnClick="IncrementMinuteClicked" />
                 <_BUISimpleInput Value="@Minute.ToString("00")"
-                                          Size="Size"
                                           ValueChanged="OnMinuteInputChanged"
                                           maxlength="2" />
                 <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
-                                     Size="SizeEnum.Small"
                                      AriaLabel="Decrement minute"
                                      OnClick="DecrementMinuteClicked" />
             </div>
@@ -46,7 +42,7 @@
 
         @if (Format == "12")
         {
-            <_BUIButton Size="Size" OnClick="ToggleAmPmClicked">
+            <_BUIButton OnClick="ToggleAmPmClicked">
                 @AmPm
             </_BUIButton>
         }
@@ -90,8 +86,22 @@
 
     private async Task OnHourInputChanged(string? value)
     {
-        if (int.TryParse(value, out int h) && h >= 0 && h < 24)
-            await UpdateHour(h);
+        if (int.TryParse(value, out int h))
+        {
+            if (Format == "12")
+            {
+                if (h >= 1 && h <= 12)
+                {
+                    int newHour = h == 12 ? 0 : h;
+                    if (AmPm == "PM") newHour += 12;
+                    await UpdateHour(newHour);
+                }
+            }
+            else if (h >= 0 && h < 24)
+            {
+                await UpdateHour(h);
+            }
+        }
     }
 
     private async Task OnMinuteInputChanged(string? value)
@@ -118,7 +128,7 @@
         await ValueChanged.InvokeAsync(new TimeOnly(Hour, Minute));
     }
 
-    private void ToggleFormat(MouseEventArgs e)
+    private void ToggleFormatClicked(MouseEventArgs e)
     {
         Format = Format == "24" ? "12" : "24";
     }
@@ -136,5 +146,11 @@
             if (Hour >= 12) Hour -= 12;
         }
         await NotifyValueChanged();
+    }
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes["data-bui-picker-base"] = "true";
     }
 }

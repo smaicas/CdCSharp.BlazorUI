@@ -111,34 +111,30 @@
                                     @bind-Text="@CurrentValueAsString"
                                     Format="@Format"
                                     Editable="@(!ReadOnly)"
+                                    Disabled="@IsDisabled"
                                     OnFocus="HandleFocus"
                                     OnBlur="HandleBlur"
                                     OnDirtyStateChanged="HandleDirtyChanged" />
 
                 @if (CanClear && !ReadOnly)
                 {
-                    <button type="button"
-                            class="bui-input__addon bui-input__addon--btn"
-                            @onclick="Clear"
-                            @onclick:preventDefault="true"
-                            @onclick:stopPropagation="true"
-                            aria-label="Clear">
-                        <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.Close"
+                                AriaLabel="Clear"
+                                OnClick="(e)=> Clear()"
+                                OnClickPreventDefault="true"
+                                OnClickStopPropagation="true" />
                 }
 
-                <button type="button"
-                        class="bui-input__addon bui-input__addon--btn"
-                        @onclick="OpenPicker"
-                        @onclick:preventDefault="true"
-                        @onclick:stopPropagation="true"
-                        disabled="@ReadOnly"
-                        aria-label="Open picker">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today" Size="Size" />
-                </button>
+                <_BUIButton Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today"
+                            Disabled="@IsDisabled"
+                            Loading="@Loading"
+                            LoadingIndicatorVariant="@LoadingIndicatorVariant"
+                            AriaLabel="Open picker"
+                            OnClick="(e)=> OpenPicker()"
+                            OnClickPreventDefault="true"
+                            OnClickStopPropagation="true" />
 
                 <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
-                <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />
 
             </div>
 

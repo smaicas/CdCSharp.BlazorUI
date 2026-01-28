@@ -59,10 +59,10 @@
     @if (_selectionState.IsMultiple && ShowSelectAll && _options.Count > 0)
     {
         <div class="bui-dropdown__select-all">
-            <_BUIButton Size="Size" OnClick="SelectAllClicked" OnClickStopPropagation="true">
+            <_BUIButton OnClick="SelectAllClicked" OnClickStopPropagation="true">
                 @SelectAllText
             </_BUIButton>
-            <_BUIButton Size="Size" OnClick="DeselectAllClicked" OnClickStopPropagation="true">
+            <_BUIButton OnClick="DeselectAllClicked" OnClickStopPropagation="true">
                 @DeselectAllText
             </_BUIButton>
         </div>

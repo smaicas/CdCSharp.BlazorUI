@@ -1,0 +1,36 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Internal
+
+<div class="@ComputedClass" @attributes="FilteredAttributes">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ComputedClass
+    {
+        get
+        {
+            List<string> classes = ["_bui-addon"];
+
+            if (AdditionalAttributes?.TryGetValue("class", out object? extraClass) == true)
+                classes.Add(extraClass.ToString() ?? "");
+
+            return string.Join(" ", classes);
+        }
+    }
+
+    private Dictionary<string, object>? FilteredAttributes
+    {
+        get
+        {
+            if (AdditionalAttributes == null) return null;
+
+            return AdditionalAttributes
+                .Where(kv => kv.Key != "class" && kv.Key != "style")
+                .ToDictionary(kv => kv.Key, kv => kv.Value);
+        }
+    }
+}

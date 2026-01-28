@@ -31,7 +31,6 @@
                         @if (!string.IsNullOrEmpty(State.FilterText))
                         {
                             <_BUIButton Icon="@BUIIcons.UI.Close"
-                                        Size="SizeEnum.Small"
                                         AriaLabel="Clear filter"
                                         OnClick="ClearFilterClicked" />
                         }
@@ -66,7 +65,6 @@
                         @if (!string.IsNullOrEmpty(State.SortColumn))
                         {
                             <_BUIButton Icon="@(State.SortDirection == SortDirection.Ascending ? BUIIcons.UI.ArrowUpward : BUIIcons.UI.ArrowDownward)"
-                                        Size="SizeEnum.Small"
                                         AriaLabel="Toggle sort direction"
                                         OnClick="ToggleSortDirectionClicked" />
                         }
@@ -140,7 +138,6 @@
 
                 <div class="bui-dc__pagination-controls">
                     <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
-                                Size="SizeEnum.Small"
                                 Disabled="@(State.CurrentPage == 1)"
                                 AriaLabel="Previous page"
                                 OnClick="() => ChangePage(State.CurrentPage - 1)" />
@@ -155,7 +152,6 @@
                     }
 
                     <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
-                                Size="SizeEnum.Small"
                                 Disabled="@(State.CurrentPage == TotalPages)"
                                 AriaLabel="Next page"
                                 OnClick="() => ChangePage(State.CurrentPage + 1)" />

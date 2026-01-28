@@ -136,37 +136,30 @@
 
                 @if (ShowCopyButton && HasValue)
                 {
-                    <button type="button"
-                            class="bui-input__addon bui-input__addon--btn"
-                            @onclick="CopyToClipboard"
-                            @onclick:stopPropagation="true"
-                            title="Copy color">
-                        <BUISvgIcon Icon="@BUIIcons.UI.Copy" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.Copy"
+                                AriaLabel="Copy color"
+                                OnClick="(e)=> CopyToClipboard()"
+                                OnClickStopPropagation="true" />
                 }
 
                 @if (Clearable && (HasValue || _isDirty) && !Disabled)
                 {
-                    <button type="button"
-                            class="bui-input__addon bui-input__addon--btn"
-                            @onclick="Clear"
-                            @onclick:stopPropagation="true"
-                            title="Clear">
-                        <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIButton Icon="@BUIIcons.UI.Close"
+                                AriaLabel="Clear"
+                                OnClick="(e)=> Clear()"
+                                OnClickStopPropagation="true" />
                 }
 
-                <button type="button"
-                        class="bui-input__addon bui-input__addon--btn"
-                        @onclick="TogglePicker"
-                        disabled="@IsDisabled"
-                        title="Open color picker">
+                <_BUIButton Icon="@BUIIcons.MaterialIconsRound.i_palette"
+                            Disabled="@IsDisabled"
+                            AriaLabel="Open color picker"
+                            OnClick="(e)=> TogglePicker()">
                     <div class="bui-input-color__preview-chess">
                         <div class="bui-input-color__preview-color"
-                             style="background-color: @(CurrentValue?.ToString(ColorOutputFormats.Rgba) ?? "transparent");">
+                             style="background-color: @(CurrentValue?.ToString(ColorOutputFormats.Rgba) ?? "transparent")">
                         </div>
                     </div>
-                </button>
+                </_BUIButton>
 
                 <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
                 <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />

@@ -8,19 +8,19 @@
 
 <bui-component @attributes="ComputedAttributes">
     <div class="bui-picker__row">
-        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="PrevYear">
-            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
-        </button>
-        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="PrevMonth">
-            <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
-        </button>
+        <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
+                    AriaLabel="Previous year"
+                    OnClick="PrevYearClicked" />
+        <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
+                    AriaLabel="Previous month"
+                    OnClick="PrevMonthClicked" />
         <span class="bui-picker__title">@CurrentMonth.ToString("MMMM yyyy", CultureInfo.CurrentCulture)</span>
-        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="NextMonth">
-            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
-        </button>
-        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="NextYear">
-            <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
-        </button>
+        <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
+                    AriaLabel="Next month"
+                    OnClick="NextMonthClicked" />
+        <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
+                    AriaLabel="Next year"
+                    OnClick="NextYearClicked" />
     </div>
 
     <div class="bui-picker__grid">
@@ -30,11 +30,11 @@
         }
         @foreach (DayCell day in Days)
         {
-            <button type="button"
-                    class="bui-picker__cell @(day.IsSelected ? "bui-picker__cell--selected" : "") @(!day.IsCurrentMonth ? "bui-picker__cell--muted" : "")"
-                    @onclick="() => SelectDate(day.Date)">
+            <_BUIButton Active="@day.IsSelected"
+                        class="@($"bui-picker__cell {(!day.IsCurrentMonth ? "bui-picker__cell--muted" : "")}")"
+                        OnClick="() => SelectDateClicked(day.Date)">
                 @day.Date.Day
-            </button>
+            </_BUIButton>
         }
     </div>
 </bui-component>
@@ -58,12 +58,12 @@
         }
     }
 
-    private void PrevYear() => CurrentMonth = CurrentMonth.AddYears(-1);
-    private void NextYear() => CurrentMonth = CurrentMonth.AddYears(1);
-    private void PrevMonth() => CurrentMonth = CurrentMonth.AddMonths(-1);
-    private void NextMonth() => CurrentMonth = CurrentMonth.AddMonths(1);
+    private void PrevYearClicked(MouseEventArgs e) => CurrentMonth = CurrentMonth.AddYears(-1);
+    private void NextYearClicked(MouseEventArgs e) => CurrentMonth = CurrentMonth.AddYears(1);
+    private void PrevMonthClicked(MouseEventArgs e) => CurrentMonth = CurrentMonth.AddMonths(-1);
+    private void NextMonthClicked(MouseEventArgs e) => CurrentMonth = CurrentMonth.AddMonths(1);
 
-    private async Task SelectDate(DateTime date)
+    private async Task SelectDateClicked(DateTime date)
     {
         SelectedDate = DateOnly.FromDateTime(date);
         CurrentMonth = new DateTime(date.Year, date.Month, 1);
@@ -96,5 +96,11 @@
         public DateTime Date { get; set; }
         public bool IsCurrentMonth { get; set; }
         public bool IsSelected { get; set; }
+    }
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes["data-bui-picker-base"] = "true";
     }
 }

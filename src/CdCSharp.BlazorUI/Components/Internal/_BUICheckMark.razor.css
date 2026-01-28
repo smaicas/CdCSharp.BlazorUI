@@ -1,6 +1,4 @@
-﻿/* Internal CheckMark - Visual selection indicator */
-
-._bui-checkmark {
+﻿._bui-checkmark {
     display: inline-flex;
     align-items: center;
     justify-content: center;

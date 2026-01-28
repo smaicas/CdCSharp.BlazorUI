@@ -37,8 +37,6 @@ public class InputFamilyGenerator : IAssetGenerator
         string validation = FeatureDefinitions.CssClasses.Input.Validation;
         string opacityPlaceholder = FeatureDefinitions.Tokens.Opacity.Placeholder;
 
-        string addon = FeatureDefinitions.CssClasses.Input.Addon;
-        string addonBtn = FeatureDefinitions.CssClasses.Input.AddonBtn;
         string addonPrefix = FeatureDefinitions.CssClasses.Input.AddonPrefix;
         string addonSuffix = FeatureDefinitions.CssClasses.Input.AddonSuffix;
 
@@ -97,7 +95,6 @@ bui-component[{{inputBase}}] .{{wrapper}} {
     display: flex;
     align-items: center;
     min-height: var(--_wrapper-min-h);
-    padding-block-start: var(--_wrapper-pt);
     background: var(--_wrapper-bg);
     border-radius: var(--_wrapper-radius);
 }
@@ -115,6 +112,7 @@ bui-component[{{inputBase}}] .{{field}} {
     height: 100%;
     padding-block: var(--_input-py);
     padding-inline: var(--_field-px);
+    padding-block-start: calc(var(--_input-py) + var(--_wrapper-pt));
     border: none;
     background: transparent;
     font: inherit;
@@ -208,49 +206,6 @@ bui-component[{{inputBase}}] .{{validation}} {
     padding-inline-start: var(--_input-px);
 }
 
-/* === ADDON BASE === */
-
-bui-component[{{inputBase}}] .{{addon}} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: stretch;
-    flex-shrink: 0;
-    gap: 0.25rem;
-    width: calc(2.5rem * {{V(sizeMult, "1")}});
-    margin: 0;
-    padding: 0;
-    border: none;
-    border-inline-start: 1px solid var(--_input-border-color);
-    border-radius: 0;
-    background: transparent;
-    color: var(--_input-label-color);
-    overflow: hidden;
-    transition: background-color 150ms ease, border-color 150ms ease;
-}
-
-bui-component[{{inputBase}}] .{{addonBtn}} {
-    width: calc(3rem * {{V(sizeMult, "1")}});
-    cursor: pointer;
-}
-
-bui-component[{{inputBase}}] .{{addonBtn}}:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--palette-surfacecontrast) 4%, transparent);
-}
-
-bui-component[{{inputBase}}] .{{addonBtn}}:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-bui-component[{{inputBase}}]:focus-within .{{addon}} {
-    border-inline-start-color: var(--_input-focus-color);
-}
-
-bui-component[{{inputBase}}][{{error}}="true"] .{{addon}} {
-    border-inline-start-color: var(--_input-error-color);
-}
-
 /* === ADDON PREFIX === */
 
 bui-component[{{inputBase}}] .{{addonPrefix}} {
@@ -305,12 +260,6 @@ bui-component[{{inputBase}}][{{variant}}="outlined"][{{error}}="true"] .{{outlin
 
 bui-component[{{inputBase}}][{{variant}}="outlined"][{{error}}="true"][{{floated}}="true"] .{{outlineNotch}} {
     border-block-start-color: transparent;
-}
-
-/* Addon adjustments */
-bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addon}} {
-    border-start-end-radius: var(--_input-radius);
-    border-end-end-radius: var(--_input-radius);
 }
 
 bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonPrefix}} {
@@ -369,13 +318,6 @@ bui-component[{{inputBase}}][{{variant}}="filled"][{{error}}="true"] .{{outlineT
     border-block-end-color: var(--_input-error-color);
 }
 
-/* Addon adjustments */
-bui-component[{{inputBase}}][{{variant}}="filled"] .{{addon}} {
-    border-start-end-radius: 4px;
-    /* Adjust padding */
-    margin-block-start: calc(-1 * var(--_wrapper-pt));
-}
-
 bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonPrefix}} {
     border-radius: 0;
     border-start-start-radius: 4px;
@@ -423,12 +365,6 @@ bui-component[{{inputBase}}][{{variant}}="standard"] .{{label}} {
 bui-component[{{inputBase}}][{{variant}}="standard"][{{floated}}="true"] .{{label}} {
     font-size: var(--_input-floated-size);
     transform: translateY(calc(var(--_wrapper-pt) * 0.25));
-}
-
-/* Addon adjustments */
-bui-component[{{inputBase}}][{{variant}}="standard"] .{{addon}} {
-    /* Adjust padding */
-    margin-block-start: calc(-1 * var(--_wrapper-pt));
 }
 
 /* Focus state */

@@ -55,8 +55,6 @@ public static class FeatureDefinitions
             public const string HelperText = "bui-input__helper-text";
             public const string Validation = "bui-input__validation";
 
-            public const string Addon = "bui-input__addon";
-            public const string AddonBtn = "bui-input__addon--btn";
             public const string AddonPrefix = "bui-input__addon--prefix";
             public const string AddonSuffix = "bui-input__addon--suffix";
 

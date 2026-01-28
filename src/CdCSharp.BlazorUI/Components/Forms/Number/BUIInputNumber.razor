@@ -213,35 +213,22 @@
 };
 
     private RenderFragment RenderStepButtons() => __builder =>
-{
-    <div class="bui-input__step-buttons">
-        <button type="button"
-                class="bui-input__step-btn bui-input__step-btn--increment"
-                @onmousedown="StartIncrement"
-                @onmouseup="StopIncrement"
-                @onmouseleave="StopIncrement"
-                @onkeydown="HandleIncrementKeyDown"
-                @onkeydown:preventDefault="_preventStepKeyDown"
-                @onkeyup="HandleIncrementKeyUp"
-                disabled="@(Disabled || IsAtMax())"
-                aria-label="Increment">
-            <BUISvgIcon Icon="@BUIIcons.UI.ChevronUp" Size="SizeEnum.Small" />
-        </button>
-        <button type="button"
-                class="bui-input__step-btn bui-input__step-btn--decrement"
-                @onmousedown="StartDecrement"
-                @onmouseup="StopDecrement"
-                @onmouseleave="StopDecrement"
-                @onkeydown="HandleDecrementKeyDown"
-                @onkeydown:preventDefault="_preventStepKeyDown"
-                @onkeyup="HandleDecrementKeyUp"
-                disabled="@(Disabled || IsAtMin())"
-                aria-label="Decrement">
-            <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="SizeEnum.Small" />
-        </button>
-    </div>
-};
-
+    {
+        <div class="bui-input__step-buttons">
+            <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
+                        Disabled="@(Disabled || IsAtMax())"
+                        AriaLabel="Increment"
+                        @onmousedown="StartIncrement"
+                        @onmouseup="StopIncrement"
+                        @onmouseleave="StopIncrement" />
+            <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
+                        Disabled="@(Disabled || IsAtMin())"
+                        AriaLabel="Decrement"
+                        @onmousedown="StartDecrement"
+                        @onmouseup="StopDecrement"
+                        @onmouseleave="StopDecrement" />
+        </div>
+    };
     private string FormatValueForDisplay(TValue? value)
     {
         if (value == null || EqualityComparer<TValue>.Default.Equals(value, default))

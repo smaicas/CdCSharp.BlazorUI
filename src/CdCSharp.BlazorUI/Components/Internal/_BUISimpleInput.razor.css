@@ -1,14 +1,15 @@
 ﻿/* Internal Simple Input - For toolbars, filters, pickers */
 
 ._bui-simple-input {
-    height: 2rem;
-    padding: 0.25rem 0.5rem;
+    --_scale: var(--bui-size-multiplier, 1);
+    height: calc(2rem * var(--_scale));
+    padding: calc(0.25rem * var(--_scale)) calc(0.5rem * var(--_scale));
     border: 1px solid var(--palette-border);
     border-radius: 4px;
     background: var(--palette-surface);
     color: inherit;
     font: inherit;
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--_scale));
     outline: none;
     transition: border-color 150ms ease;
 }

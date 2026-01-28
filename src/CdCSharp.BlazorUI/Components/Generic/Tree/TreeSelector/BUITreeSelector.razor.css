@@ -26,7 +26,6 @@
         align-items: center;
         gap: 0.5rem;
         min-height: var(--_tree-selector-node-height);
-        padding: 0.25rem 0.5rem;
         border-radius: var(--_tree-selector-border-radius);
         cursor: pointer;
         transition: background-color var(--_tree-selector-transition);

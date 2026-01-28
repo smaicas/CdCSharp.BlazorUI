@@ -29,8 +29,16 @@
     [Parameter] public string? UncheckedIcon { get; set; }
     [Parameter] public RadioOrientation Orientation { get; set; } = RadioOrientation.Vertical;
 
-    void IRadioContainer.RegisterOption(IRadioOption option) => _options.Add(option);
-    void IRadioContainer.UnregisterOption(IRadioOption option) => _options.Remove(option);
+    void IRadioContainer.RegisterOption(IRadioOption option)
+    {
+        if (_options.Contains(option)) { return; }
+        _options.Add(option);
+        StateHasChanged();
+    }
+    void IRadioContainer.UnregisterOption(IRadioOption option) {
+        _options.Remove(option);
+        StateHasChanged();
+    }
     bool IRadioContainer.IsOptionSelected(object? value) => EqualityComparer<object>.Default.Equals(CurrentValue, value);
     async Task IRadioContainer.SelectOptionAsync(object? value) => await SelectValueAsync(value);
     Type IRadioContainer.ElementType => _elementType;
@@ -107,11 +115,11 @@
                          @onkeydown="e => HandleOptionKeyDown(e, option, isOptionDisabled)">
 
                         <_BUICheckMark Checked="@isSelected"
-                                                Mode="_BUICheckMark.CheckMarkMode.Radio"
-                                                Size="Size"
-                                                Disabled="isOptionDisabled"
-                                                CheckedIcon="@CheckedIcon"
-                                                UncheckedIcon="@UncheckedIcon" />
+                                       Mode="_BUICheckMark.CheckMarkMode.Radio"
+                                       Size="Size"
+                                       Disabled="isOptionDisabled"
+                                       CheckedIcon="@CheckedIcon"
+                                       UncheckedIcon="@UncheckedIcon" />
 
                         <span class="bui-radio__text">@option.Content</span>
                     </div>
@@ -120,7 +128,7 @@
 
             @if (ShowClearButton)
             {
-                <_BUIButton Size="SizeEnum.Small" OnClick="ClearClicked">
+                <_BUIButton OnClick="ClearClicked">
                     @ClearText
                 </_BUIButton>
             }

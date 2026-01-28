@@ -1,54 +1,15 @@
-﻿bui-component[data-bui-component="input-number"] {
-    --_step-btn-width: calc(2rem * var(--bui-size-multiplier, 1));
+﻿bui-component[data-bui-component="input-number"] .bui-input__field {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
 }
 
-    bui-component[data-bui-component="input-number"] .bui-input__field {
-        font-variant-numeric: tabular-nums;
-        font-feature-settings: 'tnum';
-    }
+/* === STEP BUTTONS === */
 
-    /* === STEP BUTTONS === */
+bui-component[data-bui-component="input-number"] .bui-input__step-buttons {
+    display: flex;
+    flex-direction: column;
+}
 
-    bui-component[data-bui-component="input-number"] .bui-input__step-buttons {
-        display: flex;
-        flex-direction: column;
-    }
-
-    bui-component[data-bui-component="input-number"][data-bui-button-placement="left"] .bui-input__step-buttons {
-        order: -1;
-    }
-
-    bui-component[data-bui-component="input-number"] .bui-input__step-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: var(--_step-btn-width);
-        height: 50%;
-        padding: 0;
-        border: none;
-        background: transparent;
-        color: inherit;
-        cursor: pointer;
-        transition: background 150ms ease, opacity 150ms ease;
-        opacity: 0.6;
-    }
-
-        bui-component[data-bui-component="input-number"] .bui-input__step-btn:hover:not(:disabled) {
-            background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
-            opacity: 1;
-        }
-
-        bui-component[data-bui-component="input-number"] .bui-input__step-btn:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-
-        bui-component[data-bui-component="input-number"] .bui-input__step-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.3;
-        }
-
-        bui-component[data-bui-component="input-number"] .bui-input__step-btn:focus-visible {
-            outline: var(--bui-highlight-outline);
-            outline-offset: var(--bui-highlight-outline-offset);
-            opacity: 1;
-        }
+bui-component[data-bui-component="input-number"][data-bui-button-placement="left"] .bui-input__step-buttons {
+    order: -1;
+}

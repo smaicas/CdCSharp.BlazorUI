@@ -2,7 +2,7 @@
 
 @if (HasPrefix)
 {
-    <span class="bui-input__addon bui-input__addon--prefix">
+    <_BUIAddon class="bui-input__addon--prefix">
         @if (!string.IsNullOrWhiteSpace(PrefixIcon))
         {
             <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
@@ -11,7 +11,7 @@
         {
             <span>@PrefixText</span>
         }
-    </span>
+    </_BUIAddon>
 }
 
 @code {
