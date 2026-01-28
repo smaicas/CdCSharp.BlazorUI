@@ -14,11 +14,11 @@
             @(Title ?? Language.ToString().ToUpperInvariant())
         </span>
 
-        <button class="bui-action-btn"
-                @onclick="CopyAsync"
-                disabled="@_copied">
+        <_BUIBtn Disabled="@_copied"
+                 AriaLabel="Copy code"
+                 OnClick="CopyClicked">
             @(_copied ? "✓ Copied" : "Copy")
-        </button>
+        </_BUIBtn>
     </div>
 
     <div class="bui-code-block__content">
@@ -54,6 +54,7 @@
         }
     }
 
+    private async Task CopyClicked(MouseEventArgs e) => await CopyAsync();
     private async Task CopyAsync()
     {
         await Clipboard.CopyTextAsync(NormalizeIndentation(Code));

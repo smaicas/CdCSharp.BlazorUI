@@ -23,20 +23,16 @@
                 @if (Filterable)
                 {
                     <div class="bui-dc__filter">
-                        <input type="text"
-                               class="bui-simple-input"
-                               placeholder="@FilterPlaceholder"
-                               value="@State.FilterText"
-                               aria-label="@FilterPlaceholder"
-                               @oninput="HandleFilterChange" />
+                        <_BUIInText Value="@State.FilterText"
+                                    Placeholder="@FilterPlaceholder"
+                                    AriaLabel="@FilterPlaceholder"
+                                    UpdateOnInput="true"
+                                    OnInput="HandleFilterInputChange" />
                         @if (!string.IsNullOrEmpty(State.FilterText))
                         {
-                            <button type="button"
-                                    class="bui-icon-btn"
-                                    @onclick="ClearFilter"
-                                    aria-label="Clear filter">
-                                <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Small" />
-                            </button>
+                            <_BUIBtn Icon="@BUIIcons.UI.Close"
+                                     AriaLabel="Clear filter"
+                                     OnClick="ClearFilterClicked" />
                         }
                     </div>
                 }
@@ -47,9 +43,9 @@
                 {
                     <div class="bui-dc__selection-info">
                         <span>@State.SelectedItems.Count selected</span>
-                        <button type="button" class="bui-action-btn" @onclick="ClearSelection">
+                        <_BUIBtn OnClick="ClearSelectionClicked">
                             Clear
-                        </button>
+                        </_BUIBtn>
                     </div>
                 }
 
@@ -57,19 +53,19 @@
                 {
                     <div class="bui-dc__page-size">
                         <label>Show</label>
-                        <select class="bui-simple-select"
-                                value="@State.PageSize"
-                                @onchange="HandlePageSizeChange"
-                                aria-label="Items per page">
+                        <_BUIInSelect Value="@State.PageSize.ToString()"
+                                      AriaLabel="Items per page"
+                                      ValueChanged="HandlePageSizeSelectChange">
                             @foreach (int size in PageSizeOptions)
                             {
                                 <option value="@size">@size</option>
                             }
-                        </select>
+                        </_BUIInSelect>
                     </div>
                 }
             </div>
         }
+
 
         @if (Loading && LoadingContent != null)
         {
@@ -185,32 +181,24 @@
                 </div>
 
                 <div class="bui-dc__pagination-controls">
-                    <button type="button"
-                            class="bui-action-btn"
-                            disabled="@(State.CurrentPage == 1)"
-                            @onclick="() => ChangePage(State.CurrentPage - 1)"
-                            aria-label="Previous page">
-                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronLeft" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIBtn Icon="@BUIIcons.UI.ChevronLeft"
+                             Disabled="@(State.CurrentPage == 1)"
+                             AriaLabel="Previous page"
+                             OnClick="() => ChangePage(State.CurrentPage - 1)" />
 
                     @foreach (int currentPage in GetVisiblePages())
                     {
-                        <button type="button"
-                                class="bui-action-btn @(State.CurrentPage == currentPage ? "bui-action-btn--active" : "")"
-                                @onclick="() => ChangePage(currentPage)"
-                                aria-label="@($"Page {currentPage}")"
-                                aria-current="@(State.CurrentPage == currentPage ? "page" : null)">
+                        <_BUIBtn Active="@(State.CurrentPage == currentPage)"
+                                 AriaLabel="@($"Page {currentPage}")"
+                                 OnClick="() => ChangePage(currentPage)">
                             @currentPage
-                        </button>
+                        </_BUIBtn>
                     }
 
-                    <button type="button"
-                            class="bui-action-btn"
-                            disabled="@(State.CurrentPage == TotalPages)"
-                            @onclick="() => ChangePage(State.CurrentPage + 1)"
-                            aria-label="Next page">
-                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronRight" Size="SizeEnum.Small" />
-                    </button>
+                    <_BUIBtn Icon="@BUIIcons.UI.ChevronRight"
+                             Disabled="@(State.CurrentPage == TotalPages)"
+                             AriaLabel="Next page"
+                             OnClick="() => ChangePage(State.CurrentPage + 1)" />
                 </div>
             </div>
         }
@@ -282,5 +270,21 @@
             return $"max-height: {Height}; overflow-y: auto;";
 
         return string.Empty;
+    }
+
+    private async Task HandleFilterInputChange(string? value)
+    {
+        await HandleFilterChange(new ChangeEventArgs { Value = value });
+    }
+
+    private async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
+    private async Task ClearSelectionClicked(MouseEventArgs e) => ClearSelection();
+
+    private async Task HandlePageSizeSelectChange(string? value)
+    {
+        if (int.TryParse(value, out int size))
+        {
+            await HandlePageSizeChange(new ChangeEventArgs { Value = size });
+        }
     }
 }

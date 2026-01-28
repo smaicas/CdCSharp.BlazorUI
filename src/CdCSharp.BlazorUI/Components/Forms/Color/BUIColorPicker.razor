@@ -41,14 +41,26 @@
                        @onchange="SetHex" />
                 break;
             default:
-                <input type="number" class="bui-picker__input" min="0" max="255"
-                       value="@GetCurrentColor().R" @onchange="e => SetRgb(e, 0)" />
-                <input type="number" class="bui-picker__input" min="0" max="255"
-                       value="@GetCurrentColor().G" @onchange="e => SetRgb(e, 1)" />
-                <input type="number" class="bui-picker__input" min="0" max="255"
-                       value="@GetCurrentColor().B" @onchange="e => SetRgb(e, 2)" />
-                <input type="number" class="bui-picker__input" min="0" max="255"
-                       value="@_alpha" @onchange="SetAlpha" />
+                <_BUIInNumber Value="@GetCurrentColor().R"
+                              Min="0"
+                              Max="255"
+                              AriaLabel="Red"
+                              ValueChanged="v => SetRgbChannel(v, 0)" />
+                <_BUIInNumber Value="@GetCurrentColor().G"
+                              Min="0"
+                              Max="255"
+                              AriaLabel="Green"
+                              ValueChanged="v => SetRgbChannel(v, 1)" />
+                <_BUIInNumber Value="@GetCurrentColor().B"
+                              Min="0"
+                              Max="255"
+                              AriaLabel="Blue"
+                              ValueChanged="v => SetRgbChannel(v, 2)" />
+                <_BUIInNumber Value="@((int)_alpha)"
+                              Min="0"
+                              Max="255"
+                              AriaLabel="Alpha"
+                              ValueChanged="SetAlphaChannel" />
                 break;
         }
         <_BUIBtn Icon="@BUIIcons.MaterialIconsRound.i_sync" OnClick="CycleFormat" />
@@ -133,23 +145,28 @@
         }
     }
 
-    private async Task SetRgb(ChangeEventArgs e, int component)
+    private async Task SetRgbChannel(int? val, int component)
     {
-        if (!int.TryParse(e.Value?.ToString(), out int val)) return;
+        if (!val.HasValue) return;
         CssColor c = GetCurrentColor();
         int r = c.R, g = c.G, b = c.B;
-        switch (component) { case 0: r = Math.Clamp(val, 0, 255); break; case 1: g = Math.Clamp(val, 0, 255); break; case 2: b = Math.Clamp(val, 0, 255); break; }
+        int clampedVal = Math.Clamp(val.Value, 0, 255);
+        switch (component)
+        {
+            case 0: r = clampedVal; break;
+            case 1: g = clampedVal; break;
+            case 2: b = clampedVal; break;
+        }
         _hsvColor = HsvColor.FromCssColor(new CssColor(r, g, b, _alpha));
         await UpdateHandlerPosition();
         await NotifyColorChanged();
     }
-    private async Task SetAlpha(ChangeEventArgs e)
+
+    private async Task SetAlphaChannel(int? val)
     {
-        if (int.TryParse(e.Value?.ToString(), out int alpha))
-        {
-            _alpha = (byte)Math.Clamp(alpha, 0, 255);
-            await NotifyColorChanged();
-        }
+        if (!val.HasValue) return;
+        _alpha = (byte)Math.Clamp(val.Value, 0, 255);
+        await NotifyColorChanged();
     }
 
     private async Task SetHex(ChangeEventArgs e)
