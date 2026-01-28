@@ -1,0 +1,26 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Internal
+
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Linq.Expressions
+
+@typeparam TValue
+
+@if (ShowValidation && EditContext != null && For != null)
+{
+    <div class="_bui-field-helper _bui-field-helper--error">
+        <ValidationMessage For="For" />
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(HelperText))
+{
+    <div id="@Id" class="_bui-field-helper">@HelperText</div>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public bool ShowValidation { get; set; }
+    [Parameter] public EditContext? EditContext { get; set; }
+    [Parameter] public Expression<Func<TValue>>? For { get; set; }
+}

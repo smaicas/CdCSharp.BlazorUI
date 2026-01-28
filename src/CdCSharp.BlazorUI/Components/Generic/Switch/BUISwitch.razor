@@ -13,6 +13,7 @@
                checked="@IsChecked"
                disabled="@IsDisabled"
                aria-checked="@IsChecked"
+               aria-describedby="@AriaDescribedBy"
                class="bui-switch__input" />
 
         <span class="bui-switch__track" aria-hidden="true">
@@ -54,6 +55,9 @@
     /* ===== State ===== */
 
     [Parameter] public bool IsDisabled { get; set; }
+
+    /* ===== Accesibility ===== */
+    [Parameter] public string AriaDescribedBy { get; set; } = string.Empty;
 
     /* ===== Switch behavior ===== */
 

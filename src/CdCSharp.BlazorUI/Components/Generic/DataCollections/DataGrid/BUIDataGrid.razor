@@ -175,32 +175,11 @@
 
         @if (PageSize.HasValue && FilteredItems.Any())
         {
-            <div class="bui-dc__pagination">
-                <div class="bui-dc__pagination-info">
-                    Showing @PaginationStart to @PaginationEnd of @FilteredItems.Count
-                </div>
-
-                <div class="bui-dc__pagination-controls">
-                    <_BUIBtn Icon="@BUIIcons.UI.ChevronLeft"
-                             Disabled="@(State.CurrentPage == 1)"
-                             AriaLabel="Previous page"
-                             OnClick="() => ChangePage(State.CurrentPage - 1)" />
-
-                    @foreach (int currentPage in GetVisiblePages())
-                    {
-                        <_BUIBtn Active="@(State.CurrentPage == currentPage)"
-                                 AriaLabel="@($"Page {currentPage}")"
-                                 OnClick="() => ChangePage(currentPage)">
-                            @currentPage
-                        </_BUIBtn>
-                    }
-
-                    <_BUIBtn Icon="@BUIIcons.UI.ChevronRight"
-                             Disabled="@(State.CurrentPage == TotalPages)"
-                             AriaLabel="Next page"
-                             OnClick="() => ChangePage(State.CurrentPage + 1)" />
-                </div>
-            </div>
+            <_BUIPagination CurrentPage="@State.CurrentPage"
+                            TotalPages="@TotalPages"
+                            TotalItems="@FilteredItems.Count"
+                            PageSize="@State.PageSize"
+                            OnPageChange="ChangePage" />
         }
     }
 </bui-component>

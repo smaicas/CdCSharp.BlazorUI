@@ -24,6 +24,8 @@
 
 @code {
     private readonly string _componentId = $"bui-dropdown-{Guid.NewGuid():N}";
+    private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
+
     private ElementReference _triggerElement;
     private ElementReference _menuElement;
     private DropdownCallbacksRelay? _callbacksRelay;
@@ -121,7 +123,8 @@
                         @onblur="HandleBlur"
                         disabled="@IsDisabled"
                         aria-expanded="@IsOpen.ToString().ToLowerInvariant()"
-                        aria-haspopup="@AriaRole">
+                        aria-haspopup="@AriaRole"
+                        aria-describedby="@_helperTextId">
 
                     <span class="bui-dropdown__value @(HasValue ? "" : "bui-dropdown__placeholder")">
                         @if (HasValue)
@@ -155,19 +158,13 @@
 
             </div>
 
-            @if (IsError && EditContext != null && ValueExpression != null)
-            {
-                <div class="bui-input__validation">
-                    <ValidationMessage For="ValueExpression" />
-                </div>
-            }
+            <_BUIFieldHelper TValue="TValue"
+                             Id="@_helperTextId"
+                             HelperText="@HelperText"
+                             ShowValidation="@IsError"
+                             EditContext="@EditContext"
+                             For="@ValueExpression" />
 
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div class="bui-input__helper-text">
-                    @HelperText
-                </div>
-            }
         </bui-component>
     };
 

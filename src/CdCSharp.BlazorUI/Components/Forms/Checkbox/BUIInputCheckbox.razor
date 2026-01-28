@@ -18,6 +18,7 @@
     [Parameter] public string? IndeterminateIcon { get; set; }
 
     private readonly string _inputId = $"bui-checkbox-{Guid.NewGuid():N}";
+    private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
 
     private bool IsChecked => GetCheckedState();
     private bool IsIndeterminate => GetIndeterminateState();
@@ -107,6 +108,7 @@
                  aria-checked="@(IsIndeterminate ? "mixed" : IsChecked.ToString().ToLowerInvariant())"
                  aria-disabled="@IsDisabled.ToString().ToLowerInvariant()"
                  aria-labelledby="@(string.IsNullOrWhiteSpace(Label) ? null : $"{_inputId}-label")"
+                 aria-describedby="@_helperTextId"
                  tabindex="@(IsDisabled ? -1 : 0)"
                  @onclick="HandleClick"
                  @onkeydown="HandleKeyDown">
@@ -130,17 +132,13 @@
                 }
             </div>
 
-            @if (IsError && EditContext != null && ValueExpression != null)
-            {
-                <div class="bui-field__validation">
-                    <ValidationMessage For="ValueExpression" />
-                </div>
-            }
+            <_BUIFieldHelper TValue="TValue"
+                             Id="@_helperTextId"
+                             HelperText="@HelperText"
+                             ShowValidation="@IsError"
+                             EditContext="@EditContext"
+                             For="@ValueExpression" />
 
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div class="bui-field__helper">@HelperText</div>
-            }
         </bui-component>
     };
 

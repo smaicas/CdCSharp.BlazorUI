@@ -137,23 +137,23 @@
                 @if (ShowCopyButton && HasValue)
                 {
                     <_BUIBtn Icon="@BUIIcons.UI.Copy"
-                                AriaLabel="Copy color"
-                                OnClick="(e)=> CopyToClipboard()"
-                                OnClickStopPropagation="true" />
+                             AriaLabel="Copy color"
+                             OnClick="(e)=> CopyToClipboard()"
+                             OnClickStopPropagation="true" />
                 }
 
                 @if (Clearable && (HasValue || _isDirty) && !Disabled)
                 {
                     <_BUIBtn Icon="@BUIIcons.UI.Close"
-                                AriaLabel="Clear"
-                                OnClick="(e)=> Clear()"
-                                OnClickStopPropagation="true" />
+                             AriaLabel="Clear"
+                             OnClick="(e)=> Clear()"
+                             OnClickStopPropagation="true" />
                 }
 
                 <_BUIBtn Icon="@BUIIcons.MaterialIconsRound.i_palette"
-                            Disabled="@IsDisabled"
-                            AriaLabel="Open color picker"
-                            OnClick="(e)=> TogglePicker()">
+                         Disabled="@IsDisabled"
+                         AriaLabel="Open color picker"
+                         OnClick="(e)=> TogglePicker()">
                     <div class="bui-input-color__preview-chess">
                         <div class="bui-input-color__preview-color"
                              style="background-color: @(CurrentValue?.ToString(ColorOutputFormats.Rgba) ?? "transparent")">
@@ -206,19 +206,13 @@
                 }
             }
 
-            @if (IsError && EditContext != null && ValueExpression != null)
-            {
-                <div class="bui-input__validation">
-                    <ValidationMessage For="ValueExpression" />
-                </div>
-            }
+            <_BUIFieldHelper TValue="CssColor"
+                             Id="@_helperTextId"
+                             HelperText="@HelperText"
+                             ShowValidation="@IsError"
+                             EditContext="@EditContext"
+                             For="@ValueExpression" />
 
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div id="@_helperTextId" class="bui-input__helper-text">
-                    @HelperText
-                </div>
-            }
         </bui-component>
     };
 

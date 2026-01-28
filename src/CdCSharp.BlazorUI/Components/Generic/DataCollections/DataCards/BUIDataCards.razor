@@ -24,15 +24,15 @@
                 {
                     <div class="bui-dc__filter">
                         <_BUIInText Value="@State.FilterText"
-                                         Placeholder="@FilterPlaceholder"
-                                         AriaLabel="@FilterPlaceholder"
-                                         UpdateOnInput="true"
-                                         OnInput="HandleFilterInputChange" />
+                                    Placeholder="@FilterPlaceholder"
+                                    AriaLabel="@FilterPlaceholder"
+                                    UpdateOnInput="true"
+                                    OnInput="HandleFilterInputChange" />
                         @if (!string.IsNullOrEmpty(State.FilterText))
                         {
                             <_BUIBtn Icon="@BUIIcons.UI.Close"
-                                        AriaLabel="Clear filter"
-                                        OnClick="ClearFilterClicked" />
+                                     AriaLabel="Clear filter"
+                                     OnClick="ClearFilterClicked" />
                         }
                     </div>
                 }
@@ -54,8 +54,8 @@
                     <div class="bui-datacards__sort">
                         <label>Sort by</label>
                         <_BUIInSelect Value="@State.SortColumn"
-                                          AriaLabel="Sort by column"
-                                          ValueChanged="HandleSortSelectChange">
+                                      AriaLabel="Sort by column"
+                                      ValueChanged="HandleSortSelectChange">
                             <option value="">None</option>
                             @foreach (DataColumnRegistration<TItem> col in SortableColumns)
                             {
@@ -65,8 +65,8 @@
                         @if (!string.IsNullOrEmpty(State.SortColumn))
                         {
                             <_BUIBtn Icon="@(State.SortDirection == SortDirection.Ascending ? BUIIcons.UI.ArrowUpward : BUIIcons.UI.ArrowDownward)"
-                                        AriaLabel="Toggle sort direction"
-                                        OnClick="ToggleSortDirectionClicked" />
+                                     AriaLabel="Toggle sort direction"
+                                     OnClick="ToggleSortDirectionClicked" />
                         }
                     </div>
                 }
@@ -76,8 +76,8 @@
                     <div class="bui-dc__page-size">
                         <label>Show</label>
                         <_BUIInSelect Value="@State.PageSize.ToString()"
-                                          AriaLabel="Items per page"
-                                          ValueChanged="HandlePageSizeSelectChange">
+                                      AriaLabel="Items per page"
+                                      ValueChanged="HandlePageSizeSelectChange">
                             @foreach (int size in PageSizeOptions)
                             {
                                 <option value="@size">@size</option>
@@ -131,32 +131,11 @@
 
         @if (PageSize.HasValue && FilteredItems.Any())
         {
-            <div class="bui-dc__pagination">
-                <div class="bui-dc__pagination-info">
-                    Showing @PaginationStart to @PaginationEnd of @FilteredItems.Count
-                </div>
-
-                <div class="bui-dc__pagination-controls">
-                    <_BUIBtn Icon="@BUIIcons.UI.ChevronLeft"
-                                Disabled="@(State.CurrentPage == 1)"
-                                AriaLabel="Previous page"
-                                OnClick="() => ChangePage(State.CurrentPage - 1)" />
-
-                    @foreach (int currentPage in GetVisiblePages())
-                    {
-                        <_BUIBtn Active="@(State.CurrentPage == currentPage)"
-                                    AriaLabel="@($"Page {currentPage}")"
-                                    OnClick="() => ChangePage(currentPage)">
-                            @currentPage
-                        </_BUIBtn>
-                    }
-
-                    <_BUIBtn Icon="@BUIIcons.UI.ChevronRight"
-                                Disabled="@(State.CurrentPage == TotalPages)"
-                                AriaLabel="Next page"
-                                OnClick="() => ChangePage(State.CurrentPage + 1)" />
-                </div>
-            </div>
+            <_BUIPagination CurrentPage="@State.CurrentPage"
+                            TotalPages="@TotalPages"
+                            TotalItems="@FilteredItems.Count"
+                            PageSize="@State.PageSize"
+                            OnPageChange="ChangePage" />
         }
     }
 </bui-component>
@@ -180,14 +159,14 @@
     private RenderFragment RenderCard(TItem item) => __builder =>
     {
         bool isSelected = State.IsSelected(item);
-    
+
         <article class="bui-datacards__card @(isSelected ? "bui-datacards__card--selected" : "") @(IsInteractiveRow ? "bui-datacards__card--interactive" : "")"
                  role="@(SelectionMode != SelectionMode.None ? (SelectionMode == SelectionMode.Single ? "radio" : "checkbox") : "listitem")"
                  aria-checked="@(SelectionMode != SelectionMode.None ? isSelected.ToString().ToLowerInvariant() : null)"
                  tabindex="@(IsInteractiveRow ? 0 : -1)"
                  @onkeydown="e => HandleRowKeyDown(e, item)"
                  @onkeydown:preventDefault="PreventRowKeyDown">
-    
+
             @if (SelectionMode != SelectionMode.None)
             {
                 <div class="bui-datacards__card-select">
@@ -196,7 +175,7 @@
                                    Size="SizeEnum.Small" />
                 </div>
             }
-    
+
             @if (CardTemplate != null)
             {
                 @CardTemplate(item)
@@ -209,7 +188,7 @@
                         @CardHeaderTemplate(item)
                     </header>
                 }
-    
+
                 <div class="bui-datacards__card-body">
                     @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
                     {
@@ -228,7 +207,7 @@
                         </div>
                     }
                 </div>
-    
+
                 @if (CardFooterTemplate != null)
                 {
                     <footer class="bui-datacards__card-footer">

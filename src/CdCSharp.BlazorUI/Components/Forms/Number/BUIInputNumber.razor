@@ -196,19 +196,13 @@
 
         </div>
 
-        @if (IsError && EditContext != null && ValueExpression != null)
-        {
-            <div class="bui-input__validation">
-                <ValidationMessage For="ValueExpression" />
-            </div>
-        }
+        <_BUIFieldHelper TValue="TValue"
+                         Id="@_helperTextId"
+                         HelperText="@HelperText"
+                         ShowValidation="@IsError"
+                         EditContext="@EditContext"
+                         For="@ValueExpression" />
 
-        @if (!string.IsNullOrWhiteSpace(HelperText))
-        {
-            <div id="@_helperTextId" class="bui-input__helper-text">
-                @HelperText
-            </div>
-        }
     </bui-component>
 };
 

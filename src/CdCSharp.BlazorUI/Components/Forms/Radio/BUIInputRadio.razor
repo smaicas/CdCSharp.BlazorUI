@@ -16,6 +16,8 @@
 @code {
     private readonly List<IRadioOption> _options = [];
     private readonly string _groupName = $"radio-{Guid.NewGuid():N}";
+    private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
+
     private readonly Type _elementType;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
@@ -110,6 +112,7 @@
                          role="radio"
                          aria-checked="@isSelected.ToString().ToLowerInvariant()"
                          aria-disabled="@isOptionDisabled.ToString().ToLowerInvariant()"
+                         aria-describedby="@_helperTextId"
                          tabindex="@(isOptionDisabled ? -1 : 0)"
                          @onclick="() => HandleOptionClick(option, isOptionDisabled)"
                          @onkeydown="e => HandleOptionKeyDown(e, option, isOptionDisabled)">
@@ -133,17 +136,13 @@
                 </_BUIBtn>
             }
 
-            @if (IsError && EditContext != null && ValueExpression != null)
-            {
-                <div class="bui-field__validation">
-                    <ValidationMessage For="ValueExpression" />
-                </div>
-            }
+            <_BUIFieldHelper TValue="TValue"
+                             Id="@_helperTextId"
+                             HelperText="@HelperText"
+                             ShowValidation="@IsError"
+                             EditContext="@EditContext"
+                             For="@ValueExpression" />
 
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div class="bui-field__helper">@HelperText</div>
-            }
         </bui-component>
     };
 

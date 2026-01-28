@@ -1,0 +1,31 @@
+﻿._bui-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.75rem 0;
+}
+
+._bui-pagination__info {
+    font-size: 0.875rem;
+    color: var(--palette-surfacecontrast);
+    opacity: 0.8;
+}
+
+._bui-pagination__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+._bui-pagination__ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+    color: var(--palette-surfacecontrast);
+    opacity: 0.6;
+}

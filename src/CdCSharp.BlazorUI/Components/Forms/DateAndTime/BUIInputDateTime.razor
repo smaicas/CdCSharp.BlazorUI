@@ -119,38 +119,31 @@
                 @if (CanClear && !ReadOnly)
                 {
                     <_BUIBtn Icon="@BUIIcons.UI.Close"
-                                AriaLabel="Clear"
-                                OnClick="(e)=> Clear()"
-                                OnClickPreventDefault="true"
-                                OnClickStopPropagation="true" />
+                             AriaLabel="Clear"
+                             OnClick="(e)=> Clear()"
+                             OnClickPreventDefault="true"
+                             OnClickStopPropagation="true" />
                 }
 
                 <_BUIBtn Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today"
-                            Disabled="@IsDisabled"
-                            Loading="@Loading"
-                            LoadingIndicatorVariant="@LoadingIndicatorVariant"
-                            AriaLabel="Open picker"
-                            OnClick="(e)=> OpenPicker()"
-                            OnClickPreventDefault="true"
-                            OnClickStopPropagation="true" />
+                         Disabled="@IsDisabled"
+                         Loading="@Loading"
+                         LoadingIndicatorVariant="@LoadingIndicatorVariant"
+                         AriaLabel="Open picker"
+                         OnClick="(e)=> OpenPicker()"
+                         OnClickPreventDefault="true"
+                         OnClickStopPropagation="true" />
 
                 <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
 
             </div>
 
-            @if (IsError && EditContext != null && ValueExpression != null)
-            {
-                <div class="bui-input__validation">
-                    <ValidationMessage For="ValueExpression" />
-                </div>
-            }
-
-            @if (!string.IsNullOrWhiteSpace(HelperText))
-            {
-                <div id="@_helperTextId" class="bui-input__helper-text">
-                    @HelperText
-                </div>
-            }
+            <_BUIFieldHelper TValue="TValue"
+                             Id="@_helperTextId"
+                             HelperText="@HelperText"
+                             ShowValidation="@IsError"
+                             EditContext="@EditContext"
+                             For="@ValueExpression" />
 
             <BUIDialog @bind-Open="_isPickerOpen"
                        Title="@GetPickerTitle()"

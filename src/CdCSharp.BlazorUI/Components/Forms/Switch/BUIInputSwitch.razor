@@ -10,6 +10,7 @@
 
 @code {
     private string _inputId = $"bui-switch-{Guid.NewGuid():N}";
+    private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
 
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
@@ -63,7 +64,15 @@
                    TrackColorInactive="@TrackColorInactive"
                    TrackColorActive="@TrackColorActive"
                    InputId="@_inputId"
+                   AriaDescribedBy="@_helperTextId"
                    @attributes="ComputedAttributes" />
+
+        <_BUIFieldHelper TValue="bool"
+                         Id="@_helperTextId"
+                         HelperText="@HelperText"
+                         ShowValidation="@IsError"
+                         EditContext="@EditContext"
+                         For="@ValueExpression" />
     };
 
     private async Task OnSwitchValueChanged(bool newValue)

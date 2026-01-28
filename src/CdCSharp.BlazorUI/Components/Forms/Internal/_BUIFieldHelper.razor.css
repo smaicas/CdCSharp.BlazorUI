@@ -1,0 +1,12 @@
+﻿._bui-field-helper {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--palette-surfacecontrast);
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+._bui-field-helper--error {
+    color: var(--palette-error, #d32f2f);
+    opacity: 1;
+}
