@@ -118,14 +118,14 @@
 
                 @if (CanClear && !ReadOnly)
                 {
-                    <_BUIButton Icon="@BUIIcons.UI.Close"
+                    <_BUIBtn Icon="@BUIIcons.UI.Close"
                                 AriaLabel="Clear"
                                 OnClick="(e)=> Clear()"
                                 OnClickPreventDefault="true"
                                 OnClickStopPropagation="true" />
                 }
 
-                <_BUIButton Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today"
+                <_BUIBtn Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today"
                             Disabled="@IsDisabled"
                             Loading="@Loading"
                             LoadingIndicatorVariant="@LoadingIndicatorVariant"
@@ -303,10 +303,8 @@
         // Without this, the Pattern doesn't detect the change from incomplete → initial
         _patternKey = Guid.NewGuid().ToString("N");
 
-        // Reset dirty state
         _isDirty = false;
 
-        // Force UI update
         StateHasChanged();
     }
 

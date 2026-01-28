@@ -51,9 +51,7 @@
                        value="@_alpha" @onchange="SetAlpha" />
                 break;
         }
-        <button type="button" class="bui-picker__btn bui-picker__btn--icon" @onclick="CycleFormat">
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_sync" Size="SizeEnum.Small" />
-        </button>
+        <_BUIBtn Icon="@BUIIcons.MaterialIconsRound.i_sync" OnClick="CycleFormat" />
     </div>
 
     <div class="bui-picker__preview">
@@ -63,7 +61,7 @@
     @if (ShowActions)
     {
         <div class="bui-picker__row" style="justify-content:flex-end; border-top:1px solid var(--palette-border); padding-top:var(--bui-density-gap, 0.5rem);">
-            <button type="button" class="bui-picker__btn" @onclick="HandleRevert">@RevertText</button>
+            <_BUIBtn OnClick="HandleRevert">@RevertText</_BUIBtn>
         </div>
     }
 </bui-component>

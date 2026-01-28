@@ -8,19 +8,19 @@
 
 <bui-component @attributes="ComputedAttributes">
     <div class="bui-picker__row">
-        <_BUIButton Size="Size" OnClick="ToggleFormatClicked">
+        <_BUIBtn Size="Size" OnClick="ToggleFormatClicked">
             @(Format == "24" ? "24h" : "12h")
-        </_BUIButton>
+        </_BUIBtn>
 
         <div class="bui-picker__row" style="flex:1; justify-content:center;">
             <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
-                <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
+                <_BUIBtn Icon="@BUIIcons.UI.ChevronUp"
                                      AriaLabel="Increment hour"
                                      OnClick="IncrementHourClicked" />
-                <_BUISimpleInput Value="@DisplayHour.ToString("00")"
+                <_BUIInText Value="@DisplayHour.ToString("00")"
                                           ValueChanged="OnHourInputChanged"
                                           maxlength="2" />
-                <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
+                <_BUIBtn Icon="@BUIIcons.UI.ChevronDown"
                                      AriaLabel="Decrement hour"
                                      OnClick="DecrementHourClicked" />
             </div>
@@ -28,13 +28,13 @@
             <span class="bui-picker__separator">:</span>
 
             <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;">
-                <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
+                <_BUIBtn Icon="@BUIIcons.UI.ChevronUp"
                                      AriaLabel="Increment minute"
                                      OnClick="IncrementMinuteClicked" />
-                <_BUISimpleInput Value="@Minute.ToString("00")"
+                <_BUIInText Value="@Minute.ToString("00")"
                                           ValueChanged="OnMinuteInputChanged"
                                           maxlength="2" />
-                <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
+                <_BUIBtn Icon="@BUIIcons.UI.ChevronDown"
                                      AriaLabel="Decrement minute"
                                      OnClick="DecrementMinuteClicked" />
             </div>
@@ -42,9 +42,9 @@
 
         @if (Format == "12")
         {
-            <_BUIButton OnClick="ToggleAmPmClicked">
+            <_BUIBtn OnClick="ToggleAmPmClicked">
                 @AmPm
-            </_BUIButton>
+            </_BUIBtn>
         }
     </div>
 </bui-component>

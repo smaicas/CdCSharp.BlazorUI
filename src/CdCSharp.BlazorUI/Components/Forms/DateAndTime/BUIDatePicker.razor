@@ -8,17 +8,17 @@
 
 <bui-component @attributes="ComputedAttributes">
     <div class="bui-picker__row">
-        <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
+        <_BUIBtn Icon="@BUIIcons.UI.ChevronLeft"
                     AriaLabel="Previous year"
                     OnClick="PrevYearClicked" />
-        <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
+        <_BUIBtn Icon="@BUIIcons.UI.ChevronLeft"
                     AriaLabel="Previous month"
                     OnClick="PrevMonthClicked" />
         <span class="bui-picker__title">@CurrentMonth.ToString("MMMM yyyy", CultureInfo.CurrentCulture)</span>
-        <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
+        <_BUIBtn Icon="@BUIIcons.UI.ChevronRight"
                     AriaLabel="Next month"
                     OnClick="NextMonthClicked" />
-        <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
+        <_BUIBtn Icon="@BUIIcons.UI.ChevronRight"
                     AriaLabel="Next year"
                     OnClick="NextYearClicked" />
     </div>
@@ -30,11 +30,11 @@
         }
         @foreach (DayCell day in Days)
         {
-            <_BUIButton Active="@day.IsSelected"
+            <_BUIBtn Active="@day.IsSelected"
                         class="@($"bui-picker__cell {(!day.IsCurrentMonth ? "bui-picker__cell--muted" : "")}")"
                         OnClick="() => SelectDateClicked(day.Date)">
                 @day.Date.Day
-            </_BUIButton>
+            </_BUIBtn>
         }
     </div>
 </bui-component>

@@ -215,13 +215,13 @@
     private RenderFragment RenderStepButtons() => __builder =>
     {
         <div class="bui-input__step-buttons">
-            <_BUIButton Icon="@BUIIcons.UI.ChevronUp"
+            <_BUIBtn Icon="@BUIIcons.UI.ChevronUp"
                         Disabled="@(Disabled || IsAtMax())"
                         AriaLabel="Increment"
                         @onmousedown="StartIncrement"
                         @onmouseup="StopIncrement"
                         @onmouseleave="StopIncrement" />
-            <_BUIButton Icon="@BUIIcons.UI.ChevronDown"
+            <_BUIBtn Icon="@BUIIcons.UI.ChevronDown"
                         Disabled="@(Disabled || IsAtMin())"
                         AriaLabel="Decrement"
                         @onmousedown="StartDecrement"

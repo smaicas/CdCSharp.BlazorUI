@@ -23,14 +23,14 @@
                 @if (Filterable)
                 {
                     <div class="bui-dc__filter">
-                        <_BUISimpleInput Value="@State.FilterText"
+                        <_BUIInText Value="@State.FilterText"
                                          Placeholder="@FilterPlaceholder"
                                          AriaLabel="@FilterPlaceholder"
                                          UpdateOnInput="true"
                                          OnInput="HandleFilterInputChange" />
                         @if (!string.IsNullOrEmpty(State.FilterText))
                         {
-                            <_BUIButton Icon="@BUIIcons.UI.Close"
+                            <_BUIBtn Icon="@BUIIcons.UI.Close"
                                         AriaLabel="Clear filter"
                                         OnClick="ClearFilterClicked" />
                         }
@@ -43,9 +43,9 @@
                 {
                     <div class="bui-dc__selection-info">
                         <span>@State.SelectedItems.Count selected</span>
-                        <_BUIButton OnClick="ClearSelectionClicked">
+                        <_BUIBtn OnClick="ClearSelectionClicked">
                             Clear
-                        </_BUIButton>
+                        </_BUIBtn>
                     </div>
                 }
 
@@ -53,7 +53,7 @@
                 {
                     <div class="bui-datacards__sort">
                         <label>Sort by</label>
-                        <_BUISimpleSelect Value="@State.SortColumn"
+                        <_BUIInSelect Value="@State.SortColumn"
                                           AriaLabel="Sort by column"
                                           ValueChanged="HandleSortSelectChange">
                             <option value="">None</option>
@@ -61,10 +61,10 @@
                             {
                                 <option value="@col.Header">@col.Header</option>
                             }
-                        </_BUISimpleSelect>
+                        </_BUIInSelect>
                         @if (!string.IsNullOrEmpty(State.SortColumn))
                         {
-                            <_BUIButton Icon="@(State.SortDirection == SortDirection.Ascending ? BUIIcons.UI.ArrowUpward : BUIIcons.UI.ArrowDownward)"
+                            <_BUIBtn Icon="@(State.SortDirection == SortDirection.Ascending ? BUIIcons.UI.ArrowUpward : BUIIcons.UI.ArrowDownward)"
                                         AriaLabel="Toggle sort direction"
                                         OnClick="ToggleSortDirectionClicked" />
                         }
@@ -75,14 +75,14 @@
                 {
                     <div class="bui-dc__page-size">
                         <label>Show</label>
-                        <_BUISimpleSelect Value="@State.PageSize.ToString()"
+                        <_BUIInSelect Value="@State.PageSize.ToString()"
                                           AriaLabel="Items per page"
                                           ValueChanged="HandlePageSizeSelectChange">
                             @foreach (int size in PageSizeOptions)
                             {
                                 <option value="@size">@size</option>
                             }
-                        </_BUISimpleSelect>
+                        </_BUIInSelect>
                     </div>
                 }
             </div>
@@ -137,21 +137,21 @@
                 </div>
 
                 <div class="bui-dc__pagination-controls">
-                    <_BUIButton Icon="@BUIIcons.UI.ChevronLeft"
+                    <_BUIBtn Icon="@BUIIcons.UI.ChevronLeft"
                                 Disabled="@(State.CurrentPage == 1)"
                                 AriaLabel="Previous page"
                                 OnClick="() => ChangePage(State.CurrentPage - 1)" />
 
                     @foreach (int currentPage in GetVisiblePages())
                     {
-                        <_BUIButton Active="@(State.CurrentPage == currentPage)"
+                        <_BUIBtn Active="@(State.CurrentPage == currentPage)"
                                     AriaLabel="@($"Page {currentPage}")"
                                     OnClick="() => ChangePage(currentPage)">
                             @currentPage
-                        </_BUIButton>
+                        </_BUIBtn>
                     }
 
-                    <_BUIButton Icon="@BUIIcons.UI.ChevronRight"
+                    <_BUIBtn Icon="@BUIIcons.UI.ChevronRight"
                                 Disabled="@(State.CurrentPage == TotalPages)"
                                 AriaLabel="Next page"
                                 OnClick="() => ChangePage(State.CurrentPage + 1)" />

@@ -22,8 +22,6 @@ public class PickerFamilyCssGenerator : IAssetGenerator
 
         string row = FeatureDefinitions.CssClasses.Picker.Row;
         string title = FeatureDefinitions.CssClasses.Picker.Title;
-        string btn = FeatureDefinitions.CssClasses.Picker.Btn;
-        string btnIcon = FeatureDefinitions.CssClasses.Picker.BtnIcon;
         string grid = FeatureDefinitions.CssClasses.Picker.Grid;
         string cell = FeatureDefinitions.CssClasses.Picker.Cell;
         string cellSelected = FeatureDefinitions.CssClasses.Picker.CellSelected;
@@ -65,37 +63,6 @@ bui-component[{{picker}}] .{{title}} {
     flex: 1;
     font-weight: 600;
     text-align: center;
-}
-
-/* Button */
-bui-component[{{picker}}] .{{btn}} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    height: var(--_btn);
-    padding-inline: 0.75rem;
-    border: 1px solid var(--palette-border);
-    border-radius: 6px;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 150ms ease;
-}
-
-bui-component[{{picker}}] .{{btn}}:hover {
-    background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
-}
-
-bui-component[{{picker}}] .{{btn}}:active {
-    transform: scale(0.96);
-}
-
-bui-component[{{picker}}] .{{btnIcon}} {
-    width: var(--_btn);
-    padding: 0;
 }
 
 /* Grid */
@@ -218,11 +185,6 @@ bui-component[{{picker}}] .{{preview}} > div {
 /* ========================================
    KEYBOARD FOCUS INDICATORS
    ======================================== */
-
-bui-component[data-bui-picker-base] .bui-picker__btn:focus-visible {
-    outline: var(--bui-highlight-outline);
-    outline-offset: var(--bui-highlight-outline-offset);
-}
 
 bui-component[data-bui-picker-base] .bui-picker__cell:focus-visible {
     outline: var(--bui-highlight-outline);

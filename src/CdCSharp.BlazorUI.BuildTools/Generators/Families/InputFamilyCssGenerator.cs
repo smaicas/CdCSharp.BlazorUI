@@ -387,16 +387,6 @@ bui-component[{{inputBase}}][{{variant}}="standard"] .{{helper}},
 bui-component[{{inputBase}}][{{variant}}="standard"] .{{validation}} {
     padding-inline-start: 0;
 }
-
-/* ========================================
-   KEYBOARD FOCUS INDICATORS
-   ======================================== */
-
-/* Addon buttons retain focus-visible outline (transitional focus) */
-bui-component[data-bui-input-base] .bui-input__addon--btn:focus-visible {
-    outline: var(--bui-highlight-outline);
-    outline-offset: var(--bui-highlight-outline-offset);
-}
 """;
     }
 }

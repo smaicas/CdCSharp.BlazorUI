@@ -71,8 +71,6 @@ public static class FeatureDefinitions
         {
             public const string Row = "bui-picker__row";
             public const string Title = "bui-picker__title";
-            public const string Btn = "bui-picker__btn";
-            public const string BtnIcon = "bui-picker__btn--icon";
             public const string Grid = "bui-picker__grid";
             public const string Cell = "bui-picker__cell";
             public const string CellSelected = "bui-picker__cell--selected";

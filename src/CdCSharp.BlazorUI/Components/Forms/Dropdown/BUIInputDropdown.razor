@@ -47,7 +47,7 @@
     @if (Searchable)
     {
         <div class="bui-dropdown__search">
-            <_BUISimpleInput Value="@_searchText"
+            <_BUIInText Value="@_searchText"
                                       Placeholder="@SearchPlaceholder"
                                       Size="Size"
                                       UpdateOnInput="true"
@@ -59,12 +59,12 @@
     @if (_selectionState.IsMultiple && ShowSelectAll && _options.Count > 0)
     {
         <div class="bui-dropdown__select-all">
-            <_BUIButton OnClick="SelectAllClicked" OnClickStopPropagation="true">
+            <_BUIBtn OnClick="SelectAllClicked" OnClickStopPropagation="true">
                 @SelectAllText
-            </_BUIButton>
-            <_BUIButton OnClick="DeselectAllClicked" OnClickStopPropagation="true">
+            </_BUIBtn>
+            <_BUIBtn OnClick="DeselectAllClicked" OnClickStopPropagation="true">
                 @DeselectAllText
-            </_BUIButton>
+            </_BUIBtn>
         </div>
     }
 
