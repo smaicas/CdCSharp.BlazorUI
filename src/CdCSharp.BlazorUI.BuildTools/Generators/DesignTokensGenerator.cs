@@ -45,9 +45,18 @@ public class DesignTokensGenerator : IAssetGenerator
     /* ========================================
        SIZE MULTIPLIERS
        ======================================== */
+    --bui-size-multiplier: 1; /* Default */
     --bui-small-multiplier: 0.75;
     --bui-medium-multiplier: 1;
     --bui-large-multiplier: 1.25;
+
+    /* ========================================
+       DENSITY MULTIPLIERS
+       ======================================== */
+    --bui-density-multiplier: 1; /* Default */
+    --bui-compact-multiplier: 0.75;
+    --bui-standard-multiplier: 1;
+    --bui-comfortable-multiplier: 1.25;
 }
 
 {{GetRippleStyles()}}

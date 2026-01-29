@@ -47,7 +47,7 @@
     bui-component[data-bui-component="theme-selector"][data-bui-variant="default"] .bui-theme-switch__content {
         display: inline-flex;
         align-items: center;
-        gap: var(--bui-density-gap);
+        gap: calc(0.5rem * var(--bui-density-multiplier));
         transition: opacity 0.3s ease, transform 0.3s ease;
     }
 

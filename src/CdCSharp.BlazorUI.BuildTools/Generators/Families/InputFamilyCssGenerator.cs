@@ -63,8 +63,8 @@ bui-component[{{inputBase}}] {
 
     --_input-min-width: 200px;
     --_input-h: calc(3.5rem * {{V(sizeMult, "1")}});
-    --_input-px: calc(1rem * {{V(sizeMult, "1")}});
-    --_input-py: calc(1rem * {{V(sizeMult, "1")}});
+    --_input-px: 1rem;
+    --_input-py: 0.75rem;
     --_input-radius: {{V(inlineRadius, "4px")}};
     --_input-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --_input-scale: 0.75;

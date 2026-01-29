@@ -206,11 +206,10 @@
 
             @if (SelectionMode != SelectionMode.None)
             {
-                <td class="bui-datagrid__select-cell" role="gridcell" @onclick:stopPropagation="true">
-                    <_BUIBtn Icon="@GetRowSelectIcon(isSelected)"
-                             Size="SizeEnum.Small"
-                             AriaLabel="@(isSelected ? "Deselect row" : "Select row")"
-                             OnClick="() => HandleSelectRow(item)" />
+                <td class="bui-datagrid__select-cell" role="gridcell">
+                    <_BUICheckMark Checked="@isSelected"
+                                   Mode="@(SelectionMode == SelectionMode.Single ? _BUICheckMark.CheckMarkMode.Radio : _BUICheckMark.CheckMarkMode.Checkbox)"
+                                   Size="SizeEnum.Small" />
                 </td>
             }
 

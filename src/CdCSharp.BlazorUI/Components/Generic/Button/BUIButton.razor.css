@@ -13,7 +13,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: var(--bui-density-gap);
+        gap: calc(0.5rem * var(--bui-density-multiplier));
         cursor: pointer;
         padding: var(--_button-padding-y) var(--_button-padding-x);
         min-height: var(--_button-height);

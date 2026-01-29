@@ -14,7 +14,7 @@ public static class FeatureDefinitions
         /// </summary>
         public static class Density
         {
-            public const string Gap = "--bui-density-gap";
+            public static string Multiplier => "--bui-density-multiplier";
         }
 
         /// <summary>

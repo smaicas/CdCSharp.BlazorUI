@@ -18,8 +18,6 @@ public class PickerFamilyCssGenerator : IAssetGenerator
     {
         string picker = FeatureDefinitions.DataAttributes.PickerBase;
         string sizeMult = FeatureDefinitions.ComponentVariables.Size.Multiplier;
-        string gap = FeatureDefinitions.ComponentVariables.Density.Gap;
-
         string row = FeatureDefinitions.CssClasses.Picker.Row;
         string title = FeatureDefinitions.CssClasses.Picker.Title;
         string grid = FeatureDefinitions.CssClasses.Picker.Grid;
@@ -40,7 +38,7 @@ public class PickerFamilyCssGenerator : IAssetGenerator
 bui-component[{{picker}}] {
     display: flex;
     flex-direction: column;
-    gap: {{V(gap, "0.5rem")}};
+    gap: calc(0.5rem * var(--bui-density-multiplier));
     padding: calc(0.75rem * {{V(sizeMult, "1")}});
     background: var(--palette-surface);
     border: 1px solid var(--palette-border);
@@ -55,7 +53,7 @@ bui-component[{{picker}}] .{{row}} {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: {{V(gap, "0.5rem")}};
+    gap: calc(0.5rem * var(--bui-density-multiplier));
 }
 
 /* Title */

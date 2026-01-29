@@ -318,10 +318,47 @@
 
     private async Task HandleNodeKeyDown(KeyboardEventArgs e, TreeSelectionNode<TItem> node)
     {
-        _preventKeyDefault = e.Key == " ";
-        if ((e.Key == " " || e.Key == "Enter") && !node.IsDisabled)
+        switch (e.Key)
         {
-            await HandleNodeClickAsync(node);
+            case " ":
+            case "Enter":
+                _preventKeyDefault = true;
+                if (!node.IsDisabled)
+                {
+                    await ToggleSelectionAsync(node.Key);
+                }
+                break;
+
+            case "ArrowRight":
+                _preventKeyDefault = true;
+                if (node.HasChildren)
+                {
+                    if (!_tree.IsExpanded(node.Key))
+                    {
+                        await ToggleExpandAsync(node);
+                    }
+                }
+                break;
+
+            case "ArrowLeft":
+                _preventKeyDefault = true;
+                if (node.HasChildren && _tree.IsExpanded(node.Key))
+                {
+                    await ToggleExpandAsync(node);
+                }
+                break;
+
+            case "ArrowDown":
+                _preventKeyDefault = true;
+                break;
+
+            case "ArrowUp":
+                _preventKeyDefault = true;
+                break;
+
+            default:
+                _preventKeyDefault = false;
+                break;
         }
     }
 

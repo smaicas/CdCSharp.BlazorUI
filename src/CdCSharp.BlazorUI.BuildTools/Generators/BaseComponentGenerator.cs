@@ -42,26 +42,25 @@ public class BaseComponentGenerator : IAssetGenerator
     font-family: inherit;
     font-size: calc(1rem * var(--bui-size-multiplier, 1));
     line-height: inherit;
-    gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}}, 0.5rem);
+    gap: calc(0.5rem * var(--bui-density-multiplier, 1));
 }
 """;
 
     private static string GetDensitySystem() => $$"""
 /* ========================================
    DENSITY SYSTEM
-   Affects spacing between elements.
    ======================================== */
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="compact"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.25rem;
+    {{FeatureDefinitions.ComponentVariables.Density.Multiplier}}: var(--bui-compact-multiplier, 0.5);
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="standard"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.5rem;
+    {{FeatureDefinitions.ComponentVariables.Density.Multiplier}}: var(--bui-standard-multiplier, 1);
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Density}}="comfortable"] {
-    {{FeatureDefinitions.ComponentVariables.Density.Gap}}: 0.75rem;
+    {{FeatureDefinitions.ComponentVariables.Density.Multiplier}}: var(--bui-comfortable-multiplier, 1.5);
 }
 """;
 

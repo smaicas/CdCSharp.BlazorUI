@@ -67,7 +67,7 @@ bui-component[data-bui-component="card"] {
         padding: var(--_card-actions-padding);
         display: flex;
         align-items: center;
-        gap: var(--bui-density-gap);
+        gap: calc(0.5rem * var(--bui-density-multiplier));
     }
 
     bui-component[data-bui-component="card"] .bui-card__actions--start {

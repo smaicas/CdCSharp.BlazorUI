@@ -2,5 +2,5 @@
 bui-component[data-bui-component="input-date-time"] .bui-input-datetime__picker-content {
     display: flex;
     flex-direction: column;
-    gap: var(--bui-density-gap, 0.5rem);
+    gap: calc(0.5rem * var(--bui-density-multiplier));
 }
