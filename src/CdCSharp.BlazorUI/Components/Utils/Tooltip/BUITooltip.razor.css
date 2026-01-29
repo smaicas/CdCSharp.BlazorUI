@@ -13,6 +13,8 @@
 
 .bui-tooltip__content {
     --_tooltip-radius: 4px;
+    display: flex;
+    align-items: center;
     background-color: rgba(33, 33, 33, 0.95);
     color: #fff;
     padding: 0.5rem 0.75rem;

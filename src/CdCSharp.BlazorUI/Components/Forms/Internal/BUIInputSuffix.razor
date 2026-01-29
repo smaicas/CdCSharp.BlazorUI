@@ -2,11 +2,7 @@
 
 @if (HasSuffix)
 {
-    <_BUIAddon class="bui-input__addon--suffix">
-        @if (!string.IsNullOrWhiteSpace(SuffixIcon))
-        {
-            <BUISvgIcon Icon="@SuffixIcon" Size="Size" />
-        }
+    <_BUIAddon Icon="@SuffixIcon" Size="Size" class="bui-input__addon--suffix">
         @if (!string.IsNullOrWhiteSpace(SuffixText))
         {
             <span>@SuffixText</span>

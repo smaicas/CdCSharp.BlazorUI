@@ -46,6 +46,15 @@ public class DesignTokensGenerator : IAssetGenerator
        ======================================== */
        --bui-highlight-outline: 2px solid var(--palette-highlight);
        --bui-highlight-outline-offset: 0px;
+
+    /* ========================================
+       SIZE MULTIPLIERS
+       ======================================== */
+       --bui-small-multiplier: 0.75;
+       --bui-medium-multiplier: 1;
+       --bui-large-multiplier: 1.25;
+
+
 }
 """;
     }

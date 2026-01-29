@@ -1,5 +1,4 @@
-﻿
-@using CdCSharp.BlazorUI.Core.Abstractions.Components
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
 
 @namespace CdCSharp.BlazorUI.Components
 
@@ -23,7 +22,7 @@
              role="tooltip"
              @onmouseenter="HandleTooltipMouseEnter"
              @onmouseleave="HandleTooltipMouseLeave">
-            <div class="bui-tooltip__content">
+            <div class="bui-tooltip__content">               
                 @if (TooltipContent != null)
                 {
                     @TooltipContent
@@ -32,15 +31,16 @@
                 {
                     @Text
                 }
+                @if (Trigger == TooltipTrigger.Permanent)
+                {
+                    <_BUIBtn Icon="@BUIIcons.UI.Close"
+                             AriaLabel="Close tooltip"
+                             OnClick="HandleCloseClicked"
+                             OnClickStopPropagation="true"
+                             Size="SizeEnum.Small" />
+                }
             </div>
-            @if (Trigger == TooltipTrigger.Permanent)
-            {
-                <_BUIBtn Icon="@BUIIcons.UI.Close"
-                         AriaLabel="Close tooltip"
-                         OnClick="HandleCloseClicked"
-                         OnClickStopPropagation="true"
-                         class="bui-tooltip__close" />
-            }
+
             @if (Arrow)
             {
                 <div class="bui-tooltip__arrow"></div>

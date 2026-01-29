@@ -26,20 +26,6 @@ bui-component[data-bui-component="dropdown-container"] .bui-dropdown__placeholde
     opacity: var(--bui-opacity-placeholder);
 }
 
-/* === ARROW INDICATOR === */
-
-bui-component[data-bui-component="dropdown-container"] .bui-dropdown__arrow {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    margin-inline-start: var(--bui-density-gap, 0.5rem);
-    transition: transform 200ms ease;
-}
-
-bui-component[data-bui-component="dropdown-container"][data-bui-dropdown-open="true"] .bui-dropdown__arrow {
-    transform: rotate(180deg);
-}
-
 /* === MENU PANEL === */
 
 bui-component[data-bui-component="dropdown-container"] .bui-dropdown__menu {

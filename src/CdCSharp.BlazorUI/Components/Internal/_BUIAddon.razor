@@ -1,13 +1,30 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Internal
 
-<div class="@ComputedClass" @attributes="FilteredAttributes">
+<div class="@ComputedClass" style="@ComputedStyle" @attributes="FilteredAttributes">
+    @if (Loading)
+    {
+        <BUILoadingIndicator Variant="LoadingIndicatorVariant" Size="Size" />
+    }
+    else if (!string.IsNullOrEmpty(Icon))
+    {
+        <BUISvgIcon Icon="@Icon" Size="Size" style="@IconStyle" />
+    }
     @ChildContent
 </div>
 
 @code {
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public int IconRotation { get; set; }
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string? IconStyle => IconRotation != 0
+        ? $"transform: rotate({IconRotation}deg); transition: transform 200ms ease;"
+        : null;
 
     private string ComputedClass
     {
@@ -19,6 +36,17 @@
                 classes.Add(extraClass.ToString() ?? "");
 
             return string.Join(" ", classes);
+        }
+    }
+
+    private string? ComputedStyle
+    {
+        get
+        {
+            if (AdditionalAttributes?.TryGetValue("style", out object? extraStyle) == true)
+                return extraStyle.ToString();
+
+            return null;
         }
     }
 

@@ -5,11 +5,11 @@
     align-self: stretch;
     flex-shrink: 0;
     gap: 0.25rem;
-    width: calc(2.5rem * var(--bui-size-multiplier, 1));
+    min-width: calc(2.5rem * var(--bui-size-multiplier, 1));
     margin: 0;
     padding: 0;
     border: none;
     border-radius: 0;
     overflow: hidden;
-    transition: background-color 150ms ease, border-color 150ms ease;
+    transition: transform 200ms ease, background-color 150ms ease, border-color 150ms ease;
 }

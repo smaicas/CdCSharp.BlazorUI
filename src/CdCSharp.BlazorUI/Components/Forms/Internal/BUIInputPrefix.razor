@@ -2,11 +2,7 @@
 
 @if (HasPrefix)
 {
-    <_BUIAddon class="bui-input__addon--prefix">
-        @if (!string.IsNullOrWhiteSpace(PrefixIcon))
-        {
-            <BUISvgIcon Icon="@PrefixIcon" Size="Size" />
-        }
+    <_BUIAddon Icon="@PrefixIcon" Size="Size" class="bui-input__addon--prefix">
         @if (!string.IsNullOrWhiteSpace(PrefixText))
         {
             <span>@PrefixText</span>

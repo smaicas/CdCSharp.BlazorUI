@@ -12,6 +12,7 @@
     border-radius: 0;
     overflow: hidden;
     transition: background-color 150ms ease, border-color 150ms ease;
+    font-size: calc(1rem * var(--bui-size-multiplier, 1));
 }
 
     ._bui-btn:hover:not(:disabled) {
@@ -41,3 +42,15 @@
         border-color: var(--palette-primary);
         filter: brightness(1.1);
     }
+
+._bui-btn[data-bui-size="small"] {
+    --bui-size-multiplier: var(--bui-small-multiplier);
+}
+
+._bui-btn[data-bui-size="medium"] {
+    --bui-size-multiplier: var(--bui-medium-multiplier);
+}
+
+._bui-btn[data-bui-size="large"] {
+    --bui-size-multiplier: var(--bui-large-multiplier);
+}

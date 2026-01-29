@@ -72,15 +72,15 @@ public class BaseComponentGenerator : IAssetGenerator
    ======================================== */
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="small"] {
-    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 0.75;
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: var(--bui-small-multiplier);
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="medium"] {
-    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 1;
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: var(--bui-medium-multiplier);
 }
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.Size}}="large"] {
-    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: 1.25;
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: var(--bui-large-multiplier);
 }
 """;
 

@@ -305,16 +305,11 @@
 
         @if (hasChildren)
         {
-            <span class="bui-tree-menu__arrow @(isExpanded ? "bui-tree-menu__arrow--expanded" : "")">
-                @if (isLoading)
-                {
-                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" Size="Size" />
-                }
-                else
-                {
-                    <BUISvgIcon Icon="@GetExpandIcon()" Size="Size" />
-                }
-            </span>
+            <_BUIAddon Icon="@GetExpandIcon()"
+                       IconRotation="@(isExpanded ? 90 : 0)"
+                       Loading="@isLoading"
+                       LoadingIndicatorVariant="BUILoadingIndicatorVariant.Spinner"
+                       Size="Size" />
         }
     };
 

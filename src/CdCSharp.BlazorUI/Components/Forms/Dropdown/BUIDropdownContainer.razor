@@ -137,9 +137,9 @@
                         }
                     </span>
 
-                    <span class="bui-dropdown__arrow">
-                        <BUISvgIcon Icon="@BUIIcons.UI.ChevronDown" Size="Size" />
-                    </span>
+                    <_BUIAddon Icon="@BUIIcons.UI.ExpandMore"
+                               IconRotation="@(IsOpen ? 180 : 0)"
+                               Size="Size" />
                 </button>
 
                 @if (IsOpen)

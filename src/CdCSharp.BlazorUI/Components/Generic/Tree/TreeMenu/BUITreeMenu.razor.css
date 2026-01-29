@@ -121,24 +121,6 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__text {
     white-space: nowrap;
 }
 
-bui-component[data-bui-component="tree-menu"] .bui-tree-menu__arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    margin-left: auto;
-    opacity: 0.6;
-    transition: transform var(--_tree-menu-transition);
-}
-
-bui-component[data-bui-component="tree-menu"] .bui-tree-menu__arrow--expanded {
-    transform: rotate(90deg);
-}
-
-bui-component[data-bui-component="tree-menu"][data-bui-orientation="horizontal"] .bui-tree-menu__arrow--expanded {
-    transform: rotate(180deg);
-}
-
 bui-component[data-bui-component="tree-menu"] .bui-tree-menu__submenu--inline {
     display: flex;
     flex-direction: column;
