@@ -17,6 +17,7 @@
     private readonly List<IRadioOption> _options = [];
     private readonly string _groupName = $"radio-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
+    private bool _preventKeyDefault;
 
     private readonly Type _elementType;
 
@@ -37,7 +38,8 @@
         _options.Add(option);
         StateHasChanged();
     }
-    void IRadioContainer.UnregisterOption(IRadioOption option) {
+    void IRadioContainer.UnregisterOption(IRadioOption option)
+    {
         _options.Remove(option);
         StateHasChanged();
     }
@@ -90,7 +92,9 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
+        <bui-component @attributes="ComputedAttributes"
+                       data-orientation="@Orientation.ToString().ToLowerInvariant()">
+    
             @if (!string.IsNullOrWhiteSpace(Label))
             {
                 <span class="bui-radio__label">
@@ -101,13 +105,13 @@
                     }
                 </span>
             }
-
+    
             <div class="bui-radio__group" role="radiogroup">
                 @foreach (IRadioOption option in _options)
                 {
                     bool isSelected = ((IRadioContainer)this).IsOptionSelected(option.RawValue);
                     bool isOptionDisabled = IsDisabled || option.IsDisabled;
-
+    
                     <div class="bui-radio__option @(isOptionDisabled ? "bui-radio__option--disabled" : "")"
                          role="radio"
                          aria-checked="@isSelected.ToString().ToLowerInvariant()"
@@ -115,34 +119,35 @@
                          aria-describedby="@_helperTextId"
                          tabindex="@(isOptionDisabled ? -1 : 0)"
                          @onclick="() => HandleOptionClick(option, isOptionDisabled)"
-                         @onkeydown="e => HandleOptionKeyDown(e, option, isOptionDisabled)">
-
+                         @onkeydown="e => HandleOptionKeyDown(e, option, isOptionDisabled)"
+                         @onkeydown:preventDefault="_preventKeyDefault">
+    
                         <_BUICheckMark Checked="@isSelected"
                                        Mode="_BUICheckMark.CheckMarkMode.Radio"
                                        Size="Size"
                                        Disabled="isOptionDisabled"
                                        CheckedIcon="@CheckedIcon"
                                        UncheckedIcon="@UncheckedIcon" />
-
+    
                         <span class="bui-radio__text">@option.Content</span>
                     </div>
                 }
             </div>
-
+    
             @if (ShowClearButton)
             {
                 <_BUIBtn OnClick="ClearClicked">
                     @ClearText
                 </_BUIBtn>
             }
-
+    
             <_BUIFieldHelper TValue="TValue"
                              Id="@_helperTextId"
                              HelperText="@HelperText"
                              ShowValidation="@IsError"
                              EditContext="@EditContext"
                              For="@ValueExpression" />
-
+    
         </bui-component>
     };
 
@@ -154,6 +159,7 @@
 
     private async Task HandleOptionKeyDown(KeyboardEventArgs e, IRadioOption option, bool isDisabled)
     {
+        _preventKeyDefault = e.Key == " ";
         if ((e.Key == " " || e.Key == "Enter") && !isDisabled)
         {
             await SelectValueAsync(option.RawValue);

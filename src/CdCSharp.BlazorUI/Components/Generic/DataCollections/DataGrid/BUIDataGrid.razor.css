@@ -12,7 +12,7 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__container {
         position: sticky;
         top: 0;
         z-index: 10;
-        background: var(--_dc-header-bg);
+        background: var(--palette-surface);
     }
 
 /* Table */

@@ -8,7 +8,6 @@
 }
 
     bui-component[data-bui-component="input-radio"] .bui-radio__label {
-        font-size: calc(1rem * var(--bui-size-multiplier, 1));
         font-weight: 500;
         color: var(--palette-surfacecontrast);
     }
@@ -38,7 +37,6 @@
     }
 
     bui-component[data-bui-component="input-radio"] .bui-radio__text {
-        font-size: calc(1rem * var(--bui-size-multiplier, 1));
         line-height: 1.4;
         color: var(--palette-surfacecontrast);
     }

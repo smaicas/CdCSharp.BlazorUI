@@ -9,6 +9,7 @@
 }
 
 @code {
+
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public CssColor? Color { get; set; }
     [Parameter] public string? Label { get; set; }
@@ -19,6 +20,7 @@
 
     private readonly string _inputId = $"bui-checkbox-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
+    private bool _preventKeyDefault;
 
     private bool IsChecked => GetCheckedState();
     private bool IsIndeterminate => GetIndeterminateState();
@@ -111,14 +113,15 @@
                  aria-describedby="@_helperTextId"
                  tabindex="@(IsDisabled ? -1 : 0)"
                  @onclick="HandleClick"
-                 @onkeydown="HandleKeyDown">
+                 @onkeydown="HandleKeyDown"
+                 @onkeydown:preventDefault="_preventKeyDefault">
 
                 <_BUICheckMark Checked="@(IsIndeterminate ? null : IsChecked)"
-                                        Size="Size"
-                                        Disabled="IsDisabled"
-                                        CheckedIcon="@CheckedIcon"
-                                        UncheckedIcon="@UncheckedIcon"
-                                        IndeterminateIcon="@IndeterminateIcon" />
+                               Size="Size"
+                               Disabled="IsDisabled"
+                               CheckedIcon="@CheckedIcon"
+                               UncheckedIcon="@UncheckedIcon"
+                               IndeterminateIcon="@IndeterminateIcon" />
 
                 @if (!string.IsNullOrWhiteSpace(Label))
                 {
@@ -166,6 +169,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
+        _preventKeyDefault = e.Key == " ";
         if (e.Key == " " || e.Key == "Enter")
         {
             await HandleClick(new MouseEventArgs());

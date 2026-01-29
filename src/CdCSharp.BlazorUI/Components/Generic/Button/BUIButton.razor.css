@@ -1,10 +1,8 @@
 ﻿bui-component[data-bui-component="button"] {
-    /* Size-dependent calculations using multiplier */
     --_button-height: calc(2.5rem * var(--bui-size-multiplier, 1));
-    --_button-padding-x: calc(1rem * var(--bui-size-multiplier, 1));
-    --_button-padding-y: calc(0.5rem * var(--bui-size-multiplier, 1));
+    --_button-padding-x: 1rem;
+    --_button-padding-y: 0.5rem;
     --_button-icon-size: calc(1.25rem * var(--bui-size-multiplier, 1));
-    /* Component defaults */
     --_button-background-default: var(--palette-primary);
     --_button-color-default: var(--palette-primarycontrast);
     --_button-border-default: none;

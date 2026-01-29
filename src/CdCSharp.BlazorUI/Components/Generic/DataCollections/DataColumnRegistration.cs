@@ -4,17 +4,17 @@ namespace CdCSharp.BlazorUI.Components;
 
 public sealed class DataColumnRegistration<TItem>
 {
-    public ColumnAlign Align { get; init; } = ColumnAlign.Left;
-    public string? CellClass { get; init; }
-    public Func<TItem, TItem, int>? CustomComparer { get; init; }
-    public Func<TItem, string, bool>? CustomFilter { get; init; }
-    public bool Filterable { get; init; }
-    public string? Format { get; init; }
-    public string? Header { get; init; }
-    public string? HeaderClass { get; init; }
-    public bool Sortable { get; init; }
-    public RenderFragment<TItem>? Template { get; init; }
-    public Func<TItem, object?>? ValueSelector { get; init; }
-    public bool Visible { get; init; } = true;
-    public string? Width { get; init; }
+    public ColumnAlign Align { get; set; } = ColumnAlign.Left;
+    public string? CellClass { get; set; }
+    public Func<TItem, TItem, int>? CustomComparer { get; set; }
+    public Func<TItem, string, bool>? CustomFilter { get; set; }
+    public bool Filterable { get; set; }
+    public string? Format { get; set; }
+    public string? Header { get; set; }
+    public string? HeaderClass { get; set; }
+    public bool Sortable { get; set; }
+    public RenderFragment<TItem>? Template { get; set; }
+    public Func<TItem, object?>? ValueSelector { get; set; }
+    public bool Visible { get; set; } = true;
+    public string? Width { get; set; }
 }

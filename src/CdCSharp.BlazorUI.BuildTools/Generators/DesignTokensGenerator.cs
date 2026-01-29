@@ -17,13 +17,11 @@ public class DesignTokensGenerator : IAssetGenerator
     public string Name => "Design Tokens";
 
     public async Task<string> GetContent()
-    {
-        return $$"""
+{
+    return $$"""
 :root {
     /* ========================================
        Z-INDEX SCALE
-       Stacking context layers.
-       Usage: overlays, modals, tooltips.
        ======================================== */
     {{FeatureDefinitions.Tokens.ZIndex.Dropdown}}: {{FeatureDefinitions.Tokens.ZIndex.DropdownValue}};
     {{FeatureDefinitions.Tokens.ZIndex.Sticky}}: {{FeatureDefinitions.Tokens.ZIndex.StickyValue}};
@@ -33,8 +31,6 @@ public class DesignTokensGenerator : IAssetGenerator
 
     /* ========================================
        OPACITY STATES
-       Visual feedback values.
-       Usage: disabled, placeholder, hover.
        ======================================== */
     {{FeatureDefinitions.Tokens.Opacity.Disabled}}: {{FeatureDefinitions.Tokens.Opacity.DisabledValue}};
     {{FeatureDefinitions.Tokens.Opacity.Placeholder}}: {{FeatureDefinitions.Tokens.Opacity.PlaceholderValue}};
@@ -42,20 +38,41 @@ public class DesignTokensGenerator : IAssetGenerator
 
     /* ========================================
        OUTLINE HIGHLIGHT
-       Focus indicator for accessibility.
        ======================================== */
-       --bui-highlight-outline: 2px solid var(--palette-highlight);
-       --bui-highlight-outline-offset: 0px;
+    --bui-highlight-outline: 2px solid var(--palette-highlight);
+    --bui-highlight-outline-offset: 0px;
 
     /* ========================================
        SIZE MULTIPLIERS
        ======================================== */
-       --bui-small-multiplier: 0.75;
-       --bui-medium-multiplier: 1;
-       --bui-large-multiplier: 1.25;
+    --bui-small-multiplier: 0.75;
+    --bui-medium-multiplier: 1;
+    --bui-large-multiplier: 1.25;
+}
 
+{{GetRippleStyles()}}
+""";
+}
 
+    private static string GetRippleStyles() => """
+/* ========================================
+   RIPPLE EFFECT
+   ======================================== */
+
+.bui-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: var(--bui-ripple-color, rgba(255, 255, 255, 0.4));
+    transform: scale(0);
+    animation: bui-ripple-animation var(--bui-ripple-duration, 600ms) linear;
+    pointer-events: none;
+}
+
+@keyframes bui-ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
 }
 """;
-    }
 }

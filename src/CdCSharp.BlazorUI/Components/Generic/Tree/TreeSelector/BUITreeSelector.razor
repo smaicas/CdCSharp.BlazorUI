@@ -35,6 +35,7 @@
     private readonly HashSet<string> _selectedKeysInternal = [];
     private bool _isDeclarativeMode;
     private bool _structureBuilt;
+    private bool _preventKeyDefault;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
@@ -208,7 +209,7 @@
         bool isExpanded = _tree.IsExpanded(node.Key);
         bool isLoading = _tree.IsLoading(node.Key);
         bool isSelected = IsSelected(node.Key);
-    
+
         <div class="bui-tree-selector__node @(node.IsDisabled ? "bui-tree-selector__node--disabled" : "") @(isSelected ? "bui-tree-selector__node--selected" : "")"
              role="treeitem"
              aria-expanded="@(node.HasChildren? isExpanded.ToString().ToLowerInvariant() : null)"
@@ -216,35 +217,39 @@
              aria-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
              data-depth="@node.Depth"
              data-key="@node.Key">
-    
+
             <div class="bui-tree-selector__node-content"
                  style="padding-left: calc(@(node.Depth) * var(--bui-tree-selector-indent, 1.5rem))"
+                 tabindex="@(node.IsDisabled ? -1 : 0)"
                  @onclick="() => HandleNodeClickAsync(node)"
-                 @onclick:stopPropagation="true">
-    
+                 @onclick:stopPropagation="true"
+                 @onkeydown="e => HandleNodeKeyDown(e, node)"
+                 @onkeydown:preventDefault="_preventKeyDefault">
+
                 @if (node.HasChildren)
                 {
                     <_BUIBtn Icon="@ExpandIcon"
-                                         IconRotation="@(isExpanded ? 90 : 0)"
-                                         Loading="@isLoading"
-                                         Disabled="node.IsDisabled"
-                                         AriaLabel="@(isExpanded ? "Collapse" : "Expand")"
-                                         OnClick="() => ToggleExpandAsync(node)"
-                                        OnClickStopPropagation="true"
-                                         class="bui-tree-selector__expander" />
+                             IconRotation="@(isExpanded ? 90 : 0)"
+                             Loading="@isLoading"
+                             Disabled="node.IsDisabled"
+                             AriaLabel="@(isExpanded ? "Collapse" : "Expand")"
+                             OnClick="() => ToggleExpandAsync(node)"
+                             OnClickStopPropagation="true"
+                             tabindex="-1"
+                             class="bui-tree-selector__expander" />
                 }
                 else
                 {
                     <span class="bui-tree-selector__expander-placeholder"></span>
                 }
-    
+
                 @if (ShowCheckboxes)
                 {
                     <_BUICheckMark Checked="@isSelected"
                                    Size="Size"
                                    Disabled="node.IsDisabled" />
                 }
-    
+
                 <div class="bui-tree-selector__node-label">
                     @if (_isDeclarativeMode && node.CustomContent != null)
                     {
@@ -260,7 +265,7 @@
                     }
                 </div>
             </div>
-    
+
             @if (node.HasChildren && isExpanded)
             {
                 <div class="bui-tree-selector__children @(AnimateExpand ? "bui-tree-selector__children--animated" : "")"
@@ -309,6 +314,15 @@
         });
 
         await ToggleSelectionAsync(node.Key);
+    }
+
+    private async Task HandleNodeKeyDown(KeyboardEventArgs e, TreeSelectionNode<TItem> node)
+    {
+        _preventKeyDefault = e.Key == " ";
+        if ((e.Key == " " || e.Key == "Enter") && !node.IsDisabled)
+        {
+            await HandleNodeClickAsync(node);
+        }
     }
 
     private async Task ToggleExpandAsync(TreeSelectionNode<TItem> node)

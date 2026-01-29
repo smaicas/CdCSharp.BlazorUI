@@ -84,11 +84,10 @@
                                 <th class="bui-datagrid__select-cell" role="columnheader" scope="col">
                                     @if (SelectionMode == SelectionMode.Multiple)
                                     {
-                                        <input type="checkbox"
-                                               class="bui-dc__checkbox"
-                                               checked="@IsAllSelected()"
-                                               @onchange="HandleSelectAll"
-                                               aria-label="Select all rows" />
+                                        <_BUIBtn Icon="@GetSelectAllIcon()"
+                                                 Size="SizeEnum.Small"
+                                                 AriaLabel="@(IsAllSelected() ? "Deselect all" : "Select all")"
+                                                 OnClick="HandleSelectAllClick" />
                                     }
                                 </th>
                             }
@@ -208,12 +207,10 @@
             @if (SelectionMode != SelectionMode.None)
             {
                 <td class="bui-datagrid__select-cell" role="gridcell" @onclick:stopPropagation="true">
-                    <input type="@(SelectionMode == SelectionMode.Single ? "radio" : "checkbox")"
-                           class="bui-dc__checkbox"
-                           checked="@isSelected"
-                           tabindex="-1"
-                           @onchange="() => HandleSelectRow(item)"
-                           aria-label="Select row" />
+                    <_BUIBtn Icon="@GetRowSelectIcon(isSelected)"
+                             Size="SizeEnum.Small"
+                             AriaLabel="@(isSelected ? "Deselect row" : "Select row")"
+                             OnClick="() => HandleSelectRow(item)" />
                 </td>
             }
 
@@ -266,4 +263,42 @@
             await HandlePageSizeChange(new ChangeEventArgs { Value = size });
         }
     }
+    private string GetSelectAllIcon()
+    {
+        if (!ProcessedItems.Any())
+            return BUIIcons.MaterialIconsRound.i_check_box_outline_blank;
+
+        if (IsAllSelected())
+            return BUIIcons.MaterialIconsRound.i_check_box;
+
+        if (State.SelectedItems.Any())
+            return BUIIcons.MaterialIconsOutlined.i_indeterminate_check_box;
+
+        return BUIIcons.MaterialIconsRound.i_check_box_outline_blank;
+    }
+
+    private string GetRowSelectIcon(bool isSelected)
+    {
+        if (SelectionMode == SelectionMode.Single)
+        {
+            return isSelected
+                ? BUIIcons.MaterialIconsOutlined.i_radio_button_checked
+                : BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked;
+        }
+
+        return isSelected
+            ? BUIIcons.MaterialIconsRound.i_check_box
+            : BUIIcons.MaterialIconsRound.i_check_box_outline_blank;
+    }
+
+    private async Task HandleSelectAllClick(MouseEventArgs e)
+    {
+        if (IsAllSelected())
+            State.ClearSelection();
+        else
+            State.SelectAll(ProcessedItems);
+
+        await NotifySelectionChanged();
+    }
+
 }

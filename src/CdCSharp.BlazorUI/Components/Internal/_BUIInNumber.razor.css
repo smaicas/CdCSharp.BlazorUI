@@ -1,14 +1,13 @@
 ﻿._bui-simple-number {
-    --_scale: var(--bui-size-multiplier, 1);
-    width: calc(3rem * var(--_scale));
-    height: calc(2rem * var(--_scale));
-    padding: calc(0.25rem * var(--_scale));
+    width: calc(3rem * var(--bui-size-multiplier, 1));
+    height: calc(2rem * var(--bui-size-multiplier, 1));
+    padding: 0.25rem;
     border: 1px solid var(--palette-border);
     border-radius: 4px;
     background: var(--palette-surface);
     color: inherit;
     font: inherit;
-    font-size: calc(0.875rem * var(--_scale));
+    font-size: 0.875rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     text-align: center;
@@ -19,6 +18,11 @@
 
     ._bui-simple-number:focus {
         border-color: var(--palette-primary);
+    }
+
+    ._bui-simple-number:focus-visible {
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
     }
 
     ._bui-simple-number:disabled {

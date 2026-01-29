@@ -40,7 +40,7 @@ public class BaseComponentGenerator : IAssetGenerator
     display: inline-flex;
     box-sizing: border-box;
     font-family: inherit;
-    font-size: inherit;
+    font-size: calc(1rem * var(--bui-size-multiplier, 1));
     line-height: inherit;
     gap: var({{FeatureDefinitions.ComponentVariables.Density.Gap}}, 0.5rem);
 }

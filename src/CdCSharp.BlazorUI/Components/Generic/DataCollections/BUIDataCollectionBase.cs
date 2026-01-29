@@ -285,6 +285,11 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
 
     protected async Task HandleRowClick(TItem item)
     {
+        if (SelectionMode != SelectionMode.None)
+        {
+            await HandleSelectRow(item);
+        }
+
         if (OnRowClick.HasDelegate)
         {
             await OnRowClick.InvokeAsync(item);
@@ -299,10 +304,7 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         {
             PreventRowKeyDown = true;
 
-            if (SelectionMode != SelectionMode.None)
-                await HandleSelectRow(item);
-            else if (OnRowClick.HasDelegate)
-                await HandleRowClick(item);
+            await HandleRowClick(item);
         }
     }
 

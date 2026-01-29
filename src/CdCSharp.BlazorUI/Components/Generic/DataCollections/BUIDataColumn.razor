@@ -5,6 +5,7 @@
 
 @code {
     private bool _registered;
+    private DataColumnRegistration<TItem>? _registration;
     private Func<TItem, object?>? _compiledSelector;
     private string? _propertyName;
 
@@ -27,7 +28,7 @@
 
     protected override void OnParametersSet()
     {
-        if (Property != null)
+        if (Property != null && _compiledSelector == null)
         {
             Func<TItem, object?> compiled = Property.Compile();
             _compiledSelector = compiled;
@@ -42,27 +43,45 @@
             }
         }
 
-        if (Registry != null && !_registered)
+        if (Registry != null)
         {
-            DataColumnRegistration<TItem> registration = new()
+            if (!_registered)
             {
-                Header = Header ?? _propertyName,
-                ValueSelector = _compiledSelector,
-                Template = Template,
-                Format = Format,
-                Align = Align,
-                Width = Width,
-                HeaderClass = HeaderClass,
-                CellClass = CellClass,
-                Visible = Visible,
-                Sortable = Sortable,
-                Filterable = Filterable,
-                CustomComparer = CustomComparer,
-                CustomFilter = CustomFilter
-            };
-
-            Registry.RegisterColumn(registration);
-            _registered = true;
+                _registration = new DataColumnRegistration<TItem>
+                {
+                    Header = Header ?? _propertyName,
+                    ValueSelector = _compiledSelector,
+                    Template = Template,
+                    Format = Format,
+                    Align = Align,
+                    Width = Width,
+                    HeaderClass = HeaderClass,
+                    CellClass = CellClass,
+                    Visible = Visible,
+                    Sortable = Sortable,
+                    Filterable = Filterable,
+                    CustomComparer = CustomComparer,
+                    CustomFilter = CustomFilter
+                };
+                Registry.RegisterColumn(_registration);
+                _registered = true;
+            }
+            else if (_registration != null)
+            {
+                _registration.Header = Header ?? _propertyName;
+                _registration.ValueSelector = _compiledSelector;
+                _registration.Template = Template;
+                _registration.Format = Format;
+                _registration.Align = Align;
+                _registration.Width = Width;
+                _registration.HeaderClass = HeaderClass;
+                _registration.CellClass = CellClass;
+                _registration.Visible = Visible;
+                _registration.Sortable = Sortable;
+                _registration.Filterable = Filterable;
+                _registration.CustomComparer = CustomComparer;
+                _registration.CustomFilter = CustomFilter;
+            }
         }
     }
 }

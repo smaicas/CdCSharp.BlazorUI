@@ -161,9 +161,10 @@
         bool isSelected = State.IsSelected(item);
 
         <article class="bui-datacards__card @(isSelected ? "bui-datacards__card--selected" : "") @(IsInteractiveRow ? "bui-datacards__card--interactive" : "")"
-                 role="@(SelectionMode != SelectionMode.None ? (SelectionMode == SelectionMode.Single ? "radio" : "checkbox") : "listitem")"
-                 aria-checked="@(SelectionMode != SelectionMode.None ? isSelected.ToString().ToLowerInvariant() : null)"
+                 role="@(SelectionMode != SelectionMode.None ? "option" : null)"
+                 aria-selected="@(SelectionMode != SelectionMode.None ? isSelected.ToString().ToLowerInvariant() : null)"
                  tabindex="@(IsInteractiveRow ? 0 : -1)"
+                 @onclick="() => HandleRowClick(item)"
                  @onkeydown="e => HandleRowKeyDown(e, item)"
                  @onkeydown:preventDefault="PreventRowKeyDown">
 

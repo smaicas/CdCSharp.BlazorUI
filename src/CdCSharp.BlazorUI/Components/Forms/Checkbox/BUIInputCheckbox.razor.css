@@ -3,7 +3,7 @@
     --_size: calc(1.25rem * var(--bui-size-multiplier, 1));
     display: inline-flex;
     flex-direction: column;
-    gap: calc(0.25rem * var(--bui-size-multiplier, 1));
+    gap: 0.25rem;
 }
 
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox {
@@ -15,7 +15,6 @@
     }
 
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox__label {
-        font-size: calc(1rem * var(--bui-size-multiplier, 1));
         line-height: 1.4;
         color: var(--palette-surfacecontrast);
     }
