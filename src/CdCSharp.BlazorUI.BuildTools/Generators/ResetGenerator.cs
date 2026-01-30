@@ -37,11 +37,6 @@ html {
 }
 
 body {
-    font-family: var({{FeatureDefinitions.Typography.FontFamily}});
-    font-size: var({{FeatureDefinitions.Typography.FontSizeBase}});
-    line-height: var({{FeatureDefinitions.Typography.LineHeight}});
-    background-color: var(--palette-background);
-    color: var(--palette-backgroundcontrast);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
