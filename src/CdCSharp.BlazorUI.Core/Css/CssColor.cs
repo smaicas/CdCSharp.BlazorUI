@@ -556,6 +556,17 @@ public class CssColor : IEquatable<CssColor>
             return false;
         }
 
+        if (_isCssVariable || other._isCssVariable)
+        {
+            return _isCssVariable == other._isCssVariable
+                && string.Equals(_cssVariable, other._cssVariable, StringComparison.Ordinal);
+        }
+
+        if (_valuesAsByte is null || other._valuesAsByte is null)
+        {
+            return false;
+        }
+
         return
             _valuesAsByte[0] == other._valuesAsByte[0] &&
             _valuesAsByte[1] == other._valuesAsByte[1] &&
@@ -563,13 +574,25 @@ public class CssColor : IEquatable<CssColor>
             _valuesAsByte[3] == other._valuesAsByte[3];
     }
 
-    public override int GetHashCode() =>
-            HashCode.Combine(
-                _valuesAsByte[0],
-                _valuesAsByte[1],
-                _valuesAsByte[2],
-                _valuesAsByte[3]
-                );
+    public override int GetHashCode()
+    {
+        if (_isCssVariable)
+        {
+            return _cssVariable?.GetHashCode() ?? 0;
+        }
+
+        if (_valuesAsByte is null)
+        {
+            return 0;
+        }
+
+        return HashCode.Combine(
+            _valuesAsByte[0],
+            _valuesAsByte[1],
+            _valuesAsByte[2],
+            _valuesAsByte[3]
+        );
+    }
 
     public override string ToString() => ToString(ColorOutputFormats.Rgba);
 

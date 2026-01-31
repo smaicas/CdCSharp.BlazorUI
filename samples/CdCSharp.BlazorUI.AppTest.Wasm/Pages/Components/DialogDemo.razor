@@ -1,4 +1,4 @@
-﻿@page "/demo/modal"
+﻿@page "/demo/dialog"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
 @using CdCSharp.BlazorUI.Components.Layout.Services
 @inject IModalService ModalService
@@ -24,6 +24,9 @@
 
 <h2>Dialog - Full Screen</h2>
 <ComponentDemo Definition="@DialogFullScreenDemo" />
+
+<h2>Scrollable Content</h2>
+<ComponentDemo Definition="@ScrollableDemo" />
 
 <h2>Dialog - Close Options</h2>
 <ComponentDemo Definition="@DialogCloseOptionsDemo" />
@@ -62,6 +65,7 @@
     private bool _bottomDrawerOpen = false;
     private bool _sizeDrawerOpen = false;
     private bool _headerFooterDrawerOpen = false;
+    private bool _scrollableOpen = false;
 
     private ComponentDemoDefinition DialogBasicDemo => new()
     {
@@ -429,6 +433,44 @@
                 Size = "350px"
             });
     }
+
+    private ComponentDemoDefinition ScrollableDemo => new()
+    {
+        Demo = RenderScrollable(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderScrollable() => __builder =>
+    {
+        <BUIButton Text="Open Scrollable Dialog" OnClick="@(() => _scrollableOpen = true)" />
+
+        <BUIDialog @bind-Open="_scrollableOpen"
+                   Title="Scrollable Content"
+                   MaxHeight="400px"
+                   Closable="true">
+            <Content>
+                @for (int i = 1; i <= 20; i++)
+                {
+                    <p>This is paragraph @i. When the content exceeds the max height, it becomes scrollable.</p>
+                }
+            </Content>
+        </BUIDialog>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Open", "bool", "false", "Controls dialog visibility"),
+        new("Title", "string?", "null", "Dialog title in header"),
+        new("Closable", "bool", "true", "Show close button"),
+        new("CloseOnOverlayClick", "bool", "true", "Close when clicking outside"),
+        new("CloseOnEscape", "bool", "true", "Close on Escape key"),
+        new("MinWidth", "string", "auto", "Minimum dialog width"),
+        new("MaxWidth", "string", "fit-content", "Maximum dialog width"),
+        new("MinHeight", "string?", "null", "Minimum dialog height"),
+        new("MaxHeight", "string?", "null", "Maximum dialog height"),
+        new("Content", "RenderFragment?", "null", "Main dialog content"),
+        new("Footer", "RenderFragment?", "null", "Footer content (for actions)")
+    ];
 }
 
 @* Sample components for programmatic modals *@

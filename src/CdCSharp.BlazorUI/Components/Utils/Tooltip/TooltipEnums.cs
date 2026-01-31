@@ -21,5 +21,6 @@ public enum TooltipTrigger
     Hover,
     Focus,
     HoverAndFocus,
+    Click,
     Permanent
 }

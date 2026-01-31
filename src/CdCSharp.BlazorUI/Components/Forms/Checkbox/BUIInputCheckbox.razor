@@ -2,6 +2,7 @@
 @inherits BUIInputComponentBase<TValue, BUIInputCheckbox<TValue>, BUIInputCheckboxVariant>
 @implements IHasSize
 @implements IHasColor
+@implements IHasDensity
 @typeparam TValue
 
 @{
@@ -17,6 +18,7 @@
     [Parameter] public string? CheckedIcon { get; set; }
     [Parameter] public string? UncheckedIcon { get; set; }
     [Parameter] public string? IndeterminateIcon { get; set; }
+    [Parameter] public DensityEnum Density { get; set; }
 
     private readonly string _inputId = $"bui-checkbox-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";

@@ -44,6 +44,18 @@
 <h2>Error State</h2>
 <ComponentDemo Definition="@ErrorDemo" />
 
+<h2>With Shadow</h2>
+<ComponentDemo Definition="@ShadowDemo" />
+
+<h2>With Border</h2>
+<ComponentDemo Definition="@BorderDemo" />
+
+<h2>Custom Colors</h2>
+<ComponentDemo Definition="@CustomColorsDemo" />
+
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private string _basicValue = "";
     private string _labelValue = "";
@@ -66,6 +78,9 @@
     private string _readOnlyValue = "Read-only text";
     private string _requiredValue = "";
     private string _errorValue = "";
+    private string _shadowValue = "";
+    private string _borderValue = "";
+    private string _customColorValue = "";
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -274,4 +289,80 @@
                       Error="true"
                       HelperText="This field has an error" />
     };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        Demo = RenderShadow(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_shadowValue"
+                              Label="With Shadow"
+                              Shadow="BUIShadowPresets.Elevation(2, null)" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition BorderDemo => new()
+    {
+        Demo = RenderBorder(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBorder() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_borderValue"
+                              Label="Rounded Border"
+                              Border="BUIBorderPresets.RoundedLarge" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition CustomColorsDemo => new()
+    {
+        Demo = RenderCustomColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomColors() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputText @bind-Value="_customColorValue"
+                              Label="Custom Colors"
+                              BackgroundColor="BUIColor.Palette.Surface"
+                              PrefixColor="BUIColor.Palette.Primary"
+                              PrefixIcon="@BUIIcons.UI.Email" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "string?", "null", "Input value"),
+        new("Label", "string?", "null", "Label text"),
+        new("Placeholder", "string?", "null", "Placeholder text"),
+        new("HelperText", "string?", "null", "Helper text below input"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("Density", "DensityEnum", "Standard", "Spacing density"),
+        new("Disabled", "bool", "false", "Disable input"),
+        new("ReadOnly", "bool", "false", "Read-only mode"),
+        new("Required", "bool", "false", "Mark as required"),
+        new("Loading", "bool", "false", "Show loading indicator"),
+        new("PrefixText", "string?", "null", "Text prefix"),
+        new("PrefixIcon", "string?", "null", "Icon prefix"),
+        new("SuffixText", "string?", "null", "Text suffix"),
+        new("SuffixIcon", "string?", "null", "Icon suffix"),
+        new("BackgroundColor", "CssColor?", "null", "Custom background color"),
+        new("Color", "CssColor?", "null", "Custom text color"),
+        new("Shadow", "ShadowStyle?", "null", "Shadow style"),
+        new("Border", "BorderStyle?", "null", "Border style")
+    ];
 }

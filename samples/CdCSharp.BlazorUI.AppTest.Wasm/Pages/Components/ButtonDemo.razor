@@ -38,6 +38,15 @@
 <h2>Without Ripple</h2>
 <ComponentDemo Definition="@NoRippleDemo" />
 
+<h2>With Border</h2>
+<ComponentDemo Definition="@BorderDemo" />
+
+<h2>With Transitions</h2>
+<ComponentDemo Definition="@TransitionsDemo" />
+
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -223,4 +232,89 @@
     {
         <BUIButton Text="No Ripple Effect" DisableRipple="true" OnClick="@(() => { })" />
     };
+
+    private ComponentDemoDefinition BorderDemo => new()
+    {
+        Demo = RenderBorder(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBorder() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Default Border"
+                           Border="BUIBorderPresets.Default"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Rounded Large"
+                           Border="BUIBorderPresets.RoundedLarge"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Primary Border"
+                           Border="BUIBorderPresets.Primary"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Pill Shape"
+                           Border="BUIBorderPresets.Pill"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition TransitionsDemo => new()
+    {
+        Demo = RenderTransitions(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderTransitions() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Hover Scale"
+                           Transitions="@BUITransitionPresets.HoverScale"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Hover Lift"
+                           Transitions="BUITransitionPresets.HoverLift"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Interactive"
+                           Transitions="BUITransitionPresets.Interactive"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIButton Text="Material"
+                           Transitions="BUITransitionPresets.MaterialButton"
+                           OnClick="@(() => { })" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Text", "string?", "null", "Button text"),
+        new("LeadingIcon", "string?", "null", "Icon before text"),
+        new("TrailingIcon", "string?", "null", "Icon after text"),
+        new("Variant", "BUIButtonVariant", "Default", "Visual variant"),
+        new("Size", "SizeEnum", "Medium", "Button size"),
+        new("Density", "DensityEnum", "Standard", "Spacing density"),
+        new("FullWidth", "bool", "false", "Stretch to container width"),
+        new("Disabled", "bool", "false", "Disable button"),
+        new("Loading", "bool", "false", "Show loading indicator"),
+        new("LoadingIndicatorVariant", "BUILoadingIndicatorVariant?", "null", "Loading indicator style"),
+        new("BackgroundColor", "CssColor?", "null", "Custom background color"),
+        new("Color", "CssColor?", "null", "Custom text color"),
+        new("Shadow", "ShadowStyle?", "null", "Shadow style"),
+        new("Border", "BorderStyle?", "null", "Border style"),
+        new("DisableRipple", "bool", "false", "Disable ripple effect"),
+        new("Transitions", "UITransitions?", "null", "Hover/click transitions"),
+        new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click handler")
+    ];
 }

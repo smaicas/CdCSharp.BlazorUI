@@ -35,6 +35,9 @@
 <h2>Disabled Option</h2>
 <ComponentDemo Definition="@DisabledOptionDemo" />
 
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private string? _basicValue = "option1";
     private string? _labelValue = "option2";
@@ -45,6 +48,7 @@
     private string? _largeValue = "option3";
     private string? _primaryValue = "option1";
     private string? _secondaryValue = "option2";
+    private string? _infoValue = "option2";
     private string? _compactValue = "option1";
     private string? _standardValue = "option2";
     private string? _comfortableValue = "option1";
@@ -166,6 +170,12 @@
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputRadio TValue="string" @bind-Value="_infoValue" Label="Info" Color="BUIColor.Palette.Info">
+                    <RadioOption Value="@("option1")">Option 1</RadioOption>
+                    <RadioOption Value="@("option2")">Option 2</RadioOption>
+                </BUIInputRadio>
+            </BUIGridItem>
         </BUIGrid>
     };
 
@@ -266,4 +276,19 @@
             <RadioOption Value="@("option3")">Available</RadioOption>
         </BUIInputRadio>
     };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue", "-", "Selected value"),
+        new("Label", "string?", "null", "Group label"),
+        new("HelperText", "string?", "null", "Helper text"),
+        new("Orientation", "RadioOrientation", "Vertical", "Layout orientation"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("Disabled", "bool", "false", "Disable entire group"),
+        new("Clearable", "bool", "false", "Show clear button"),
+        new("ClearText", "string", "Clear", "Clear button text"),
+        new("Color", "CssColor?", "null", "Custom radio color"),
+        new("CheckedIcon", "string?", "null", "Custom checked icon"),
+        new("UncheckedIcon", "string?", "null", "Custom unchecked icon")
+    ];
 }

@@ -1,41 +1,95 @@
 ﻿@page "/demo/tooltip"
+
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Core.Css
 
-<PageTitle>Tooltip - CdCSharp.BlazorUI</PageTitle>
+<PageTitle>Tooltips - CdCSharp.BlazorUI</PageTitle>
 
-<h1>BUITooltip</h1>
+<div class="doc-page">
+    <h1>BUITooltip</h1>
 
-<h2>Basic Usage</h2>
-<ComponentDemo Definition="@BasicUsageDemo" />
+    <p class="doc-intro">
+        <strong>BUITooltip</strong> displays contextual information when hovering, focusing,
+        or clicking on an element. Supports rich content, multiple placements, configurable delays,
+        auto-close, and interactive tooltips.
+    </p>
 
-<h2>Placements</h2>
-<ComponentDemo Definition="@PlacementsDemo" />
+    <section class="doc-section">
+        <h2>Basic usage</h2>
+        <ComponentDemo Definition="@BasicUsageDemo" />
+    </section>
 
-<h2>Trigger Options</h2>
-<ComponentDemo Definition="@TriggerDemo" />
+    <section class="doc-section">
+        <h2>Placements</h2>
+        <ComponentDemo Definition="@PlacementsDemo" />
+    </section>
 
-<h2>Show/Hide Delay</h2>
-<ComponentDemo Definition="@DelayDemo" />
+    <section class="doc-section">
+        <h2>Triggers</h2>
+        <ComponentDemo Definition="@TriggersDemo" />
+    </section>
 
-<h2>With Arrow</h2>
-<ComponentDemo Definition="@ArrowDemo" />
+    <section class="doc-section">
+        <h2>Click trigger</h2>
+        <ComponentDemo Definition="@ClickTriggerDemo" />
+    </section>
 
-<h2>Interactive Tooltip</h2>
-<ComponentDemo Definition="@InteractiveDemo" />
+    <section class="doc-section">
+        <h2>Auto close</h2>
+        <ComponentDemo Definition="@AutoCloseDemo" />
+    </section>
 
-<h2>Custom Max Width</h2>
-<ComponentDemo Definition="@MaxWidthDemo" />
+    <section class="doc-section">
+        <h2>Delays</h2>
+        <ComponentDemo Definition="@DelaysDemo" />
+    </section>
 
-<h2>Custom Offset</h2>
-<ComponentDemo Definition="@OffsetDemo" />
+    <section class="doc-section">
+        <h2>Interactive</h2>
+        <ComponentDemo Definition="@InteractiveDemo" />
+    </section>
 
-<h2>Custom Content</h2>
-<ComponentDemo Definition="@CustomContentDemo" />
+    <section class="doc-section">
+        <h2>Arrow</h2>
+        <ComponentDemo Definition="@ArrowDemo" />
+    </section>
 
-<h2>On Various Elements</h2>
-<ComponentDemo Definition="@VariousElementsDemo" />
+    <section class="doc-section">
+        <h2>Max width</h2>
+        <ComponentDemo Definition="@MaxWidthDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Offset</h2>
+        <ComponentDemo Definition="@OffsetDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Rich content</h2>
+        <ComponentDemo Definition="@RichContentDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2>On various elements</h2>
+        <ComponentDemo Definition="@VariousElementsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Permanent</h2>
+        <ComponentDemo Definition="@PermanentDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2>Properties</h2>
+        <PropertyTable Properties="@Properties" />
+    </section>
+</div>
 
 @code {
+
+    /* ===================== BASIC USAGE ===================== */
+
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
         Demo = RenderBasicUsage(),
@@ -48,6 +102,8 @@
             <BUIButton Text="Hover me" OnClick="@(() => { })" />
         </BUITooltip>
     };
+
+    /* ===================== PLACEMENTS ===================== */
 
     private ComponentDemoDefinition PlacementsDemo => new()
     {
@@ -62,7 +118,7 @@
                 <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.Center">
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Top Start" Placement="TooltipPlacement.TopStart">
-                            <BUIButton Text="Top Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="TopStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
@@ -72,7 +128,7 @@
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Top End" Placement="TooltipPlacement.TopEnd">
-                            <BUIButton Text="Top End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="TopEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                 </BUIGrid>
@@ -83,7 +139,7 @@
                         <BUIGrid Gap="1rem">
                             <BUIGridItem>
                                 <BUITooltip Text="Left Start" Placement="TooltipPlacement.LeftStart">
-                                    <BUIButton Text="Left Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="LeftStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                             <BUIGridItem>
@@ -93,7 +149,7 @@
                             </BUIGridItem>
                             <BUIGridItem>
                                 <BUITooltip Text="Left End" Placement="TooltipPlacement.LeftEnd">
-                                    <BUIButton Text="Left End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="LeftEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                         </BUIGrid>
@@ -102,7 +158,7 @@
                         <BUIGrid Gap="1rem">
                             <BUIGridItem>
                                 <BUITooltip Text="Right Start" Placement="TooltipPlacement.RightStart">
-                                    <BUIButton Text="Right Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="RightStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                             <BUIGridItem>
@@ -112,7 +168,7 @@
                             </BUIGridItem>
                             <BUIGridItem>
                                 <BUITooltip Text="Right End" Placement="TooltipPlacement.RightEnd">
-                                    <BUIButton Text="Right End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="RightEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                         </BUIGrid>
@@ -123,7 +179,7 @@
                 <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.Center">
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Bottom Start" Placement="TooltipPlacement.BottomStart">
-                            <BUIButton Text="Bottom Start" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="BottomStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
@@ -133,7 +189,7 @@
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Bottom End" Placement="TooltipPlacement.BottomEnd">
-                            <BUIButton Text="Bottom End" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="BottomEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                 </BUIGrid>
@@ -141,13 +197,15 @@
         </BUIGrid>
     };
 
-    private ComponentDemoDefinition TriggerDemo => new()
+    /* ===================== TRIGGERS ===================== */
+
+    private ComponentDemoDefinition TriggersDemo => new()
     {
-        Demo = RenderTrigger(),
+        Demo = RenderTriggers(),
         Code = """ """
     };
 
-    private RenderFragment RenderTrigger() => __builder =>
+    private RenderFragment RenderTriggers() => __builder =>
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
@@ -157,75 +215,115 @@
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUITooltip Text="Focus trigger" Trigger="TooltipTrigger.Focus">
-                    <BUIButton Text="Focus" OnClick="@(() => { })" />
+                    <BUIButton Text="Focus (tab)" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="HoverAndFocus trigger" Trigger="TooltipTrigger.HoverAndFocus">
-                    <BUIButton Text="HoverAndFocus" OnClick="@(() => { })" />
+                <BUITooltip Text="Hover and focus trigger" Trigger="TooltipTrigger.HoverAndFocus">
+                    <BUIButton Text="Hover or Focus" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Permanent" Trigger="TooltipTrigger.Permanent">
-                    <BUIButton Text="Hover" OnClick="@(() => { })" />
+                <BUITooltip Text="Click trigger" Trigger="TooltipTrigger.Click">
+                    <BUIButton Text="Click" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
         </BUIGrid>
     };
 
-    private ComponentDemoDefinition DelayDemo => new()
+    /* ===================== CLICK TRIGGER ===================== */
+
+    private ComponentDemoDefinition ClickTriggerDemo => new()
     {
-        Demo = RenderDelay(),
+        Demo = RenderClickTrigger(),
         Code = """ """
     };
 
-    private RenderFragment RenderDelay() => __builder =>
+    private RenderFragment RenderClickTrigger() => __builder =>
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Text="No delay" ShowDelay="0" HideDelay="0">
-                    <BUIButton Text="No Delay" OnClick="@(() => { })" />
+                <BUITooltip Text="Copied!" Trigger="TooltipTrigger.Click" AutoCloseAfter="2000">
+                    <BUIButton Text="Copy to clipboard" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Default delay" ShowDelay="200" HideDelay="0">
-                    <BUIButton Text="Default (200ms show)" OnClick="@(() => { })" />
+                <BUITooltip Text="Saved!" Trigger="TooltipTrigger.Click" AutoCloseAfter="1500">
+                    <BUIButton Text="Save" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Slow show (500ms)" ShowDelay="500" HideDelay="0">
-                    <BUIButton Text="Slow Show (500ms)" OnClick="@(() => { })" />
-                </BUITooltip>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUITooltip Text="Slow hide (300ms)" ShowDelay="0" HideDelay="300">
-                    <BUIButton Text="Slow Hide (300ms)" OnClick="@(() => { })" />
+                <BUITooltip Text="Click again to close (no auto-close)" Trigger="TooltipTrigger.Click">
+                    <BUIButton Text="Toggle" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
         </BUIGrid>
     };
 
-    private ComponentDemoDefinition ArrowDemo => new()
+    /* ===================== AUTO CLOSE ===================== */
+
+    private ComponentDemoDefinition AutoCloseDemo => new()
     {
-        Demo = RenderArrow(),
+        Demo = RenderAutoClose(),
         Code = """ """
     };
 
-    private RenderFragment RenderArrow() => __builder =>
+    private RenderFragment RenderAutoClose() => __builder =>
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Text="With arrow (default)" Arrow="true">
-                    <BUIButton Text="With Arrow" OnClick="@(() => { })" />
+                <BUITooltip Text="I will close in 2 seconds" AutoCloseAfter="2000">
+                    <BUIButton Text="Hover (2s auto-close)" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Without arrow" Arrow="false">
-                    <BUIButton Text="Without Arrow" OnClick="@(() => { })" />
+                <BUITooltip Text="I will close in 5 seconds" AutoCloseAfter="5000">
+                    <BUIButton Text="Hover (5s auto-close)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Hover over me to pause auto-close" AutoCloseAfter="3000" Interactive="true">
+                    <BUIButton Text="Interactive + auto-close" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
         </BUIGrid>
     };
+
+    /* ===================== DELAYS ===================== */
+
+    private ComponentDemoDefinition DelaysDemo => new()
+    {
+        Demo = RenderDelays(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDelays() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Instant show" ShowDelay="0">
+                    <BUIButton Text="No delay" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Default delays (200ms show, 150ms leave)">
+                    <BUIButton Text="Default" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Slow show (500ms)" ShowDelay="500">
+                    <BUIButton Text="Slow show" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Long leave delay (500ms)" LeaveDelay="500">
+                    <BUIButton Text="Long leave delay" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    /* ===================== INTERACTIVE ===================== */
 
     private ComponentDemoDefinition InteractiveDemo => new()
     {
@@ -237,8 +335,8 @@
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Interactive="false" Text="Non-interactive - disappears when you move to tooltip">
-                    <BUIButton Text="Non-Interactive" OnClick="@(() => { })" />
+                <BUITooltip Interactive="false" Text="Non-interactive: disappears when you move to tooltip">
+                    <BUIButton Text="Non-interactive" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
@@ -254,8 +352,47 @@
                     </TooltipContent>
                 </BUITooltip>
             </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Interactive="true">
+                    <ChildContent>
+                        <BUIButton Text="With link" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <div>
+                            Click the link:
+                            <a href="https://github.com" target="_blank">GitHub</a>
+                        </div>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
         </BUIGrid>
     };
+
+    /* ===================== ARROW ===================== */
+
+    private ComponentDemoDefinition ArrowDemo => new()
+    {
+        Demo = RenderArrow(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderArrow() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="With arrow (default)" Arrow="true">
+                    <BUIButton Text="With arrow" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Without arrow" Arrow="false">
+                    <BUIButton Text="No arrow" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    /* ===================== MAX WIDTH ===================== */
 
     private ComponentDemoDefinition MaxWidthDemo => new()
     {
@@ -267,17 +404,24 @@
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Text="This is a tooltip with default max width. It will wrap when content is too long." MaxWidth="200">
-                    <BUIButton Text="200px Max Width" OnClick="@(() => { })" />
+                <BUITooltip Text="This is a tooltip with a narrow max width. It will wrap when content is too long." MaxWidth="150">
+                    <BUIButton Text="150px" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="This tooltip has a wider max width of 400px. It can display more content in a single line before wrapping occurs." MaxWidth="400">
-                    <BUIButton Text="400px Max Width" OnClick="@(() => { })" />
+                <BUITooltip Text="This tooltip has the default max width of 300px." MaxWidth="300">
+                    <BUIButton Text="300px (default)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="This tooltip has a wider max width of 500px. It can display more content in a single line before wrapping occurs." MaxWidth="500">
+                    <BUIButton Text="500px" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
         </BUIGrid>
     };
+
+    /* ===================== OFFSET ===================== */
 
     private ComponentDemoDefinition OffsetDemo => new()
     {
@@ -289,36 +433,38 @@
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Default offset (8px)" Offset="8">
-                    <BUIButton Text="Default Offset" OnClick="@(() => { })" />
+                <BUITooltip Text="Small offset (4px)" Offset="4">
+                    <BUIButton Text="4px offset" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Small offset (4px)" Offset="4">
-                    <BUIButton Text="Small Offset (4px)" OnClick="@(() => { })" />
+                <BUITooltip Text="Default offset (8px)" Offset="8">
+                    <BUIButton Text="8px (default)" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUITooltip Text="Large offset (20px)" Offset="20">
-                    <BUIButton Text="Large Offset (20px)" OnClick="@(() => { })" />
+                    <BUIButton Text="20px offset" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
         </BUIGrid>
     };
 
-    private ComponentDemoDefinition CustomContentDemo => new()
+    /* ===================== RICH CONTENT ===================== */
+
+    private ComponentDemoDefinition RichContentDemo => new()
     {
-        Demo = RenderCustomContent(),
+        Demo = RenderRichContent(),
         Code = """ """
     };
 
-    private RenderFragment RenderCustomContent() => __builder =>
+    private RenderFragment RenderRichContent() => __builder =>
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
                 <BUITooltip>
                     <ChildContent>
-                        <BUIButton Text="Rich Content" OnClick="@(() => { })" />
+                        <BUIButton Text="With icon" OnClick="@(() => { })" />
                     </ChildContent>
                     <TooltipContent>
                         <div style="text-align: center;">
@@ -332,7 +478,7 @@
             <BUIGridItem Auto="true">
                 <BUITooltip>
                     <ChildContent>
-                        <BUIButton Text="With Badge" OnClick="@(() => { })" />
+                        <BUIButton Text="With badge" OnClick="@(() => { })" />
                     </ChildContent>
                     <TooltipContent>
                         <div>
@@ -345,7 +491,7 @@
             <BUIGridItem Auto="true">
                 <BUITooltip Interactive="true">
                     <ChildContent>
-                        <BUIButton Text="With List" OnClick="@(() => { })" />
+                        <BUIButton Text="With list" OnClick="@(() => { })" />
                     </ChildContent>
                     <TooltipContent>
                         <div>
@@ -359,8 +505,25 @@
                     </TooltipContent>
                 </BUITooltip>
             </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip>
+                    <ChildContent>
+                        <BUIButton Text="Formatted text" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <div>
+                            <strong>Bold title</strong>
+                            <p style="margin: 0.5rem 0 0 0;">
+                                With <em>italic</em> and <u>underlined</u> text.
+                            </p>
+                        </div>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
         </BUIGrid>
     };
+
+    /* ===================== VARIOUS ELEMENTS ===================== */
 
     private ComponentDemoDefinition VariousElementsDemo => new()
     {
@@ -383,16 +546,68 @@
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUITooltip Text="Tooltip on text">
-                    <span style="text-decoration: underline; cursor: help;">Hover this text</span>
+                    <span style="text-decoration: underline dotted; cursor: help;">Hover this text</span>
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Disabled button info">
+                <BUITooltip Text="This button is disabled because...">
                     <span>
                         <BUIButton Text="Disabled" Disabled="true" OnClick="@(() => { })" />
                     </span>
                 </BUITooltip>
             </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Tooltip on image">
+                    <img src="https://via.placeholder.com/50" alt="Placeholder" style="border-radius: 4px;" />
+                </BUITooltip>
+            </BUIGridItem>
         </BUIGrid>
     };
+
+    /* ===================== PERMANENT ===================== */
+
+    private ComponentDemoDefinition PermanentDemo => new()
+    {
+        Demo = RenderPermanent(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPermanent() => __builder =>
+    {
+        <BUIGrid Direction="GridDirection.Row" Gap="1rem">
+            <BUIGridItem Auto="true">
+                <BUITooltip Trigger="TooltipTrigger.Permanent" Placement="TooltipPlacement.Right">
+                    <ChildContent>
+                        <BUIButton Text="Permanent tooltip" OnClick="@(() => { })" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <strong>This tooltip stays visible until closed.</strong>
+                    </TooltipContent>
+                </BUITooltip>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Permanent with auto-close" Trigger="TooltipTrigger.Permanent" AutoCloseAfter="5000" Placement="TooltipPlacement.Top">
+                    <BUIButton Text="Permanent (5s auto-close)" OnClick="@(() => { })" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    /* ===================== PROPERTIES ===================== */
+
+    private List<PropertyDefinition> Properties =
+    [
+        new("Text", "string?", "null", "Simple text content for the tooltip"),
+        new("TooltipContent", "RenderFragment?", "null", "Rich content for the tooltip (takes precedence over Text)"),
+        new("ChildContent", "RenderFragment?", "null", "The element that triggers the tooltip"),
+        new("Placement", "TooltipPlacement", "Top", "Position relative to trigger: Top, TopStart, TopEnd, Bottom, BottomStart, BottomEnd, Left, LeftStart, LeftEnd, Right, RightStart, RightEnd"),
+        new("Trigger", "TooltipTrigger", "Hover", "How the tooltip is triggered: Hover, Focus, HoverAndFocus, Click, Permanent"),
+        new("ShowDelay", "int?", "200 / 0", "Delay in ms before showing. Default: 200 for Hover/Focus, 0 for Click/Permanent"),
+        new("LeaveDelay", "int?", "150 / 0", "Delay in ms before hiding when leaving trigger. Default: 150 for Hover/Focus, 0 for Click/Permanent"),
+        new("AutoCloseAfter", "int?", "null", "Auto-close tooltip after N milliseconds once visible. Works with all triggers."),
+        new("Arrow", "bool", "true", "Show arrow pointing to the trigger element"),
+        new("Interactive", "bool", "true", "Allow hovering over tooltip without it closing. Pauses LeaveDelay and AutoCloseAfter timers."),
+        new("MaxWidth", "int?", "300", "Maximum width in pixels"),
+        new("Offset", "int", "8", "Distance from trigger element in pixels")
+    ];
 }

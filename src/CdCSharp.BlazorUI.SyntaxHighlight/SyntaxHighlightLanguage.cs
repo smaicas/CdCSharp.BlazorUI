@@ -5,7 +5,8 @@ public enum SyntaxHighlightLanguage
     CSharp,
     Razor,
     TypeScript,
-    Css
+    Css,
+    Json
 }
 
 public static class SyntaxHighlightLanguageExtensions
@@ -18,6 +19,8 @@ public static class SyntaxHighlightLanguageExtensions
             SyntaxHighlightLanguage.Razor => "razor",
             SyntaxHighlightLanguage.TypeScript => "typescript",
             SyntaxHighlightLanguage.Css => "css",
+            SyntaxHighlightLanguage.Json => "json",
+
             _ => throw new ArgumentOutOfRangeException(nameof(language))
         };
     }

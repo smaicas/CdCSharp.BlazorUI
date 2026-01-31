@@ -32,6 +32,9 @@
 <h2>Indeterminate (Tri-State)</h2>
 <ComponentDemo Definition="@IndeterminateDemo" />
 
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private bool _basicValue;
     private bool _labelValue;
@@ -161,10 +164,14 @@
 
     private RenderFragment RenderCustomIcons() => __builder =>
     {
-        <BUIInputCheckbox @bind-Value="_customIconValue"
-                          Label="Favorite"
-                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border"
-                          CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite" />
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputCheckbox @bind-Value="_customIconValue"
+                                  Label="Custom Icons"
+                                  CheckedIcon="@BUIIcons.MaterialIconsRound.i_favorite"
+                                  UncheckedIcon="@BUIIcons.MaterialIconsRound.i_favorite_border" />
+            </BUIGridItem>
+        </BUIGrid>
     };
 
     private ComponentDemoDefinition StatesDemo => new()
@@ -196,12 +203,30 @@
 
     private RenderFragment RenderIndeterminate() => __builder =>
     {
-        <div>
-            <p style="margin-bottom: 1rem; opacity: 0.7;">
-                Click to cycle: Unchecked → Indeterminate → Checked → Unchecked
-            </p>
-            <BUIInputCheckbox @bind-Value="_indeterminateValue"
-                              Label="Select all items" />
-        </div>
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputCheckbox TValue="bool?"
+                                  @bind-Value="_indeterminateValue"
+                                  Label="Tristate Checkbox"
+                                  HelperText="Click to cycle through: unchecked → indeterminate → checked" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p><strong>Current State:</strong> @(_indeterminateValue switch { null => "Indeterminate", true => "Checked", false => "Unchecked" })</p>
+            </BUIGridItem>
+        </BUIGrid>
     };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue (bool or bool?)", "-", "Checkbox value"),
+        new("Label", "string?", "null", "Label text"),
+        new("HelperText", "string?", "null", "Helper text below checkbox"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("Disabled", "bool", "false", "Disable checkbox"),
+        new("Required", "bool", "false", "Mark as required"),
+        new("Color", "CssColor?", "null", "Custom checkbox color"),
+        new("CheckedIcon", "string?", "null", "Custom checked icon"),
+        new("UncheckedIcon", "string?", "null", "Custom unchecked icon"),
+        new("IndeterminateIcon", "string?", "null", "Custom indeterminate icon")
+    ];
 }

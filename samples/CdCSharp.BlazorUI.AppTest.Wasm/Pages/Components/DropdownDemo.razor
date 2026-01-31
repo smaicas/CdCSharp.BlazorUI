@@ -35,6 +35,24 @@
 <h2>Disabled</h2>
 <ComponentDemo Definition="@DisabledDemo" />
 
+<h2>Loading State</h2>
+<ComponentDemo Definition="@LoadingDemo" />
+
+<h2>No Options Template</h2>
+<ComponentDemo Definition="@NoOptionsDemo" />
+
+<h2>Custom Option Content</h2>
+<ComponentDemo Definition="@CustomOptionDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>With Helper Text</h2>
+<ComponentDemo Definition="@HelperTextDemo" />
+
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private string? _singleValue;
     private List<string> _multipleValue = new();
@@ -51,9 +69,17 @@
     private string? _bottomValue;
     private string? _closeValue;
     private string? _disabledValue = "Option 1";
+    private string? _loadingValue;
+    private string? _noOptionsValue;
+    private string? _customOptionValue;
+    private string? _compactValue;
+    private string? _standardDensity;
+    private string? _comfortableValue;
+    private string? _helperValue;
+
+    private bool _isLoading = true;
 
     private List<string> _options = new() { "Option 1", "Option 2", "Option 3", "Option 4", "Option 5" };
-    private List<string> _countries = new() { "Spain", "France", "Germany", "Italy", "Portugal", "Netherlands", "Belgium" };
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -101,7 +127,7 @@
                           Placeholder="Choose...">
             @foreach (var country in _countries)
             {
-                <DropdownOption Value="@country" Text="@country" />
+                <DropdownOption Value="@country" Text="@country.Name" />
             }
         </BUIInputDropdown>
     };
@@ -120,7 +146,7 @@
                           SearchPlaceholder="Type to search...">
             @foreach (var country in _countries)
             {
-                <DropdownOption Value="@country" Text="@country" />
+                <DropdownOption Value="@country" Text="@country.Name" />
             }
         </BUIInputDropdown>
     };
@@ -288,4 +314,163 @@
             }
         </BUIInputDropdown>
     };
+
+    private List<CountryOption> _countries = new()
+    {
+        new CountryOption { Code = "us", Name = "United States", Flag = "🇺🇸" },
+        new CountryOption { Code = "uk", Name = "United Kingdom", Flag = "🇬🇧" },
+        new CountryOption { Code = "de", Name = "Germany", Flag = "🇩🇪" },
+        new CountryOption { Code = "fr", Name = "France", Flag = "🇫🇷" },
+        new CountryOption { Code = "es", Name = "Spain", Flag = "🇪🇸" }
+    };
+
+    private ComponentDemoDefinition LoadingDemo => new()
+    {
+        Demo = RenderLoading(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderLoading() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIButton Text="Toggle Loading" OnClick="@(() => _isLoading = !_isLoading)" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown TValue="string"
+                                  @bind-Value="_loadingValue"
+                                  Label="Loading State"
+                                  IsLoading="_isLoading">
+                    <DropdownOption TValue="string" Value="@("opt1")">Option 1</DropdownOption>
+                    <DropdownOption TValue="string" Value="@("opt2")">Option 2</DropdownOption>
+                    <DropdownOption TValue="string" Value="@("opt3")">Option 3</DropdownOption>
+                </BUIInputDropdown>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition NoOptionsDemo => new()
+    {
+        Demo = RenderNoOptions(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNoOptions() => __builder =>
+    {
+        <BUIInputDropdown TValue="string"
+                          @bind-Value="_noOptionsValue"
+                          Label="Empty Dropdown"
+                          NoOptionsText="No items available">
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition CustomOptionDemo => new()
+    {
+        Demo = RenderCustomOption(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCustomOption() => __builder =>
+    {
+        <BUIInputDropdown TValue="string"
+                          @bind-Value="_customOptionValue"
+                          Label="Select Country"
+                          Placeholder="Choose a country...">
+            @foreach (CountryOption country in _countries)
+            {
+                <DropdownOption TValue="string" Value="@country.Code">
+                    <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.25rem;">@country.Flag</span>
+                        <span>@country.Name</span>
+                    </span>
+                </DropdownOption>
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDropdown TValue="string"
+                                  @bind-Value="_compactValue"
+                                  Label="Compact"
+                                  Density="DensityEnum.Compact">
+                    <DropdownOption TValue="string" Value="@("a")">Option A</DropdownOption>
+                    <DropdownOption TValue="string" Value="@("b")">Option B</DropdownOption>
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown TValue="string"
+                                  @bind-Value="_standardDensity"
+                                  Label="Standard"
+                                  Density="DensityEnum.Standard">
+                    <DropdownOption TValue="string" Value="@("a")">Option A</DropdownOption>
+                    <DropdownOption TValue="string" Value="@("b")">Option B</DropdownOption>
+                </BUIInputDropdown>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown TValue="string"
+                                  @bind-Value="_comfortableValue"
+                                  Label="Comfortable"
+                                  Density="DensityEnum.Comfortable">
+                    <DropdownOption TValue="string" Value="@("a")">Option A</DropdownOption>
+                    <DropdownOption TValue="string" Value="@("b")">Option B</DropdownOption>
+                </BUIInputDropdown>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition HelperTextDemo => new()
+    {
+        Demo = RenderHelperText(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderHelperText() => __builder =>
+    {
+        <BUIInputDropdown TValue="string"
+                          @bind-Value="_helperValue"
+                          Label="Select Option"
+                          HelperText="Please select one option from the list"
+                          Required="true">
+            <DropdownOption TValue="string" Value="@("opt1")">Option 1</DropdownOption>
+            <DropdownOption TValue="string" Value="@("opt2")">Option 2</DropdownOption>
+            <DropdownOption TValue="string" Value="@("opt3")">Option 3</DropdownOption>
+        </BUIInputDropdown>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue", "-", "Selected value (single selection)"),
+        new("Values", "ICollection<TValue>", "-", "Selected values (multiple selection)"),
+        new("Label", "string?", "null", "Input label"),
+        new("Placeholder", "string?", "null", "Placeholder text"),
+        new("HelperText", "string?", "null", "Helper text below input"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("Density", "DensityEnum", "Standard", "Spacing density"),
+        new("Disabled", "bool", "false", "Disable dropdown"),
+        new("Required", "bool", "false", "Mark as required"),
+        new("IsLoading", "bool", "false", "Show loading state"),
+        new("Searchable", "bool", "false", "Enable search/filter"),
+        new("ShowSelectAll", "bool", "false", "Show select all option (multiple)"),
+        new("CloseOnSelect", "bool", "true", "Close dropdown on selection"),
+        new("NoOptionsText", "string?", "null", "Text when no options"),
+        new("Placement", "DropdownPlacement", "Auto", "Menu placement"),
+        new("MaxMenuHeight", "int", "320", "Maximum menu height (px)")
+    ];
+
+    private class CountryOption
+    {
+        public string Code { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Flag { get; set; } = "";
+    }
 }

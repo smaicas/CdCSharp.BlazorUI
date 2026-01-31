@@ -1,0 +1,280 @@
+﻿@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Components.Layout.Services
+@using CdCSharp.BlazorUI.Core.Theming.Abstractions
+@using CdCSharp.BlazorUI.SyntaxHighlight
+@inject IToastService ToastService
+
+@namespace CdCSharp.BlazorUI.Components.Utils
+
+<BUIGrid Direction="GridDirection.Column" Gap="1rem" P="1.5rem"
+         style="background: var(--palette-background); color: var(--palette-backgroundcontrast); overflow-y: auto; height: 100vh;">
+
+    <BUIGridItem>
+        <BUIGrid JustifyContent="GridJustifyContent.SpaceBetween" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true"><h2 style="margin: 0;">Preview</h2></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIThemeSelector /></BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* BUTTONS *@
+    <BUIGridItem>
+        <BUIGrid Gap="0.5rem" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true"><BUIButton Text="Primary" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Secondary" BackgroundColor="@Var("secondary")" Color="@Var("secondarycontrast")" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Disabled" Disabled="true" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Loading" Loading="true" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Error" BackgroundColor="@Var("error")" Color="@Var("errorcontrast")" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Success" BackgroundColor="@Var("success")" Color="@Var("successcontrast")" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Warning" BackgroundColor="@Var("warning")" Color="@Var("warningcontrast")" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Info" BackgroundColor="@Var("info")" Color="@Var("infocontrast")" /></BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* BADGES *@
+    <BUIGridItem>
+        <BUIGrid Gap="0.5rem" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true"><BUIBadge>Primary</BUIBadge></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIBadge BackgroundColor="@Var("secondary")">Secondary</BUIBadge></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIBadge BackgroundColor="@Var("error")">Error</BUIBadge></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIBadge BackgroundColor="@Var("success")">Success</BUIBadge></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIBadge BackgroundColor="@Var("warning")">Warning</BUIBadge></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIBadge Variant="BUIBadgeVariant.Outlined">Outlined</BUIBadge></BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Count="5" MaxCount="99">
+                    <AnchorContent><BUIButton Text="Notifications" Size="SizeEnum.Small" /></AnchorContent>
+                </BUIBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* TEXT INPUTS *@
+    <BUIGridItem>
+        <BUIGrid Columns="4" Gap="0.75rem">
+            <BUIGridItem><BUIInputText @bind-Value="_demoText" Label="Outlined" Variant="BUIInputVariant.Outlined" /></BUIGridItem>
+            <BUIGridItem><BUIInputText @bind-Value="_demoText" Label="Filled" Variant="BUIInputVariant.Filled" /></BUIGridItem>
+            <BUIGridItem><BUIInputText @bind-Value="_demoText" Label="Standard" Variant="BUIInputVariant.Standard" /></BUIGridItem>
+            <BUIGridItem><BUIInputText @bind-Value="_demoText" Label="Disabled" Disabled="true" /></BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* OTHER INPUTS *@
+    <BUIGridItem>
+        <BUIGrid Columns="4" Gap="0.75rem">
+            <BUIGridItem><BUIInputNumber @bind-Value="_demoNumber" Label="Number" /></BUIGridItem>
+            <BUIGridItem><BUIInputDateTime @bind-Value="_demoDate" Label="Date" /></BUIGridItem>
+            <BUIGridItem><BUIInputColor @bind-Value="_demoColor" Label="Color" /></BUIGridItem>
+            <BUIGridItem>
+                <BUIInputDropdown TValue="string" @bind-Value="_demoDropdownValue" Label="Dropdown">
+                    @foreach (string item in _dropdownItems)
+                    {
+                        <DropdownOption Value="@item">@item</DropdownOption>
+                    }
+                </BUIInputDropdown>
+            </BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* TEXTAREA *@
+    <BUIGridItem>
+        <BUIGrid Columns="2" Gap="0.75rem">
+            <BUIGridItem><BUIInputTextArea @bind-Value="_demoTextArea" Label="Text Area" Rows="2" /></BUIGridItem>
+            <BUIGridItem><BUIInputTextArea @bind-Value="_demoTextArea" Label="Auto Resize" AutoResize="true" /></BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* CHECKBOXES, RADIOS, SWITCHES *@
+    <BUIGridItem>
+        <BUIGrid Columns="3" Gap="0.75rem">
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Column" Gap="0.25rem">
+                    <BUIGridItem><BUIInputCheckbox @bind-Value="_demoCheck1" Label="Checkbox 1" /></BUIGridItem>
+                    <BUIGridItem><BUIInputCheckbox @bind-Value="_demoCheck2" Label="Checkbox 2" /></BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Column" Gap="0.25rem">
+                    <BUIGridItem><BUIInputRadio @bind-Value="_demoRadio" OptionValue="1" Label="Radio A" GroupName="demo" /></BUIGridItem>
+                    <BUIGridItem><BUIInputRadio @bind-Value="_demoRadio" OptionValue="2" Label="Radio B" GroupName="demo" /></BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUIGrid Direction="GridDirection.Column" Gap="0.25rem">
+                    <BUIGridItem><BUIInputSwitch @bind-Value="_demoSwitch1" Label="Switch On" /></BUIGridItem>
+                    <BUIGridItem><BUIInputSwitch @bind-Value="_demoSwitch2" Label="Switch Off" /></BUIGridItem>
+                </BUIGrid>
+            </BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* CARDS *@
+    <BUIGridItem>
+        <BUIGrid Columns="3" Gap="0.75rem">
+            <BUIGridItem>
+                <BUICard>
+                    <Header><h4 style="margin:0;">Default Card</h4></Header>
+                    <ChildContent><p style="margin:0;">Card content.</p></ChildContent>
+                    <Actions><BUIButton Text="Action" Size="SizeEnum.Small" /></Actions>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUICard Variant="BUICardVariant.Outlined">
+                    <Header><h4 style="margin:0;">Outlined</h4></Header>
+                    <ChildContent><p style="margin:0;">Outlined variant.</p></ChildContent>
+                </BUICard>
+            </BUIGridItem>
+            <BUIGridItem>
+                <BUICard Clickable="true">
+                    <Header><h4 style="margin:0;">Clickable</h4></Header>
+                    <ChildContent><p style="margin:0;">Hover effects.</p></ChildContent>
+                </BUICard>
+            </BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* LOADING & TOOLTIPS *@
+    <BUIGridItem>
+        <BUIGrid Gap="1rem" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true"><BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" Size="SizeEnum.Small" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" Size="SizeEnum.Medium" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Dots" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Pulse" /></BUIGridItem>
+            <BUIGridItem Auto="true" style="min-width:150px;"><BUILoadingIndicator Variant="BUILoadingIndicatorVariant.LinearIndeterminate" /></BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUITooltip Text="Tooltip message">
+                    <BUIButton Text="Hover me" Size="SizeEnum.Small" />
+                </BUITooltip>
+            </BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* DIALOG & TOASTS *@
+    <BUIGridItem>
+        <BUIGrid Gap="0.5rem">
+            <BUIGridItem Auto="true"><BUIButton Text="Open Dialog" Size="SizeEnum.Small" OnClick="() => _showDialog = true" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Success" Size="SizeEnum.Small" BackgroundColor="@Var("success")" Color="@Var("successcontrast")" OnClick="() => ShowToast(ToastType.Success)" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Error" Size="SizeEnum.Small" BackgroundColor="@Var("error")" Color="@Var("errorcontrast")" OnClick="() => ShowToast(ToastType.Error)" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Warning" Size="SizeEnum.Small" BackgroundColor="@Var("warning")" Color="@Var("warningcontrast")" OnClick="() => ShowToast(ToastType.Warning)" /></BUIGridItem>
+            <BUIGridItem Auto="true"><BUIButton Text="Info" Size="SizeEnum.Small" BackgroundColor="@Var("info")" Color="@Var("infocontrast")" OnClick="() => ShowToast(ToastType.Info)" /></BUIGridItem>
+        </BUIGrid>
+    </BUIGridItem>
+
+    @* CODE BLOCK *@
+    <BUIGridItem>
+        <BUICodeBlock Code="@_sampleCode" Language="SyntaxHighlightLanguage.CSharp" />
+    </BUIGridItem>
+
+    @* DATA GRID *@
+    <BUIGridItem>
+        <BUIDataGrid TItem="SampleDataItem" Items="@_sampleData" Variant="DataGridVariant.StripedBordered" Hoverable="true">
+            <Columns>
+                <BUIDataColumn TItem="SampleDataItem" Header="ID" Property="x => x.Id" Width="60px" />
+                <BUIDataColumn TItem="SampleDataItem" Header="Name" Property="x => x.Name" />
+                <BUIDataColumn TItem="SampleDataItem" Header="Email" Property="x => x.Email" />
+                <BUIDataColumn TItem="SampleDataItem" Header="Status">
+                    <Template Context="item">
+                        <BUIBadge BackgroundColor="@(item.IsActive? Var("success") : Var("error"))">
+                            @(item.IsActive ? "Active" : "Inactive")
+                        </BUIBadge>
+                    </Template>
+                </BUIDataColumn>
+            </Columns>
+        </BUIDataGrid>
+    </BUIGridItem>
+</BUIGrid>
+
+<BUIDialog @bind-Open="_showDialog" Title="Sample Dialog" Closable="true">
+    <Content>
+        <p>Dialog with current palette colors.</p>
+        <BUIInputText @bind-Value="_dialogInput" Label="Sample Input" />
+    </Content>
+    <Footer>
+        <BUIButton Text="Cancel" OnClick="() => _showDialog = false" />
+        <BUIButton Text="Confirm" OnClick="() => _showDialog = false" />
+    </Footer>
+</BUIDialog>
+
+<BUIToastHost />
+
+@code {
+    [Parameter] public Dictionary<string, CssColor> DarkPalette { get; set; } = new();
+    [Parameter] public Dictionary<string, CssColor> LightPalette { get; set; } = new();
+
+    private string _demoText = "Sample";
+    private string _demoTextArea = "Multiline text";
+    private int? _demoNumber = 42;
+    private DateOnly? _demoDate = DateOnly.FromDateTime(DateTime.Today);
+    private CssColor? _demoColor = new("#3B82F6");
+    private string? _demoDropdownValue = "Option 1";
+    private bool _demoCheck1 = true;
+    private bool _demoCheck2 = false;
+    private int _demoRadio = 1;
+    private bool _demoSwitch1 = true;
+    private bool _demoSwitch2 = false;
+    private string _dialogInput = "";
+    private bool _showDialog = false;
+
+    private List<string> _dropdownItems = new() { "Option 1", "Option 2", "Option 3" };
+    private List<SampleDataItem> _sampleData = new();
+
+    private string _sampleCode = @"public class Theme : BUIThemePaletteBase
+{
+    public Theme() => Primary = new CssColor(""#3B82F6"");
+}";
+
+    protected override void OnInitialized()
+    {
+        _sampleData = Enumerable.Range(1, 4).Select(i => new SampleDataItem
+        {
+            Id = i,
+            Name = $"User {i}",
+            Email = $"user{i}@example.com",
+            IsActive = i % 2 != 0
+        }).ToList();
+    }
+
+    private static CssColor Var(string name) => new CssColor($"var(--palette-{name})", isCssVariable: true);
+
+    private void ShowToast(ToastType type)
+    {
+        string icon = type switch
+        {
+            ToastType.Success => BUIIcons.MaterialIconsRound.i_check_circle,
+            ToastType.Error => BUIIcons.MaterialIconsRound.i_error,
+            ToastType.Warning => BUIIcons.MaterialIconsRound.i_warning,
+            _ => BUIIcons.MaterialIconsRound.i_info
+        };
+
+        string message = type switch
+        {
+            ToastType.Success => "Operation completed!",
+            ToastType.Error => "An error occurred.",
+            ToastType.Warning => "Please review.",
+            _ => "Information."
+        };
+
+        ToastService.Show(builder =>
+        {
+            builder.OpenElement(0, "div");
+            builder.AddAttribute(1, "style", "display:flex;align-items:center;gap:0.5rem;");
+            builder.OpenComponent<BUISvgIcon>(2);
+            builder.AddAttribute(3, "Icon", icon);
+            builder.CloseComponent();
+            builder.OpenElement(4, "span");
+            builder.AddContent(5, message);
+            builder.CloseElement();
+            builder.CloseElement();
+        });
+    }
+
+    private enum ToastType { Success, Error, Warning, Info }
+
+    public class SampleDataItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Email { get; set; } = "";
+        public bool IsActive { get; set; }
+    }
+}

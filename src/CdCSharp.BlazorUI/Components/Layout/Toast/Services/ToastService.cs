@@ -115,7 +115,7 @@ public sealed class ToastService : IToastService
         NotifyChange();
     }
 
-    public void Show(RenderFragment content, ToastOptions? options = null)
+    public void ShowFragment(RenderFragment content, ToastOptions? options = null)
     {
         ToastState state = new()
         {
@@ -129,7 +129,7 @@ public sealed class ToastService : IToastService
     public void Show(Action<RenderTreeBuilder> builder, ToastOptions? options = null)
     {
         RenderFragment fragment = new(builder);
-        Show(fragment, options);
+        ShowFragment(fragment, options);
     }
 
     public void Show<TComponent>(ToastOptions? options = null) where TComponent : IComponent
@@ -155,7 +155,7 @@ public sealed class ToastService : IToastService
             builder.CloseComponent();
         };
 
-        Show(fragment, options);
+        ShowFragment(fragment, options);
     }
 
     internal void Remove(Guid toastId)

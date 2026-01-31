@@ -26,6 +26,9 @@
 <h2>With Suffix</h2>
 <ComponentDemo Definition="@SuffixDemo" />
 
+<h2>With Prefix/Suffix</h2>
+<ComponentDemo Definition="@PrefixSuffixDemo" />
+
 <h2>Loading State</h2>
 <ComponentDemo Definition="@LoadingDemo" />
 
@@ -34,6 +37,21 @@
 
 <h2>Required</h2>
 <ComponentDemo Definition="@RequiredDemo" />
+
+<h2>Date Only Mode</h2>
+<ComponentDemo Definition="@DateOnlyDemo" />
+
+<h2>Time Only Mode</h2>
+<ComponentDemo Definition="@TimeOnlyDemo" />
+
+@* <h2>Clearable</h2>
+<ComponentDemo Definition="@ClearableDemo" />
+
+<h2>Custom Format</h2>
+<ComponentDemo Definition="@CustomFormatDemo" /> *@
+
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
 
 @code {
     private DateTime? _basicValue = DateTime.Now;
@@ -50,6 +68,10 @@
     private DateTime? _loadingValue;
     private DateTime? _disabledValue = DateTime.Now;
     private DateTime? _requiredValue;
+    private DateOnly? _dateOnlyValue = DateOnly.FromDateTime(DateTime.Today);
+    private TimeOnly? _timeOnlyValue = TimeOnly.FromDateTime(DateTime.Now);
+    private DateTime? _clearableValue = DateTime.Now;
+    private DateTime? _customFormatValue = DateTime.Now;
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -186,4 +208,120 @@
     {
         <BUIInputDateTime @bind-Value="_requiredValue" Label="Required field" Required="true" />
     };
+
+    private ComponentDemoDefinition DateOnlyDemo => new()
+    {
+        Demo = RenderDateOnly(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDateOnly() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDateTime TValue="DateOnly?"
+                                  @bind-Value="_dateOnlyValue"
+                                  Label="Date Only"
+                                  HelperText="Only date picker, no time" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p><strong>Selected:</strong> @_dateOnlyValue?.ToString("D")</p>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition TimeOnlyDemo => new()
+    {
+        Demo = RenderTimeOnly(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderTimeOnly() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputDateTime TValue="TimeOnly?"
+                                  @bind-Value="_timeOnlyValue"
+                                  Label="Time Only"
+                                  HelperText="Only time picker, no date" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p><strong>Selected:</strong> @_timeOnlyValue?.ToString("T")</p>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    // private ComponentDemoDefinition ClearableDemo => new()
+    // {
+    //     Demo = RenderClearable(),
+    //     Code = """ """
+    // };
+
+    // private RenderFragment RenderClearable() => __builder =>
+    // {
+    //     <BUIGrid Gap="1rem">
+    //         <BUIGridItem>
+    //             <BUIInputDateTime TValue="DateTime?"
+    //                               @bind-Value="_clearableValue"
+    //                               Label="Clearable DateTime"
+    //                               Clearable="true" />
+    //         </BUIGridItem>
+    //         <BUIGridItem>
+    //             <p><strong>Selected:</strong> @(_clearableValue?.ToString("F") ?? "null")</p>
+    //         </BUIGridItem>
+    //     </BUIGrid>
+    // };
+
+    // private ComponentDemoDefinition CustomFormatDemo => new()
+    // {
+    //     Demo = RenderCustomFormat(),
+    //     Code = """ """
+    // };
+
+    // private RenderFragment RenderCustomFormat() => __builder =>
+    // {
+    //     <BUIGrid Gap="1rem">
+    //         <BUIGridItem>
+    //             <BUIInputDateTime TValue="DateTime?"
+    //                               @bind-Value="_customFormatValue"
+    //                               Label="Custom Format (ISO)"
+    //                               Format="yyyy-MM-dd HH:mm" />
+    //         </BUIGridItem>
+    //         <BUIGridItem>
+    //             <p><strong>Formatted:</strong> @_customFormatValue?.ToString("yyyy-MM-dd HH:mm")</p>
+    //         </BUIGridItem>
+    //     </BUIGrid>
+    // };
+
+    private ComponentDemoDefinition PrefixSuffixDemo => new()
+    {
+        Demo = RenderPrefixSuffix(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderPrefixSuffix() => __builder =>
+    {
+        <BUIInputDateTime TValue="DateTime?"
+                          @bind-Value="_prefixValue"
+                          Label="Event Date"
+                          PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_event" />
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue", "-", "The value (DateTime, DateTime?, DateOnly, DateOnly?, TimeOnly, TimeOnly?)"),
+        new("Label", "string?", "null", "Input label"),
+        new("Placeholder", "string?", "null", "Placeholder text"),
+        new("HelperText", "string?", "null", "Helper text"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("Density", "DensityEnum", "Standard", "Spacing density"),
+        new("Disabled", "bool", "false", "Disable input"),
+        new("Required", "bool", "false", "Mark as required"),
+        new("Loading", "bool", "false", "Show loading state"),
+        new("PrefixIcon", "string?", "null", "Icon prefix"),
+        new("SuffixIcon", "string?", "null", "Icon suffix"),
+        new("PrefixText", "string?", "null", "Text prefix"),
+        new("SuffixText", "string?", "null", "Text suffix")
+    ];
 }

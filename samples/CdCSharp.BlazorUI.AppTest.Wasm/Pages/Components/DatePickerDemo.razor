@@ -1,0 +1,117 @@
+﻿@page "/demo/datepicker"
+@using CdCSharp.BlazorUI.AppTest.Wasm.Shared
+
+<PageTitle>Date Picker - CdCSharp.BlazorUI</PageTitle>
+
+<h1>BUIDatePicker</h1>
+
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicUsageDemo" />
+
+<h2>Sizes</h2>
+<ComponentDemo Definition="@SizesDemo" />
+
+<h2>Density</h2>
+<ComponentDemo Definition="@DensityDemo" />
+
+<h2>Selected Date Display</h2>
+<ComponentDemo Definition="@SelectedDateDemo" />
+
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
+@code {
+    private DateOnly? _basicValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _smallValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _mediumValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _largeValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _compactValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _standardValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _comfortableValue = DateOnly.FromDateTime(DateTime.Today);
+    private DateOnly? _selectedValue = DateOnly.FromDateTime(DateTime.Today);
+
+    private ComponentDemoDefinition BasicUsageDemo => new()
+    {
+        Demo = RenderBasicUsage(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderBasicUsage() => __builder =>
+    {
+        <BUIDatePicker @bind-Value="_basicValue" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIGrid Gap="2rem">
+            <BUIGridItem>
+                <h4>Small</h4>
+                <BUIDatePicker @bind-Value="_smallValue" Size="SizeEnum.Small" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <h4>Medium (Default)</h4>
+                <BUIDatePicker @bind-Value="_mediumValue" Size="SizeEnum.Medium" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <h4>Large</h4>
+                <BUIDatePicker @bind-Value="_largeValue" Size="SizeEnum.Large" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIGrid Gap="2rem">
+            <BUIGridItem>
+                <h4>Compact</h4>
+                <BUIDatePicker @bind-Value="_compactValue" Density="DensityEnum.Compact" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <h4>Standard</h4>
+                <BUIDatePicker @bind-Value="_standardValue" Density="DensityEnum.Standard" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <h4>Comfortable</h4>
+                <BUIDatePicker @bind-Value="_comfortableValue" Density="DensityEnum.Comfortable" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition SelectedDateDemo => new()
+    {
+        Demo = RenderSelectedDate(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderSelectedDate() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIDatePicker @bind-Value="_selectedValue" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p><strong>Selected Date:</strong> @_selectedValue?.ToString("D")</p>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "DateOnly", "-", "The selected date"),
+        new("ValueChanged", "EventCallback<DateOnly>", "-", "Fired when date changes"),
+        new("Size", "SizeEnum", "Medium", "Component size"),
+        new("Density", "DensityEnum", "Standard", "Component density")
+    ];
+}

@@ -26,6 +26,9 @@
 <h2>Button Placement</h2>
 <ComponentDemo Definition="@ButtonPlacementDemo" />
 
+<h2>Without Step Buttons</h2>
+<ComponentDemo Definition="@NoStepButtonsDemo" />
+
 <h2>Thousands Separator</h2>
 <ComponentDemo Definition="@ThousandsSeparatorDemo" />
 
@@ -41,6 +44,18 @@
 <h2>Disabled</h2>
 <ComponentDemo Definition="@DisabledDemo" />
 
+<h2>Mouse Wheel Support</h2>
+<ComponentDemo Definition="@MouseWheelDemo" />
+
+<h2>Acceleration Settings</h2>
+<ComponentDemo Definition="@AccelerationDemo" />
+
+<h2>Culture Settings</h2>
+<ComponentDemo Definition="@CultureDemo" />
+
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private int? _basicValue = 0;
     private decimal? _labelValue = 10.5m;
@@ -50,7 +65,8 @@
     private int? _stepButtonsValue = 5;
     private int? _leftButtonValue = 0;
     private int? _rightButtonValue = 0;
-    private decimal? _thousandsValue = 1234567.89m;
+    private int _noButtonsValue = 25;
+    private int _thousandsValue = 1234567;
     private int? _negativeValue = -10;
     private int? _smallValue = 0;
     private int? _mediumValue = 0;
@@ -58,6 +74,9 @@
     private decimal? _prefixValue = 100m;
     private decimal? _suffixValue = 50m;
     private int? _disabledValue = 42;
+    private int _wheelValue = 50;
+    private int _accelValue = 0;
+    private decimal _cultureValue = 1234.56m;
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -118,9 +137,17 @@
 
     private RenderFragment RenderDecimalPlaces() => __builder =>
     {
-        <BUIInputNumber @bind-Value="_decimalValue"
-                        Label="Pi (5 decimals)"
-                        DecimalPlaces="5" />
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber @bind-Value="_decimalValue"
+                                Label="2 Decimal Places"
+                                DecimalPlaces="2"
+                                Step="0.01m" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p>Value: @_decimalValue</p>
+            </BUIGridItem>
+        </BUIGrid>
     };
 
     private ComponentDemoDefinition StepButtonsDemo => new()
@@ -160,6 +187,24 @@
         </BUIGrid>
     };
 
+    private ComponentDemoDefinition NoStepButtonsDemo => new()
+    {
+        Demo = RenderNoStepButtons(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNoStepButtons() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber TValue="int"
+                                @bind-Value="_noButtonsValue"
+                                Label="Without Step Buttons"
+                                ShowStepButtons="false" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
     private ComponentDemoDefinition ThousandsSeparatorDemo => new()
     {
         Demo = RenderThousandsSeparator(),
@@ -168,10 +213,20 @@
 
     private RenderFragment RenderThousandsSeparator() => __builder =>
     {
-        <BUIInputNumber @bind-Value="_thousandsValue"
-                        Label="With Thousands Separator"
-                        UseThousandsSeparator="true" />
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber TValue="int"
+                                @bind-Value="_thousandsValue"
+                                Label="With Thousands Separator"
+                                UseThousandsSeparator="true"
+                                Step="1000" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p>Value: @_thousandsValue</p>
+            </BUIGridItem>
+        </BUIGrid>
     };
+
 
     private ComponentDemoDefinition AllowNegativeDemo => new()
     {
@@ -239,4 +294,89 @@
     {
         <BUIInputNumber @bind-Value="_disabledValue" Label="Disabled" Disabled="true" />
     };
+
+    private ComponentDemoDefinition MouseWheelDemo => new()
+    {
+        Demo = RenderMouseWheel(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderMouseWheel() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber TValue="int"
+                                @bind-Value="_wheelValue"
+                                Label="Mouse Wheel Enabled"
+                                EnableMouseWheel="true"
+                                HelperText="Focus the input and use mouse wheel to change value" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition AccelerationDemo => new()
+    {
+        Demo = RenderAcceleration(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderAcceleration() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber TValue="int"
+                                @bind-Value="_accelValue"
+                                Label="Custom Acceleration"
+                                EnableAcceleration="true"
+                                AccelerationInitialDelay="300"
+                                AccelerationMinDelay="30"
+                                AccelerationStepReduction="40"
+                                HelperText="Hold the button to see acceleration" />
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition CultureDemo => new()
+    {
+        Demo = RenderCulture(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCulture() => __builder =>
+    {
+        <BUIGrid Gap="1rem">
+            <BUIGridItem>
+                <BUIInputNumber TValue="decimal"
+                                @bind-Value="_cultureValue"
+                                Label="German Culture (de-DE)"
+                                Culture="@(new System.Globalization.CultureInfo("de-DE"))"
+                                UseThousandsSeparator="true"
+                                DecimalPlaces="2" />
+            </BUIGridItem>
+            <BUIGridItem>
+                <p>Value: @_cultureValue</p>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue", "-", "The numeric value"),
+        new("Min", "TValue?", "null", "Minimum allowed value"),
+        new("Max", "TValue?", "null", "Maximum allowed value"),
+        new("Step", "decimal", "1", "Step increment/decrement amount"),
+        new("DecimalPlaces", "int?", "null", "Number of decimal places"),
+        new("AllowNegative", "bool", "true", "Allow negative values"),
+        new("ShowStepButtons", "bool", "true", "Show increment/decrement buttons"),
+        new("ButtonPlacement", "StepButtonPlacement", "Right", "Position of step buttons"),
+        new("UseThousandsSeparator", "bool", "false", "Format with thousands separator"),
+        new("Culture", "CultureInfo?", "null", "Culture for number formatting"),
+        new("EnableMouseWheel", "bool", "false", "Change value with mouse wheel"),
+        new("EnableAcceleration", "bool", "true", "Accelerate when holding buttons"),
+        new("AccelerationInitialDelay", "int", "400", "Initial delay before acceleration (ms)"),
+        new("AccelerationMinDelay", "int", "50", "Minimum delay between increments (ms)"),
+        new("AccelerationStepReduction", "int", "50", "Delay reduction per step (ms)"),
+        new("OnIncrement", "EventCallback<TValue?>", "-", "Fired on increment"),
+        new("OnDecrement", "EventCallback<TValue?>", "-", "Fired on decrement")
+    ];
 }

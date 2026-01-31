@@ -29,6 +29,9 @@
 <h2>Disabled</h2>
 <ComponentDemo Definition="@DisabledDemo" />
 
+<h2>Properties</h2>
+<PropertyTable Properties="@_properties" />
+
 @code {
     private bool _basicValue = false;
     private string? _stringValue = "option1";
@@ -129,12 +132,12 @@
 
     private RenderFragment RenderIcons() => __builder =>
     {
-        <BUISwitch @bind-Value="_iconsValue" 
-                   Label="Dark Mode" 
+        <BUISwitch @bind-Value="_iconsValue"
+                   Label="Dark Mode"
                    OptionInactive="true"
                    OptionActive="false"
-                   IconOption1="@BUIIcons.MaterialIconsRound.i_light_mode"
-                   IconOption2="@BUIIcons.MaterialIconsRound.i_dark_mode" />
+                   IconInactive="@BUIIcons.MaterialIconsRound.i_light_mode"
+                   IconActive="@BUIIcons.MaterialIconsRound.i_dark_mode" />
     };
 
     private ComponentDemoDefinition ColorsDemo => new()
@@ -145,8 +148,8 @@
 
     private RenderFragment RenderColors() => __builder =>
     {
-        <BUISwitch @bind-Value="_colorsValue" 
-                   Label="Custom Colors" 
+        <BUISwitch @bind-Value="_colorsValue"
+                   Label="Custom Colors"
                    OptionInactive="true"
                    OptionActive="false"
                    TrackColorInactive="BUIColor.Palette.Error"
@@ -163,4 +166,20 @@
     {
         <BUISwitch @bind-Value="_disabledValue" OptionInactive="true" OptionActive="false" Label="Disabled switch" IsDisabled="true" />
     };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+            new("Value", "TValue", "-", "Current value"),
+            new("OptionInactive", "TValue", "-", "Value when inactive"),
+            new("OptionActive", "TValue", "-", "Value when active"),
+            new("Label", "string?", "null", "Label text"),
+            new("HelperText", "string?", "null", "Helper text"),
+            new("Size", "SizeEnum", "Medium", "Component size"),
+            new("Density", "DensityEnum", "Standard", "Spacing density"),
+            new("IsDisabled", "bool", "false", "Disable switch"),
+            new("IconInactive", "string?", "null", "Icon when inactive"),
+            new("IconActive", "string?", "null", "Icon when active"),
+            new("TrackColorInactive", "CssColor?", "null", "Track color when inactive"),
+            new("TrackColorActive", "CssColor?", "null", "Track color when active")
+    ];
 }

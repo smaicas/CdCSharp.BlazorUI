@@ -37,6 +37,12 @@
 <h2>Manage Toasts</h2>
 <ComponentDemo Definition="@ManageDemo" />
 
+<h2>Toast Options - All Properties</h2>
+<PropertyTable Properties="@_toastOptionsProperties" />
+
+<h2>Toast Service Methods</h2>
+<PropertyTable Properties="@_toastServiceMethods" />
+
 @code {
     private int _clickCount = 0;
 
@@ -480,6 +486,31 @@
     {
         ToastService.CloseAll();
     }
+
+    private readonly PropertyDefinition[] _toastOptionsProperties =
+[
+        new("Title", "string?", "null", "Toast title"),
+        new("Message", "string?", "null", "Toast message"),
+        new("Type", "ToastType", "Info", "Toast type (Info, Success, Warning, Error)"),
+        new("Position", "ToastPosition", "TopRight", "Toast position"),
+        new("Duration", "TimeSpan", "5s", "Auto-dismiss duration"),
+        new("AutoDismiss", "bool", "true", "Auto-dismiss after duration"),
+        new("Closable", "bool", "true", "Show close button"),
+        new("Animation", "ToastAnimationConfig", "-", "Animation settings"),
+        new("Icon", "string?", "null", "Custom icon"),
+        new("OnClick", "Action?", "null", "Click callback")
+];
+
+    private readonly PropertyDefinition[] _toastServiceMethods =
+    [
+        new("Show(message, options?)", "void", "-", "Show a toast"),
+        new("Info(message, title?)", "void", "-", "Show info toast"),
+        new("Success(message, title?)", "void", "-", "Show success toast"),
+        new("Warning(message, title?)", "void", "-", "Show warning toast"),
+        new("Error(message, title?)", "void", "-", "Show error toast"),
+        new("Close(id)", "void", "-", "Close a specific toast"),
+        new("CloseAll()", "void", "-", "Close all toasts")
+    ];
 }
 
 <style>
