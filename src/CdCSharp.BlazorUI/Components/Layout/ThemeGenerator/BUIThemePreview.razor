@@ -1,0 +1,177 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Layout
+
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Components.Layout.Services
+@using Microsoft.AspNetCore.Components.Rendering
+
+<div class="bui-theme-preview">
+    <section class="bui-theme-preview__section">
+        <h5>Buttons</h5>
+        <div class="bui-theme-preview__row">
+            <BUIButton Text="Default" />
+            <BUIButton Text="Disabled" Disabled="true" />
+            <BUIButton Text="Loading" Loading="true" />
+            <BUIButton Text="Small" Size="SizeEnum.Small" />
+            <BUIButton Text="Large" Size="SizeEnum.Large" />
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Inputs</h5>
+        <div class="bui-theme-preview__row">
+            <BUIInputText @bind-Value="_textValue" Label="Text Input" Placeholder="Enter text..." />
+            <BUIInputText @bind-Value="_textValue" Label="With Helper" HelperText="Helper text here" />
+            <BUIInputText @bind-Value="_textValue" Label="Disabled" Disabled="true" />
+        </div>
+        <div class="bui-theme-preview__row">
+            <BUIInputNumber @bind-Value="_numberValue" Label="Number" />
+            <BUIInputColor @bind-Value="_colorValue" Label="Color" />
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Selection</h5>
+        <div class="bui-theme-preview__row">
+            <BUISwitch @bind-Value="_switchValue" OptionActive="true" OptionInactive="false" Label="Switch" />
+            <BUIInputCheckbox @bind-Value="_checkValue" Label="Checkbox" />
+        </div>
+        <div class="bui-theme-preview__row">
+            <BUIInputRadio @bind-Value="_radioValue" Label="Radio Group" Orientation="RadioOrientation.Horizontal">
+                <RadioOption Value="@("option1")">Option 1</RadioOption>
+                <RadioOption Value="@("option2")">Option 2</RadioOption>
+                <RadioOption Value="@("option3")">Option 3</RadioOption>
+            </BUIInputRadio>
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Card</h5>
+        <BUICard Title="Card Title" Subtitle="Card subtitle">
+            <ChildContent>
+                <p>This is the card content. Cards use surface colors for background and contrast.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Action" Size="SizeEnum.Small" />
+            </Actions>
+        </BUICard>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Badges</h5>
+        <div class="bui-theme-preview__row">
+            <BUIBadge Text="Default" />
+            <BUIBadge Text="Primary" BackgroundColor="var(--palette-primary)" Color="var(--palette-primarycontrast)" />
+            <BUIBadge Text="Success" BackgroundColor="var(--palette-success)" Color="var(--palette-successcontrast)" />
+            <BUIBadge Text="Warning" BackgroundColor="var(--palette-warning)" Color="var(--palette-warningcontrast)" />
+            <BUIBadge Text="Error" BackgroundColor="var(--palette-error)" Color="var(--palette-errorcontrast)" />
+            <BUIBadge Text="Info" BackgroundColor="var(--palette-info)" Color="var(--palette-infocontrast)" />
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Data Grid</h5>
+        <BUIDataGrid Items="_gridData" Hoverable="true" Density="DensityEnum.Compact">
+            <BUIDataColumn TItem="GridItem" Header="Name" Property="x => x.Name" />
+            <BUIDataColumn TItem="GridItem" Header="Status" Property="x => x.Status" />
+            <BUIDataColumn TItem="GridItem" Header="Value" Property="x => x.Value" />
+        </BUIDataGrid>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Code Block</h5>
+        <BUICodeBlock Language="SyntaxHighlight.SyntaxHighlightLanguage.CSharp" Code="@_codeExample" />
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Loading Indicators</h5>
+        <div class="bui-theme-preview__row">
+            <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" />
+            <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Dots" />
+            <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" />
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Tooltip</h5>
+        <div class="bui-theme-preview__row">
+            <BUITooltip Text="This is a tooltip">
+                <BUIButton Text="Hover me" />
+            </BUITooltip>
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>Overlays</h5>
+        <div class="bui-theme-preview__row">
+            <BUIButton Text="Show Dialog" Size="SizeEnum.Small" OnClick="() => _dialogOpen = true" />
+            <BUIButton Text="Show Drawer" Size="SizeEnum.Small" OnClick="() => _drawerOpen = true" />
+            <BUIButton Text="Show Toast" Size="SizeEnum.Small" OnClick="ShowToast" />
+        </div>
+    </section>
+
+    <section class="bui-theme-preview__section">
+        <h5>SVG Icons</h5>
+        <div class="bui-theme-preview__row">
+            <BUISvgIcon Icon="@BUIIcons.UI.Home" Size="SizeEnum.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Settings" Size="SizeEnum.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Search" Size="SizeEnum.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="SizeEnum.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Large" />
+        </div>
+    </section>
+
+    <BUIDialog @bind-Open="_dialogOpen" Title="Dialog Preview">
+        <Content>
+            <p>This is a dialog. It uses surface and contrast colors from the palette.</p>
+        </Content>
+        <Footer>
+            <BUIButton Text="Close" OnClick="() => _dialogOpen = false" />
+        </Footer>
+    </BUIDialog>
+
+    <BUIDrawer @bind-Open="_drawerOpen" Position="DrawerPosition.Right">
+        <Header>Drawer Preview</Header>
+        <ChildContent>
+            <p>This is a drawer panel. Useful for side navigation or detail views.</p>
+        </ChildContent>
+    </BUIDrawer>
+</div>
+
+@code {
+    [Inject] private IToastService ToastService { get; set; } = default!;
+
+    private string? _textValue = "";
+    private int _numberValue = 42;
+    private CssColor? _colorValue = new("#8AB4F8");
+    private bool _switchValue = true;
+    private bool _checkValue = true;
+    private string _radioValue = "option1";
+    private bool _dialogOpen = false;
+    private bool _drawerOpen = false;
+
+    private List<GridItem> _gridData = new()
+    {
+        new("Item 1", "Active", 100),
+        new("Item 2", "Pending", 250),
+        new("Item 3", "Completed", 75)
+    };
+
+    private string _codeExample = @"public class Example
+{
+    public void HelloWorld()
+    {
+        Console.WriteLine(""Hello!"");
+    }
+}";
+
+    private void ShowToast()
+    {
+        ToastService.Show((RenderTreeBuilder builder) =>
+        {
+            builder.AddContent(0, "This is a toast notification preview");
+        });
+    }
+
+    private record GridItem(string Name, string Status, int Value);
+}

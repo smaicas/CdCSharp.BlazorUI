@@ -1,0 +1,104 @@
+﻿@namespace CdCSharp.BlazorUI.Components
+@inherits BUIVariantComponentBase<BUITabs, BUITabsVariant>
+@implements IHasSize
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    /* ========= Public API ========= */
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public string? ActiveTab { get; set; }
+
+    [Parameter] public EventCallback<string?> ActiveTabChanged { get; set; }
+
+    [Parameter] public bool FullWidth { get; set; }
+
+    // IHasSize
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    /* ========= Variant ========= */
+    public override BUITabsVariant DefaultVariant => BUITabsVariant.Underline;
+
+    protected override Dictionary<BUITabsVariant, Func<BUITabs, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [BUITabsVariant.Underline] = t => t.RenderDefault(),
+        [BUITabsVariant.Pills] = t => t.RenderDefault(),
+        [BUITabsVariant.Enclosed] = t => t.RenderDefault(),
+    };
+
+    /* ========= Private state ========= */
+    private readonly List<BUITab> _tabs = new();
+
+    /* ========= Internal API for BUITab ========= */
+    internal void RegisterTab(BUITab tab)
+    {
+        if (!_tabs.Contains(tab))
+        {
+            _tabs.Add(tab);
+            if (string.IsNullOrEmpty(ActiveTab) && _tabs.Count == 1)
+            {
+                ActiveTab = tab.Id;
+            }
+            StateHasChanged();
+        }
+    }
+
+    internal void UnregisterTab(BUITab tab)
+    {
+        _tabs.Remove(tab);
+        StateHasChanged();
+    }
+
+    internal bool IsActiveTab(string? tabId) => ActiveTab == tabId;
+
+    /* ========= Render ========= */
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <CascadingValue Value="this">
+            <bui-component @attributes="@ComputedAttributes">
+                <div class="bui-tabs__header" role="tablist">
+                    @foreach (BUITab tab in _tabs)
+                    {
+                        <button type="button"
+                                role="tab"
+                                class="bui-tabs__tab @(tab.Id == ActiveTab ? "bui-tabs__tab--active" : "")"
+                                aria-selected="@(tab.Id == ActiveTab)"
+                                disabled="@tab.Disabled"
+                                @onclick="() => SelectTab(tab.Id)">
+                            @if (tab.Icon != null)
+                            {
+                                <span class="bui-tabs__tab-icon">@tab.Icon</span>
+                            }
+                            <span class="bui-tabs__tab-label">@tab.Label</span>
+                        </button>
+                    }
+                </div>
+                <div class="bui-tabs__content" role="tabpanel">
+                    @ChildContent
+                </div>
+            </bui-component>
+        </CascadingValue>
+    };
+
+    /* ========= Event Handlers ========= */
+    private async Task SelectTab(string? tabId)
+    {
+        if (ActiveTab != tabId)
+        {
+            ActiveTab = tabId;
+            await ActiveTabChanged.InvokeAsync(tabId);
+        }
+    }
+
+    /* ========= Component Attributes ========= */
+    public override void BuildComponentDataAttributes(Dictionary<string, object> attributes)
+    {
+        if (FullWidth)
+        {
+            attributes[FeatureDefinitions.DataAttributes.FullWidth] = "true";
+        }
+    }
+}

@@ -20,8 +20,6 @@ public class CssInitializeThemesGenerator : IAssetGenerator
           line-height: var({{FeatureDefinitions.Typography.LineHeight}});
           background-color: var(--palette-background);
           color: var(--palette-backgroundcontrast);
-          background-color: var(--palette-background);
-          color: var(--palette-backgroundcontrast);
         }
 
         .bui-color-primary {

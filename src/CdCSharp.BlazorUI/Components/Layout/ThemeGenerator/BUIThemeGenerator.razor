@@ -1,0 +1,288 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Layout
+
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Core.Css
+@using CdCSharp.BlazorUI.Core.Theming.Abstractions
+@using CdCSharp.BlazorUI.Core.Themes
+@using System.Text.Json
+@using System.Reflection
+@using CdCSharp.BlazorUI.SyntaxHighlight
+
+<div class="bui-theme-generator">
+    <BUITabs @bind-ActiveTab="_activeTheme" Variant="BUITabsVariant.Underline">
+        <BUITab Id="dark" Label="Dark">
+            <div class="bui-theme-generator__editor">
+                <BUIThemeEditor Palette="_darkPalette" OnPaletteChanged="p => _darkPalette = p" />
+            </div>
+        </BUITab>
+        <BUITab Id="light" Label="Light">
+            <div class="bui-theme-generator__editor">
+                <BUIThemeEditor Palette="_lightPalette" OnPaletteChanged="p => _lightPalette = p" />
+            </div>
+        </BUITab>
+    </BUITabs>
+
+    <div class="bui-theme-generator__actions">
+        <div class="bui-theme-generator__actions-group">
+            <span class="bui-theme-generator__actions-label">Import</span>
+            <BUIButton Text="JSON" OnClick="OpenImportDialog" Size="SizeEnum.Small" />
+        </div>
+        <div class="bui-theme-generator__actions-group">
+            <span class="bui-theme-generator__actions-label">Export</span>
+            <BUIButton Text="JSON" OnClick="@(() => ShowExport("JSON", GenerateJson()))" Size="SizeEnum.Small" />
+            <BUIButton Text="CSS" OnClick="@(() => ShowExport("CSS", GenerateCss()))" Size="SizeEnum.Small" />
+            <BUIButton Text="C#" OnClick="@(() => ShowExport("C#", GenerateCSharp()))" Size="SizeEnum.Small" />
+        </div>
+        <BUIButton Text="Reset" OnClick="Reset" Size="SizeEnum.Small" />
+    </div>
+
+    <div class="bui-theme-generator__preview-container" style="@GetPreviewStyles()">
+        <BUIThemePreview />
+    </div>
+</div>
+
+<BUIDialog @bind-Open="_importDialogOpen" Title="Import JSON" MaxWidth="600px">
+    <Content>
+        <BUIInputTextArea @bind-Value="_importContent"
+                          Label="Paste JSON"
+                          Rows="12"
+                          Placeholder="@_importPlaceholder" />
+        @if (!string.IsNullOrEmpty(_importError))
+        {
+            <div class="bui-theme-generator__import-error">@_importError</div>
+        }
+    </Content>
+    <Footer>
+        <BUIButton Text="Cancel" OnClick="() => _importDialogOpen = false" />
+        <BUIButton Text="Import" OnClick="ImportJson" />
+    </Footer>
+</BUIDialog>
+
+<BUIDialog @bind-Open="_exportDialogOpen" Title="@_exportTitle" MaxWidth="800px">
+    <Content>
+        <BUICodeBlock Language="@_exportLanguage" Code="@_exportContent" />
+    </Content>
+    <Footer>
+        <BUIButton Text="Close" OnClick="() => _exportDialogOpen = false" />
+    </Footer>
+</BUIDialog>
+
+@code {
+    private string _activeTheme = "dark";
+    private Dictionary<string, CssColor> _darkPalette = new();
+    private Dictionary<string, CssColor> _lightPalette = new();
+
+    private bool _exportDialogOpen = false;
+    private string _exportTitle = "";
+    private string _exportContent = "";
+    private SyntaxHighlightLanguage _exportLanguage = SyntaxHighlightLanguage.Json;
+
+    private bool _importDialogOpen = false;
+    private string _importContent = "";
+    private string _importError = "";
+    private const string _importPlaceholder = @"{
+  ""dark"": { ""primary"": ""#8AB4F8"", ... },
+  ""light"": { ""primary"": ""#1A73E8"", ... }
+}";
+
+    protected override void OnInitialized()
+    {
+        InitializePalettes();
+    }
+
+    private void InitializePalettes()
+    {
+        DarkTheme dark = new();
+        LightTheme light = new();
+
+        _darkPalette = ExtractPaletteColors(dark);
+        _lightPalette = ExtractPaletteColors(light);
+    }
+
+    private Dictionary<string, CssColor> ExtractPaletteColors(BUIThemePaletteBase palette)
+    {
+        Dictionary<string, CssColor> colors = new();
+        PropertyInfo[] properties = typeof(BUIThemePaletteBase)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(p => p.PropertyType == typeof(CssColor))
+            .ToArray();
+
+        foreach (PropertyInfo prop in properties)
+        {
+            CssColor color = (CssColor)prop.GetValue(palette)!;
+            colors[prop.Name] = color;
+        }
+        return colors;
+    }
+
+    private string GetPreviewStyles()
+    {
+        List<string> vars = new();
+        Dictionary<string, CssColor> palette = _activeTheme == "dark" ? _darkPalette : _lightPalette;
+
+        foreach (KeyValuePair<string, CssColor> kvp in palette)
+        {
+            string cssName = kvp.Key.ToLowerInvariant();
+            vars.Add($"--palette-{cssName}: {kvp.Value.ToString(ColorOutputFormats.Hex)}");
+        }
+
+        return string.Join("; ", vars);
+    }
+
+    private void OpenImportDialog()
+    {
+        _importContent = "";
+        _importError = "";
+        _importDialogOpen = true;
+    }
+
+    private void ImportJson()
+    {
+        _importError = "";
+
+        if (string.IsNullOrWhiteSpace(_importContent))
+        {
+            _importError = "Please paste JSON content.";
+            return;
+        }
+
+        try
+        {
+            JsonDocument doc = JsonDocument.Parse(_importContent);
+            JsonElement root = doc.RootElement;
+
+            if (root.TryGetProperty("dark", out JsonElement darkElement))
+            {
+                MergePalette(_darkPalette, darkElement);
+            }
+
+            if (root.TryGetProperty("light", out JsonElement lightElement))
+            {
+                MergePalette(_lightPalette, lightElement);
+            }
+
+            _importDialogOpen = false;
+        }
+        catch (JsonException ex)
+        {
+            _importError = $"Invalid JSON: {ex.Message}";
+        }
+    }
+
+    private void MergePalette(Dictionary<string, CssColor> target, JsonElement source)
+    {
+        foreach (JsonProperty prop in source.EnumerateObject())
+        {
+            string? key = FindMatchingKey(target, prop.Name);
+            if (key != null && prop.Value.ValueKind == JsonValueKind.String)
+            {
+                string? colorValue = prop.Value.GetString();
+                if (!string.IsNullOrEmpty(colorValue))
+                {
+                    try
+                    {
+                        target[key] = new CssColor(colorValue);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+    }
+
+    private string? FindMatchingKey(Dictionary<string, CssColor> palette, string jsonKey)
+    {
+        foreach (string key in palette.Keys)
+        {
+            if (string.Equals(key, jsonKey, StringComparison.OrdinalIgnoreCase))
+            {
+                return key;
+            }
+        }
+        return null;
+    }
+
+    private void ShowExport(string title, string content)
+    {
+        _exportTitle = $"Export {title}";
+        _exportContent = content;
+        _exportLanguage = title switch
+        {
+            "JSON" => SyntaxHighlightLanguage.Json,
+            "CSS" => SyntaxHighlightLanguage.Css,
+            "C#" => SyntaxHighlightLanguage.CSharp,
+            _ => SyntaxHighlightLanguage.Json
+        };
+        _exportDialogOpen = true;
+    }
+
+    private string GenerateJson()
+    {
+        var export = new
+        {
+            dark = _darkPalette.ToDictionary(k => k.Key.ToLowerInvariant(), v => v.Value.ToString(ColorOutputFormats.Hex)),
+            light = _lightPalette.ToDictionary(k => k.Key.ToLowerInvariant(), v => v.Value.ToString(ColorOutputFormats.Hex))
+        };
+        return JsonSerializer.Serialize(export, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    private string GenerateCss()
+    {
+        System.Text.StringBuilder sb = new();
+        sb.AppendLine(":root {");
+        foreach (KeyValuePair<string, CssColor> kvp in _darkPalette)
+        {
+            sb.AppendLine($"  --palette-{kvp.Key.ToLowerInvariant()}: {kvp.Value.ToString(ColorOutputFormats.Hex)};");
+        }
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("html[data-theme=\"light\"] {");
+        foreach (KeyValuePair<string, CssColor> kvp in _lightPalette)
+        {
+            sb.AppendLine($"  --palette-{kvp.Key.ToLowerInvariant()}: {kvp.Value.ToString(ColorOutputFormats.Hex)};");
+        }
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    private string GenerateCSharp()
+    {
+        System.Text.StringBuilder sb = new();
+        sb.AppendLine("using CdCSharp.BlazorUI.Core.Css;");
+        sb.AppendLine("using CdCSharp.BlazorUI.Core.Theming.Abstractions;");
+        sb.AppendLine();
+        sb.AppendLine("public class CustomDarkTheme : BUIThemePaletteBase");
+        sb.AppendLine("{");
+        sb.AppendLine("    public CustomDarkTheme()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        Id = \"dark\";");
+        sb.AppendLine("        Name = \"Dark\";");
+        foreach (KeyValuePair<string, CssColor> kvp in _darkPalette)
+        {
+            sb.AppendLine($"        {kvp.Key} = new CssColor(\"{kvp.Value.ToString(ColorOutputFormats.Hex)}\");");
+        }
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        sb.AppendLine();
+        sb.AppendLine("public class CustomLightTheme : BUIThemePaletteBase");
+        sb.AppendLine("{");
+        sb.AppendLine("    public CustomLightTheme()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        Id = \"light\";");
+        sb.AppendLine("        Name = \"Light\";");
+        foreach (KeyValuePair<string, CssColor> kvp in _lightPalette)
+        {
+            sb.AppendLine($"        {kvp.Key} = new CssColor(\"{kvp.Value.ToString(ColorOutputFormats.Hex)}\");");
+        }
+        sb.AppendLine("    }");
+        sb.AppendLine("}");
+        return sb.ToString();
+    }
+
+    private void Reset()
+    {
+        InitializePalettes();
+    }
+}

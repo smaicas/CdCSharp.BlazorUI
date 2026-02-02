@@ -5,8 +5,8 @@ bui-component[data-bui-component="badge"] {
     --_badge-font-size: 0.75rem;
     --_badge-font-weight: 600;
     --_badge-border-radius: 4px;
-    --_badge-bg: var(--palette-primary);
-    --_badge-color: var(--palette-primarycontrast);
+    --_badge-bg: var(--bui-inline-background, var(--palette-primary));
+    --_badge-color: var(--bui-inline-color, var(--palette-primarycontrast));
     --_badge-border-color: transparent;
     --_badge-border-width: 1px;
     display: inline-flex;

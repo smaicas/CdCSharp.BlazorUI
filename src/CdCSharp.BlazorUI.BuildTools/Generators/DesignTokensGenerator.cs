@@ -18,8 +18,8 @@ public class DesignTokensGenerator : IAssetGenerator
     public string Name => "Design Tokens";
 
     public async Task<string> GetContent()
-{
-    return $$"""
+    {
+        return $$"""
 :root {
     /* ========================================
        Z-INDEX SCALE
@@ -58,11 +58,18 @@ public class DesignTokensGenerator : IAssetGenerator
     --bui-compact-multiplier: 0.75;
     --bui-standard-multiplier: 1;
     --bui-comfortable-multiplier: 1.25;
+
+    /* ========================================
+       BORDER DEFAULT
+       ======================================== */
+    --bui-border-width: 1px;
+    --bui-border-style: solid;
+    --bui-border-radius: 4px;
 }
 
 {{GetRippleStyles()}}
 """;
-}
+    }
 
     private static string GetRippleStyles() => """
 /* ========================================

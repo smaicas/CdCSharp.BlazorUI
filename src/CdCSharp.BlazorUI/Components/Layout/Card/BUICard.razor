@@ -6,6 +6,7 @@
 @implements IHasBorder
 @implements IHasRipple
 @implements IHasBackgroundColor
+@implements IHasColor
 
 @{
     base.BuildRenderTree(__builder);
@@ -57,6 +58,10 @@
     /* ========= IHasBackgroundColor ========= */
 
     [Parameter] public string? BackgroundColor { get; set; }
+
+    /* ========= IHasColor ========= */
+
+    [Parameter] public string? Color { get; set; }
 
     /* ========= Variant ========= */
 

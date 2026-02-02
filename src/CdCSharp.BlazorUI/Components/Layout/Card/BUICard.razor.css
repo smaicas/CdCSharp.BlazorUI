@@ -2,7 +2,21 @@
 bui-component[data-bui-component="card"] {
     display: block;
     width: 100%;
+    border-radius: var(--_card-border-radius);
+    border: var(--_card-border);
+    border-top: var(--_card-border-top);
+    border-right: var(--_card-border-right);
+    border-bottom: var(--_card-border-bottom);
+    border-left: var(--_card-border-left);
     /* CSS Variables */
+    --_card-bg: var(--bui-inline-background, var(--palette-surface));
+    --_card-color: var(--bui-inline-color, var(--palette-surfacecontrast));
+    --_card-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
+    --_card-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
+    --_card-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_card-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_card-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_card-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
     --_card-padding: 1rem;
     --_card-header-padding: 1rem;
     --_card-content-padding: 1rem;
@@ -14,8 +28,9 @@ bui-component[data-bui-component="card"] {
     bui-component[data-bui-component="card"] .bui-card {
         display: flex;
         flex-direction: column;
-        background: var(--palette-surface);
-        border-radius: var(--bui-radius-md);
+        background: var(--_card-bg);
+        color: var(--_card-color);
+        border-radius: var(--_card-border-radius);
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         position: relative;
@@ -31,7 +46,6 @@ bui-component[data-bui-component="card"] {
         font-size: 1.25rem;
         font-weight: 500;
         line-height: 1.4;
-        color: var(--palette-backgroundcontrast);
     }
 
     bui-component[data-bui-component="card"] .bui-card__subtitle {
@@ -90,65 +104,50 @@ bui-component[data-bui-component="card"] {
         border-top: 1px solid rgba(0, 0, 0, 0.12);
     }
 
-    /* Variant: Outlined */
-    bui-component[data-bui-component="card"][data-bui-variant="outlined"] .bui-card {
-        border: 1px solid rgba(0, 0, 0, 0.12);
+    /* Variant: Outlined (default - has border by default) */
+    bui-component[data-bui-component="card"][data-bui-variant="outlined"][data-bui-clickable="true"] .bui-card:hover {
+        border-color: color-mix(in srgb, currentColor 24%, transparent);
+        box-shadow: 0 2px 4px color-mix(in srgb, currentColor 8%, transparent);
     }
 
-[data-theme="dark"] bui-component[data-bui-component="card"][data-bui-variant="outlined"] .bui-card {
-    border-color: rgba(255, 255, 255, 0.12);
-}
-
-bui-component[data-bui-component="card"][data-bui-variant="outlined"][data-bui-clickable="true"] .bui-card:hover {
-    border-color: rgba(0, 0, 0, 0.24);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="dark"] bui-component[data-bui-component="card"][data-bui-variant="outlined"][data-bui-clickable="true"] .bui-card:hover {
-    border-color: rgba(255, 255, 255, 0.24);
-}
-
-/* Variant: Flat */
-bui-component[data-bui-component="card"][data-bui-variant="flat"] .bui-card {
-    box-shadow: none;
-}
-
-bui-component[data-bui-component="card"][data-bui-variant="flat"][data-bui-clickable="true"] .bui-card:hover {
-    background: rgba(0, 0, 0, 0.02);
-}
-
-[data-theme="dark"] bui-component[data-bui-component="card"][data-bui-variant="flat"][data-bui-clickable="true"] .bui-card:hover {
-    background: rgba(255, 255, 255, 0.04);
-}
-
-/* Clickable State */
-bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card {
-    cursor: pointer;
-}
-
-    bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:active {
-        transform: scale(0.98);
+    /* Variant: Flat */
+    bui-component[data-bui-component="card"][data-bui-variant="flat"] .bui-card {
+        box-shadow: none;
+        border: none;
     }
 
-/* Media Position Variants */
-bui-component[data-bui-component="card"][data-bui-media-position="top"] .bui-card__media {
-    order: -3;
-}
+    bui-component[data-bui-component="card"][data-bui-variant="flat"][data-bui-clickable="true"] .bui-card:hover {
+        background: color-mix(in srgb, currentColor 2%, transparent);
+    }
 
-bui-component[data-bui-component="card"][data-bui-media-position="afterheader"] .bui-card__media {
-    order: -1;
-}
+    /* Clickable State */
+    bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card {
+        cursor: pointer;
+    }
 
-bui-component[data-bui-component="card"][data-bui-media-position="beforeactions"] .bui-card__media {
-    order: 1;
-}
+        bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:active {
+            transform: scale(0.98);
+        }
 
-bui-component[data-bui-component="card"][data-bui-media-position="bottom"] .bui-card__media {
-    order: 2;
-}
+    /* Media Position Variants */
+    bui-component[data-bui-component="card"][data-bui-media-position="top"] .bui-card__media {
+        order: -3;
+    }
 
-/* Accessibility */
-bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:focus-visible {
-    outline: var(--bui-highlight-outline);
-    outline-offset: var(--bui-highlight-outline-offset);
-}
+    bui-component[data-bui-component="card"][data-bui-media-position="afterheader"] .bui-card__media {
+        order: -1;
+    }
+
+    bui-component[data-bui-component="card"][data-bui-media-position="beforeactions"] .bui-card__media {
+        order: 1;
+    }
+
+    bui-component[data-bui-component="card"][data-bui-media-position="bottom"] .bui-card__media {
+        order: 2;
+    }
+
+    /* Accessibility */
+    bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:focus-visible {
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
+    }
