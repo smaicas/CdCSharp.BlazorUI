@@ -57,6 +57,9 @@
 <PropertyTable Properties="@_properties" />
 
 @code {
+
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private string _basicValue = "";
     private string _labelValue = "";
     private string _placeholderValue = "";
@@ -336,8 +339,8 @@
             <BUIGridItem>
                 <BUIInputText @bind-Value="_customColorValue"
                               Label="Custom Colors"
-                              BackgroundColor="BUIColor.Palette.Surface"
-                              PrefixColor="BUIColor.Palette.Primary"
+                              BackgroundColor="@Palette.Surface"
+                              PrefixColor="@Palette.Primary"
                               PrefixIcon="@BUIIcons.UI.Email" />
             </BUIGridItem>
         </BUIGrid>

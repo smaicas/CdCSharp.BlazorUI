@@ -44,6 +44,9 @@
 <PropertyTable Properties="@_toastServiceMethods" />
 
 @code {
+
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private int _clickCount = 0;
 
     private ComponentDemoDefinition BasicUsageDemo => new()
@@ -78,26 +81,26 @@
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
                 <BUIButton Text="Info"
-                           BackgroundColor="BUIColor.Palette.Info"
-                           Color="BUIColor.Palette.InfoContrast"
+                           BackgroundColor="@Palette.Info"
+                           Color="@Palette.InfoContrast"
                            OnClick="@ShowInfoToast" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIButton Text="Success"
-                           BackgroundColor="BUIColor.Palette.Success"
-                           Color="BUIColor.Palette.SuccessContrast"
+                           BackgroundColor="@Palette.Success"
+                           Color="@Palette.SuccessContrast"
                            OnClick="@ShowSuccessToast" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIButton Text="Warning"
-                           BackgroundColor="BUIColor.Palette.Warning"
-                           Color="BUIColor.Palette.WarningContrast"
+                           BackgroundColor="@Palette.Warning"
+                           Color="@Palette.WarningContrast"
                            OnClick="@ShowWarningToast" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIButton Text="Error"
-                           BackgroundColor="BUIColor.Palette.Error"
-                           Color="BUIColor.Palette.ErrorContrast"
+                           BackgroundColor="@Palette.Error"
+                           Color="@Palette.ErrorContrast"
                            OnClick="@ShowErrorToast" />
             </BUIGridItem>
         </BUIGrid>
@@ -460,8 +463,8 @@
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIButton Text="Close All Toasts"
-                           BackgroundColor="BUIColor.Palette.Error"
-                           Color="BUIColor.Palette.ErrorContrast"
+                           BackgroundColor="@Palette.Error"
+                           Color="@Palette.ErrorContrast"
                            OnClick="@CloseAllToasts" />
             </BUIGridItem>
         </BUIGrid>

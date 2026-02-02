@@ -33,10 +33,10 @@
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
 
     // IHasColor
-    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public string? Color { get; set; }
 
     // IHasBackgroundColor
-    [Parameter] public CssColor? BackgroundColor { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; }
 
     public override BUIBadgeVariant DefaultVariant => BUIBadgeVariant.Filled;
 

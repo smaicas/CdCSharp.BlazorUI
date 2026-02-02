@@ -1,5 +1,4 @@
-﻿using static CdCSharp.BlazorUI.Core.Css.FeatureDefinitions;
-
+﻿
 namespace CdCSharp.BlazorUI.Components;
 
 #region Public API
@@ -21,29 +20,37 @@ public sealed class BorderStyle
 
     public static BorderStyle Create() => new();
 
-    // ---------- ALL ----------
-    public BorderStyle All(string width, BorderStyleType style, CssColor color)
+    // ---------- SIDES ----------
+    public BorderStyle All(string width, BorderStyleType style, string color)
     {
         _all = new Border(width, style, color);
-
-        // Definir ALL invalida overrides anteriores
         _top = _right = _bottom = _left = null;
-
         return this;
     }
 
-    public BorderStyle Bottom(string width, BorderStyleType style, CssColor color)
+    public BorderStyle Top(string width, BorderStyleType style, string color)
+    {
+        _top = new Border(width, style, color);
+        return this;
+    }
+
+    public BorderStyle Right(string width, BorderStyleType style, string color)
+    {
+        _right = new Border(width, style, color);
+        return this;
+    }
+
+    public BorderStyle Bottom(string width, BorderStyleType style, string color)
     {
         _bottom = new Border(width, style, color);
         return this;
     }
 
-    public BorderStyle Left(string width, BorderStyleType style, CssColor color)
+    public BorderStyle Left(string width, BorderStyleType style, string color)
     {
         _left = new Border(width, style, color);
         return this;
     }
-
     // ---------- PRESETS ----------
     public BorderStyle None()
     {
@@ -75,12 +82,6 @@ public sealed class BorderStyle
         return this;
     }
 
-    public BorderStyle Right(string width, BorderStyleType style, CssColor color)
-    {
-        _right = new Border(width, style, color);
-        return this;
-    }
-
     // ---------- CSS VARIABLES ----------
     public IDictionary<string, string> ToCssVariables()
     {
@@ -88,32 +89,26 @@ public sealed class BorderStyle
 
         if (_all != null && !_all.IsNone)
         {
-            vars[InlineVariables.Border] = _all.ToCss();
+            vars[FeatureDefinitions.InlineVariables.Border] = _all.ToCss();
         }
 
         if (_radius != null)
         {
-            vars[InlineVariables.BorderRadius] = _radius.ToCss();
+            vars[FeatureDefinitions.InlineVariables.BorderRadius] = _radius.ToCss();
         }
 
         if (_top != null && !_top.IsNone)
-            vars[InlineVariables.BorderTop] = _top.ToCss();
+            vars[FeatureDefinitions.InlineVariables.BorderTop] = _top.ToCss();
         if (_right != null && !_right.IsNone)
-            vars[InlineVariables.BorderRight] = _right.ToCss();
+            vars[FeatureDefinitions.InlineVariables.BorderRight] = _right.ToCss();
         if (_bottom != null && !_bottom.IsNone)
-            vars[InlineVariables.BorderBottom] = _bottom.ToCss();
+            vars[FeatureDefinitions.InlineVariables.BorderBottom] = _bottom.ToCss();
         if (_left != null && !_left.IsNone)
-            vars[InlineVariables.BorderLeft] = _left.ToCss();
+            vars[FeatureDefinitions.InlineVariables.BorderLeft] = _left.ToCss();
 
         return vars;
     }
 
-    // ---------- SIDES ----------
-    public BorderStyle Top(string width, BorderStyleType style, CssColor color)
-    {
-        _top = new Border(width, style, color);
-        return this;
-    }
 }
 
 #endregion
@@ -122,13 +117,13 @@ public sealed class BorderStyle
 
 internal sealed class Border
 {
-    public Border(string width, BorderStyleType style, CssColor color)
+    public Border(string width, BorderStyleType style, string color)
     {
         if (style == BorderStyleType.None || width == "0" || width == "0px")
         {
             Width = "0";
             Style = BorderStyleType.None;
-            Color = new(0, 0, 0, 0);
+            Color = "transparent";
             return;
         }
 
@@ -137,20 +132,20 @@ internal sealed class Border
         Color = color;
     }
 
-    public static Border None => new("0", BorderStyleType.None, new(0, 0, 0, 0));
+    public static Border None => new("0", BorderStyleType.None, "transparent");
 
-    public CssColor Color { get; }
-    public string ColorCss => Color.ToString(ColorOutputFormats.Optimized);
+    public string Color { get; }
     public bool IsNone => Style == BorderStyleType.None;
     public BorderStyleType Style { get; }
     public string StyleCss => Style.ToString().ToLowerInvariant();
     public string Width { get; }
+
     public string ToCss()
     {
         if (IsNone)
             return "0";
 
-        return $"{Width} {StyleCss} {ColorCss}";
+        return $"{Width} {StyleCss} {Color}";
     }
 }
 

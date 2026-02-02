@@ -39,6 +39,9 @@
 <ComponentDemo Definition="@SizesDemo" />
 
 @code {
+
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private ComponentDemoDefinition BasicTextDemo => new()
     {
         Demo = RenderBasicText(),
@@ -221,18 +224,18 @@
         <BUIGrid Gap="1rem" Direction="GridDirection.Row">
             <BUIGridItem Auto="true">
                 <BUIBadge Text="Primary"
-                          BackgroundColor="BUIColor.Palette.Primary"
-                          Color="BUIColor.Palette.PrimaryContrast" />
+                          BackgroundColor="@Palette.Primary"
+                          Color="@Palette.PrimaryContrast" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIBadge Text="Error"
-                          BackgroundColor="BUIColor.Palette.Error"
-                          Color="BUIColor.Palette.ErrorContrast" />
+                          BackgroundColor="@Palette.Error"
+                          Color="@Palette.ErrorContrast" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIBadge Text="Success"
-                          BackgroundColor="BUIColor.Palette.Success"
-                          Color="BUIColor.Palette.SuccessContrast" />
+                          BackgroundColor="@Palette.Success"
+                          Color="@Palette.SuccessContrast" />
             </BUIGridItem>
         </BUIGrid>
     };

@@ -12,7 +12,7 @@
     [Parameter][EditorRequired] public required string Icon { get; set; }
     [Parameter] public string? Title { get; set; }
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public string? Color { get; set; }
     [Parameter] public string ViewBox { get; set; } = "0 0 24 24";
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 

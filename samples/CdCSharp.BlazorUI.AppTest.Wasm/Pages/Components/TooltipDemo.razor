@@ -88,6 +88,8 @@
 
 @code {
 
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     /* ===================== BASIC USAGE ===================== */
 
     private ComponentDemoDefinition BasicUsageDemo => new()
@@ -468,7 +470,7 @@
                     </ChildContent>
                     <TooltipContent>
                         <div style="text-align: center;">
-                            <BUISvgIcon Icon="@BUIIcons.UI.Info" Color="BUIColor.Palette.Primary" />
+                            <BUISvgIcon Icon="@BUIIcons.UI.Info" Color="@Palette.Primary" />
                             <p style="margin: 0.5rem 0 0 0; font-weight: bold;">Information</p>
                             <p style="margin: 0; font-size: 0.875rem;">This is a tooltip with rich content.</p>
                         </div>
@@ -483,7 +485,7 @@
                     <TooltipContent>
                         <div>
                             <p style="margin: 0 0 0.5rem 0;">Status:</p>
-                            <BUIBadge Text="Active" BackgroundColor="BUIColor.Palette.Success" Color="BUIColor.Palette.SuccessContrast" />
+                            <BUIBadge Text="Active" BackgroundColor="@Palette.Success" Color="@Palette.SuccessContrast" />
                         </div>
                     </TooltipContent>
                 </BUITooltip>
@@ -536,12 +538,12 @@
         <BUIGrid Direction="GridDirection.Row" Gap="2rem" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
                 <BUITooltip Text="Tooltip on icon">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_help" Size="SizeEnum.Large" Color="BUIColor.Palette.Primary" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_help" Size="SizeEnum.Large" Color="@Palette.Primary" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUITooltip Text="Tooltip on badge">
-                    <BUIBadge Text="New" BackgroundColor="BUIColor.Palette.Primary" Color="BUIColor.Palette.PrimaryContrast" />
+                    <BUIBadge Text="New" BackgroundColor="@Palette.Primary" Color="@Palette.PrimaryContrast" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">

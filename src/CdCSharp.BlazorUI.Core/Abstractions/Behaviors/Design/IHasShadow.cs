@@ -1,4 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Components;
+﻿using CdCSharp.BlazorUI.Core.Css;
+
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasShadow
 {
@@ -7,14 +9,14 @@ public interface IHasShadow
 
 public readonly struct ShadowLine
 {
-    public readonly CssColor Color;
+    public readonly string Color;
     public readonly bool Inset;
     public readonly float Opacity;
     public readonly int X, Y, Blur, Spread;
 
     internal ShadowLine(
         int x, int y, int blur, int spread,
-        float opacity, CssColor color, bool inset)
+        float opacity, string color, bool inset)
     {
         X = x;
         Y = y;
@@ -36,19 +38,19 @@ public sealed class ShadowStyle
     internal IReadOnlyList<ShadowLine> Lines => _lines;
 
     public static ShadowStyle Create(
-            int y,
+        int y,
         int blur,
         float opacity = 0.2f,
         int x = 0,
         int spread = 0,
-        CssColor? color = null,
+        string? color = null,
         bool inset = false)
     {
         ShadowStyle style = new();
         style._lines.Add(new ShadowLine(
             x, y, blur, spread,
             opacity,
-            color ?? new CssColor(0, 0, 0, 255),
+            color ?? "#000000",
             inset));
 
         return style;
@@ -60,13 +62,13 @@ public sealed class ShadowStyle
         float opacity = 0.2f,
         int x = 0,
         int spread = 0,
-        CssColor? color = null,
+        string? color = null,
         bool inset = false)
     {
         _lines.Add(new ShadowLine(
             x, y, blur, spread,
             opacity,
-            color ?? new CssColor(0, 0, 0, 255),
+            color ?? "#000000",
             inset));
 
         return this;
@@ -79,9 +81,9 @@ public static class BUIShadowPresets
     /// Generates realistic Material Design-inspired elevation shadows. Each elevation level (0-24)
     /// has been calibrated for visual consistency.
     /// </summary>
-    public static ShadowStyle Elevation(int level, CssColor? color = null)
+    public static ShadowStyle Elevation(int level, string? color = null)
     {
-        color ??= BUIColor.Palette.Shadow;
+        color ??= PaletteColor.Shadow;
         level = Math.Clamp(level, 0, 24);
 
         if (level == 0)

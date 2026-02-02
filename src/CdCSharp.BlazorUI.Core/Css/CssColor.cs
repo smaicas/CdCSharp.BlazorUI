@@ -47,10 +47,6 @@ public class CssColor : IEquatable<CssColor>
 
     private const double Epsilon = 0.000000000000001;
 
-    private readonly string? _cssVariable;
-
-    private readonly bool _isCssVariable;
-
     //private readonly ColorVariant? _associatedColorVariant;
     private readonly byte[] _valuesAsByte;
 
@@ -225,20 +221,11 @@ public class CssColor : IEquatable<CssColor>
     /// <summary>
     /// Constructs a CssColor from string representation (RGB/RGBA/HEX)
     /// </summary>
-    public CssColor(string value, bool isCssVariable = false)
+    public CssColor(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Color value cannot be null or empty.", nameof(value));
 
-        if (isCssVariable)
-        {
-            _cssVariable = value;
-            _isCssVariable = true;
-            // No need to process further for CSS variables
-            return;
-        }
-
-        // Existing logic for RGB/RGBA/HEX
         value = value.Trim().ToLowerInvariant();
         byte[] bytes = value switch
         {
@@ -454,19 +441,15 @@ public class CssColor : IEquatable<CssColor>
     /// Returns the best contrast color (black or white) for this color. Uses CSS variables with
     /// fallback if no custom values are set.
     /// </summary>
-    public CssColor GetBestContrast()
+    public CssColor GetBestContrast(CssColor contrastBlack, CssColor contrastWhite)
     {
-        // Black and white with optional custom overrides
-        CssColor black = _contrastBlack ?? new CssColor("var(--palette-black, #000000)", true);
-        CssColor white = _contrastWhite ?? new CssColor("var(--palette-white, #ffffff)", true);
-
         double L = GetRelativeLuminance();
 
         // WCAG contrast formula
         double contrastWithBlack = (L + 0.05) / 0.05;
         double contrastWithWhite = (1.05) / (L + 0.05);
 
-        return contrastWithWhite > contrastWithBlack ? white : black;
+        return contrastWithWhite > contrastWithBlack ? contrastWhite : contrastBlack;
     }
 
     /// <summary>
@@ -474,9 +457,8 @@ public class CssColor : IEquatable<CssColor>
     /// </summary>
     public double GetRelativeLuminance()
     {
-        if (_isCssVariable || _valuesAsByte == null)
+        if (_valuesAsByte == null)
         {
-            // For Css variables, we cannot compute luminance, return a neutral value
             return 0.5;
         }
 
@@ -515,7 +497,7 @@ public class CssColor : IEquatable<CssColor>
 
     #region operators and object members
 
-    public static explicit operator string(CssColor? color)
+    public static implicit operator string(CssColor? color)
     {
         return color?.ToString() ?? string.Empty;
     }
@@ -556,12 +538,6 @@ public class CssColor : IEquatable<CssColor>
             return false;
         }
 
-        if (_isCssVariable || other._isCssVariable)
-        {
-            return _isCssVariable == other._isCssVariable
-                && string.Equals(_cssVariable, other._cssVariable, StringComparison.Ordinal);
-        }
-
         if (_valuesAsByte is null || other._valuesAsByte is null)
         {
             return false;
@@ -576,11 +552,6 @@ public class CssColor : IEquatable<CssColor>
 
     public override int GetHashCode()
     {
-        if (_isCssVariable)
-        {
-            return _cssVariable?.GetHashCode() ?? 0;
-        }
-
         if (_valuesAsByte is null)
         {
             return 0;
@@ -598,11 +569,6 @@ public class CssColor : IEquatable<CssColor>
 
     public string ToString(ColorOutputFormats format)
     {
-        if (_isCssVariable && _cssVariable != null)
-        {
-            return _cssVariable;
-        }
-
         return format switch
         {
             ColorOutputFormats.Hex => Value.Substring(0, 7),

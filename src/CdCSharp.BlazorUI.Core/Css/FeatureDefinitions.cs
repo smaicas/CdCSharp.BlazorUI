@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Css;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 /// <summary>
 /// Central definition of all CSS-related constants used by the BUI component library. Organized by

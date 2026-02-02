@@ -48,6 +48,9 @@
 <PropertyTable Properties="@_properties" />
 
 @code {
+
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
         Demo = RenderBasicUsage(),
@@ -168,20 +171,20 @@
         <BUIGrid Gap="1rem" Direction="GridDirection.Row">
             <BUIGridItem Auto="true">
                 <BUIButton Text="Primary"
-                           BackgroundColor="BUIColor.Palette.Primary"
-                           Color="BUIColor.Palette.PrimaryContrast"
+                           BackgroundColor="@Palette.Primary"
+                           Color="@Palette.PrimaryContrast"
                            OnClick="@(() => {})" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIButton Text="Secondary"
-                           BackgroundColor="BUIColor.Palette.Secondary"
-                           Color="BUIColor.Palette.SecondaryContrast"
+                           BackgroundColor="@Palette.Secondary"
+                           Color="@Palette.SecondaryContrast"
                            OnClick="@(() => {})" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUIButton Text="Error"
-                           BackgroundColor="BUIColor.Palette.Error"
-                           Color="BUIColor.Palette.ErrorContrast"
+                           BackgroundColor="@Palette.Error"
+                           Color="@Palette.ErrorContrast"
                            OnClick="@(() => {})" />
             </BUIGridItem>
         </BUIGrid>

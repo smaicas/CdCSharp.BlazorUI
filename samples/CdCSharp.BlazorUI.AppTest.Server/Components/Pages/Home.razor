@@ -1,7 +1,42 @@
 ﻿@page "/"
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components.Layout
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Home - CdCSharp.BlazorUI</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-page">
+    <h1>Welcome to CdCSharp.BlazorUI</h1>
+    <p>A modern Blazor component library.</p>
 
-Welcome to your new app.
+    <h2>Palette Colors</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        <div style="@ColorBox(Palette.Primary)">Primary</div>
+        <div style="@ColorBox(Palette.Secondary)">Secondary</div>
+        <div style="@ColorBox(Palette.Success)">Success</div>
+        <div style="@ColorBox(Palette.Warning)">Warning</div>
+        <div style="@ColorBox(Palette.Error)">Error</div>
+        <div style="@ColorBox(Palette.Info)">Info</div>
+        <div style="@ColorBox(Palette.Surface)">Surface</div>
+        <div style="@ColorBox(Palette.Background)">Background</div>
+    </div>
+
+    <h2>Contrast Colors</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+        <div style="@ColorBoxWithContrast(Palette.Primary, Palette.PrimaryContrast)">Primary</div>
+        <div style="@ColorBoxWithContrast(Palette.Secondary, Palette.SecondaryContrast)">Secondary</div>
+        <div style="@ColorBoxWithContrast(Palette.Success, Palette.SuccessContrast)">Success</div>
+        <div style="@ColorBoxWithContrast(Palette.Warning, Palette.WarningContrast)">Warning</div>
+        <div style="@ColorBoxWithContrast(Palette.Error, Palette.ErrorContrast)">Error</div>
+        <div style="@ColorBoxWithContrast(Palette.Info, Palette.InfoContrast)">Info</div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
+    private string ColorBox(CssColor color) =>
+        $"width: 100px; height: 100px; background-color: {color}; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; text-shadow: 0 0 2px black;";
+
+    private string ColorBoxWithContrast(CssColor background, CssColor foreground) =>
+        $"width: 100px; height: 100px; background-color: {background}; color: {foreground}; border-radius: 8px; display: flex; align-items: center; justify-content: center;";
+}

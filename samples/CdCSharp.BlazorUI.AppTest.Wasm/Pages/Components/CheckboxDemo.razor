@@ -36,6 +36,8 @@
 <PropertyTable Properties="@_properties" />
 
 @code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private bool _basicValue;
     private bool _labelValue;
     private bool _helperValue;
@@ -121,16 +123,16 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_primaryValue" Label="Primary" Color="BUIColor.Palette.Primary" />
+                <BUIInputCheckbox @bind-Value="_primaryValue" Label="Primary" Color="@Palette.Primary" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_secondaryValue" Label="Secondary" Color="BUIColor.Palette.Secondary" />
+                <BUIInputCheckbox @bind-Value="_secondaryValue" Label="Secondary" Color="@Palette.Secondary" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_successValue" Label="Success" Color="BUIColor.Palette.Success" />
+                <BUIInputCheckbox @bind-Value="_successValue" Label="Success" Color="@Palette.Success" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_errorValue" Label="Error" Color="BUIColor.Palette.Error" />
+                <BUIInputCheckbox @bind-Value="_errorValue" Label="Error" Color="@Palette.Error" />
             </BUIGridItem>
         </BUIGrid>
     };

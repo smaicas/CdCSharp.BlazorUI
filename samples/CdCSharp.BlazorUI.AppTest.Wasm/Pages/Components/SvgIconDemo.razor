@@ -27,6 +27,8 @@
 <ComponentDemo Definition="@ClickableDemo" />
 
 @code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private int _clickCount = 0;
 
     private ComponentDemoDefinition BasicUsageDemo => new()
@@ -125,19 +127,19 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row">
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="BUIColor.Palette.Primary" />
+                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@Palette.Primary" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="BUIColor.Palette.Secondary" />
+                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@Palette.Secondary" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="BUIColor.Palette.Error" />
+                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@Palette.Error" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="BUIColor.Palette.Success" />
+                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@Palette.Success" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="BUIColor.Palette.Warning" />
+                <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@Palette.Warning" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -163,7 +165,7 @@
     {
         <div>
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_thumb_up"
-                        Color="BUIColor.Palette.Primary"
+                        Color="@Palette.Primary"
                         Size="SizeEnum.Large"
                         OnClick="@HandleIconClick" />
             <p>Clicked @_clickCount times</p>

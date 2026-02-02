@@ -50,6 +50,8 @@
 <ComponentDemo Definition="@DrawerServiceDemo" />
 
 @code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private bool _basicDialogOpen = false;
     private bool _titleDialogOpen = false;
     private bool _customHeaderDialogOpen = false;
@@ -116,7 +118,7 @@
             <Header>
                 <BUIGrid Direction="GridDirection.Row" AlignItems="GridAlignItems.Center" Gap="0.5rem">
                     <BUIGridItem Auto="true">
-                        <BUISvgIcon Icon="@BUIIcons.UI.Info" Color="BUIColor.Palette.Primary" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Info" Color="@Palette.Primary" />
                     </BUIGridItem>
                     <BUIGridItem>
                         <strong>Custom Header</strong>
@@ -150,8 +152,8 @@
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUIButton Text="Confirm"
-                                   BackgroundColor="BUIColor.Palette.Primary"
-                                   Color="BUIColor.Palette.PrimaryContrast"
+                                   BackgroundColor="@Palette.Primary"
+                                   Color="@Palette.PrimaryContrast"
                                    OnClick="@(() => _footerDialogOpen = false)" />
                     </BUIGridItem>
                 </BUIGrid>
@@ -229,8 +231,8 @@
             </Content>
             <Footer>
                 <BUIButton Text="Close Manually"
-                           BackgroundColor="BUIColor.Palette.Primary"
-                           Color="BUIColor.Palette.PrimaryContrast"
+                           BackgroundColor="@Palette.Primary"
+                           Color="@Palette.PrimaryContrast"
                            OnClick="@(() => _closeOptionsDialogOpen = false)" />
             </Footer>
         </BUIDialog>
@@ -396,8 +398,8 @@
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUIButton Text="Save"
-                                   BackgroundColor="BUIColor.Palette.Primary"
-                                   Color="BUIColor.Palette.PrimaryContrast"
+                                   BackgroundColor="@Palette.Primary"
+                                   Color="@Palette.PrimaryContrast"
                                    OnClick="@(() => _headerFooterDrawerOpen = false)" />
                     </BUIGridItem>
                 </BUIGrid>

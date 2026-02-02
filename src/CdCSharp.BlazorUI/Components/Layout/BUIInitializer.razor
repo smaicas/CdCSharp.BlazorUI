@@ -1,0 +1,60 @@
+﻿@namespace CdCSharp.BlazorUI.Components.Layout
+@using Microsoft.JSInterop
+
+@inject IThemeJsInterop ThemeInterop
+
+<HeadContent>
+    <script>
+        // Prevent theme flash on page load
+        (function(){
+            var t=localStorage.getItem('blazorui-theme')||'light';
+            document.documentElement.setAttribute('data-theme',t);
+        })();
+    </script>
+</HeadContent>
+
+@if (_palette is not null)
+{
+    <CascadingValue Value="_palette" IsFixed="false">
+        @ChildContent
+    </CascadingValue>
+}
+
+@code{
+
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string DefaultTheme { get; set; } = "dark";
+
+    private BUIPalette? _palette;
+
+    protected override void OnInitialized()
+    {
+        ThemeInterop.OnThemeChanged += HandleThemeChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        await ThemeInterop.InitializeAsync(DefaultTheme);
+        await LoadPaletteAsync();
+        StateHasChanged();
+    }
+
+    private async void HandleThemeChanged(string theme)
+    {
+        await LoadPaletteAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadPaletteAsync()
+    {
+        Dictionary<string, string> colors = await ThemeInterop.GetPaletteAsync();
+        _palette = new BUIPalette(colors);
+    }
+
+    public void Dispose()
+    {
+        ThemeInterop.OnThemeChanged -= HandleThemeChanged;
+    }
+}

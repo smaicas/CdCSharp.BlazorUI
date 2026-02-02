@@ -1,4 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Components;
+﻿using CdCSharp.BlazorUI.Core.Css;
+
+namespace CdCSharp.BlazorUI.Components;
 
 public static class BUIBorderPresets
 {
@@ -23,11 +25,11 @@ public static class BUIBorderPresets
 
     public static BorderStyle Error =>
         BorderStyle.Create()
-            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Error);
+            .All("2px", BorderStyleType.Solid, PaletteColor.Error);
 
     public static BorderStyle Info =>
         BorderStyle.Create()
-            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Info);
+            .All("2px", BorderStyleType.Solid, PaletteColor.Info);
 
     public static BorderStyle None =>
         BorderStyle.Create().None();
@@ -39,7 +41,7 @@ public static class BUIBorderPresets
 
     public static BorderStyle Primary =>
         BorderStyle.Create()
-            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Primary);
+            .All("2px", BorderStyleType.Solid, PaletteColor.Primary);
 
     public static BorderStyle Rounded =>
         BorderStyle.Create()
@@ -55,7 +57,7 @@ public static class BUIBorderPresets
     // ===================================== Temáticos =====================================
     public static BorderStyle Secondary =>
         BorderStyle.Create()
-            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Secondary);
+            .All("2px", BorderStyleType.Solid, PaletteColor.Secondary);
 
     public static BorderStyle Strong =>
         BorderStyle.Create()
@@ -67,11 +69,11 @@ public static class BUIBorderPresets
 
     public static BorderStyle Success =>
         BorderStyle.Create()
-            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Success);
+            .All("2px", BorderStyleType.Solid, PaletteColor.Success);
 
     public static BorderStyle Warning =>
             BorderStyle.Create()
-            .All("2px", BorderStyleType.Solid, BUIColor.Palette.Warning);
+            .All("2px", BorderStyleType.Solid, PaletteColor.Warning);
 
     // ===================================== Utilitarios =====================================
 }

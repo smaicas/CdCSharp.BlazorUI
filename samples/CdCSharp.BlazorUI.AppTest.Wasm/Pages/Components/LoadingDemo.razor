@@ -15,6 +15,8 @@
 <ComponentDemo Definition="@ColorsDemo" />
 
 @code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private ComponentDemoDefinition VariantsDemo => new()
     {
         Demo = RenderVariants(),
@@ -97,19 +99,19 @@
     {
         <BUIGrid Gap="2rem" Direction="GridDirection.Row">
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="BUIColor.Palette.Primary" />
+                <BUILoadingIndicator Color="@Palette.Primary" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="BUIColor.Palette.Secondary" />
+                <BUILoadingIndicator Color="@Palette.Secondary" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="BUIColor.Palette.Error" />
+                <BUILoadingIndicator Color="@Palette.Error" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="BUIColor.Palette.Success" />
+                <BUILoadingIndicator Color="@Palette.Success" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="BUIColor.Palette.Warning" />
+                <BUILoadingIndicator Color="@Palette.Warning" />
             </BUIGridItem>
         </BUIGrid>
     };

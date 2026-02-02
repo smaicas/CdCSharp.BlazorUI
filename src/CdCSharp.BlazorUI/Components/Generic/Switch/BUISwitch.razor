@@ -108,12 +108,12 @@
     /// <summary>
     /// Track background color when unchecked
     /// </summary>
-    [Parameter] public CssColor? TrackColorInactive { get; set; }
+    [Parameter] public string? TrackColorInactive { get; set; }
 
     /// <summary>
     /// Track background color when checked
     /// </summary>
-    [Parameter] public CssColor? TrackColorActive { get; set; }
+    [Parameter] public string? TrackColorActive { get; set; }
 
     /// <summary>
     /// Optional custom input ID. If not provided, one will be generated.
@@ -156,8 +156,8 @@
         base.BuildComponentCssVariables(cssVariables);
 
         if (TrackColorInactive != null)
-            cssVariables["--track-inactive"] = TrackColorInactive.ToString(ColorOutputFormats.Optimized);
+            cssVariables["--track-inactive"] = TrackColorInactive;
         if (TrackColorActive != null)
-            cssVariables["--track-active"] = TrackColorActive.ToString(ColorOutputFormats.Optimized);
+            cssVariables["--track-active"] = TrackColorActive;
     }
 }

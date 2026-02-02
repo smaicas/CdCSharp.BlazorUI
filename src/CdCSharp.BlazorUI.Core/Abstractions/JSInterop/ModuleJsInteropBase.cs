@@ -50,10 +50,20 @@ public abstract class ModuleJsInteropBase : IAsyncDisposable
     /// </returns>
     public virtual async ValueTask DisposeAsync()
     {
-        if (ModuleTask.IsValueCreated)
+        if (!ModuleTask.IsValueCreated) return;
+
+        try
         {
             IJSObjectReference module = await ModuleTask.Value;
             await module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // (Blazor Server) Circuit disconnected, module already disposed by browser
+        }
+        catch (ObjectDisposedException)
+        {
+            // Runtime already disposed
         }
     }
 }

@@ -76,6 +76,7 @@
     private string? _standardDensity;
     private string? _comfortableValue;
     private string? _helperValue;
+    private CountryOption? _countryValue;
 
     private bool _isLoading = true;
 
@@ -121,7 +122,7 @@
 
     private RenderFragment RenderWithLabel() => __builder =>
     {
-        <BUIInputDropdown @bind-Value="_labelValue"
+        <BUIInputDropdown @bind-Value="_countryValue"
                           Label="Country"
                           HelperText="Select your country"
                           Placeholder="Choose...">
@@ -140,7 +141,7 @@
 
     private RenderFragment RenderSearchable() => __builder =>
     {
-        <BUIInputDropdown @bind-Value="_searchableValue"
+        <BUIInputDropdown @bind-Value="_countryValue"
                           Label="Searchable Dropdown"
                           Searchable="true"
                           SearchPlaceholder="Type to search...">
@@ -341,9 +342,9 @@
                                   @bind-Value="_loadingValue"
                                   Label="Loading State"
                                   IsLoading="_isLoading">
-                    <DropdownOption TValue="string" Value="@("opt1")">Option 1</DropdownOption>
-                    <DropdownOption TValue="string" Value="@("opt2")">Option 2</DropdownOption>
-                    <DropdownOption TValue="string" Value="@("opt3")">Option 3</DropdownOption>
+                    <DropdownOption Value="@("opt1")">Option 1</DropdownOption>
+                    <DropdownOption Value="@("opt2")">Option 2</DropdownOption>
+                    <DropdownOption Value="@("opt3")">Option 3</DropdownOption>
                 </BUIInputDropdown>
             </BUIGridItem>
         </BUIGrid>
@@ -359,8 +360,10 @@
     {
         <BUIInputDropdown TValue="string"
                           @bind-Value="_noOptionsValue"
-                          Label="Empty Dropdown"
-                          NoOptionsText="No items available">
+                          Label="Empty Dropdown">
+            <NoOptionsTemplate>
+                <span>No items available</span>
+            </NoOptionsTemplate>
         </BUIInputDropdown>
     };
 
@@ -372,13 +375,12 @@
 
     private RenderFragment RenderCustomOption() => __builder =>
     {
-        <BUIInputDropdown TValue="string"
-                          @bind-Value="_customOptionValue"
+        <BUIInputDropdown @bind-Value="_countryValue"
                           Label="Select Country"
                           Placeholder="Choose a country...">
             @foreach (CountryOption country in _countries)
             {
-                <DropdownOption TValue="string" Value="@country.Code">
+                <DropdownOption Value="@country">
                     <span style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 1.25rem;">@country.Flag</span>
                         <span>@country.Name</span>
@@ -402,8 +404,8 @@
                                   @bind-Value="_compactValue"
                                   Label="Compact"
                                   Density="DensityEnum.Compact">
-                    <DropdownOption TValue="string" Value="@("a")">Option A</DropdownOption>
-                    <DropdownOption TValue="string" Value="@("b")">Option B</DropdownOption>
+                    <DropdownOption Value="@("a")">Option A</DropdownOption>
+                    <DropdownOption Value="@("b")">Option B</DropdownOption>
                 </BUIInputDropdown>
             </BUIGridItem>
             <BUIGridItem>
@@ -411,8 +413,8 @@
                                   @bind-Value="_standardDensity"
                                   Label="Standard"
                                   Density="DensityEnum.Standard">
-                    <DropdownOption TValue="string" Value="@("a")">Option A</DropdownOption>
-                    <DropdownOption TValue="string" Value="@("b")">Option B</DropdownOption>
+                    <DropdownOption Value="@("a")">Option A</DropdownOption>
+                    <DropdownOption Value="@("b")">Option B</DropdownOption>
                 </BUIInputDropdown>
             </BUIGridItem>
             <BUIGridItem>
@@ -420,8 +422,8 @@
                                   @bind-Value="_comfortableValue"
                                   Label="Comfortable"
                                   Density="DensityEnum.Comfortable">
-                    <DropdownOption TValue="string" Value="@("a")">Option A</DropdownOption>
-                    <DropdownOption TValue="string" Value="@("b")">Option B</DropdownOption>
+                    <DropdownOption Value="@("a")">Option A</DropdownOption>
+                    <DropdownOption Value="@("b")">Option B</DropdownOption>
                 </BUIInputDropdown>
             </BUIGridItem>
         </BUIGrid>
@@ -440,9 +442,9 @@
                           Label="Select Option"
                           HelperText="Please select one option from the list"
                           Required="true">
-            <DropdownOption TValue="string" Value="@("opt1")">Option 1</DropdownOption>
-            <DropdownOption TValue="string" Value="@("opt2")">Option 2</DropdownOption>
-            <DropdownOption TValue="string" Value="@("opt3")">Option 3</DropdownOption>
+            <DropdownOption Value="@("opt1")">Option 1</DropdownOption>
+            <DropdownOption Value="@("opt2")">Option 2</DropdownOption>
+            <DropdownOption Value="@("opt3")">Option 3</DropdownOption>
         </BUIInputDropdown>
     };
 

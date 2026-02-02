@@ -33,6 +33,8 @@
 <PropertyTable Properties="@_properties" />
 
 @code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private bool _basicValue = false;
     private string? _stringValue = "option1";
     private bool _labelValue = true;
@@ -152,8 +154,8 @@
                    Label="Custom Colors"
                    OptionInactive="true"
                    OptionActive="false"
-                   TrackColorInactive="BUIColor.Palette.Error"
-                   TrackColorActive="BUIColor.Palette.Success" />
+                   TrackColorInactive="@Palette.Error"
+                   TrackColorActive="@Palette.Success" />
     };
 
     private ComponentDemoDefinition DisabledDemo => new()

@@ -43,7 +43,7 @@
 
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }
-    [Parameter] public CssColor? RippleColor { get; set; }
+    [Parameter] public string? RippleColor { get; set; }
     [Parameter] public int? RippleDurationMs { get; set; }
 
     // IHasDensity
@@ -53,10 +53,10 @@
     [Parameter] public BorderStyle? Border { get; set; }
 
     // IHasBackgroundColor
-    [Parameter] public CssColor? BackgroundColor { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; }
 
     // IHasColor
-    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public string? Color { get; set; }
 
     // IJsBehavior
     public ElementReference GetRippleContainer() => _buttonElement;

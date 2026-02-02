@@ -33,6 +33,9 @@
 <PropertyTable Properties="@_properties" />
 
 @code {
+
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private bool _basicValue;
     private bool _labelValue = true;
     private bool _helperValue;
@@ -148,8 +151,8 @@
     {
         <BUIInputSwitch @bind-Value="_colorsValue"
                         Label="Custom Colors"
-                        TrackColorInactive="BUIColor.Palette.Error"
-                        TrackColorActive="BUIColor.Palette.Success" />
+                        TrackColorInactive="@Palette.Error"
+                        TrackColorActive="@Palette.Success" />
     };
 
     private ComponentDemoDefinition DisabledDemo => new()

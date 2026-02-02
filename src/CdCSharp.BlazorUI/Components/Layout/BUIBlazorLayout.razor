@@ -2,17 +2,9 @@
 
 @inject IThemeJsInterop ThemeInterop
 
-@Body
+<BUIInitializer DefaultTheme="dark">
+    @Body
+</BUIInitializer>
 
 <BUIModalHost />
 <BUIToastHost MaxVisiblePerPosition="5"/>
-
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await ThemeInterop.InitializeAsync("dark");
-        }
-    }
-}

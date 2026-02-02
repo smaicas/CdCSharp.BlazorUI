@@ -1,5 +1,4 @@
 ﻿using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Css;
 using Microsoft.AspNetCore.Components;
 using System.Text;
 
@@ -95,12 +94,6 @@ internal sealed class BUIComponentAttributesBuilder
         return sb.ToString();
     }
 
-    private void BuildBackgroundColor(ComponentBase component, Dictionary<string, string> cssVariables)
-    {
-        if (component is IHasBackgroundColor bg && bg.BackgroundColor != null)
-            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor.ToString(ColorOutputFormats.Optimized);
-    }
-
     private void BuildBorder(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasBorder hasBorder && hasBorder.Border != null)
@@ -115,9 +108,9 @@ internal sealed class BUIComponentAttributesBuilder
         if (component is IHasPrefix prefix)
         {
             if (prefix.PrefixColor != null)
-                cssVariables[FeatureDefinitions.InlineVariables.PrefixColor] = prefix.PrefixColor.ToString(ColorOutputFormats.Optimized);
+                cssVariables[FeatureDefinitions.InlineVariables.PrefixColor] = prefix.PrefixColor;
             if (prefix.PrefixBackgroundColor != null)
-                cssVariables[FeatureDefinitions.InlineVariables.PrefixBackgroundColor] = prefix.PrefixBackgroundColor.ToString(ColorOutputFormats.Optimized);
+                cssVariables[FeatureDefinitions.InlineVariables.PrefixBackgroundColor] = prefix.PrefixBackgroundColor;
         }
     }
 
@@ -126,16 +119,22 @@ internal sealed class BUIComponentAttributesBuilder
         if (component is IHasSuffix suffix)
         {
             if (suffix.SuffixColor != null)
-                cssVariables[FeatureDefinitions.InlineVariables.SuffixColor] = suffix.SuffixColor.ToString(ColorOutputFormats.Optimized);
+                cssVariables[FeatureDefinitions.InlineVariables.SuffixColor] = suffix.SuffixColor;
             if (suffix.SuffixBackgroundColor != null)
-                cssVariables[FeatureDefinitions.InlineVariables.SuffixBackgroundColor] = suffix.SuffixBackgroundColor.ToString(ColorOutputFormats.Optimized);
+                cssVariables[FeatureDefinitions.InlineVariables.SuffixBackgroundColor] = suffix.SuffixBackgroundColor;
         }
     }
 
     private void BuildColor(ComponentBase component, Dictionary<string, string> cssVariables)
     {
         if (component is IHasColor color && color.Color != null)
-            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color.ToString(ColorOutputFormats.Optimized);
+            cssVariables[FeatureDefinitions.InlineVariables.Color] = color.Color;
+    }
+
+    private void BuildBackgroundColor(ComponentBase component, Dictionary<string, string> cssVariables)
+    {
+        if (component is IHasBackgroundColor bg && bg.BackgroundColor != null)
+            cssVariables[FeatureDefinitions.InlineVariables.BackgroundColor] = bg.BackgroundColor;
     }
 
     private void BuildDensity(ComponentBase component)
@@ -160,7 +159,7 @@ internal sealed class BUIComponentAttributesBuilder
                 string.Join(", ", shadow.Shadow.Lines.Select(l =>
                     $"{(l.Inset ? "inset " : "")}" +
                     $"{l.X}px {l.Y}px {l.Blur}px {l.Spread}px " +
-                    $"color-mix(in srgb, {l.Color.ToString(ColorOutputFormats.Optimized)} " +
+                    $"color-mix(in srgb, {l.Color} " +
                     $"{l.Opacity * 100}%, transparent)"
                 ));
         }
@@ -238,7 +237,7 @@ internal sealed class BUIComponentAttributesBuilder
             if (!ripple.DisableRipple)
             {
                 if (ripple.RippleColor != null)
-                    cssVariables[FeatureDefinitions.InlineVariables.RippleColor] = ripple.RippleColor.ToString(ColorOutputFormats.Optimized);
+                    cssVariables[FeatureDefinitions.InlineVariables.RippleColor] = ripple.RippleColor;
                 if (ripple.RippleDurationMs.HasValue)
                     cssVariables[FeatureDefinitions.InlineVariables.RippleDuration] = $"{ripple.RippleDurationMs}ms";
             }

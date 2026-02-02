@@ -2,5 +2,5 @@
 
 public interface IHasBackgroundColor
 {
-    CssColor? BackgroundColor { get; set; }
+    string? BackgroundColor { get; set; }
 }

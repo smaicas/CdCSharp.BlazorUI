@@ -52,6 +52,7 @@
 
 @code {
     private int _clickCount = 0;
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
 
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -121,7 +122,7 @@
         <BUICard Title="Card with Media" MediaHeight="200px">
             <Media>
                 <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--palette-primary), var(--palette-secondary)); display: flex; align-items: center; justify-content: center;">
-                    <BUISvgIcon Icon="@BUIIcons.UI.Image" Size="SizeEnum.Large" Color="BUIColor.Palette.White" />
+                    <BUISvgIcon Icon="@BUIIcons.UI.Image" Size="SizeEnum.Large" Color="@Palette.White" />
                 </div>
             </Media>
             <ChildContent>
@@ -199,7 +200,7 @@
             </ChildContent>
             <Actions>
                 <BUIButton Text="Cancel" Variant="BUIButtonVariant.Default" OnClick="@(() => { })" />
-                <BUIButton Text="Save" BackgroundColor="BUIColor.Palette.Primary" Color="BUIColor.Palette.PrimaryContrast" OnClick="@(() => { })" />
+                <BUIButton Text="Save" BackgroundColor="@Palette.Primary" Color="@Palette.PrimaryContrast" OnClick="@(() => { })" />
             </Actions>
         </BUICard>
     };
@@ -451,7 +452,7 @@
         <BUIGrid Gap="1rem">
             <BUIGridItem Xs="12" Md="6">
                 <BUICard Title="Primary Background"
-                         BackgroundColor="BUIColor.Palette.Primary">
+                         BackgroundColor="@Palette.Primary">
                     <ChildContent>
                         <p style="color: var(--palette-primarycontrast);">Card with primary background color.</p>
                     </ChildContent>
@@ -459,7 +460,7 @@
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="6">
                 <BUICard Title="Success Background"
-                         BackgroundColor="BUIColor.Palette.Success">
+                         BackgroundColor="@Palette.Success">
                     <ChildContent>
                         <p style="color: var(--palette-successcontrast);">Card with success background color.</p>
                     </ChildContent>
@@ -485,18 +486,18 @@
                  Border="BUIBorderPresets.Rounded">
             <Media>
                 <div style="width: 100%; height: 100%; background: linear-gradient(45deg, var(--palette-primary), var(--palette-info)); display: flex; align-items: center; justify-content: center;">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_bag" Size="SizeEnum.Large" Color="BUIColor.Palette.White" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_bag" Size="SizeEnum.Large" Color="@Palette.White" />
                 </div>
             </Media>
             <ChildContent>
                 <p>This is a complete card example with all features combined: media, title, subtitle, content, and actions.</p>
-                <BUIBadge Text="In Stock" BackgroundColor="BUIColor.Palette.Success" Color="BUIColor.Palette.SuccessContrast" />
+                <BUIBadge Text="In Stock" BackgroundColor="@Palette.Success" Color="@Palette.SuccessContrast" />
             </ChildContent>
             <Actions>
                 <BUIButton Text="Add to Cart"
                            LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_add_shopping_cart"
-                           BackgroundColor="BUIColor.Palette.Primary"
-                           Color="BUIColor.Palette.PrimaryContrast"
+                           BackgroundColor="@Palette.Primary"
+                           Color="@Palette.PrimaryContrast"
                            OnClick="@(() => {})" />
                 <BUIButton Text="Details" OnClick="@(() => { })" />
             </Actions>

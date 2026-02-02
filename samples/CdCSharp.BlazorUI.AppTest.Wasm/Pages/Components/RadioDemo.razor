@@ -39,6 +39,8 @@
 <PropertyTable Properties="@_properties" />
 
 @code {
+    [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
+
     private string? _basicValue = "option1";
     private string? _labelValue = "option2";
     private string? _verticalValue = "option1";
@@ -159,19 +161,19 @@
     {
         <BUIGrid Gap="2rem">
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_primaryValue" Label="Primary" Color="BUIColor.Palette.Primary">
+                <BUIInputRadio @bind-Value="_primaryValue" Label="Primary" Color="@Palette.Primary">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_secondaryValue" Label="Secondary" Color="BUIColor.Palette.Secondary">
+                <BUIInputRadio @bind-Value="_secondaryValue" Label="Secondary" Color="@Palette.Secondary">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputRadio TValue="string" @bind-Value="_infoValue" Label="Info" Color="BUIColor.Palette.Info">
+                <BUIInputRadio TValue="string" @bind-Value="_infoValue" Label="Info" Color="@Palette.Info">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>

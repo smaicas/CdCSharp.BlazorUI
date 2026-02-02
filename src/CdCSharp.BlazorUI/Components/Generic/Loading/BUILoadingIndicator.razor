@@ -2,13 +2,14 @@
 
 @inherits BUIVariantComponentBase<BUILoadingIndicator, BUILoadingIndicatorVariant>
 @implements IHasSize
+@implements IHasColor
 
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
-    [Parameter] public CssColor? Color { get; set; }
+    [Parameter] public string? Color { get; set; }
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
