@@ -1,0 +1,36 @@
+﻿bui-component[data-bui-component="notification-badge"] {
+    position: relative;
+}
+
+bui-component[data-bui-component="notification-badge"] .bui-notification-badge__indicator {
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Position: TopRight (default) */
+bui-component[data-bui-component="notification-badge"][data-bui-position="topright"] .bui-notification-badge__indicator {
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+}
+
+/* Position: TopLeft */
+bui-component[data-bui-component="notification-badge"][data-bui-position="topleft"] .bui-notification-badge__indicator {
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+
+/* Position: BottomRight */
+bui-component[data-bui-component="notification-badge"][data-bui-position="bottomright"] .bui-notification-badge__indicator {
+    bottom: 0;
+    right: 0;
+    transform: translate(50%, 50%);
+}
+
+/* Position: BottomLeft */
+bui-component[data-bui-component="notification-badge"][data-bui-position="bottomleft"] .bui-notification-badge__indicator {
+    bottom: 0;
+    left: 0;
+    transform: translate(-50%, 50%);
+}

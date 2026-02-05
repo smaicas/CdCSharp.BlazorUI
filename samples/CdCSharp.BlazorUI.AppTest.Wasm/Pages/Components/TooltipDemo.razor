@@ -245,12 +245,12 @@
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Copied!" Trigger="TooltipTrigger.Click" AutoCloseAfter="2000">
+                <BUITooltip Text="Copied!" Trigger="TooltipTrigger.Click" AutoCloseAfterMs="2000">
                     <BUIButton Text="Copy to clipboard" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Saved!" Trigger="TooltipTrigger.Click" AutoCloseAfter="1500">
+                <BUITooltip Text="Saved!" Trigger="TooltipTrigger.Click" AutoCloseAfterMs="1500">
                     <BUIButton Text="Save" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
@@ -274,17 +274,17 @@
     {
         <BUIGrid Direction="GridDirection.Row" Gap="1rem">
             <BUIGridItem Auto="true">
-                <BUITooltip Text="I will close in 2 seconds" AutoCloseAfter="2000">
+                <BUITooltip Text="I will close in 2 seconds" AutoCloseAfterMs="2000">
                     <BUIButton Text="Hover (2s auto-close)" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="I will close in 5 seconds" AutoCloseAfter="5000">
+                <BUITooltip Text="I will close in 5 seconds" AutoCloseAfterMs="5000">
                     <BUIButton Text="Hover (5s auto-close)" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Hover over me to pause auto-close" AutoCloseAfter="3000" Interactive="true">
+                <BUITooltip Text="Hover over me to pause auto-close" AutoCloseAfterMs="3000" Interactive="true">
                     <BUIButton Text="Interactive + auto-close" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>
@@ -588,7 +588,7 @@
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUITooltip Text="Permanent with auto-close" Trigger="TooltipTrigger.Permanent" AutoCloseAfter="5000" Placement="TooltipPlacement.Top">
+                <BUITooltip Text="Permanent with auto-close" Trigger="TooltipTrigger.Permanent" AutoCloseAfterMs="5000" Placement="TooltipPlacement.Top">
                     <BUIButton Text="Permanent (5s auto-close)" OnClick="@(() => { })" />
                 </BUITooltip>
             </BUIGridItem>

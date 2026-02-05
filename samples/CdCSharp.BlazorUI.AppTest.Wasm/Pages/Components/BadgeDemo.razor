@@ -5,20 +5,14 @@
 
 <h1>BUIBadge</h1>
 
-<h2>Basic Usage - Text</h2>
-<ComponentDemo Definition="@BasicTextDemo" />
+<h2>Basic Usage</h2>
+<ComponentDemo Definition="@BasicDemo" />
 
 <h2>With Icon</h2>
 <ComponentDemo Definition="@IconDemo" />
 
-<h2>Variants</h2>
-<ComponentDemo Definition="@VariantsDemo" />
-
-<h2>As Anchor Badge</h2>
-<ComponentDemo Definition="@AnchorDemo" />
-
-<h2>Badge Position</h2>
-<ComponentDemo Definition="@PositionDemo" />
+<h2>Dot Badge (Empty)</h2>
+<ComponentDemo Definition="@DotDemo" />
 
 <h2>Pill Shape</h2>
 <ComponentDemo Definition="@PillDemo" />
@@ -26,31 +20,45 @@
 <h2>Rounded</h2>
 <ComponentDemo Definition="@RoundedDemo" />
 
-<h2>Dot Badge</h2>
-<ComponentDemo Definition="@DotDemo" />
-
-<h2>With Count</h2>
-<ComponentDemo Definition="@CountDemo" />
-
 <h2>Colors</h2>
 <ComponentDemo Definition="@ColorsDemo" />
 
 <h2>Sizes</h2>
 <ComponentDemo Definition="@SizesDemo" />
 
+<h2>Shadow</h2>
+<ComponentDemo Definition="@ShadowDemo" />
+
+<h1 style="margin-top: 3rem;">BUINotificationBadge</h1>
+
+<h2>Basic Notification</h2>
+<ComponentDemo Definition="@NotificationBasicDemo" />
+
+<h2>Badge Positions</h2>
+<ComponentDemo Definition="@NotificationPositionDemo" />
+
+<h2>Dot Notification (No Content)</h2>
+<ComponentDemo Definition="@NotificationDotDemo" />
+
+<h2>Custom Content</h2>
+<ComponentDemo Definition="@NotificationCustomDemo" />
+
+<h2>Colors on Notification</h2>
+<ComponentDemo Definition="@NotificationColorsDemo" />
+
 @code {
 
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
 
-    private ComponentDemoDefinition BasicTextDemo => new()
+    private ComponentDemoDefinition BasicDemo => new()
     {
-        Demo = RenderBasicText(),
+        Demo = RenderBasic(),
         Code = """ """
     };
 
-    private RenderFragment RenderBasicText() => __builder =>
+    private RenderFragment RenderBasic() => __builder =>
     {
-        <BUIBadge Text="New" />
+        <BUIBadge>New</BUIBadge>
     };
 
     private ComponentDemoDefinition IconDemo => new()
@@ -61,84 +69,23 @@
 
     private RenderFragment RenderIcon() => __builder =>
     {
-        <BUIBadge Icon="@BUIIcons.MaterialIconsOutlined.i_star" Text="Featured" />
-    };
-
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        Demo = RenderVariants(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
-        <BUIGrid Gap="1rem" Direction="GridDirection.Row">
-            <BUIGridItem Auto="true">
-                <BUIBadge Text="Filled" Variant="BUIBadgeVariant.Filled" />
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge Text="Outlined" Variant="BUIBadgeVariant.Outlined" />
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge Text="Soft" Variant="BUIBadgeVariant.Soft" />
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge Text="Dot" Variant="BUIBadgeVariant.Dot" Dot="true" />
-            </BUIGridItem>
-        </BUIGrid>
-    };
-
-    private ComponentDemoDefinition AnchorDemo => new()
-    {
-        Demo = RenderAnchor(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderAnchor() => __builder =>
-    {
-        <BUIBadge BadgeContent="3">
-            <AnchorContent>
-                <BUIButton Text="Messages" OnClick="@(() => { })" />
-            </AnchorContent>
+        <BUIBadge>
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+            Featured
         </BUIBadge>
     };
 
-    private ComponentDemoDefinition PositionDemo => new()
+    private ComponentDemoDefinition DotDemo => new()
     {
-        Demo = RenderPosition(),
+        Demo = RenderDot(),
         Code = """ """
     };
 
-    private RenderFragment RenderPosition() => __builder =>
+    private RenderFragment RenderDot() => __builder =>
     {
-        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.TopRight">
-                    <AnchorContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
-                    </AnchorContent>
-                </BUIBadge>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.TopLeft">
-                    <AnchorContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
-                    </AnchorContent>
-                </BUIBadge>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.BottomRight">
-                    <AnchorContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
-                    </AnchorContent>
-                </BUIBadge>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge BadgeContent="5" BadgePosition="BadgePosition.BottomLeft">
-                    <AnchorContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
-                    </AnchorContent>
-                </BUIBadge>
+                <BUIBadge />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -151,7 +98,7 @@
 
     private RenderFragment RenderPill() => __builder =>
     {
-        <BUIBadge Text="Pill Badge" Pill="true" />
+        <BUIBadge Border="@BUIBorderPresets.Pill">Pill Badge</BUIBadge>
     };
 
     private ComponentDemoDefinition RoundedDemo => new()
@@ -162,55 +109,7 @@
 
     private RenderFragment RenderRounded() => __builder =>
     {
-        <BUIBadge Text="Rounded" Rounded="true" />
-    };
-
-    private ComponentDemoDefinition DotDemo => new()
-    {
-        Demo = RenderDot(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderDot() => __builder =>
-    {
-        <BUIBadge Dot="true">
-            <AnchorContent>
-                <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
-            </AnchorContent>
-        </BUIBadge>
-    };
-
-    private ComponentDemoDefinition CountDemo => new()
-    {
-        Demo = RenderCount(),
-        Code = """ """
-    };
-
-    private RenderFragment RenderCount() => __builder =>
-    {
-        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
-            <BUIGridItem Auto="true">
-                <BUIBadge Count="5">
-                    <AnchorContent>
-                        <BUIButton Text="Inbox" OnClick="@(() => { })" />
-                    </AnchorContent>
-                </BUIBadge>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge Count="150" MaxCount="99">
-                    <AnchorContent>
-                        <BUIButton Text="Notifications" OnClick="@(() => { })" />
-                    </AnchorContent>
-                </BUIBadge>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <BUIBadge Count="0" ShowZero="true">
-                    <AnchorContent>
-                        <BUIButton Text="Tasks" OnClick="@(() => { })" />
-                    </AnchorContent>
-                </BUIBadge>
-            </BUIGridItem>
-        </BUIGrid>
+        <BUIBadge Border="@BUIBorderPresets.Rounded">Rounded</BUIBadge>
     };
 
     private ComponentDemoDefinition ColorsDemo => new()
@@ -223,19 +122,16 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row">
             <BUIGridItem Auto="true">
-                <BUIBadge Text="Primary"
-                          BackgroundColor="@Palette.Primary"
-                          Color="@Palette.PrimaryContrast" />
+                <BUIBadge BackgroundColor="@Palette.Primary"
+                          Color="@Palette.PrimaryContrast">Primary</BUIBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIBadge Text="Error"
-                          BackgroundColor="@Palette.Error"
-                          Color="@Palette.ErrorContrast" />
+                <BUIBadge BackgroundColor="@Palette.Error"
+                          Color="@Palette.ErrorContrast">Error</BUIBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIBadge Text="Success"
-                          BackgroundColor="@Palette.Success"
-                          Color="@Palette.SuccessContrast" />
+                <BUIBadge BackgroundColor="@Palette.Success"
+                          Color="@Palette.SuccessContrast">Success</BUIBadge>
             </BUIGridItem>
         </BUIGrid>
     };
@@ -250,13 +146,207 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUIBadge Text="Small" Size="SizeEnum.Small" />
+                <BUIBadge Size="SizeEnum.Small">Small</BUIBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIBadge Text="Medium" Size="SizeEnum.Medium" />
+                <BUIBadge Size="SizeEnum.Medium">Medium</BUIBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIBadge Text="Large" Size="SizeEnum.Large" />
+                <BUIBadge Size="SizeEnum.Large">Large</BUIBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        Demo = RenderShadow(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
+            <BUIGridItem Auto="true">
+                <BUIBadge Shadow="BUIShadowPresets.Elevation(10)">Elevation 10</BUIBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUIBadge Shadow="BUIShadowPresets.Elevation(24)">Elevation 24</BUIBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition NotificationBasicDemo => new()
+    {
+        Demo = RenderNotificationBasic(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNotificationBasic() => __builder =>
+    {
+        <BUINotificationBadge>
+            <ChildContent>
+                <BUIButton OnClick="@(() => { })">Messages</BUIButton>
+            </ChildContent>
+            <BadgeContent>3</BadgeContent>
+        </BUINotificationBadge>
+    };
+
+    private ComponentDemoDefinition NotificationPositionDemo => new()
+    {
+        Demo = RenderNotificationPosition(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNotificationPosition() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Position="BadgePosition.TopRight">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Position="BadgePosition.TopLeft">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Position="BadgePosition.BottomRight">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Position="BadgePosition.BottomLeft">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.TopRight">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.TopLeft">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.BottomRight">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.BottomLeft">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>5</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition NotificationDotDemo => new()
+    {
+        Demo = RenderNotificationDot(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNotificationDot() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge>
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                    </ChildContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition NotificationCustomDemo => new()
+    {
+        Demo = RenderNotificationCustom(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNotificationCustom() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge>
+                    <ChildContent>
+                        <BUIButton OnClick="@(() => { })">Inbox</BUIButton>
+                    </ChildContent>
+                    <BadgeContent>99+</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge>
+                    <ChildContent>
+                        <BUIButton OnClick="@(() => { })">Updates</BUIButton>
+                    </ChildContent>
+                    <BadgeContent>
+                        <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+                    </BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+        </BUIGrid>
+    };
+
+    private ComponentDemoDefinition NotificationColorsDemo => new()
+    {
+        Demo = RenderNotificationColors(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderNotificationColors() => __builder =>
+    {
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge BackgroundColor="@Palette.Error" Color="@Palette.ErrorContrast">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>!</BadgeContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge BackgroundColor="@Palette.Success" Color="@Palette.SuccessContrast">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                    </ChildContent>
+                </BUINotificationBadge>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <BUINotificationBadge BackgroundColor="@Palette.Warning" Color="@Palette.WarningContrast">
+                    <ChildContent>
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                    </ChildContent>
+                    <BadgeContent>3</BadgeContent>
+                </BUINotificationBadge>
             </BUIGridItem>
         </BUIGrid>
     };

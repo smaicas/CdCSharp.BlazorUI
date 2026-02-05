@@ -11,6 +11,7 @@
 @implements IHasBorder
 @implements IHasBackgroundColor
 @implements IHasColor
+@implements IHasDisabled
 
 @{
     base.BuildRenderTree(__builder);
@@ -19,10 +20,10 @@
 @code {
     /* ========= Public API ========= */
 
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string? Text { get; set; }
     [Parameter] public string? LeadingIcon { get; set; }
     [Parameter] public string? TrailingIcon { get; set; }
-    [Parameter] public bool Disabled { get; set; }
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
     // IHasTransitions
@@ -41,6 +42,9 @@
     // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }
 
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+
     // IHasRipple
     [Parameter] public bool DisableRipple { get; set; }
     [Parameter] public string? RippleColor { get; set; }
@@ -49,14 +53,15 @@
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
-    // IHasBorder
-    [Parameter] public BorderStyle? Border { get; set; }
-
     // IHasBackgroundColor
     [Parameter] public string? BackgroundColor { get; set; }
 
     // IHasColor
     [Parameter] public string? Color { get; set; }
+
+    // IHasDisabled
+    [Parameter] public bool Disabled { get; set; }
+    public bool IsDisabled => Disabled || Loading;
 
     // IJsBehavior
     public ElementReference GetRippleContainer() => _buttonElement;
@@ -72,43 +77,45 @@
 
     /* ========= Private state ========= */
 
-    private bool IsDisabled => Disabled || Loading;
     private ElementReference _buttonElement;
 
     /* ========= Render ========= */
 
     private RenderFragment RenderDefault() => __builder =>
-    {
-        <bui-component @attributes="@ComputedAttributes">
-            <button @ref="_buttonElement"
-                    type="button"
-                    disabled="@IsDisabled"
-                    @onclick="HandleClick">
-
+{
+    <bui-component @attributes="@ComputedAttributes">
+        <button @ref="_buttonElement"
+                type="button"
+                disabled="@IsDisabled"
+                @onclick="HandleClick">
+            @if (ChildContent != null)
+            {
+                @ChildContent
+            }
+            else
+            {
                 @if (Loading && LoadingIndicatorVariant != null)
                 {
                     <BUILoadingIndicator Variant="@LoadingIndicatorVariant"
-                                         Size="Size"
+                                         Size="@Size"
                                          Color="@Color" />
                 }
                 else if (LeadingIcon != null)
                 {
                     <BUISvgIcon Icon="@LeadingIcon" class="bui-button__icon bui-button__icon--leading" Size="@Size" />
                 }
-
                 @if (!string.IsNullOrWhiteSpace(Text))
                 {
                     <span class="bui-button__text">@Text</span>
                 }
-
                 @if (TrailingIcon != null && !Loading)
                 {
                     <BUISvgIcon Icon="@TrailingIcon" class="bui-button__icon bui-button__icon--trailing" Size="@Size" />
                 }
-
-            </button>
-        </bui-component>
-    };
+            }
+        </button>
+    </bui-component>
+};
 
     /* ========= Event Handlers ========= */
 

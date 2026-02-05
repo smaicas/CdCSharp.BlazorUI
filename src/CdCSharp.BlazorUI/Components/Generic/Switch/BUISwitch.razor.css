@@ -133,20 +133,6 @@ bui-component[data-bui-component="input-switch"] {
     }
 
     /* ============================================
- * DISABLED STATE
- * ============================================ */
-
-    bui-component[data-bui-component="switch"][data-bui-disabled="true"] .bui-switch,
-    bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] .bui-switch {
-        cursor: not-allowed;
-    }
-
-    bui-component[data-bui-component="switch"][data-bui-disabled="true"],
-    bui-component[data-bui-component="input-switch"][data-bui-disabled="true"] {
-        opacity: 0.5;
-    }
-
-    /* ============================================
  * HELPER TEXT
  * ============================================ */
 

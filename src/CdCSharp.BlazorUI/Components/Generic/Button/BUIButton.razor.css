@@ -2,11 +2,14 @@
     --_button-height: calc(2.5rem * var(--bui-size-multiplier, 1));
     --_button-padding-x: 1rem;
     --_button-padding-y: 0.5rem;
-    --_button-icon-size: calc(1.25rem * var(--bui-size-multiplier, 1));
-    --_button-background-default: var(--palette-primary);
-    --_button-color-default: var(--palette-primarycontrast);
-    --_button-border-default: none;
-    --_button-border-radius-default: 4px;
+    --_button-background: var(--bui-inline-background, var(--palette-primary));
+    --_button-color: var(--bui-inline-color, var(--palette-primarycontrast));
+    --_button-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
+    --_button-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
+    --_button-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_button-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_button-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_button-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
 }
 
     bui-component[data-bui-component="button"] button {
@@ -20,38 +23,18 @@
         position: relative;
         overflow: hidden;
         /* Consume inline overrides with fallback to defaults */
-        background-color: var(--bui-inline-background, var(--_button-background-default));
-        color: var(--bui-inline-color, var(--_button-color-default));
-        border-top: var(--bui-inline-border-top, var(--_button-border, var(--_button-border-default)));
-        border-bottom: var(--bui-inline-border-bottom, var(--_button-border, var(--_button-border-default)));
-        border-left: var(--bui-inline-border-left, var(--_button-border, var(--_button-border-default)));
-        border-right: var(--bui-inline-border-right, var(--_button-border, var(--_button-border-default)));
+        background-color: var(--_button-background);
+        color: var(--_button-color);
+        border-radius: var(--_button-border-radius);
+        border: var(--_button-border);
+        border-top: var(--_button-border-top);
+        border-right: var(--_button-border-right);
+        border-bottom: var(--_button-border-bottom);
+        border-left: var(--_button-border-left);
     }
 
 .bui-button__text {
     white-space: nowrap;
-}
-
-/* Icon sizing */
-bui-component[data-bui-component="button"] svg {
-    width: var(--_button-icon-size);
-    height: var(--_button-icon-size);
-}
-
-/* Icon only button */
-bui-component[data-bui-component="button"]:not(:has(.bui-button__text)) button {
-    padding: var(--_button-padding-y);
-    aspect-ratio: 1;
-}
-
-/* Disabled state */
-bui-component[data-bui-component="button"] button:disabled {
-    cursor: not-allowed;
-}
-
-/* Hover state - respects inline overrides */
-bui-component[data-bui-component="button"] button:hover:not(:disabled) {
-    filter: brightness(1.1);
 }
 
 /* Focus state */

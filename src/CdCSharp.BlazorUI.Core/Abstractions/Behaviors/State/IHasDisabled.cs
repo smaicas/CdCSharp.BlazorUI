@@ -1,6 +1,9 @@
-﻿namespace CdCSharp.BlazorUI.Components;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasDisabled
 {
-    bool Disabled { get; }
+    public bool Disabled { get; set; }
+    public bool IsDisabled { get; }
 }

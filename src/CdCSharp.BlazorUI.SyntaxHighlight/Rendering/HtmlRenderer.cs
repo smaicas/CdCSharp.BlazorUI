@@ -63,21 +63,21 @@ public sealed class HtmlRenderer
     {
         StringBuilder sb = new();
         sb.AppendLine("<style>");
-        sb.AppendLine($".{CssPrefix}-container {{");
-        sb.AppendLine($"  background-color: {options.BackgroundColor};");
-        sb.AppendLine($"  color: {options.DefaultColor};");
-        sb.AppendLine($"  font-family: {options.FontFamily};");
-        sb.AppendLine($"  font-size: {options.FontSize};");
-        sb.AppendLine("  padding: 1em;");
-        sb.AppendLine("  border-radius: 4px;");
-        sb.AppendLine("  overflow-x: auto;");
-        sb.AppendLine("  margin: 0;");
-        sb.AppendLine("}");
-        sb.AppendLine($".{CssPrefix}-code {{");
-        sb.AppendLine("  display: block;");
-        sb.AppendLine("  white-space: pre;");
-        sb.AppendLine("  margin: 0;");
-        sb.AppendLine("}");
+        //sb.AppendLine($".{CssPrefix}-container {{");
+        //sb.AppendLine($"  background-color: {options.BackgroundColor};");
+        //sb.AppendLine($"  color: {options.DefaultColor};");
+        //sb.AppendLine($"  font-family: {options.FontFamily};");
+        //sb.AppendLine($"  font-size: {options.FontSize};");
+        //sb.AppendLine("  padding: 1em;");
+        //sb.AppendLine("  border-radius: 4px;");
+        //sb.AppendLine("  overflow-x: auto;");
+        //sb.AppendLine("  margin: 0;");
+        //sb.AppendLine("}");
+        //sb.AppendLine($".{CssPrefix}-code {{");
+        //sb.AppendLine("  display: block;");
+        //sb.AppendLine("  white-space: pre;");
+        //sb.AppendLine("  margin: 0;");
+        //sb.AppendLine("}");
 
         foreach ((TokenType type, string color) in options.TokenColors)
         {

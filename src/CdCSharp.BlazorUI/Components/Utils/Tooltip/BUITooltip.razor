@@ -18,7 +18,7 @@
         <div class="bui-tooltip"
              data-bui-placement="@Placement.ToString().ToLowerInvariant()"
              data-bui-arrow="@Arrow.ToString().ToLowerInvariant()"
-             data-bui-permanent="@(Trigger == TooltipTrigger.Permanent).ToString().ToLowerInvariant()"
+             data-bui-permanent="@(Trigger == TooltipTrigger.Permanent ? "true" : "false")"
              style="@GetTooltipStyle()"
              role="tooltip"
              @onmouseenter="HandleTooltipMouseEnter"
@@ -63,7 +63,7 @@
     [Parameter] public TooltipTrigger Trigger { get; set; } = TooltipTrigger.Hover;
     [Parameter] public int? ShowDelay { get; set; }
     [Parameter] public int? LeaveDelay { get; set; }
-    [Parameter] public int? AutoCloseAfter { get; set; }
+    [Parameter] public int? AutoCloseAfterMs { get; set; }
     [Parameter] public bool Arrow { get; set; } = true;
     [Parameter] public bool Interactive { get; set; } = true;
     [Parameter] public int? MaxWidth { get; set; }
@@ -261,7 +261,7 @@
 
     private void StartAutoClose()
     {
-        if (!AutoCloseAfter.HasValue)
+        if (!AutoCloseAfterMs.HasValue)
             return;
 
         CancelAutoClose();
@@ -274,7 +274,7 @@
     {
         try
         {
-            await Task.Delay(AutoCloseAfter!.Value, token);
+            await Task.Delay(AutoCloseAfterMs!.Value, token);
             if (!_isTooltipHovered)
             {
                 Hide();

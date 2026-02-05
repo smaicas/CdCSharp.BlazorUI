@@ -146,7 +146,7 @@ internal sealed class BUIComponentAttributesBuilder
     private void BuildDisabled(ComponentBase component)
     {
         if (component is IHasDisabled disabled)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.Disabled.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
     }
 
     private void BuildShadow(ComponentBase component, Dictionary<string, string> cssVariables)

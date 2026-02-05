@@ -87,20 +87,16 @@ a:focus-visible {
 
 code, kbd, samp {
     font-family: var({{FeatureDefinitions.Typography.FontMono}});
-    font-size: 0.875em;
-    background-color: var(--palette-surface);
+    font-size: calc(0.875em * var(--bui-size-multiplier, 1));
     padding-inline: 0.375em;
     padding-block: 0.125em;
-    border-radius: 4px;
 }
 
 pre {
     font-family: var({{FeatureDefinitions.Typography.FontMono}});
-    font-size: 0.875em;
+    font-size: calc(0.875em * var(--bui-size-multiplier, 1));
     line-height: 1.6;
-    background-color: var(--palette-surface);
     padding: 1em;
-    border-radius: 4px;
     overflow-x: auto;
     white-space: pre;
 }
@@ -108,7 +104,6 @@ pre {
 pre code {
     background-color: transparent;
     padding: 0;
-    border-radius: 0;
 }
 
 /* ========================================

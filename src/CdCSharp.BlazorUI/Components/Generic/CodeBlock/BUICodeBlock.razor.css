@@ -1,20 +1,33 @@
 ﻿bui-component[data-bui-component="code-block"] {
-    --_code-block-radius: 8px;
     display: flex;
     flex-direction: column;
     gap: 0;
-    border-radius: var(--_code-block-radius);
-    border: 1px solid var(--palette-border);
-    overflow: hidden;
+    --_code-block-background: var(--bui-inline-background, var(--palette-surface));
+    --_code-block-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
+    --_code-block-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
+    --_code-block-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_code-block-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_code-block-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_code-block-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
 }
 
     bui-component[data-bui-component="code-block"] .bui-code-block__header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: var(--palette-surface);
+        padding: 0.25rem 0.5rem;
+        background-color: color-mix( in oklab, var(--_code-block-background) 75%, var(--palette-primary) );
+        border-radius: var(--_code-block-border-radius);
+        border: var(--_code-block-border);
+        border-top: var(--_code-block-border-top);
+        border-right: var(--_code-block-border-right);
+        border-bottom: var(--_code-block-border-bottom);
+        border-left: var(--_code-block-border-left);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
         border-bottom: 1px solid var(--palette-border);
         width: 100%;
+        user-select:none;
     }
 
     bui-component[data-bui-component="code-block"] .bui-code-block__title {
@@ -27,29 +40,13 @@
         width: 100%;
         overflow-x: auto;
         font-family: var(--bui-font-mono);
-    }
-
-    /* Size variations */
-    bui-component[data-bui-component="code-block"][data-bui-size="small"] .bui-code-block__title {
-        font-size: 0.7rem;
-    }
-
-    bui-component[data-bui-component="code-block"][data-bui-size="small"] .bui-code-block__content {
-        font-size: 0.8rem;
-    }
-
-    bui-component[data-bui-component="code-block"][data-bui-size="medium"] .bui-code-block__title {
-        font-size: 0.75rem;
-    }
-
-    bui-component[data-bui-component="code-block"][data-bui-size="medium"] .bui-code-block__content {
-        font-size: 0.875rem;
-    }
-
-    bui-component[data-bui-component="code-block"][data-bui-size="large"] .bui-code-block__title {
-        font-size: 0.875rem;
-    }
-
-    bui-component[data-bui-component="code-block"][data-bui-size="large"] .bui-code-block__content {
-        font-size: 1rem;
+        background-color: var(--_code-block-background);
+        border-radius: var(--_code-block-border-radius);
+        border: var(--_code-block-border);
+        border-top: var(--code-blockn-border-top);
+        border-right: var(--_code-block-border-right);
+        border-bottom: var(--_code-block-border-bottom);
+        border-left: var(--_code-block-border-left);
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
     }

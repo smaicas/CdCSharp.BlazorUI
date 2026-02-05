@@ -236,11 +236,3 @@ code {
 .doc-section {
     margin-bottom: 3rem;
 }
-
-:root{
-    --palette-primary: #ff0000;
-}
-
-html[data-theme="light"]{
-    --palette-primary: #00ff00;
-}

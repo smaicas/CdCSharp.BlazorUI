@@ -5,6 +5,8 @@
 
 @inherits BUIComponentBase
 @implements IHasSize
+@implements IHasBorder
+@implements IHasBackgroundColor
 
 @inject IClipboardJsInterop Clipboard
 
@@ -14,11 +16,15 @@
             @(Title ?? Language.ToString().ToUpperInvariant())
         </span>
 
-        <_BUIBtn Disabled="@_copied"
-                 AriaLabel="Copy code"
-                 OnClick="CopyClicked">
-            @(_copied ? "✓ Copied" : "Copy")
-        </_BUIBtn>
+        <BUITooltip AutoCloseAfterMs="1500" Trigger="TooltipTrigger.Click"
+                    Placement="TooltipPlacement.Top"
+                    Text="Copied!">
+            <_BUIBtn Disabled="@_copied"
+                     AriaLabel="Copy code"
+                     OnClick="CopyClicked">
+                <span>Copy</span>
+            </_BUIBtn>
+        </BUITooltip>
     </div>
 
     <div class="bui-code-block__content">
@@ -31,7 +37,14 @@
     [Parameter] public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.CSharp;
     [Parameter] public string? Title { get; set; }
 
+    // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public string? BackgroundColor { get; set; }
 
     private bool _copied;
     private Highlighter _highlighter = new Highlighter();

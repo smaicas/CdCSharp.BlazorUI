@@ -30,14 +30,6 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     width: 100%;
 }
 
-[data-theme="dark"] [data-bui-data-collection] {
-    --_dc-header-bg: rgba(255, 255, 255, 0.05);
-    --_dc-border-color: rgba(255, 255, 255, 0.12);
-    --_dc-hover-bg: rgba(255, 255, 255, 0.08);
-    --_dc-selected-bg: rgba(25, 118, 210, 0.15);
-    --_dc-toolbar-bg: rgba(255, 255, 255, 0.02);
-}
-
 /* === TOOLBAR === */
 [data-bui-data-collection] .bui-dc__toolbar {
     display: flex;

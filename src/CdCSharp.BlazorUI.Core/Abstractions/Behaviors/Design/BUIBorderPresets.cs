@@ -63,8 +63,8 @@ public static class BUIBorderPresets
         BorderStyle.Create()
             .All("2px", BorderStyleType.Solid, BUIColor.Gray.Default);
 
-    public static BorderStyle Subtle =>
-                                                    BorderStyle.Create()
+    public static BorderStyle Subtle => 
+        BorderStyle.Create()
             .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten3);
 
     public static BorderStyle Success =>

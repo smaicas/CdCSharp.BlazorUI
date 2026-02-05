@@ -19,7 +19,6 @@
 }
 
 @code {
-    private ElementReference _inputContainer;
     private string _inputId = $"bui-input-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
     private bool _isFocused;
@@ -66,8 +65,6 @@
     [Parameter] public bool UpdateOnInput { get; set; }
     [Parameter] public EventCallback<string> OnInput { get; set; }
 
-    public ElementReference GetRippleContainer() => _inputContainer;
-
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
     private bool IsFloated => _isFocused || HasValue || _isDirty;
 
@@ -86,7 +83,7 @@
         <bui-component @attributes="ComputedAttributes"
                        data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
 
-            <div class="bui-input__wrapper" @ref="_inputContainer">
+            <div class="bui-input__wrapper">
 
                 <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />

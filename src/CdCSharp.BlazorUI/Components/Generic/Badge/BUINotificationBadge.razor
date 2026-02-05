@@ -1,0 +1,53 @@
+﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@namespace CdCSharp.BlazorUI.Components
+
+@inherits BUIVariantComponentBase<BUINotificationBadge, BUIBadgeVariant>
+@implements IHasSize
+@implements IHasColor
+@implements IHasBackgroundColor
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public RenderFragment? BadgeContent { get; set; }
+    [Parameter] public BadgePosition Position { get; set; } = BadgePosition.TopRight;
+    [Parameter] public bool Circular { get; set; } = true;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Small;
+    [Parameter] public string? Color { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; }
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public ShadowStyle? Shadow { get; set; }
+
+    public override BUIBadgeVariant DefaultVariant => BUIBadgeVariant.Default;
+
+    protected override Dictionary<BUIBadgeVariant, Func<BUINotificationBadge, RenderFragment>> BuiltInTemplates { get; } = new()
+    {
+        [BUIBadgeVariant.Default] = b => b.RenderNotificationBadge(),
+    };
+
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        dataAttributes["data-bui-position"] = Position.ToString().ToLowerInvariant();
+    }
+
+    private RenderFragment RenderNotificationBadge() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes">
+            @ChildContent
+            <div class="bui-notification-badge__indicator">
+                <BUIBadge Variant="@Variant"
+                          Circular="@Circular"
+                          Size="@Size"
+                          Color="@Color"
+                          BackgroundColor="@BackgroundColor"
+                          Border="@Border"
+                          Shadow="@Shadow"
+                          ChildContent="@BadgeContent">
+                </BUIBadge>
+            </div>
+        </bui-component>
+    };
+}
