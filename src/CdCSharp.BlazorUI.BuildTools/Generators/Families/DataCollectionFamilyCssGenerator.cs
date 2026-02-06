@@ -17,27 +17,38 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
    Auto-generated - Do not edit manually
    ======================================== */
 
-/* === SHARED VARIABLES === */
 [data-bui-data-collection] {
     --_dc-padding-x: 1rem;
     --_dc-padding-y: 0.75rem;
-    --_dc-header-bg: rgba(0, 0, 0, 0.02);
-    --_dc-border-color: rgba(0, 0, 0, 0.12);
-    --_dc-hover-bg: rgba(0, 0, 0, 0.04);
-    --_dc-selected-bg: rgba(25, 118, 210, 0.08);
-    --_dc-toolbar-bg: rgba(0, 0, 0, 0.02);
+    --_dc-header-bg: color-mix(in oklab, var(--palette-surface) 95%, var(--palette-surfacecontrast));
+    --_dc-hover-bg: color-mix(in oklab, var(--palette-surface) 92%, var(--palette-surfacecontrast));
+    --_dc-selected-bg: color-mix(in oklab, var(--palette-surface) 90%, var(--palette-primary));
+    --_dc-background: var(--bui-inline-background, var(--palette-surface));
+    --_dc-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
+    --_dc-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
+    --_dc-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_dc-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_dc-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_dc-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
     display: block;
     width: 100%;
+    background-color: var(--_dc-background);
+    border: var(--_dc-border);
+    border-top: var(--_dc-border-top);
+    border-right: var(--_dc-border-right);
+    border-bottom: var(--_dc-border-bottom);
+    border-left: var(--_dc-border-left);
+    border-radius: var(--_dc-border-radius);
 }
 
 /* === TOOLBAR === */
 [data-bui-data-collection] .bui-dc__toolbar {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: calc(1rem * var(--bui-density-multiplier, 1));
     padding: var(--_dc-padding-y) var(--_dc-padding-x);
-    background: var(--_dc-toolbar-bg);
-    border-bottom: 1px solid var(--_dc-border-color);
+    background: var(--_dc-header-bg);
+    border-bottom: 1px solid var(--palette-border);
 }
 
 [data-bui-data-collection] .bui-dc__toolbar-spacer {
@@ -49,6 +60,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     position: relative;
     display: flex;
     align-items: center;
+    gap: calc(0.5rem * var(--bui-density-multiplier, 1));
     flex: 0 1 300px;
 }
 
@@ -56,7 +68,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 [data-bui-data-collection] .bui-dc__selection-info {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--bui-density-multiplier, 1));
     font-size: 0.875rem;
     color: var(--palette-primary);
 }
@@ -65,7 +77,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 [data-bui-data-collection] .bui-dc__page-size {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--bui-density-multiplier, 1));
     font-size: 0.875rem;
 }
 
@@ -75,8 +87,8 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     align-items: center;
     justify-content: space-between;
     padding: var(--_dc-padding-y) var(--_dc-padding-x);
-    border-top: 1px solid var(--_dc-border-color);
-    background: var(--_dc-toolbar-bg);
+    border-top: 1px solid var(--palette-border);
+    background: var(--_dc-header-bg);
 }
 
 [data-bui-data-collection] .bui-dc__pagination-info {
@@ -88,7 +100,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 [data-bui-data-collection] .bui-dc__pagination-controls {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: calc(0.25rem * var(--bui-density-multiplier, 1));
 }
 
 /* === CHECKBOX (shared) === */
@@ -105,8 +117,8 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 3rem 1rem;
+    gap: calc(0.5rem * var(--bui-density-multiplier, 1));
+    padding: calc(var(--_dc-padding-y) * 4) var(--_dc-padding-x);
     color: var(--palette-surfacecontrast);
     opacity: 0.6;
     text-align: center;
@@ -127,7 +139,18 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 3rem 1rem;
+    padding: calc(var(--_dc-padding-y) * 4) var(--_dc-padding-x);
+}
+
+/* === DENSITY: Padding overrides === */
+[data-bui-data-collection][data-bui-density="compact"] {
+    --_dc-padding-x: 0.5rem;
+    --_dc-padding-y: 0.375rem;
+}
+
+[data-bui-data-collection][data-bui-density="comfortable"] {
+    --_dc-padding-x: 1.5rem;
+    --_dc-padding-y: 1rem;
 }
 
 /* === RESPONSIVE === */

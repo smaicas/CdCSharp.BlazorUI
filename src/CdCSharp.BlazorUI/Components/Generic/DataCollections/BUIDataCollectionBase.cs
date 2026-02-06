@@ -8,6 +8,8 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     : BUIVariantComponentBase<TComponent, TVariant>,
       IHasDensity,
       IHasShadow,
+      IHasBorder,
+      IHasBackgroundColor,
       IDataCollectionFamilyComponent
     where TComponent : BUIDataCollectionBase<TItem, TComponent, TVariant>
     where TVariant : Variant
@@ -51,6 +53,12 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     [Parameter] public RenderFragment? EmptyContent { get; set; }
     [Parameter] public RenderFragment? LoadingContent { get; set; }
     [Parameter] public bool Loading { get; set; }
+
+    // IHasBorder
+    [Parameter] public BorderStyle? Border { get; set; }
+
+    // IHasBackgroundColor
+    [Parameter] public string? BackgroundColor { get; set; }
 
     [Parameter] public EventCallback<TItem> OnRowClick { get; set; }
     [Parameter] public EventCallback<DataCollectionSortEventArgs> OnSort { get; set; }
