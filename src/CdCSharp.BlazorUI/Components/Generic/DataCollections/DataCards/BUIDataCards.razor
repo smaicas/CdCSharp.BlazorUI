@@ -17,7 +17,7 @@
 <bui-component @attributes="ComputedAttributes">
     @if (ColumnsBuilt)
     {
-        @if (Filterable || ShowPageSizeSelector || (Sortable && SortableColumns.Any()))
+        @if (Filterable || ShowPageSizeSelector || (Sortable && CachedSortableColumns.Any()))
         {
             <div class="bui-dc__toolbar">
                 @if (Filterable)
@@ -49,7 +49,7 @@
                     </div>
                 }
 
-                @if (Sortable && SortableColumns.Any())
+                @if (Sortable && CachedSortableColumns.Any())
                 {
                     <div class="bui-datacards__sort">
                         <label>Sort by</label>
@@ -57,7 +57,7 @@
                                       AriaLabel="Sort by column"
                                       ValueChanged="HandleSortSelectChange">
                             <option value="">None</option>
-                            @foreach (DataColumnRegistration<TItem> col in SortableColumns)
+                            @foreach (DataColumnRegistration<TItem> col in CachedSortableColumns)
                             {
                                 <option value="@col.Header">@col.Header</option>
                             }
@@ -101,15 +101,17 @@
                  role="list">
                 @if (EnableVirtualization && !string.IsNullOrEmpty(Height))
                 {
-                    <Virtualize Items="@ProcessedItems" Context="item">
-                        @RenderCard(item)
+                    <Virtualize Items="@IndexedItems" Context="indexed">
+                        @RenderCard(indexed.Item, indexed.Index)
                     </Virtualize>
                 }
                 else
                 {
+                    int cardIndex = 0;
                     @foreach (TItem item in ProcessedItems)
                     {
-                        @RenderCard(item)
+                        @RenderCard(item, cardIndex)
+                        cardIndex++;
                     }
                 }
             </div>
@@ -157,8 +159,18 @@
     protected override IReadOnlyDictionary<DataCardsVariant, Func<BUIDataCards<TItem>, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<DataCardsVariant, Func<BUIDataCards<TItem>, RenderFragment>>();
 
-    private IEnumerable<DataColumnRegistration<TItem>> SortableColumns =>
-        RegisteredColumns.Where(c => c.Sortable && c.ValueSelector != null);
+    private List<DataColumnRegistration<TItem>> CachedSortableColumns = [];
+
+    private List<(TItem Item, int Index)> IndexedItems =>
+        ProcessedItems.Select((item, i) => (item, i)).ToList();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        CachedSortableColumns = RegisteredColumns
+            .Where(c => c.Sortable && c.ValueSelector != null)
+            .ToList();
+    }
 
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
@@ -192,11 +204,14 @@
         }
     }
 
-    private RenderFragment RenderCard(TItem item) => __builder =>
+    private RenderFragment RenderCard(TItem item, int index) => __builder =>
     {
         bool isSelected = State.IsSelected(item);
+        string? patternStyle = GetItemPatternStyle(index);
 
-        <article class="bui-datacards__card @(isSelected ? "bui-datacards__card--selected" : "") @(IsInteractiveRow ? "bui-datacards__card--interactive" : "")"
+        <article @key="item"
+                 class="bui-datacards__card @(isSelected ? "bui-datacards__card--selected" : "") @(IsInteractiveRow ? "bui-datacards__card--interactive" : "")"
+                 style="@patternStyle"
                  role="@(SelectionMode != SelectionMode.None ? "option" : null)"
                  aria-selected="@(SelectionMode != SelectionMode.None ? isSelected.ToString().ToLowerInvariant() : null)"
                  tabindex="@(IsInteractiveRow ? 0 : -1)"
@@ -227,7 +242,7 @@
                 }
 
                 <div class="bui-datacards__card-body">
-                    @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
+                    @foreach (DataColumnRegistration<TItem> col in VisibleColumns)
                     {
                         <div class="bui-datacards__field">
                             <span class="bui-datacards__field-label">@col.Header</span>
@@ -275,66 +290,5 @@
         }
 
         return string.Join("; ", styles);
-    }
-
-    private async Task HandleSortChange(ChangeEventArgs e)
-    {
-        string? columnName = e.Value?.ToString();
-
-        if (string.IsNullOrEmpty(columnName))
-        {
-            State.SortColumn = null;
-            State.SortDirection = SortDirection.None;
-        }
-        else
-        {
-            State.SortColumn = columnName;
-            if (State.SortDirection == SortDirection.None)
-            {
-                State.SortDirection = SortDirection.Ascending;
-            }
-        }
-
-        State.ResetPagination();
-        ProcessData();
-
-        if (OnSort.HasDelegate && !string.IsNullOrEmpty(State.SortColumn))
-        {
-            await OnSort.InvokeAsync(new DataCollectionSortEventArgs
-            {
-                ColumnName = State.SortColumn,
-                Direction = State.SortDirection
-            });
-        }
-    }
-
-    private void ToggleSortDirection()
-    {
-        State.SortDirection = State.SortDirection == SortDirection.Ascending
-            ? SortDirection.Descending
-            : SortDirection.Ascending;
-        ProcessData();
-    }
-
-    private async Task HandleFilterInputChange(string? value)
-    {
-        await HandleFilterChange(new ChangeEventArgs { Value = value });
-    }
-
-    private async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
-    private async Task ClearSelectionClicked(MouseEventArgs e) => await ClearSelection();
-    private async Task ToggleSortDirectionClicked(MouseEventArgs e) => ToggleSortDirection();
-
-    private async Task HandleSortSelectChange(string? value)
-    {
-        await HandleSortChange(new ChangeEventArgs { Value = value });
-    }
-
-    private async Task HandlePageSizeSelectChange(string? value)
-    {
-        if (int.TryParse(value, out int size))
-        {
-            await HandlePageSizeChange(new ChangeEventArgs { Value = size });
-        }
     }
 }

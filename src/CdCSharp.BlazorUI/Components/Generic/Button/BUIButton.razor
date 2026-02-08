@@ -87,7 +87,8 @@
         <button @ref="_buttonElement"
                 type="button"
                 disabled="@IsDisabled"
-                @onclick="HandleClick">
+                @onclick="HandleClick"
+                class="transition-target">
             @if (ChildContent != null)
             {
                 @ChildContent

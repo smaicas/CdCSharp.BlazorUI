@@ -89,41 +89,6 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__sort-icon {
     min-width: 1rem;
 }
 
-/* Rows */
-bui-component[data-bui-component="data-grid"] .bui-datagrid__row {
-    /* Row pattern variables - can be overridden per row */
-    --_dg-row-pattern-bg: var(--bui-inline-dc-row-pattern-bg, transparent);
-    --_dg-row-pattern-border: var(--bui-inline-dc-row-pattern-border, var(--_dg-row-border));
-    --_dg-row-pattern-border-top: var(--bui-inline-dc-row-pattern-border-top, var(--_dg-row-border-top));
-    --_dg-row-pattern-border-right: var(--bui-inline-dc-row-pattern-border-right, var(--_dg-row-border-right));
-    --_dg-row-pattern-border-bottom: var(--bui-inline-dc-row-pattern-border-bottom, var(--_dg-row-border-bottom));
-    --_dg-row-pattern-border-left: var(--bui-inline-dc-row-pattern-border-left, var(--_dg-row-border-left));
-    background: var(--_dg-row-pattern-bg);
-    border: var(--_dg-row-pattern-border);
-    border-top: var(--_dg-row-pattern-border-top);
-    border-right: var(--_dg-row-pattern-border-right);
-    border-bottom: var(--_dg-row-pattern-border-bottom);
-    border-left: var(--_dg-row-pattern-border-left);
-    transition: background-color 150ms ease;
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
-    background: var(--_dc-hover-bg);
-}
-
-bui-component[data-bui-component="data-grid"] .bui-datagrid__row--selected {
-    background: var(--_dc-selected-bg);
-}
-
-bui-component[data-bui-component="data-grid"] .bui-datagrid__row--interactive {
-    cursor: pointer;
-}
-
-    bui-component[data-bui-component="data-grid"] .bui-datagrid__row--interactive:focus-visible {
-        outline: var(--bui-highlight-outline);
-        outline-offset: var(--bui-highlight-outline-offset);
-    }
-
 /* Cell alignment */
 bui-component[data-bui-component="data-grid"] .bui-datagrid__cell--center {
     text-align: center;
@@ -158,4 +123,70 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__footer {
 
     bui-component[data-bui-component="data-grid"] .bui-datagrid__footer td {
         font-weight: 600;
+    }
+
+
+/* ========================================
+   Row Patterns - CSS-expressible
+   ======================================== */
+
+/* Default: per-item inline variable fallback */
+bui-component[data-bui-component="data-grid"] .bui-datagrid__row {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-bg, transparent);
+    --_dg-row-pattern-border: var(--bui-inline-row-pattern-border, var(--_dg-row-border));
+    --_dg-row-pattern-border-top: var(--bui-inline-row-pattern-border-top, var(--_dg-row-border-top));
+    --_dg-row-pattern-border-right: var(--bui-inline-row-pattern-border-right, var(--_dg-row-border-right));
+    --_dg-row-pattern-border-bottom: var(--bui-inline-row-pattern-border-bottom, var(--_dg-row-border-bottom));
+    --_dg-row-pattern-border-left: var(--bui-inline-row-pattern-border-left, var(--_dg-row-border-left));
+    background: var(--_dg-row-pattern-bg);
+    border: var(--_dg-row-pattern-border);
+    border-top: var(--_dg-row-pattern-border-top);
+    border-right: var(--_dg-row-pattern-border-right);
+    border-bottom: var(--_dg-row-pattern-border-bottom);
+    border-left: var(--_dg-row-pattern-border-left);
+}
+
+/* Alternating pattern */
+bui-component[data-bui-component="data-grid"][data-bui-row-pattern="alternating"] .bui-datagrid__row:nth-child(even) {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-even-bg, transparent);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-row-pattern="alternating"] .bui-datagrid__row:nth-child(odd) {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-odd-bg, transparent);
+}
+
+/* Every-Nth patterns */
+bui-component[data-bui-component="data-grid"][data-bui-row-pattern="every-3"] .bui-datagrid__row:nth-child(3n) {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-nth-bg, transparent);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-row-pattern="every-4"] .bui-datagrid__row:nth-child(4n) {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-nth-bg, transparent);
+}
+
+bui-component[data-bui-component="data-grid"][data-bui-row-pattern="every-5"] .bui-datagrid__row:nth-child(5n) {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-nth-bg, transparent);
+}
+
+/* All pattern */
+bui-component[data-bui-component="data-grid"][data-bui-row-pattern="all"] .bui-datagrid__row {
+    --_dg-row-pattern-bg: var(--bui-inline-row-pattern-all-bg, transparent);
+}
+
+/* Interactions */
+bui-component[data-bui-component="data-grid"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
+    background: var(--_dc-hover-bg);
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__row--selected {
+    background: var(--_dc-selected-bg);
+}
+
+bui-component[data-bui-component="data-grid"] .bui-datagrid__row--interactive {
+    cursor: pointer;
+}
+
+    bui-component[data-bui-component="data-grid"] .bui-datagrid__row--interactive:focus-visible {
+        outline: var(--bui-highlight-outline);
+        outline-offset: var(--bui-highlight-outline-offset);
     }

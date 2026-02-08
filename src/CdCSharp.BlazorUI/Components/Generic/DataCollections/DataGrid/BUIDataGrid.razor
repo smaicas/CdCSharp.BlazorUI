@@ -90,7 +90,7 @@
                                     }
                                 </th>
                             }
-                            @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
+                            @foreach (DataColumnRegistration<TItem> col in VisibleColumns)
                             {
                                 <th class="bui-datagrid__header-cell @GetAlignClass(col.Align, "bui-datagrid__cell") @col.HeaderClass"
                                     style="@(col.Width != null ? $"width: {col.Width}" : null)"
@@ -129,8 +129,8 @@
                     <tbody>
                         @if (EnableVirtualization && !string.IsNullOrEmpty(Height))
                         {
-                            <Virtualize Items="@ProcessedItems" Context="item">
-                                @RenderRow(item, ProcessedItems.IndexOf(item))
+                            <Virtualize Items="@IndexedItems" Context="indexed">
+                                @RenderRow(indexed.Item, indexed.Index)
                             </Virtualize>
                         }
                         else if (ProcessedItems.Any())
@@ -145,7 +145,7 @@
                         else
                         {
                             <tr class="bui-datagrid__empty-row" role="row">
-                                <td colspan="@(RegisteredColumns.Count(c => c.Visible) + (SelectionMode != SelectionMode.None ? 1 : 0))"
+                                <td colspan="@(VisibleColumns.Count + (SelectionMode != SelectionMode.None ? 1 : 0))"
                                     class="bui-datagrid__empty-cell">
                                     @if (EmptyContent != null)
                                     {
@@ -191,12 +191,14 @@
 
     [Parameter] public BorderStyle? CellBorder { get; set; }
     [Parameter] public BorderStyle? RowBorder { get; set; }
-    [Parameter] public RowStylePattern? RowPattern { get; set; }
 
     public override DataGridVariant DefaultVariant => DataGridVariant.Default;
 
     protected override IReadOnlyDictionary<DataGridVariant, Func<BUIDataGrid<TItem>, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<DataGridVariant, Func<BUIDataGrid<TItem>, RenderFragment>>();
+
+    private List<(TItem Item, int Index)> IndexedItems =>
+        ProcessedItems.Select((item, i) => (item, i)).ToList();
 
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
@@ -236,13 +238,13 @@
     private RenderFragment RenderRow(TItem item, int index) => __builder =>
     {
         bool isSelected = State.IsSelected(item);
-        RowStyle? rowStyle = RowPattern?.GetStyleForIndex(index);
+        string? patternStyle = GetItemPatternStyle(index);
 
         string rowClasses = $"bui-datagrid__row {(isSelected ? "bui-datagrid__row--selected" : "")} {(IsInteractiveRow ? "bui-datagrid__row--interactive" : "")}";
-        string? rowInlineVars = BuildRowPatternVariables(rowStyle);
 
-        <tr class="@rowClasses"
-            style="@rowInlineVars"
+        <tr @key="item"
+            class="@rowClasses"
+            style="@patternStyle"
             role="row"
             tabindex="@(IsInteractiveRow ? 0 : -1)"
             @onclick="() => HandleRowClick(item)"
@@ -264,7 +266,7 @@
             }
             else
             {
-                @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
+                @foreach (DataColumnRegistration<TItem> col in VisibleColumns)
                 {
                     <td class="bui-datagrid__cell @GetAlignClass(col.Align, "bui-datagrid__cell") @col.CellClass"
                         role="gridcell">
@@ -291,49 +293,6 @@
             return $"max-height: {Height}; overflow-y: auto;";
 
         return string.Empty;
-    }
-
-    private string? BuildRowPatternVariables(RowStyle? rowStyle)
-    {
-        if (rowStyle == null) return null;
-
-        List<string> vars = [];
-
-        if (rowStyle.BackgroundColor != null)
-            vars.Add($"--bui-inline-dc-row-pattern-bg: {rowStyle.BackgroundColor}");
-
-        if (rowStyle.Border != null)
-        {
-            BorderCssValues values = rowStyle.Border.GetCssValues();
-            if (values.All != null)
-                vars.Add($"--bui-inline-dc-row-pattern-border: {values.All}");
-            if (values.Top != null)
-                vars.Add($"--bui-inline-dc-row-pattern-border-top: {values.Top}");
-            if (values.Right != null)
-                vars.Add($"--bui-inline-dc-row-pattern-border-right: {values.Right}");
-            if (values.Bottom != null)
-                vars.Add($"--bui-inline-dc-row-pattern-border-bottom: {values.Bottom}");
-            if (values.Left != null)
-                vars.Add($"--bui-inline-dc-row-pattern-border-left: {values.Left}");
-        }
-
-        return vars.Any() ? string.Join("; ", vars) : null;
-    }
-
-    private async Task HandleFilterInputChange(string? value)
-    {
-        await HandleFilterChange(new ChangeEventArgs { Value = value });
-    }
-
-    private async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
-    private async Task ClearSelectionClicked(MouseEventArgs e) => await ClearSelection();
-
-    private async Task HandlePageSizeSelectChange(string? value)
-    {
-        if (int.TryParse(value, out int size))
-        {
-            await HandlePageSizeChange(new ChangeEventArgs { Value = size });
-        }
     }
 
     private string GetSelectAllIcon()

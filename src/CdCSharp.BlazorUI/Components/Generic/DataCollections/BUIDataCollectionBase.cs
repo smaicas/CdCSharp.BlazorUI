@@ -17,6 +17,7 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     protected readonly DataColumnRegistry<TItem> ColumnRegistry = new();
     protected readonly DataCollectionState<TItem> State = new();
     protected List<DataColumnRegistration<TItem>> RegisteredColumns = [];
+    protected List<DataColumnRegistration<TItem>> VisibleColumns = [];
     protected List<TItem> FilteredItems = [];
     protected List<TItem> ProcessedItems = [];
     protected bool ColumnsBuilt;
@@ -54,11 +55,10 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     [Parameter] public RenderFragment? LoadingContent { get; set; }
     [Parameter] public bool Loading { get; set; }
 
-    // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }
-
-    // IHasBackgroundColor
     [Parameter] public string? BackgroundColor { get; set; }
+
+    [Parameter] public RowStylePattern? ItemPattern { get; set; }
 
     [Parameter] public EventCallback<TItem> OnRowClick { get; set; }
     [Parameter] public EventCallback<DataCollectionSortEventArgs> OnSort { get; set; }
@@ -66,6 +66,10 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     [Parameter] public EventCallback<DataCollectionPageChangeEventArgs> OnPageChange { get; set; }
 
     protected bool IsInteractiveRow => OnRowClick.HasDelegate || SelectionMode != SelectionMode.None;
+
+    protected bool UsePerItemPatternStyles =>
+        ItemPattern != null &&
+        (!ItemPattern.IsCssExpressible || (EnableVirtualization && !string.IsNullOrEmpty(Height)));
 
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
@@ -75,6 +79,26 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         if (Hoverable)
         {
             dataAttributes["data-bui-hoverable"] = "true";
+        }
+
+        if (ItemPattern != null && !UsePerItemPatternStyles)
+        {
+            string? patternAttr = ItemPattern.GetPatternDataAttribute();
+            if (patternAttr != null)
+            {
+                dataAttributes["data-bui-row-pattern"] = patternAttr;
+            }
+        }
+    }
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        base.BuildComponentCssVariables(cssVariables);
+
+        if (ItemPattern != null && !UsePerItemPatternStyles)
+        {
+            foreach (KeyValuePair<string, string> kv in ItemPattern.GetContainerCssVariables())
+                cssVariables[kv.Key] = kv.Value;
         }
     }
 
@@ -130,9 +154,11 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         {
             FilteredItems = [];
             ProcessedItems = [];
+            VisibleColumns = [];
             return;
         }
 
+        VisibleColumns = RegisteredColumns.Where(c => c.Visible).ToList();
         FilteredItems = ApplyFilter(Items).ToList();
         IEnumerable<TItem> sorted = ApplySort(FilteredItems);
         CalculatePaginationInfo();
@@ -234,6 +260,50 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         }
     }
 
+    protected async Task HandleSortSelectChange(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            State.SortColumn = null;
+            State.SortDirection = SortDirection.None;
+        }
+        else
+        {
+            State.SortColumn = value;
+            if (State.SortDirection == SortDirection.None)
+                State.SortDirection = SortDirection.Ascending;
+        }
+
+        State.ResetPagination();
+        ProcessData();
+
+        if (OnSort.HasDelegate && !string.IsNullOrEmpty(State.SortColumn))
+        {
+            await OnSort.InvokeAsync(new DataCollectionSortEventArgs
+            {
+                ColumnName = State.SortColumn,
+                Direction = State.SortDirection
+            });
+        }
+    }
+
+    protected async Task ToggleSortDirectionClicked(MouseEventArgs e)
+    {
+        State.SortDirection = State.SortDirection == SortDirection.Ascending
+            ? SortDirection.Descending
+            : SortDirection.Ascending;
+        ProcessData();
+
+        if (OnSort.HasDelegate && !string.IsNullOrEmpty(State.SortColumn))
+        {
+            await OnSort.InvokeAsync(new DataCollectionSortEventArgs
+            {
+                ColumnName = State.SortColumn,
+                Direction = State.SortDirection
+            });
+        }
+    }
+
     protected async Task HandleFilterChange(ChangeEventArgs e)
     {
         State.FilterText = e.Value?.ToString() ?? string.Empty;
@@ -249,11 +319,26 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         }
     }
 
+    protected async Task HandleFilterInputChange(string? value)
+    {
+        await HandleFilterChange(new ChangeEventArgs { Value = value });
+    }
+
+    protected async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
+
     protected void ClearFilter()
     {
         State.FilterText = string.Empty;
         State.ResetPagination();
         ProcessData();
+    }
+
+    protected async Task HandlePageSizeSelectChange(string? value)
+    {
+        if (int.TryParse(value, out int size))
+        {
+            await HandlePageSizeChange(new ChangeEventArgs { Value = size });
+        }
     }
 
     protected async Task HandleSelectRow(TItem item)
@@ -271,6 +356,8 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
 
         await NotifySelectionChanged();
     }
+
+    protected async Task ClearSelectionClicked(MouseEventArgs e) => await ClearSelection();
 
     protected async Task ClearSelection()
     {
@@ -311,7 +398,6 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         if (e.Key is "Enter" or " ")
         {
             PreventRowKeyDown = true;
-
             await HandleRowClick(item);
         }
     }
@@ -351,6 +437,12 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
                 });
             }
         }
+    }
+
+    protected string? GetItemPatternStyle(int index)
+    {
+        if (!UsePerItemPatternStyles) return null;
+        return ItemPattern?.GetItemInlineStyle(index);
     }
 
     protected IEnumerable<int> GetVisiblePages()
