@@ -3,7 +3,6 @@
 public class DataCardsVariant : Variant
 {
     public static readonly DataCardsVariant Default = new("Default");
-    public static readonly DataCardsVariant Outlined = new("Outlined");
 
     public DataCardsVariant(string name) : base(name) { }
 

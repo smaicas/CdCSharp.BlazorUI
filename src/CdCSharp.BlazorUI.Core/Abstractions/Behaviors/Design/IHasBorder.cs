@@ -1,5 +1,4 @@
-﻿
-namespace CdCSharp.BlazorUI.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 #region Public API
 
@@ -16,6 +15,7 @@ public sealed class BorderStyle
     private BorderRadius? _radius;
     private Border? _right;
     private Border? _top;
+
     private BorderStyle() { }
 
     public static BorderStyle Create() => new();
@@ -51,6 +51,7 @@ public sealed class BorderStyle
         _left = new Border(width, style, color);
         return this;
     }
+
     // ---------- PRESETS ----------
     public BorderStyle None()
     {
@@ -59,6 +60,7 @@ public sealed class BorderStyle
         _radius = null;
         return this;
     }
+
     // ---------- RADIUS ----------
     public BorderStyle Radius(int all)
     {
@@ -67,10 +69,10 @@ public sealed class BorderStyle
     }
 
     public BorderStyle Radius(
-            int? topLeft = null,
-            int? topRight = null,
-            int? bottomRight = null,
-            int? bottomLeft = null)
+        int? topLeft = null,
+        int? topRight = null,
+        int? bottomRight = null,
+        int? bottomLeft = null)
     {
         _radius = new BorderRadius
         {
@@ -82,7 +84,7 @@ public sealed class BorderStyle
         return this;
     }
 
-    // ---------- CSS VARIABLES ----------
+    // ---------- CSS VARIABLES (for component system via IHasBorder) ----------
     public IDictionary<string, string> ToCssVariables()
     {
         Dictionary<string, string> vars = [];
@@ -109,6 +111,29 @@ public sealed class BorderStyle
         return vars;
     }
 
+    // ---------- CSS VALUES (raw values without variable names) ----------
+    public BorderCssValues GetCssValues()
+    {
+        return new BorderCssValues
+        {
+            All = _all?.ToCss(),
+            Top = _top?.ToCss(),
+            Right = _right?.ToCss(),
+            Bottom = _bottom?.ToCss(),
+            Left = _left?.ToCss(),
+            Radius = _radius?.ToCss()
+        };
+    }
+}
+
+public sealed class BorderCssValues
+{
+    public string? All { get; init; }
+    public string? Top { get; init; }
+    public string? Right { get; init; }
+    public string? Bottom { get; init; }
+    public string? Left { get; init; }
+    public string? Radius { get; init; }
 }
 
 #endregion
@@ -155,6 +180,7 @@ internal sealed class BorderRadius
     public int? BottomRight { get; set; }
     public int? TopLeft { get; set; }
     public int? TopRight { get; set; }
+
     public static BorderRadius All(int value)
     {
         value = Math.Max(0, value);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CdCSharp.BlazorUI.Core.Css;
+namespace CdCSharp.BlazorUI.Components;
 
 public sealed class PaletteColor
 {

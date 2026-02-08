@@ -66,7 +66,6 @@
             </div>
         }
 
-
         @if (Loading && LoadingContent != null)
         {
             <div class="bui-dc__loading">
@@ -131,14 +130,16 @@
                         @if (EnableVirtualization && !string.IsNullOrEmpty(Height))
                         {
                             <Virtualize Items="@ProcessedItems" Context="item">
-                                @RenderRow(item)
+                                @RenderRow(item, ProcessedItems.IndexOf(item))
                             </Virtualize>
                         }
                         else if (ProcessedItems.Any())
                         {
+                            int rowIndex = 0;
                             @foreach (TItem item in ProcessedItems)
                             {
-                                @RenderRow(item)
+                                @RenderRow(item, rowIndex)
+                                rowIndex++;
                             }
                         }
                         else
@@ -188,16 +189,60 @@
     [Parameter] public RenderFragment<TItem>? RowTemplate { get; set; }
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
+    [Parameter] public BorderStyle? CellBorder { get; set; }
+    [Parameter] public BorderStyle? RowBorder { get; set; }
+    [Parameter] public RowStylePattern? RowPattern { get; set; }
+
     public override DataGridVariant DefaultVariant => DataGridVariant.Default;
 
     protected override IReadOnlyDictionary<DataGridVariant, Func<BUIDataGrid<TItem>, RenderFragment>> BuiltInTemplates { get; } =
         new Dictionary<DataGridVariant, Func<BUIDataGrid<TItem>, RenderFragment>>();
 
-    private RenderFragment RenderRow(TItem item) => __builder =>
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        base.BuildComponentCssVariables(cssVariables);
+
+        if (CellBorder != null)
+        {
+            BorderCssValues values = CellBorder.GetCssValues();
+            if (values.All != null)
+                cssVariables["--bui-inline-dc-cell-border"] = values.All;
+            if (values.Top != null)
+                cssVariables["--bui-inline-dc-cell-border-top"] = values.Top;
+            if (values.Right != null)
+                cssVariables["--bui-inline-dc-cell-border-right"] = values.Right;
+            if (values.Bottom != null)
+                cssVariables["--bui-inline-dc-cell-border-bottom"] = values.Bottom;
+            if (values.Left != null)
+                cssVariables["--bui-inline-dc-cell-border-left"] = values.Left;
+        }
+
+        if (RowBorder != null)
+        {
+            BorderCssValues values = RowBorder.GetCssValues();
+            if (values.All != null)
+                cssVariables["--bui-inline-dc-row-border"] = values.All;
+            if (values.Top != null)
+                cssVariables["--bui-inline-dc-row-border-top"] = values.Top;
+            if (values.Right != null)
+                cssVariables["--bui-inline-dc-row-border-right"] = values.Right;
+            if (values.Bottom != null)
+                cssVariables["--bui-inline-dc-row-border-bottom"] = values.Bottom;
+            if (values.Left != null)
+                cssVariables["--bui-inline-dc-row-border-left"] = values.Left;
+        }
+    }
+
+    private RenderFragment RenderRow(TItem item, int index) => __builder =>
     {
         bool isSelected = State.IsSelected(item);
+        RowStyle? rowStyle = RowPattern?.GetStyleForIndex(index);
 
-        <tr class="bui-datagrid__row @(isSelected ? "bui-datagrid__row--selected" : "") @(IsInteractiveRow ? "bui-datagrid__row--interactive" : "")"
+        string rowClasses = $"bui-datagrid__row {(isSelected ? "bui-datagrid__row--selected" : "")} {(IsInteractiveRow ? "bui-datagrid__row--interactive" : "")}";
+        string? rowInlineVars = BuildRowPatternVariables(rowStyle);
+
+        <tr class="@rowClasses"
+            style="@rowInlineVars"
             role="row"
             tabindex="@(IsInteractiveRow ? 0 : -1)"
             @onclick="() => HandleRowClick(item)"
@@ -221,7 +266,8 @@
             {
                 @foreach (DataColumnRegistration<TItem> col in RegisteredColumns.Where(c => c.Visible))
                 {
-                    <td class="bui-datagrid__cell @GetAlignClass(col.Align, "bui-datagrid__cell") @col.CellClass" role="gridcell">
+                    <td class="bui-datagrid__cell @GetAlignClass(col.Align, "bui-datagrid__cell") @col.CellClass"
+                        role="gridcell">
                         @if (col.Template != null)
                         {
                             @col.Template(item)
@@ -247,13 +293,40 @@
         return string.Empty;
     }
 
+    private string? BuildRowPatternVariables(RowStyle? rowStyle)
+    {
+        if (rowStyle == null) return null;
+
+        List<string> vars = [];
+
+        if (rowStyle.BackgroundColor != null)
+            vars.Add($"--bui-inline-dc-row-pattern-bg: {rowStyle.BackgroundColor}");
+
+        if (rowStyle.Border != null)
+        {
+            BorderCssValues values = rowStyle.Border.GetCssValues();
+            if (values.All != null)
+                vars.Add($"--bui-inline-dc-row-pattern-border: {values.All}");
+            if (values.Top != null)
+                vars.Add($"--bui-inline-dc-row-pattern-border-top: {values.Top}");
+            if (values.Right != null)
+                vars.Add($"--bui-inline-dc-row-pattern-border-right: {values.Right}");
+            if (values.Bottom != null)
+                vars.Add($"--bui-inline-dc-row-pattern-border-bottom: {values.Bottom}");
+            if (values.Left != null)
+                vars.Add($"--bui-inline-dc-row-pattern-border-left: {values.Left}");
+        }
+
+        return vars.Any() ? string.Join("; ", vars) : null;
+    }
+
     private async Task HandleFilterInputChange(string? value)
     {
         await HandleFilterChange(new ChangeEventArgs { Value = value });
     }
 
     private async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
-    private async Task ClearSelectionClicked(MouseEventArgs e) => ClearSelection();
+    private async Task ClearSelectionClicked(MouseEventArgs e) => await ClearSelection();
 
     private async Task HandlePageSizeSelectChange(string? value)
     {
@@ -262,6 +335,7 @@
             await HandlePageSizeChange(new ChangeEventArgs { Value = size });
         }
     }
+
     private string GetSelectAllIcon()
     {
         if (!ProcessedItems.Any())
@@ -276,20 +350,6 @@
         return BUIIcons.MaterialIconsRound.i_check_box_outline_blank;
     }
 
-    private string GetRowSelectIcon(bool isSelected)
-    {
-        if (SelectionMode == SelectionMode.Single)
-        {
-            return isSelected
-                ? BUIIcons.MaterialIconsOutlined.i_radio_button_checked
-                : BUIIcons.MaterialIconsOutlined.i_radio_button_unchecked;
-        }
-
-        return isSelected
-            ? BUIIcons.MaterialIconsRound.i_check_box
-            : BUIIcons.MaterialIconsRound.i_check_box_outline_blank;
-    }
-
     private async Task HandleSelectAllClick(MouseEventArgs e)
     {
         if (IsAllSelected())
@@ -299,5 +359,4 @@
 
         await NotifySelectionChanged();
     }
-
 }

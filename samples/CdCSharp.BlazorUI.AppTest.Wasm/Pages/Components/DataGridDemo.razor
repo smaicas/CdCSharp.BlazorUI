@@ -67,9 +67,21 @@
 <p>Show/hide columns dynamically.</p>
 <ComponentDemo Definition="@VisibilityDemo" />
 
-<h2>Table Variants</h2>
-<p>Default, Bordered, Striped styles.</p>
-<ComponentDemo Definition="@VariantsDemo" />
+<h2>Cell Borders</h2>
+<p>Add borders to all table cells using CellBorder parameter.</p>
+<ComponentDemo Definition="@CellBordersDemo" />
+
+<h2>Row Borders</h2>
+<p>Add borders to table rows using RowBorder parameter.</p>
+<ComponentDemo Definition="@RowBordersDemo" />
+
+<h2>Row Patterns (Striped)</h2>
+<p>Apply alternating background colors using RowPattern.</p>
+<ComponentDemo Definition="@RowPatternsDemo" />
+
+<h2>Combined Border Styling</h2>
+<p>Container border + Cell borders + Row pattern together.</p>
+<ComponentDemo Definition="@CombinedStylingDemo" />
 
 <h2>Hoverable Rows</h2>
 <p>Highlight rows on hover.</p>
@@ -137,7 +149,10 @@
     private List<Person> _visibilityData = GenerateSampleData();
     private bool _showEmailColumn = true;
     private bool _showAgeColumn = true;
-    private List<Person> _variantData = GenerateSampleData();
+    private List<Person> _cellBordersData = GenerateSampleData();
+    private List<Person> _rowBordersData = GenerateSampleData();
+    private List<Person> _rowPatternsData = GenerateSampleData();
+    private List<Person> _combinedStylingData = GenerateSampleData();
     private List<Person> _hoverableData = GenerateSampleData();
     private List<Person> _compactData = GenerateSampleData();
     private List<Person> _standardData = GenerateSampleData();
@@ -584,44 +599,115 @@
     };
     #endregion
 
-    #region Variants
-    private ComponentDemoDefinition VariantsDemo => new()
+    #region Cell Borders
+    private ComponentDemoDefinition CellBordersDemo => new()
     {
-        Demo = RenderVariants(),
+        Demo = RenderCellBorders(),
         Code = """ """
     };
 
-    private RenderFragment RenderVariants() => __builder =>
+    private RenderFragment RenderCellBorders() => __builder =>
     {
-        <BUIGrid Gap="2rem">
-            <BUIGridItem Xs="12" Md="6">
-                <h4>Bordered</h4>
-                <BUIDataGrid Items="_variantData" Variant="DataGridVariant.Bordered">
-                    <Columns>
-                        <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
-                        <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
-                    </Columns>
-                </BUIDataGrid>
-            </BUIGridItem>
-            <BUIGridItem Xs="12" Md="6">
-                <h4>Striped</h4>
-                <BUIDataGrid Items="_variantData" Variant="DataGridVariant.Striped">
-                    <Columns>
-                        <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
-                        <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
-                    </Columns>
-                </BUIDataGrid>
-            </BUIGridItem>
-            <BUIGridItem Xs="12" Md="6">
-                <h4>StripedBordered</h4>
-                <BUIDataGrid Items="_variantData" Variant="DataGridVariant.StripedBordered">
-                    <Columns>
-                        <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
-                        <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
-                    </Columns>
-                </BUIDataGrid>
-            </BUIGridItem>
-        </BUIGrid>
+        <BUIDataGrid Items="_cellBordersData"
+                     CellBorder="@BUIBorderPresets.Subtle">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+            </Columns>
+        </BUIDataGrid>
+    };
+    #endregion
+
+    #region Row Borders
+    private ComponentDemoDefinition RowBordersDemo => new()
+    {
+        Demo = RenderRowBorders(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRowBorders() => __builder =>
+    {
+        <BUIDataGrid Items="_rowBordersData"
+                     RowBorder="@BorderStyle.Create().Bottom("2px", BorderStyleType.Solid, BUIColor.DarkMagenta.Lighten3)">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+            </Columns>
+        </BUIDataGrid>
+    };
+    #endregion
+
+    #region Row Patterns
+    private ComponentDemoDefinition RowPatternsDemo => new()
+    {
+        Demo = RenderRowPatterns(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderRowPatterns() => __builder =>
+    {
+        <div>
+            <h4>Striped Pattern (Preset)</h4>
+            <BUIDataGrid Items="_rowPatternsData"
+                         RowPattern="@BUIRowPatternPresets.Striped">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+                </Columns>
+            </BUIDataGrid>
+
+            <h4 style="margin-top: 2rem;">Every 3rd Row Pattern</h4>
+            <BUIDataGrid Items="_rowPatternsData"
+                         RowPattern="@BUIRowPatternPresets.Every3rd">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+                </Columns>
+            </BUIDataGrid>
+
+            <h4 style="margin-top: 2rem;">Custom Pattern (Age >= 30)</h4>
+            <BUIDataGrid Items="_rowPatternsData"
+                         RowPattern="@RowStylePattern.Custom(i => _rowPatternsData[i].Age >= 30 ? new RowStyle { BackgroundColor = "color-mix(in srgb, var(--palette-success) 10%, transparent)" } : null)">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+    #endregion
+
+    #region Combined Styling
+    private ComponentDemoDefinition CombinedStylingDemo => new()
+    {
+        Demo = RenderCombinedStyling(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCombinedStyling() => __builder =>
+    {
+        <BUIDataGrid Items="_combinedStylingData"
+                     Border="@BUIBorderPresets.Rounded"
+                     CellBorder="@BUIBorderPresets.Subtle"
+                     RowPattern="@BUIRowPatternPresets.Striped"
+                     Hoverable="true">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" Width="80px" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" Width="80px" Align="ColumnAlign.Right" />
+            </Columns>
+        </BUIDataGrid>
     };
     #endregion
 
@@ -1044,4 +1130,6 @@
         public double Discount { get; set; }
     }
     #endregion
+
+
 }

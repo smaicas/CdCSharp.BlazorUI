@@ -73,14 +73,19 @@ public sealed class ShadowStyle
 
         return this;
     }
+
+    public string ToCss()
+    {
+        return string.Join(", ", _lines.Select(l =>
+            $"{(l.Inset ? "inset " : "")}" +
+            $"{l.X}px {l.Y}px {l.Blur}px {l.Spread}px " +
+            $"color-mix(in srgb, {l.Color} {l.Opacity * 100}%, transparent)"
+        ));
+    }
 }
 
 public static class BUIShadowPresets
 {
-    /// <summary>
-    /// Generates realistic Material Design-inspired elevation shadows. Each elevation level (0-24)
-    /// has been calibrated for visual consistency.
-    /// </summary>
     public static ShadowStyle Elevation(int level, string? color = null)
     {
         color ??= PaletteColor.Shadow;

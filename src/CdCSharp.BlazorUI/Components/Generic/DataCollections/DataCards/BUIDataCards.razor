@@ -148,6 +148,10 @@
     [Parameter] public RenderFragment<TItem>? CardHeaderTemplate { get; set; }
     [Parameter] public RenderFragment<TItem>? CardFooterTemplate { get; set; }
 
+    [Parameter] public BorderStyle? CardBorder { get; set; }
+    [Parameter] public ShadowStyle? CardShadow { get; set; }
+    [Parameter] public string? CardBackground { get; set; }
+
     public override DataCardsVariant DefaultVariant => DataCardsVariant.Default;
 
     protected override IReadOnlyDictionary<DataCardsVariant, Func<BUIDataCards<TItem>, RenderFragment>> BuiltInTemplates { get; } =
@@ -155,6 +159,38 @@
 
     private IEnumerable<DataColumnRegistration<TItem>> SortableColumns =>
         RegisteredColumns.Where(c => c.Sortable && c.ValueSelector != null);
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        base.BuildComponentCssVariables(cssVariables);
+
+        if (CardBorder != null)
+        {
+            BorderCssValues values = CardBorder.GetCssValues();
+            if (values.All != null)
+                cssVariables["--bui-inline-dc-card-border"] = values.All;
+            if (values.Top != null)
+                cssVariables["--bui-inline-dc-card-border-top"] = values.Top;
+            if (values.Right != null)
+                cssVariables["--bui-inline-dc-card-border-right"] = values.Right;
+            if (values.Bottom != null)
+                cssVariables["--bui-inline-dc-card-border-bottom"] = values.Bottom;
+            if (values.Left != null)
+                cssVariables["--bui-inline-dc-card-border-left"] = values.Left;
+            if (values.Radius != null)
+                cssVariables["--bui-inline-dc-card-border-radius"] = values.Radius;
+        }
+
+        if (CardShadow != null)
+        {
+            cssVariables["--bui-inline-dc-card-shadow"] = CardShadow.ToCss();
+        }
+
+        if (CardBackground != null)
+        {
+            cssVariables["--bui-inline-dc-card-background"] = CardBackground;
+        }
+    }
 
     private RenderFragment RenderCard(TItem item) => __builder =>
     {
@@ -286,7 +322,7 @@
     }
 
     private async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
-    private async Task ClearSelectionClicked(MouseEventArgs e) => ClearSelection();
+    private async Task ClearSelectionClicked(MouseEventArgs e) => await ClearSelection();
     private async Task ToggleSortDirectionClicked(MouseEventArgs e) => ToggleSortDirection();
 
     private async Task HandleSortSelectChange(string? value)

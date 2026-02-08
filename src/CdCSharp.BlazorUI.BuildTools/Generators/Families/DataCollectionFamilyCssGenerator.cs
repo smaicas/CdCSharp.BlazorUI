@@ -30,6 +30,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     --_dc-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
     --_dc-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
     --_dc-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    
     display: block;
     width: 100%;
     background-color: var(--_dc-background);

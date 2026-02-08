@@ -1,10 +1,12 @@
 ﻿._bui-pagination {
+    --_pagination-padding-x: 1rem;
+    --_pagination-padding-y: .75rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
-    padding: 0.75rem 0;
+    padding: var(--_pagination-padding-y) var(--_pagination-padding-x);
 }
 
 ._bui-pagination__info {

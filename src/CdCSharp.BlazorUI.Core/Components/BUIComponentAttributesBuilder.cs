@@ -154,14 +154,7 @@ internal sealed class BUIComponentAttributesBuilder
         if (component is IHasShadow shadow && shadow.Shadow != null)
         {
             ComputedAttributes[FeatureDefinitions.DataAttributes.Shadow] = "true";
-
-            cssVariables[FeatureDefinitions.InlineVariables.Shadow] =
-                string.Join(", ", shadow.Shadow.Lines.Select(l =>
-                    $"{(l.Inset ? "inset " : "")}" +
-                    $"{l.X}px {l.Y}px {l.Blur}px {l.Spread}px " +
-                    $"color-mix(in srgb, {l.Color} " +
-                    $"{l.Opacity * 100}%, transparent)"
-                ));
+            cssVariables[FeatureDefinitions.InlineVariables.Shadow] = shadow.Shadow.ToCss();
         }
     }
 

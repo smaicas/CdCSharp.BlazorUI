@@ -55,9 +55,21 @@
 <p>Custom header and footer templates for each card.</p>
 <ComponentDemo Definition="@HeaderFooterDemo" />
 
-<h2>Variants</h2>
-<p>Default (elevated) and Outlined styles.</p>
-<ComponentDemo Definition="@VariantsDemo" />
+<h2>Card Borders</h2>
+<p>Add borders to cards using CardBorder parameter.</p>
+<ComponentDemo Definition="@CardBordersDemo" />
+
+<h2>Card Shadows</h2>
+<p>Add elevation shadows to cards using CardShadow parameter.</p>
+<ComponentDemo Definition="@CardShadowsDemo" />
+
+<h2>Card Background</h2>
+<p>Customize card background color using CardBackground parameter.</p>
+<ComponentDemo Definition="@CardBackgroundDemo" />
+
+<h2>Combined Card Styling</h2>
+<p>Border + Shadow + Background together.</p>
+<ComponentDemo Definition="@CombinedCardStylingDemo" />
 
 <h2>Hoverable</h2>
 <p>Highlight cards on hover.</p>
@@ -115,6 +127,10 @@
     private List<Person> _clickData = GenerateSampleData();
     private List<Person> _customCardData = GenerateSampleData();
     private List<Person> _headerFooterData = GenerateSampleData();
+    private List<Person> _cardBordersData = GenerateSampleData();
+    private List<Person> _cardShadowsData = GenerateSampleData();
+    private List<Person> _cardBackgroundData = GenerateSampleData();
+    private List<Person> _combinedCardStylingData = GenerateSampleData();
     private List<Person> _variantData = GenerateSampleData();
     private List<Person> _hoverableData = GenerateSampleData();
     private List<Person> _compactData = GenerateSampleData();
@@ -153,6 +169,35 @@
                 <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
             </Columns>
         </BUIDataCards>
+    };
+    #endregion
+
+    #region Grid Layout
+    private ComponentDemoDefinition GridLayoutDemo => new()
+    {
+        Demo = RenderGridLayout(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderGridLayout() => __builder =>
+    {
+        <div>
+            <h4>2 Columns, 2rem Gap</h4>
+            <BUIDataCards Items="_gridData" ColumnsCount="2" Gap="2rem" MinCardWidth="">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataCards>
+
+            <h4 style="margin-top: 2rem;">4 Columns, 0.5rem Gap</h4>
+            <BUIDataCards Items="_gridData" ColumnsCount="4" Gap="0.5rem" MinCardWidth="">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataCards>
+        </div>
     };
     #endregion
 
@@ -450,26 +495,37 @@
     };
     #endregion
 
-    #region Grid Layout
-    private ComponentDemoDefinition GridLayoutDemo => new()
+    #region Card Borders
+    private ComponentDemoDefinition CardBordersDemo => new()
     {
-        Demo = RenderGridLayout(),
+        Demo = RenderCardBorders(),
         Code = """ """
     };
 
-    private RenderFragment RenderGridLayout() => __builder =>
+    private RenderFragment RenderCardBorders() => __builder =>
     {
         <div>
-            <h4>2 Columns, 2rem Gap</h4>
-            <BUIDataCards Items="_gridData" ColumnsCount="2" Gap="2rem" MinCardWidth="">
+            <h4>Subtle Border</h4>
+            <BUIDataCards Items="_cardBordersData"
+                          CardBorder="@BUIBorderPresets.Subtle">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
                 </Columns>
             </BUIDataCards>
 
-            <h4 style="margin-top: 2rem;">4 Columns, 0.5rem Gap</h4>
-            <BUIDataCards Items="_gridData" ColumnsCount="4" Gap="0.5rem" MinCardWidth="">
+            <h4 style="margin-top: 2rem;">Primary Border with Rounded Corners</h4>
+            <BUIDataCards Items="_cardBordersData"
+                          CardBorder="@BorderStyle.Create().All("2px", BorderStyleType.Solid, PaletteColor.Primary).Radius(12)">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataCards>
+
+            <h4 style="margin-top: 2rem;">Dashed Border</h4>
+            <BUIDataCards Items="_cardBordersData"
+                          CardBorder="@BorderStyle.Create().All("2px", BorderStyleType.Dashed, PaletteColor.Secondary).Radius(8)">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
@@ -479,32 +535,98 @@
     };
     #endregion
 
-    #region Variants
-    private ComponentDemoDefinition VariantsDemo => new()
+    #region Card Shadows
+    private ComponentDemoDefinition CardShadowsDemo => new()
     {
-        Demo = RenderVariants(),
+        Demo = RenderCardShadows(),
         Code = """ """
     };
 
-    private RenderFragment RenderVariants() => __builder =>
+    private RenderFragment RenderCardShadows() => __builder =>
     {
         <div>
-            <h4>Default (Elevated)</h4>
-            <BUIDataCards Items="_variantData" Variant="DataCardsVariant.Default">
+            <h4>Elevation 2</h4>
+            <BUIDataCards Items="_cardShadowsData"
+                          CardShadow="@BUIShadowPresets.Elevation(2)">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
                 </Columns>
             </BUIDataCards>
 
-            <h4 style="margin-top: 2rem;">Outlined</h4>
-            <BUIDataCards Items="_variantData" Variant="DataCardsVariant.Outlined">
+            <h4 style="margin-top: 2rem;">Elevation 6</h4>
+            <BUIDataCards Items="_cardShadowsData"
+                          CardShadow="@BUIShadowPresets.Elevation(6)">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataCards>
+
+            <h4 style="margin-top: 2rem;">Elevation 12</h4>
+            <BUIDataCards Items="_cardShadowsData"
+                          CardShadow="@BUIShadowPresets.Elevation(12)">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
                 </Columns>
             </BUIDataCards>
         </div>
+    };
+    #endregion
+
+    #region Card Background
+    private ComponentDemoDefinition CardBackgroundDemo => new()
+    {
+        Demo = RenderCardBackground(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCardBackground() => __builder =>
+    {
+        <div>
+            <h4>Light Blue Background</h4>
+            <BUIDataCards Items="_cardBackgroundData"
+                          CardBackground="@BUIColor.Blue.Lighten3">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataCards>
+
+            <h4 style="margin-top: 2rem;">Gradient Background</h4>
+            <BUIDataCards Items="_cardBackgroundData"
+                          CardBackground="linear-gradient(135deg, color-mix(in srgb, var(--palette-primary) 10%, transparent) 0%, color-mix(in srgb, var(--palette-secondary) 10%, transparent) 100%)">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                </Columns>
+            </BUIDataCards>
+        </div>
+    };
+    #endregion
+
+    #region Combined Card Styling
+    private ComponentDemoDefinition CombinedCardStylingDemo => new()
+    {
+        Demo = RenderCombinedCardStyling(),
+        Code = """ """
+    };
+
+    private RenderFragment RenderCombinedCardStyling() => __builder =>
+    {
+        <BUIDataCards Items="_combinedCardStylingData"
+                      CardBorder="@BorderStyle.Create().All("1px", BorderStyleType.Solid, PaletteColor.Primary).Radius(16)"
+                      CardShadow="@BUIShadowPresets.Elevation(4)"
+                      CardBackground="@BUIColor.Blue.Lighten3"
+                      Hoverable="true">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+            </Columns>
+        </BUIDataCards>
     };
     #endregion
 
@@ -773,7 +895,7 @@
     private RenderFragment RenderProgrammatic() => __builder =>
     {
         <div>
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
                 <button class="bui-action-btn" @onclick="@(() => _programmaticCards?.SortBy("Name", SortDirection.Ascending))">
                     Sort by Name (Asc)
                 </button>
@@ -790,7 +912,6 @@
                     Go to Page 2
                 </button>
             </div>
-
             <BUIDataCards @ref="_programmaticCards"
                           Items="_programmaticData"
                           PageSize="6"
@@ -835,15 +956,6 @@
         }
         return data;
     }
-
-    private static List<Order> GenerateOrderData() => new()
-    {
-        new Order { Id = 1, Customer = "Acme Corp", Date = DateTime.Now.AddDays(-5), Total = 1500.00m, Discount = 0.10 },
-        new Order { Id = 2, Customer = "Tech Inc", Date = DateTime.Now.AddDays(-3), Total = 2750.50m, Discount = 0.15 },
-        new Order { Id = 3, Customer = "Global Ltd", Date = DateTime.Now.AddDays(-1), Total = 890.25m, Discount = 0.05 },
-        new Order { Id = 4, Customer = "StartUp Co", Date = DateTime.Now, Total = 450.00m, Discount = 0.00 },
-        new Order { Id = 5, Customer = "Enterprise", Date = DateTime.Now.AddDays(-10), Total = 5200.00m, Discount = 0.20 }
-    };
     #endregion
 
     #region Models
@@ -854,24 +966,7 @@
         public string Email { get; set; } = "";
         public int Age { get; set; }
     }
-
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
-        public string Category { get; set; } = "";
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
-    }
-
-    public class Order
-    {
-        public int Id { get; set; }
-        public string Customer { get; set; } = "";
-        public DateTime Date { get; set; }
-        public decimal Total { get; set; }
-        public double Discount { get; set; }
-    }
     #endregion
+
 
 }

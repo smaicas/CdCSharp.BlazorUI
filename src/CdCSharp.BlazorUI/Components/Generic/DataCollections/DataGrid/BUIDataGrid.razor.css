@@ -21,11 +21,28 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__table {
     border-collapse: collapse;
     background: var(--_dc-background);
     color: var(--palette-surfacecontrast);
+    /* Cell border variables - consume inline variables */
+    --_dg-cell-border: var(--bui-inline-dc-cell-border, none);
+    --_dg-cell-border-top: var(--bui-inline-dc-cell-border-top, var(--_dg-cell-border));
+    --_dg-cell-border-right: var(--bui-inline-dc-cell-border-right, var(--_dg-cell-border));
+    --_dg-cell-border-bottom: var(--bui-inline-dc-cell-border-bottom, var(--_dg-cell-border));
+    --_dg-cell-border-left: var(--bui-inline-dc-cell-border-left, var(--_dg-cell-border));
+    /* Row border variables - consume inline variables */
+    --_dg-row-border: var(--bui-inline-dc-row-border, none);
+    --_dg-row-border-top: var(--bui-inline-dc-row-border-top, var(--_dg-row-border));
+    --_dg-row-border-right: var(--bui-inline-dc-row-border-right, var(--_dg-row-border));
+    --_dg-row-border-bottom: var(--bui-inline-dc-row-border-bottom, var(--_dg-row-border));
+    --_dg-row-border-left: var(--bui-inline-dc-row-border-left, var(--_dg-row-border));
 }
 
 /* Common cell styles */
 bui-component[data-bui-component="data-grid"] :is(th, td) {
     padding: var(--_dc-padding-y) var(--_dc-padding-x);
+    border: var(--_dg-cell-border);
+    border-top: var(--_dg-cell-border-top);
+    border-right: var(--_dg-cell-border-right);
+    border-bottom: var(--_dg-cell-border-bottom);
+    border-left: var(--_dg-cell-border-left);
 }
 
 /* Header */
@@ -74,7 +91,19 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__sort-icon {
 
 /* Rows */
 bui-component[data-bui-component="data-grid"] .bui-datagrid__row {
-    border-bottom: 1px solid var(--palette-border);
+    /* Row pattern variables - can be overridden per row */
+    --_dg-row-pattern-bg: var(--bui-inline-dc-row-pattern-bg, transparent);
+    --_dg-row-pattern-border: var(--bui-inline-dc-row-pattern-border, var(--_dg-row-border));
+    --_dg-row-pattern-border-top: var(--bui-inline-dc-row-pattern-border-top, var(--_dg-row-border-top));
+    --_dg-row-pattern-border-right: var(--bui-inline-dc-row-pattern-border-right, var(--_dg-row-border-right));
+    --_dg-row-pattern-border-bottom: var(--bui-inline-dc-row-pattern-border-bottom, var(--_dg-row-border-bottom));
+    --_dg-row-pattern-border-left: var(--bui-inline-dc-row-pattern-border-left, var(--_dg-row-border-left));
+    background: var(--_dg-row-pattern-bg);
+    border: var(--_dg-row-pattern-border);
+    border-top: var(--_dg-row-pattern-border-top);
+    border-right: var(--_dg-row-pattern-border-right);
+    border-bottom: var(--_dg-row-pattern-border-bottom);
+    border-left: var(--_dg-row-pattern-border-left);
     transition: background-color 150ms ease;
 }
 
@@ -130,52 +159,3 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__footer {
     bui-component[data-bui-component="data-grid"] .bui-datagrid__footer td {
         font-weight: 600;
     }
-
-/* ========================================
-   VARIANT: Striped
-   ======================================== */
-bui-component[data-bui-component="data-grid"][data-bui-variant="striped"] .bui-datagrid__row:nth-child(even) {
-    background: var(--_dc-header-bg);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="striped"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
-    background: var(--_dc-hover-bg);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="striped"] .bui-datagrid__row--selected {
-    background: var(--_dc-selected-bg);
-}
-
-/* ========================================
-   VARIANT: Bordered
-   ======================================== */
-bui-component[data-bui-component="data-grid"][data-bui-variant="bordered"] .bui-datagrid__table {
-    border: 1px solid var(--palette-border);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="bordered"] :is(th, td) {
-    border: 1px solid var(--palette-border);
-}
-
-/* ========================================
-   VARIANT: StripedBordered
-   ======================================== */
-bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__table {
-    border: 1px solid var(--palette-border);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] :is(th, td) {
-    border: 1px solid var(--palette-border);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__row:nth-child(even) {
-    background: var(--_dc-header-bg);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"][data-bui-hoverable="true"] .bui-datagrid__row:hover {
-    background: var(--_dc-hover-bg);
-}
-
-bui-component[data-bui-component="data-grid"][data-bui-variant="stripedbordered"] .bui-datagrid__row--selected {
-    background: var(--_dc-selected-bg);
-}
