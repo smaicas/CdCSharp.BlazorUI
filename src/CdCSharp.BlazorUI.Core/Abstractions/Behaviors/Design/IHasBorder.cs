@@ -84,46 +84,41 @@ public sealed class BorderStyle
         return this;
     }
 
-    // ---------- CSS VARIABLES (for component system via IHasBorder) ----------
-    public IDictionary<string, string> ToCssVariables()
-    {
-        Dictionary<string, string> vars = [];
-
-        if (_all != null && !_all.IsNone)
-        {
-            vars[FeatureDefinitions.InlineVariables.Border] = _all.ToCss();
-        }
-
-        if (_radius != null)
-        {
-            vars[FeatureDefinitions.InlineVariables.BorderRadius] = _radius.ToCss();
-        }
-
-        if (_top != null && !_top.IsNone)
-            vars[FeatureDefinitions.InlineVariables.BorderTop] = _top.ToCss();
-        if (_right != null && !_right.IsNone)
-            vars[FeatureDefinitions.InlineVariables.BorderRight] = _right.ToCss();
-        if (_bottom != null && !_bottom.IsNone)
-            vars[FeatureDefinitions.InlineVariables.BorderBottom] = _bottom.ToCss();
-        if (_left != null && !_left.IsNone)
-            vars[FeatureDefinitions.InlineVariables.BorderLeft] = _left.ToCss();
-
-        return vars;
-    }
-
     // ---------- CSS VALUES (raw values without variable names) ----------
     public BorderCssValues GetCssValues()
     {
         return new BorderCssValues
         {
-            All = _all?.ToCss(),
-            Top = _top?.ToCss(),
-            Right = _right?.ToCss(),
-            Bottom = _bottom?.ToCss(),
-            Left = _left?.ToCss(),
+            All = _all is { IsNone: false } ? _all.ToCss() : null,
+            Top = _top is { IsNone: false } ? _top.ToCss() : null,
+            Right = _right is { IsNone: false } ? _right.ToCss() : null,
+            Bottom = _bottom is { IsNone: false } ? _bottom.ToCss() : null,
+            Left = _left is { IsNone: false } ? _left.ToCss() : null,
             Radius = _radius?.ToCss()
         };
     }
+
+    public string? GetColorCss()
+    {
+        if (_all is { IsNone: false })
+            return _all.Color;
+
+        if (_top == null && _right == null && _bottom == null && _left == null)
+            return null;
+
+        string fallback = "currentColor";
+        string top = _top is { IsNone: false } ? _top.Color : fallback;
+        string right = _right is { IsNone: false } ? _right.Color : fallback;
+        string bottom = _bottom is { IsNone: false } ? _bottom.Color : fallback;
+        string left = _left is { IsNone: false } ? _left.Color : fallback;
+
+        if (top == right && right == bottom && bottom == left)
+            return top;
+
+        return $"{top} {right} {bottom} {left}";
+    }
+
+    public string? GetRadiusCss() => _radius?.ToCss();
 }
 
 public sealed class BorderCssValues

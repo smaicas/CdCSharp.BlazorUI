@@ -98,8 +98,20 @@ internal sealed class BUIComponentAttributesBuilder
     {
         if (component is IHasBorder hasBorder && hasBorder.Border != null)
         {
-            foreach (KeyValuePair<string, string> kv in hasBorder.Border.ToCssVariables())
-                cssVariables[kv.Key] = kv.Value;
+            BorderCssValues values = hasBorder.Border.GetCssValues();
+
+            if (values.All != null)
+                cssVariables[FeatureDefinitions.InlineVariables.Border] = values.All;
+            if (values.Top != null)
+                cssVariables[FeatureDefinitions.InlineVariables.BorderTop] = values.Top;
+            if (values.Right != null)
+                cssVariables[FeatureDefinitions.InlineVariables.BorderRight] = values.Right;
+            if (values.Bottom != null)
+                cssVariables[FeatureDefinitions.InlineVariables.BorderBottom] = values.Bottom;
+            if (values.Left != null)
+                cssVariables[FeatureDefinitions.InlineVariables.BorderLeft] = values.Left;
+            if (values.Radius != null)
+                cssVariables[FeatureDefinitions.InlineVariables.BorderRadius] = values.Radius;
         }
     }
 

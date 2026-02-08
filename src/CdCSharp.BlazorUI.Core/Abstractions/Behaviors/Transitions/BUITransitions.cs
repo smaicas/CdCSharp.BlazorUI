@@ -1,44 +1,42 @@
-﻿namespace CdCSharp.BlazorUI.Components;
+﻿using System.Globalization;
+
+namespace CdCSharp.BlazorUI.Components;
 
 public enum TransitionTrigger
 {
     Hover,
     Focus,
-    Active,
-    Disabled
+    Active
+}
+
+public class TransitionEntry
+{
+    public string CssProperty { get; init; } = default!;
+    public string Value { get; init; } = default!;
+    public TimeSpan? Duration { get; init; }
+    public string? Easing { get; init; }
+    public TimeSpan? Delay { get; init; }
 }
 
 public class BUITransitions
 {
-    private readonly Dictionary<TransitionTrigger, List<TransitionConfig>> _transitions = [];
+    private readonly Dictionary<TransitionTrigger, List<TransitionEntry>> _entries = [];
 
-    public bool HasTransitions => _transitions.Any();
+    public bool HasTransitions => _entries.Count > 0;
 
     public Dictionary<string, string> GetCssVariables()
     {
         Dictionary<string, string> variables = [];
 
-        foreach ((TransitionTrigger trigger, List<TransitionConfig> configs) in _transitions)
+        foreach ((TransitionTrigger trigger, List<TransitionEntry> entries) in _entries)
         {
-            foreach (TransitionConfig config in configs)
-            {
-                string prefix = $"--bui-transition-{trigger.ToString().ToLower()}";
+            string triggerName = trigger.ToString().ToLowerInvariant();
 
-                if (config.Duration.HasValue)
-                    variables[$"{prefix}-duration"] =
-                        $"{config.Duration.Value.TotalMilliseconds}ms";
-
-                if (config.Delay.HasValue)
-                    variables[$"{prefix}-delay"] =
-                        $"{config.Delay.Value.TotalMilliseconds}ms";
-
-                if (!string.IsNullOrEmpty(config.Easing))
-                    variables[$"{prefix}-easing"] = config.Easing;
-
-                foreach (KeyValuePair<string, string> prop in config.CustomProperties)
-                    variables[$"{prefix}-{prop.Key}"] = prop.Value;
-            }
+            foreach (TransitionEntry entry in entries)
+                variables[$"--bui-t-{triggerName}-{entry.CssProperty}"] = entry.Value;
         }
+
+        variables["--bui-t-transition"] = BuildTransitionShorthand();
 
         return variables;
     }
@@ -46,65 +44,80 @@ public class BUITransitions
     public string GetDataAttributeValue()
     {
         return string.Join(" ",
-            _transitions.SelectMany(t =>
-                t.Value.Select(cfg =>
-                    $"bui-transition-{t.Key.ToString().ToLower()}-{cfg.Type.ToString().ToLower()}"
-                )));
+            _entries.SelectMany(t =>
+                t.Value.Select(e =>
+                    $"{t.Key.ToString().ToLowerInvariant()}:{e.CssProperty}"
+                )).Distinct());
     }
 
-    internal void AddTransition(TransitionTrigger trigger, TransitionConfig config)
+    public BUITransitions MergeWith(BUITransitions overrides)
     {
-        if (!_transitions.TryGetValue(trigger, out List<TransitionConfig>? list))
+        BUITransitions merged = new();
+
+        foreach ((TransitionTrigger trigger, List<TransitionEntry> entries) in _entries)
         {
-            list = [];
-            _transitions[trigger] = list;
+            foreach (TransitionEntry entry in entries)
+                merged.AddEntry(trigger, entry);
         }
 
-        list.Add(config);
+        foreach ((TransitionTrigger trigger, List<TransitionEntry> entries) in overrides._entries)
+        {
+            foreach (TransitionEntry entry in entries)
+            {
+                if (merged._entries.TryGetValue(trigger, out List<TransitionEntry>? existing))
+                {
+                    int index = existing.FindIndex(e => e.CssProperty == entry.CssProperty);
+                    if (index >= 0)
+                        existing[index] = entry;
+                    else
+                        existing.Add(entry);
+                }
+                else
+                {
+                    merged.AddEntry(trigger, entry);
+                }
+            }
+        }
+
+        return merged;
     }
-}
 
-public class TransitionConfig
-{
-    public Dictionary<string, string> CustomProperties { get; set; } = [];
-    public TimeSpan? Delay { get; set; }
-    public TimeSpan? Duration { get; set; }
-    public string? Easing { get; set; }
-    public TransitionType Type { get; set; }
-}
+    internal void AddEntry(TransitionTrigger trigger, TransitionEntry entry)
+    {
+        if (!_entries.TryGetValue(trigger, out List<TransitionEntry>? list))
+        {
+            list = [];
+            _entries[trigger] = list;
+        }
 
-public enum TransitionType
-{
-    // Transform
-    Scale,
+        list.Add(entry);
+    }
 
-    Rotate,
-    Translate,
-    Skew,
+    private string BuildTransitionShorthand()
+    {
+        Dictionary<string, TransitionEntry> byProperty = [];
 
-    // Appearance
-    Fade,
+        foreach ((TransitionTrigger _, List<TransitionEntry> entries) in _entries)
+        {
+            foreach (TransitionEntry entry in entries)
+            {
+                if (!byProperty.TryGetValue(entry.CssProperty, out TransitionEntry? existing)
+                    || (entry.Duration ?? TimeSpan.Zero) > (existing.Duration ?? TimeSpan.Zero))
+                {
+                    byProperty[entry.CssProperty] = entry;
+                }
+            }
+        }
 
-    Blur,
-    Brightness,
-    Contrast,
-    Saturate,
-
-    // Background
-    Background,
-
-    // Layout
-    Shadow,
-
-    Border,
-
-    // Modern CSS
-    BackdropBlur,
-
-    // Combinations
-    Lift,
-
-    Glow,
-    Pulse,
-    Shake
+        return string.Join(", ", byProperty.Values.Select(e =>
+        {
+            string duration = ((int)(e.Duration ?? TimeSpan.FromMilliseconds(200)).TotalMilliseconds)
+                .ToString(CultureInfo.InvariantCulture) + "ms";
+            string easing = e.Easing ?? "ease-in-out";
+            string delay = e.Delay.HasValue
+                ? " " + ((int)e.Delay.Value.TotalMilliseconds).ToString(CultureInfo.InvariantCulture) + "ms"
+                : "";
+            return $"{e.CssProperty} {duration} {easing}{delay}";
+        }));
+    }
 }
