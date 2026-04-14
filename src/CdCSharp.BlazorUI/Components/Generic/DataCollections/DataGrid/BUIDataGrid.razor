@@ -80,7 +80,7 @@
                         <tr role="row">
                             @if (SelectionMode != SelectionMode.None)
                             {
-                                <th class="bui-datagrid__select-cell" role="columnheader" scope="col">
+                                <th class="bui-datagrid__header-cell bui-datagrid__select-cell" role="columnheader" scope="col">
                                     @if (SelectionMode == SelectionMode.Multiple)
                                     {
                                         <_BUIBtn Icon="@GetSelectAllIcon()"
@@ -256,7 +256,7 @@
                 <td class="bui-datagrid__select-cell" role="gridcell">
                     <_BUICheckMark Checked="@isSelected"
                                    Mode="@(SelectionMode == SelectionMode.Single ? _BUICheckMark.CheckMarkMode.Radio : _BUICheckMark.CheckMarkMode.Checkbox)"
-                                   Size="SizeEnum.Small" />
+                                   Size="@Size" />
                 </td>
             }
 

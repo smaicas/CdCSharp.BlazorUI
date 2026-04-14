@@ -7,6 +7,7 @@ namespace CdCSharp.BlazorUI.Components;
 public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     : BUIVariantComponentBase<TComponent, TVariant>,
       IHasDensity,
+      IHasSize,
       IHasShadow,
       IHasBorder,
       IHasBackgroundColor,
@@ -29,6 +30,7 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     [Parameter] public RenderFragment? Columns { get; set; }
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
     [Parameter] public bool Hoverable { get; set; } = true;
     [Parameter] public ShadowStyle? Shadow { get; set; }
 

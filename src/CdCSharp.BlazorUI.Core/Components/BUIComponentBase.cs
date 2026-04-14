@@ -1,6 +1,7 @@
 ﻿using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Components;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
@@ -65,5 +66,11 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
     {
         base.OnParametersSet();
         _styleBuilder.BuildStyles(this, AdditionalAttributes);
+    }
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        _styleBuilder.PatchVolatileAttributes(this);
+        base.BuildRenderTree(builder);
     }
 }

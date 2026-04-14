@@ -1,23 +1,24 @@
 ﻿._bui-checkmark {
+    --_checkmark-color: var(--palette-primary);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    vertical-align: middle;
     flex-shrink: 0;
     color: var(--palette-surfacecontrast);
-    transition: color 150ms ease, transform 150ms ease;
 }
 
 ._bui-checkmark--checked,
 ._bui-checkmark--indeterminate {
-    color: var(--bui-inline-color, var(--palette-primary));
+    color: var(--_checkmark-color);
 }
 
 ._bui-checkmark--disabled {
-    opacity: var(--bui-opacity-disabled, 0.5);
+    opacity: var(--bui-opacity-disabled);
     cursor: not-allowed;
 }
 
 /* Hover effect when parent is hoverable */
 :hover > ._bui-checkmark:not(._bui-checkmark--disabled) {
-    transform: scale(1.1);
+    color: color-mix(in oklab, var(--_checkmark-color) 80%, var(--palette-hovertint) 20%);
 }

@@ -2,15 +2,18 @@
  * COMPONENT CONTAINER
  * ============================================ */
 
-bui-component[data-bui-component="switch"],
-bui-component[data-bui-component="input-switch"] {
+bui-component[data-bui-component="switch"] {
     --_scale: var(--bui-size-multiplier, 1);
     --_track-w: calc(3rem * var(--_scale));
     --_track-h: calc(1.5rem * var(--_scale));
     --_thumb-size: calc(1.25rem * var(--_scale));
     --_thumb-translate: calc(1.5rem * var(--_scale));
-    --_track-inactive: var(--track-inactive, var(--palette-border));
-    --_track-active: var(--track-active, var(--palette-primary));
+    --_track-inactive-background: var(--track-inline-inactive-bg, var(--palette-border));
+    --_track-active-background: var(--track-inline-active-bg, var(--palette-primary));
+    --_thumb-inactive-background: var(--thumb-inline-inactive-bg, var(--palette-surface));
+    --_thumb-active-background: var(--thumb-inline-active-bg, var(--palette-surface));
+    --_thumb-inactive-color: var(--thumb-inline-inactive-color, var(--palette-surfacecontrast));
+    --_thumb-active-color: var(--thumb-inline-active-color, var(--palette-surfacecontrast));
     display: inline-flex;
     flex-direction: column;
     gap: calc(0.25rem * var(--_scale));
@@ -20,8 +23,7 @@ bui-component[data-bui-component="input-switch"] {
  * CLICKABLE CONTAINER
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch,
-    bui-component[data-bui-component="input-switch"] .bui-switch {
+    bui-component[data-bui-component="switch"] .bui-switch {
         display: inline-flex;
         align-items: center;
         gap: calc(0.5rem * var(--bui-density-multiplier));
@@ -33,8 +35,7 @@ bui-component[data-bui-component="input-switch"] {
  * HIDDEN NATIVE INPUT
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch__input,
-    bui-component[data-bui-component="input-switch"] .bui-switch__input {
+    bui-component[data-bui-component="switch"] .bui-switch__input {
         position: absolute;
         opacity: 0;
         width: 0;
@@ -46,29 +47,26 @@ bui-component[data-bui-component="input-switch"] {
  * TRACK
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch__track,
-    bui-component[data-bui-component="input-switch"] .bui-switch__track {
+    bui-component[data-bui-component="switch"] .bui-switch__track {
         position: relative;
         width: var(--_track-w);
         height: var(--_track-h);
         padding: 0.125rem;
         border-radius: var(--_track-h);
-        background: var(--_track-inactive);
+        background: var(--_track-inactive-background);
         transition: background 0.2s ease;
     }
 
     /* Track checked state */
-    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__track,
-    bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__track {
-        background: var(--_track-active);
+    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__track {
+        background: var(--_track-active-background);
     }
 
     /* ============================================
  * THUMB
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch__thumb,
-    bui-component[data-bui-component="input-switch"] .bui-switch__thumb {
+    bui-component[data-bui-component="switch"] .bui-switch__thumb {
         position: absolute;
         top: 50%;
         left: 0.125rem;
@@ -76,7 +74,7 @@ bui-component[data-bui-component="input-switch"] {
         width: var(--_thumb-size);
         height: var(--_thumb-size);
         border-radius: 50%;
-        background: var(--palette-surface);
+        background: var(--_thumb-inactive-background);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         display: flex;
         align-items: center;
@@ -85,29 +83,31 @@ bui-component[data-bui-component="input-switch"] {
     }
 
     /* Thumb checked state */
-    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__thumb,
-    bui-component[data-bui-component="input-switch"][data-checked="true"] .bui-switch__thumb {
+    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__thumb {
         transform: translateY(-50%) translateX(var(--_thumb-translate));
+        background: var(--_thumb-active-background);
     }
 
     /* ============================================
  * ICON
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch__icon,
-    bui-component[data-bui-component="input-switch"] .bui-switch__icon {
+    bui-component[data-bui-component="switch"] .bui-switch__icon {
         font-size: calc(0.75rem * var(--_scale));
         line-height: 1;
-        color: var(--palette-surfacecontrast);
+        color: var(--_thumb-inactive-color);
         animation: bui-switch-icon-in 0.2s ease-out;
+    }
+
+    bui-component[data-bui-component="switch"][data-checked="true"] .bui-switch__icon {
+        color: var(--_thumb-active-color);
     }
 
     /* ============================================
  * LABEL
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch__label,
-    bui-component[data-bui-component="input-switch"] .bui-switch__label {
+    bui-component[data-bui-component="switch"] .bui-switch__label {
         font-size: calc(1rem * var(--_scale));
         line-height: 1.4;
         color: var(--palette-surfacecontrast);
@@ -117,8 +117,7 @@ bui-component[data-bui-component="input-switch"] {
  * HOVER STATE
  * ============================================ */
 
-    bui-component[data-bui-component="switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb,
-    bui-component[data-bui-component="input-switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb {
+    bui-component[data-bui-component="switch"]:not([data-bui-disabled="true"]) .bui-switch:hover .bui-switch__thumb {
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
     }
 
@@ -126,8 +125,7 @@ bui-component[data-bui-component="input-switch"] {
  * FOCUS STATE
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-switch__input:focus-visible + .bui-switch__track,
-    bui-component[data-bui-component="input-switch"] .bui-switch__input:focus-visible + .bui-switch__track {
+    bui-component[data-bui-component="switch"] .bui-switch__input:focus-visible + .bui-switch__track {
         outline: var(--bui-highlight-outline);
         outline-offset: var(--bui-highlight-outline-offset);
     }
@@ -136,8 +134,7 @@ bui-component[data-bui-component="input-switch"] {
  * HELPER TEXT
  * ============================================ */
 
-    bui-component[data-bui-component="switch"] .bui-field__helper,
-    bui-component[data-bui-component="input-switch"] .bui-field__helper {
+    bui-component[data-bui-component="switch"] .bui-field__helper {
         font-size: 0.875em;
         color: var(--palette-surfacecontrast);
         opacity: 0.7;

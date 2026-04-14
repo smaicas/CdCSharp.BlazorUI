@@ -1,19 +1,22 @@
 ﻿._bui-simple-select {
-    height: 2rem;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--palette-border);
-    border-radius: 4px;
+    min-width: calc(3rem * var(--bui-size-multiplier, 1));
+    min-height: calc(2rem * var(--bui-size-multiplier, 1));
+    padding: 0.25rem;
+    border: var(--bui-border-width) var(--bui-border-style) var(--palette-border);
+    border-radius: var(--bui-border-radius);
     background: var(--palette-surface);
-    color: inherit;
+    color: var(--palette-surfacecontrast);
     font: inherit;
     font-size: 0.875rem;
-    cursor: pointer;
+    font-weight: 600;
+    text-align: center;
     outline: none;
     transition: border-color 150ms ease;
+    cursor:pointer;
 }
 
     ._bui-simple-select:focus {
-        border-color: var(--palette-primary);
+        border-color: var(--palette-surfacecontrast);
     }
 
     ._bui-simple-select:focus-visible {
@@ -23,5 +26,5 @@
 
     ._bui-simple-select:disabled {
         cursor: not-allowed;
-        opacity: 0.5;
+        opacity: var(--bui-opacity-disabled);
     }

@@ -35,7 +35,6 @@ public class DesignTokensGenerator : IAssetGenerator
        ======================================== */
     {{FeatureDefinitions.Tokens.Opacity.Disabled}}: {{FeatureDefinitions.Tokens.Opacity.DisabledValue}};
     {{FeatureDefinitions.Tokens.Opacity.Placeholder}}: {{FeatureDefinitions.Tokens.Opacity.PlaceholderValue}};
-    {{FeatureDefinitions.Tokens.Opacity.Hover}}: {{FeatureDefinitions.Tokens.Opacity.HoverValue}};
 
     /* ========================================
        OUTLINE HIGHLIGHT

@@ -42,3 +42,13 @@ bui-component[data-bui-component="button"] button:focus-visible {
     outline: var(--bui-highlight-outline);
     outline-offset: var(--bui-highlight-outline-offset);
 }
+
+/* Press state */
+bui-component[data-bui-component="button"] button:active:not(:disabled) {
+    background: color-mix(in oklab, var(--_button-background) 80%, var(--palette-activetint) 20%);
+}
+
+/* Hover state */
+bui-component[data-bui-component="button"] button:hover:not(:active):not(:disabled) {
+    background: color-mix(in oklab, var(--_button-background) 90%, var(--palette-hovertint) 10%);
+}

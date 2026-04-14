@@ -31,6 +31,7 @@
         border-right: var(--_badge-border-right);
         border-bottom: var(--_badge-border-bottom);
         border-left: var(--_badge-border-left);
+        user-select: none;
     }
 
     /* Empty badge (dot) */

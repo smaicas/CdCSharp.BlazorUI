@@ -2,14 +2,8 @@
 bui-component[data-bui-component="card"] {
     display: block;
     width: 100%;
-    border-radius: var(--_card-border-radius);
-    border: var(--_card-border);
-    border-top: var(--_card-border-top);
-    border-right: var(--_card-border-right);
-    border-bottom: var(--_card-border-bottom);
-    border-left: var(--_card-border-left);
     /* CSS Variables */
-    --_card-bg: var(--bui-inline-background, var(--palette-surface));
+    --_card-background: var(--bui-inline-background, var(--palette-surface));
     --_card-color: var(--bui-inline-color, var(--palette-surfacecontrast));
     --_card-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
     --_card-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
@@ -21,16 +15,21 @@ bui-component[data-bui-component="card"] {
     --_card-header-padding: 1rem;
     --_card-content-padding: 1rem;
     --_card-actions-padding: 0.5rem 1rem;
-    --_card-media-height: 200px;
+    --_card-media-height: var(--bui-card-inline-media-height, 200px);
 }
 
     /* Card Container */
     bui-component[data-bui-component="card"] .bui-card {
         display: flex;
         flex-direction: column;
-        background: var(--_card-bg);
+        background: var(--_card-background);
         color: var(--_card-color);
         border-radius: var(--_card-border-radius);
+        border: var(--_card-border);
+        border-top: var(--_card-border-top);
+        border-right: var(--_card-border-right);
+        border-bottom: var(--_card-border-bottom);
+        border-left: var(--_card-border-left);
         overflow: hidden;
         transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         position: relative;
@@ -100,35 +99,6 @@ bui-component[data-bui-component="card"] {
         justify-content: space-between;
     }
 
-    bui-component[data-bui-component="card"] .bui-card__actions--outlined {
-        border-top: 1px solid rgba(0, 0, 0, 0.12);
-    }
-
-    /* Variant: Outlined (default - has border by default) */
-    bui-component[data-bui-component="card"][data-bui-variant="outlined"][data-bui-clickable="true"] .bui-card:hover {
-        border-color: color-mix(in srgb, currentColor 24%, transparent);
-        box-shadow: 0 2px 4px color-mix(in srgb, currentColor 8%, transparent);
-    }
-
-    /* Variant: Flat */
-    bui-component[data-bui-component="card"][data-bui-variant="flat"] .bui-card {
-        box-shadow: none;
-        border: none;
-    }
-
-    bui-component[data-bui-component="card"][data-bui-variant="flat"][data-bui-clickable="true"] .bui-card:hover {
-        background: color-mix(in srgb, currentColor 2%, transparent);
-    }
-
-    /* Clickable State */
-    bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card {
-        cursor: pointer;
-    }
-
-        bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:active {
-            transform: scale(0.98);
-        }
-
     /* Media Position Variants */
     bui-component[data-bui-component="card"][data-bui-media-position="top"] .bui-card__media {
         order: -3;
@@ -146,8 +116,22 @@ bui-component[data-bui-component="card"] {
         order: 2;
     }
 
-    /* Accessibility */
-    bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:focus-visible {
-        outline: var(--bui-highlight-outline);
-        outline-offset: var(--bui-highlight-outline-offset);
+    /* Clickable State */
+    bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card {
+        cursor: pointer;
     }
+
+        /* Accessibility */
+        bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:focus-visible {
+            outline: var(--bui-highlight-outline);
+            outline-offset: var(--bui-highlight-outline-offset);
+        }
+
+        /* Press state */
+        bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:active:not(:disabled) {
+            background: color-mix(in oklab, var(--_card-background) 80%, var(--palette-activetint) 20%);
+        }
+        /* Hover state */
+        bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:hover:not(:active):not(:disabled) {
+            background: color-mix(in oklab, var(--_card-background) 90%, var(--palette-hovertint) 10%);
+        }

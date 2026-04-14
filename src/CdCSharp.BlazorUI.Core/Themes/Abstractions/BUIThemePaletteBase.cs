@@ -6,17 +6,14 @@ namespace CdCSharp.BlazorUI.Core.Theming.Abstractions;
 
 public abstract class BUIThemePaletteBase
 {
-    // Surface colors
     public CssColor Background { get; set; } = new("#0F172A");
 
     public CssColor BackgroundContrast { get; set; } = new("#F1F5F9");
 
-    // Base colors for contrast calculations
     public CssColor Black { get; set; } = new("#010101");
 
     public CssColor Border { get; set; } = BUIColor.White.Default;
 
-    // Status colors
     public CssColor Error { get; set; } = new("#EF4444");
 
     public CssColor ErrorContrast { get; set; } = new("#0F172A");
@@ -26,7 +23,6 @@ public abstract class BUIThemePaletteBase
     public CssColor InfoContrast { get; set; } = new("#0F172A");
     public string Name { get; set; } = "Default";
 
-    // Main colors
     public CssColor Primary { get; set; } = new("#60A5FA");
 
     public CssColor PrimaryContrast { get; set; } = new("#0F172A");
@@ -40,6 +36,8 @@ public abstract class BUIThemePaletteBase
     public CssColor Warning { get; set; } = new("#F59E0B");
     public CssColor WarningContrast { get; set; } = new("#0F172A");
     public CssColor White { get; set; } = new("#e9e9e9");
+    public CssColor HoverTint { get; set; } = new("#e9e9e9");
+    public CssColor ActiveTint { get; set; } = new("#e9e9e9");
 
     /// <summary>
     /// Gets palette mapping variables (e.g., --palette-background: var(--dark-background))

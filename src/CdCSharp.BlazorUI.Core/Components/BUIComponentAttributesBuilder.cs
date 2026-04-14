@@ -41,6 +41,7 @@ internal sealed class BUIComponentAttributesBuilder
         BuildLoading(component);
         BuildError(component);
         BuildDisabled(component);
+        BuildActive(component);
         BuildReadOnly(component);
         BuildRequired(component);
         BuildPrefix(component, cssVariables);
@@ -63,6 +64,15 @@ internal sealed class BUIComponentAttributesBuilder
         }
 
         BuildInlineStyles(cssVariables);
+    }
+
+    public void PatchVolatileAttributes(ComponentBase component)
+    {
+        if (component is IHasActive active)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = active.IsActive.ToString().ToLowerInvariant();
+
+        if (component is IHasDisabled disabled)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
     }
 
     private static string ToKebabCaseComponentName(string value)
@@ -159,6 +169,12 @@ internal sealed class BUIComponentAttributesBuilder
     {
         if (component is IHasDisabled disabled)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
+    }
+
+    private void BuildActive(ComponentBase component)
+    {
+        if (component is IHasActive active)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = active.IsActive.ToString().ToLowerInvariant();
     }
 
     private void BuildShadow(ComponentBase component, Dictionary<string, string> cssVariables)

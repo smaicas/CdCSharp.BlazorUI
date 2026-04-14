@@ -21,13 +21,13 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__table {
     border-collapse: collapse;
     background: var(--_dc-background);
     color: var(--palette-surfacecontrast);
-    /* Cell border variables - consume inline variables */
+    /* Cell border variables */
     --_dg-cell-border: var(--bui-inline-dc-cell-border, none);
     --_dg-cell-border-top: var(--bui-inline-dc-cell-border-top, var(--_dg-cell-border));
     --_dg-cell-border-right: var(--bui-inline-dc-cell-border-right, var(--_dg-cell-border));
     --_dg-cell-border-bottom: var(--bui-inline-dc-cell-border-bottom, var(--_dg-cell-border));
     --_dg-cell-border-left: var(--bui-inline-dc-cell-border-left, var(--_dg-cell-border));
-    /* Row border variables - consume inline variables */
+    /* Row border variables */
     --_dg-row-border: var(--bui-inline-dc-row-border, none);
     --_dg-row-border-top: var(--bui-inline-dc-row-border-top, var(--_dg-row-border));
     --_dg-row-border-right: var(--bui-inline-dc-row-border-right, var(--_dg-row-border));

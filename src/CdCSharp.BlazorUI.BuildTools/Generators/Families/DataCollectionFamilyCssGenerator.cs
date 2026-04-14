@@ -20,9 +20,9 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 [data-bui-data-collection] {
     --_dc-padding-x: 1rem;
     --_dc-padding-y: 0.75rem;
-    --_dc-header-bg: color-mix(in oklab, var(--palette-surface) 95%, var(--palette-surfacecontrast));
-    --_dc-hover-bg: color-mix(in oklab, var(--palette-surface) 92%, var(--palette-surfacecontrast));
-    --_dc-selected-bg: color-mix(in oklab, var(--palette-surface) 90%, var(--palette-primary));
+    --_dc-header-bg: color-mix(in oklab, var(--palette-surface) 95%, var(--palette-primary));
+    --_dc-hover-bg: color-mix(in oklab, var(--_dc-background) 90%, var(--palette-hovertint) 10%);
+    --_dc-selected-bg: color-mix(in oklab, var(--_dc-background) 80%, var(--palette-primary) 20%);
     --_dc-background: var(--bui-inline-background, var(--palette-surface));
     --_dc-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
     --_dc-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));

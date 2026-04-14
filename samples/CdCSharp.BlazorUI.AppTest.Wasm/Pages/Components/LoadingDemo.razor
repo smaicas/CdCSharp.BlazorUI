@@ -1,19 +1,13 @@
 ﻿@page "/demo/loading"
 @using CdCSharp.BlazorUI.AppTest.Wasm.Shared
-
 <PageTitle>Loading Indicator - CdCSharp.BlazorUI</PageTitle>
-
 <h1>BUILoadingIndicator</h1>
-
 <h2>Variants</h2>
 <ComponentDemo Definition="@VariantsDemo" />
-
 <h2>Sizes</h2>
 <ComponentDemo Definition="@SizesDemo" />
-
 <h2>Colors</h2>
 <ComponentDemo Definition="@ColorsDemo" />
-
 @code {
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
 
@@ -34,20 +28,26 @@
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <div style="text-align: center;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" />
+                    <p>Circular Progress</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Ring" />
+                    <p>Ring</p>
+                </div>
+            </BUIGridItem>
+            <BUIGridItem Auto="true">
+                <div style="text-align: center;">
                     <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Dots" />
                     <p>Dots</p>
                 </div>
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <div style="text-align: center;">
-                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Pulse" />
-                    <p>Pulse</p>
-                </div>
-            </BUIGridItem>
-            <BUIGridItem Auto="true">
-                <div style="text-align: center;">
-                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" />
-                    <p>Circular Progress</p>
+                    <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Bars" />
+                    <p>Bars</p>
                 </div>
             </BUIGridItem>
             <BUIGridItem Auto="true">
@@ -97,21 +97,36 @@
 
     private RenderFragment RenderColors() => __builder =>
     {
-        <BUIGrid Gap="2rem" Direction="GridDirection.Row">
+        <BUIGrid Gap="2rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="@Palette.Primary" />
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Color="@Palette.Primary" />
+                    <p>Primary</p>
+                </div>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="@Palette.Secondary" />
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Color="@Palette.Secondary" />
+                    <p>Secondary</p>
+                </div>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="@Palette.Error" />
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Color="@Palette.Error" />
+                    <p>Error</p>
+                </div>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="@Palette.Success" />
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Color="@Palette.Success" />
+                    <p>Success</p>
+                </div>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUILoadingIndicator Color="@Palette.Warning" />
+                <div style="text-align: center;">
+                    <BUILoadingIndicator Color="@Palette.Warning" />
+                    <p>Warning</p>
+                </div>
             </BUIGridItem>
         </BUIGrid>
     };

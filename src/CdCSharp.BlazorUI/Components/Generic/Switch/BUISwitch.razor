@@ -118,6 +118,26 @@
     [Parameter] public string? TrackColorActive { get; set; }
 
     /// <summary>
+    /// Thumb background color when unchecked
+    /// </summary>
+    [Parameter] public string? ThumbBackgroundColorInactive { get; set; }
+
+    /// <summary>
+    /// Thumb background color when checked
+    /// </summary>
+    [Parameter] public string? ThumbBackgroundColorActive { get; set; }
+
+    /// <summary>
+    /// Thumb color when unchecked
+    /// </summary>
+    [Parameter] public string? ThumbColorInactive { get; set; }
+
+    /// <summary>
+    /// Thumb color when checked
+    /// </summary>
+    [Parameter] public string? ThumbColorActive { get; set; }
+
+    /// <summary>
     /// Optional custom input ID. If not provided, one will be generated.
     /// </summary>
     [Parameter] public string? InputId { get; set; }
@@ -157,9 +177,13 @@
     {
         base.BuildComponentCssVariables(cssVariables);
 
-        if (TrackColorInactive != null)
-            cssVariables["--track-inactive"] = TrackColorInactive;
-        if (TrackColorActive != null)
-            cssVariables["--track-active"] = TrackColorActive;
+        if (!string.IsNullOrWhiteSpace(TrackColorInactive)) { cssVariables["--track-inline-inactive-bg"] = TrackColorInactive; }
+        if (!string.IsNullOrWhiteSpace(TrackColorActive)) { cssVariables["--track-inline-active-bg"] = TrackColorActive; }
+
+        if (!string.IsNullOrWhiteSpace(ThumbBackgroundColorInactive)) { cssVariables["--thumb-inline-inactive-bg"] = ThumbBackgroundColorInactive; }
+        if (!string.IsNullOrWhiteSpace(ThumbBackgroundColorActive)) { cssVariables["--thumb-inline-active-bg"] = ThumbBackgroundColorActive; }
+
+        if (!string.IsNullOrWhiteSpace(ThumbColorInactive)) { cssVariables["--thumb-inline-inactive-color"] = ThumbColorInactive; }
+        if (!string.IsNullOrWhiteSpace(ThumbColorActive)) { cssVariables["--thumb-inline-active-color"] = ThumbColorActive; }
     }
 }

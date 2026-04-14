@@ -101,6 +101,11 @@ public static class FeatureDefinitions
         public const string Disabled = "data-bui-disabled";
 
         /// <summary>
+        /// Component is active.
+        /// </summary>
+        public const string Active = "data-bui-active";
+
+        /// <summary>
         /// Marks component as part of dropdown family for shared styles.
         /// </summary>
         public const string DropdownBase = "data-bui-dropdown-base";
@@ -227,8 +232,6 @@ public static class FeatureDefinitions
         {
             public const string Disabled = "--bui-opacity-disabled";
             public const string DisabledValue = "0.5";
-            public const string Hover = "--bui-opacity-hover";
-            public const string HoverValue = "0.8";
             public const string Placeholder = "--bui-opacity-placeholder";
             public const string PlaceholderValue = "0.5";
         }
