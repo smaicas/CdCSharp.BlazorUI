@@ -63,7 +63,7 @@
             ModalState? current = _modals.LastOrDefault(m => m.IsVisible && !m.IsAnimatingOut);
             if (current != null)
             {
-                _hostRef.FocusAsync();
+                await _hostRef.FocusAsync();
             }
         }
     }
