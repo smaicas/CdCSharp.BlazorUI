@@ -100,7 +100,8 @@ export default defineConfig({
             input: "./CssBundle/entry.js",
             output: {
                 assetFileNames: (assetInfo) => {
-                    if (assetInfo.name.endsWith(".css")) {
+                    const name = assetInfo.name ?? (assetInfo.names && assetInfo.names[0]) ?? "";
+                    if (name.endsWith(".css")) {
                         return "blazorui.css";
                     }
                     return "[name][extname]";

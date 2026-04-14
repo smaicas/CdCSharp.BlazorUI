@@ -19,8 +19,8 @@ public class BUIButtonRenderingTests
         IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
             .Add(c => c.Text, "Test Button")
             .Add(c => c.Size, SizeEnum.Large)
-            .Add(c => c.BackgroundColor, BUIColor.Palette.Background)
-            .Add(c => c.Color, BUIColor.Palette.BackgroundContrast)
+            .Add(c => c.BackgroundColor, PaletteColor.Background)
+            .Add(c => c.Color, PaletteColor.BackgroundContrast)
 
             .Add(c => c.Shadow, BUIShadowPresets.Elevation(4)));
 

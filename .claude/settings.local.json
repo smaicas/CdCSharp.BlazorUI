@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(\"V:\\\\Work\\\\CdCSharp\\\\Projects\\\\BlazorUI\\\\src\\\\CdCSharp.BlazorUI.BuildTools\\\\bin\\\\Debug\\\\net10.0\\\\CdCSharp.BlazorUI.BuildTools.exe\" \"V:\\\\Work\\\\CdCSharp\\\\Projects\\\\BlazorUI\\\\src\\\\CdCSharp.BlazorUI\")",
+      "Bash(iconv -f ISO-8859-1 -t UTF-8 src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts -o src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts.utf82)",
+      "Bash(iconv -f ISO-8859-1 -t UTF-8 \"src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts\")"
+    ]
+  }
+}

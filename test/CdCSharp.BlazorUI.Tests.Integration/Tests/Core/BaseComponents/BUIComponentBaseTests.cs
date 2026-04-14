@@ -215,7 +215,7 @@ public class BUIComponentBaseTests
         // Test con AdditionalAttributes nulos explícitamente
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
             .Add(c => c.AdditionalAttributes, null)
-            .Add(c => c.Color, new CssColor("#000")));
+            .Add(c => c.Color, "rgba(0,0,0,1)"));
 
         cut.Find("div").GetAttribute("style").Should().Contain("--bui-inline-color");
     }
@@ -238,10 +238,10 @@ public class BUIComponentBaseTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Color, new CssColor("#FF0000"))
-            .Add(c => c.BackgroundColor, new CssColor("#00FF00"))
+            .Add(c => c.Color, "rgba(255,0,0,1)")
+            .Add(c => c.BackgroundColor, "rgba(0,255,0,1)")
             .Add(c => c.DisableRipple, false)
-            .Add(c => c.RippleColor, new CssColor("#FFFFFF"))
+            .Add(c => c.RippleColor, "rgba(255,255,255,1)")
             .Add(c => c.RippleDurationMs, 300)
         );
 
@@ -263,7 +263,7 @@ public class BUIComponentBaseTests
         { { "style", "display: flex;" } };
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
             .Add(c => c.AdditionalAttributes, attrs)
-            .Add(c => c.Color, new CssColor("#FF0000"))
+            .Add(c => c.Color, "rgba(255,0,0,1)")
         );
 
         string? style = cut.Find("div").GetAttribute("style");

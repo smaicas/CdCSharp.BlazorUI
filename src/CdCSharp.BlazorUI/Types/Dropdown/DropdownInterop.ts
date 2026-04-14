@@ -1,15 +1,15 @@
 //  ARIA APG Combobox Pattern
 //  Tecla Comportamiento
-//  Space(en trigger) Abre el menú
-//  Enter(en trigger) Abre el menú
-//  Arrow Down Abre el menú(si cerrado) o navega a siguiente opción
-//  Arrow Up Navega a opción anterior
-//  Home Navega a primera opción
-//  End Navega a última opción
-//  Enter(en menú abierto) Selecciona opción activa y cierra
-//  Space(en menú abierto) Selecciona opción activa(NO cierra en multiselect, SÍ cierra en single)
+//  Space(en trigger) Abre el menÃº
+//  Enter(en trigger) Abre el menÃº
+//  Arrow Down Abre el menÃº(si cerrado) o navega a siguiente opciÃ³n
+//  Arrow Up Navega a opciÃ³n anterior
+//  Home Navega a primera opciÃ³n
+//  End Navega a Ãºltima opciÃ³n
+//  Enter(en menÃº abierto) Selecciona opciÃ³n activa y cierra
+//  Space(en menÃº abierto) Selecciona opciÃ³n activa(NO cierra en multiselect, SÃ cierra en single)
 //  Escape Cierra sin seleccionar
-//  Tab Cierra el menú y mueve focus al siguiente elemento
+//  Tab Cierra el menÃº y mueve focus al siguiente elemento
 
 interface DropdownCallbacksRelay {
     invokeMethodAsync(methodName: string, ...args: unknown[]): Promise<unknown>;

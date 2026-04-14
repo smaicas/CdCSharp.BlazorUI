@@ -17,8 +17,8 @@ public class BUIButtonStateTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         // Arrange
-        CssColor initialColor = new("#FF0000");
-        CssColor updatedColor = new("#00FF00");
+        string initialColor = "rgba(255,0,0,1)";
+        string updatedColor = "rgba(0,255,0,1)";
 
         IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
             .Add(c => c.Text, "Color Button")
@@ -27,7 +27,7 @@ public class BUIButtonStateTests
         // Act
         cut.Render(p => p
             .Add(c => c.Color, updatedColor)
-            .Add(c => c.BackgroundColor, new CssColor("#0000FF")));
+            .Add(c => c.BackgroundColor, "rgba(0,0,255,1)"));
 
         // Assert
         IElement component = cut.Find("bui-component");
@@ -105,7 +105,7 @@ public class BUIButtonStateTests
         // Act - Re-enable with custom color
         cut.Render(p => p
             .Add(c => c.DisableRipple, false)
-            .Add(c => c.RippleColor, new CssColor("#FF00FF")));
+            .Add(c => c.RippleColor, "rgba(255,0,255,1)"));
 
         // Assert
         component.GetAttribute("data-bui-ripple").Should().Be("true");

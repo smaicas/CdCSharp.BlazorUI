@@ -198,10 +198,10 @@ public class BUIInputComponentBaseTests
         IRenderedComponent<BUIInputComponentBase_TestStub> cut =
             ctx.Render<BUIInputComponentBase_TestStub>(p => p
                 .Add(c => c.ValueExpression, () => model.Value)
-                .Add(c => c.Color, new CssColor("#0000FF"))
+                .Add(c => c.Color, "rgba(0,0,255,1)")
                 .Add(c => c.Border,
                     BorderStyle.Create()
-                        .All("2px", BorderStyleType.Solid, new CssColor("#FF0000"))
+                        .All("2px", BorderStyleType.Solid, "rgba(255,0,0,1)")
                         .Radius(8))
             );
 
@@ -223,7 +223,7 @@ public class BUIInputComponentBaseTests
         IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
             .Add(c => c.ValueExpression, () => model.Value)
             .Add(c => c.AdditionalAttributes, additionalAttrs)
-            .Add(c => c.Color, BUIColor.Coral.Default)
+            .Add(c => c.Color, (string)BUIColor.Coral.Default)
         );
 
         string? style = cut.Find("input").GetAttribute("style");

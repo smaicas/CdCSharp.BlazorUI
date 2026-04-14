@@ -59,8 +59,8 @@ public class CssColorSystemTests
         BUIColor.Red.Lighten1.Should().NotBeNull();
 
         // Assert palette colors
-        BUIColor.Palette.Primary.Should().NotBeNull();
-        BUIColor.Palette.Background.Should().NotBeNull();
+        ((string)PaletteColor.Primary).Should().NotBeNull();
+        ((string)PaletteColor.Background).Should().NotBeNull();
 
         // Assert color output formats
         CssColor color = BUIColor.Blue.Default;
@@ -152,29 +152,6 @@ public class CssColorSystemTests
     }
 
     [Fact]
-    public void CssColor_Constructor_WithCssVariable_StoresVariable()
-    {
-        // Act
-        CssColor color = new("var(--palette-primary)", true);
-
-        // Assert
-        color.ToString(ColorOutputFormats.Rgba).Should().Be("var(--palette-primary)");
-    }
-
-    [Theory]
-    [InlineData("var(--palette-primary)", true, "var(--palette-primary)")]
-    [InlineData("#FF0000", false, "rgba(255,0,0,1)")]
-    [InlineData("rgb(255,0,0)", false, "rgba(255,0,0,1)")]
-    public void CssColor_Constructor_WithCssVariable_VariousCases(string input, bool isCssVariable, string expected)
-    {
-        // Act
-        CssColor color = new(input, isCssVariable);
-
-        // Assert
-        color.ToString(ColorOutputFormats.Rgba).Should().Be(expected);
-    }
-
-    [Fact]
     public void CssColor_EqualityOperator_ComparesTwoColors()
     {
         // Arrange
@@ -220,20 +197,6 @@ public class CssColorSystemTests
         color1.Equals((object)color2).Should().BeTrue();
         color1.Equals(nullObject).Should().BeFalse();
         color1.Equals(notAColor).Should().BeFalse();
-    }
-
-    [Fact]
-    public void CssColor_GetBestContrast_WithCssVariable_Should_NotThrow()
-    {
-        // Arrange
-        CssColor cssVar = new("var(--palette-primary)", true);
-
-        // Act
-        CssColor contrast = cssVar.GetBestContrast();
-
-        // Assert
-        contrast.Should().NotBeNull();
-        contrast.ToString().Should().StartWith("var(");
     }
 
     [Fact]
@@ -448,19 +411,6 @@ public class CssColorSystemTests
 
         // Assert
         result.Should().Be(expected);
-    }
-
-    [Fact]
-    public void CssColor_Optimized_ShouldReturn_CssVariable_WhenIsCssVariable()
-    {
-        // Arrange
-        CssColor color = new("var(--palette-primary)", true);
-
-        // Act
-        string result = color.ToString(ColorOutputFormats.Optimized);
-
-        // Assert
-        result.Should().Be("var(--palette-primary)");
     }
 
     [Fact]
