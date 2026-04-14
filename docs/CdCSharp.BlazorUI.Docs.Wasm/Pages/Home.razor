@@ -1,7 +1,155 @@
-﻿@page "/"
+@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>CdCSharp.BlazorUI — Modern Blazor components for .NET 10</PageTitle>
 
-<h1>Hello, world!</h1>
+<section class="hero">
+    <span class="hero__badge">
+        <span class="hero__badge-dot"></span>
+        v1.0 · .NET 10 ready
+    </span>
 
-Welcome to your new app.
+    <h1 class="hero__title">
+        Blazor components,<br />
+        <span class="hero__title-accent">beautifully themed.</span>
+    </h1>
+
+    <p class="hero__lede">
+        A modern, production-grade component library for Blazor Server and WebAssembly.
+        Data-attribute driven styling, a powerful theming system, and a consistent
+        component API that just gets out of your way.
+    </p>
+
+    <div class="hero__ctas">
+        <BUIButton Text="Get started"
+                   LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_rocket_launch"
+                   Size="SizeEnum.Large"
+                   OnClick="@(() => _nav.NavigateTo("/getting-started"))" />
+        <BUIButton Text="Browse components"
+                   Size="SizeEnum.Large"
+                   Border="@BUIBorderPresets.Default"
+                   BackgroundColor="transparent"
+                   Color="@PaletteColor.Primary"
+                   OnClick="@(() => _nav.NavigateTo("/components/button"))" />
+    </div>
+
+    <div class="hero__snippet">
+        <code><span class="hero__snippet-prompt">&gt;</span> dotnet add package CdCSharp.BlazorUI</code>
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature">
+        <div class="feature__icon">⚡</div>
+        <h3 class="feature__title">Zero-runtime styling</h3>
+        <p class="feature__desc">Components advertise capabilities through <code>IHas*</code> interfaces — CSS is driven by <code>data-bui-*</code> attributes and custom properties. No class toggling, no runtime cost.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature__icon">🎨</div>
+        <h3 class="feature__title">Theme-driven palettes</h3>
+        <p class="feature__desc">Light and dark themes built in, with a palette system of 12+ semantic colors. Override any token with a single CSS custom property.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature__icon">🧩</div>
+        <h3 class="feature__title">40+ components</h3>
+        <p class="feature__desc">Forms, data grids, trees, modals, toasts, date &amp; color pickers, theme generator — everything you need to ship a real app.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature__icon">🔀</div>
+        <h3 class="feature__title">Pluggable variants</h3>
+        <p class="feature__desc">Every component supports custom variants. Register your own render template and slot it in alongside the built-in ones.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature__icon">🌐</div>
+        <h3 class="feature__title">Server &amp; WASM</h3>
+        <p class="feature__desc">One component library, both hosting models. Localization packages for each. Full .NET 10 support.</p>
+    </div>
+
+    <div class="feature">
+        <div class="feature__icon">🧪</div>
+        <h3 class="feature__title">Tested &amp; typed</h3>
+        <p class="feature__desc">bUnit integration tests run under both Server and WASM scenarios. Strict nullable annotations throughout the API surface.</p>
+    </div>
+</section>
+
+<section class="stats">
+    <div>
+        <div class="stat__value">40+</div>
+        <div class="stat__label">Components</div>
+    </div>
+    <div>
+        <div class="stat__value">12</div>
+        <div class="stat__label">Palette colors</div>
+    </div>
+    <div>
+        <div class="stat__value">2</div>
+        <div class="stat__label">Built-in themes</div>
+    </div>
+    <div>
+        <div class="stat__value">100%</div>
+        <div class="stat__label">.NET 10 native</div>
+    </div>
+</section>
+
+<section class="doc-section">
+    <h2 class="doc-section__title">Add it to your project</h2>
+    <p class="doc-section__description">
+        Install the NuGet package, register the services, and link the stylesheet. That's it.
+    </p>
+
+    <BUICodeBlock Title="Program.cs"
+                  Language="SyntaxHighlightLanguage.CSharp"
+                  Code="@_programSnippet" />
+
+    <BUICodeBlock Title="wwwroot/index.html"
+                  Language="SyntaxHighlightLanguage.Razor"
+                  Code="@_indexSnippet" />
+
+    <p style="margin-top: 1.5rem;">
+        For detailed installation and configuration steps, head over to the
+        <a href="/getting-started">Getting started</a> guide.
+    </p>
+</section>
+
+<section class="doc-section">
+    <h2 class="doc-section__title">Start with the essentials</h2>
+    <p class="doc-section__description">
+        Three components cover 80% of what you'll build first.
+    </p>
+
+    <div class="demo-grid">
+        <div class="feature" role="link" tabindex="0" @onclick='@(() => _nav.NavigateTo("/components/button"))' style="cursor: pointer;">
+            <div class="feature__icon">🔘</div>
+            <h3 class="feature__title">Button</h3>
+            <p class="feature__desc">Multiple variants, sizes, loading states, icons, custom colors. The workhorse of any UI.</p>
+        </div>
+        <div class="feature" role="link" tabindex="0" @onclick='@(() => _nav.NavigateTo("/components/text"))' style="cursor: pointer;">
+            <div class="feature__icon">📝</div>
+            <h3 class="feature__title">InputText</h3>
+            <p class="feature__desc">Outlined, filled, standard. Prefix/suffix slots, validation messages, full EditForm support.</p>
+        </div>
+        <div class="feature" role="link" tabindex="0" @onclick='@(() => _nav.NavigateTo("/components/card"))' style="cursor: pointer;">
+            <div class="feature__icon">🎴</div>
+            <h3 class="feature__title">Card</h3>
+            <p class="feature__desc">Elevation, borders, density. Build layouts without writing layout CSS.</p>
+        </div>
+    </div>
+</section>
+
+@code {
+    [Inject] private NavigationManager _nav { get; set; } = default!;
+
+    private const string _programSnippet = @"builder.Services.AddBlazorUI();
+
+// Optional: localization for WebAssembly
+builder.Services.AddBlazorUILocalizationWasm(options =>
+{
+    options.SupportedCultures = [new CultureInfo(""en-US""), new CultureInfo(""es-ES"")];
+    options.DefaultCulture = ""en-US"";
+});";
+
+    private const string _indexSnippet = @"<link href=""_content/CdCSharp.BlazorUI/css/blazorui.css"" rel=""stylesheet"" />";
+}

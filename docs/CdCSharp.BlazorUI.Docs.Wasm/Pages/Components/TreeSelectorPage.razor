@@ -1,0 +1,192 @@
+@page "/components/treeselector"
+
+<PageTitle>Tree Selector — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Tree Selector"
+         Lede="Hierarchical selection with single/multiple modes, optional checkboxes, cascading, and declarative or data-driven trees.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Single selection</h2>
+        <ComponentDemo Definition="@SingleDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Multiple with checkboxes</h2>
+        <ComponentDemo Definition="@CheckboxDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Fully expanded</h2>
+        <ComponentDemo Definition="@ExpandedDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">With icons</h2>
+        <ComponentDemo Definition="@IconsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private HashSet<string> _single = new();
+    private HashSet<string> _checkbox = new();
+    private HashSet<string> _expanded = new();
+    private HashSet<string> _icons = new();
+
+    private ComponentDemoDefinition SingleDemo => new()
+    {
+        CodeTitle = "Single.razor",
+        Code = @"<BUITreeSelector TItem=""object""
+                 @bind-SelectedKeys=""_selected""
+                 SelectionMode=""TreeSelectionMode.Single"">
+    <BUITreeSelectorItem Text=""Documents"" Key=""docs"">
+        <ChildContent>
+            <BUITreeSelectorItem Text=""Work"" Key=""work"" />
+        </ChildContent>
+    </BUITreeSelectorItem>
+</BUITreeSelector>",
+        Demo = RenderSingle()
+    };
+
+    private RenderFragment RenderSingle() => __builder =>
+    {
+        <div class="demo-stack">
+            <div>Selected: <code>@string.Join(", ", _single)</code></div>
+            <div class="demo-panel" style="max-width: 360px;">
+                <BUITreeSelector TItem="object"
+                                 SelectedKeys="_single"
+                                 SelectedKeysChanged="@(k => { _single = k; StateHasChanged(); })"
+                                 SelectionMode="TreeSelectionMode.Single"
+                                 ShowCheckboxes="false">
+                    <BUITreeSelectorItem Text="Alpha" Key="alpha" />
+                    <BUITreeSelectorItem Text="Beta" Key="beta">
+                        <ChildContent>
+                            <BUITreeSelectorItem Text="Beta 1" Key="beta.1" />
+                            <BUITreeSelectorItem Text="Beta 2" Key="beta.2" />
+                        </ChildContent>
+                    </BUITreeSelectorItem>
+                    <BUITreeSelectorItem Text="Gamma" Key="gamma" />
+                </BUITreeSelector>
+            </div>
+        </div>
+    };
+
+    private ComponentDemoDefinition CheckboxDemo => new()
+    {
+        CodeTitle = "Checkboxes.razor",
+        Code = @"<BUITreeSelector TItem=""object""
+                 @bind-SelectedKeys=""_selected""
+                 SelectionMode=""TreeSelectionMode.Multiple""
+                 ShowCheckboxes=""true"" />",
+        Demo = RenderCheckbox()
+    };
+
+    private RenderFragment RenderCheckbox() => __builder =>
+    {
+        <div class="demo-stack">
+            <div>Selected: <code>@string.Join(", ", _checkbox)</code></div>
+            <div class="demo-panel" style="max-width: 360px;">
+                <BUITreeSelector TItem="object"
+                                 SelectedKeys="_checkbox"
+                                 SelectedKeysChanged="@(k => { _checkbox = k; StateHasChanged(); })"
+                                 SelectionMode="TreeSelectionMode.Multiple"
+                                 ShowCheckboxes="true">
+                    <BUITreeSelectorItem Text="Documents" Key="docs">
+                        <ChildContent>
+                            <BUITreeSelectorItem Text="Work" Key="work">
+                                <ChildContent>
+                                    <BUITreeSelectorItem Text="Report.pdf" Key="report" />
+                                    <BUITreeSelectorItem Text="Slides.pptx" Key="slides" />
+                                </ChildContent>
+                            </BUITreeSelectorItem>
+                            <BUITreeSelectorItem Text="Personal" Key="personal">
+                                <ChildContent>
+                                    <BUITreeSelectorItem Text="Photo.jpg" Key="photo" />
+                                </ChildContent>
+                            </BUITreeSelectorItem>
+                        </ChildContent>
+                    </BUITreeSelectorItem>
+                </BUITreeSelector>
+            </div>
+        </div>
+    };
+
+    private ComponentDemoDefinition ExpandedDemo => new()
+    {
+        CodeTitle = "Expanded.razor",
+        Code = @"<BUITreeSelector ExpandAll=""true"" />",
+        Demo = RenderExpanded()
+    };
+
+    private RenderFragment RenderExpanded() => __builder =>
+    {
+        <div class="demo-panel" style="max-width: 360px;">
+            <BUITreeSelector TItem="object"
+                             SelectedKeys="_expanded"
+                             SelectedKeysChanged="@(k => { _expanded = k; StateHasChanged(); })"
+                             ExpandAll="true"
+                             ShowCheckboxes="false">
+                <BUITreeSelectorItem Text="Level 1" Key="l1">
+                    <ChildContent>
+                        <BUITreeSelectorItem Text="Level 2" Key="l2">
+                            <ChildContent>
+                                <BUITreeSelectorItem Text="Level 3" Key="l3">
+                                    <ChildContent>
+                                        <BUITreeSelectorItem Text="Level 4" Key="l4" />
+                                    </ChildContent>
+                                </BUITreeSelectorItem>
+                            </ChildContent>
+                        </BUITreeSelectorItem>
+                    </ChildContent>
+                </BUITreeSelectorItem>
+            </BUITreeSelector>
+        </div>
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        CodeTitle = "Icons.razor",
+        Code = @"<BUITreeSelectorItem Text=""Home"" Key=""home"" Icon=""@BUIIcons.UI.Home"" />",
+        Demo = RenderIcons()
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <div class="demo-panel" style="max-width: 360px;">
+            <BUITreeSelector TItem="object"
+                             SelectedKeys="_icons"
+                             SelectedKeysChanged="@(k => { _icons = k; StateHasChanged(); })"
+                             SelectionMode="TreeSelectionMode.Multiple">
+                <BUITreeSelectorItem Text="Navigation" Key="nav" Icon="@BUIIcons.UI.Home">
+                    <ChildContent>
+                        <BUITreeSelectorItem Text="Search" Key="search" Icon="@BUIIcons.UI.Search" />
+                        <BUITreeSelectorItem Text="Settings" Key="settings" Icon="@BUIIcons.UI.Settings" />
+                    </ChildContent>
+                </BUITreeSelectorItem>
+                <BUITreeSelectorItem Text="Messages" Key="mail" Icon="@BUIIcons.UI.Email" />
+            </BUITreeSelector>
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("SelectedKeys", "HashSet<string>?", "null", "Two-way bound selection"),
+        new("SelectionMode", "TreeSelectionMode", "Single", "Single / Multiple"),
+        new("ShowCheckboxes", "bool", "true", "Show checkbox in front of each node"),
+        new("ExpandedKeys / ExpandAll", "—", "—", "Expansion control"),
+        new("AnimateExpand", "bool", "true", "Animate expand/collapse"),
+        new("Items / KeySelector / ChildrenSelector", "—", "null", "Data-driven alternative"),
+        new("NodeTemplate", "RenderFragment<…>?", "null", "Custom node rendering"),
+        new("ExpandIcon / CollapseIcon", "string", "chevrons", "Chevron overrides"),
+        new("OnLoadChildren", "Func<…>?", "null", "Lazy-load children async"),
+        new("OnNodeClick / OnNodeExpand / OnNodeCollapse", "EventCallback", "—", "Events"),
+        new("BUITreeSelectorItem.Key / Text / Icon", "—", "—", "Node identity"),
+        new("BUITreeSelectorItem.Disabled / InitiallyExpanded", "bool", "false", "Initial state")
+    ];
+}

@@ -1,0 +1,246 @@
+@page "/components/button"
+
+<PageTitle>Button — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Button"
+         Lede="The workhorse of any UI. Multiple variants, sizes, loading states, icons, and colors — all driven by parameters.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <p class="doc-section__description">Three sizes, applied through a CSS multiplier.</p>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Icons</h2>
+        <p class="doc-section__description">Icons can be placed before or after the text.</p>
+        <ComponentDemo Definition="@IconsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Colors</h2>
+        <p class="doc-section__description">Use semantic <code>PaletteColor</code> values, or any CSS color string.</p>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Loading state</h2>
+        <p class="doc-section__description">While <code>Loading</code> is true, the button is disabled and shows an indicator.</p>
+        <ComponentDemo Definition="@LoadingDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Disabled</h2>
+        <ComponentDemo Definition="@DisabledDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Full width</h2>
+        <ComponentDemo Definition="@FullWidthDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Shadow &amp; border</h2>
+        <ComponentDemo Definition="@ShadowDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Transitions</h2>
+        <p class="doc-section__description">Built-in transition presets for hover/click feedback.</p>
+        <ComponentDemo Definition="@TransitionsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIButton Text=""Click me"" OnClick=""HandleClick"" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIButton Text="Click me" OnClick="@(() => { })" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code = @"<BUIButton Text=""Small""  Size=""SizeEnum.Small"" />
+<BUIButton Text=""Medium"" Size=""SizeEnum.Medium"" />
+<BUIButton Text=""Large""  Size=""SizeEnum.Large"" />",
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Small" Size="SizeEnum.Small" />
+            <BUIButton Text="Medium" Size="SizeEnum.Medium" />
+            <BUIButton Text="Large" Size="SizeEnum.Large" />
+        </div>
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        CodeTitle = "Icons.razor",
+        Code = @"<BUIButton Text=""Add"" LeadingIcon=""@BUIIcons.MaterialIconsOutlined.i_add"" />
+<BUIButton Text=""Next"" TrailingIcon=""@BUIIcons.MaterialIconsOutlined.i_arrow_forward"" />
+<BUIButton Text=""Save"" LeadingIcon=""@BUIIcons.MaterialIconsOutlined.i_save""
+           TrailingIcon=""@BUIIcons.MaterialIconsOutlined.i_check"" />",
+        Demo = RenderIcons()
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Add" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_add" />
+            <BUIButton Text="Next" TrailingIcon="@BUIIcons.MaterialIconsOutlined.i_arrow_forward" />
+            <BUIButton Text="Save" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_save"
+                       TrailingIcon="@BUIIcons.MaterialIconsOutlined.i_check" />
+        </div>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        CodeTitle = "Colors.razor",
+        Code = @"<BUIButton Text=""Primary""
+           BackgroundColor=""@PaletteColor.Primary""
+           Color=""@PaletteColor.PrimaryContrast"" />
+<BUIButton Text=""Success""
+           BackgroundColor=""@PaletteColor.Success""
+           Color=""@PaletteColor.SuccessContrast"" />
+<BUIButton Text=""Error""
+           BackgroundColor=""@PaletteColor.Error""
+           Color=""@PaletteColor.ErrorContrast"" />",
+        Demo = RenderColors()
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Primary" BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast" />
+            <BUIButton Text="Success" BackgroundColor="@PaletteColor.Success" Color="@PaletteColor.SuccessContrast" />
+            <BUIButton Text="Warning" BackgroundColor="@PaletteColor.Warning" Color="@PaletteColor.WarningContrast" />
+            <BUIButton Text="Error" BackgroundColor="@PaletteColor.Error" Color="@PaletteColor.ErrorContrast" />
+        </div>
+    };
+
+    private ComponentDemoDefinition LoadingDemo => new()
+    {
+        CodeTitle = "Loading.razor",
+        Code = @"<BUIButton Text=""Submitting"" Loading=""true"" />
+<BUIButton Text=""Ring"" Loading=""true""
+           LoadingIndicatorVariant=""BUILoadingIndicatorVariant.Ring"" />
+<BUIButton Text=""Dots"" Loading=""true""
+           LoadingIndicatorVariant=""BUILoadingIndicatorVariant.Dots"" />",
+        Demo = RenderLoading()
+    };
+
+    private RenderFragment RenderLoading() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Submitting" Loading="true" />
+            <BUIButton Text="Ring" Loading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Ring" />
+            <BUIButton Text="Dots" Loading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Dots" />
+            <BUIButton Text="Bars" Loading="true" LoadingIndicatorVariant="BUILoadingIndicatorVariant.Bars" />
+        </div>
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        CodeTitle = "Disabled.razor",
+        Code = @"<BUIButton Text=""Disabled"" Disabled=""true"" />",
+        Demo = RenderDisabled()
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUIButton Text="Disabled" Disabled="true" />
+    };
+
+    private ComponentDemoDefinition FullWidthDemo => new()
+    {
+        CodeTitle = "FullWidth.razor",
+        Code = @"<BUIButton Text=""Full-width button"" FullWidth=""true"" />",
+        Demo = RenderFullWidth()
+    };
+
+    private RenderFragment RenderFullWidth() => __builder =>
+    {
+        <div style="width: 100%;">
+            <BUIButton Text="Full-width button" FullWidth="true" />
+        </div>
+    };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        CodeTitle = "ShadowAndBorder.razor",
+        Code = @"<BUIButton Text=""Elevated"" Shadow=""@BUIShadowPresets.Elevation(3)"" />
+<BUIButton Text=""Pill""     Border=""@BUIBorderPresets.Pill"" />
+<BUIButton Text=""Rounded""  Border=""@BUIBorderPresets.RoundedLarge"" />",
+        Demo = RenderShadow()
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Elevated" Shadow="@BUIShadowPresets.Elevation(3)" />
+            <BUIButton Text="Pill" Border="@BUIBorderPresets.Pill" />
+            <BUIButton Text="Rounded" Border="@BUIBorderPresets.RoundedLarge" />
+        </div>
+    };
+
+    private ComponentDemoDefinition TransitionsDemo => new()
+    {
+        CodeTitle = "Transitions.razor",
+        Code = @"<BUIButton Text=""Hover scale"" Transitions=""@BUITransitionPresets.HoverScale"" />
+<BUIButton Text=""Hover lift""  Transitions=""@BUITransitionPresets.HoverLift"" />
+<BUIButton Text=""Material""    Transitions=""@BUITransitionPresets.MaterialButton"" />",
+        Demo = RenderTransitions()
+    };
+
+    private RenderFragment RenderTransitions() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Hover scale" Transitions="@BUITransitionPresets.HoverScale" />
+            <BUIButton Text="Hover lift" Transitions="@BUITransitionPresets.HoverLift" />
+            <BUIButton Text="Material" Transitions="@BUITransitionPresets.MaterialButton" />
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Text", "string?", "null", "Button text"),
+        new("LeadingIcon", "string?", "null", "Icon displayed before the text"),
+        new("TrailingIcon", "string?", "null", "Icon displayed after the text"),
+        new("Variant", "BUIButtonVariant", "Default", "Visual variant"),
+        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
+        new("Density", "DensityEnum", "Standard", "Inter-element spacing"),
+        new("FullWidth", "bool", "false", "Stretch to container width"),
+        new("Disabled", "bool", "false", "Disabled state"),
+        new("Loading", "bool", "false", "Shows a loading indicator and disables clicks"),
+        new("LoadingIndicatorVariant", "BUILoadingIndicatorVariant?", "null", "Loading indicator style"),
+        new("BackgroundColor", "string?", "null", "Any CSS color — or a PaletteColor"),
+        new("Color", "string?", "null", "Text color"),
+        new("Shadow", "ShadowStyle?", "null", "Elevation / shadow (see BUIShadowPresets)"),
+        new("Border", "BorderStyle?", "null", "Border (see BUIBorderPresets)"),
+        new("DisableRipple", "bool", "false", "Disable click ripple effect"),
+        new("RippleColor", "string?", "null", "Custom ripple color"),
+        new("Transitions", "UITransitions?", "null", "Hover/click transitions"),
+        new("OnClick", "EventCallback<MouseEventArgs>", "—", "Click handler")
+    ];
+}

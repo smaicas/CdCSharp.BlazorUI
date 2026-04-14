@@ -1,0 +1,118 @@
+@page "/components/textarea"
+
+<PageTitle>TextArea — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="TextArea"
+         Lede="Multi-line text input with auto-resize, character limits, and the full InputText API surface.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Auto-resize</h2>
+        <p class="doc-section__description">Grows with its content — no scrollbar until needed.</p>
+        <ComponentDemo Definition="@AutoResizeDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Rows &amp; max length</h2>
+        <ComponentDemo Definition="@RowsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Resize behavior</h2>
+        <ComponentDemo Definition="@ResizeDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private string _basic = "";
+    private string _auto = "Type to watch me grow...";
+    private string _rows = "";
+    private string _resizeNone = "";
+    private string _resizeBoth = "";
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputTextArea @bind-Value=""_value""
+                  Label=""Description""
+                  HelperText=""Keep it short."" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputTextArea @bind-Value="_basic" Label="Description" HelperText="Keep it short." />
+    };
+
+    private ComponentDemoDefinition AutoResizeDemo => new()
+    {
+        CodeTitle = "AutoResize.razor",
+        Code = @"<BUIInputTextArea @bind-Value=""_value""
+                  Label=""Notes""
+                  AutoResize=""true""
+                  Rows=""2"" />",
+        Demo = RenderAutoResize()
+    };
+
+    private RenderFragment RenderAutoResize() => __builder =>
+    {
+        <BUIInputTextArea @bind-Value="_auto" Label="Notes" AutoResize="true" Rows="2" />
+    };
+
+    private ComponentDemoDefinition RowsDemo => new()
+    {
+        CodeTitle = "Rows.razor",
+        Code = @"<BUIInputTextArea @bind-Value=""_value""
+                  Label=""Bio""
+                  Rows=""5""
+                  MaxLength=""200"" />",
+        Demo = RenderRows()
+    };
+
+    private RenderFragment RenderRows() => __builder =>
+    {
+        <BUIInputTextArea @bind-Value="_rows" Label="Bio" Rows="5" MaxLength="200" HelperText="@($"{_rows.Length}/200")" />
+    };
+
+    private ComponentDemoDefinition ResizeDemo => new()
+    {
+        CodeTitle = "Resize.razor",
+        Code = @"<BUIInputTextArea Label=""No resize""   Resize=""TextAreaResize.None"" />
+<BUIInputTextArea Label=""Both axes""   Resize=""TextAreaResize.Both"" />",
+        Demo = RenderResize()
+    };
+
+    private RenderFragment RenderResize() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputTextArea @bind-Value="_resizeNone" Label="No resize" Resize="TextAreaResize.None" />
+            <BUIInputTextArea @bind-Value="_resizeBoth" Label="Both axes" Resize="TextAreaResize.Both" />
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "string?", "null", "Bound value"),
+        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
+        new("Rows", "int", "3", "Initial visible rows"),
+        new("MaxLength", "int?", "null", "Maximum character count"),
+        new("AutoResize", "bool", "false", "Grow with content"),
+        new("Resize", "TextAreaResize", "Vertical", "None / Both / Horizontal / Vertical"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual style"),
+        new("Size / Density", "SizeEnum / DensityEnum", "Medium / Standard", "Sizing"),
+        new("Disabled / ReadOnly / Required / Error", "bool", "false", "State flags"),
+        new("UpdateOnInput", "bool", "false", "Update on every keystroke"),
+        new("OnInput", "EventCallback<string>", "—", "Raw input event")
+    ];
+}

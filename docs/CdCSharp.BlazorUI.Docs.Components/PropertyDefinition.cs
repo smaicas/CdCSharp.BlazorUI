@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.AppTest.Wasm.Shared;
+namespace CdCSharp.BlazorUI.Docs.Components;
 
 public record PropertyDefinition(
     string Name,

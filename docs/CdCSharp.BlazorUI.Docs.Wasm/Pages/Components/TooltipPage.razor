@@ -1,0 +1,232 @@
+@page "/components/tooltip"
+
+<PageTitle>Tooltip — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Tooltip"
+         Lede="Context popups with 12 placements, five triggers, interactive content, delays, auto-close, and custom markup.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Placements</h2>
+        <p class="doc-section__description">Four sides × three alignments (<code>Start</code>, center, <code>End</code>).</p>
+        <ComponentDemo Definition="@PlacementsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Triggers</h2>
+        <ComponentDemo Definition="@TriggersDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Rich content</h2>
+        <p class="doc-section__description">Use <code>&lt;TooltipContent&gt;</code> and <code>&lt;ChildContent&gt;</code> slots.</p>
+        <ComponentDemo Definition="@RichDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Interactive + auto-close</h2>
+        <ComponentDemo Definition="@InteractiveDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Delays + offset</h2>
+        <ComponentDemo Definition="@DelaysDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUITooltip Text=""This is a tooltip"">
+    <BUIButton Text=""Hover me"" />
+</BUITooltip>",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUITooltip Text="This is a basic tooltip">
+            <BUIButton Text="Hover me" OnClick="@(() => { })" />
+        </BUITooltip>
+    };
+
+    private ComponentDemoDefinition PlacementsDemo => new()
+    {
+        CodeTitle = "Placements.razor",
+        Code = @"<BUITooltip Text=""Top"" Placement=""TooltipPlacement.Top"" />
+<BUITooltip Text=""Right"" Placement=""TooltipPlacement.Right"" />",
+        Demo = RenderPlacements()
+    };
+
+    private RenderFragment RenderPlacements() => __builder =>
+    {
+        <div class="demo-grid" style="padding: 2.5rem 0;">
+            <BUITooltip Text="Top" Placement="TooltipPlacement.Top"><BUIButton Text="Top" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="Bottom" Placement="TooltipPlacement.Bottom"><BUIButton Text="Bottom" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="Left" Placement="TooltipPlacement.Left"><BUIButton Text="Left" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="Right" Placement="TooltipPlacement.Right"><BUIButton Text="Right" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="TopStart" Placement="TooltipPlacement.TopStart"><BUIButton Text="TopStart" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="TopEnd" Placement="TooltipPlacement.TopEnd"><BUIButton Text="TopEnd" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="BottomStart" Placement="TooltipPlacement.BottomStart"><BUIButton Text="BottomStart" Size="SizeEnum.Small" /></BUITooltip>
+            <BUITooltip Text="BottomEnd" Placement="TooltipPlacement.BottomEnd"><BUIButton Text="BottomEnd" Size="SizeEnum.Small" /></BUITooltip>
+        </div>
+    };
+
+    private ComponentDemoDefinition TriggersDemo => new()
+    {
+        CodeTitle = "Triggers.razor",
+        Code = @"<BUITooltip Trigger=""TooltipTrigger.Hover"" />
+<BUITooltip Trigger=""TooltipTrigger.Focus"" />
+<BUITooltip Trigger=""TooltipTrigger.Click"" />
+<BUITooltip Trigger=""TooltipTrigger.Permanent"" />",
+        Demo = RenderTriggers()
+    };
+
+    private RenderFragment RenderTriggers() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="Hover (default)" Trigger="TooltipTrigger.Hover">
+                <BUIButton Text="Hover" />
+            </BUITooltip>
+            <BUITooltip Text="Focus via keyboard" Trigger="TooltipTrigger.Focus">
+                <BUIButton Text="Focus (Tab)" />
+            </BUITooltip>
+            <BUITooltip Text="Click to toggle" Trigger="TooltipTrigger.Click">
+                <BUIButton Text="Click" />
+            </BUITooltip>
+            <BUITooltip Text="Hover or focus" Trigger="TooltipTrigger.HoverAndFocus">
+                <BUIButton Text="Hover + Focus" />
+            </BUITooltip>
+        </div>
+    };
+
+    private ComponentDemoDefinition RichDemo => new()
+    {
+        CodeTitle = "Rich.razor",
+        Code = @"<BUITooltip>
+    <ChildContent>
+        <BUIButton Text=""Info"" />
+    </ChildContent>
+    <TooltipContent>
+        <strong>Keyboard shortcuts</strong>
+        <ul>
+            <li>Ctrl+S — Save</li>
+            <li>Ctrl+Z — Undo</li>
+        </ul>
+    </TooltipContent>
+</BUITooltip>",
+        Demo = RenderRich()
+    };
+
+    private RenderFragment RenderRich() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip>
+                <ChildContent>
+                    <BUIButton Text="With icon + text" />
+                </ChildContent>
+                <TooltipContent>
+                    <div style="text-align: center;">
+                        <BUISvgIcon Icon="@BUIIcons.UI.Info" Color="@PaletteColor.Primary" />
+                        <p style="margin: 0.5rem 0 0;"><strong>Information</strong></p>
+                        <p style="margin: 0; font-size: 0.85em;">Rich tooltip content.</p>
+                    </div>
+                </TooltipContent>
+            </BUITooltip>
+            <BUITooltip Interactive="true">
+                <ChildContent>
+                    <BUIButton Text="Keyboard shortcuts" />
+                </ChildContent>
+                <TooltipContent>
+                    <div>
+                        <strong>Shortcuts</strong>
+                        <ul style="margin: 0.5rem 0 0; padding-left: 1.2rem;">
+                            <li>Ctrl+S — Save</li>
+                            <li>Ctrl+Z — Undo</li>
+                            <li>Ctrl+Y — Redo</li>
+                        </ul>
+                    </div>
+                </TooltipContent>
+            </BUITooltip>
+        </div>
+    };
+
+    private ComponentDemoDefinition InteractiveDemo => new()
+    {
+        CodeTitle = "Interactive.razor",
+        Code = @"<BUITooltip Interactive=""true"" AutoCloseAfterMs=""3000"">…</BUITooltip>",
+        Demo = RenderInteractive()
+    };
+
+    private RenderFragment RenderInteractive() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="Closes in 2s" AutoCloseAfterMs="2000">
+                <BUIButton Text="Auto-close 2s" />
+            </BUITooltip>
+            <BUITooltip Text="Hover into tooltip to keep it open" Interactive="true" AutoCloseAfterMs="3000">
+                <BUIButton Text="Interactive + auto-close" />
+            </BUITooltip>
+            <BUITooltip Interactive="true">
+                <ChildContent>
+                    <BUIButton Text="Contains a link" />
+                </ChildContent>
+                <TooltipContent>
+                    Visit <a href="https://github.com" target="_blank">GitHub</a> for more.
+                </TooltipContent>
+            </BUITooltip>
+        </div>
+    };
+
+    private ComponentDemoDefinition DelaysDemo => new()
+    {
+        CodeTitle = "Delays.razor",
+        Code = @"<BUITooltip ShowDelay=""0"" LeaveDelay=""500"" Offset=""20"" />",
+        Demo = RenderDelays()
+    };
+
+    private RenderFragment RenderDelays() => __builder =>
+    {
+        <div class="demo-row">
+            <BUITooltip Text="Instant show" ShowDelay="0">
+                <BUIButton Text="No show delay" />
+            </BUITooltip>
+            <BUITooltip Text="500ms leave delay" LeaveDelay="500">
+                <BUIButton Text="Sticky leave" />
+            </BUITooltip>
+            <BUITooltip Text="20px away from trigger" Offset="20">
+                <BUIButton Text="20px offset" />
+            </BUITooltip>
+            <BUITooltip Text="No arrow" Arrow="false">
+                <BUIButton Text="No arrow" />
+            </BUITooltip>
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Text", "string?", "null", "Simple text content"),
+        new("TooltipContent", "RenderFragment?", "null", "Rich content (takes precedence over Text)"),
+        new("ChildContent", "RenderFragment", "—", "The trigger element"),
+        new("Placement", "TooltipPlacement", "Top", "12 positions (Top/Bottom/Left/Right × Start/center/End)"),
+        new("Trigger", "TooltipTrigger", "Hover", "Hover / Focus / HoverAndFocus / Click / Permanent"),
+        new("ShowDelay / LeaveDelay", "int?", "200 / 150", "ms before showing / hiding"),
+        new("AutoCloseAfterMs", "int?", "null", "Auto-close once visible"),
+        new("Interactive", "bool", "true", "Allow cursor to enter the tooltip"),
+        new("Arrow", "bool", "true", "Show arrow pointing to trigger"),
+        new("MaxWidth", "int?", "300", "Max width in pixels"),
+        new("Offset", "int", "8", "Gap from trigger in pixels")
+    ];
+}

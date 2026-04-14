@@ -4,22 +4,34 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CdCSharp.BlazorUI.Docs.Wasm</title>
+    <meta name="description" content="CdCSharp.BlazorUI — A modern, theme-driven Blazor component library for .NET 10." />
+    <meta name="theme-color" content="#c41236" />
+    <title>CdCSharp.BlazorUI — Official Documentation</title>
     <base href="/" />
     <link rel="preload" id="webassembly" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <link href="_content/CdCSharp.BlazorUI/css/blazorui.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/app.css" />
-    <!-- If you add any scoped CSS files, uncomment the following to load them
-    <link href="CdCSharp.BlazorUI.Docs.Wasm.styles.css" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="css/docs.css" />
+    <link href="CdCSharp.BlazorUI.Docs.Wasm.styles.css" rel="stylesheet" />
     <script type="importmap"></script>
 </head>
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
+        <div class="docs-bootstrap">
+            <div class="docs-bootstrap__logo">
+                <span class="docs-bootstrap__spark"></span>
+            </div>
+            <div class="docs-bootstrap__text">
+                <strong>BlazorUI</strong>
+                <span>Booting documentation&hellip;</span>
+            </div>
+        </div>
     </div>
 
     <div id="blazor-error-ui">

@@ -1,0 +1,244 @@
+@page "/components/datagrid"
+
+<PageTitle>DataGrid — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="DataGrid"
+         Lede="Strongly-typed tabular data with sorting, filtering, pagination, selection, custom templates, and more — declaratively.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <p class="doc-section__description">Bind <code>Items</code> and declare <code>&lt;BUIDataColumn&gt;</code> elements inside <code>&lt;Columns&gt;</code>.</p>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sortable</h2>
+        <p class="doc-section__description">Enable <code>Sortable</code> on the grid and on the columns you want clickable.</p>
+        <ComponentDemo Definition="@SortableDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Filter + pagination</h2>
+        <ComponentDemo Definition="@FilterPageDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Multiple selection</h2>
+        <ComponentDemo Definition="@SelectionDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Custom templates</h2>
+        <p class="doc-section__description">Use <code>Template</code> with <code>context</code> to render any markup inside a cell.</p>
+        <ComponentDemo Definition="@TemplateDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Alignment &amp; width</h2>
+        <ComponentDemo Definition="@AlignDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private record Person(int Id, string Name, string Email, int Age);
+
+    private readonly List<Person> _people =
+    [
+        new(1, "Alice Johnson", "alice@example.com", 29),
+        new(2, "Marcus Chen", "marcus@example.com", 34),
+        new(3, "Priya Patel", "priya@example.com", 41),
+        new(4, "Diego Martinez", "diego@example.com", 26),
+        new(5, "Hana Nakamura", "hana@example.com", 38)
+    ];
+
+    private readonly List<Person> _big = Enumerable.Range(1, 35)
+        .Select(i => new Person(i, $"Person {i:D2}", $"person{i}@example.com", 20 + (i % 40)))
+        .ToList();
+
+    private HashSet<Person> _selected = new();
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIDataGrid Items=""_people"">
+    <Columns>
+        <BUIDataColumn TItem=""Person"" Property=""@(p => p.Id)""    Header=""ID"" />
+        <BUIDataColumn TItem=""Person"" Property=""@(p => p.Name)""  Header=""Name"" />
+        <BUIDataColumn TItem=""Person"" Property=""@(p => p.Email)"" Header=""Email"" />
+        <BUIDataColumn TItem=""Person"" Property=""@(p => p.Age)""   Header=""Age"" />
+    </Columns>
+</BUIDataGrid>",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIDataGrid Items="_people">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    private ComponentDemoDefinition SortableDemo => new()
+    {
+        CodeTitle = "Sortable.razor",
+        Code = @"<BUIDataGrid Items=""_people"" Sortable=""true"">
+    <Columns>
+        <BUIDataColumn TItem=""Person"" Property=""@(p => p.Name)"" Header=""Name"" Sortable=""true"" />
+        <BUIDataColumn TItem=""Person"" Property=""@(p => p.Age)""  Header=""Age""  Sortable=""true"" />
+    </Columns>
+</BUIDataGrid>",
+        Demo = RenderSortable()
+    };
+
+    private RenderFragment RenderSortable() => __builder =>
+    {
+        <BUIDataGrid Items="_people" Sortable="true">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" Sortable="true" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" Sortable="true" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" Sortable="true" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    private ComponentDemoDefinition FilterPageDemo => new()
+    {
+        CodeTitle = "FilterPage.razor",
+        Code = @"<BUIDataGrid Items=""_people""
+             Filterable=""true""
+             FilterPlaceholder=""Search...""
+             PageSize=""10""
+             ShowPageSizeSelector=""true"">
+    <Columns> ... </Columns>
+</BUIDataGrid>",
+        Demo = RenderFilterPage()
+    };
+
+    private RenderFragment RenderFilterPage() => __builder =>
+    {
+        <BUIDataGrid Items="_big"
+                     Filterable="true"
+                     FilterPlaceholder="Search..."
+                     PageSize="10"
+                     ShowPageSizeSelector="true"
+                     PageSizeOptions="@(new[] { 5, 10, 25 })">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" Filterable="true" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" Filterable="true" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" Filterable="true" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" Filterable="true" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    private ComponentDemoDefinition SelectionDemo => new()
+    {
+        CodeTitle = "Selection.razor",
+        Code = @"<BUIDataGrid TItem=""Person""
+             Items=""_people""
+             SelectionMode=""SelectionMode.Multiple""
+             @bind-SelectedItems=""_selected"">
+    <Columns> ... </Columns>
+</BUIDataGrid>",
+        Demo = RenderSelection()
+    };
+
+    private RenderFragment RenderSelection() => __builder =>
+    {
+        <div class="demo-stack">
+            <div>Selected: <strong>@_selected.Count</strong></div>
+            <BUIDataGrid TItem="Person"
+                         Items="_people"
+                         SelectionMode="SelectionMode.Multiple"
+                         SelectedItems="_selected"
+                         SelectedItemsChanged="@(s => { _selected = s; StateHasChanged(); })">
+                <Columns>
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
+                    <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" />
+                </Columns>
+            </BUIDataGrid>
+        </div>
+    };
+
+    private ComponentDemoDefinition TemplateDemo => new()
+    {
+        CodeTitle = "Template.razor",
+        Code = @"<BUIDataColumn TItem=""Person"" Header=""Person"">
+    <Template>
+        <strong>@context.Name</strong>
+        <div style=""font-size: 0.85em; opacity: 0.7;"">@context.Email</div>
+    </Template>
+</BUIDataColumn>",
+        Demo = RenderTemplate()
+    };
+
+    private RenderFragment RenderTemplate() => __builder =>
+    {
+        <BUIDataGrid Items="_people">
+            <Columns>
+                <BUIDataColumn TItem="Person" Header="Person">
+                    <Template>
+                        <strong>@context.Name</strong>
+                        <div style="font-size: 0.85em; opacity: 0.7;">@context.Email</div>
+                    </Template>
+                </BUIDataColumn>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age" Align="ColumnAlign.Right" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    private ComponentDemoDefinition AlignDemo => new()
+    {
+        CodeTitle = "Align.razor",
+        Code = @"<BUIDataColumn TItem=""Person"" Property=""@(p => p.Name)"" Align=""ColumnAlign.Left""   Width=""200px"" />
+<BUIDataColumn TItem=""Person"" Property=""@(p => p.Email)"" Align=""ColumnAlign.Center"" />
+<BUIDataColumn TItem=""Person"" Property=""@(p => p.Age)""  Align=""ColumnAlign.Right""  Width=""80px"" />",
+        Demo = RenderAlign()
+    };
+
+    private RenderFragment RenderAlign() => __builder =>
+    {
+        <BUIDataGrid Items="_people">
+            <Columns>
+                <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name (left)" Align="ColumnAlign.Left" Width="200px" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email (center)" Align="ColumnAlign.Center" />
+                <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="Age (right)" Align="ColumnAlign.Right" Width="80px" />
+            </Columns>
+        </BUIDataGrid>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Items", "IEnumerable<TItem>?", "null", "Data source"),
+        new("Columns", "RenderFragment", "—", "Column declarations"),
+        new("Sortable", "bool", "false", "Enable sorting"),
+        new("Filterable", "bool", "false", "Enable global text filter"),
+        new("PageSize", "int?", "null", "Rows per page (enables pagination)"),
+        new("ShowPageSizeSelector", "bool", "false", "Expose the page-size dropdown"),
+        new("SelectionMode", "SelectionMode", "None", "None / Single / Multiple"),
+        new("SelectedItems", "HashSet<TItem>?", "null", "Two-way bound selection set"),
+        new("Hoverable", "bool", "true", "Highlight rows on hover"),
+        new("Density / Size", "DensityEnum / SizeEnum", "Standard / Medium", "Compact / Standard / Comfortable"),
+        new("FixedHeader", "bool", "false", "Sticky header when scrolling"),
+        new("CellBorder / RowBorder / Border", "BorderStyle?", "null", "Border configuration"),
+        new("ItemPattern", "RowStylePattern?", "null", "Striped / zebra pattern"),
+        new("Loading / LoadingContent", "bool / RenderFragment?", "—", "Loading state"),
+        new("EmptyContent", "RenderFragment?", "null", "Custom empty state"),
+        new("FooterTemplate", "RenderFragment?", "null", "Footer row"),
+        new("OnRowClick / OnSort / OnFilter / OnPageChange", "EventCallback", "—", "Event hooks")
+    ];
+}

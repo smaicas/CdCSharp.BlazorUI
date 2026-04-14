@@ -4,7 +4,12 @@
       "Bash(dotnet build:*)",
       "Bash(\"V:\\\\Work\\\\CdCSharp\\\\Projects\\\\BlazorUI\\\\src\\\\CdCSharp.BlazorUI.BuildTools\\\\bin\\\\Debug\\\\net10.0\\\\CdCSharp.BlazorUI.BuildTools.exe\" \"V:\\\\Work\\\\CdCSharp\\\\Projects\\\\BlazorUI\\\\src\\\\CdCSharp.BlazorUI\")",
       "Bash(iconv -f ISO-8859-1 -t UTF-8 src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts -o src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts.utf82)",
-      "Bash(iconv -f ISO-8859-1 -t UTF-8 \"src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts\")"
+      "Bash(iconv -f ISO-8859-1 -t UTF-8 \"src/CdCSharp.BlazorUI/Types/Dropdown/DropdownInterop.ts\")",
+      "Bash(grep -E \"\\\\.\\(cs|razor\\)$\")",
+      "Bash(grep -E \"\\\\.\\(cs\\)$\")",
+      "Bash(wc -l docs/CdCSharp.BlazorUI.Docs.Wasm/Pages/Components/*.razor docs/CdCSharp.BlazorUI.Docs.Wasm/Pages/*.razor)",
+      "Bash(ls -1 docs/CdCSharp.BlazorUI.Docs.Wasm/Pages/Components/*.razor)",
+      "Bash(xargs -I {} basename {})"
     ]
   }
 }

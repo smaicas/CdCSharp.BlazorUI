@@ -1,0 +1,156 @@
+@page "/components/checkbox"
+
+<PageTitle>Checkbox — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Checkbox"
+         Lede="Boolean input with label, helper text, and custom icons for checked/unchecked states.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Colors</h2>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">States</h2>
+        <ComponentDemo Definition="@StatesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Custom icons</h2>
+        <ComponentDemo Definition="@IconsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private bool _basic = true;
+    private bool _primary = true;
+    private bool _success;
+    private bool _warning;
+    private bool _small;
+    private bool _medium = true;
+    private bool _large;
+    private bool _disabled = true;
+    private bool _heart = true;
+    private bool _star;
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputCheckbox @bind-Value=""_value"" Label=""Accept terms"" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_basic" Label="Accept terms" HelperText="You must accept to continue." />
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        CodeTitle = "Colors.razor",
+        Code = @"<BUIInputCheckbox Color=""@PaletteColor.Primary"" Label=""Primary"" />
+<BUIInputCheckbox Color=""@PaletteColor.Success"" Label=""Success"" />
+<BUIInputCheckbox Color=""@PaletteColor.Warning"" Label=""Warning"" />",
+        Demo = RenderColors()
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputCheckbox @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary" />
+            <BUIInputCheckbox @bind-Value="_success" Color="@PaletteColor.Success" Label="Success" />
+            <BUIInputCheckbox @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning" />
+        </div>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code = @"<BUIInputCheckbox Size=""SizeEnum.Small"" Label=""Small"" />
+<BUIInputCheckbox Size=""SizeEnum.Medium"" Label=""Medium"" />
+<BUIInputCheckbox Size=""SizeEnum.Large"" Label=""Large"" />",
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIInputCheckbox @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
+            <BUIInputCheckbox @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
+            <BUIInputCheckbox @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
+        </div>
+    };
+
+    private ComponentDemoDefinition StatesDemo => new()
+    {
+        CodeTitle = "States.razor",
+        Code = @"<BUIInputCheckbox Disabled=""true"" Label=""Disabled"" />
+<BUIInputCheckbox Required=""true"" Label=""Required"" />",
+        Demo = RenderStates()
+    };
+
+    private RenderFragment RenderStates() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputCheckbox @bind-Value="_disabled" Disabled="true" Label="Disabled" />
+            <BUIInputCheckbox @bind-Value="_basic" Required="true" Label="Required" />
+        </div>
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        CodeTitle = "Icons.razor",
+        Code = @"<BUIInputCheckbox CheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite""
+                   UncheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite_border""
+                   Color=""@PaletteColor.Error""
+                   Label=""Favorite"" />",
+        Demo = RenderIcons()
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputCheckbox @bind-Value="_heart"
+                              CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite"
+                              UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border"
+                              Color="@PaletteColor.Error"
+                              Label="Favorite" />
+            <BUIInputCheckbox @bind-Value="_star"
+                              CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star"
+                              UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star_border"
+                              Color="@PaletteColor.Warning"
+                              Label="Starred" />
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "bool", "false", "Bound value"),
+        new("Label", "string?", "null", "Label text"),
+        new("HelperText", "string?", "null", "Helper text below"),
+        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
+        new("Color", "string?", "null", "Check color"),
+        new("CheckedIcon", "string?", "null", "Custom icon when checked"),
+        new("UncheckedIcon", "string?", "null", "Custom icon when unchecked"),
+        new("IndeterminateIcon", "string?", "null", "Icon for indeterminate state"),
+        new("Disabled", "bool", "false", "Disabled state"),
+        new("Required", "bool", "false", "Required marker")
+    ];
+}

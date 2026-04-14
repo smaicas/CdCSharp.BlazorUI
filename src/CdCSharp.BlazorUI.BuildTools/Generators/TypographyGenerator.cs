@@ -90,6 +90,8 @@ code, kbd, samp {
     font-size: calc(0.875em * var(--bui-size-multiplier, 1));
     padding-inline: 0.375em;
     padding-block: 0.125em;
+    background-color: var(--palette-surface);
+    font-weight: 500;
 }
 
 pre {

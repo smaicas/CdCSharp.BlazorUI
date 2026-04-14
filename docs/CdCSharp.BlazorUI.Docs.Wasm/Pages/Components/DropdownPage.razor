@@ -1,0 +1,146 @@
+@page "/components/dropdown"
+
+<PageTitle>Dropdown — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Dropdown"
+         Lede="Single-select list with keyboard navigation, search, and strongly-typed values. Options are declared as children.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Searchable</h2>
+        <p class="doc-section__description">Set <code>Searchable</code> to filter options by typing.</p>
+        <ComponentDemo Definition="@SearchableDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Disabled options</h2>
+        <ComponentDemo Definition="@DisabledOptionDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Placement</h2>
+        <ComponentDemo Definition="@PlacementDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private string? _basic = "en";
+    private string? _searchable = null;
+    private string? _disabled = "apple";
+    private string? _placement = "up";
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputDropdown TValue=""string"" @bind-Value=""_value"" Label=""Language"">
+    <DropdownOption TValue=""string"" Value=""en"">English</DropdownOption>
+    <DropdownOption TValue=""string"" Value=""es"">Spanish</DropdownOption>
+    <DropdownOption TValue=""string"" Value=""fr"">French</DropdownOption>
+</BUIInputDropdown>",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputDropdown TValue="string" @bind-Value="_basic" Label="Language">
+            <DropdownOption TValue="string" Value="@("en")">English</DropdownOption>
+            <DropdownOption TValue="string" Value="@("es")">Spanish</DropdownOption>
+            <DropdownOption TValue="string" Value="@("fr")">French</DropdownOption>
+            <DropdownOption TValue="string" Value="@("de")">German</DropdownOption>
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition SearchableDemo => new()
+    {
+        CodeTitle = "Searchable.razor",
+        Code = @"<BUIInputDropdown TValue=""string""
+                   @bind-Value=""_value""
+                   Label=""Country""
+                   Searchable=""true""
+                   SearchPlaceholder=""Type a country..."">
+    <DropdownOption TValue=""string"" Value=""us"">United States</DropdownOption>
+    <DropdownOption TValue=""string"" Value=""mx"">Mexico</DropdownOption>
+    ...
+</BUIInputDropdown>",
+        Demo = RenderSearchable()
+    };
+
+    private RenderFragment RenderSearchable() => __builder =>
+    {
+        <BUIInputDropdown TValue="string" @bind-Value="_searchable" Label="Country" Searchable="true" SearchPlaceholder="Type a country...">
+            <DropdownOption TValue="string" Value="@("us")">United States</DropdownOption>
+            <DropdownOption TValue="string" Value="@("mx")">Mexico</DropdownOption>
+            <DropdownOption TValue="string" Value="@("ca")">Canada</DropdownOption>
+            <DropdownOption TValue="string" Value="@("br")">Brazil</DropdownOption>
+            <DropdownOption TValue="string" Value="@("ar")">Argentina</DropdownOption>
+            <DropdownOption TValue="string" Value="@("es")">Spain</DropdownOption>
+            <DropdownOption TValue="string" Value="@("fr")">France</DropdownOption>
+            <DropdownOption TValue="string" Value="@("de")">Germany</DropdownOption>
+            <DropdownOption TValue="string" Value="@("uk")">United Kingdom</DropdownOption>
+            <DropdownOption TValue="string" Value="@("jp")">Japan</DropdownOption>
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition DisabledOptionDemo => new()
+    {
+        CodeTitle = "DisabledOption.razor",
+        Code = @"<DropdownOption TValue=""string"" Value=""kiwi"" Disabled=""true"">Kiwi (out of stock)</DropdownOption>",
+        Demo = RenderDisabledOption()
+    };
+
+    private RenderFragment RenderDisabledOption() => __builder =>
+    {
+        <BUIInputDropdown TValue="string" @bind-Value="_disabled" Label="Fruit">
+            <DropdownOption TValue="string" Value="@("apple")">Apple</DropdownOption>
+            <DropdownOption TValue="string" Value="@("banana")">Banana</DropdownOption>
+            <DropdownOption TValue="string" Value="@("kiwi")" Disabled="true">Kiwi (out of stock)</DropdownOption>
+            <DropdownOption TValue="string" Value="@("orange")">Orange</DropdownOption>
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition PlacementDemo => new()
+    {
+        CodeTitle = "Placement.razor",
+        Code = @"<BUIInputDropdown Placement=""DropdownPlacement.Top"" ... />",
+        Demo = RenderPlacement()
+    };
+
+    private RenderFragment RenderPlacement() => __builder =>
+    {
+        <div style="min-height: 220px; display: flex; align-items: flex-end;">
+            <BUIInputDropdown TValue="string" @bind-Value="_placement" Label="Opens upward" Placement="DropdownPlacement.Top">
+                <DropdownOption TValue="string" Value="@("up")">Option 1</DropdownOption>
+                <DropdownOption TValue="string" Value="@("left")">Option 2</DropdownOption>
+                <DropdownOption TValue="string" Value="@("right")">Option 3</DropdownOption>
+            </BUIInputDropdown>
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue?", "default", "Bound value"),
+        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
+        new("Searchable", "bool", "false", "Show search input"),
+        new("SearchPlaceholder", "string", "Search...", "Placeholder for search input"),
+        new("SearchMode", "SearchMode", "Smart", "Contains / StartsWith / Smart"),
+        new("Placement", "DropdownPlacement", "Auto", "Auto / Top / Bottom / BottomStart / BottomEnd / …"),
+        new("CloseOnSelect", "bool", "true", "Close after selection"),
+        new("MaxVisibleItems", "int", "8", "Items shown before scrolling"),
+        new("ItemHeight", "int", "40", "Item height in px (for virtualization)"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
+        new("Size / Density", "SizeEnum / DensityEnum", "—", "Sizing"),
+        new("Disabled / ReadOnly / Required / IsLoading", "bool", "false", "State flags"),
+        new("NoOptionsTemplate / NoResultsTemplate", "RenderFragment?", "null", "Empty-state customization")
+    ];
+}

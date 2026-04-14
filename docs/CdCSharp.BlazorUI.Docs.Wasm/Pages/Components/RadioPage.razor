@@ -1,0 +1,148 @@
+@page "/components/radio"
+
+<PageTitle>Radio — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Radio"
+         Lede="Single-selection group using RadioOption children. Vertical or horizontal orientation, clearable, strongly-typed values.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Orientation</h2>
+        <ComponentDemo Definition="@OrientationDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Clearable</h2>
+        <p class="doc-section__description">Allow users to clear the selection with a reset action.</p>
+        <ComponentDemo Definition="@ClearableDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Custom icons</h2>
+        <ComponentDemo Definition="@IconsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private string? _basic = "medium";
+    private string? _horizontal = "standard";
+    private string? _clearable = "paid";
+    private string? _icon = "heart";
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputRadio @bind-Value=""_value"" Label=""Size"">
+    <RadioOption Value=""@(""small"")"">Small</RadioOption>
+    <RadioOption Value=""@(""medium"")"">Medium</RadioOption>
+    <RadioOption Value=""@(""large"")"">Large</RadioOption>
+</BUIInputRadio>",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_basic" Label="Size" HelperText="Choose a shirt size.">
+            <RadioOption Value="@("small")">Small</RadioOption>
+            <RadioOption Value="@("medium")">Medium</RadioOption>
+            <RadioOption Value="@("large")">Large</RadioOption>
+        </BUIInputRadio>
+    };
+
+    private ComponentDemoDefinition OrientationDemo => new()
+    {
+        CodeTitle = "Orientation.razor",
+        Code = @"<BUIInputRadio @bind-Value=""_value""
+               Orientation=""RadioOrientation.Horizontal""
+               Label=""Density"">
+    <RadioOption Value=""@(""compact"")"">Compact</RadioOption>
+    <RadioOption Value=""@(""standard"")"">Standard</RadioOption>
+    <RadioOption Value=""@(""cozy"")"">Cozy</RadioOption>
+</BUIInputRadio>",
+        Demo = RenderOrientation()
+    };
+
+    private RenderFragment RenderOrientation() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_horizontal" Orientation="RadioOrientation.Horizontal" Label="Density">
+            <RadioOption Value="@("compact")">Compact</RadioOption>
+            <RadioOption Value="@("standard")">Standard</RadioOption>
+            <RadioOption Value="@("cozy")">Cozy</RadioOption>
+        </BUIInputRadio>
+    };
+
+    private ComponentDemoDefinition ClearableDemo => new()
+    {
+        CodeTitle = "Clearable.razor",
+        Code = @"<BUIInputRadio @bind-Value=""_value""
+               Clearable=""true""
+               ClearText=""No preference""
+               Label=""Payment status"">
+    <RadioOption Value=""@(""paid"")"">Paid</RadioOption>
+    <RadioOption Value=""@(""pending"")"">Pending</RadioOption>
+    <RadioOption Value=""@(""overdue"")"">Overdue</RadioOption>
+</BUIInputRadio>",
+        Demo = RenderClearable()
+    };
+
+    private RenderFragment RenderClearable() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_clearable" Clearable="true" ClearText="No preference" Label="Payment status">
+            <RadioOption Value="@("paid")">Paid</RadioOption>
+            <RadioOption Value="@("pending")">Pending</RadioOption>
+            <RadioOption Value="@("overdue")">Overdue</RadioOption>
+        </BUIInputRadio>
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        CodeTitle = "Icons.razor",
+        Code = @"<BUIInputRadio @bind-Value=""_value""
+               CheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite""
+               UncheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite_border""
+               Color=""@PaletteColor.Error""
+               Label=""Pick a reaction"">
+    <RadioOption Value=""@(""heart"")"">Heart</RadioOption>
+    <RadioOption Value=""@(""star"")"">Star</RadioOption>
+</BUIInputRadio>",
+        Demo = RenderIcons()
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_icon"
+                       CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite"
+                       UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border"
+                       Color="@PaletteColor.Error"
+                       Label="Pick a reaction">
+            <RadioOption Value="@("heart")">Heart</RadioOption>
+            <RadioOption Value="@("star")">Star</RadioOption>
+        </BUIInputRadio>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "T?", "default", "Bound value — any type"),
+        new("Label", "string?", "null", "Group label"),
+        new("HelperText", "string?", "null", "Helper text below"),
+        new("Orientation", "RadioOrientation", "Vertical", "Vertical / Horizontal"),
+        new("Size", "SizeEnum", "Medium", "Radio button size"),
+        new("Color", "string?", "null", "Check color"),
+        new("Clearable", "bool", "false", "Show a 'clear selection' action"),
+        new("ClearText", "string", "Clear", "Label for the clear action"),
+        new("CheckedIcon / UncheckedIcon", "string?", "null", "Custom state icons"),
+        new("Disabled", "bool", "false", "Disable the whole group"),
+        new("Required", "bool", "false", "Required marker")
+    ];
+}

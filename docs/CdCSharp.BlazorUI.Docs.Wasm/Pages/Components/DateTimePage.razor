@@ -1,0 +1,128 @@
+@page "/components/datetime"
+
+<PageTitle>DateTime — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="DateTime"
+         Lede="One generic input for DateOnly, TimeOnly, DateTime, and DateTimeOffset. Culture-aware parsing and validation, plus standalone pickers.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Date input</h2>
+        <p class="doc-section__description">Use <code>TValue="DateOnly"</code> for date-only input.</p>
+        <ComponentDemo Definition="@DateDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Time input</h2>
+        <ComponentDemo Definition="@TimeDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Full datetime</h2>
+        <ComponentDemo Definition="@DateTimeDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Date picker</h2>
+        <p class="doc-section__description"><code>BUIDatePicker</code> is a calendar-only component (no input).</p>
+        <ComponentDemo Definition="@DatePickerDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Time picker</h2>
+        <p class="doc-section__description"><code>BUITimePicker</code> is a clock-only component (no input).</p>
+        <ComponentDemo Definition="@TimePickerDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private DateOnly? _date = DateOnly.FromDateTime(DateTime.Today);
+    private TimeOnly? _time = new(14, 30);
+    private DateTime? _dateTime = DateTime.Now;
+    private DateOnly? _pickerDate = DateOnly.FromDateTime(DateTime.Today);
+    private TimeOnly? _pickerTime = new(9, 0);
+
+    private ComponentDemoDefinition DateDemo => new()
+    {
+        CodeTitle = "Date.razor",
+        Code = @"<BUIInputDateTime TValue=""DateOnly?""
+                  @bind-Value=""_date""
+                  Label=""Start date"" />",
+        Demo = RenderDate()
+    };
+
+    private RenderFragment RenderDate() => __builder =>
+    {
+        <BUIInputDateTime TValue="DateOnly?" @bind-Value="_date" Label="Start date" />
+    };
+
+    private ComponentDemoDefinition TimeDemo => new()
+    {
+        CodeTitle = "Time.razor",
+        Code = @"<BUIInputDateTime TValue=""TimeOnly?""
+                  @bind-Value=""_time""
+                  Label=""Meeting time"" />",
+        Demo = RenderTime()
+    };
+
+    private RenderFragment RenderTime() => __builder =>
+    {
+        <BUIInputDateTime TValue="TimeOnly?" @bind-Value="_time" Label="Meeting time" />
+    };
+
+    private ComponentDemoDefinition DateTimeDemo => new()
+    {
+        CodeTitle = "DateTime.razor",
+        Code = @"<BUIInputDateTime TValue=""DateTime?""
+                  @bind-Value=""_dateTime""
+                  Label=""Appointment"" />",
+        Demo = RenderDateTime()
+    };
+
+    private RenderFragment RenderDateTime() => __builder =>
+    {
+        <BUIInputDateTime TValue="DateTime?" @bind-Value="_dateTime" Label="Appointment" />
+    };
+
+    private ComponentDemoDefinition DatePickerDemo => new()
+    {
+        CodeTitle = "DatePicker.razor",
+        Code = @"<BUIDatePicker @bind-Value=""_date"" />",
+        Demo = RenderDatePicker()
+    };
+
+    private RenderFragment RenderDatePicker() => __builder =>
+    {
+        <BUIDatePicker @bind-Value="_pickerDate" />
+    };
+
+    private ComponentDemoDefinition TimePickerDemo => new()
+    {
+        CodeTitle = "TimePicker.razor",
+        Code = @"<BUITimePicker @bind-Value=""_time"" />",
+        Demo = RenderTimePicker()
+    };
+
+    private RenderFragment RenderTimePicker() => __builder =>
+    {
+        <BUITimePicker @bind-Value="_pickerTime" />
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("TValue", "type", "—", "DateOnly / TimeOnly / DateTime / DateTimeOffset (or nullable)"),
+        new("Value", "TValue?", "default", "Bound value"),
+        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
+        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
+        new("Size / Density", "SizeEnum / DensityEnum", "—", "Sizing"),
+        new("Disabled / ReadOnly / Required", "bool", "false", "State flags"),
+        new("BackgroundColor / Color", "string?", "null", "Custom colors"),
+        new("PrefixIcon / SuffixIcon / PrefixText / SuffixText", "string?", "null", "Addons")
+    ];
+}

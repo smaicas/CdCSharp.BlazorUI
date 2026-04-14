@@ -1,0 +1,169 @@
+@page "/components/svgicon"
+
+<PageTitle>SVG Icon — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="SVG Icon"
+         Lede="Render SVGs from the bundled Material or UI icon sets (or any path/string). Inherits color and scales with size.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Material Icons</h2>
+        <p class="doc-section__description">Use <code>BUIIcons.MaterialIconsOutlined</code>, <code>.MaterialIconsRound</code>, <code>.MaterialIconsSharp</code>, or <code>.MaterialIconsFilled</code>.</p>
+        <ComponentDemo Definition="@MaterialDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">UI Icons</h2>
+        <p class="doc-section__description">A curated set for UI chrome: <code>BUIIcons.UI.*</code>.</p>
+        <ComponentDemo Definition="@UIDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Colors</h2>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Clickable</h2>
+        <ComponentDemo Definition="@ClickableDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private int _clickCount;
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUISvgIcon Icon=""@BUIIcons.UI.Home"" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUISvgIcon Icon="@BUIIcons.UI.Home" />
+    };
+
+    private ComponentDemoDefinition MaterialDemo => new()
+    {
+        CodeTitle = "Material.razor",
+        Code = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsOutlined.i_favorite"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsOutlined.i_star"" />
+<BUISvgIcon Icon=""@BUIIcons.MaterialIconsOutlined.i_settings"" />",
+        Demo = RenderMaterial()
+    };
+
+    private RenderFragment RenderMaterial() => __builder =>
+    {
+        <div class="demo-row">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_favorite" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_settings" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_search" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_cart" />
+        </div>
+    };
+
+    private ComponentDemoDefinition UIDemo => new()
+    {
+        CodeTitle = "UI.razor",
+        Code = @"<BUISvgIcon Icon=""@BUIIcons.UI.Home"" />
+<BUISvgIcon Icon=""@BUIIcons.UI.Search"" />
+<BUISvgIcon Icon=""@BUIIcons.UI.Settings"" />",
+        Demo = RenderUI()
+    };
+
+    private RenderFragment RenderUI() => __builder =>
+    {
+        <div class="demo-row">
+            <BUISvgIcon Icon="@BUIIcons.UI.Home" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Search" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Settings" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Notifications" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Email" />
+        </div>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code = @"<BUISvgIcon Icon=""..."" Size=""SizeEnum.Small"" />
+<BUISvgIcon Icon=""..."" Size=""SizeEnum.Medium"" />
+<BUISvgIcon Icon=""..."" Size=""SizeEnum.Large"" />",
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row" style="align-items: center;">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Medium" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Large" />
+        </div>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        CodeTitle = "Colors.razor",
+        Code = @"<BUISvgIcon Icon=""..."" Color=""@PaletteColor.Primary"" />
+<BUISvgIcon Icon=""..."" Color=""@PaletteColor.Error"" />",
+        Demo = RenderColors()
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <div class="demo-row">
+            <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Primary" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Secondary" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Error" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Success" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Warning" />
+        </div>
+    };
+
+    private ComponentDemoDefinition ClickableDemo => new()
+    {
+        CodeTitle = "Clickable.razor",
+        Code = @"<BUISvgIcon Icon=""@BUIIcons.MaterialIconsSharp.i_thumb_up""
+            Color=""@PaletteColor.Primary""
+            Size=""SizeEnum.Large""
+            OnClick=""HandleClick"" />",
+        Demo = RenderClickable()
+    };
+
+    private RenderFragment RenderClickable() => __builder =>
+    {
+        <div class="demo-row" style="align-items: center;">
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_thumb_up"
+                        Color="@PaletteColor.Primary"
+                        Size="SizeEnum.Large"
+                        OnClick="@(() => _clickCount++)" />
+            <span>Clicked @_clickCount times</span>
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Icon", "string", "—", "SVG path or value from BUIIcons.* sets"),
+        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
+        new("Color", "string?", "null", "Fill color — accepts palette vars, hex, rgb, currentColor"),
+        new("Title", "string?", "null", "Accessible title (shows as tooltip)"),
+        new("OnClick", "EventCallback", "—", "Click handler (also adds pointer cursor)")
+    ];
+}

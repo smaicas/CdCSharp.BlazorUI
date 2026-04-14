@@ -1,0 +1,114 @@
+@page "/components/codeblock"
+
+<PageTitle>Code Block — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Code Block"
+         Lede="Syntax-highlighted code with a title, language label, and one-click copy. Auto-dedents, auto-formats.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Languages</h2>
+        <p class="doc-section__description">Pick from any <code>SyntaxHighlightLanguage</code> — CSharp, Razor, TypeScript, Css, Json.</p>
+        <ComponentDemo Definition="@LanguagesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Custom title</h2>
+        <p class="doc-section__description">Set <code>Title</code> to override the language badge with a filename or custom label.</p>
+        <ComponentDemo Definition="@TitleDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUICodeBlock Language=""SyntaxHighlightLanguage.CSharp""
+              Code=""@(""var name = \""BlazorUI\"";"")"" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
+                      Code="@("var name = \"BlazorUI\";\nConsole.WriteLine($\"Hello {name}!\");")" />
+    };
+
+    private ComponentDemoDefinition LanguagesDemo => new()
+    {
+        CodeTitle = "Languages.razor",
+        Code = @"<BUICodeBlock Language=""SyntaxHighlightLanguage.Razor"" Code=""..."" />
+<BUICodeBlock Language=""SyntaxHighlightLanguage.Css""   Code=""..."" />
+<BUICodeBlock Language=""SyntaxHighlightLanguage.Json""  Code=""..."" />",
+        Demo = RenderLanguages()
+    };
+
+    private RenderFragment RenderLanguages() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUICodeBlock Language="SyntaxHighlightLanguage.Razor" Code="@("<BUIButton Text=\"Save\" />")" />
+            <BUICodeBlock Language="SyntaxHighlightLanguage.Css" Code="@(".bui-demo { color: var(--palette-primary); }")" />
+            <BUICodeBlock Language="SyntaxHighlightLanguage.Json" Code="@("{\n  \"name\": \"BlazorUI\",\n  \"version\": \"1.0.0\"\n}")" />
+        </div>
+    };
+
+    private ComponentDemoDefinition TitleDemo => new()
+    {
+        CodeTitle = "Title.razor",
+        Code = @"<BUICodeBlock Title=""Program.cs""
+              Language=""SyntaxHighlightLanguage.CSharp""
+              Code=""..."" />",
+        Demo = RenderTitle()
+    };
+
+    private RenderFragment RenderTitle() => __builder =>
+    {
+        <BUICodeBlock Title="Program.cs"
+                      Language="SyntaxHighlightLanguage.CSharp"
+                      Code="@("builder.Services.AddBlazorUI();\nawait builder.Build().RunAsync();")" />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code = @"<BUICodeBlock Size=""SizeEnum.Small""  ... />
+<BUICodeBlock Size=""SizeEnum.Medium"" ... />
+<BUICodeBlock Size=""SizeEnum.Large""  ... />",
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUICodeBlock Size="SizeEnum.Small" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Small\" />")' />
+            <BUICodeBlock Size="SizeEnum.Medium" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Medium\" />")' />
+            <BUICodeBlock Size="SizeEnum.Large" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Large\" />")' />
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Code", "string", "\"\"", "The code body (EditorRequired). Leading indentation is auto-trimmed."),
+        new("Language", "SyntaxHighlightLanguage", "CSharp", "Language used for tokenization / highlighting."),
+        new("Title", "string?", "null", "Custom title shown in the header. Defaults to the language name."),
+        new("Size", "SizeEnum", "Medium", "Overall sizing (typography + paddings)."),
+        new("Border", "BorderStyle?", "null", "Custom border (defaults to theme border)."),
+        new("BackgroundColor", "string?", "null", "Background override. Defaults to the surface palette.")
+    ];
+}

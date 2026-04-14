@@ -1,0 +1,161 @@
+@page "/components/tabs"
+
+<PageTitle>Tabs — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Tabs"
+         Lede="Tab panels with three visual variants. Declare tabs as children — the active one renders automatically.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Variants</h2>
+        <p class="doc-section__description"><code>Underline</code> (default), <code>Pills</code>, and <code>Enclosed</code>.</p>
+        <ComponentDemo Definition="@VariantsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Full width</h2>
+        <ComponentDemo Definition="@FullWidthDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Disabled tab</h2>
+        <ComponentDemo Definition="@DisabledDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private string? _basic = "overview";
+    private string? _pills = "billing";
+    private string? _enclosed = "notifications";
+    private string? _full = "inbox";
+    private string? _disabled = "general";
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUITabs @bind-ActiveTab=""_tab"">
+    <BUITab Id=""overview"" Label=""Overview"">Overview content…</BUITab>
+    <BUITab Id=""details"" Label=""Details"">Details content…</BUITab>
+    <BUITab Id=""reviews"" Label=""Reviews"">Reviews content…</BUITab>
+</BUITabs>",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUITabs @bind-ActiveTab="_basic">
+            <BUITab Id="overview" Label="Overview">
+                <div class="demo-panel">Overview content — the first tab is active by default.</div>
+            </BUITab>
+            <BUITab Id="details" Label="Details">
+                <div class="demo-panel">Details content.</div>
+            </BUITab>
+            <BUITab Id="reviews" Label="Reviews">
+                <div class="demo-panel">Reviews content.</div>
+            </BUITab>
+        </BUITabs>
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        CodeTitle = "Variants.razor",
+        Code = @"<BUITabs Variant=""BUITabsVariant.Pills"" ... />
+<BUITabs Variant=""BUITabsVariant.Enclosed"" ... />",
+        Demo = RenderVariants()
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUITabs Variant="BUITabsVariant.Pills" @bind-ActiveTab="_pills">
+                <BUITab Id="account" Label="Account">
+                    <div class="demo-panel">Account settings.</div>
+                </BUITab>
+                <BUITab Id="billing" Label="Billing">
+                    <div class="demo-panel">Billing details.</div>
+                </BUITab>
+                <BUITab Id="team" Label="Team">
+                    <div class="demo-panel">Team members.</div>
+                </BUITab>
+            </BUITabs>
+            <BUITabs Variant="BUITabsVariant.Enclosed" @bind-ActiveTab="_enclosed">
+                <BUITab Id="profile" Label="Profile">
+                    <div class="demo-panel">Profile tab.</div>
+                </BUITab>
+                <BUITab Id="notifications" Label="Notifications">
+                    <div class="demo-panel">Notifications tab.</div>
+                </BUITab>
+                <BUITab Id="security" Label="Security">
+                    <div class="demo-panel">Security tab.</div>
+                </BUITab>
+            </BUITabs>
+        </div>
+    };
+
+    private ComponentDemoDefinition FullWidthDemo => new()
+    {
+        CodeTitle = "FullWidth.razor",
+        Code = @"<BUITabs FullWidth=""true"" ... />",
+        Demo = RenderFullWidth()
+    };
+
+    private RenderFragment RenderFullWidth() => __builder =>
+    {
+        <BUITabs FullWidth="true" @bind-ActiveTab="_full">
+            <BUITab Id="inbox" Label="Inbox">
+                <div class="demo-panel">Inbox.</div>
+            </BUITab>
+            <BUITab Id="sent" Label="Sent">
+                <div class="demo-panel">Sent messages.</div>
+            </BUITab>
+            <BUITab Id="archive" Label="Archive">
+                <div class="demo-panel">Archive.</div>
+            </BUITab>
+        </BUITabs>
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        CodeTitle = "Disabled.razor",
+        Code = @"<BUITab Id=""pro"" Label=""Pro features"" Disabled=""true"">…</BUITab>",
+        Demo = RenderDisabled()
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <BUITabs @bind-ActiveTab="_disabled">
+            <BUITab Id="general" Label="General">
+                <div class="demo-panel">General settings.</div>
+            </BUITab>
+            <BUITab Id="pro" Label="Pro features" Disabled="true">
+                <div class="demo-panel">Unreachable content.</div>
+            </BUITab>
+            <BUITab Id="about" Label="About">
+                <div class="demo-panel">About page.</div>
+            </BUITab>
+        </BUITabs>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("ActiveTab", "string?", "null", "Id of the active tab (two-way bindable)"),
+        new("Variant", "BUITabsVariant", "Underline", "Underline / Pills / Enclosed"),
+        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
+        new("FullWidth", "bool", "false", "Stretch tabs to fill the container"),
+        new("BUITab.Id", "string", "—", "Unique tab identifier (required)"),
+        new("BUITab.Label", "string", "—", "Tab label (required)"),
+        new("BUITab.Icon", "RenderFragment?", "null", "Optional icon before label"),
+        new("BUITab.Disabled", "bool", "false", "Disable the tab")
+    ];
+}

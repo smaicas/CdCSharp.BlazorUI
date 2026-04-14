@@ -1,0 +1,22 @@
+<div class="doc-page">
+    <header class="doc-page__header">
+        @if (!string.IsNullOrEmpty(Eyebrow))
+        {
+            <span class="doc-page__eyebrow">@Eyebrow</span>
+        }
+        <h1 class="doc-page__title">@Title</h1>
+        @if (!string.IsNullOrEmpty(Lede))
+        {
+            <p class="doc-page__lede">@Lede</p>
+        }
+    </header>
+
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string? Eyebrow { get; set; }
+    [Parameter, EditorRequired] public string Title { get; set; } = default!;
+    [Parameter] public string? Lede { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

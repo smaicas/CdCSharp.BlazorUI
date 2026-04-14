@@ -1,3 +1,34 @@
-﻿@inherits LayoutComponentBase
+@inherits BUIBlazorLayout
 
-@Body
+<div class="doc-layout" data-theme="light">
+    <header class="doc-header">
+        <a class="doc-header__brand" href="/">
+            <div class="doc-header__logo">B</div>
+            <div class="doc-header__title">
+                <strong>BlazorUI</strong>
+                <span>Documentation · v1.0</span>
+            </div>
+        </a>
+
+        <nav class="doc-header__actions">
+            <a class="doc-header__link" href="/getting-started">Get started</a>
+            <a class="doc-header__link" href="/theming">Theming</a>
+            <a class="doc-header__link" href="https://github.com/smaicas/CdCSharp.BlazorUI" target="_blank" rel="noopener">GitHub</a>
+            <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
+        </nav>
+    </header>
+
+    <div class="doc-container">
+        <aside class="doc-sidebar">
+            <NavMenu />
+        </aside>
+
+        <main class="doc-content">
+            <div class="doc-content__wrapper">
+                @{
+                    base.BuildRenderTree(__builder);
+                }
+            </div>
+        </main>
+    </div>
+</div>

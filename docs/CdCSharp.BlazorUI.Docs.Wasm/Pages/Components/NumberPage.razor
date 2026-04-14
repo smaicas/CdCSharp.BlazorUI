@@ -1,0 +1,149 @@
+@page "/components/number"
+
+<PageTitle>Number — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="InputNumber"
+         Lede="Strongly-typed numeric input with min/max, stepper buttons, acceleration, and culture-aware formatting.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Min &amp; max</h2>
+        <ComponentDemo Definition="@MinMaxDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Decimals &amp; step</h2>
+        <ComponentDemo Definition="@DecimalDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Step buttons placement</h2>
+        <ComponentDemo Definition="@PlacementDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Prefix / suffix</h2>
+        <ComponentDemo Definition="@PrefixSuffixDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private int _basic = 10;
+    private int _minMax = 50;
+    private decimal _decimal = 0.5m;
+    private int _leftPlacement = 0;
+    private int _splitPlacement = 0;
+    private decimal _price = 9.99m;
+    private int _percentage = 25;
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputNumber TValue=""int"" @bind-Value=""_value"" Label=""Quantity"" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputNumber TValue="int" @bind-Value="_basic" Label="Quantity" />
+    };
+
+    private ComponentDemoDefinition MinMaxDemo => new()
+    {
+        CodeTitle = "MinMax.razor",
+        Code = @"<BUIInputNumber TValue=""int""
+                 @bind-Value=""_percent""
+                 Min=""0"" Max=""100""
+                 Label=""Progress"" />",
+        Demo = RenderMinMax()
+    };
+
+    private RenderFragment RenderMinMax() => __builder =>
+    {
+        <BUIInputNumber TValue="int" @bind-Value="_minMax" Min="0" Max="100" Label="Progress" HelperText="Clamped between 0 and 100." />
+    };
+
+    private ComponentDemoDefinition DecimalDemo => new()
+    {
+        CodeTitle = "Decimal.razor",
+        Code = @"<BUIInputNumber TValue=""decimal""
+                 @bind-Value=""_value""
+                 Step=""0.1m""
+                 DecimalPlaces=""2""
+                 Label=""Price"" />",
+        Demo = RenderDecimal()
+    };
+
+    private RenderFragment RenderDecimal() => __builder =>
+    {
+        <BUIInputNumber TValue="decimal" @bind-Value="_decimal" Step="0.1m" DecimalPlaces="2" Label="Price" />
+    };
+
+    private ComponentDemoDefinition PlacementDemo => new()
+    {
+        CodeTitle = "Placement.razor",
+        Code = @"<BUIInputNumber TValue=""int""
+                 ButtonPlacement=""StepButtonPlacement.Left"" />
+<BUIInputNumber TValue=""int""
+                 ButtonPlacement=""StepButtonPlacement.Right"" />",
+        Demo = RenderPlacement()
+    };
+
+    private RenderFragment RenderPlacement() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputNumber TValue="int" @bind-Value="_leftPlacement" ButtonPlacement="StepButtonPlacement.Left" Label="Left placement" />
+            <BUIInputNumber TValue="int" @bind-Value="_splitPlacement" ButtonPlacement="StepButtonPlacement.Right" Label="Right placement (default)" />
+        </div>
+    };
+
+    private ComponentDemoDefinition PrefixSuffixDemo => new()
+    {
+        CodeTitle = "PrefixSuffix.razor",
+        Code = @"<BUIInputNumber TValue=""decimal""
+                 @bind-Value=""_price""
+                 PrefixText=""$""
+                 Label=""Price"" />
+<BUIInputNumber TValue=""int""
+                 @bind-Value=""_pct""
+                 SuffixText=""%""
+                 Label=""Discount"" />",
+        Demo = RenderPrefixSuffix()
+    };
+
+    private RenderFragment RenderPrefixSuffix() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputNumber TValue="decimal" @bind-Value="_price" PrefixText="$" Label="Price" Step="0.01m" DecimalPlaces="2" />
+            <BUIInputNumber TValue="int" @bind-Value="_percentage" SuffixText="%" Label="Discount" Min="0" Max="100" />
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "TValue", "default", "Bound numeric value"),
+        new("TValue", "type", "—", "int, long, decimal, double, float, short, sbyte, uint, ulong, byte, ushort"),
+        new("Min / Max", "TValue?", "null", "Value bounds"),
+        new("Step", "decimal", "1", "Increment / decrement step"),
+        new("DecimalPlaces", "int?", "null", "Fixed precision"),
+        new("AllowNegative", "bool", "true", "Permit negative values"),
+        new("UseThousandsSeparator", "bool", "false", "Format large numbers"),
+        new("Culture", "CultureInfo?", "null", "Culture for parsing/formatting"),
+        new("ShowStepButtons", "bool", "true", "Show inc/dec buttons"),
+        new("ButtonPlacement", "StepButtonPlacement", "Right", "Right / Left"),
+        new("EnableAcceleration", "bool", "true", "Speed up on long-press"),
+        new("EnableMouseWheel", "bool", "false", "Scroll to increment/decrement"),
+        new("OnIncrement / OnDecrement", "EventCallback<TValue?>", "—", "Step events")
+    ];
+}

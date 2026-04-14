@@ -1,0 +1,210 @@
+@page "/components/card"
+
+<PageTitle>Card — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Card"
+         Lede="A flexible container for content — header, media, body, and actions in a single component.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">With header &amp; actions</h2>
+        <ComponentDemo Definition="@HeaderActionsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">With media</h2>
+        <p class="doc-section__description">Media can be placed at <code>Top</code> (default), <code>AfterHeader</code>, <code>BeforeActions</code>, or <code>Bottom</code>.</p>
+        <ComponentDemo Definition="@MediaDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Clickable</h2>
+        <ComponentDemo Definition="@ClickableDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Actions alignment</h2>
+        <ComponentDemo Definition="@ActionsAlignmentDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Shadow &amp; border</h2>
+        <ComponentDemo Definition="@ShadowDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private int _clicks;
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUICard>
+    <ChildContent>
+        <p>A simple card with only body content.</p>
+    </ChildContent>
+</BUICard>",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUICard>
+            <ChildContent>
+                <p>A simple card with only body content.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition HeaderActionsDemo => new()
+    {
+        CodeTitle = "HeaderActions.razor",
+        Code = @"<BUICard>
+    <Header><h3>Invoice #4213</h3></Header>
+    <ChildContent>
+        <p>Total: $240.00 — due April 30.</p>
+    </ChildContent>
+    <Actions>
+        <BUIButton Text=""Decline"" />
+        <BUIButton Text=""Pay""
+                   BackgroundColor=""@PaletteColor.Primary""
+                   Color=""@PaletteColor.PrimaryContrast"" />
+    </Actions>
+</BUICard>",
+        Demo = RenderHeaderActions()
+    };
+
+    private RenderFragment RenderHeaderActions() => __builder =>
+    {
+        <BUICard>
+            <Header><h3 style="margin: 0;">Invoice #4213</h3></Header>
+            <ChildContent>
+                <p>Total: $240.00 — due April 30.</p>
+            </ChildContent>
+            <Actions>
+                <BUIButton Text="Decline" />
+                <BUIButton Text="Pay" BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast" />
+            </Actions>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition MediaDemo => new()
+    {
+        CodeTitle = "Media.razor",
+        Code = @"<BUICard MediaHeight=""160px"">
+    <Media>
+        <div style=""background: linear-gradient(135deg,
+                                 var(--palette-primary),
+                                 var(--palette-secondary));
+                    width: 100%; height: 100%;""></div>
+    </Media>
+    <Header><h3>Featured</h3></Header>
+    <ChildContent>
+        <p>Media area can contain any RenderFragment — image, gradient, or video.</p>
+    </ChildContent>
+</BUICard>",
+        Demo = RenderMedia()
+    };
+
+    private RenderFragment RenderMedia() => __builder =>
+    {
+        <BUICard MediaHeight="160px" Border="@BUIBorderPresets.Rounded">
+            <Media>
+                <div style="background: linear-gradient(135deg, var(--palette-primary), var(--palette-secondary)); width: 100%; height: 100%;"></div>
+            </Media>
+            <Header><h3 style="margin: 0;">Featured</h3></Header>
+            <ChildContent>
+                <p>Media area can contain any RenderFragment — image, gradient, or video.</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition ClickableDemo => new()
+    {
+        CodeTitle = "Clickable.razor",
+        Code = @"<BUICard Clickable=""true"" OnClick=""HandleClick"">
+    <ChildContent><p>Click anywhere on this card.</p></ChildContent>
+</BUICard>",
+        Demo = RenderClickable()
+    };
+
+    private RenderFragment RenderClickable() => __builder =>
+    {
+        <BUICard Clickable="true" OnClick="@(() => _clicks++)">
+            <Header><h3 style="margin: 0;">Clickable card</h3></Header>
+            <ChildContent>
+                <p>Clicked @_clicks time@(_clicks == 1 ? "" : "s").</p>
+            </ChildContent>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition ActionsAlignmentDemo => new()
+    {
+        CodeTitle = "Alignment.razor",
+        Code = @"<BUICard ActionsAlignment=""CardActionsAlignment.SpaceBetween"">
+    <Actions>
+        <BUIButton Text=""Cancel"" />
+        <BUIButton Text=""Confirm"" />
+    </Actions>
+</BUICard>",
+        Demo = RenderAlignment()
+    };
+
+    private RenderFragment RenderAlignment() => __builder =>
+    {
+        <BUICard ActionsAlignment="CardActionsAlignment.SpaceBetween">
+            <ChildContent><p>Space-between actions.</p></ChildContent>
+            <Actions>
+                <BUIButton Text="Cancel" />
+                <BUIButton Text="Confirm" BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast" />
+            </Actions>
+        </BUICard>
+    };
+
+    private ComponentDemoDefinition ShadowDemo => new()
+    {
+        CodeTitle = "Shadow.razor",
+        Code = @"<BUICard Shadow=""@BUIShadowPresets.Elevation(4)""
+         Border=""@BUIBorderPresets.RoundedLarge"">
+    ...
+</BUICard>",
+        Demo = RenderShadow()
+    };
+
+    private RenderFragment RenderShadow() => __builder =>
+    {
+        <BUICard Shadow="@BUIShadowPresets.Elevation(4)" Border="@BUIBorderPresets.RoundedLarge">
+            <Header><h3 style="margin: 0;">Elevated</h3></Header>
+            <ChildContent><p>Shadow + border combined for a polished look.</p></ChildContent>
+        </BUICard>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Header", "RenderFragment?", "null", "Content rendered above the body"),
+        new("Media", "RenderFragment?", "null", "Media slot (image, video, etc.)"),
+        new("ChildContent", "RenderFragment?", "null", "Body content"),
+        new("Actions", "RenderFragment?", "null", "Action buttons rendered at the bottom"),
+        new("MediaHeight", "string?", "null", "CSS height for the media slot"),
+        new("MediaPosition", "CardMediaPosition", "Top", "Top / AfterHeader / BeforeActions / Bottom"),
+        new("ActionsAlignment", "CardActionsAlignment", "End", "Start / Center / End / SpaceBetween"),
+        new("Clickable", "bool", "false", "Makes the entire card clickable"),
+        new("OnClick", "EventCallback<MouseEventArgs>", "—", "Click handler"),
+        new("Shadow", "ShadowStyle?", "null", "Elevation"),
+        new("Border", "BorderStyle?", "null", "Border"),
+        new("BackgroundColor", "string?", "null", "Card background"),
+        new("Color", "string?", "null", "Text color"),
+        new("Density", "DensityEnum", "Standard", "Internal spacing")
+    ];
+}

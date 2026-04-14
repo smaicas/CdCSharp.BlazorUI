@@ -5,11 +5,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
+    <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.2" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+    <ProjectReference Include="..\..\src\CdCSharp.BlazorUI.Localization.Wasm\CdCSharp.BlazorUI.Localization.Wasm.csproj" />
+    <ProjectReference Include="..\..\docs\CdCSharp.BlazorUI.Docs.Components\CdCSharp.BlazorUI.Docs.Components.csproj" />
   </ItemGroup>
 
 </Project>

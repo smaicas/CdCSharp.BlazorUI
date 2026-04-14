@@ -1,0 +1,143 @@
+@page "/concepts/localization"
+
+<PageTitle>Localization — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Concept"
+         Title="Localization"
+         Lede="Built-in culture management for both hosting models — a drop-in service, a culture selector component, and automatic persistence.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Which package to install</h2>
+        <ul>
+            <li><code>CdCSharp.BlazorUI.Localization.Wasm</code> — for Blazor WebAssembly apps. Persists the chosen culture in <code>localStorage</code>.</li>
+            <li><code>CdCSharp.BlazorUI.Localization.Server</code> — for Blazor Server apps. Persists via an HTTP cookie and wires up <code>RequestLocalizationOptions</code>.</li>
+        </ul>
+        <p class="doc-section__description">
+            Both packages depend on the standard <code>Microsoft.Extensions.Localization</code> pipeline —
+            you still author <code>.resx</code> files the usual way. The packages only add the
+            persistence layer and a ready-made <code>BUICultureSelector</code> component.
+        </p>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">WASM setup</h2>
+        <BUICodeBlock Title="Program.cs"
+                      Language="SyntaxHighlightLanguage.CSharp"
+                      Code="@_wasmProgram" />
+        <p class="doc-section__description" style="margin-top: 1rem;">
+            <code>UseBlazorUILocalizationWasm</code> reads the persisted culture before any component
+            renders, so the first paint uses the right language.
+        </p>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Server setup</h2>
+        <BUICodeBlock Title="Program.cs"
+                      Language="SyntaxHighlightLanguage.CSharp"
+                      Code="@_serverProgram" />
+        <p class="doc-section__description" style="margin-top: 1rem;">
+            A <code>CookieRequestCultureProvider</code> is inserted at the front of the request
+            localization chain. A startup filter registers a
+            <code>/blazor-ui/culture/{culture}</code> endpoint the selector uses to set the cookie.
+        </p>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">The BUICultureSelector</h2>
+        <p class="doc-section__description">
+            Ships in both Localization packages. Two built-in variants:
+        </p>
+        <ul>
+            <li><code>BUICultureSelectorVariant.Dropdown</code> — a styled <code>&lt;select&gt;</code> with flags and culture names.</li>
+            <li><code>BUICultureSelectorVariant.Flags</code> — one flag button per culture.</li>
+        </ul>
+        <BUICodeBlock Title="MainLayout.razor"
+                      Language="SyntaxHighlightLanguage.Razor"
+                      Code="@_selectorUsage" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Using IStringLocalizer in components</h2>
+        <p class="doc-section__description">
+            Once localization is wired up, the standard ASP.NET approach works everywhere:
+        </p>
+        <BUICodeBlock Title="Greeting.razor"
+                      Language="SyntaxHighlightLanguage.Razor"
+                      Code="@_usageCode" />
+        <p class="doc-section__description" style="margin-top: 1rem;">
+            Organize the matching <code>.resx</code> files under <code>Resources/Pages/Greeting.resx</code>,
+            <code>Greeting.es.resx</code>, etc. — the <code>ResourcesPath</code> passed to the service
+            options dictates the root folder.
+        </p>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Manually switching culture</h2>
+        <p class="doc-section__description">
+            If you'd rather not use the selector, both persistence services (<code>ILocalizationPersistence</code>)
+            expose a <code>SetStoredCultureAsync</code> you can call from your own UI.
+        </p>
+    </section>
+
+</DocPage>
+
+@code {
+    private const string _wasmProgram = @"using System.Globalization;
+using CdCSharp.BlazorUI.Localization.Wasm;
+
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+builder.Services.AddBlazorUI();
+builder.Services.AddBlazorUILocalizationWasm(opts =>
+{
+    opts.SupportedCultures = [
+        new CultureInfo(""en-US""),
+        new CultureInfo(""es-ES""),
+        new CultureInfo(""fr-FR"")
+    ];
+    opts.DefaultCulture = ""en-US"";
+});
+
+var host = builder.Build();
+await host.UseBlazorUILocalizationWasm();
+await host.RunAsync();";
+
+    private const string _serverProgram = @"using System.Globalization;
+using CdCSharp.BlazorUI.Localization.Server;
+using Microsoft.AspNetCore.Localization;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddBlazorUI();
+builder.Services.AddBlazorUILocalizationServer(opts =>
+{
+    opts.SupportedCultures = [
+        new CultureInfo(""en-US""),
+        new CultureInfo(""es-ES""),
+        new CultureInfo(""fr-FR"")
+    ];
+    opts.DefaultCulture = ""en-US"";
+});
+
+var app = builder.Build();
+
+app.UseRequestLocalization(
+    app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
+app.Run();";
+
+    private const string _selectorUsage = @"@* WASM *@
+@using CdCSharp.BlazorUI.Components.Wasm
+
+<BUICultureSelector Variant=""BUICultureSelectorVariant.Dropdown"" />
+
+@* Server — same component, different namespace *@
+@using CdCSharp.BlazorUI.Components.Server
+
+<BUICultureSelector Variant=""BUICultureSelectorVariant.Flags"" />";
+
+    private const string _usageCode = @"@inject IStringLocalizer<Greeting> L
+
+<h1>@L[""HelloWorld""]</h1>
+<p>@L[""WelcomeUser"", user.Name]</p>";
+}

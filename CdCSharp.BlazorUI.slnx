@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/docs/">
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/docs/CdCSharp.BlazorUI.Docs.Wasm/CdCSharp.BlazorUI.Docs.Wasm.csproj" Id="7a2e7f75-7eda-4b3d-8713-23ea7d782850" />
+    <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/docs/CdCSharp.BlazorUI.Docs.Components/CdCSharp.BlazorUI.Docs.Components.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />

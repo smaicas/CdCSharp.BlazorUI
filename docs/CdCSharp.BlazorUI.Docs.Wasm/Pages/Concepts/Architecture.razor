@@ -1,0 +1,128 @@
+@page "/concepts/architecture"
+
+<PageTitle>Architecture — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Concept"
+         Title="Architecture"
+         Lede="How BlazorUI expresses style through data-attributes and CSS custom properties — and why that means no class juggling at runtime.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">The IHas* interfaces</h2>
+        <p class="doc-section__description">
+            Components advertise their capabilities by implementing marker / property interfaces from
+            <code>CdCSharp.BlazorUI.Core.Abstractions.Behaviors</code>. A component that has a border
+            parameter implements <code>IHasBorder</code>; one that shows a loading indicator implements
+            <code>IHasLoading</code>. These interfaces are discovered by reflection at render time and
+            transformed into DOM attributes on the <code>&lt;bui-component&gt;</code> root.
+        </p>
+
+        <BUICodeBlock Title="MyCustom.razor.cs"
+                      Language="SyntaxHighlightLanguage.CSharp"
+                      Code="@_interfaceSample" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">The data-bui-* attributes</h2>
+        <p class="doc-section__description">
+            State-like capabilities flip <code>data-bui-*</code> attributes on the root. CSS selectors
+            key off those attributes — never class toggles. The result is a DOM you can reason about
+            just by looking at it.
+        </p>
+
+        <BUICodeBlock Title="Rendered DOM"
+                      Language="SyntaxHighlightLanguage.Razor"
+                      Code="@_domSample" />
+
+        <p class="doc-section__description" style="margin-top: 1rem;">
+            Canonical names live in <code>FeatureDefinitions.DataAttributes</code>. A few of the most common:
+        </p>
+        <ul>
+            <li><code>data-bui-component</code> — kebab name of the component (e.g. <code>button</code>)</li>
+            <li><code>data-bui-variant</code> — the active variant</li>
+            <li><code>data-bui-size</code> — <code>small / medium / large</code></li>
+            <li><code>data-bui-density</code> — <code>compact / standard / comfortable</code></li>
+            <li><code>data-bui-disabled</code>, <code>data-bui-loading</code>, <code>data-bui-error</code>, <code>data-bui-active</code>, <code>data-bui-readonly</code>, <code>data-bui-required</code>, <code>data-bui-fullwidth</code>, <code>data-bui-shadow</code>, <code>data-bui-ripple</code>, <code>data-bui-transitions</code></li>
+        </ul>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">The --bui-inline-* variables</h2>
+        <p class="doc-section__description">
+            Value-carrying capabilities (colors, borders, shadows…) flow as CSS custom properties on
+            the element's <code>style</code> attribute. Component CSS consumes them through a
+            <em>private alias</em> pattern so defaults cascade cleanly.
+        </p>
+
+        <BUICodeBlock Title="Component CSS"
+                      Language="SyntaxHighlightLanguage.Css"
+                      Code="@_privateVarPattern" />
+
+        <p class="doc-section__description" style="margin-top: 1rem;">
+            That way a consumer can override a single component instance by passing
+            <code>BackgroundColor=&quot;@@PaletteColor.Success&quot;</code>, or re-skin the whole app by
+            setting <code>--palette-primary</code> on <code>:root</code>.
+        </p>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Families</h2>
+        <p class="doc-section__description">
+            Components that share a DOM / CSS contract belong to a <em>family</em>. Membership is a
+            marker interface — the attribute is emitted automatically.
+        </p>
+
+        <ul>
+            <li><code>IInputFamilyComponent</code> → <code>[data-bui-input-base]</code> → <code>_input-family.css</code>. Text, number, dropdown, textarea, color, date, checkbox, radio, switch.</li>
+            <li><code>IPickerFamilyComponent</code> → <code>[data-bui-picker]</code> → <code>_picker-family.css</code>. Color picker, date picker.</li>
+            <li><code>IDataCollectionFamilyComponent</code> → <code>[data-bui-data-collection]</code> → <code>_data-collection-family.css</code>. DataGrid, DataCards.</li>
+        </ul>
+
+        <p class="doc-section__description">
+            Family CSS provides the shared layout scaffolding (e.g. <code>bui-input__wrapper</code> /
+            <code>__field</code> / <code>__label</code> / <code>__outline</code>), so you don't need to
+            restyle every input component separately.
+        </p>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Why this design</h2>
+        <p class="doc-section__description">
+            Three practical consequences fall out of the approach:
+        </p>
+        <ul>
+            <li><strong>Zero runtime styling cost.</strong> No JS needed to toggle classes per interaction — browsers already match on attribute selectors.</li>
+            <li><strong>Debuggable.</strong> The DOM tells you every state a component is in. No hidden refs, no stale class lists.</li>
+            <li><strong>One override surface.</strong> Every visual knob is either a parameter (per-instance) or a CSS custom property (global). No CSS specificity war.</li>
+        </ul>
+    </section>
+
+</DocPage>
+
+@code {
+    private const string _interfaceSample = @"public partial class MyCustom : BUIComponentBase,
+    IHasSize, IHasBorder, IHasLoading
+{
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BorderStyle? Border { get; set; }
+    [Parameter] public bool Loading { get; set; }
+}";
+
+    private const string _domSample = @"<bui-component
+    data-bui-component=""button""
+    data-bui-size=""large""
+    data-bui-loading=""true""
+    data-bui-disabled=""true""
+    style=""--bui-inline-background: var(--palette-success); --bui-inline-color: #fff;"">
+    …
+</bui-component>";
+
+    private const string _privateVarPattern = @"bui-component[data-bui-component=""button""] {
+    --_button-background: var(--bui-inline-background, var(--palette-primary));
+    --_button-color:      var(--bui-inline-color,       var(--palette-primarycontrast));
+}
+
+bui-component[data-bui-component=""button""] button {
+    background-color: var(--_button-background);
+    color:            var(--_button-color);
+}";
+}

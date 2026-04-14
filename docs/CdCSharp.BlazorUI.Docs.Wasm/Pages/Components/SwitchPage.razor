@@ -1,0 +1,130 @@
+@page "/components/switch"
+
+<PageTitle>Switch — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Switch"
+         Lede="Toggle-style boolean input with optional icons in the thumb and custom track colors.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">With icons</h2>
+        <ComponentDemo Definition="@IconsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Disabled</h2>
+        <ComponentDemo Definition="@DisabledDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private bool _basic = true;
+    private bool _small = true;
+    private bool _medium = true;
+    private bool _large = true;
+    private bool _wifi = true;
+    private bool _bluetooth;
+    private bool _disabledOn = true;
+    private bool _disabledOff;
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputSwitch @bind-Value=""_value""
+                Label=""Enable notifications""
+                HelperText=""Receive updates about account activity."" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputSwitch @bind-Value="_basic" Label="Enable notifications" HelperText="Receive updates about account activity." />
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code = @"<BUIInputSwitch Size=""SizeEnum.Small"" />
+<BUIInputSwitch Size=""SizeEnum.Medium"" />
+<BUIInputSwitch Size=""SizeEnum.Large"" />",
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIInputSwitch @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
+            <BUIInputSwitch @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
+            <BUIInputSwitch @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
+        </div>
+    };
+
+    private ComponentDemoDefinition IconsDemo => new()
+    {
+        CodeTitle = "Icons.razor",
+        Code = @"<BUIInputSwitch @bind-Value=""_value""
+                IconActive=""@BUIIcons.MaterialIconsOutlined.i_wifi""
+                IconInactive=""@BUIIcons.MaterialIconsOutlined.i_wifi_off""
+                Label=""Wi-Fi"" />",
+        Demo = RenderIcons()
+    };
+
+    private RenderFragment RenderIcons() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_wifi"
+                            IconActive="@BUIIcons.MaterialIconsOutlined.i_wifi"
+                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_wifi_off"
+                            Label="Wi-Fi" />
+            <BUIInputSwitch @bind-Value="_bluetooth"
+                            IconActive="@BUIIcons.MaterialIconsOutlined.i_bluetooth"
+                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_bluetooth_disabled"
+                            Label="Bluetooth" />
+        </div>
+    };
+
+    private ComponentDemoDefinition DisabledDemo => new()
+    {
+        CodeTitle = "Disabled.razor",
+        Code = @"<BUIInputSwitch Disabled=""true"" Label=""Disabled (on)"" />
+<BUIInputSwitch Disabled=""true"" Label=""Disabled (off)"" />",
+        Demo = RenderDisabled()
+    };
+
+    private RenderFragment RenderDisabled() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="Disabled (on)" />
+            <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="Disabled (off)" />
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "bool", "false", "Bound value"),
+        new("Label", "string?", "null", "Label text"),
+        new("HelperText", "string?", "null", "Helper text below"),
+        new("Size", "SizeEnum", "Medium", "Switch size"),
+        new("Density", "DensityEnum", "Standard", "Spacing"),
+        new("IconActive / IconInactive", "string?", "null", "Thumb icons per state"),
+        new("TrackColorActive / TrackColorInactive", "CssColor?", "null", "Custom track colors"),
+        new("Disabled", "bool", "false", "Disabled state"),
+        new("Required", "bool", "false", "Required marker")
+    ];
+}

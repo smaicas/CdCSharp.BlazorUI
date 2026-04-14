@@ -1,0 +1,143 @@
+@page "/components/loading"
+
+<PageTitle>Loading — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Loading Indicator"
+         Lede="Six animation variants for progress, activity, and waiting states. Size- and color-aware.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Variants</h2>
+        <p class="doc-section__description">Six built-in animations covering every common case.</p>
+        <ComponentDemo Definition="@VariantsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Colors</h2>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        CodeTitle = "Variants.razor",
+        Code = @"<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.CircularProgress"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Ring"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Dots"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Bars"" />
+<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.LinearIndeterminate"" />",
+        Demo = RenderVariants()
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+        <div class="demo-grid">
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" />
+                <span>Spinner</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.CircularProgress" />
+                <span>CircularProgress</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Ring" />
+                <span>Ring</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Dots" />
+                <span>Dots</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Bars" />
+                <span>Bars</span>
+            </div>
+            <div class="demo-grid__cell" style="min-width: 200px;">
+                <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.LinearIndeterminate" />
+                <span>LinearIndeterminate</span>
+            </div>
+        </div>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code = @"<BUILoadingIndicator Size=""SizeEnum.Small"" />
+<BUILoadingIndicator Size=""SizeEnum.Medium"" />
+<BUILoadingIndicator Size=""SizeEnum.Large"" />",
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <div class="demo-grid">
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Size="SizeEnum.Small" />
+                <span>Small</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Size="SizeEnum.Medium" />
+                <span>Medium</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Size="SizeEnum.Large" />
+                <span>Large</span>
+            </div>
+        </div>
+    };
+
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        CodeTitle = "Colors.razor",
+        Code = @"<BUILoadingIndicator Color=""@PaletteColor.Primary"" />
+<BUILoadingIndicator Color=""@PaletteColor.Secondary"" />
+<BUILoadingIndicator Color=""@PaletteColor.Error"" />",
+        Demo = RenderColors()
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <div class="demo-grid">
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Color="@PaletteColor.Primary" />
+                <span>Primary</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Color="@PaletteColor.Secondary" />
+                <span>Secondary</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Color="@PaletteColor.Error" />
+                <span>Error</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Color="@PaletteColor.Success" />
+                <span>Success</span>
+            </div>
+            <div class="demo-grid__cell">
+                <BUILoadingIndicator Color="@PaletteColor.Warning" />
+                <span>Warning</span>
+            </div>
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Variant", "BUILoadingIndicatorVariant", "Spinner", "Spinner / CircularProgress / Ring / Dots / Bars / LinearIndeterminate"),
+        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
+        new("Color", "string?", "null", "Color — accepts palette vars, hex, rgb, etc.")
+    ];
+}

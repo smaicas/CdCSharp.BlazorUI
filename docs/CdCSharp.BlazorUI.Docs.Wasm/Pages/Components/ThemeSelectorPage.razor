@@ -1,0 +1,87 @@
+@page "/components/themeselector"
+
+<PageTitle>Theme Selector — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Theme Selector"
+         Lede="Toggle between light, dark, and any custom theme you register. Persists the choice to localStorage and flips the data-theme attribute on &lt;html&gt;.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Default variant</h2>
+        <p class="doc-section__description">A labeled button with an icon that reflects the current theme.</p>
+        <ComponentDemo Definition="@DefaultDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sun / Moon variant</h2>
+        <p class="doc-section__description">The compact switch used in the docs header: a <code>BUISwitch</code> with sun and moon icons.</p>
+        <ComponentDemo Definition="@SunMoonDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Custom themes list</h2>
+        <p class="doc-section__description">Cycle through a custom list — not limited to light / dark.</p>
+        <ComponentDemo Definition="@CustomThemesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Hook onto change events</h2>
+        <ComponentDemo Definition="@EventDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private string _lastTheme = "(unchanged)";
+
+    private ComponentDemoDefinition DefaultDemo => new()
+    {
+        CodeTitle = "Default.razor",
+        Code = @"<BUIThemeSelector />",
+        Demo = @<BUIThemeSelector />
+    };
+
+    private ComponentDemoDefinition SunMoonDemo => new()
+    {
+        CodeTitle = "SunMoon.razor",
+        Code = @"<BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />",
+        Demo = @<BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
+    };
+
+    private ComponentDemoDefinition CustomThemesDemo => new()
+    {
+        CodeTitle = "CustomThemes.razor",
+        Code = @"<BUIThemeSelector AvailableThemes=""@(new[] { ""light"", ""dark"", ""sepia"" })"" />",
+        Demo = @<BUIThemeSelector AvailableThemes="@(new[] { "light", "dark" })" />
+    };
+
+    private ComponentDemoDefinition EventDemo => new()
+    {
+        CodeTitle = "Event.razor",
+        Code = @"<BUIThemeSelector OnThemeChanged=""@(t => _lastTheme = t)"" />",
+        Demo = RenderEventDemo()
+    };
+
+    private RenderFragment RenderEventDemo() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon"
+                              OnThemeChanged="@(t => { _lastTheme = t; StateHasChanged(); })" />
+            <span>Last change: <code>@_lastTheme</code></span>
+        </div>
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Variant", "BUIThemeSelectorVariant", "Default", "Default / SunMoon, or a custom registered variant."),
+        new("AvailableThemes", "string[]", "[\"light\", \"dark\"]", "Themes cycled through on each click."),
+        new("ShowIcon", "bool", "true", "Show the per-theme icon in the Default variant."),
+        new("ThemeIcons", "Dictionary<string,string>?", "null", "Map theme id -> icon character / emoji (Default variant)."),
+        new("OnThemeChanged", "EventCallback<string>", "—", "Fires with the newly active theme id.")
+    ];
+}

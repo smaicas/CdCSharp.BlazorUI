@@ -1,0 +1,243 @@
+@page "/components/modal"
+
+<PageTitle>Modal — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Dialog &amp; Drawer"
+         Lede="Accessible modals — centered dialogs and edge-anchored drawers. Both usable declaratively or via IModalService.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic dialog</h2>
+        <ComponentDemo Definition="@BasicDialogDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">With header + footer</h2>
+        <ComponentDemo Definition="@FooterDialogDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Dimensions</h2>
+        <p class="doc-section__description">Use <code>MinWidth</code>, <code>MaxWidth</code>, <code>MinHeight</code>, <code>MaxHeight</code>, or <code>FullScreen</code>.</p>
+        <ComponentDemo Definition="@DimensionsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Close options</h2>
+        <p class="doc-section__description">Toggle <code>Closable</code>, <code>CloseOnOverlayClick</code>, and <code>CloseOnEscape</code>.</p>
+        <ComponentDemo Definition="@CloseOptionsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Drawer positions</h2>
+        <ComponentDemo Definition="@DrawerPositionsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Programmatic API</h2>
+        <p class="doc-section__description">Inject <code>IModalService</code> and call <code>ShowDialogAsync</code> / <code>ShowDrawerAsync</code>.</p>
+        <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp" Code="@_serviceCode" Title="Program.cs + usage" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private bool _basic;
+    private bool _footer;
+    private bool _dims;
+    private bool _closeOpts;
+    private bool _left;
+    private bool _right;
+    private bool _top;
+    private bool _bottom;
+
+    private ComponentDemoDefinition BasicDialogDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIButton Text=""Open dialog"" OnClick=""@(() => _open = true)"" />
+<BUIDialog @bind-Open=""_open"" Title=""Hello"">
+    <Content>Dialog body…</Content>
+</BUIDialog>",
+        Demo = RenderBasicDialog()
+    };
+
+    private RenderFragment RenderBasicDialog() => __builder =>
+    {
+        <BUIButton Text="Open dialog" OnClick="@(() => _basic = true)" />
+        <BUIDialog @bind-Open="_basic" Title="Hello">
+            <Content>
+                <p>This is a basic dialog. Press Escape or click outside to close.</p>
+            </Content>
+        </BUIDialog>
+    };
+
+    private ComponentDemoDefinition FooterDialogDemo => new()
+    {
+        CodeTitle = "Footer.razor",
+        Code = @"<BUIDialog @bind-Open=""_open"" Title=""Confirm"">
+    <Content>Are you sure?</Content>
+    <Footer>
+        <BUIButton Text=""Cancel"" OnClick=""@(() => _open = false)"" />
+        <BUIButton Text=""Confirm"" BackgroundColor=""@PaletteColor.Primary"" Color=""@PaletteColor.PrimaryContrast"" OnClick=""@(() => _open = false)"" />
+    </Footer>
+</BUIDialog>",
+        Demo = RenderFooterDialog()
+    };
+
+    private RenderFragment RenderFooterDialog() => __builder =>
+    {
+        <BUIButton Text="Open dialog with footer" OnClick="@(() => _footer = true)" />
+        <BUIDialog @bind-Open="_footer" Title="Confirm action">
+            <Content>
+                <p>Are you sure you want to proceed?</p>
+            </Content>
+            <Footer>
+                <div class="demo-row" style="justify-content: flex-end;">
+                    <BUIButton Text="Cancel" OnClick="@(() => _footer = false)" />
+                    <BUIButton Text="Confirm"
+                               BackgroundColor="@PaletteColor.Primary"
+                               Color="@PaletteColor.PrimaryContrast"
+                               OnClick="@(() => _footer = false)" />
+                </div>
+            </Footer>
+        </BUIDialog>
+    };
+
+    private ComponentDemoDefinition DimensionsDemo => new()
+    {
+        CodeTitle = "Dimensions.razor",
+        Code = @"<BUIDialog @bind-Open=""_open""
+           MinWidth=""400px"" MaxWidth=""600px""
+           MinHeight=""300px"" MaxHeight=""500px"" />",
+        Demo = RenderDimensions()
+    };
+
+    private RenderFragment RenderDimensions() => __builder =>
+    {
+        <BUIButton Text="Constrained dialog" OnClick="@(() => _dims = true)" />
+        <BUIDialog @bind-Open="_dims" Title="400 × 300 min, 600 × 500 max"
+                   MinWidth="400px" MaxWidth="600px"
+                   MinHeight="300px" MaxHeight="500px">
+            <Content>
+                <p>This dialog has custom min/max width and height constraints.</p>
+            </Content>
+        </BUIDialog>
+    };
+
+    private ComponentDemoDefinition CloseOptionsDemo => new()
+    {
+        CodeTitle = "CloseOptions.razor",
+        Code = @"<BUIDialog @bind-Open=""_open""
+           Closable=""false""
+           CloseOnOverlayClick=""false""
+           CloseOnEscape=""false"" />",
+        Demo = RenderCloseOptions()
+    };
+
+    private RenderFragment RenderCloseOptions() => __builder =>
+    {
+        <BUIButton Text="Uncloseable dialog" OnClick="@(() => _closeOpts = true)" />
+        <BUIDialog @bind-Open="_closeOpts"
+                   Title="Explicit close only"
+                   Closable="false"
+                   CloseOnOverlayClick="false"
+                   CloseOnEscape="false">
+            <Content>
+                <p>The header X, overlay click, and Escape are all disabled. The only way out is the button below.</p>
+            </Content>
+            <Footer>
+                <BUIButton Text="Close"
+                           BackgroundColor="@PaletteColor.Primary"
+                           Color="@PaletteColor.PrimaryContrast"
+                           OnClick="@(() => _closeOpts = false)" />
+            </Footer>
+        </BUIDialog>
+    };
+
+    private ComponentDemoDefinition DrawerPositionsDemo => new()
+    {
+        CodeTitle = "Drawer.razor",
+        Code = @"<BUIDrawer @bind-Open=""_open"" Position=""DrawerPosition.Right"" Size=""350px"">
+    <ChildContent>…</ChildContent>
+</BUIDrawer>",
+        Demo = RenderDrawerPositions()
+    };
+
+    private RenderFragment RenderDrawerPositions() => __builder =>
+    {
+        <div class="demo-row">
+            <BUIButton Text="Left" OnClick="@(() => _left = true)" />
+            <BUIButton Text="Right" OnClick="@(() => _right = true)" />
+            <BUIButton Text="Top" OnClick="@(() => _top = true)" />
+            <BUIButton Text="Bottom" OnClick="@(() => _bottom = true)" />
+        </div>
+
+        <BUIDrawer @bind-Open="_left" Position="DrawerPosition.Left">
+            <ChildContent>
+                <h3>Left drawer</h3>
+                <p>Slides in from the left.</p>
+            </ChildContent>
+        </BUIDrawer>
+
+        <BUIDrawer @bind-Open="_right" Position="DrawerPosition.Right">
+            <ChildContent>
+                <h3>Right drawer</h3>
+                <p>Slides in from the right.</p>
+            </ChildContent>
+        </BUIDrawer>
+
+        <BUIDrawer @bind-Open="_top" Position="DrawerPosition.Top">
+            <ChildContent>
+                <h3>Top drawer</h3>
+                <p>Slides down from the top.</p>
+            </ChildContent>
+        </BUIDrawer>
+
+        <BUIDrawer @bind-Open="_bottom" Position="DrawerPosition.Bottom">
+            <ChildContent>
+                <h3>Bottom drawer</h3>
+                <p>Slides up from the bottom.</p>
+            </ChildContent>
+        </BUIDrawer>
+    };
+
+    private const string _serviceCode = @"// Register in Program.cs
+services.AddBlazorUI(); // includes IModalService
+
+// Inject and call
+@inject IModalService ModalService
+
+private async Task Show()
+{
+    var result = await ModalService.ShowDialogAsync<MyConfirmDialog, bool?>(
+        null,
+        new DialogOptions { Title = ""Confirm"", MaxWidth = ""400px"" });
+}
+
+// Inside MyConfirmDialog.razor
+@implements IModalContent
+[CascadingParameter] public ModalReference ModalReference { get; set; } = default!;
+
+<BUIButton Text=""Yes"" OnClick=""() => ModalReference.CloseAsync(true)"" />
+<BUIButton Text=""No""  OnClick=""() => ModalReference.CloseAsync(false)"" />";
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Open", "bool", "false", "Two-way bound open state"),
+        new("Title", "string?", "null", "Header title (ignored if <Header> slot is set)"),
+        new("Content / Footer / Header", "RenderFragment?", "null", "Slots"),
+        new("Closable", "bool", "true", "Show the × close button"),
+        new("CloseOnOverlayClick", "bool", "true", "Dismiss when clicking outside"),
+        new("CloseOnEscape", "bool", "true", "Dismiss on Esc"),
+        new("MinWidth / MaxWidth / MinHeight / MaxHeight", "string?", "—", "CSS lengths"),
+        new("FullScreen", "bool", "false", "Fill viewport"),
+        new("Drawer.Position", "DrawerPosition", "Left", "Left / Right / Top / Bottom"),
+        new("Drawer.Size", "string", "320px", "Drawer width (L/R) or height (T/B)"),
+        new("IModalService.ShowDialogAsync / ShowDrawerAsync", "Task<T?>", "—", "Programmatic API")
+    ];
+}

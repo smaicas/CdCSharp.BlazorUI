@@ -1,0 +1,137 @@
+@page "/components/color"
+
+<PageTitle>Color Picker — CdCSharp.BlazorUI</PageTitle>
+
+<DocPage Eyebrow="Component"
+         Title="Color Picker"
+         Lede="Full-featured color input with HSL/RGB/Hex output, an inline or dropdown picker, copy and revert actions.">
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Output formats</h2>
+        <p class="doc-section__description">Pick the serialization format that matches your back-end.</p>
+        <ComponentDemo Definition="@FormatDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Display modes</h2>
+        <ComponentDemo Definition="@DisplayModeDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Clearable + copy</h2>
+        <ComponentDemo Definition="@ClearCopyDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Standalone picker</h2>
+        <p class="doc-section__description">Use <code>BUIColorPicker</code> directly — no input field, just the picker.</p>
+        <ComponentDemo Definition="@StandaloneDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Properties</h2>
+        <PropertyTable Properties="@_properties" />
+    </section>
+
+</DocPage>
+
+@code {
+    private CssColor? _basic = new("#c41236");
+    private CssColor? _hex = new("#2a7fff");
+    private CssColor? _rgba = new("rgba(42,127,255,1)");
+    private CssColor? _hsl = new("#ff6b35");
+    private CssColor? _inline = new("#10b981");
+    private CssColor? _clearable = new("#f59e0b");
+    private CssColor? _standalone = new("#c41236");
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Basic.razor",
+        Code = @"<BUIInputColor @bind-Value=""_color"" Label=""Brand color"" />",
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_basic" Label="Brand color" HelperText="Pick anything, or paste a hex/rgb value." />
+    };
+
+    private ComponentDemoDefinition FormatDemo => new()
+    {
+        CodeTitle = "Format.razor",
+        Code = @"<BUIInputColor OutputFormat=""ColorPickerOutputFormat.Hex"" ... />
+<BUIInputColor OutputFormat=""ColorPickerOutputFormat.Rgb"" ... />
+<BUIInputColor OutputFormat=""ColorPickerOutputFormat.Hsv"" ... />",
+        Demo = RenderFormat()
+    };
+
+    private RenderFragment RenderFormat() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputColor @bind-Value="_hex" Label="HEX" OutputFormat="ColorPickerOutputFormat.Hex" />
+            <BUIInputColor @bind-Value="_rgba" Label="RGB" OutputFormat="ColorPickerOutputFormat.Rgb" />
+            <BUIInputColor @bind-Value="_hsl" Label="HSV" OutputFormat="ColorPickerOutputFormat.Hsv" />
+        </div>
+    };
+
+    private ComponentDemoDefinition DisplayModeDemo => new()
+    {
+        CodeTitle = "DisplayMode.razor",
+        Code = @"<BUIInputColor DisplayMode=""ColorPickerDisplayMode.Dropdown"" ... />
+<BUIInputColor DisplayMode=""ColorPickerDisplayMode.Modal"" ... />",
+        Demo = RenderDisplayMode()
+    };
+
+    private RenderFragment RenderDisplayMode() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputColor @bind-Value="_inline" Label="Dropdown" DisplayMode="ColorPickerDisplayMode.Dropdown" />
+            <BUIInputColor @bind-Value="_inline" Label="Modal" DisplayMode="ColorPickerDisplayMode.Modal" />
+        </div>
+    };
+
+    private ComponentDemoDefinition ClearCopyDemo => new()
+    {
+        CodeTitle = "Clear.razor",
+        Code = @"<BUIInputColor @bind-Value=""_color""
+                Label=""Accent""
+                Clearable=""true""
+                ShowCopyButton=""true"" />",
+        Demo = RenderClearCopy()
+    };
+
+    private RenderFragment RenderClearCopy() => __builder =>
+    {
+        <BUIInputColor @bind-Value="_clearable" Label="Accent" Clearable="true" ShowCopyButton="true" />
+    };
+
+    private ComponentDemoDefinition StandaloneDemo => new()
+    {
+        CodeTitle = "Standalone.razor",
+        Code = @"<BUIColorPicker @bind-Value=""_color"" />",
+        Demo = RenderStandalone()
+    };
+
+    private RenderFragment RenderStandalone() => __builder =>
+    {
+        <BUIColorPicker @bind-Value="_standalone" />
+    };
+
+    private readonly PropertyDefinition[] _properties =
+    [
+        new("Value", "CssColor?", "null", "Bound color"),
+        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
+        new("DisplayMode", "ColorPickerDisplayMode", "Dropdown", "Dropdown / Inline"),
+        new("OutputFormat", "ColorPickerOutputFormat", "Hex", "Hex / Rgb / Rgba / Hsl / Hsla"),
+        new("Clearable", "bool", "false", "Show clear button"),
+        new("ShowCopyButton", "bool", "false", "Show copy-to-clipboard button"),
+        new("InputEditable", "bool", "true", "Allow typing in the field"),
+        new("RevertText", "string", "Revert", "Label for revert action"),
+        new("SelectionWidth / SelectionHeight", "int", "200 / 150", "Picker dimensions")
+    ];
+}
