@@ -20,7 +20,8 @@ Convenciones:
   - Decidir si también `IVariantComponent.CurrentVariant` debe refrescarse aquí.
 - **Aceptación**: cambio de `Error`/`Loading` en runtime sin re-llamar `BuildStyles` se refleja en los `data-bui-*` del DOM (test de integración con `Verify`).
 
-### [ ] INPUT-01 — `BUIInputSwitch` no aplica `ComputedAttributes` al root `<bui-component>`
+### [x] INPUT-01 — `BUIInputSwitch` no aplica `ComputedAttributes` al root `<bui-component>`
+> Resuelto en commit `b55707d` — *INPUT-01: wrap BUIInputSwitch variant template in its own bui-component root*
 - **Origen**: `BUIInputSwitch.razor:50-68` propaga `@attributes="ComputedAttributes"` al componente hijo `<BUISwitch>`, que emite su propio `<bui-component data-bui-component="switch">`. Resultado: el `data-bui-component` queda como `switch` (no `input-switch`), y los data-attrs de estado del wrapper (IsError, IsLoading, IsReadOnly, floated, etc.) se pierden o se mezclan con los del hijo.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Switch/BUIInputSwitch.razor`
 - **Cambios**:
