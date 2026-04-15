@@ -278,7 +278,7 @@ Convenciones:
 
 ## E. PERFORMANCE
 
-### [ ] PERF-01 — `BUIComponentAttributesBuilder` recrea diccionarios por render
+### [x] PERF-01 — `BUIComponentAttributesBuilder` recrea diccionarios por render
 - **Origen**: `BuildStyles` asigna `ComputedAttributes = new Dictionary<...>(...)` cada llamada; también crea `cssVariables` local. Alto churn GC con muchos componentes.
 - **Archivos**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:12-67`
 - **Cambios**:
@@ -286,6 +286,8 @@ Convenciones:
   - Reutilizar un `Dictionary<string,string>` de instancia para `cssVariables` (campo privado + Clear).
   - Medir impacto con benchmark simple.
 - **Aceptación**: sin regresión funcional (tests pasan). Perfil indica menos allocations en hot path de render.
+
+> Resuelto en commit `7e5a1b7` — *PERF-01: reuse ComputedAttributes and cssVariables dictionaries*
 
 ### [ ] PERF-02 — `BuildInlineStyles` concatena con LINQ
 - **Origen**: `string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"))` — `StringBuilder` sería más eficiente para N>4 vars.
