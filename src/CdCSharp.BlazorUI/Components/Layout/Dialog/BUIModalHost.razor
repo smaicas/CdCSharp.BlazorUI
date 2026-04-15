@@ -1,4 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Components.Layout.Services
+@using Microsoft.JSInterop
 
 @namespace CdCSharp.BlazorUI.Components.Layout
 
@@ -36,24 +37,30 @@
         ModalService.OnChange += HandleModalChange;
     }
 
-    private async void HandleModalChange()
+    private void HandleModalChange() => _ = HandleModalChangeAsync();
+
+    private async Task HandleModalChangeAsync()
     {
-        List<ModalState> previous = _modals;
-        _modals = ModalService.ActiveModals.ToList();
-        _isClosing = _modals.Any(m => m.IsAnimatingOut);
-
-        if (_modals.Count > 0 && !_jsInitialized)
+        try
         {
-            await JsInterop.LockScrollAsync();
-            _jsInitialized = true;
-        }
-        else if (_modals.Count == 0 && _jsInitialized)
-        {
-            await JsInterop.UnlockScrollAsync();
-            _jsInitialized = false;
-        }
+            _modals = ModalService.ActiveModals.ToList();
+            _isClosing = _modals.Any(m => m.IsAnimatingOut);
 
-        await InvokeAsync(StateHasChanged);
+            if (_modals.Count > 0 && !_jsInitialized)
+            {
+                await JsInterop.LockScrollAsync();
+                _jsInitialized = true;
+            }
+            else if (_modals.Count == 0 && _jsInitialized)
+            {
+                await JsInterop.UnlockScrollAsync();
+                _jsInitialized = false;
+            }
+
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (ObjectDisposedException) { }
+        catch (JSDisconnectedException) { }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
