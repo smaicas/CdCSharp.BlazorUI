@@ -30,7 +30,8 @@ Convenciones:
   - Revisar si el `.razor.css` del InputSwitch selecciona por `[data-bui-component="input-switch"]` o por `[data-bui-component="switch"]`; alinear tras el cambio.
 - **Aceptación**: DOM renderizado muestra `<bui-component data-bui-component="input-switch" data-bui-error data-bui-loading ...>` envolviendo al switch interno.
 
-### [ ] INPUT-02 — `async Task` sin `await` en HandleChange (InputText / InputTextArea)
+### [x] INPUT-02 — `async Task` sin `await` en HandleChange (InputText / InputTextArea)
+> Resuelto en commit `7401fb7` — *INPUT-02: drop spurious async from HandleChange in Text/TextArea*
 - **Origen**: firmas `async Task HandleChange(...)` que solo asignan `CurrentValueAsString`. Genera warning y `Task` completado sincrónicamente con overhead innecesario.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Forms/Text/BUIInputText.razor:123`
