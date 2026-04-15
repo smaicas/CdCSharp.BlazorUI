@@ -343,11 +343,13 @@ Convenciones:
 
 > Resuelto en commit `eb3277d` — *A11Y-03: harden focus trap for BUIDialog/BUIDrawer*
 
-### [ ] A11Y-04 — `BUIInputSwitch`/`BUISwitch` labels y ARIA
+### [x] A11Y-04 — `BUIInputSwitch`/`BUISwitch` labels y ARIA
 - **Origen**: revisar `aria-checked`, `role="switch"`, asociación label-input.
 - **Archivos**: Switch components.
 - **Cambios**: aplicar patrón WAI-ARIA switch.
 - **Aceptación**: axe no reporta missing-label.
+
+> Resuelto en commit `13b470b` — *A11Y-04: add role=switch + label association to BUISwitch*
 
 ---
 
