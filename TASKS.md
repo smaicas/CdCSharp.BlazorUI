@@ -317,13 +317,15 @@ Convenciones:
 
 ## F. ACCESIBILIDAD
 
-### [ ] A11Y-01 — `BUILoadingIndicator` sin role/aria
+### [x] A11Y-01 — `BUILoadingIndicator` sin role/aria
 - **Origen**: SVG sin `role="img"` ni `aria-label`; variante lineal sin ARIA live region.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Loading/*`
 - **Cambios**:
   - Añadir `role="img" aria-label="@AriaLabel ?? DefaultLoadingLabel"`.
   - Para variante lineal con progreso, envolver en `<div role="progressbar" aria-valuenow="..." aria-valuemin="0" aria-valuemax="100">`.
 - **Aceptación**: lighthouse/axe no reporta missing label.
+
+> Resuelto en commit `0eafd6f` — *A11Y-01: add role/aria attributes to BUILoadingIndicator*
 
 ### [ ] A11Y-02 — `BUITabs` navegación por teclado y ARIA
 - **Origen**: verificar implementación de `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`, flechas izquierda/derecha, `Home`/`End`.
