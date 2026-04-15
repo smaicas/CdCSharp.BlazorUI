@@ -1,8 +1,11 @@
 @page "/"
+@implements IAsyncDisposable
+@inject IJSRuntime _js
 
 <PageTitle>CdCSharp.BlazorUI — Modern Blazor components for .NET 10</PageTitle>
+<InstallAppHint />
 
-<section class="hero">
+<section class="hero" @ref="_heroRef">
     <div class="hero__puzzle" aria-hidden="true">
         <span class="hero__tile hero__tile--1"></span>
         <span class="hero__tile hero__tile--2"></span>
@@ -108,6 +111,35 @@
 
 @code {
     [Inject] private NavigationManager _nav { get; set; } = default!;
+
+    private ElementReference _heroRef;
+    private IJSObjectReference? _parallaxModule;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _parallaxModule = await _js.InvokeAsync<IJSObjectReference>("import", "./js/hero-parallax.js");
+                await _parallaxModule.InvokeVoidAsync("attach", _heroRef);
+            }
+            catch (JSDisconnectedException) { }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_parallaxModule is not null)
+        {
+            try
+            {
+                await _parallaxModule.InvokeVoidAsync("detach");
+                await _parallaxModule.DisposeAsync();
+            }
+            catch (JSDisconnectedException) { }
+        }
+    }
 
     private const string _packageSnippet = @"dotnet add package CdCSharp.BlazorUI";
 

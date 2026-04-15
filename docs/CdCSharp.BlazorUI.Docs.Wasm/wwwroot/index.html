@@ -10,6 +10,10 @@
     <base href="/" />
     <link rel="preload" id="webassembly" />
 
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+
     <link href="_content/CdCSharp.BlazorUI/css/blazorui.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="css/docs.css" />
@@ -35,7 +39,27 @@
         <a href="." class="reload">Reload</a>
         <span class="dismiss">🗙</span>
     </div>
+    <script>
+        window.__buiInstall = { deferred: null, installed: false, listeners: [] };
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.__buiInstall.deferred = e;
+            window.__buiInstall.listeners.forEach(fn => { try { fn(); } catch { } });
+        });
+        window.addEventListener('appinstalled', () => {
+            window.__buiInstall.deferred = null;
+            window.__buiInstall.installed = true;
+            window.__buiInstall.listeners.forEach(fn => { try { fn(); } catch { } });
+        });
+    </script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js').catch(() => { });
+            });
+        }
+    </script>
 </body>
 
 </html>

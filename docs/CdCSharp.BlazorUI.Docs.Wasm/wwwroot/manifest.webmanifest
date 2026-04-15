@@ -1,0 +1,33 @@
+{
+  "name": "CdCSharp.BlazorUI Docs",
+  "short_name": "BlazorUI",
+  "description": "Official documentation for CdCSharp.BlazorUI — a modern Blazor component library for .NET 10.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#121417",
+  "theme_color": "#c41236",
+  "lang": "en",
+  "categories": ["developer", "productivity"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
