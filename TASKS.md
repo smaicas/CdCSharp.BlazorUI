@@ -102,7 +102,8 @@ Convenciones:
   - Documentar en XML-doc si se mantiene el pass-through sin sanitizar y se asume trust.
 - **Aceptación**: entrada `"<svg><script>alert(1)</script></svg>"` no ejecuta script en sample.
 
-### [ ] SEC-02 — `BUICodeBlock` renderiza MarkupString de Highlighter sin validar
+### [x] SEC-02 — `BUICodeBlock` renderiza MarkupString de Highlighter sin validar
+> Auditoría sin cambio de código. `HtmlRenderer.Render` en `src/CdCSharp.BlazorUI.SyntaxHighlight/Rendering/HtmlRenderer.cs:44-60` escapa `<`, `>`, `&`, `"`, `'` en cada token antes de concatenar. El fallback en `BUICodeBlock.HighlightedCode` usa `HttpUtility.HtmlEncode`. No se detectó vector XSS. Seguimiento opcional: añadir test de regresión cuando el proyecto de tests referencie `CdCSharp.BlazorUI.SyntaxHighlight`.
 - **Origen**: confianza implícita en que `CdCSharp.BlazorUI.SyntaxHighlight` produce HTML seguro. Si la entrada contiene secuencias que el highlighter no escapa (edge cases), XSS posible.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Generic/CodeBlock/BUICodeBlock.razor:~61`
