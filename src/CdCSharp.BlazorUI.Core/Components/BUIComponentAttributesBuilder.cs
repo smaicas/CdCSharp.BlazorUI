@@ -73,6 +73,21 @@ internal sealed class BUIComponentAttributesBuilder
 
         if (component is IHasDisabled disabled)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = disabled.IsDisabled.ToString().ToLowerInvariant();
+
+        if (component is IHasLoading loading)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = loading.Loading.ToString().ToLowerInvariant();
+
+        if (component is IHasError error)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = error.Error.ToString().ToLowerInvariant();
+
+        if (component is IHasReadOnly readOnly)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = readOnly.ReadOnly.ToString().ToLowerInvariant();
+
+        if (component is IHasRequired required)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = required.Required.ToString().ToLowerInvariant();
+
+        if (component is IHasFullWidth fullWidth)
+            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = fullWidth.FullWidth.ToString().ToLowerInvariant();
     }
 
     private static string ToKebabCaseComponentName(string value)

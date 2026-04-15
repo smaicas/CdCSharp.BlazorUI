@@ -77,7 +77,7 @@ Call flow:
    - Emits `data-bui-component="<kebab-name>"` (with the `BUI` prefix stripped from the type name).
    - For each `IHas*` interface the component implements, sets the matching entry in `FeatureDefinitions.DataAttributes` or `FeatureDefinitions.InlineVariables`.
    - Merges all `--bui-inline-*` vars into a single `style="..."` string, preserving any user-provided inline `style`.
-3. `PatchVolatileAttributes` is called on re-renders for the subset of states that flip frequently (`IHasActive`, `IHasDisabled`) without rebuilding the full attribute set.
+3. `PatchVolatileAttributes` is called on re-renders for the subset of states that flip frequently (`IHasActive`, `IHasDisabled`, `IHasLoading`, `IHasError`, `IHasReadOnly`, `IHasRequired`, `IHasFullWidth`) without rebuilding the full attribute set.
 4. Components can hook `BuildComponentDataAttributes` / `BuildComponentCssVariables` on `IBuiltComponent` (via `BUIComponentBase` virtuals) to contribute extra attributes/vars before `style` is flattened.
 
 Interface → DOM output mapping (see `FeatureDefinitions.cs` for the canonical attribute/variable names):
