@@ -183,6 +183,11 @@ public static class FeatureDefinitions
         /// Current variant of the component (e.g., "outlined", "filled")
         /// </summary>
         public const string Variant = "data-bui-variant";
+
+        /// <summary>
+        /// Placement of auxiliary buttons within a component (e.g., "left", "right").
+        /// </summary>
+        public const string ButtonPlacement = "data-bui-button-placement";
     }
 
     public static class InlineVariables

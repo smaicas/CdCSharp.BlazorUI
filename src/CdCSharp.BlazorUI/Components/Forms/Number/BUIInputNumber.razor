@@ -108,6 +108,12 @@
     private bool HasValue => CurrentValue != null && !EqualityComparer<TValue>.Default.Equals(CurrentValue, default);
     private bool IsFloated => _isFocused || HasValue || _isDirty;
 
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes[FeatureDefinitions.DataAttributes.ButtonPlacement] = ButtonPlacement.ToString().ToLowerInvariant();
+    }
+
     public BUIInputNumber()
     {
         _underlyingType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
@@ -149,8 +155,7 @@
     private RenderFragment RenderInput() => __builder =>
 {
     <bui-component @attributes="ComputedAttributes"
-                   data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
-                   data-bui-button-placement="@ButtonPlacement.ToString().ToLowerInvariant()">
+                   data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
 
         <div class="bui-input__wrapper">
 
