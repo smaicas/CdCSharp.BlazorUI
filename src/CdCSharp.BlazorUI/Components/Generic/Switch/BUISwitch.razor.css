@@ -3,20 +3,20 @@
  * ============================================ */
 
 bui-component[data-bui-component="switch"] {
-    --_scale: var(--bui-size-multiplier, 1);
-    --_track-w: calc(3rem * var(--_scale));
-    --_track-h: calc(1.5rem * var(--_scale));
-    --_thumb-size: calc(1.25rem * var(--_scale));
-    --_thumb-translate: calc(1.5rem * var(--_scale));
-    --_track-inactive-background: var(--track-inline-inactive-bg, var(--palette-border));
-    --_track-active-background: var(--track-inline-active-bg, var(--palette-primary));
-    --_thumb-inactive-background: var(--thumb-inline-inactive-bg, var(--palette-surface));
-    --_thumb-active-background: var(--thumb-inline-active-bg, var(--palette-surface));
-    --_thumb-inactive-color: var(--thumb-inline-inactive-color, var(--palette-surfacecontrast));
-    --_thumb-active-color: var(--thumb-inline-active-color, var(--palette-surfacecontrast));
+    --_switch-scale: var(--bui-size-multiplier, 1);
+    --_switch-track-w: calc(3rem * var(--_switch-scale));
+    --_switch-track-h: calc(1.5rem * var(--_switch-scale));
+    --_switch-thumb-size: calc(1.25rem * var(--_switch-scale));
+    --_switch-thumb-translate: calc(1.5rem * var(--_switch-scale));
+    --_switch-track-inactive-bg: var(--bui-inline-track-inactive-bg, var(--palette-border));
+    --_switch-track-active-bg: var(--bui-inline-track-active-bg, var(--palette-primary));
+    --_switch-thumb-inactive-bg: var(--bui-inline-thumb-inactive-bg, var(--palette-surface));
+    --_switch-thumb-active-bg: var(--bui-inline-thumb-active-bg, var(--palette-surface));
+    --_switch-thumb-inactive-color: var(--bui-inline-thumb-inactive-color, var(--palette-surfacecontrast));
+    --_switch-thumb-active-color: var(--bui-inline-thumb-active-color, var(--palette-surfacecontrast));
     display: inline-flex;
     flex-direction: column;
-    gap: calc(0.25rem * var(--_scale));
+    gap: calc(0.25rem * var(--_switch-scale));
 }
 
     /* ============================================
@@ -49,17 +49,17 @@ bui-component[data-bui-component="switch"] {
 
     bui-component[data-bui-component="switch"] .bui-switch__track {
         position: relative;
-        width: var(--_track-w);
-        height: var(--_track-h);
+        width: var(--_switch-track-w);
+        height: var(--_switch-track-h);
         padding: 0.125rem;
-        border-radius: var(--_track-h);
-        background: var(--_track-inactive-background);
+        border-radius: var(--_switch-track-h);
+        background: var(--_switch-track-inactive-bg);
         transition: background 0.2s ease;
     }
 
     /* Track checked state */
     bui-component[data-bui-component="switch"][data-bui-active="true"] .bui-switch__track {
-        background: var(--_track-active-background);
+        background: var(--_switch-track-active-bg);
     }
 
     /* ============================================
@@ -71,10 +71,10 @@ bui-component[data-bui-component="switch"] {
         top: 50%;
         left: 0.125rem;
         transform: translateY(-50%);
-        width: var(--_thumb-size);
-        height: var(--_thumb-size);
+        width: var(--_switch-thumb-size);
+        height: var(--_switch-thumb-size);
         border-radius: 50%;
-        background: var(--_thumb-inactive-background);
+        background: var(--_switch-thumb-inactive-bg);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         display: flex;
         align-items: center;
@@ -84,8 +84,8 @@ bui-component[data-bui-component="switch"] {
 
     /* Thumb checked state */
     bui-component[data-bui-component="switch"][data-bui-active="true"] .bui-switch__thumb {
-        transform: translateY(-50%) translateX(var(--_thumb-translate));
-        background: var(--_thumb-active-background);
+        transform: translateY(-50%) translateX(var(--_switch-thumb-translate));
+        background: var(--_switch-thumb-active-bg);
     }
 
     /* ============================================
@@ -93,14 +93,14 @@ bui-component[data-bui-component="switch"] {
  * ============================================ */
 
     bui-component[data-bui-component="switch"] .bui-switch__icon {
-        font-size: calc(0.75rem * var(--_scale));
+        font-size: calc(0.75rem * var(--_switch-scale));
         line-height: 1;
-        color: var(--_thumb-inactive-color);
+        color: var(--_switch-thumb-inactive-color);
         animation: bui-switch-icon-in 0.2s ease-out;
     }
 
     bui-component[data-bui-component="switch"][data-bui-active="true"] .bui-switch__icon {
-        color: var(--_thumb-active-color);
+        color: var(--_switch-thumb-active-color);
     }
 
     /* ============================================
@@ -108,7 +108,7 @@ bui-component[data-bui-component="switch"] {
  * ============================================ */
 
     bui-component[data-bui-component="switch"] .bui-switch__label {
-        font-size: calc(1rem * var(--_scale));
+        font-size: calc(1rem * var(--_switch-scale));
         line-height: 1.4;
         color: var(--palette-surfacecontrast);
     }
@@ -138,7 +138,7 @@ bui-component[data-bui-component="switch"] {
         font-size: 0.875em;
         color: var(--palette-surfacecontrast);
         opacity: 0.7;
-        padding-left: calc(var(--_track-w));
+        padding-left: calc(var(--_switch-track-w));
     }
 
 /* ============================================

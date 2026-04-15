@@ -168,13 +168,13 @@
     {
         base.BuildComponentCssVariables(cssVariables);
 
-        if (!string.IsNullOrWhiteSpace(TrackColorInactive)) { cssVariables["--track-inline-inactive-bg"] = TrackColorInactive; }
-        if (!string.IsNullOrWhiteSpace(TrackColorActive)) { cssVariables["--track-inline-active-bg"] = TrackColorActive; }
+        if (!string.IsNullOrWhiteSpace(TrackColorInactive)) { cssVariables["--bui-inline-track-inactive-bg"] = TrackColorInactive; }
+        if (!string.IsNullOrWhiteSpace(TrackColorActive)) { cssVariables["--bui-inline-track-active-bg"] = TrackColorActive; }
 
-        if (!string.IsNullOrWhiteSpace(ThumbBackgroundColorInactive)) { cssVariables["--thumb-inline-inactive-bg"] = ThumbBackgroundColorInactive; }
-        if (!string.IsNullOrWhiteSpace(ThumbBackgroundColorActive)) { cssVariables["--thumb-inline-active-bg"] = ThumbBackgroundColorActive; }
+        if (!string.IsNullOrWhiteSpace(ThumbBackgroundColorInactive)) { cssVariables["--bui-inline-thumb-inactive-bg"] = ThumbBackgroundColorInactive; }
+        if (!string.IsNullOrWhiteSpace(ThumbBackgroundColorActive)) { cssVariables["--bui-inline-thumb-active-bg"] = ThumbBackgroundColorActive; }
 
-        if (!string.IsNullOrWhiteSpace(ThumbColorInactive)) { cssVariables["--thumb-inline-inactive-color"] = ThumbColorInactive; }
-        if (!string.IsNullOrWhiteSpace(ThumbColorActive)) { cssVariables["--thumb-inline-active-color"] = ThumbColorActive; }
+        if (!string.IsNullOrWhiteSpace(ThumbColorInactive)) { cssVariables["--bui-inline-thumb-inactive-color"] = ThumbColorInactive; }
+        if (!string.IsNullOrWhiteSpace(ThumbColorActive)) { cssVariables["--bui-inline-thumb-active-color"] = ThumbColorActive; }
     }
 }
