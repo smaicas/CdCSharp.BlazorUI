@@ -224,13 +224,15 @@ Convenciones:
 
 > Resuelto en commit `3e76afe` — *STD-10: route data-bui-floated through BuildComponentDataAttributes*
 
-### [ ] STD-11 — `BUIInputDropdown` no hereda `BUIInputComponentBase`
+### [x] STD-11 — `BUIInputDropdown` no hereda `BUIInputComponentBase`
 - **Origen**: `BUIInputDropdown.razor` hereda `ComponentBase` implícito y compone `BUIDropdownContainer` (que sí hereda la base). Decisión deliberada pero causa inconsistencia: `Value`, `ValueExpression`, validación, `IsError` se gestionan en contenedor, no en el input público; API divergente con el resto.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Dropdown/BUIInputDropdown.razor` (+ code-behind)
 - **Cambios** (decisión previa):
   - Opción A: mantener composición, documentar la razón en CLAUDE.md y añadir delegación de `IsError`/`IsDisabled`/etc. para consumidores.
   - Opción B: refactor para que `BUIInputDropdown` herede `BUIInputComponentBase<TValue, BUIInputDropdown<TValue>, BUIInputVariant>` y `BUIDropdownContainer` sea detalle interno no-input.
 - **Aceptación**: API pública coherente — validaciones `EditContext`, `IHas*`, y DOM root consistentes entre inputs.
+
+> Resuelto en commit `289c57b` — *STD-11: document BUIInputDropdown composition pattern* (Opción A: composición documentada; delegación existente cubre validación/IHas* vía `ValueExpression` + parámetros reenviados).
 
 ---
 
