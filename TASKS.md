@@ -117,7 +117,8 @@ Convenciones:
 
 ## C. ESTÁNDAR (CLAUDE.md) — Estado via `data-bui-*`, no clases CSS
 
-### [ ] STD-01 — `BUITabs` usa clase CSS para tab activa
+### [x] STD-01 — `BUITabs` usa clase CSS para tab activa
+> Resuelto en commit `d86659c` — *STD-01: express active tab state via data-bui-active, not a CSS modifier class*
 - **Origen**: `BUITabs.razor:~67` aplica `bui-tabs__tab--active` condicional en lugar de `data-bui-active`.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITabs.razor`
