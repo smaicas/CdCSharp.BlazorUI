@@ -5,6 +5,7 @@
 @typeparam TItem
 @inherits BUIComponentBase
 @implements IHasSize
+@implements IDisposable
 
 @{
     base.BuildRenderTree(__builder);
@@ -472,4 +473,11 @@
 
     public IReadOnlyCollection<TreeSelectionNode<TItem>> GetSelectedNodes()
         => _selectedKeysInternal.Select(k => _tree.GetNode(k)).Where(n => n != null).ToList()!;
+
+    public void Dispose()
+    {
+        _registry.Clear();
+        _tree?.Clear();
+        _selectedKeysInternal.Clear();
+    }
 }
