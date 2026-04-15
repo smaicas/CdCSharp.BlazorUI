@@ -57,6 +57,16 @@ html[data-theme="light"] {
     color: var(--palette-surfacecontrast);
 }
 
+.doc-header__brand:hover,
+.doc-header__brand:focus,
+.doc-header__brand:hover .doc-header__logo,
+.doc-header__brand:hover .doc-header__wordmark,
+.doc-header__brand:hover .doc-header__wordmark-blazor,
+.doc-header__brand:hover .doc-header__wordmark-ui {
+    text-decoration: none;
+    border-bottom: none;
+}
+
 .doc-header__logo {
     width: 36px;
     height: 36px;
@@ -71,24 +81,21 @@ html[data-theme="light"] {
     letter-spacing: -0.04em;
 }
 
-.doc-header__title {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
-}
-
-.doc-header__title strong {
+.doc-header__wordmark {
+    display: inline-flex;
+    align-items: baseline;
     font-weight: 800;
-    font-size: 1.02rem;
-    letter-spacing: -0.02em;
+    font-size: 1.15rem;
+    letter-spacing: -0.03em;
+    line-height: 1;
 }
 
-.doc-header__title span {
-    font-size: 0.72rem;
-    color: color-mix(in oklab, var(--palette-surfacecontrast) 60%, var(--palette-surface));
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    font-weight: 500;
+.doc-header__wordmark-blazor {
+    color: var(--palette-surfacecontrast);
+}
+
+.doc-header__wordmark-ui {
+    color: var(--palette-primary);
 }
 
 .doc-header__actions {

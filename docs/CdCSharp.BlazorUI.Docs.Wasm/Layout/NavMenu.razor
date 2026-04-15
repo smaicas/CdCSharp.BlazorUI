@@ -1,86 +1,78 @@
 <BUITreeMenu TItem="object" Size="SizeEnum.Medium">
-    <BUITreeMenuItem Text="Home"
-                     Icon="@BUIIcons.MaterialIconsRound.i_home"
-                     Href="/"
-                     Match="NavLinkMatch.All" />
+    <BUITreeMenuItem Text="Components"
+                     Icon="@BUIIcons.MaterialIconsOutlined.i_widgets"
+                     InitiallyExpanded="true">
+        <ChildContent>
+            <BUITreeMenuItem Text="Forms"
+                             Icon="@BUIIcons.MaterialIconsOutlined.i_edit_note"
+                             InitiallyExpanded="true">
+                <ChildContent>
+                    <BUITreeMenuItem Text="Checkbox" Href="/components/checkbox" />
+                    <BUITreeMenuItem Text="Color Picker" Href="/components/color" />
+                    <BUITreeMenuItem Text="DateTime" Href="/components/datetime" />
+                    <BUITreeMenuItem Text="Dropdown" Href="/components/dropdown" />
+                    <BUITreeMenuItem Text="Number" Href="/components/number" />
+                    <BUITreeMenuItem Text="Radio" Href="/components/radio" />
+                    <BUITreeMenuItem Text="Switch" Href="/components/switch" />
+                    <BUITreeMenuItem Text="Text" Href="/components/text" />
+                    <BUITreeMenuItem Text="TextArea" Href="/components/textarea" />
+                </ChildContent>
+            </BUITreeMenuItem>
 
-    <BUITreeMenuItem Text="Getting started"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_rocket_launch"
-                     Href="/getting-started" />
+            <BUITreeMenuItem Text="Generic"
+                             Icon="@BUIIcons.MaterialIconsOutlined.i_category">
+                <ChildContent>
+                    <BUITreeMenuItem Text="Badge" Href="/components/badge" />
+                    <BUITreeMenuItem Text="Button" Href="/components/button" />
+                    <BUITreeMenuItem Text="Code Block" Href="/components/codeblock" />
+                    <BUITreeMenuItem Text="DataCards" Href="/components/datacards" />
+                    <BUITreeMenuItem Text="DataGrid" Href="/components/datagrid" />
+                    <BUITreeMenuItem Text="Loading" Href="/components/loading" />
+                    <BUITreeMenuItem Text="Svg Icon" Href="/components/svgicon" />
+                    <BUITreeMenuItem Text="Tabs" Href="/components/tabs" />
+                </ChildContent>
+            </BUITreeMenuItem>
 
-    <BUITreeMenuItem Text="Theming"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_palette"
-                     Href="/theming" />
+            <BUITreeMenuItem Text="Layout"
+                             Icon="@BUIIcons.MaterialIconsOutlined.i_dashboard">
+                <ChildContent>
+                    <BUITreeMenuItem Text="Card" Href="/components/card" />
+                    <BUITreeMenuItem Text="Dialog &amp; Drawer" Href="/components/modal" />
+                    <BUITreeMenuItem Text="Grid" Href="/components/grid" />
+                    <BUITreeMenuItem Text="Theme Generator" Href="/components/themegenerator" />
+                    <BUITreeMenuItem Text="Theme Selector" Href="/components/themeselector" />
+                    <BUITreeMenuItem Text="Toast" Href="/components/toast" />
+                </ChildContent>
+            </BUITreeMenuItem>
 
-    <BUITreeMenuItem Text="Concepts"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_auto_stories"
+            <BUITreeMenuItem Text="Tree"
+                             Icon="@BUIIcons.MaterialIconsOutlined.i_account_tree">
+                <ChildContent>
+                    <BUITreeMenuItem Text="Tree Menu" Href="/components/treemenu" />
+                    <BUITreeMenuItem Text="Tree Selector" Href="/components/treeselector" />
+                </ChildContent>
+            </BUITreeMenuItem>
+
+            <BUITreeMenuItem Text="Utils"
+                             Icon="@BUIIcons.MaterialIconsOutlined.i_build">
+                <ChildContent>
+                    <BUITreeMenuItem Text="Draggable" Href="/components/draggable" />
+                    <BUITreeMenuItem Text="Tooltip" Href="/components/tooltip" />
+                </ChildContent>
+            </BUITreeMenuItem>
+        </ChildContent>
+    </BUITreeMenuItem>
+
+    <BUITreeMenuItem Text="Developer"
+                     Icon="@BUIIcons.MaterialIconsOutlined.i_code"
                      InitiallyExpanded="true">
         <ChildContent>
             <BUITreeMenuItem Text="Architecture" Href="/concepts/architecture" />
             <BUITreeMenuItem Text="Variants" Href="/concepts/variants" />
+            <BUITreeMenuItem Text="Theming" Href="/theming" />
             <BUITreeMenuItem Text="Localization" Href="/concepts/localization" />
             <BUITreeMenuItem Text="JS Interop" Href="/concepts/js-interop" />
             <BUITreeMenuItem Text="Accessibility" Href="/concepts/accessibility" />
-        </ChildContent>
-    </BUITreeMenuItem>
-
-    <BUITreeMenuItem Text="Forms"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_edit_note"
-                     InitiallyExpanded="true">
-        <ChildContent>
-            <BUITreeMenuItem Text="Checkbox" Href="/components/checkbox" />
-            <BUITreeMenuItem Text="Color Picker" Href="/components/color" />
-            <BUITreeMenuItem Text="DateTime" Href="/components/datetime" />
-            <BUITreeMenuItem Text="Dropdown" Href="/components/dropdown" />
-            <BUITreeMenuItem Text="Number" Href="/components/number" />
-            <BUITreeMenuItem Text="Radio" Href="/components/radio" />
-            <BUITreeMenuItem Text="Switch" Href="/components/switch" />
-            <BUITreeMenuItem Text="Text" Href="/components/text" />
-            <BUITreeMenuItem Text="TextArea" Href="/components/textarea" />
-        </ChildContent>
-    </BUITreeMenuItem>
-
-    <BUITreeMenuItem Text="Generic"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_widgets"
-                     InitiallyExpanded="true">
-        <ChildContent>
-            <BUITreeMenuItem Text="Badge" Href="/components/badge" />
-            <BUITreeMenuItem Text="Button" Href="/components/button" />
-            <BUITreeMenuItem Text="Code Block" Href="/components/codeblock" />
-            <BUITreeMenuItem Text="DataCards" Href="/components/datacards" />
-            <BUITreeMenuItem Text="DataGrid" Href="/components/datagrid" />
-            <BUITreeMenuItem Text="Loading" Href="/components/loading" />
-            <BUITreeMenuItem Text="Svg Icon" Href="/components/svgicon" />
-            <BUITreeMenuItem Text="Tabs" Href="/components/tabs" />
-        </ChildContent>
-    </BUITreeMenuItem>
-
-    <BUITreeMenuItem Text="Layout"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_dashboard"
-                     InitiallyExpanded="true">
-        <ChildContent>
-            <BUITreeMenuItem Text="Card" Href="/components/card" />
-            <BUITreeMenuItem Text="Dialog &amp; Drawer" Href="/components/modal" />
-            <BUITreeMenuItem Text="Grid" Href="/components/grid" />
-            <BUITreeMenuItem Text="Theme Generator" Href="/components/themegenerator" />
-            <BUITreeMenuItem Text="Theme Selector" Href="/components/themeselector" />
-            <BUITreeMenuItem Text="Toast" Href="/components/toast" />
-        </ChildContent>
-    </BUITreeMenuItem>
-
-    <BUITreeMenuItem Text="Tree"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_account_tree">
-        <ChildContent>
-            <BUITreeMenuItem Text="Tree Menu" Href="/components/treemenu" />
-            <BUITreeMenuItem Text="Tree Selector" Href="/components/treeselector" />
-        </ChildContent>
-    </BUITreeMenuItem>
-
-    <BUITreeMenuItem Text="Utils"
-                     Icon="@BUIIcons.MaterialIconsOutlined.i_build">
-        <ChildContent>
-            <BUITreeMenuItem Text="Draggable" Href="/components/draggable" />
-            <BUITreeMenuItem Text="Tooltip" Href="/components/tooltip" />
         </ChildContent>
     </BUITreeMenuItem>
 </BUITreeMenu>
