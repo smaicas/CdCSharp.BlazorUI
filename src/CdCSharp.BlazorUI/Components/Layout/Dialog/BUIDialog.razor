@@ -4,6 +4,7 @@
 @implements IAsyncDisposable
 
 @inject IModalJsInterop JsInterop
+@using Microsoft.JSInterop
 
 @if (Open)
 {
@@ -67,6 +68,8 @@
     private ElementReference _dialogRef;
     private bool _jsInitialized;
     private bool _isClosing;
+    private bool _disposed;
+    private const int CloseAnimationFallbackMs = 300;
 
     [Parameter] public bool Open { get; set; }
     [Parameter] public EventCallback<bool> OpenChanged { get; set; }
@@ -149,7 +152,15 @@
         _isClosing = true;
         StateHasChanged();
 
-        await Task.Delay(150);
+        try
+        {
+            await JsInterop.WaitForAnimationEndAsync(_dialogRef, CloseAnimationFallbackMs);
+        }
+        catch (JSDisconnectedException) { }
+        catch (InvalidOperationException) { }
+        catch (TaskCanceledException) { }
+
+        if (_disposed) return;
 
         _isClosing = false;
         Open = false;
@@ -168,6 +179,7 @@
 
     public async ValueTask DisposeAsync()
     {
+        _disposed = true;
         await CleanupAsync();
     }
 }

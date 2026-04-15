@@ -77,6 +77,28 @@ export function trapFocus(element: HTMLElement): void {
     focusTrapState.firstFocusable.focus();
 }
 
+export function waitForAnimationEnd(element: HTMLElement, fallbackMs: number): Promise<void> {
+    if (!element) return Promise.resolve();
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return Promise.resolve();
+
+    return new Promise<void>((resolve) => {
+        let done = false;
+        const finish = (): void => {
+            if (done) return;
+            done = true;
+            element.removeEventListener('animationend', finish);
+            element.removeEventListener('transitionend', finish);
+            clearTimeout(timeoutId);
+            resolve();
+        };
+        element.addEventListener('animationend', finish, { once: true });
+        element.addEventListener('transitionend', finish, { once: true });
+        const timeoutId = window.setTimeout(finish, fallbackMs);
+    });
+}
+
 export function releaseFocus(): void {
     if (focusTrapState.tabHandler) {
         document.removeEventListener('keydown', focusTrapState.tabHandler);

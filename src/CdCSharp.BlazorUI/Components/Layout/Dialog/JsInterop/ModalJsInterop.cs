@@ -14,6 +14,8 @@ public interface IModalJsInterop
     ValueTask TrapFocusAsync(ElementReference element);
 
     ValueTask UnlockScrollAsync();
+
+    ValueTask WaitForAnimationEndAsync(ElementReference element, int fallbackMs);
 }
 
 public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
@@ -49,5 +51,12 @@ public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
         await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
         await module.InvokeVoidAsync("unlockScroll");
+    }
+
+    public async ValueTask WaitForAnimationEndAsync(ElementReference element, int fallbackMs)
+    {
+        await IsModuleTaskLoaded.Task;
+        IJSObjectReference module = await ModuleTask.Value;
+        await module.InvokeVoidAsync("waitForAnimationEnd", element, fallbackMs);
     }
 }
