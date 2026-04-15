@@ -12,7 +12,7 @@ Convenciones:
 ## A. BUGS CRÍTICOS
 
 ### [x] CORE-01 — PatchVolatileAttributes omite estados Error/Loading/ReadOnly
-> Resuelto en commit `03abd80` — *CORE-01: extend PatchVolatileAttributes to cover Loading/Error/ReadOnly/Required/FullWidth*
+> Resuelto en commit `6bba694` — *CORE-01: extend PatchVolatileAttributes to cover Loading/Error/ReadOnly/Required/FullWidth*
 - **Origen**: `BUIComponentAttributesBuilder.BuildStyles` aplica Error/Loading/ReadOnly a `ComputedAttributes`, pero `PatchVolatileAttributes` (llamado en cada render de `BUIComponentBase.BuildRenderTree`) solo re-parchea `Active` y `Disabled`. Mid-render, cambios de validación que no pasan por `OnParametersSet` pueden dejar el atributo stale (el `HandleValidationStateChanged` en `BUIInputComponentBase:128` mitiga llamando a `BuildStyles` completo, pero el contrato de `PatchVolatileAttributes` es incompleto).
 - **Archivos**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:69-76`
 - **Cambios**:
