@@ -49,30 +49,32 @@
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <BUISwitch TValue="bool"
-                   Value="@CurrentValue"
-                   ValueChanged="@OnSwitchValueChanged"
-                   OptionInactive="@false"
-                   OptionActive="@true"
-                   Disabled="@IsDisabled"
-                   Size="@Size"
-                   Density="@Density"
-                   Label="@Label"
-                   HelperText="@HelperText"
-                   IconInactive="@IconInactive"
-                   IconActive="@IconActive"
-                   TrackColorInactive="@TrackColorInactive"
-                   TrackColorActive="@TrackColorActive"
-                   InputId="@_inputId"
-                   AriaDescribedBy="@_helperTextId"
-                   @attributes="ComputedAttributes" />
+        <bui-component @attributes="ComputedAttributes">
 
-        <_BUIFieldHelper TValue="bool"
-                         Id="@_helperTextId"
-                         HelperText="@HelperText"
-                         ShowValidation="@IsError"
-                         EditContext="@EditContext"
-                         For="@ValueExpression" />
+            <BUISwitch TValue="bool"
+                       Value="@CurrentValue"
+                       ValueChanged="@OnSwitchValueChanged"
+                       OptionInactive="@false"
+                       OptionActive="@true"
+                       Disabled="@IsDisabled"
+                       Size="@Size"
+                       Density="@Density"
+                       Label="@Label"
+                       IconInactive="@IconInactive"
+                       IconActive="@IconActive"
+                       TrackColorInactive="@TrackColorInactive"
+                       TrackColorActive="@TrackColorActive"
+                       InputId="@_inputId"
+                       AriaDescribedBy="@_helperTextId" />
+
+            <_BUIFieldHelper TValue="bool"
+                             Id="@_helperTextId"
+                             HelperText="@HelperText"
+                             ShowValidation="@IsError"
+                             EditContext="@EditContext"
+                             For="@ValueExpression" />
+
+        </bui-component>
     };
 
     private async Task OnSwitchValueChanged(bool newValue)
