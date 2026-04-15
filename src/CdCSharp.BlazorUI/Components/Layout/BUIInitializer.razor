@@ -1,6 +1,8 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Layout
 @using Microsoft.JSInterop
 
+@implements IDisposable
+
 @inject IThemeJsInterop ThemeInterop
 
 <HeadContent>
@@ -43,8 +45,13 @@
 
     private async void HandleThemeChanged(string theme)
     {
-        await LoadPaletteAsync();
-        await InvokeAsync(StateHasChanged);
+        try
+        {
+            await LoadPaletteAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+        catch (ObjectDisposedException) { }
+        catch (JSDisconnectedException) { }
     }
 
     private async Task LoadPaletteAsync()

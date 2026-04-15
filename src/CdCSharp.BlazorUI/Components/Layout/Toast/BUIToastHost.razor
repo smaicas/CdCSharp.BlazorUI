@@ -30,6 +30,7 @@
 @code {
     private ToastService? _toastService;
     private List<ToastState> _allToasts = [];
+    private bool _disposed;
 
     [Parameter]
     public int MaxVisiblePerPosition { get; set; } = 5;
@@ -43,8 +44,9 @@
 
     private void HandleToastChange()
     {
+        if (_disposed) return;
         _allToasts = ToastService.ActiveToasts.ToList();
-        InvokeAsync(StateHasChanged);
+        _ = InvokeAsync(StateHasChanged);
     }
 
     private IEnumerable<ToastState> GetToastsForPosition(ToastPosition position)
@@ -87,6 +89,7 @@
 
     public void Dispose()
     {
+        _disposed = true;
         ToastService.OnChange -= HandleToastChange;
     }
 }
