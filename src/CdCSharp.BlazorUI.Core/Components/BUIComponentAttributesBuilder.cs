@@ -7,21 +7,28 @@ namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 internal sealed class BUIComponentAttributesBuilder
 {
     private string? _originalUserStyles;
-    public Dictionary<string, object> ComputedAttributes { get; private set; } = [];
+    private readonly Dictionary<string, string> _cssVariables = [];
+    public Dictionary<string, object> ComputedAttributes { get; } = [];
 
     public void BuildStyles(
         ComponentBase component,
         IReadOnlyDictionary<string, object>? additionalAttributes)
     {
-        ComputedAttributes = additionalAttributes != null
-            ? new Dictionary<string, object>(additionalAttributes)
-            : [];
+        ComputedAttributes.Clear();
+        if (additionalAttributes != null)
+        {
+            foreach (KeyValuePair<string, object> kv in additionalAttributes)
+            {
+                ComputedAttributes[kv.Key] = kv.Value;
+            }
+        }
 
         _originalUserStyles = ComputedAttributes.TryGetValue("style", out object? style)
             ? style?.ToString()
             : null;
 
-        Dictionary<string, string> cssVariables = [];
+        Dictionary<string, string> cssVariables = _cssVariables;
+        cssVariables.Clear();
 
         string componentName = ToKebabCaseComponentName(component.GetType().Name);
         ComputedAttributes[FeatureDefinitions.DataAttributes.Component] = componentName;
