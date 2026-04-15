@@ -15,7 +15,7 @@ bui-component[data-bui-component="card"] {
     --_card-header-padding: 1rem;
     --_card-content-padding: 1rem;
     --_card-actions-padding: 0.5rem 1rem;
-    --_card-media-height: var(--bui-card-inline-media-height, 200px);
+    --_card-media-height: 200px;
 }
 
     /* Card Container */
