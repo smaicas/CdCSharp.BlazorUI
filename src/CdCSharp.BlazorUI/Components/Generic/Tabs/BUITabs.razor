@@ -1,4 +1,6 @@
 ﻿@namespace CdCSharp.BlazorUI.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
 @inherits BUIVariantComponentBase<BUITabs, BUITabsVariant>
 @implements IHasSize
 
@@ -32,6 +34,8 @@
     /* ========= Private state ========= */
     private readonly List<BUITab> _tabs = new();
     private readonly object _tabsLock = new();
+    private readonly Dictionary<string, ElementReference> _tabRefs = new();
+    private string? _pendingFocusTabId;
     private bool _disposed;
 
     /* ========= Internal API for BUITab ========= */
@@ -88,6 +92,7 @@
         {
             _tabs.Clear();
         }
+        _tabRefs.Clear();
         await base.DisposeAsync();
     }
 
@@ -96,18 +101,26 @@
     /* ========= Render ========= */
     private RenderFragment RenderDefault() => __builder =>
     {
+        List<BUITab> tabs = SnapshotTabs();
         <CascadingValue Value="this">
             <bui-component @attributes="@ComputedAttributes">
                 <div class="bui-tabs__header" role="tablist">
-                    @foreach (BUITab tab in SnapshotTabs())
+                    @foreach (BUITab tab in tabs)
                     {
+                        string tabId = tab.Id ?? string.Empty;
+                        bool isActive = tab.Id == ActiveTab;
                         <button type="button"
                                 role="tab"
+                                id="@($"bui-tab-{tabId}")"
                                 class="bui-tabs__tab"
-                                data-bui-active="@((tab.Id == ActiveTab).ToString().ToLowerInvariant())"
-                                aria-selected="@(tab.Id == ActiveTab)"
+                                data-bui-active="@(isActive.ToString().ToLowerInvariant())"
+                                aria-selected="@(isActive ? "true" : "false")"
+                                aria-controls="@($"bui-tabpanel-{tabId}")"
+                                tabindex="@(isActive ? 0 : -1)"
                                 disabled="@tab.Disabled"
-                                @onclick="() => SelectTab(tab.Id)">
+                                @ref="_tabRefs[tabId]"
+                                @onclick="() => SelectTab(tab.Id)"
+                                @onkeydown="e => HandleKeyDown(e, tabs, tab.Id)">
                             @if (tab.Icon != null)
                             {
                                 <span class="bui-tabs__tab-icon">@tab.Icon</span>
@@ -116,7 +129,11 @@
                         </button>
                     }
                 </div>
-                <div class="bui-tabs__content" role="tabpanel">
+                <div class="bui-tabs__content"
+                     role="tabpanel"
+                     id="@($"bui-tabpanel-{ActiveTab}")"
+                     aria-labelledby="@($"bui-tab-{ActiveTab}")"
+                     tabindex="0">
                     @ChildContent
                 </div>
             </bui-component>
@@ -130,6 +147,80 @@
         {
             ActiveTab = tabId;
             await ActiveTabChanged.InvokeAsync(tabId);
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e, List<BUITab> tabs, string? currentId)
+    {
+        if (tabs.Count == 0) return;
+
+        int currentIndex = tabs.FindIndex(t => t.Id == currentId);
+        int targetIndex = -1;
+
+        switch (e.Key)
+        {
+            case "ArrowRight":
+                targetIndex = FindNextEnabled(tabs, currentIndex, 1);
+                break;
+            case "ArrowLeft":
+                targetIndex = FindNextEnabled(tabs, currentIndex, -1);
+                break;
+            case "Home":
+                targetIndex = FindFirstEnabled(tabs, 0, 1);
+                break;
+            case "End":
+                targetIndex = FindFirstEnabled(tabs, tabs.Count - 1, -1);
+                break;
+            default:
+                return;
+        }
+
+        if (targetIndex < 0 || targetIndex == currentIndex) return;
+
+        string? targetId = tabs[targetIndex].Id;
+        _pendingFocusTabId = targetId;
+        await SelectTab(targetId);
+    }
+
+    private static int FindNextEnabled(List<BUITab> tabs, int start, int step)
+    {
+        if (tabs.Count == 0) return -1;
+        int count = tabs.Count;
+        for (int i = 1; i <= count; i++)
+        {
+            int idx = ((start + step * i) % count + count) % count;
+            if (!tabs[idx].Disabled) return idx;
+        }
+        return -1;
+    }
+
+    private static int FindFirstEnabled(List<BUITab> tabs, int start, int step)
+    {
+        for (int i = start; i >= 0 && i < tabs.Count; i += step)
+        {
+            if (!tabs[i].Disabled) return i;
+        }
+        return -1;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (_pendingFocusTabId != null &&
+            _tabRefs.TryGetValue(_pendingFocusTabId, out ElementReference er))
+        {
+            _pendingFocusTabId = null;
+            try
+            {
+                await er.FocusAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
         }
     }
 
