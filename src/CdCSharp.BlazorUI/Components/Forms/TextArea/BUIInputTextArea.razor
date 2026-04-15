@@ -1,4 +1,5 @@
 ﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using Microsoft.JSInterop
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 
@@ -100,8 +101,13 @@
 
         if (firstRender && AutoResize)
         {
-            await TextAreaJs.InitializeAutoResizeAsync(_textareaRef, _textareaId);
-            _jsInitialized = true;
+            try
+            {
+                await TextAreaJs.InitializeAutoResizeAsync(_textareaRef, _textareaId);
+                _jsInitialized = true;
+            }
+            catch (InvalidOperationException) { }
+            catch (JSDisconnectedException) { }
         }
     }
 
