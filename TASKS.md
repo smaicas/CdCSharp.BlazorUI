@@ -305,11 +305,13 @@ Convenciones:
 
 > Resuelto en commit `a296a18` — *PERF-03: cache System.Drawing.Color reflection in ColorClassGenerator*
 
-### [ ] PERF-04 — Reflection IHas* en cada render
+### [x] PERF-04 — Reflection IHas* en cada render
 - **Origen**: `BuildStyles` chequea `component is IHas*` ~15 veces cada render. Patrón matching sobre interfaces es rápido, pero acumulado en arbol grande pesa. Opción: cachear flags por tipo.
 - **Archivos**: `BUIComponentAttributesBuilder.cs`
 - **Cambios**: `ConcurrentDictionary<Type, InterfaceFlags>` precalculada en primera instancia; iterar solo las ramas que el tipo implementa.
 - **Aceptación**: benchmark muestra mejora en árboles con cientos de componentes; tests pasan.
+
+> Resuelto en commit `6c467c2` — *PERF-04: cache IHas* interface flags per component type*
 
 ---
 
