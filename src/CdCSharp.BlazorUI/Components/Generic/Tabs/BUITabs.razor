@@ -64,7 +64,8 @@
                     {
                         <button type="button"
                                 role="tab"
-                                class="bui-tabs__tab @(tab.Id == ActiveTab ? "bui-tabs__tab--active" : "")"
+                                class="bui-tabs__tab"
+                                data-bui-active="@((tab.Id == ActiveTab).ToString().ToLowerInvariant())"
                                 aria-selected="@(tab.Id == ActiveTab)"
                                 disabled="@tab.Disabled"
                                 @onclick="() => SelectTab(tab.Id)">
