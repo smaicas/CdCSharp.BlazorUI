@@ -208,7 +208,7 @@ Convenciones:
 
 > Resuelto en commit `11cea70` — *STD-09: normalize BUISwitch CSS variable naming conventions*
 
-### [ ] STD-10 — `data-bui-floated` emitido inline en markup (Text/Number/TextArea/Color/DateTime)
+### [x] STD-10 — `data-bui-floated` emitido inline en markup (Text/Number/TextArea/Color/DateTime)
 - **Origen**: cada input mantiene su `_isFocused`/`_isDirty` y escribe `data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"` en el razor. Debe fluir por `BuildComponentDataAttributes`.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Forms/Text/BUIInputText.razor`
@@ -221,6 +221,8 @@ Convenciones:
   - Override `BuildComponentDataAttributes` por componente que lea su estado interno.
   - Llamar a `_styleBuilder.PatchVolatileAttributes`/`BuildStyles` (según alcance de CORE-01) al cambiar focus/dirty, o añadir `Floated` a volátiles.
 - **Aceptación**: sin literales `data-bui-floated` en razor; atributo cambia con focus/blur en DOM.
+
+> Resuelto en commit `3e76afe` — *STD-10: route data-bui-floated through BuildComponentDataAttributes*
 
 ### [ ] STD-11 — `BUIInputDropdown` no hereda `BUIInputComponentBase`
 - **Origen**: `BUIInputDropdown.razor` hereda `ComponentBase` implícito y compone `BUIDropdownContainer` (que sí hereda la base). Decisión deliberada pero causa inconsistencia: `Value`, `ValueExpression`, validación, `IsError` se gestionan en contenedor, no en el input público; API divergente con el resto.
