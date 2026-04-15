@@ -68,6 +68,12 @@
     private bool HasValue => !string.IsNullOrEmpty(CurrentValue);
     private bool IsFloated => _isFocused || HasValue || _isDirty;
 
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes[FeatureDefinitions.DataAttributes.Floated] = IsFloated.ToString().ToLowerInvariant();
+    }
+
     public override BUIInputVariant DefaultVariant => BUIInputVariant.Outlined;
 
     protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputText, RenderFragment>> BuiltInTemplates { get; } =
@@ -80,8 +86,7 @@
 
     private RenderFragment RenderInput() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
+        <bui-component @attributes="ComputedAttributes">
 
             <div class="bui-input__wrapper">
 

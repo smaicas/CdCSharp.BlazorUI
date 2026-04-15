@@ -112,6 +112,7 @@
     {
         base.BuildComponentDataAttributes(dataAttributes);
         dataAttributes[FeatureDefinitions.DataAttributes.ButtonPlacement] = ButtonPlacement.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Floated] = IsFloated.ToString().ToLowerInvariant();
     }
 
     public BUIInputNumber()
@@ -154,8 +155,7 @@
 
     private RenderFragment RenderInput() => __builder =>
 {
-    <bui-component @attributes="ComputedAttributes"
-                   data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
+    <bui-component @attributes="ComputedAttributes">
 
         <div class="bui-input__wrapper">
 

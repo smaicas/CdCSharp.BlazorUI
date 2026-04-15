@@ -103,10 +103,15 @@
 
     private bool IsFloated => _isFocused || HasValue || IsOpen;
 
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes[FeatureDefinitions.DataAttributes.Floated] = IsFloated.ToString().ToLowerInvariant();
+    }
+
     private RenderFragment RenderDropdown() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
                        data-bui-dropdown-open="@IsOpen.ToString().ToLowerInvariant()"
                        data-bui-placement="@GetEffectivePlacement().ToString().ToLowerInvariant()">
 

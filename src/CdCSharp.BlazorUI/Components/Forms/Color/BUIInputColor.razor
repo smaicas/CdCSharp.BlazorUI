@@ -84,6 +84,12 @@
     private bool IsFloated => _isFocused || HasValue || _isDirty;
     private string DisplayValue => CurrentValue?.ToString(GetDisplayFormat()) ?? "";
 
+    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+    {
+        base.BuildComponentDataAttributes(dataAttributes);
+        dataAttributes[FeatureDefinitions.DataAttributes.Floated] = IsFloated.ToString().ToLowerInvariant();
+    }
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -111,7 +117,6 @@
     private RenderFragment RenderInput() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"
                        @onkeydown="HandleKeyDown">
 
             <div class="bui-input__wrapper">

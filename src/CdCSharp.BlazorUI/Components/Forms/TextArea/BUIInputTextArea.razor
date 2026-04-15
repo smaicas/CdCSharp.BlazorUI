@@ -83,6 +83,7 @@
         base.BuildComponentDataAttributes(dataAttributes);
         dataAttributes[FeatureDefinitions.DataAttributes.Resize] = Resize.ToString().ToLowerInvariant();
         dataAttributes[FeatureDefinitions.DataAttributes.AutoResize] = AutoResize.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Floated] = IsFloated.ToString().ToLowerInvariant();
     }
 
     protected override IReadOnlyDictionary<BUIInputVariant, Func<BUIInputTextArea, RenderFragment>> BuiltInTemplates { get; } =
@@ -106,8 +107,7 @@
 
     private RenderFragment RenderTextArea() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes"
-                       data-bui-floated="@IsFloated.ToString().ToLowerInvariant()">
+        <bui-component @attributes="ComputedAttributes">
 
             <div class="bui-input__wrapper">
 
