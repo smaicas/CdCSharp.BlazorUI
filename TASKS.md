@@ -62,7 +62,8 @@ Convenciones:
 - **Cambios**: implementar `IDisposable`, desuscribir `OnChange` en `Dispose`.
 - **Aceptación**: unmount de host no deja handler colgado.
 
-### [ ] GENERIC-01 — `BUICodeBlock` `StateHasChanged` tras `Task.Delay` sin guard de disposal
+### [x] GENERIC-01 — `BUICodeBlock` `StateHasChanged` tras `Task.Delay` sin guard de disposal
+> Resuelto en commit `c31c608` — *GENERIC-01: tie CodeBlock copy-feedback delay to component lifetime*
 - **Origen**: `BUICodeBlock.razor:~74` — patrón `_copied=true; await Task.Delay(1500); StateHasChanged();`. Si usuario navega, llamada sobre componente disposed → warnings.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/CodeBlock/BUICodeBlock.razor`
 - **Cambios**: añadir `CancellationTokenSource` disposed en `Dispose`; pasar token a `Task.Delay`; comprobar token antes de `StateHasChanged`.
