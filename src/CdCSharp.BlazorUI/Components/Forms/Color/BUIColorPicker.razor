@@ -1,4 +1,5 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@using Microsoft.JSInterop
 
 @inherits BUIComponentBase
 @implements IHasSize
@@ -112,7 +113,15 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Value != null) await UpdateHandlerPosition();
+        if (firstRender && Value != null)
+        {
+            try
+            {
+                await UpdateHandlerPosition();
+            }
+            catch (InvalidOperationException) { }
+            catch (JSDisconnectedException) { }
+        }
     }
 
     private CssColor GetCurrentColor() => _hsvColor.ToCssColor(_alpha);
