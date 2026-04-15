@@ -363,11 +363,13 @@ Convenciones:
 
 > Resuelto en commit `d030224` — *MISC-01: surface palette import errors in BUIThemeGenerator*
 
-### [ ] MISC-02 — Revisar llamadas JS con `ConfigureAwait(false)` server-side
+### [x] MISC-02 — Revisar llamadas JS con `ConfigureAwait(false)` server-side
 - **Origen**: `BUIComponentJsBehaviorBuilder:38` y otras. En Blazor, el contexto de síntesis es importante; `ConfigureAwait(false)` puede saltar el sync context de Server. Validar política en el repo (probablemente dejar tal cual).
 - **Archivos**: varios `Services/JsInterop/*`
 - **Cambios**: definir convención en CLAUDE.md si no está, aplicar uniformemente.
 - **Aceptación**: convención documentada; código coherente.
+
+> Resuelto en commit `a1ab554` — *MISC-02: document async / JS interop conventions*. Auditoría: `grep ConfigureAwait src/` devuelve 0 coincidencias — la convención se aplicaba implícitamente, ahora queda escrita en CLAUDE.md.
 
 ### [ ] MISC-03 — `FeatureDefinitions` auditoría de cobertura
 - **Origen**: hallazgos STD-04/05/06/07/10 indican atributos faltantes. Auditoría completa de qué atributos están en `FeatureDefinitions.DataAttributes` vs cuáles se usan directamente en razor/C#.
