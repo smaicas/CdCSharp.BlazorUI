@@ -246,11 +246,13 @@ Convenciones:
 
 > Resuelto en commit `49c748f` — *DISP-01: guard BUIInputTextArea JS init under prerender*
 
-### [ ] DISP-02 — `BUIColorPicker` `UpdateHandlerPosition` sin guard
+### [x] DISP-02 — `BUIColorPicker` `UpdateHandlerPosition` sin guard
 - **Origen**: análogo a DISP-01 en `BUIColorPicker.razor:~113-115`.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Color/BUIColorPicker.razor`
 - **Cambios**: mismo patrón de guard.
 - **Aceptación**: idem.
+
+> Resuelto en commit `82a8f02` — *DISP-02: guard BUIColorPicker first-render JS call under prerender*
 
 ### [ ] DISP-03 — `BUITreeSelector` sin `IDisposable`
 - **Origen**: crea `TreeNodeRegistry` y posibles suscripciones; no libera.
