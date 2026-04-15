@@ -2,6 +2,7 @@
 
 interface FocusTrapState {
     previousActiveElement: HTMLElement | null;
+    container: HTMLElement | null;
     firstFocusable: HTMLElement | null;
     lastFocusable: HTMLElement | null;
     tabHandler: ((e: KeyboardEvent) => void) | null;
@@ -10,6 +11,7 @@ interface FocusTrapState {
 let scrollLockCount = 0;
 let focusTrapState: FocusTrapState = {
     previousActiveElement: null,
+    container: null,
     firstFocusable: null,
     lastFocusable: null,
     tabHandler: null
@@ -43,38 +45,55 @@ export function trapFocus(element: HTMLElement): void {
     releaseFocus();
 
     focusTrapState.previousActiveElement = document.activeElement as HTMLElement;
+    focusTrapState.container = element;
 
     const focusables = element.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS);
 
     if (focusables.length === 0) {
         element.setAttribute('tabindex', '-1');
         element.focus();
-        return;
+    } else {
+        focusTrapState.firstFocusable = focusables[0];
+        focusTrapState.lastFocusable = focusables[focusables.length - 1];
+        focusTrapState.firstFocusable.focus();
     }
-
-    focusTrapState.firstFocusable = focusables[0];
-    focusTrapState.lastFocusable = focusables[focusables.length - 1];
 
     focusTrapState.tabHandler = (e: KeyboardEvent): void => {
         if (e.key !== 'Tab') return;
 
-        if (!focusTrapState.firstFocusable || !focusTrapState.lastFocusable) return;
+        const container = focusTrapState.container;
+        if (!container) return;
+
+        const active = document.activeElement as HTMLElement | null;
+        const first = focusTrapState.firstFocusable;
+        const last = focusTrapState.lastFocusable;
+
+        // If focus escaped the dialog (e.g. host wrapper has tabindex=-1),
+        // pull it back inside.
+        if (!active || !container.contains(active)) {
+            if (first) {
+                e.preventDefault();
+                first.focus();
+            }
+            return;
+        }
+
+        if (!first || !last) return;
 
         if (e.shiftKey) {
-            if (document.activeElement === focusTrapState.firstFocusable) {
+            if (active === first) {
                 e.preventDefault();
-                focusTrapState.lastFocusable.focus();
+                last.focus();
             }
         } else {
-            if (document.activeElement === focusTrapState.lastFocusable) {
+            if (active === last) {
                 e.preventDefault();
-                focusTrapState.firstFocusable.focus();
+                first.focus();
             }
         }
     };
 
     document.addEventListener('keydown', focusTrapState.tabHandler);
-    focusTrapState.firstFocusable.focus();
 }
 
 export function waitForAnimationEnd(element: HTMLElement, fallbackMs: number): Promise<void> {
@@ -110,6 +129,7 @@ export function releaseFocus(): void {
 
     focusTrapState = {
         previousActiveElement: null,
+        container: null,
         firstFocusable: null,
         lastFocusable: null,
         tabHandler: null

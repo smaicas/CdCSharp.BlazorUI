@@ -85,7 +85,6 @@
         {
             await JsInterop.LockScrollAsync();
             await JsInterop.TrapFocusAsync(_drawerRef);
-            await _hostRef.FocusAsync();
             _jsInitialized = true;
         }
         else if (!Open && _jsInitialized)

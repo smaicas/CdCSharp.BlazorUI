@@ -95,7 +95,6 @@
         {
             await JsInterop.LockScrollAsync();
             await JsInterop.TrapFocusAsync(_dialogRef);
-            await _hostRef.FocusAsync();
             _jsInitialized = true;
         }
         else if (!Open && _jsInitialized)
