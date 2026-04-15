@@ -16,6 +16,18 @@ public class ColorClassGenerator : IIncrementalGenerator
 {
     public const string AttributeNameContains = "AutogenerateCssColors";
 
+    private readonly record struct NamedColor(string Name, byte R, byte G, byte B, byte A);
+
+    private static readonly NamedColor[] _colors = typeof(Color)
+        .GetProperties(BindingFlags.Public | BindingFlags.Static)
+        .Where(p => p.PropertyType == typeof(Color))
+        .Select(p =>
+        {
+            Color c = (Color)p.GetValue(null)!;
+            return new NamedColor(p.Name, c.R, c.G, c.B, c.A);
+        })
+        .ToArray();
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         IncrementalValuesProvider<ClassToGenerate> classDeclarations = context.SyntaxProvider
@@ -84,37 +96,26 @@ public class ColorClassGenerator : IIncrementalGenerator
             string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
             string className = classSymbol.Name;
 
-            // Obtener los colores públicos de System.Drawing.Color
-            PropertyInfo[] colors = typeof(Color).GetProperties(BindingFlags.Public | BindingFlags.Static)
-                .Where(p => p.PropertyType == typeof(Color))
-                .ToArray();
-
             ClassDeclarationSyntax classSyntax = GenerateClassDeclaration(className);
 
-            foreach (PropertyInfo color in colors)
+            foreach (NamedColor color in _colors)
             {
-                string propertyName = color.Name;
-                Color colorValue = (Color)color.GetValue(null)!;
+                ClassDeclarationSyntax innerClassDeclaration = GenerateInnerClassDeclaration(color.Name);
 
-                ClassDeclarationSyntax innerClassDeclaration = GenerateInnerClassDeclaration(propertyName);
-
-                // Default property
-                string defaultCssColor = $"new CssColor({colorValue.R}, {colorValue.G}, {colorValue.B}, {colorValue.A})";
+                string defaultCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A})";
                 innerClassDeclaration = innerClassDeclaration.AddMembers(
                     GenerateProperty("Default", defaultCssColor));
 
-                // Darken variants
                 for (int i = 1; i <= variantLevels; i++)
                 {
-                    string darkenCssColor = $"new CssColor({colorValue.R}, {colorValue.G}, {colorValue.B}, {colorValue.A}, CssColorVariant.Darken({i}))";
+                    string darkenCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A}, CssColorVariant.Darken({i}))";
                     innerClassDeclaration = innerClassDeclaration.AddMembers(
                         GenerateProperty($"Darken{i}", darkenCssColor));
                 }
 
-                // Lighten variants
                 for (int i = 1; i <= variantLevels; i++)
                 {
-                    string lightenCssColor = $"new CssColor({colorValue.R}, {colorValue.G}, {colorValue.B}, {colorValue.A}, CssColorVariant.Lighten({i}))";
+                    string lightenCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A}, CssColorVariant.Lighten({i}))";
                     innerClassDeclaration = innerClassDeclaration.AddMembers(
                         GenerateProperty($"Lighten{i}", lightenCssColor));
                 }
