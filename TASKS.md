@@ -189,11 +189,13 @@ Convenciones:
 
 > Resuelto en commit `006b860` — *STD-07: register Resize/AutoResize attributes in FeatureDefinitions*
 
-### [ ] STD-08 — `BUICard` usa var `--bui-card-inline-media-height` fuera de convención
+### [x] STD-08 — `BUICard` usa var `--bui-card-inline-media-height` fuera de convención
 - **Origen**: convención es `--bui-inline-<prop>` (público, uniforme) o `--_<component>-<prop>` (privado). `--bui-card-inline-media-height` mezcla ambos.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Card/BUICard.razor` + `.razor.css`
 - **Cambios**: decidir si la altura de media es pública (renombrar a `--bui-inline-media-height` y usar `IHas*` adecuado) o privada (`--_card-media-height`).
 - **Aceptación**: convención alineada con el resto de componentes.
+
+> Resuelto en commit `96b016f` — *STD-08: align BUICard media-height var with private-var convention*
 
 ### [ ] STD-09 — `BUISwitch` private vars con prefijo no estándar
 - **Origen**: `BUISwitch.razor:171-178` usa `--track-inline-inactive-bg`, `--thumb-inline-active-bg`, `--thumb-inline-inactive-color`. Convención: `--bui-inline-*` para vars públicas y `--_switch-*` para privadas.
