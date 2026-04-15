@@ -5,6 +5,7 @@ public sealed class DelayedActionHandler : IDisposable
 {
     private readonly object _lock = new();
     private CancellationTokenSource? _cts;
+    private bool _disposed;
 
     public void Cancel()
     {
@@ -18,16 +19,24 @@ public sealed class DelayedActionHandler : IDisposable
 
     public void Dispose()
     {
-        Cancel();
+        lock (_lock)
+        {
+            _disposed = true;
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+        }
     }
 
     public async Task ExecuteWithDelayAsync(Func<Task> action, TimeSpan delay)
     {
-        Cancel();
-
         CancellationTokenSource cts;
         lock (_lock)
         {
+            if (_disposed) return;
+
+            _cts?.Cancel();
+            _cts?.Dispose();
             _cts = new CancellationTokenSource();
             cts = _cts;
         }
@@ -35,10 +44,14 @@ public sealed class DelayedActionHandler : IDisposable
         try
         {
             await Task.Delay(delay, cts.Token);
-            if (!cts.Token.IsCancellationRequested)
+            if (cts.Token.IsCancellationRequested) return;
+
+            lock (_lock)
             {
-                await action();
+                if (_disposed) return;
             }
+
+            await action();
         }
         catch (TaskCanceledException)
         {
