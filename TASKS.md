@@ -146,7 +146,7 @@ Convenciones:
 
 > Resuelto en commit `34c2eaf` — *STD-03: route BUISwitch checked state through data-bui-active*
 
-### [ ] STD-04 — `BUIInputCheckbox` `data-checked` / `data-indeterminate` sin prefijo `bui-`
+### [x] STD-04 — `BUIInputCheckbox` `data-checked` / `data-indeterminate` sin prefijo `bui-`
 - **Origen**: `BUIInputCheckbox.razor:99-105` emite `data-checked`/`data-indeterminate` directos. No siguen convención `data-bui-*` ni existen en `FeatureDefinitions`.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Forms/Checkbox/BUIInputCheckbox.razor`
@@ -154,6 +154,8 @@ Convenciones:
   - `src/CdCSharp.BlazorUI.Core/Components/FeatureDefinitions.cs` (añadir constantes si se mantienen separadas de Active)
 - **Cambios**: renombrar a `data-bui-checked` / `data-bui-indeterminate`, registrar constantes, actualizar selectores CSS.
 - **Aceptación**: convención homogénea con el resto de componentes.
+
+> Resuelto en commit `edf099a` — *STD-04: prefix BUIInputCheckbox state attributes with bui-*
 
 ### [ ] STD-05 — `BUIInputRadio` `data-orientation` duplicado y sin prefijo
 - **Origen**: `BUIInputRadio.razor:87-91` emite `data-orientation` (sin prefijo) vía `BuildComponentDataAttributes`, y `BUIInputRadio.razor:96` también lo renderiza inline en markup → duplicado.
