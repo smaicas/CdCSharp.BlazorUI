@@ -8,12 +8,14 @@
 @implements IHasDisabled
 
 <bui-component @attributes="ComputedAttributes">
-    <label class="bui-switch" @onclick="HandleClick" @onclick:preventDefault="true">
+    <label class="bui-switch" for="@ActualInputId" @onclick="HandleClick" @onclick:preventDefault="true">
         <input type="checkbox"
-               id="@InputId"
+               id="@ActualInputId"
+               role="switch"
                checked="@IsChecked"
                disabled="@IsDisabled"
-               aria-checked="@IsChecked"
+               aria-checked="@(IsChecked ? "true" : "false")"
+               aria-label="@ResolvedAriaLabel"
                aria-describedby="@AriaDescribedBy"
                class="bui-switch__input" />
 
@@ -56,6 +58,13 @@
 
     /* ===== Accesibility ===== */
     [Parameter] public string AriaDescribedBy { get; set; } = string.Empty;
+
+    [Parameter] public string? AriaLabel { get; set; }
+
+    private string? ResolvedAriaLabel =>
+        !string.IsNullOrWhiteSpace(AriaLabel) ? AriaLabel
+        : !string.IsNullOrWhiteSpace(Label) ? null
+        : "Toggle";
 
     /* ===== Switch behavior ===== */
 
