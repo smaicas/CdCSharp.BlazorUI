@@ -289,11 +289,13 @@ Convenciones:
 
 > Resuelto en commit `7e5a1b7` — *PERF-01: reuse ComputedAttributes and cssVariables dictionaries*
 
-### [ ] PERF-02 — `BuildInlineStyles` concatena con LINQ
+### [x] PERF-02 — `BuildInlineStyles` concatena con LINQ
 - **Origen**: `string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"))` — `StringBuilder` sería más eficiente para N>4 vars.
 - **Archivos**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:221`
 - **Cambios**: construir con `StringBuilder` reutilizable (campo), cuidado con separador y orden estable.
 - **Aceptación**: mismo output; `Verify` snapshots inalterados.
+
+> Resuelto en commit `43e5de1` — *PERF-02: build inline style string with a reusable StringBuilder*
 
 ### [ ] PERF-03 — `ColorClassGenerator` reflection no cacheada
 - **Origen**: `typeof(Color).GetProperties(...)` cada ejecución del source generator. Aunque se ejecuta en compile-time, ralentiza builds incrementales.
