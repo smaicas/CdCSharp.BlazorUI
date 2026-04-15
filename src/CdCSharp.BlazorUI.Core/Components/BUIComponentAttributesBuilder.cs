@@ -8,6 +8,7 @@ internal sealed class BUIComponentAttributesBuilder
 {
     private string? _originalUserStyles;
     private readonly Dictionary<string, string> _cssVariables = [];
+    private readonly StringBuilder _styleBuilder = new();
     public Dictionary<string, object> ComputedAttributes { get; } = [];
 
     public void BuildStyles(
@@ -240,15 +241,25 @@ internal sealed class BUIComponentAttributesBuilder
 
     private void BuildInlineStyles(Dictionary<string, string> cssVariables)
     {
-        string cssVars = string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"));
-        string computedStyles = string.IsNullOrWhiteSpace(_originalUserStyles)
-            ? cssVars
-            : string.IsNullOrWhiteSpace(cssVars)
-                ? _originalUserStyles
-                : $"{cssVars}; {_originalUserStyles}";
+        _styleBuilder.Clear();
 
-        if (!string.IsNullOrWhiteSpace(computedStyles))
-            ComputedAttributes["style"] = computedStyles;
+        bool first = true;
+        foreach (KeyValuePair<string, string> kv in cssVariables)
+        {
+            if (!first) _styleBuilder.Append("; ");
+            _styleBuilder.Append(kv.Key).Append(": ").Append(kv.Value);
+            first = false;
+        }
+
+        bool hasUserStyles = !string.IsNullOrWhiteSpace(_originalUserStyles);
+        if (hasUserStyles)
+        {
+            if (_styleBuilder.Length > 0) _styleBuilder.Append("; ");
+            _styleBuilder.Append(_originalUserStyles);
+        }
+
+        if (_styleBuilder.Length > 0)
+            ComputedAttributes["style"] = _styleBuilder.ToString();
         else
             ComputedAttributes.Remove("style");
     }
