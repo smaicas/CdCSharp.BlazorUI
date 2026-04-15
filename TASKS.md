@@ -238,11 +238,13 @@ Convenciones:
 
 ## D. DISPOSAL / PRERENDER
 
-### [ ] DISP-01 — `BUIInputTextArea` JS interop sin guard prerender
+### [x] DISP-01 — `BUIInputTextArea` JS interop sin guard prerender
 - **Origen**: `OnAfterRenderAsync` invoca JS sin comprobar estado de servidor/prerender. En SSR estático puede fallar.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/TextArea/BUIInputTextArea.razor:~89-97`
 - **Cambios**: verificar patrón del resto del repo (posiblemente `IsRenderingOnServer` o `OperatingSystem.IsBrowser()` según modelo) y aplicar guard. Usar `firstRender` + try/catch `InvalidOperationException`.
 - **Aceptación**: render bajo prerender server no lanza.
+
+> Resuelto en commit `49c748f` — *DISP-01: guard BUIInputTextArea JS init under prerender*
 
 ### [ ] DISP-02 — `BUIColorPicker` `UpdateHandlerPosition` sin guard
 - **Origen**: análogo a DISP-01 en `BUIColorPicker.razor:~113-115`.
