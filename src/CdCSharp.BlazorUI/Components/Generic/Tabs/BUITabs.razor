@@ -31,25 +31,64 @@
 
     /* ========= Private state ========= */
     private readonly List<BUITab> _tabs = new();
+    private readonly object _tabsLock = new();
+    private bool _disposed;
 
     /* ========= Internal API for BUITab ========= */
     internal void RegisterTab(BUITab tab)
     {
-        if (!_tabs.Contains(tab))
+        if (_disposed) return;
+
+        bool added;
+        lock (_tabsLock)
         {
+            if (_tabs.Contains(tab)) return;
             _tabs.Add(tab);
+            added = true;
             if (string.IsNullOrEmpty(ActiveTab) && _tabs.Count == 1)
             {
                 ActiveTab = tab.Id;
             }
-            StateHasChanged();
+        }
+
+        if (added)
+        {
+            _ = InvokeAsync(StateHasChanged);
         }
     }
 
     internal void UnregisterTab(BUITab tab)
     {
-        _tabs.Remove(tab);
-        StateHasChanged();
+        if (_disposed) return;
+
+        bool removed;
+        lock (_tabsLock)
+        {
+            removed = _tabs.Remove(tab);
+        }
+
+        if (removed)
+        {
+            _ = InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private List<BUITab> SnapshotTabs()
+    {
+        lock (_tabsLock)
+        {
+            return new List<BUITab>(_tabs);
+        }
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        _disposed = true;
+        lock (_tabsLock)
+        {
+            _tabs.Clear();
+        }
+        await base.DisposeAsync();
     }
 
     internal bool IsActiveTab(string? tabId) => ActiveTab == tabId;
@@ -60,7 +99,7 @@
         <CascadingValue Value="this">
             <bui-component @attributes="@ComputedAttributes">
                 <div class="bui-tabs__header" role="tablist">
-                    @foreach (BUITab tab in _tabs)
+                    @foreach (BUITab tab in SnapshotTabs())
                     {
                         <button type="button"
                                 role="tab"
