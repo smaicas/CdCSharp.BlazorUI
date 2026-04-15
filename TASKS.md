@@ -77,11 +77,13 @@ Convenciones:
 
 > Resuelto en commit `85bdfbc` — *LAYOUT-03: tie dialog/drawer close to animationend instead of fixed delay*
 
-### [ ] LAYOUT-04 — `BUITreeMenu` timer con callbacks pendientes post-dispose
+### [x] LAYOUT-04 — `BUITreeMenu` timer con callbacks pendientes post-dispose
 - **Origen**: `_hoverDelayHandler` puede disparar tras `Dispose`. Suscripción a `NavigationManager.LocationChanged` se libera pero el timer no necesariamente.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeMenu.razor` (línea ~493)
 - **Cambios**: `Dispose` llama a `_hoverDelayHandler?.Dispose()` antes de desuscribir NavManager; verificar que todas las mutaciones de estado comprueben `!IsDisposed`.
 - **Aceptación**: tests unitarios con timer activo + dispose no fallan.
+
+> Resuelto en commit `e915239` — *LAYOUT-04: gate BUITreeMenu hover timer against disposal*
 
 ### [x] LAYOUT-05 — `BUIModalHost` usa `async void HandleModalChange`
 > Resuelto en commit `239f404` — *LAYOUT-05: replace async void HandleModalChange with sync wrapper + async Task*
