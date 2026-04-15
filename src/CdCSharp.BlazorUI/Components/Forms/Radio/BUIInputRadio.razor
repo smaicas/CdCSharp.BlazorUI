@@ -87,14 +87,13 @@
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
         base.BuildComponentDataAttributes(dataAttributes);
-        dataAttributes["data-orientation"] = Orientation.ToString().ToLowerInvariant();
+        dataAttributes["data-bui-orientation"] = Orientation.ToString().ToLowerInvariant();
     }
 
     private RenderFragment RenderDefault() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes"
-                       data-orientation="@Orientation.ToString().ToLowerInvariant()">
-    
+        <bui-component @attributes="ComputedAttributes">
+
             @if (!string.IsNullOrWhiteSpace(Label))
             {
                 <span class="bui-radio__label">

@@ -18,7 +18,7 @@
         gap: var(--_gap);
     }
 
-    bui-component[data-bui-component="input-radio"][data-orientation="horizontal"] .bui-radio__group {
+    bui-component[data-bui-component="input-radio"][data-bui-orientation="horizontal"] .bui-radio__group {
         flex-direction: row;
         flex-wrap: wrap;
     }
