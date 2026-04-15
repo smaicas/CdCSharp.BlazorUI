@@ -335,11 +335,13 @@ Convenciones:
 
 > Resuelto en commit `00da2fb` — *A11Y-02: keyboard nav + ARIA for BUITabs*
 
-### [ ] A11Y-03 — `BUIDialog` focus trap y ESC
+### [x] A11Y-03 — `BUIDialog` focus trap y ESC
 - **Origen**: revisar si modal atrapa focus y cierra con ESC; requerido por WCAG 2.1.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/*`, `src/CdCSharp.BlazorUI/Services/JsInterop/IModalJsInterop.cs`
 - **Cambios**: asegurar focus trap via JS, handler ESC, restaurar focus al elemento previo al cerrar.
 - **Aceptación**: abrir dialog con teclado, tab ciclo dentro, ESC cierra, focus vuelve al botón origen.
+
+> Resuelto en commit `eb3277d` — *A11Y-03: harden focus trap for BUIDialog/BUIDrawer*
 
 ### [ ] A11Y-04 — `BUIInputSwitch`/`BUISwitch` labels y ARIA
 - **Origen**: revisar `aria-checked`, `role="switch"`, asociación label-input.
