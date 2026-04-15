@@ -130,11 +130,13 @@ Convenciones:
   - Añadir `aria-selected` coherente.
 - **Aceptación**: DOM muestra `data-bui-active` en tab activa; CSS estiliza via atributo.
 
-### [ ] STD-02 — `BUITreeMenu` usa clases para disabled/active/expanded
+### [x] STD-02 — `BUITreeMenu` usa clases para disabled/active/expanded
 - **Origen**: `BUITreeMenu.razor:240-244` aplica `bui-tree-menu__item--disabled/--active/--expanded`.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeMenu.razor` y `.razor.css`
 - **Cambios**: migrar a `data-bui-disabled`, `data-bui-active`, y atributo nuevo `data-bui-expanded` (registrar en `FeatureDefinitions.DataAttributes` si aún no existe).
 - **Aceptación**: CSS selecciona por atributos; no quedan clases modificador de estado en el HTML.
+
+> Resuelto en commit `30e2f33` — *STD-02: express BUITreeMenu item state via data-bui-\* attributes*
 
 ### [ ] STD-03 — `BUISwitch` emite `data-checked` fuera de `FeatureDefinitions`
 - **Origen**: hardcoded `data-checked` en vez de usar `FeatureDefinitions.DataAttributes.Active`.
