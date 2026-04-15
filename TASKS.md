@@ -355,11 +355,13 @@ Convenciones:
 
 ## G. OTROS
 
-### [ ] MISC-01 — `BUIThemeGenerator` silencia excepciones en import
+### [x] MISC-01 — `BUIThemeGenerator` silencia excepciones en import
 - **Origen**: `catch { }` vacío oculta errores de parseo de colores al importar paleta.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/ThemeGenerator/*:~145-189`
 - **Cambios**: capturar a variable `_importError` y renderizar feedback; o loguear vía `ILogger`.
 - **Aceptación**: import de JSON inválido muestra mensaje al usuario.
+
+> Resuelto en commit `d030224` — *MISC-01: surface palette import errors in BUIThemeGenerator*
 
 ### [ ] MISC-02 — Revisar llamadas JS con `ConfigureAwait(false)` server-side
 - **Origen**: `BUIComponentJsBehaviorBuilder:38` y otras. En Blazor, el contexto de síntesis es importante; `ConfigureAwait(false)` puede saltar el sync context de Server. Validar política en el repo (probablemente dejar tal cual).
