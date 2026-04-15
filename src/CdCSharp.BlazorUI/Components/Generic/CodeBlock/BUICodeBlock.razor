@@ -48,6 +48,7 @@
 
     private bool _copied;
     private Highlighter _highlighter = new Highlighter();
+    private CancellationTokenSource _disposeCts = new();
 
     private MarkupString HighlightedCode
     {
@@ -73,9 +74,24 @@
         await Clipboard.CopyTextAsync(NormalizeIndentation(Code));
         _copied = true;
 
-        await Task.Delay(1500);
+        try
+        {
+            await Task.Delay(1500, _disposeCts.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+
         _copied = false;
         StateHasChanged();
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        _disposeCts.Cancel();
+        _disposeCts.Dispose();
+        await base.DisposeAsync();
     }
 
     private static string NormalizeIndentation(string code)
