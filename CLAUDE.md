@@ -159,6 +159,12 @@ Input components use `BUIInputComponentBase` (which already implements `IInputFa
 9. **Transitions**: if the component needs enter/exit animation, implement `IHasTransitions` and add `class="transition-target"` to the element that should animate — the transition classes themselves come from `_transition-classes.css` and are selected via `[data-bui-transitions]`.
 10. **Do not hand-edit generated files**: `CssBundle/*.css` and the Vite/TypeScript config files are rewritten on every build. Changes belong in the corresponding `Generators/*.cs`, `Infrastructure/BuildTemplates.cs`, or `FeatureDefinitions`.
 
+## Async / JS interop conventions
+
+- **Do not use `ConfigureAwait(false)`** in library code. Blazor Server relies on the renderer's `SynchronizationContext` so UI state mutations (`StateHasChanged`, `EventCallback.InvokeAsync`) and `IJSRuntime` calls marshal back to the correct dispatcher. Escaping the context via `ConfigureAwait(false)` produces subtle threading bugs under Server. WASM is single-threaded so it is unaffected, but the same code runs on both hosts — the rule is uniform: await without `ConfigureAwait`.
+- **JS interop disposal**: wrap `IJSObjectReference` / `InvokeVoidAsync` calls during teardown paths in `try/catch (JSDisconnectedException) { } catch (InvalidOperationException) { }` — prerendering and circuit-shutdown both raise these and they are not actionable.
+- **Disposable components**: if the component subscribes to `NavigationManager.LocationChanged`, registers children through cascading parameters, or holds a `CancellationTokenSource`, set a `_disposed` flag inside `DisposeAsync`/`Dispose` and gate any post-await continuations on it before touching component state.
+
 ## Testing
 
 - Integration tests (`test/CdCSharp.BlazorUI.Tests.Integration`) use **bUnit 2.x**, **Verify** for snapshots, **FluentAssertions**, **NSubstitute**, **xUnit**.
