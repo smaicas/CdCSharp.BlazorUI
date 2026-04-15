@@ -1,0 +1,93 @@
+@namespace CdCSharp.BlazorUI.Components.Layout
+
+@inherits BUIComponentBase
+
+<bui-component @attributes="ComputedAttributes"
+               data-bui-sticky-header="@StickyHeader.ToString().ToLowerInvariant()"
+               data-bui-sticky-nav="@StickyNav.ToString().ToLowerInvariant()"
+               data-bui-nav-open="@_navOpen.ToString().ToLowerInvariant()">
+
+    <header class="bui-stacked-layout__header">
+        @if (ShowToggle && Nav != null)
+        {
+            <button type="button"
+                    class="bui-stacked-layout__toggle"
+                    aria-label="Toggle navigation"
+                    aria-expanded="@_navOpen.ToString().ToLowerInvariant()"
+                    @onclick="ToggleNav">
+                <span class="bui-stacked-layout__toggle-bar"></span>
+                <span class="bui-stacked-layout__toggle-bar"></span>
+                <span class="bui-stacked-layout__toggle-bar"></span>
+            </button>
+        }
+        @if (Header != null)
+        {
+            <div class="bui-stacked-layout__header-content">
+                @Header
+            </div>
+        }
+    </header>
+
+    @if (Nav != null)
+    {
+        <nav class="bui-stacked-layout__nav">
+            <div class="bui-stacked-layout__nav-inner">
+                @Nav
+            </div>
+        </nav>
+    }
+
+    <main class="bui-stacked-layout__main">
+        <div class="bui-stacked-layout__main-inner">
+            @ChildContent
+        </div>
+    </main>
+</bui-component>
+
+@code {
+    private bool _navOpen;
+
+    [Parameter] public RenderFragment? Header { get; set; }
+    [Parameter] public RenderFragment? Nav { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public string? HeaderHeight { get; set; }
+    [Parameter] public string? NavMinColumnWidth { get; set; }
+    [Parameter] public string? NavGap { get; set; }
+    [Parameter] public string? ContentMaxWidth { get; set; }
+
+    [Parameter] public int? NavColumns { get; set; }
+    [Parameter] public bool StickyHeader { get; set; } = true;
+    [Parameter] public bool StickyNav { get; set; } = false;
+    [Parameter] public bool ShowToggle { get; set; } = true;
+
+    [Parameter]
+    public bool NavOpen
+    {
+        get => _navOpen;
+        set => _navOpen = value;
+    }
+
+    [Parameter] public EventCallback<bool> NavOpenChanged { get; set; }
+
+    private async Task ToggleNav()
+    {
+        _navOpen = !_navOpen;
+        if (NavOpenChanged.HasDelegate)
+            await NavOpenChanged.InvokeAsync(_navOpen);
+    }
+
+    public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+    {
+        if (HeaderHeight != null)
+            cssVariables["--bui-inline-header-height"] = HeaderHeight;
+        if (NavMinColumnWidth != null)
+            cssVariables["--bui-inline-nav-col-min"] = NavMinColumnWidth;
+        if (NavGap != null)
+            cssVariables["--bui-inline-nav-gap"] = NavGap;
+        if (ContentMaxWidth != null)
+            cssVariables["--bui-inline-content-max-width"] = ContentMaxWidth;
+        if (NavColumns.HasValue)
+            cssVariables["--bui-inline-nav-columns"] = NavColumns.Value.ToString();
+    }
+}

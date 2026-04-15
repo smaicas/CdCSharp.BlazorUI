@@ -63,10 +63,10 @@
         CodeTitle = "Basic.razor",
         Code = @"<BUIDataCards TItem=""Product"" Items=""_products"" MinCardWidth=""240px"">
     <Columns>
-        <BUIDataColumn TItem=""Product"" Header=""Name""     ValueSelector=""p => p.Name"" />
-        <BUIDataColumn TItem=""Product"" Header=""Category"" ValueSelector=""p => p.Category"" />
-        <BUIDataColumn TItem=""Product"" Header=""Price""    ValueSelector=""p => p.Price"" Format=""C"" />
-        <BUIDataColumn TItem=""Product"" Header=""Stock""    ValueSelector=""p => p.Stock"" />
+        <BUIDataColumn TItem=""Product"" Header=""Name""     Property=""@(p => p.Name)"" />
+        <BUIDataColumn TItem=""Product"" Header=""Category"" Property=""@(p => p.Category)"" />
+        <BUIDataColumn TItem=""Product"" Header=""Price""    Property=""@(p => p.Price)"" Format=""C"" />
+        <BUIDataColumn TItem=""Product"" Header=""Stock""    Property=""@(p => p.Stock)"" />
     </Columns>
 </BUIDataCards>",
         Demo = RenderBasic()
@@ -76,10 +76,10 @@
     {
         <BUIDataCards TItem="Product" Items="_products" MinCardWidth="240px">
             <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" ValueSelector="p => p.Name" />
-                <BUIDataColumn TItem="Product" Header="Category" ValueSelector="p => p.Category" />
-                <BUIDataColumn TItem="Product" Header="Price" ValueSelector="p => p.Price" Format="C" />
-                <BUIDataColumn TItem="Product" Header="Stock" ValueSelector="p => p.Stock" />
+                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
+                <BUIDataColumn TItem="Product" Header="Category" Property="@(p => p.Category)" />
+                <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Format="C" />
+                <BUIDataColumn TItem="Product" Header="Stock" Property="@(p => p.Stock)" />
             </Columns>
         </BUIDataCards>
     };
@@ -89,7 +89,7 @@
         CodeTitle = "Template.razor",
         Code = @"<BUIDataCards TItem=""Product"" Items=""_products"">
     <Columns>
-        <BUIDataColumn TItem=""Product"" Header=""Name"" ValueSelector=""p => p.Name"" />
+        <BUIDataColumn TItem=""Product"" Header=""Name"" Property=""@(p => p.Name)"" />
     </Columns>
     <CardTemplate Context=""p"">
         <div style=""padding: 1rem;"">
@@ -106,7 +106,7 @@
     {
         <BUIDataCards TItem="Product" Items="_products" MinCardWidth="220px">
             <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" ValueSelector="p => p.Name" />
+                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
             </Columns>
             <CardTemplate Context="p">
                 <div style="padding: 1rem;">
@@ -127,12 +127,11 @@
         Code = @"<BUIDataCards TItem=""Product"" Items=""_products""
                Filterable=""true""
                Sortable=""true""
-               PageSize=""4""
-               ShowPageSizeSelector=""true"">
+               PageSize=""4"">
     <Columns>
-        <BUIDataColumn TItem=""Product"" Header=""Name""     ValueSelector=""p => p.Name""     Sortable=""true"" />
-        <BUIDataColumn TItem=""Product"" Header=""Category"" ValueSelector=""p => p.Category"" Sortable=""true"" />
-        <BUIDataColumn TItem=""Product"" Header=""Price""    ValueSelector=""p => p.Price""    Sortable=""true"" Format=""C"" />
+        <BUIDataColumn TItem=""Product"" Header=""Name""     Property=""@(p => p.Name)""     Sortable=""true"" />
+        <BUIDataColumn TItem=""Product"" Header=""Category"" Property=""@(p => p.Category)"" Sortable=""true"" />
+        <BUIDataColumn TItem=""Product"" Header=""Price""    Property=""@(p => p.Price)""    Sortable=""true"" Format=""C"" />
     </Columns>
 </BUIDataCards>",
         Demo = RenderFilterSort()
@@ -142,9 +141,9 @@
     {
         <BUIDataCards TItem="Product" Items="_products" Filterable="true" Sortable="true" PageSize="4" MinCardWidth="220px">
             <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" ValueSelector="p => p.Name" Sortable="true" />
-                <BUIDataColumn TItem="Product" Header="Category" ValueSelector="p => p.Category" Sortable="true" />
-                <BUIDataColumn TItem="Product" Header="Price" ValueSelector="p => p.Price" Sortable="true" Format="C" />
+                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" Sortable="true" />
+                <BUIDataColumn TItem="Product" Header="Category" Property="@(p => p.Category)" Sortable="true" />
+                <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Sortable="true" Format="C" />
             </Columns>
         </BUIDataCards>
     };
@@ -170,8 +169,8 @@
                           @bind-SelectedItems="_selected"
                           MinCardWidth="220px">
                 <Columns>
-                    <BUIDataColumn TItem="Product" Header="Name" ValueSelector="p => p.Name" />
-                    <BUIDataColumn TItem="Product" Header="Price" ValueSelector="p => p.Price" Format="C" />
+                    <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
+                    <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Format="C" />
                 </Columns>
             </BUIDataCards>
             <p style="margin-top: 1rem; color: var(--palette-surfacecontrast); opacity:.7;">
@@ -198,9 +197,9 @@
                       CardShadow="@BUIShadowPresets.Elevation(2)"
                       MinCardWidth="220px">
             <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" ValueSelector="p => p.Name" />
-                <BUIDataColumn TItem="Product" Header="Category" ValueSelector="p => p.Category" />
-                <BUIDataColumn TItem="Product" Header="Price" ValueSelector="p => p.Price" Format="C" />
+                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
+                <BUIDataColumn TItem="Product" Header="Category" Property="@(p => p.Category)" />
+                <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Format="C" />
             </Columns>
         </BUIDataCards>
     };

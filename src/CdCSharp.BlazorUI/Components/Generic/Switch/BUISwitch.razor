@@ -39,10 +39,6 @@
         }
     </label>
 
-    @if (!string.IsNullOrWhiteSpace(HelperText))
-    {
-        <div class="bui-field__helper">@HelperText</div>
-    }
 </bui-component>
 
 @code {
@@ -91,11 +87,6 @@
     /// Label text displayed next to the switch
     /// </summary>
     [Parameter] public string? Label { get; set; }
-
-    /// <summary>
-    /// Helper text displayed below the switch
-    /// </summary>
-    [Parameter] public string? HelperText { get; set; }
 
     /// <summary>
     /// Icon shown when switch is unchecked (Option1)

@@ -12,17 +12,15 @@
    ───────────────────────────────────────── */
 
 :root,
-[data-theme="dark"] {
+html[data-theme="dark"] {
     --palette-primary: #c41236;
     --docs-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
     --docs-shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4);
     --docs-shadow-lg: 0 20px 60px -15px rgba(0, 0, 0, 0.7), 0 10px 20px -10px rgba(0, 0, 0, 0.5);
     --docs-shadow-glow: 0 20px 60px -10px rgba(255, 77, 109, 0.3);
-    --docs-code-bg: #0a0204;
-    --docs-code-fg: #f3e9eb;
 }
 
-[data-theme="light"] {
+html[data-theme="light"] {
     --palette-primary: #c41236;
 }
 
@@ -219,18 +217,6 @@
     color: var(--palette-surfacecontrast);
 }
 
-.doc-content__wrapper p code,
-.doc-content__wrapper li code,
-.doc-content__wrapper td code {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.85em;
-    padding: 0.15em 0.4em;
-    background: color-mix(in oklab, var(--palette-primary) 12%, var(--palette-surface));
-    color: color-mix(in oklab, var(--palette-primary) 70%, #000);
-    border-radius: 4px;
-    font-weight: 500;
-}
-
 .doc-content__wrapper a {
     color: var(--palette-primary);
     text-decoration: none;
@@ -291,113 +277,188 @@
 }
 
 /* ─────────────────────────────────────────
-   HOME / HERO
+   HOME / HERO — puzzle tiles
    ───────────────────────────────────────── */
 
 .hero {
     position: relative;
-    padding: 5rem 0 6rem;
-    text-align: center;
+    padding: clamp(4rem, 10vw, 7rem) 1rem clamp(3rem, 8vw, 6rem);
     isolation: isolate;
     overflow: hidden;
+    min-height: min(78vh, 720px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    inset: -200px 0 auto 0;
-    height: 700px;
-    background:
-        radial-gradient(ellipse 60% 50% at 50% 0%, color-mix(in oklab, var(--palette-primary) 24%, transparent) 0%, transparent 60%),
-        radial-gradient(ellipse 80% 60% at 50% 100%, color-mix(in oklab, var(--palette-primary) 12%, #000 18%) 0%, transparent 70%);
-    z-index: -1;
-    pointer-events: none;
+.hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    text-align: center;
 }
 
-.hero::after {
-    content: '';
+/* Floating geometric tiles — no big gradient, theme-agnostic */
+.hero__puzzle {
     position: absolute;
     inset: 0;
-    background-image:
-        linear-gradient(to right, color-mix(in oklab, var(--palette-primary) 8%, transparent) 1px, transparent 1px),
-        linear-gradient(to bottom, color-mix(in oklab, var(--palette-primary) 8%, transparent) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 60% 70% at 50% 40%, black 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 40%, black 30%, transparent 75%);
-    z-index: -1;
+    z-index: 1;
     pointer-events: none;
-    opacity: 0.5;
 }
+
+.hero__tile {
+    position: absolute;
+    display: block;
+    background: color-mix(in oklab, var(--palette-primary) 6%, transparent);
+    border: 1px solid color-mix(in oklab, var(--palette-primary) 22%, transparent);
+    border-radius: 14px;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.hero__tile--1 {
+    top: 10%;
+    left: 8%;
+    width: 120px;
+    height: 120px;
+    transform: rotate(-12deg);
+    background: color-mix(in oklab, var(--palette-primary) 10%, transparent);
+    border-color: color-mix(in oklab, var(--palette-primary) 32%, transparent);
+}
+
+.hero__tile--2 {
+    top: 18%;
+    right: 10%;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    transform: rotate(8deg);
+}
+
+.hero__tile--3 {
+    bottom: 14%;
+    left: 12%;
+    width: 160px;
+    height: 70px;
+    transform: rotate(6deg);
+    border-radius: 18px;
+}
+
+.hero__tile--4 {
+    bottom: 8%;
+    right: 8%;
+    width: 140px;
+    height: 140px;
+    transform: rotate(16deg);
+    border-radius: 28px;
+    background: color-mix(in oklab, var(--palette-primary) 14%, transparent);
+}
+
+.hero__tile--5 {
+    top: 42%;
+    left: 3%;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    transform: rotate(24deg);
+    background: var(--palette-primary);
+    border: none;
+    opacity: 0.55;
+}
+
+.hero__tile--6 {
+    top: 8%;
+    left: 38%;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    background: var(--palette-primary);
+    border: none;
+    opacity: 0.5;
+    transform: rotate(18deg);
+}
+
+.hero__tile--7 {
+    bottom: 32%;
+    right: 22%;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    transform: rotate(-18deg);
+    border: 1px dashed color-mix(in oklab, var(--palette-primary) 40%, transparent);
+    background: transparent;
+}
+
+.hero:hover .hero__tile--1 { transform: rotate(4deg) translate(-18px, -24px) scale(1.08); }
+.hero:hover .hero__tile--2 { transform: rotate(-16deg) translate(22px, -18px) scale(1.1); }
+.hero:hover .hero__tile--3 { transform: rotate(-10deg) translate(28px, 12px) scale(1.06); }
+.hero:hover .hero__tile--4 { transform: rotate(30deg) translate(-22px, -26px) scale(1.08); }
+.hero:hover .hero__tile--5 { transform: rotate(52deg) translate(16px, -14px) scale(1.18); }
+.hero:hover .hero__tile--6 { transform: rotate(-32deg) translate(-22px, 16px) scale(1.25); }
+.hero:hover .hero__tile--7 { transform: rotate(26deg) translate(-28px, -20px) scale(1.15); }
 
 .hero__badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 0.9rem;
+    padding: 0.35rem 0.85rem;
     background: var(--palette-surface);
     border: 1px solid var(--palette-border);
     border-radius: 999px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    color: color-mix(in oklab, var(--palette-surfacecontrast) 60%, var(--palette-surface));
-    box-shadow: var(--docs-shadow-sm);
-    margin-bottom: 1.5rem;
+    color: color-mix(in oklab, var(--palette-surfacecontrast) 65%, var(--palette-surface));
+    margin-bottom: 1.75rem;
 }
 
 .hero__badge-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: var(--palette-primary);
-    box-shadow: 0 0 12px var(--palette-primary);
 }
 
 .hero__title {
-    font-size: clamp(2.75rem, 7vw, 5rem);
+    font-size: clamp(2.75rem, 8vw, 5.25rem);
     font-weight: 900;
-    letter-spacing: -0.045em;
+    letter-spacing: -0.05em;
     line-height: 0.98;
-    margin: 0 0 1.5rem;
+    margin: 0 0 1.25rem;
     color: var(--palette-surfacecontrast);
 }
 
 .hero__title-accent {
-    background: linear-gradient(135deg, var(--palette-primary) 0%, color-mix(in oklab, var(--palette-primary) 55%, #000) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--palette-primary);
 }
 
 .hero__lede {
-    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    font-size: clamp(1.05rem, 1.5vw, 1.2rem);
     line-height: 1.55;
-    max-width: 620px;
-    margin: 0 auto 2.5rem;
-    color: color-mix(in oklab, var(--palette-surfacecontrast) 65%, var(--palette-surface));
+    max-width: 480px;
+    margin: 0 auto 2.25rem;
+    color: color-mix(in oklab, var(--palette-surfacecontrast) 60%, var(--palette-surface));
 }
 
 .hero__ctas {
     display: flex;
-    gap: 0.85rem;
+    gap: 0.75rem;
     justify-content: center;
     flex-wrap: wrap;
 }
 
 .hero__snippet {
-    margin: 3rem auto 0;
-    max-width: 640px;
-    padding: 1rem 1.25rem;
-    background: var(--docs-code-bg);
-    color: var(--docs-code-fg);
-    border-radius: var(--docs-radius-md);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-    display: flex;
+    margin: 2.25rem auto 0;
+    display: inline-flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    box-shadow: var(--docs-shadow-lg);
-    text-align: left;
+    gap: 0.75rem;
+    padding: 0.65rem 1.1rem;
+    background: var(--palette-surface);
+    border: 1px solid var(--palette-border);
+    border-radius: 999px;
+    font-family: var(--bui-font-mono), ui-monospace, monospace;
+    font-size: 0.88rem;
+    color: var(--palette-surfacecontrast);
+    box-shadow: 0 4px 14px -8px color-mix(in oklab, var(--palette-surfacecontrast) 50%, transparent);
 }
 
 .hero__snippet code {
@@ -408,102 +469,161 @@
 }
 
 .hero__snippet-prompt {
-    color: color-mix(in oklab, var(--palette-primary) 70%, #fff);
+    color: var(--palette-primary);
+    font-weight: 700;
     user-select: none;
 }
 
 /* ─────────────────────────────────────────
-   FEATURE CARDS
+   PILLARS (compact feature row)
    ───────────────────────────────────────── */
 
-.features {
-    padding: 5rem 0;
+.pillars {
+    padding: 3rem 0 4rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem 2.5rem;
 }
 
-.feature {
-    padding: 1.75rem;
-    background: var(--palette-surface);
-    border: 1px solid var(--palette-border);
-    border-radius: var(--docs-radius-lg);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
-    position: relative;
-    overflow: hidden;
+.pillar {
+    padding: 0 0.25rem;
 }
 
-.feature:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--docs-shadow-md);
-    border-color: color-mix(in oklab, var(--palette-border) 60%, var(--palette-surfacecontrast));
-}
-
-.feature__icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 11px;
-    display: grid;
-    place-items: center;
-    background: color-mix(in oklab, var(--palette-primary) 12%, var(--palette-surface));
-    color: var(--palette-primary);
-    font-size: 1.4rem;
-    font-weight: 900;
+.pillar__mark {
+    width: 36px;
+    height: 36px;
     margin-bottom: 1rem;
+    background: var(--palette-primary);
+    opacity: 0.9;
 }
 
-.feature__title {
-    font-size: 1.1rem;
+.pillar__mark--a { border-radius: 10px 10px 10px 2px; }
+.pillar__mark--b { border-radius: 50% 50% 10px 10px; }
+.pillar__mark--c { border-radius: 10px 2px 10px 10px; transform: rotate(-8deg); }
+
+.pillar__title {
+    font-size: 1rem;
     font-weight: 700;
     letter-spacing: -0.015em;
     margin: 0 0 0.4rem;
     color: var(--palette-surfacecontrast);
 }
 
-.feature__desc {
-    font-size: 0.93rem;
-    color: color-mix(in oklab, var(--palette-surfacecontrast) 65%, var(--palette-surface));
+.pillar__desc {
+    font-size: 0.92rem;
+    color: color-mix(in oklab, var(--palette-surfacecontrast) 62%, var(--palette-surface));
     line-height: 1.55;
     margin: 0;
 }
 
 /* ─────────────────────────────────────────
-   STAT BAR
+   INSTALL
    ───────────────────────────────────────── */
 
-.stats {
+.install {
+    padding: 3rem 0 5rem;
+    max-width: 720px;
+    margin-inline: auto;
+}
+
+.install__head {
+    margin-bottom: 1.5rem;
+}
+
+.install__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.3rem;
+    color: var(--palette-surfacecontrast);
+}
+
+.install__desc {
+    color: color-mix(in oklab, var(--palette-surfacecontrast) 60%, var(--palette-surface));
+    margin: 0;
+}
+
+.install__more {
+    margin-top: 1.25rem;
+    font-size: 0.92rem;
+    color: color-mix(in oklab, var(--palette-surfacecontrast) 60%, var(--palette-surface));
+}
+
+.install__steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.install__step {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: 40px 1fr;
     gap: 1rem;
-    padding: 2rem;
-    background:
-        linear-gradient(135deg, var(--palette-primary) 0%, color-mix(in oklab, var(--palette-primary) 55%, #000) 100%);
-    color: var(--palette-primarycontrast);
-    border-radius: var(--docs-radius-lg);
-    margin: 4rem 0;
-    box-shadow: var(--docs-shadow-glow);
+    align-items: start;
 }
 
-.stat__value {
-    font-size: 2.2rem;
-    font-weight: 900;
-    letter-spacing: -0.035em;
-    line-height: 1;
+.install__step-num {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: color-mix(in oklab, var(--palette-primary) 14%, var(--palette-surface));
+    color: var(--palette-primary);
+    font-weight: 800;
+    font-size: 0.92rem;
+    margin-top: 0.15rem;
 }
 
-.stat__label {
-    font-size: 0.85rem;
-    opacity: 0.8;
-    margin-top: 0.35rem;
-    letter-spacing: 0.02em;
+.install__step-body {
+    min-width: 0;
 }
 
-/* ─────────────────────────────────────────
-   CODEBLOCK RE-STYLING
-   ───────────────────────────────────────── */
+.install__step-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 0.6rem;
+    color: var(--palette-surfacecontrast);
+    letter-spacing: -0.01em;
+}
 
-pre, code {
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+@media (max-width: 520px) {
+    .install__step {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .hero__tile--3,
+    .hero__tile--5,
+    .hero__tile--6,
+    .hero__tile--7 {
+        display: none;
+    }
+
+    .hero__tile--1 {
+        width: 80px;
+        height: 80px;
+        top: 6%;
+        left: 4%;
+    }
+
+    .hero__tile--2 {
+        width: 60px;
+        height: 60px;
+        top: 10%;
+        right: 6%;
+    }
+
+    .hero__tile--4 {
+        width: 90px;
+        height: 90px;
+        bottom: 4%;
+        right: 4%;
+    }
 }
 
 /* ─────────────────────────────────────────
