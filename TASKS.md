@@ -179,13 +179,15 @@ Convenciones:
 
 > Resuelto en commit `93af7d0` — *STD-06: register ButtonPlacement attribute in FeatureDefinitions*
 
-### [ ] STD-07 — `BUIInputTextArea` `data-bui-resize` / `data-bui-autoresize` sin registrar
+### [x] STD-07 — `BUIInputTextArea` `data-bui-resize` / `data-bui-autoresize` sin registrar
 - **Origen**: emitidos inline en markup; no existen en `FeatureDefinitions`.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Forms/TextArea/BUIInputTextArea.razor:~104-105`
   - `FeatureDefinitions.cs`
 - **Cambios**: registrar constantes, mover a `BuildComponentDataAttributes`. Considerar exponer interface `IHasResize` si patrón se repite.
 - **Aceptación**: sin literales `data-bui-*` en markup razor.
+
+> Resuelto en commit `006b860` — *STD-07: register Resize/AutoResize attributes in FeatureDefinitions*
 
 ### [ ] STD-08 — `BUICard` usa var `--bui-card-inline-media-height` fuera de convención
 - **Origen**: convención es `--bui-inline-<prop>` (público, uniforme) o `--_<component>-<prop>` (privado). `--bui-card-inline-media-height` mezcla ambos.
