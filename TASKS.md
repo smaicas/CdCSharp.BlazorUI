@@ -138,11 +138,13 @@ Convenciones:
 
 > Resuelto en commit `30e2f33` — *STD-02: express BUITreeMenu item state via data-bui-\* attributes*
 
-### [ ] STD-03 — `BUISwitch` emite `data-checked` fuera de `FeatureDefinitions`
+### [x] STD-03 — `BUISwitch` emite `data-checked` fuera de `FeatureDefinitions`
 - **Origen**: hardcoded `data-checked` en vez de usar `FeatureDefinitions.DataAttributes.Active`.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Switch/BUISwitch.razor:~164`
 - **Cambios**: mapear semántica `checked` a `data-bui-active` (o registrar constante `Checked` en FeatureDefinitions si se prefiere separar semántica). Actualizar `.razor.css` del Switch y selectores dependientes.
 - **Aceptación**: sin strings literales `data-checked` en C#/razor.
+
+> Resuelto en commit `34c2eaf` — *STD-03: route BUISwitch checked state through data-bui-active*
 
 ### [ ] STD-04 — `BUIInputCheckbox` `data-checked` / `data-indeterminate` sin prefijo `bui-`
 - **Origen**: `BUIInputCheckbox.razor:99-105` emite `data-checked`/`data-indeterminate` directos. No siguen convención `data-bui-*` ni existen en `FeatureDefinitions`.
