@@ -152,14 +152,22 @@
             JsonDocument doc = JsonDocument.Parse(_importContent);
             JsonElement root = doc.RootElement;
 
+            List<string> failures = new();
+
             if (root.TryGetProperty("dark", out JsonElement darkElement))
             {
-                MergePalette(_darkPalette, darkElement);
+                MergePalette(_darkPalette, darkElement, "dark", failures);
             }
 
             if (root.TryGetProperty("light", out JsonElement lightElement))
             {
-                MergePalette(_lightPalette, lightElement);
+                MergePalette(_lightPalette, lightElement, "light", failures);
+            }
+
+            if (failures.Count > 0)
+            {
+                _importError = "Some colors could not be parsed: " + string.Join(", ", failures);
+                return;
             }
 
             _importDialogOpen = false;
@@ -170,7 +178,7 @@
         }
     }
 
-    private void MergePalette(Dictionary<string, CssColor> target, JsonElement source)
+    private void MergePalette(Dictionary<string, CssColor> target, JsonElement source, string paletteName, List<string> failures)
     {
         foreach (JsonProperty prop in source.EnumerateObject())
         {
@@ -184,8 +192,9 @@
                     {
                         target[key] = new CssColor(colorValue);
                     }
-                    catch
+                    catch (Exception ex) when (ex is ArgumentException or FormatException)
                     {
+                        failures.Add($"{paletteName}.{prop.Name} ('{colorValue}')");
                     }
                 }
             }
