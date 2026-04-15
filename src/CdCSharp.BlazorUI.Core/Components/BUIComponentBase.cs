@@ -45,8 +45,23 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
     {
         if (_behaviorInstance != null)
         {
-            await _behaviorInstance.InvokeVoidAsync("dispose");
-            await _behaviorInstance.DisposeAsync();
+            try
+            {
+                await _behaviorInstance.InvokeVoidAsync("dispose");
+                await _behaviorInstance.DisposeAsync();
+            }
+            catch (JSDisconnectedException)
+            {
+                // (Blazor Server) Circuit disconnected, behavior already disposed by browser
+            }
+            catch (ObjectDisposedException)
+            {
+                // Runtime already disposed
+            }
+            catch (TaskCanceledException)
+            {
+                // Disposal raced with in-flight call being cancelled
+            }
         }
     }
 
