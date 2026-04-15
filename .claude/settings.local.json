@@ -9,7 +9,11 @@
       "Bash(grep -E \"\\\\.\\(cs\\)$\")",
       "Bash(wc -l docs/CdCSharp.BlazorUI.Docs.Wasm/Pages/Components/*.razor docs/CdCSharp.BlazorUI.Docs.Wasm/Pages/*.razor)",
       "Bash(ls -1 docs/CdCSharp.BlazorUI.Docs.Wasm/Pages/Components/*.razor)",
-      "Bash(xargs -I {} basename {})"
+      "Bash(xargs -I {} basename {})",
+      "Bash(grep -n \"data-orientation.*ToString\\\\|data-bui-floated\\\\|data-bui-button\" \"V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI/Components/Forms\"/**/*.razor)",
+      "Bash(xargs wc *)",
+      "Bash(grep *)",
+      "Bash(dotnet test *)"
     ]
   }
 }

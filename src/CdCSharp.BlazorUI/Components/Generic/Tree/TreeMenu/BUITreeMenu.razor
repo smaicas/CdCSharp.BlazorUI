@@ -237,9 +237,12 @@
         bool isFlyout = ExpandMode == TreeMenuExpandMode.Flyout;
         bool isHoverTrigger = Trigger == TreeMenuTrigger.Hover;
 
-        <div class="bui-tree-menu__item @(node.IsDisabled ? "bui-tree-menu__item--disabled" : "") @(isActive ? "bui-tree-menu__item--active" : "") @(isExpanded ? "bui-tree-menu__item--expanded" : "")"
+        <div class="bui-tree-menu__item"
              role="none"
              data-depth="@node.Depth"
+             data-bui-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
+             data-bui-active="@isActive.ToString().ToLowerInvariant()"
+             data-bui-expanded="@isExpanded.ToString().ToLowerInvariant()"
              @onmouseenter="@(isHoverTrigger && hasChildren ? () => HandleHoverEnter(node.Key) : null)"
              @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? () => HandleHoverLeave(node.Key) : null)">
 

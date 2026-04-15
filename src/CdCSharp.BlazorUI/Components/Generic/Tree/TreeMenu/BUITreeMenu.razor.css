@@ -96,14 +96,14 @@ bui-component[data-bui-component="tree-menu"] .bui-tree-menu__button {
         background: var(--_tree-menu-hover-bg);
     }
 
-bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--active > .bui-tree-menu__link,
-bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--active > .bui-tree-menu__button {
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item[data-bui-active="true"] > .bui-tree-menu__link,
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item[data-bui-active="true"] > .bui-tree-menu__button {
     background: var(--_tree-menu-active-bg);
     color: var(--_tree-menu-active-color);
 }
 
-bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--disabled > .bui-tree-menu__link,
-bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item--disabled > .bui-tree-menu__button {
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item[data-bui-disabled="true"] > .bui-tree-menu__link,
+bui-component[data-bui-component="tree-menu"] .bui-tree-menu__item[data-bui-disabled="true"] > .bui-tree-menu__button {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
