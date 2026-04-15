@@ -6,10 +6,16 @@
     base.BuildRenderTree(__builder);
 }
 @code {
+    private const string DefaultLoadingLabel = "Loading";
+
     [Parameter] public string? Color { get; set; }
+
+    [Parameter] public string? AriaLabel { get; set; }
 
     // IHasSize
     [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    private string ResolvedAriaLabel => AriaLabel ?? DefaultLoadingLabel;
 
     /* ========= Variant ========= */
     public override BUILoadingIndicatorVariant DefaultVariant => BUILoadingIndicatorVariant.Spinner;
@@ -28,8 +34,8 @@
 
     private RenderFragment RenderSpinner() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <svg viewBox="0 0 50 50">
+        <bui-component @attributes="ComputedAttributes" role="status" aria-live="polite" aria-label="@ResolvedAriaLabel">
+            <svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false">
                 <circle cx="25" cy="25" r="20"></circle>
             </svg>
         </bui-component>
@@ -37,8 +43,8 @@
 
     private RenderFragment RenderCircularProgress() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <svg viewBox="0 0 50 50">
+        <bui-component @attributes="ComputedAttributes" role="status" aria-live="polite" aria-label="@ResolvedAriaLabel">
+            <svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false">
                 <circle cx="25" cy="25" r="20"></circle>
             </svg>
         </bui-component>
@@ -46,8 +52,8 @@
 
     private RenderFragment RenderRing() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <svg viewBox="0 0 50 50">
+        <bui-component @attributes="ComputedAttributes" role="status" aria-live="polite" aria-label="@ResolvedAriaLabel">
+            <svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false">
                 <circle cx="25" cy="25" r="20"></circle>
             </svg>
         </bui-component>
@@ -55,8 +61,8 @@
 
     private RenderFragment RenderDots() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <svg viewBox="0 0 40 10">
+        <bui-component @attributes="ComputedAttributes" role="status" aria-live="polite" aria-label="@ResolvedAriaLabel">
+            <svg viewBox="0 0 40 10" role="img" aria-hidden="true" focusable="false">
                 <circle cx="5" cy="5" r="4"></circle>
                 <circle cx="20" cy="5" r="4"></circle>
                 <circle cx="35" cy="5" r="4"></circle>
@@ -66,8 +72,8 @@
 
     private RenderFragment RenderBars() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
-            <svg viewBox="0 0 24 30">
+        <bui-component @attributes="ComputedAttributes" role="status" aria-live="polite" aria-label="@ResolvedAriaLabel">
+            <svg viewBox="0 0 24 30" role="img" aria-hidden="true" focusable="false">
                 <rect x="0" y="0" width="4" height="30" rx="2"></rect>
                 <rect x="10" y="0" width="4" height="30" rx="2"></rect>
                 <rect x="20" y="0" width="4" height="30" rx="2"></rect>
@@ -77,7 +83,7 @@
 
     private RenderFragment RenderLinear() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes">
+        <bui-component @attributes="ComputedAttributes" role="progressbar" aria-label="@ResolvedAriaLabel" aria-valuemin="0" aria-valuemax="100">
             <div class="bui-loading-linear bui-loading-linear--primary"></div>
             <div class="bui-loading-linear bui-loading-linear--secondary"></div>
         </bui-component>
