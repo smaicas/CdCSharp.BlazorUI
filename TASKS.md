@@ -197,7 +197,7 @@ Convenciones:
 
 > Resuelto en commit `96b016f` — *STD-08: align BUICard media-height var with private-var convention*
 
-### [ ] STD-09 — `BUISwitch` private vars con prefijo no estándar
+### [x] STD-09 — `BUISwitch` private vars con prefijo no estándar
 - **Origen**: `BUISwitch.razor:171-178` usa `--track-inline-inactive-bg`, `--thumb-inline-active-bg`, `--thumb-inline-inactive-color`. Convención: `--bui-inline-*` para vars públicas y `--_switch-*` para privadas.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Switch/BUISwitch.razor` + `.razor.css`
 - **Cambios**: renombrar:
@@ -205,6 +205,8 @@ Convenciones:
   - Privadas internas: `--_switch-track-active`, etc., resolviendo `var(--bui-inline-*, default)`.
   - Si se mantiene parametrización por propiedades (`TrackColorInactive`, etc.), registrar en `BuildComponentCssVariables` contra las constantes públicas.
 - **Aceptación**: patrón privado/público coherente con `BUIButton.razor.css`.
+
+> Resuelto en commit `11cea70` — *STD-09: normalize BUISwitch CSS variable naming conventions*
 
 ### [ ] STD-10 — `data-bui-floated` emitido inline en markup (Text/Number/TextArea/Color/DateTime)
 - **Origen**: cada input mantiene su `_isFocused`/`_isDirty` y escribe `data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"` en el razor. Debe fluir por `BuildComponentDataAttributes`.
