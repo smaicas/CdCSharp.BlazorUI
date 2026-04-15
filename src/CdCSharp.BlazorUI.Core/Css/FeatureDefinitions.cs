@@ -188,6 +188,17 @@ public static class FeatureDefinitions
         /// Placement of auxiliary buttons within a component (e.g., "left", "right").
         /// </summary>
         public const string ButtonPlacement = "data-bui-button-placement";
+
+        /// <summary>
+        /// Resize behavior for resizable elements (e.g., textarea). Values: "none", "vertical",
+        /// "horizontal", "both".
+        /// </summary>
+        public const string Resize = "data-bui-resize";
+
+        /// <summary>
+        /// Whether the component auto-grows to fit its content.
+        /// </summary>
+        public const string AutoResize = "data-bui-autoresize";
     }
 
     public static class InlineVariables
