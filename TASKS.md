@@ -69,11 +69,13 @@ Convenciones:
 - **Cambios**: añadir `CancellationTokenSource` disposed en `Dispose`; pasar token a `Task.Delay`; comprobar token antes de `StateHasChanged`.
 - **Aceptación**: no hay warnings "Cannot update component" tras navegación post-copy.
 
-### [ ] LAYOUT-03 — `BUIDialog`/`BUIDrawer` usan `Task.Delay(150)` fijo para fin de animación
+### [x] LAYOUT-03 — `BUIDialog`/`BUIDrawer` usan `Task.Delay(150)` fijo para fin de animación
 - **Origen**: detección de fin de transición por delay fijo. Frágil (varía con prefers-reduced-motion, `animation-duration` custom). Callback puede correr sobre instancia disposed.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/*`
 - **Cambios**: sustituir por listener JS `animationend`/`transitionend` vía `IModalJsInterop`. Cleanup en dispose.
 - **Aceptación**: ajuste de `animation-duration` via CSS var afecta tiempo real de cierre; reduced-motion no deja residuos.
+
+> Resuelto en commit `85bdfbc` — *LAYOUT-03: tie dialog/drawer close to animationend instead of fixed delay*
 
 ### [ ] LAYOUT-04 — `BUITreeMenu` timer con callbacks pendientes post-dispose
 - **Origen**: `_hoverDelayHandler` puede disparar tras `Dispose`. Suscripción a `NavigationManager.LocationChanged` se libera pero el timer no necesariamente.
