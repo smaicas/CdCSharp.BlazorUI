@@ -262,11 +262,13 @@ Convenciones:
 
 > Resuelto en commit `6266a08` — *DISP-03: add IDisposable cleanup to BUITreeSelector*
 
-### [ ] DISP-04 — `BUITab` disposal síncrono con efecto lateral en padre
+### [x] DISP-04 — `BUITab` disposal síncrono con efecto lateral en padre
 - **Origen**: `Dispose()` desregistra del padre (`BUITabs`); si el padre re-renderiza durante dispose del hijo, posible race.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITab.razor(.cs)`, `BUITabs.razor(.cs)`
 - **Cambios**: hacer `UnregisterTab` thread-safe (lock o snapshot de colección) y no invocar `StateHasChanged` síncrono durante disposal; usar `InvokeAsync`.
 - **Aceptación**: tests de dispose de múltiples tabs no fallan.
+
+> Resuelto en commit `1a672c2` — *DISP-04: make BUITabs tab registry thread-safe and dispose-safe*
 
 ---
 
