@@ -297,11 +297,13 @@ Convenciones:
 
 > Resuelto en commit `43e5de1` — *PERF-02: build inline style string with a reusable StringBuilder*
 
-### [ ] PERF-03 — `ColorClassGenerator` reflection no cacheada
+### [x] PERF-03 — `ColorClassGenerator` reflection no cacheada
 - **Origen**: `typeof(Color).GetProperties(...)` cada ejecución del source generator. Aunque se ejecuta en compile-time, ralentiza builds incrementales.
 - **Archivos**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/ColorClassGenerator.cs:~88`
 - **Cambios**: memoizar resultado en `static readonly` si el generator lo permite (ojo: source generators deben ser deterministas y stateless idealmente).
 - **Aceptación**: tiempo de build no degrada; output idéntico.
+
+> Resuelto en commit `a296a18` — *PERF-03: cache System.Drawing.Color reflection in ColorClassGenerator*
 
 ### [ ] PERF-04 — Reflection IHas* en cada render
 - **Origen**: `BuildStyles` chequea `component is IHas*` ~15 veces cada render. Patrón matching sobre interfaces es rápido, pero acumulado en arbol grande pesa. Opción: cachear flags por tipo.
