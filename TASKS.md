@@ -254,11 +254,13 @@ Convenciones:
 
 > Resuelto en commit `82a8f02` — *DISP-02: guard BUIColorPicker first-render JS call under prerender*
 
-### [ ] DISP-03 — `BUITreeSelector` sin `IDisposable`
+### [x] DISP-03 — `BUITreeSelector` sin `IDisposable`
 - **Origen**: crea `TreeNodeRegistry` y posibles suscripciones; no libera.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeSelector.razor` (+ code-behind)
 - **Cambios**: implementar `IAsyncDisposable`, limpiar registry y handlers.
 - **Aceptación**: test de unmount no retiene referencias.
+
+> Resuelto en commit `6266a08` — *DISP-03: add IDisposable cleanup to BUITreeSelector*
 
 ### [ ] DISP-04 — `BUITab` disposal síncrono con efecto lateral en padre
 - **Origen**: `Dispose()` desregistra del padre (`BUITabs`); si el padre re-renderiza durante dispose del hijo, posible race.
