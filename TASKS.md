@@ -327,11 +327,13 @@ Convenciones:
 
 > Resuelto en commit `0eafd6f` — *A11Y-01: add role/aria attributes to BUILoadingIndicator*
 
-### [ ] A11Y-02 — `BUITabs` navegación por teclado y ARIA
+### [x] A11Y-02 — `BUITabs` navegación por teclado y ARIA
 - **Origen**: verificar implementación de `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`, flechas izquierda/derecha, `Home`/`End`.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITabs.razor`, `BUITab.razor`
 - **Cambios**: implementar patrón WAI-ARIA Authoring Practices para tabs.
 - **Aceptación**: test manual con teclado + screen reader.
+
+> Resuelto en commit `00da2fb` — *A11Y-02: keyboard nav + ARIA for BUITabs*
 
 ### [ ] A11Y-03 — `BUIDialog` focus trap y ESC
 - **Origen**: revisar si modal atrapa focus y cierra con ESC; requerido por WCAG 2.1.
