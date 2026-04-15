@@ -169,13 +169,15 @@ Convenciones:
 
 > Resuelto en commit `6e3237b` — *STD-05: dedupe and prefix BUIInputRadio orientation attribute*
 
-### [ ] STD-06 — `BUIInputNumber` `data-bui-button-placement` sin registrar
+### [x] STD-06 — `BUIInputNumber` `data-bui-button-placement` sin registrar
 - **Origen**: hardcoded en `BUIInputNumber.razor:~153`.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI/Components/Forms/Number/BUIInputNumber.razor`
   - `src/CdCSharp.BlazorUI.Core/Components/FeatureDefinitions.cs`
 - **Cambios**: añadir constante `FeatureDefinitions.DataAttributes.ButtonPlacement` (o más genérico si reusable), emitir vía `BuildComponentDataAttributes`.
 - **Aceptación**: atributo proviene de constante centralizada.
+
+> Resuelto en commit `93af7d0` — *STD-06: register ButtonPlacement attribute in FeatureDefinitions*
 
 ### [ ] STD-07 — `BUIInputTextArea` `data-bui-resize` / `data-bui-autoresize` sin registrar
 - **Origen**: emitidos inline en markup; no existen en `FeatureDefinitions`.
