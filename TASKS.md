@@ -37,7 +37,8 @@ Convenciones:
 - **Cambios**: cambiar firmas a `private void HandleChange(ChangeEventArgs e)`. Actualizar bindings `@onchange` (aceptan `EventCallback` y delegados no-async).
 - **Aceptación**: compilación sin warning `CS1998`. Tests existentes de Text/TextArea pasan.
 
-### [ ] CORE-02 — JS dispose sin captura de `JSDisconnectedException`
+### [x] CORE-02 — JS dispose sin captura de `JSDisconnectedException`
+> Resuelto en commit `c82fd1f` — *CORE-02: guard JS behavior dispose against disconnected circuit*
 - **Origen**: `BUIComponentBase.DisposeAsync` (y equivalente en `BUIInputComponentBase:49-56`) llama a `_behaviorInstance.InvokeVoidAsync("dispose")` y `DisposeAsync()` sin try/catch. En Server, al cerrar circuit, `JSDisconnectedException` burbujea como excepción no observada y puede marcar el circuito como fallido.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI.Core/Abstractions/Components/BUIComponentBase.cs` (método `DisposeAsync`)
