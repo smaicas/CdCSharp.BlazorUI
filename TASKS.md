@@ -81,7 +81,8 @@ Convenciones:
 - **Cambios**: `Dispose` llama a `_hoverDelayHandler?.Dispose()` antes de desuscribir NavManager; verificar que todas las mutaciones de estado comprueben `!IsDisposed`.
 - **Aceptación**: tests unitarios con timer activo + dispose no fallan.
 
-### [ ] LAYOUT-05 — `BUIModalHost` usa `async void HandleModalChange`
+### [x] LAYOUT-05 — `BUIModalHost` usa `async void HandleModalChange`
+> Resuelto en commit `239f404` — *LAYOUT-05: replace async void HandleModalChange with sync wrapper + async Task*
 - **Origen**: `async void` traga excepciones y corre fuera del ciclo de render. Debe ser `async Task` invocado con `InvokeAsync` o handler síncrono.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/BUIModalHost.razor:~39`
 - **Cambios**: cambiar firma a `private async Task HandleModalChange(...)` y suscribir con lambda que use `InvokeAsync`.
