@@ -157,7 +157,7 @@ Convenciones:
 
 > Resuelto en commit `edf099a` — *STD-04: prefix BUIInputCheckbox state attributes with bui-*
 
-### [ ] STD-05 — `BUIInputRadio` `data-orientation` duplicado y sin prefijo
+### [x] STD-05 — `BUIInputRadio` `data-orientation` duplicado y sin prefijo
 - **Origen**: `BUIInputRadio.razor:87-91` emite `data-orientation` (sin prefijo) vía `BuildComponentDataAttributes`, y `BUIInputRadio.razor:96` también lo renderiza inline en markup → duplicado.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Radio/BUIInputRadio.razor` y `.razor.css`
 - **Cambios**:
@@ -166,6 +166,8 @@ Convenciones:
   - Registrar `FeatureDefinitions.DataAttributes.Orientation`.
   - Actualizar selector CSS.
 - **Aceptación**: un solo atributo `data-bui-orientation` en DOM.
+
+> Resuelto en commit `6e3237b` — *STD-05: dedupe and prefix BUIInputRadio orientation attribute*
 
 ### [ ] STD-06 — `BUIInputNumber` `data-bui-button-placement` sin registrar
 - **Origen**: hardcoded en `BUIInputNumber.razor:~153`.
