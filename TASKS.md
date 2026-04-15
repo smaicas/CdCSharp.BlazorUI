@@ -48,13 +48,15 @@ Convenciones:
 - **Cambios**: envolver en `try { ... } catch (JSDisconnectedException) { } catch (ObjectDisposedException) { }`. Buscar patrón ya usado en `ModuleJsInteropBase` y replicar.
 - **Aceptación**: cerrar pestaña/circuit mientras componente está montado no produce excepciones en logs.
 
-### [ ] LAYOUT-01 — Memory leak en `BUIInitializer` (OnThemeChanged no desuscrito)
+### [x] LAYOUT-01 — Memory leak en `BUIInitializer` (OnThemeChanged no desuscrito)
+> Resuelto en commit `784c93d` — *LAYOUT-01/02: activate IDisposable on Initializer and guard Toast host race*
 - **Origen**: suscribe a `ThemeInterop.OnThemeChanged` en `OnInitialized`/`OnAfterRenderAsync` pero no implementa `Dispose`/`IAsyncDisposable` para desuscribirse.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/BUIInitializer.razor`
 - **Cambios**: implementar `IDisposable` y desuscribir handler.
 - **Aceptación**: navegación repetida que monta/desmonta `BUIInitializer` no incrementa handlers en `ThemeInterop.OnThemeChanged`.
 
-### [ ] LAYOUT-02 — Memory leak en `BUIToastHost` (ToastService.OnChange no desuscrito)
+### [x] LAYOUT-02 — Memory leak en `BUIToastHost` (ToastService.OnChange no desuscrito)
+> Resuelto en commit `784c93d` — *LAYOUT-01/02: activate IDisposable on Initializer and guard Toast host race*. Nota: la desuscripción ya existía; el fix añade guard `_disposed` contra race de `InvokeAsync` post-dispose.
 - **Origen**: suscripción a evento del servicio singleton sin cleanup; `InvokeAsync(StateHasChanged)` puede ejecutarse sobre instancia ya disposed.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/BUIToastHost.razor`
 - **Cambios**: implementar `IDisposable`, desuscribir `OnChange` en `Dispose`.
