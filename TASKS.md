@@ -92,7 +92,8 @@ Convenciones:
 
 ## B. SEGURIDAD
 
-### [ ] SEC-01 — `BUISvgIcon` inyección de SVG arbitrario
+### [x] SEC-01 — `BUISvgIcon` inyección de SVG arbitrario
+> Resuelto en commit `f9bb2f0` — *SEC-01: sanitize BUISvgIcon markup before rendering*. Sanitizador mínimo (strip script/iframe/object/embed/foreignObject + on\* + javascript:). Conservador; no sustituye un HTML sanitizer completo.
 - **Origen**: `@((MarkupString)Icon)` renderiza markup user-supplied sin sanear. Permite `<script>`, atributos `on*`, `<foreignObject>` con HTML.
 - **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Svg/BUISvgIcon.razor`
 - **Cambios**:
