@@ -1,0 +1,44 @@
+﻿[
+  {
+    Name: Unchecked,
+    Html:
+<bui-component data-bui-component="input-checkbox" data-bui-variant="default" data-bui-size="medium" data-bui-density="comfortable" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-active="false" b-chhdqsfqrg><div class="bui-checkbox" role="checkbox" aria-checked="false" aria-disabled="false" aria-labelledby="bui-checkbox-<ID>-label" aria-describedby="bui-helper-<ID>" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-chhdqsfqrg><span class="_bui-checkmark" role="checkbox" aria-checked="false" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></bui-component></span><span id="bui-checkbox-<ID>-label" class="bui-checkbox__label" b-chhdqsfqrg>Accept</span></div>
+
+            </bui-component>
+  },
+  {
+    Name: Checked,
+    Html:
+<bui-component data-bui-component="input-checkbox" data-bui-variant="default" data-bui-size="medium" data-bui-density="comfortable" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-active="true" b-chhdqsfqrg><div class="bui-checkbox" role="checkbox" aria-checked="true" aria-disabled="false" aria-labelledby="bui-checkbox-<ID>-label" aria-describedby="bui-helper-<ID>" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-chhdqsfqrg><span class="_bui-checkmark _bui-checkmark--checked" role="checkbox" aria-checked="true" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"/></svg></bui-component></span><span id="bui-checkbox-<ID>-label" class="bui-checkbox__label" b-chhdqsfqrg>Accept</span></div>
+
+            </bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="input-checkbox" data-bui-variant="default" data-bui-size="medium" data-bui-density="comfortable" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-active="false" b-chhdqsfqrg><div class="bui-checkbox" role="checkbox" aria-checked="false" aria-disabled="true" aria-labelledby="bui-checkbox-<ID>-label" aria-describedby="bui-helper-<ID>" tabindex="-1" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-chhdqsfqrg><span class="_bui-checkmark _bui-checkmark--disabled" role="checkbox" aria-checked="false" aria-disabled="true" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></bui-component></span><span id="bui-checkbox-<ID>-label" class="bui-checkbox__label" b-chhdqsfqrg>Disabled</span></div>
+
+            </bui-component>
+  },
+  {
+    Name: Error,
+    Html:
+<bui-component data-bui-component="input-checkbox" data-bui-variant="default" data-bui-size="medium" data-bui-density="comfortable" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-active="false" b-chhdqsfqrg><div class="bui-checkbox" role="checkbox" aria-checked="false" aria-disabled="false" aria-labelledby="bui-checkbox-<ID>-label" aria-describedby="bui-helper-<ID>" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-chhdqsfqrg><span class="_bui-checkmark" role="checkbox" aria-checked="false" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></bui-component></span><span id="bui-checkbox-<ID>-label" class="bui-checkbox__label" b-chhdqsfqrg>Error</span></div>
+
+            </bui-component>
+  },
+  {
+    Name: Required_With_Helper,
+    Html:
+<bui-component data-bui-component="input-checkbox" data-bui-variant="default" data-bui-size="medium" data-bui-density="comfortable" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" data-bui-active="false" b-chhdqsfqrg><div class="bui-checkbox" role="checkbox" aria-checked="false" aria-disabled="false" aria-labelledby="bui-checkbox-<ID>-label" aria-describedby="bui-helper-<ID>" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-chhdqsfqrg><span class="_bui-checkmark" role="checkbox" aria-checked="false" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></bui-component></span><span id="bui-checkbox-<ID>-label" class="bui-checkbox__label" b-chhdqsfqrg>Terms<span class="bui-field__required" b-chhdqsfqrg>*</span></span></div>
+
+            <div id="bui-helper-<ID>" class="_bui-field-helper" b-tk6qfhhc0u>Must accept.</div></bui-component>
+  },
+  {
+    Name: Large_Colored,
+    Html:
+<bui-component data-bui-component="input-checkbox" data-bui-variant="default" data-bui-size="large" data-bui-density="comfortable" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-active="true" style="--bui-inline-color: rgba(255,0,0,1)" b-chhdqsfqrg><div class="bui-checkbox" role="checkbox" aria-checked="true" aria-disabled="false" aria-labelledby="bui-checkbox-<ID>-label" aria-describedby="bui-helper-<ID>" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-chhdqsfqrg><span class="_bui-checkmark _bui-checkmark--checked" role="checkbox" aria-checked="true" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="large" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8.29 13.29c-.39.39-1.02.39-1.41 0L5.71 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.58 7.59z"/></svg></bui-component></span><span id="bui-checkbox-<ID>-label" class="bui-checkbox__label" b-chhdqsfqrg>Styled</span></div>
+
+            </bui-component>
+  }
+]

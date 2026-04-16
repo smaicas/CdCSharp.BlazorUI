@@ -10,11 +10,11 @@ public static class VerifyConfig
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex OnClickRegex =
-        new(@"blazor:(onclick|onchange|oninput|onfocus|onblur|onsubmit)=""\d+""",
+        new(@"blazor:(onclick|onchange|oninput|onfocus|onblur|onsubmit|onkeydown|onkeyup)=""\d+""",
             RegexOptions.Compiled);
 
     private static readonly Regex BuiGeneratedIdRegex =
-        new(@"bui-(input|helper)-[a-f0-9]{32}",
+        new(@"bui-(input|helper|checkbox|radio|switch)-[a-f0-9]{32}",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     [ModuleInitializer]

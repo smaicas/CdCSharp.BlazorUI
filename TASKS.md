@@ -51,13 +51,13 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIInputCheckbox (`Components/Forms/Checkbox/`)
 
-- [ ] **FRM-CHK-01** — `BUIInputCheckboxRenderingTests` — root + `data-bui-component="input-checkbox"`, `data-bui-checked`, `data-bui-indeterminate`, tamaño, color.
-- [ ] **FRM-CHK-02** — `BUIInputCheckboxStateTests` — toggle `Checked`, `Indeterminate`, `Disabled`, `ReadOnly`, `Error`; preservación de atributos.
-- [ ] **FRM-CHK-03** — `BUIInputCheckboxInteractionTests` — `ValueChanged`, click en label asociada, space key.
-- [ ] **FRM-CHK-04** — `BUIInputCheckboxVariantTests` — `BUIInputCheckboxVariant` custom.
-- [ ] **FRM-CHK-05** — `BUIInputCheckboxAccessibilityTests` — `role="checkbox"`, `aria-checked`, `aria-disabled`, label association.
-- [ ] **FRM-CHK-06** — `BUIInputCheckboxValidationTests` — `EditContext` + `[Required]` → `data-bui-error="true"` + `ValidationMessage`.
-- [ ] **FRM-CHK-07** — `BUIInputCheckboxSnapshotTests` — estados: Default, Checked, Indeterminate, Disabled, Error.
+- [x] **FRM-CHK-01** — `BUIInputCheckboxRenderingTests` (16 tests)
+- [x] **FRM-CHK-02** — `BUIInputCheckboxStateTests` (16 tests)
+- [x] **FRM-CHK-03** — `BUIInputCheckboxInteractionTests` (14 tests)
+- [x] **FRM-CHK-04** — `BUIInputCheckboxVariantTests` (4 tests)
+- [x] **FRM-CHK-05** — `BUIInputCheckboxAccessibilityTests` (18 tests)
+- [x] **FRM-CHK-06** — `BUIInputCheckboxValidationTests` (10 tests)
+- [x] **FRM-CHK-07** — `BUIInputCheckboxSnapshotTests` (4 tests, 6+1 states)
 
 ### BUIInputSwitch (`Components/Forms/Switch/`)
 
