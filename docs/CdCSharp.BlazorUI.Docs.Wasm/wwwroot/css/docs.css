@@ -524,48 +524,6 @@ html[data-theme="light"] {
 }
 
 /* ─────────────────────────────────────────
-   PILLARS (compact feature row)
-   ───────────────────────────────────────── */
-
-.pillars {
-    padding: 3rem 0 4rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 2rem 2.5rem;
-}
-
-.pillar {
-    padding: 0 0.25rem;
-}
-
-.pillar__mark {
-    width: 36px;
-    height: 36px;
-    margin-bottom: 1rem;
-    background: var(--palette-primary);
-    opacity: 0.9;
-}
-
-.pillar__mark--a { border-radius: 10px 10px 10px 2px; }
-.pillar__mark--b { border-radius: 50% 50% 10px 10px; }
-.pillar__mark--c { border-radius: 10px 2px 10px 10px; transform: rotate(-8deg); }
-
-.pillar__title {
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    margin: 0 0 0.4rem;
-    color: var(--palette-surfacecontrast);
-}
-
-.pillar__desc {
-    font-size: 0.92rem;
-    color: color-mix(in oklab, var(--palette-surfacecontrast) 62%, var(--palette-surface));
-    line-height: 1.55;
-    margin: 0;
-}
-
-/* ─────────────────────────────────────────
    INSTALL
    ───────────────────────────────────────── */
 

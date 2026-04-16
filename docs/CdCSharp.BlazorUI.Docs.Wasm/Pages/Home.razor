@@ -27,20 +27,13 @@
         </h1>
 
         <p class="hero__lede">
-            A component library for Blazor Server and WebAssembly.
-            Themed, typed, done.
+            A lightweight component library that extends native capabilities and improves your productivity
         </p>
 
         <div class="hero__ctas">
             <BUIButton Text="Get started"
                        Size="SizeEnum.Large"
                        OnClick="@(() => _nav.NavigateTo("/getting-started"))" />
-            <BUIButton Text="Components"
-                       Size="SizeEnum.Large"
-                       Border="@BUIBorderPresets.Default"
-                       BackgroundColor="transparent"
-                       Color="@PaletteColor.Primary"
-                       OnClick="@(() => _nav.NavigateTo("/components/button"))" />
         </div>
 
         <div class="hero__snippet" role="figure" aria-label="Install command">
@@ -48,65 +41,6 @@
             <code>dotnet add package CdCSharp.BlazorUI</code>
         </div>
     </div>
-</section>
-
-<section class="pillars">
-    <div class="pillar">
-        <div class="pillar__mark pillar__mark--a"></div>
-        <h3 class="pillar__title">Data-attribute styling</h3>
-        <p class="pillar__desc">No class toggling. Components expose <code>IHas*</code> interfaces; CSS reads <code>data-bui-*</code> and custom properties.</p>
-    </div>
-    <div class="pillar">
-        <div class="pillar__mark pillar__mark--b"></div>
-        <h3 class="pillar__title">Theme-first palettes</h3>
-        <p class="pillar__desc">Light and dark out of the box. Override any semantic token with a single CSS variable.</p>
-    </div>
-    <div class="pillar">
-        <div class="pillar__mark pillar__mark--c"></div>
-        <h3 class="pillar__title">Pluggable variants</h3>
-        <p class="pillar__desc">Every component accepts custom render templates alongside its built-ins. Swap, don't fork.</p>
-    </div>
-</section>
-
-<section class="install">
-    <div class="install__head">
-        <h2 class="install__title">Install</h2>
-        <p class="install__desc">Three steps. Package, services, stylesheet.</p>
-    </div>
-
-    <ol class="install__steps">
-        <li class="install__step">
-            <span class="install__step-num">1</span>
-            <div class="install__step-body">
-                <h3 class="install__step-title">Add the package</h3>
-                <BUICodeBlock Title="Terminal"
-                              Language="SyntaxHighlightLanguage.CSharp"
-                              Code="@_packageSnippet" />
-            </div>
-        </li>
-        <li class="install__step">
-            <span class="install__step-num">2</span>
-            <div class="install__step-body">
-                <h3 class="install__step-title">Register the services</h3>
-                <BUICodeBlock Title="Program.cs"
-                              Language="SyntaxHighlightLanguage.CSharp"
-                              Code="@_programSnippet" />
-            </div>
-        </li>
-        <li class="install__step">
-            <span class="install__step-num">3</span>
-            <div class="install__step-body">
-                <h3 class="install__step-title">Link the stylesheet</h3>
-                <BUICodeBlock Title="wwwroot/index.html"
-                              Language="SyntaxHighlightLanguage.Razor"
-                              Code="@_indexSnippet" />
-            </div>
-        </li>
-    </ol>
-
-    <p class="install__more">
-        Full walkthrough in the <a href="/getting-started">Getting started</a> guide.
-    </p>
 </section>
 
 @code {

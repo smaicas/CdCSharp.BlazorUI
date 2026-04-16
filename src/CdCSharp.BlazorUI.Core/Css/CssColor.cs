@@ -590,7 +590,7 @@ public class CssColor : IEquatable<CssColor>
 
         if (CanUseShortHex())
         {
-            return $"#{R:x1}{G:x1}{B:x1}";
+            return $"#{R & 0x0F:x}{G & 0x0F:x}{B & 0x0F:x}";
         }
 
         return $"#{R:x2}{G:x2}{B:x2}";

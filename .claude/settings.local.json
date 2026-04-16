@@ -13,7 +13,18 @@
       "Bash(grep -n \"data-orientation.*ToString\\\\|data-bui-floated\\\\|data-bui-button\" \"V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI/Components/Forms\"/**/*.razor)",
       "Bash(xargs wc *)",
       "Bash(grep *)",
-      "Bash(dotnet test *)"
+      "Bash(dotnet test *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(ls test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/*.verified.txt)",
+      "Bash(taskkill //F //IM VBCSCompiler.exe)",
+      "Bash(taskkill //F //IM dotnet.exe)",
+      "Bash(python -c ' *)",
+      "Bash(awk 'NR==131 || NR==133 || NR==145 {printf \"line %d:[%s]\\\\n\", NR, $0}' test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/CSharpSnapshotTests.cs)",
+      "Bash(cp CSharpSnapshotTests.Tokenize_CompleteClass_MatchesSnapshot.received.txt CSharpSnapshotTests.Tokenize_CompleteClass_MatchesSnapshot.verified.txt)",
+      "Bash(cp CSharpSnapshotTests.Tokenize_ModernCSharpFeatures_MatchesSnapshot.received.txt CSharpSnapshotTests.Tokenize_ModernCSharpFeatures_MatchesSnapshot.verified.txt)",
+      "Bash(cp TypeScriptSnapshotTests.Tokenize_CompleteModule_MatchesSnapshot.received.txt TypeScriptSnapshotTests.Tokenize_CompleteModule_MatchesSnapshot.verified.txt)",
+      "Bash(ls test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/*.received.txt)"
     ]
   }
 }
