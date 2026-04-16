@@ -91,12 +91,12 @@
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
         if (SidebarWidth != null)
-            cssVariables["--bui-inline-sidebar-width"] = SidebarWidth;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutSidebarWidth] = SidebarWidth;
         if (HeaderHeight != null)
-            cssVariables["--bui-inline-header-height"] = HeaderHeight;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutHeaderHeight] = HeaderHeight;
         if (CollapseBreakpoint != null)
-            cssVariables["--bui-inline-collapse-breakpoint"] = CollapseBreakpoint;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutCollapseBreakpoint] = CollapseBreakpoint;
         if (ContentMaxWidth != null)
-            cssVariables["--bui-inline-content-max-width"] = ContentMaxWidth;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutContentMaxWidth] = ContentMaxWidth;
     }
 }

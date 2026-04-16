@@ -101,7 +101,7 @@
         base.BuildComponentDataAttributes(dataAttributes);
         dataAttributes[FeatureDefinitions.DataAttributes.Active] = IsChecked.ToString().ToLowerInvariant();
         if (IsIndeterminate)
-            dataAttributes["data-bui-indeterminate"] = "true";
+            dataAttributes[FeatureDefinitions.DataAttributes.Indeterminate] = "true";
     }
 
     private RenderFragment RenderDefault() => __builder =>

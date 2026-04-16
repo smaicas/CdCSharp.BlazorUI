@@ -180,27 +180,27 @@
         {
             BorderCssValues values = CardBorder.GetCssValues();
             if (values.All != null)
-                cssVariables["--bui-inline-dc-card-border"] = values.All;
+                cssVariables[FeatureDefinitions.InlineVariables.DcCardBorder] = values.All;
             if (values.Top != null)
-                cssVariables["--bui-inline-dc-card-border-top"] = values.Top;
+                cssVariables[FeatureDefinitions.InlineVariables.DcCardBorderTop] = values.Top;
             if (values.Right != null)
-                cssVariables["--bui-inline-dc-card-border-right"] = values.Right;
+                cssVariables[FeatureDefinitions.InlineVariables.DcCardBorderRight] = values.Right;
             if (values.Bottom != null)
-                cssVariables["--bui-inline-dc-card-border-bottom"] = values.Bottom;
+                cssVariables[FeatureDefinitions.InlineVariables.DcCardBorderBottom] = values.Bottom;
             if (values.Left != null)
-                cssVariables["--bui-inline-dc-card-border-left"] = values.Left;
+                cssVariables[FeatureDefinitions.InlineVariables.DcCardBorderLeft] = values.Left;
             if (values.Radius != null)
-                cssVariables["--bui-inline-dc-card-border-radius"] = values.Radius;
+                cssVariables[FeatureDefinitions.InlineVariables.DcCardBorderRadius] = values.Radius;
         }
 
         if (CardShadow != null)
         {
-            cssVariables["--bui-inline-dc-card-shadow"] = CardShadow.ToCss();
+            cssVariables[FeatureDefinitions.InlineVariables.DcCardShadow] = CardShadow.ToCss();
         }
 
         if (CardBackground != null)
         {
-            cssVariables["--bui-inline-dc-card-background"] = CardBackground;
+            cssVariables[FeatureDefinitions.InlineVariables.DcCardBackground] = CardBackground;
         }
     }
 

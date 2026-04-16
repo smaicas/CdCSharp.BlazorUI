@@ -134,7 +134,7 @@ public static class FeatureDefinitions
         /// <summary>
         /// Marks component as part of picker family for shared styles.
         /// </summary>
-        public const string PickerBase = "data-bui-picker";
+        public const string PickerBase = "data-bui-picker-base";
 
         /// <summary>
         /// Marks component as part of data collection family for shared styles.
@@ -199,6 +199,80 @@ public static class FeatureDefinitions
         /// Whether the component auto-grows to fit its content.
         /// </summary>
         public const string AutoResize = "data-bui-autoresize";
+
+        // --- Badge attributes ---
+        /// <summary>
+        /// Badge rendered as a small dot with no content.
+        /// </summary>
+        public const string Dot = "data-bui-dot";
+
+        /// <summary>
+        /// Badge rendered with a fully circular shape.
+        /// </summary>
+        public const string Circular = "data-bui-circular";
+
+        /// <summary>
+        /// Placement of floating / notification elements (badges, toasts).
+        /// </summary>
+        public const string Position = "data-bui-position";
+
+        // --- Data collection attributes ---
+        /// <summary>
+        /// Data-collection rows respond to hover.
+        /// </summary>
+        public const string Hoverable = "data-bui-hoverable";
+
+        /// <summary>
+        /// Name of the row-alternation pattern applied by data-collection components.
+        /// </summary>
+        public const string RowPattern = "data-bui-row-pattern";
+
+        // --- Form state attributes ---
+        /// <summary>
+        /// Checkbox is in indeterminate (tri-state) mode.
+        /// </summary>
+        public const string Indeterminate = "data-bui-indeterminate";
+
+        /// <summary>
+        /// Single-select vs. multi-select behavior for collections.
+        /// </summary>
+        public const string SelectionMode = "data-bui-selection-mode";
+
+        /// <summary>
+        /// Whether multi-select collections render row checkboxes.
+        /// </summary>
+        public const string ShowCheckboxes = "data-bui-show-checkboxes";
+
+        /// <summary>
+        /// Layout orientation (horizontal / vertical).
+        /// </summary>
+        public const string Orientation = "data-bui-orientation";
+
+        /// <summary>
+        /// Interaction that triggers menu expansion (click / hover).
+        /// </summary>
+        public const string Trigger = "data-bui-trigger";
+
+        /// <summary>
+        /// Whether expanding a menu node collapses siblings.
+        /// </summary>
+        public const string ExpandMode = "data-bui-expand-mode";
+
+        // --- Toast attributes ---
+        /// <summary>
+        /// Toast is currently running its close animation.
+        /// </summary>
+        public const string Closing = "data-bui-closing";
+
+        /// <summary>
+        /// Toast auto-close timer is paused (hover).
+        /// </summary>
+        public const string Paused = "data-bui-paused";
+
+        /// <summary>
+        /// Named animation applied to a toast.
+        /// </summary>
+        public const string Animation = "data-bui-animation";
     }
 
     public static class InlineVariables
@@ -229,6 +303,57 @@ public static class FeatureDefinitions
         public const string PrefixBackgroundColor = "--bui-inline-prefix-background";
         public const string SuffixColor = "--bui-inline-suffix-color";
         public const string SuffixBackgroundColor = "--bui-inline-suffix-background";
+
+        // --- Switch overrides (BUISwitch) ---
+        public const string SwitchTrackInactiveBackground = "--bui-inline-track-inactive-bg";
+        public const string SwitchTrackActiveBackground = "--bui-inline-track-active-bg";
+        public const string SwitchThumbInactiveBackground = "--bui-inline-thumb-inactive-bg";
+        public const string SwitchThumbActiveBackground = "--bui-inline-thumb-active-bg";
+        public const string SwitchThumbInactiveColor = "--bui-inline-thumb-inactive-color";
+        public const string SwitchThumbActiveColor = "--bui-inline-thumb-active-color";
+
+        // --- Layout overrides ---
+        public const string LayoutSidebarWidth = "--bui-inline-sidebar-width";
+        public const string LayoutHeaderHeight = "--bui-inline-header-height";
+        public const string LayoutCollapseBreakpoint = "--bui-inline-collapse-breakpoint";
+        public const string LayoutContentMaxWidth = "--bui-inline-content-max-width";
+        public const string LayoutNavColMin = "--bui-inline-nav-col-min";
+        public const string LayoutNavGap = "--bui-inline-nav-gap";
+        public const string LayoutNavColumns = "--bui-inline-nav-columns";
+
+        // --- Data collection overrides ---
+        public const string DcCardBorder = "--bui-inline-dc-card-border";
+        public const string DcCardBorderTop = "--bui-inline-dc-card-border-top";
+        public const string DcCardBorderRight = "--bui-inline-dc-card-border-right";
+        public const string DcCardBorderBottom = "--bui-inline-dc-card-border-bottom";
+        public const string DcCardBorderLeft = "--bui-inline-dc-card-border-left";
+        public const string DcCardBorderRadius = "--bui-inline-dc-card-border-radius";
+        public const string DcCardShadow = "--bui-inline-dc-card-shadow";
+        public const string DcCardBackground = "--bui-inline-dc-card-background";
+
+        public const string DcCellBorder = "--bui-inline-dc-cell-border";
+        public const string DcCellBorderTop = "--bui-inline-dc-cell-border-top";
+        public const string DcCellBorderRight = "--bui-inline-dc-cell-border-right";
+        public const string DcCellBorderBottom = "--bui-inline-dc-cell-border-bottom";
+        public const string DcCellBorderLeft = "--bui-inline-dc-cell-border-left";
+
+        public const string DcRowBorder = "--bui-inline-dc-row-border";
+        public const string DcRowBorderTop = "--bui-inline-dc-row-border-top";
+        public const string DcRowBorderRight = "--bui-inline-dc-row-border-right";
+        public const string DcRowBorderBottom = "--bui-inline-dc-row-border-bottom";
+        public const string DcRowBorderLeft = "--bui-inline-dc-row-border-left";
+
+        public const string RowPatternBackground = "--bui-inline-row-pattern-bg";
+        public const string RowPatternEvenBackground = "--bui-inline-row-pattern-even-bg";
+        public const string RowPatternOddBackground = "--bui-inline-row-pattern-odd-bg";
+        public const string RowPatternNthBackground = "--bui-inline-row-pattern-nth-bg";
+        public const string RowPatternAllBackground = "--bui-inline-row-pattern-all-bg";
+
+        public const string RowPatternBorder = "--bui-inline-row-pattern-border";
+        public const string RowPatternBorderTop = "--bui-inline-row-pattern-border-top";
+        public const string RowPatternBorderRight = "--bui-inline-row-pattern-border-right";
+        public const string RowPatternBorderBottom = "--bui-inline-row-pattern-border-bottom";
+        public const string RowPatternBorderLeft = "--bui-inline-row-pattern-border-left";
     }
 
     public static class Tags

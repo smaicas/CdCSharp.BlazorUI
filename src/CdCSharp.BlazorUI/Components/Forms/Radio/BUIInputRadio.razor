@@ -87,7 +87,7 @@
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
         base.BuildComponentDataAttributes(dataAttributes);
-        dataAttributes["data-bui-orientation"] = Orientation.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Orientation] = Orientation.ToString().ToLowerInvariant();
     }
 
     private RenderFragment RenderDefault() => __builder =>

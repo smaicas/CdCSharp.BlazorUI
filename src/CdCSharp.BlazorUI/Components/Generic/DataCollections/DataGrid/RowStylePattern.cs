@@ -45,18 +45,18 @@ internal sealed class AlternatingRowStylePattern : RowStylePattern
     {
         Dictionary<string, string> vars = [];
         if (_evenBackground != null)
-            vars["--bui-inline-row-pattern-even-bg"] = _evenBackground;
+            vars[FeatureDefinitions.InlineVariables.RowPatternEvenBackground] = _evenBackground;
         if (_oddBackground != null)
-            vars["--bui-inline-row-pattern-odd-bg"] = _oddBackground;
+            vars[FeatureDefinitions.InlineVariables.RowPatternOddBackground] = _oddBackground;
         return vars;
     }
 
     internal override string? GetItemInlineStyle(int index)
     {
         if (index % 2 == 0 && _evenBackground != null)
-            return $"--bui-inline-row-pattern-bg: {_evenBackground}";
+            return $"{FeatureDefinitions.InlineVariables.RowPatternBackground}: {_evenBackground}";
         if (index % 2 != 0 && _oddBackground != null)
-            return $"--bui-inline-row-pattern-bg: {_oddBackground}";
+            return $"{FeatureDefinitions.InlineVariables.RowPatternBackground}: {_oddBackground}";
         return null;
     }
 }
@@ -83,14 +83,14 @@ internal sealed class EveryNthRowStylePattern : RowStylePattern
         if (!IsCssExpressible) return [];
         return new Dictionary<string, string>
         {
-            ["--bui-inline-row-pattern-nth-bg"] = _backgroundColor
+            [FeatureDefinitions.InlineVariables.RowPatternNthBackground] = _backgroundColor
         };
     }
 
     internal override string? GetItemInlineStyle(int index)
     {
         if (index % _n == 0)
-            return $"--bui-inline-row-pattern-bg: {_backgroundColor}";
+            return $"{FeatureDefinitions.InlineVariables.RowPatternBackground}: {_backgroundColor}";
         return null;
     }
 }
@@ -112,12 +112,12 @@ internal sealed class AllRowStylePattern : RowStylePattern
     {
         return new Dictionary<string, string>
         {
-            ["--bui-inline-row-pattern-all-bg"] = _backgroundColor
+            [FeatureDefinitions.InlineVariables.RowPatternAllBackground] = _backgroundColor
         };
     }
 
     internal override string? GetItemInlineStyle(int index) =>
-        $"--bui-inline-row-pattern-bg: {_backgroundColor}";
+        $"{FeatureDefinitions.InlineVariables.RowPatternBackground}: {_backgroundColor}";
 }
 
 internal sealed class CustomRowStylePattern : RowStylePattern
@@ -152,21 +152,21 @@ public sealed class RowStyle
         List<string> vars = [];
 
         if (BackgroundColor != null)
-            vars.Add($"--bui-inline-row-pattern-bg: {BackgroundColor}");
+            vars.Add($"{FeatureDefinitions.InlineVariables.RowPatternBackground}: {BackgroundColor}");
 
         if (Border != null)
         {
             BorderCssValues values = Border.GetCssValues();
             if (values.All != null)
-                vars.Add($"--bui-inline-row-pattern-border: {values.All}");
+                vars.Add($"{FeatureDefinitions.InlineVariables.RowPatternBorder}: {values.All}");
             if (values.Top != null)
-                vars.Add($"--bui-inline-row-pattern-border-top: {values.Top}");
+                vars.Add($"{FeatureDefinitions.InlineVariables.RowPatternBorderTop}: {values.Top}");
             if (values.Right != null)
-                vars.Add($"--bui-inline-row-pattern-border-right: {values.Right}");
+                vars.Add($"{FeatureDefinitions.InlineVariables.RowPatternBorderRight}: {values.Right}");
             if (values.Bottom != null)
-                vars.Add($"--bui-inline-row-pattern-border-bottom: {values.Bottom}");
+                vars.Add($"{FeatureDefinitions.InlineVariables.RowPatternBorderBottom}: {values.Bottom}");
             if (values.Left != null)
-                vars.Add($"--bui-inline-row-pattern-border-left: {values.Left}");
+                vars.Add($"{FeatureDefinitions.InlineVariables.RowPatternBorderLeft}: {values.Left}");
         }
 
         return vars.Count > 0 ? string.Join("; ", vars) : null;

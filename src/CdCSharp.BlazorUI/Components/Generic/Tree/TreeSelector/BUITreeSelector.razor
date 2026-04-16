@@ -70,8 +70,8 @@
 
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        dataAttributes["data-bui-selection-mode"] = SelectionMode.ToString().ToLowerInvariant();
-        dataAttributes["data-bui-show-checkboxes"] = ShowCheckboxes.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.SelectionMode] = SelectionMode.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.ShowCheckboxes] = ShowCheckboxes.ToString().ToLowerInvariant();
     }
 
     protected override void OnInitialized()

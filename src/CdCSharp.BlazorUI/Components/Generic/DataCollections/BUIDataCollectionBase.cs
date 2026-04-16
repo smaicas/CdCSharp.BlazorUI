@@ -76,11 +76,10 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
         base.BuildComponentDataAttributes(dataAttributes);
-        dataAttributes["data-bui-data-collection"] = "true";
 
         if (Hoverable)
         {
-            dataAttributes["data-bui-hoverable"] = "true";
+            dataAttributes[FeatureDefinitions.DataAttributes.Hoverable] = "true";
         }
 
         if (ItemPattern != null && !UsePerItemPatternStyles)
@@ -88,7 +87,7 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
             string? patternAttr = ItemPattern.GetPatternDataAttribute();
             if (patternAttr != null)
             {
-                dataAttributes["data-bui-row-pattern"] = patternAttr;
+                dataAttributes[FeatureDefinitions.DataAttributes.RowPattern] = patternAttr;
             }
         }
     }

@@ -148,9 +148,4 @@
         await NotifyValueChanged();
     }
 
-    public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
-    {
-        base.BuildComponentDataAttributes(dataAttributes);
-        dataAttributes["data-bui-picker-base"] = "true";
-    }
 }

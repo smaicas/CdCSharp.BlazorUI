@@ -80,14 +80,14 @@
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     {
         if (HeaderHeight != null)
-            cssVariables["--bui-inline-header-height"] = HeaderHeight;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutHeaderHeight] = HeaderHeight;
         if (NavMinColumnWidth != null)
-            cssVariables["--bui-inline-nav-col-min"] = NavMinColumnWidth;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutNavColMin] = NavMinColumnWidth;
         if (NavGap != null)
-            cssVariables["--bui-inline-nav-gap"] = NavGap;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutNavGap] = NavGap;
         if (ContentMaxWidth != null)
-            cssVariables["--bui-inline-content-max-width"] = ContentMaxWidth;
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutContentMaxWidth] = ContentMaxWidth;
         if (NavColumns.HasValue)
-            cssVariables["--bui-inline-nav-columns"] = NavColumns.Value.ToString();
+            cssVariables[FeatureDefinitions.InlineVariables.LayoutNavColumns] = NavColumns.Value.ToString();
     }
 }

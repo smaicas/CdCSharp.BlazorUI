@@ -31,10 +31,10 @@
 
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        dataAttributes["data-bui-position"] = GetPositionValue();
-        dataAttributes["data-bui-animation"] = GetAnimationValue();
-        dataAttributes["data-bui-closing"] = State.IsClosing.ToString().ToLowerInvariant();
-        dataAttributes["data-bui-paused"] = State.IsPaused.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Position] = GetPositionValue();
+        dataAttributes[FeatureDefinitions.DataAttributes.Animation] = GetAnimationValue();
+        dataAttributes[FeatureDefinitions.DataAttributes.Closing] = State.IsClosing.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Paused] = State.IsPaused.ToString().ToLowerInvariant();
     }
 
     public override void BuildComponentCssVariables(Dictionary<string, string> cssVariables)

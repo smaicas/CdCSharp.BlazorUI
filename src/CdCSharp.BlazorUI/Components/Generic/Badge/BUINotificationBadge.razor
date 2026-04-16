@@ -30,7 +30,7 @@
 
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        dataAttributes["data-bui-position"] = Position.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Position] = Position.ToString().ToLowerInvariant();
     }
 
     private RenderFragment RenderNotificationBadge() => __builder =>

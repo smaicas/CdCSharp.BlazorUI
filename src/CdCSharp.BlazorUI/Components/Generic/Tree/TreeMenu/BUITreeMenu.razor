@@ -77,9 +77,9 @@
 
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
-        dataAttributes["data-bui-orientation"] = Orientation.ToString().ToLowerInvariant();
-        dataAttributes["data-bui-trigger"] = Trigger.ToString().ToLowerInvariant();
-        dataAttributes["data-bui-expand-mode"] = ExpandMode.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Orientation] = Orientation.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.Trigger] = Trigger.ToString().ToLowerInvariant();
+        dataAttributes[FeatureDefinitions.DataAttributes.ExpandMode] = ExpandMode.ToString().ToLowerInvariant();
     }
 
     protected override void OnInitialized()
