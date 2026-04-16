@@ -33,7 +33,7 @@ public class BUIButtonStateTests
         IElement component = cut.Find("bui-component");
         string style = component.GetAttribute("style");
         style.Should().Contain("--bui-inline-color: rgba(0,255,0,1)");
-        style.Should().Contain("--bui-bg-color: rgba(0,0,255,1)");
+        style.Should().Contain("--bui-inline-background: rgba(0,0,255,1)");
     }
 
     [Theory]
@@ -57,7 +57,8 @@ public class BUIButtonStateTests
 
         component.GetAttribute("data-bui-size").Should().Be("large");
         component.GetAttribute("data-bui-variant").Should().Be("default");
-        component.GetAttribute("data-bui-elevation").Should().Be("4");
+        component.GetAttribute("data-bui-shadow").Should().Be("true");
+        component.GetAttribute("style").Should().Contain("--bui-inline-shadow:");
     }
 
     [Theory]

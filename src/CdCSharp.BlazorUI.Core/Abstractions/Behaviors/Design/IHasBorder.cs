@@ -89,13 +89,16 @@ public sealed class BorderStyle
     {
         return new BorderCssValues
         {
-            All = _all is { IsNone: false } ? _all.ToCss() : null,
-            Top = _top is { IsNone: false } ? _top.ToCss() : null,
-            Right = _right is { IsNone: false } ? _right.ToCss() : null,
-            Bottom = _bottom is { IsNone: false } ? _bottom.ToCss() : null,
-            Left = _left is { IsNone: false } ? _left.ToCss() : null,
+            All = ToVarValue(_all),
+            Top = ToVarValue(_top),
+            Right = ToVarValue(_right),
+            Bottom = ToVarValue(_bottom),
+            Left = ToVarValue(_left),
             Radius = _radius?.ToCss()
         };
+
+        static string? ToVarValue(Border? border) =>
+            border is null ? null : border.IsNone ? "none" : border.ToCss();
     }
 
     public string? GetColorCss()

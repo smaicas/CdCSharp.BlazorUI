@@ -100,7 +100,7 @@ public class BUIComponentBaseTests
             );
 
         string? style = cut.Find("div").GetAttribute("style");
-        style.Should().Contain("--bui-border-style: none");
+        style.Should().Contain("--bui-inline-border:").And.Contain("none");
     }
 
     [Theory]
@@ -118,9 +118,8 @@ public class BUIComponentBaseTests
             );
 
         string? style = cut.Find("div").GetAttribute("style");
-        style.Should().Contain("--bui-border-top-width: 1px");
-        style.Should().Contain("--bui-border-left-width: 2px");
-        style.Should().Contain("--bui-border-left-style: dotted");
+        style.Should().Contain("--bui-inline-border-top:").And.Contain("1px solid");
+        style.Should().Contain("--bui-inline-border-left:").And.Contain("2px dotted");
     }
 
     [Theory]
@@ -139,13 +138,11 @@ public class BUIComponentBaseTests
     );
 
         string? style = cut.Find("div").GetAttribute("style");
-        // Shorthand vars
-        style.Should().Contain("--bui-border-width: 1px");
-        style.Should().Contain("--bui-border-style: solid");
-        style.Should().Contain("--bui-border-radius: 5px");
-        // Specific vars
-        style.Should().Contain("--bui-border-bottom-width: 2px");
-        style.Should().Contain("--bui-border-bottom-style: dashed");
+        // Composed shorthand var
+        style.Should().Contain("--bui-inline-border:").And.Contain("1px solid");
+        style.Should().Contain("--bui-inline-border-radius: 5px");
+        // Composed side override
+        style.Should().Contain("--bui-inline-border-bottom:").And.Contain("2px dashed");
     }
 
     [Theory]
@@ -155,10 +152,14 @@ public class BUIComponentBaseTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p.Add(c => c.Shadow, BUIShadowPresets.Elevation(12)));
-        cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("12");
+        IElement el = cut.Find("div");
+        el.GetAttribute("data-bui-shadow").Should().Be("true");
+        el.GetAttribute("style").Should().Contain("--bui-inline-shadow:");
 
         cut.Render(p => p.Add(c => c.Shadow, null));
-        cut.Find("div").GetAttribute("data-bui-elevation").Should().Be("0");
+        el = cut.Find("div");
+        el.HasAttribute("data-bui-shadow").Should().BeFalse();
+        (el.GetAttribute("style") ?? string.Empty).Should().NotContain("--bui-inline-shadow");
     }
 
     [Theory]
@@ -247,9 +248,9 @@ public class BUIComponentBaseTests
 
         string? style = cut.Find("div").GetAttribute("style");
         style.Should().Contain("--bui-inline-color: rgba(255,0,0,1)");
-        style.Should().Contain("--bui-bg-color: rgba(0,255,0,1)");
-        style.Should().Contain("--bui-ripple-color: rgba(255,255,255,1)");
-        style.Should().Contain("--bui-ripple-duration: 300ms");
+        style.Should().Contain("--bui-inline-background: rgba(0,255,0,1)");
+        style.Should().Contain("--bui-inline-ripple-color: rgba(255,255,255,1)");
+        style.Should().Contain("--bui-inline-ripple-duration: 300ms");
         cut.Find("div").GetAttribute("data-bui-ripple").Should().Be("true");
     }
 

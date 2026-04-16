@@ -236,6 +236,11 @@ internal sealed class BUIComponentAttributesBuilder
             ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).Required.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.FullWidth) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = ((IHasFullWidth)component).FullWidth.ToString().ToLowerInvariant();
+
+        // Component-supplied data attributes can also change between renders without a parameter
+        // change (e.g. focus-driven floated state). Refresh them every render to keep DOM in sync.
+        if ((flags & ComponentFeatures.BuiltComponent) != 0)
+            ((IBuiltComponent)component).BuildComponentDataAttributes(ComputedAttributes);
     }
 
     private static string ToKebabCaseComponentName(string value)

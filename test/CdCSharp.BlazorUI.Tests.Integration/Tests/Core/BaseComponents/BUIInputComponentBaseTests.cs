@@ -124,7 +124,7 @@ public class BUIInputComponentBaseTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Throw_When_ValueExpression_Is_Missing(BlazorScenario scenario)
+    public async Task Should_Render_When_ValueExpression_Is_Missing(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
@@ -132,9 +132,10 @@ public class BUIInputComponentBaseTests
         Action act = () => ctx.Render<BUIInputComponentBase_TestStub>(p => p
             .Add(c => c.Value, "No Expression"));
 
-        // Assert: Verificamos que se respeta el contrato de InputBase
-        act.Should().Throw<InvalidOperationException>()
-           .WithMessage("*requires a value for the 'ValueExpression' parameter*");
+        // BUIInputComponentBase relaxes the InputBase contract: rendering outside an
+        // EditForm without ValueExpression must not throw. A synthetic ValueExpression
+        // is injected so the component renders standalone.
+        act.Should().NotThrow();
     }
 
     [Theory]
@@ -185,7 +186,8 @@ public class BUIInputComponentBaseTests
         input.GetAttribute("data-bui-size").Should().Be("small");
         input.GetAttribute("data-bui-density").Should().Be("compact");
         input.GetAttribute("data-bui-fullwidth").Should().Be("true");
-        input.GetAttribute("data-bui-elevation").Should().Be("4");
+        input.GetAttribute("data-bui-shadow").Should().Be("true");
+        input.GetAttribute("style").Should().Contain("--bui-inline-shadow:");
     }
 
     [Theory]
@@ -207,8 +209,8 @@ public class BUIInputComponentBaseTests
 
         string? style = cut.Find("input").GetAttribute("style");
         style.Should().Contain("--bui-inline-color: rgba(0,0,255,1)");
-        style.Should().Contain("--bui-border-width: 2px");
-        style.Should().Contain("--bui-border-radius: 8px");
+        style.Should().Contain("--bui-inline-border:").And.Contain("2px solid");
+        style.Should().Contain("--bui-inline-border-radius: 8px");
     }
 
     [Theory]

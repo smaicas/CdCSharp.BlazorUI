@@ -131,7 +131,7 @@
                 }
 
                 <_BUIBtn Icon="@BUIIcons.MaterialIconsOutlined.i_calendar_today"
-                         Disabled="@IsDisabled"
+                         Disabled="@(IsDisabled || ReadOnly)"
                          Loading="@Loading"
                          LoadingIndicatorVariant="@LoadingIndicatorVariant"
                          AriaLabel="Open picker"
@@ -265,6 +265,8 @@
 
     private void OpenPicker()
     {
+        if (IsDisabled || ReadOnly) return;
+
         if (!HasValue)
         {
             DateValue = DateOnly.FromDateTime(DateTime.Today);

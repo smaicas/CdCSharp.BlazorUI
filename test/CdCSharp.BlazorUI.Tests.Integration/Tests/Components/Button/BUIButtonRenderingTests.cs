@@ -29,6 +29,7 @@ public class BUIButtonRenderingTests
         cut.Find("bui-component").GetAttribute("data-bui-component").Should().Be("button");
         cut.Find("bui-component").GetAttribute("data-bui-variant").Should().Be("default");
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");
-        cut.Find("bui-component").GetAttribute("data-bui-elevation").Should().Be("4");
+        cut.Find("bui-component").GetAttribute("data-bui-shadow").Should().Be("true");
+        cut.Find("bui-component").GetAttribute("style").Should().Contain("--bui-inline-shadow:");
     }
 }

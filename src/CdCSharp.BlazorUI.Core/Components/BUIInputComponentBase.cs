@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
+using System.Linq.Expressions;
 
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 
@@ -35,10 +36,35 @@ public abstract class BUIInputComponentBase<TValue> :
     public bool IsReadOnly => ReadOnly;
     public bool IsRequired => Required;
 
+    // Validation-aware override: surface effective error state to the attributes builder.
+    bool IHasError.Error => IsError;
+
     // This is what components will use with @attributes
     protected Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        bool hasValueExpression = false;
+        bool hasEditContext = false;
+        foreach (ParameterValue p in parameters)
+        {
+            if (p.Name == nameof(ValueExpression))
+                hasValueExpression = true;
+            else if (p.Cascading && p.Value is EditContext)
+                hasEditContext = true;
+        }
+
+        if (hasValueExpression || hasEditContext)
+            return base.SetParametersAsync(parameters);
+
+        Dictionary<string, object?> patched = [];
+        foreach (ParameterValue p in parameters)
+            patched[p.Name] = p.Value;
+        patched[nameof(ValueExpression)] = (Expression<Func<TValue>>)(() => Value!);
+        return base.SetParametersAsync(ParameterView.FromDictionary(patched));
+    }
 
     public virtual void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
     { }
@@ -90,6 +116,12 @@ public abstract class BUIInputComponentBase<TValue> :
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        _styleBuilder.PatchVolatileAttributes(this);
+        base.BuildRenderTree(builder);
     }
 
     protected override void OnInitialized()

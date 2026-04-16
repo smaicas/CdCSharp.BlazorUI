@@ -55,7 +55,7 @@ public class BUIInputDateTimeInteractionTests
 
         IElement pattern = cut.Find(".bui-pattern");
         await pattern.FocusAsync(new());
-        await pattern.BlurAsync(new());
+        await pattern.FocusOutAsync(new());
 
         // Assert - Label should remain floated because there's a value
         container.GetAttribute("data-bui-floated").Should().Be("true");
@@ -79,7 +79,7 @@ public class BUIInputDateTimeInteractionTests
             container.GetAttribute("data-bui-floated").Should().Be("true"));
 
         // Act
-        await pattern.BlurAsync(new());
+        await pattern.FocusOutAsync(new());
 
         // Assert - Label should unfloat when empty and no focus
         cut.WaitForAssertion(() =>
@@ -130,7 +130,7 @@ public class BUIInputDateTimeInteractionTests
             ?.Invoke(cut.Instance, new object[] { true });
         cut.Render();
 
-        IElement clearButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IElement clearButton = cut.Find("button[aria-label='Clear']");
 
         // Act
         clearButton.Click();
@@ -159,7 +159,7 @@ public class BUIInputDateTimeInteractionTests
             ?.Invoke(cut.Instance, new object[] { true });
         cut.Render();
 
-        IElement clearButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IElement clearButton = cut.Find("button[aria-label='Clear']");
 
         // Act
         clearButton.Click();
@@ -194,7 +194,7 @@ public class BUIInputDateTimeInteractionTests
             ?.Invoke(cut.Instance, new object[] { true });
         cut.Render();
 
-        IElement clearButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IElement clearButton = cut.Find("button[aria-label='Clear']");
 
         // Act
         clearButton.Click();
@@ -214,7 +214,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime"));
 
         // Act & Assert
-        IReadOnlyList<IElement> clearButtons = cut.FindAll(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IReadOnlyList<IElement> clearButtons = cut.FindAll("button[aria-label='Clear']");
         clearButtons.Should().BeEmpty();
     }
 
@@ -236,7 +236,7 @@ public class BUIInputDateTimeInteractionTests
         cut.Render();
 
         // Act & Assert
-        IReadOnlyList<IElement> clearButtons = cut.FindAll(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IReadOnlyList<IElement> clearButtons = cut.FindAll("button[aria-label='Clear']");
         clearButtons.Should().BeEmpty();
     }
 
@@ -254,7 +254,7 @@ public class BUIInputDateTimeInteractionTests
         IRenderedComponent<BUIInputDateTime<DateTime?>> cut = ctx.Render<BUIInputDateTime<DateTime?>>(p => p
             .Add(c => c.Label, "Test DateTime"));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
 
         // Act
         calendarButton.Click();
@@ -275,11 +275,11 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
-        cut.FindAll(".bui-datepicker").Should().HaveCount(1);
+        cut.FindAll("bui-component[data-bui-component='date-picker']").Should().HaveCount(1);
     }
 
     [Theory]
@@ -293,11 +293,11 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
-        cut.FindAll(".bui-timepicker").Should().HaveCount(1);
+        cut.FindAll("bui-component[data-bui-component='time-picker']").Should().HaveCount(1);
     }
 
     [Theory]
@@ -311,12 +311,12 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test Date"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
-        cut.FindAll(".bui-datepicker").Should().HaveCount(1);
-        cut.FindAll(".bui-timepicker").Should().BeEmpty();
+        cut.FindAll("bui-component[data-bui-component='date-picker']").Should().HaveCount(1);
+        cut.FindAll("bui-component[data-bui-component='time-picker']").Should().BeEmpty();
     }
 
     [Theory]
@@ -330,12 +330,12 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test Time"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
-        cut.FindAll(".bui-timepicker").Should().HaveCount(1);
-        cut.FindAll(".bui-datepicker").Should().BeEmpty();
+        cut.FindAll("bui-component[data-bui-component='time-picker']").Should().HaveCount(1);
+        cut.FindAll("bui-component[data-bui-component='date-picker']").Should().BeEmpty();
     }
 
     [Theory]
@@ -348,7 +348,7 @@ public class BUIInputDateTimeInteractionTests
         IRenderedComponent<BUIInputDateTime<DateTime?>> cut = ctx.Render<BUIInputDateTime<DateTime?>>(p => p
             .Add(c => c.Label, "Test DateTime"));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         IElement cancelButton = cut.Find("button:contains('Cancel')");
@@ -357,7 +357,7 @@ public class BUIInputDateTimeInteractionTests
         cancelButton.Click();
 
         // Assert
-        cut.FindAll(".bui-dialog[open]").Should().BeEmpty();
+        cut.FindAll(".bui-dialog").Should().BeEmpty();
     }
 
     [Theory]
@@ -372,7 +372,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime")
             .Add(c => c.ValueChanged, v => changedValue = v));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Simulate date/time selection in pickers (would need to interact with DatePicker/TimePicker)
@@ -383,7 +383,7 @@ public class BUIInputDateTimeInteractionTests
         applyButton.Click();
 
         // Assert
-        cut.FindAll(".bui-dialog[open]").Should().BeEmpty();
+        cut.FindAll(".bui-dialog").Should().BeEmpty();
         changedValue.Should().NotBeNull(); // Value should have been applied
     }
 
@@ -398,14 +398,14 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime")
             .Add(c => c.ReadOnly, true));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
 
         // Act
         calendarButton.Click();
 
         // Assert - button should be disabled, dialog should not open
         calendarButton.HasAttribute("disabled").Should().BeTrue();
-        cut.FindAll(".bui-dialog[open]").Should().BeEmpty();
+        cut.FindAll(".bui-dialog").Should().BeEmpty();
     }
 
     [Theory]
@@ -421,14 +421,14 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Value, value));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
         // DatePicker and TimePicker should be initialized with the value
         // This would require inspecting the internal state or rendered output of those components
-        cut.Find(".bui-datepicker").Should().NotBeNull();
-        cut.Find(".bui-timepicker").Should().NotBeNull();
+        cut.Find("bui-component[data-bui-component='date-picker']").Should().NotBeNull();
+        cut.Find("bui-component[data-bui-component='time-picker']").Should().NotBeNull();
     }
 
     [Theory]
@@ -442,13 +442,13 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
         // Should initialize with Today/Now
-        cut.Find(".bui-datepicker").Should().NotBeNull();
-        cut.Find(".bui-timepicker").Should().NotBeNull();
+        cut.Find("bui-component[data-bui-component='date-picker']").Should().NotBeNull();
+        cut.Find("bui-component[data-bui-component='time-picker']").Should().NotBeNull();
     }
 
     #endregion
@@ -461,24 +461,33 @@ public class BUIInputDateTimeInteractionTests
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
-        // Arrange
-        TimeOnly midnight = new(0, 0); // 12:00 AM
-        IRenderedComponent<BUIInputDateTime<TimeOnly?>> cut = ctx.Render<BUIInputDateTime<TimeOnly?>>(p => p
-            .Add(c => c.Label, "Midnight")
-            .Add(c => c.Value, midnight));
+        CultureInfo previousCulture = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo("en-US");
+        try
+        {
+            // Arrange
+            TimeOnly midnight = new(0, 0); // 12:00 AM
+            IRenderedComponent<BUIInputDateTime<TimeOnly?>> cut = ctx.Render<BUIInputDateTime<TimeOnly?>>(p => p
+                .Add(c => c.Label, "Midnight")
+                .Add(c => c.Value, midnight));
 
-        // Act
-        IElement pattern = cut.Find(".bui-pattern");
-        string displayText = pattern.TextContent.Trim();
+            // Act
+            IElement pattern = cut.Find(".bui-pattern");
+            string displayText = pattern.TextContent.Trim();
 
-        // Assert
-        // Should display as 12:00 AM (culture-dependent format)
-        displayText.Should().NotBeEmpty();
-        displayText.Should().NotBe("00:00"); // Should not show 24-hour format for 12-hour cultures
+            // Assert
+            // Should display as 12:00 AM (culture-dependent format)
+            displayText.Should().NotBeEmpty();
+            displayText.Should().NotBe("00:00"); // Should not show 24-hour format for 12-hour cultures
 
-        // Verify it's formatted according to culture
-        string expectedFormat = midnight.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
-        displayText.Should().Contain(expectedFormat);
+            // Verify it's formatted according to culture
+            string expectedFormat = midnight.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern);
+            displayText.Should().Contain(expectedFormat);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previousCulture;
+        }
     }
 
     [Theory]
@@ -516,11 +525,11 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Value, midnight));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
-        IElement timePicker = cut.Find(".bui-timepicker");
+        IElement timePicker = cut.Find("bui-component[data-bui-component='time-picker']");
         timePicker.Should().NotBeNull();
         // TimePicker should be initialized with hour=0, minute=0
     }
@@ -548,7 +557,7 @@ public class BUIInputDateTimeInteractionTests
             ?.Invoke(cut.Instance, new object[] { true });
         cut.Render();
 
-        IElement clearButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IElement clearButton = cut.Find("button[aria-label='Clear']");
 
         // Act
         clearButton.Click();
@@ -621,7 +630,7 @@ public class BUIInputDateTimeInteractionTests
         cut.Render();
 
         // Act & Assert
-        IReadOnlyList<IElement> clearButtons = cut.FindAll(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IReadOnlyList<IElement> clearButtons = cut.FindAll("button[aria-label='Clear']");
         clearButtons.Should().HaveCount(1);
     }
 
@@ -644,7 +653,7 @@ public class BUIInputDateTimeInteractionTests
             ?.Invoke(cut.Instance, new object[] { true });
         cut.Render();
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
 
         // Act
         calendarButton.Click();
@@ -690,7 +699,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.ReadOnly, true));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
 
         // Assert
         calendarButton.HasAttribute("disabled").Should().BeTrue();
@@ -708,7 +717,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Disabled, true));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
 
         // Assert
         // Disabled state is managed through IsDisabled property
@@ -814,7 +823,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
@@ -834,7 +843,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test Date"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
@@ -855,7 +864,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test Time"));
 
         // Act
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // Assert
@@ -881,7 +890,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Label, "Test DateTime")
             .Add(c => c.ValueChanged, v => changedValue = v));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         IElement applyButton = cut.Find("button:contains('Apply')");
@@ -907,7 +916,7 @@ public class BUIInputDateTimeInteractionTests
             .Add(c => c.Value, initialValue)
             .Add(c => c.ValueChanged, v => changedValue = v));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         // User could modify pickers here, but we cancel
@@ -930,7 +939,7 @@ public class BUIInputDateTimeInteractionTests
         IRenderedComponent<BUIInputDateTime<DateTime?>> cut = ctx.Render<BUIInputDateTime<DateTime?>>(p => p
             .Add(c => c.Label, "Test DateTime"));
 
-        IElement calendarButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IElement calendarButton = cut.Find("button[aria-label='Open picker']");
         calendarButton.Click();
 
         IElement applyButton = cut.Find("button:contains('Apply')");
@@ -957,16 +966,23 @@ public class BUIInputDateTimeInteractionTests
         TestModel model = new();
         IRenderedComponent<EditForm> form = ctx.Render<EditForm>(p => p
             .Add(f => f.Model, model)
-            .AddChildContent<BUIInputDateTime<DateTime?>>(dt => dt
-                .Add(c => c.Value, model.RequiredDate)
-                .Add(c => c.ValueExpression, () => model.RequiredDate)
-                .Add(c => c.Label, "Required Date")));
+            .Add(f => f.ChildContent, _ => builder =>
+            {
+                builder.OpenComponent<DataAnnotationsValidator>(0);
+                builder.CloseComponent();
+                builder.OpenComponent<BUIInputDateTime<DateTime?>>(1);
+                builder.AddAttribute(2, "Value", model.RequiredDate);
+                builder.AddAttribute(3, "ValueExpression",
+                    (System.Linq.Expressions.Expression<Func<DateTime?>>)(() => model.RequiredDate));
+                builder.AddAttribute(4, "Label", "Required Date");
+                builder.CloseComponent();
+            }));
 
         // Act - Submit form without value
         form.Find("form").Submit();
 
         // Assert
-        IReadOnlyList<IElement> validationMessages = form.FindAll(".bui-input__validation");
+        IReadOnlyList<IElement> validationMessages = form.FindAll(".validation-message");
         validationMessages.Should().NotBeEmpty();
     }
 
@@ -1037,7 +1053,7 @@ public class BUIInputDateTimeInteractionTests
         IElement patternBefore = cut.Find(".bui-pattern");
         string keyBefore = patternBefore.GetAttribute("data-pattern-id");
 
-        IElement clearButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Clear']");
+        IElement clearButton = cut.Find("button[aria-label='Clear']");
 
         // Act
         clearButton.Click();
@@ -1069,12 +1085,13 @@ public class BUIInputDateTimeInteractionTests
             ?.Invoke(cut.Instance, new object[] { true });
         cut.Render();
 
-        IElement clearButton = cut.Find(".bui-input-datetime__action-btn[aria-label='Clear']");
-
-        // Act - Multiple rapid clears
-        clearButton.Click();
-        clearButton.Click();
-        clearButton.Click();
+        // Act - Multiple rapid clears (button may unmount after first clear when no longer dirty)
+        for (int i = 0; i < 3; i++)
+        {
+            IReadOnlyList<IElement> buttons = cut.FindAll("button[aria-label='Clear']");
+            if (buttons.Count == 0) break;
+            buttons[0].Click();
+        }
 
         // Assert - Should not throw and should be stable
         IElement pattern = cut.Find(".bui-pattern");
@@ -1186,7 +1203,7 @@ public class BUIInputDateTimeInteractionTests
 
         // Act
         IReadOnlyList<IElement> patterns = cut.FindAll(".bui-pattern");
-        IReadOnlyList<IElement> calendarButtons = cut.FindAll(".bui-input-datetime__action-btn[aria-label='Open picker']");
+        IReadOnlyList<IElement> calendarButtons = cut.FindAll("button[aria-label='Open picker']");
 
         // Assert
         patterns.Should().HaveCount(2);
