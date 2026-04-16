@@ -79,15 +79,15 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [ ] **FRM-RD-06** — `BUIInputRadioValidationTests` — `[Required]` + sin selección.
 - [ ] **FRM-RD-07** — `BUIInputRadioSnapshotTests` — vertical/horizontal, selected/none, disabled.
 
-### BUIInputText (`Components/Forms/Text/`)
+### BUIInputText (`Components/Forms/Text/`) — ✅ `e28ae4a`
 
-- [x] **FRM-TXT-01** — `BUIInputTextRenderingTests` — `data-bui-input-base`, `data-bui-component="input-text"`, `data-bui-variant` (outlined/filled/standard), `data-bui-floated` (regresión STD-10), prefix/suffix.
-- [x] **FRM-TXT-02** — `BUIInputTextStateTests` — cambio `Value`, `Disabled`, `ReadOnly`, `Error`, `Loading`, `Required`, `FullWidth`, `Label`, `HelperText`, `Placeholder`.
-- [x] **FRM-TXT-03** — `BUIInputTextInteractionTests` — `onchange` / `oninput`, `ValueChanged`, focus/blur → `data-bui-floated` cambia.
-- [x] **FRM-TXT-04** — `BUIInputTextVariantTests` — outlined/filled/standard emiten DOM correspondiente; variante custom.
-- [x] **FRM-TXT-05** — `BUIInputTextAccessibilityTests` — label asociada, `aria-invalid`, `aria-required`, `aria-describedby` → helper/validation.
-- [x] **FRM-TXT-06** — `BUIInputTextValidationTests` — `[Required]`, `[StringLength]`, `[RegularExpression]`; `ValidationMessage` en DOM.
-- [x] **FRM-TXT-07** — `BUIInputTextSnapshotTests` — outlined/filled/standard × empty/filled/error/disabled.
+- [x] **FRM-TXT-01** — `BUIInputTextRenderingTests` (14 tests)
+- [x] **FRM-TXT-02** — `BUIInputTextStateTests` (16 tests)
+- [x] **FRM-TXT-03** — `BUIInputTextInteractionTests` (14 tests)
+- [x] **FRM-TXT-04** — `BUIInputTextVariantTests` (8 tests)
+- [x] **FRM-TXT-05** — `BUIInputTextAccessibilityTests` (14 tests)
+- [x] **FRM-TXT-06** — `BUIInputTextValidationTests` (14 tests)
+- [x] **FRM-TXT-07** — `BUIInputTextSnapshotTests` (2 tests, 9 states each)
 
 ### BUIInputNumber (`Components/Forms/Number/`)
 
