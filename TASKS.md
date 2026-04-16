@@ -389,6 +389,16 @@ Convenciones:
 
 > Resuelto en commit `8533fb0` — *MISC-04: regenerate BUIButton Verify snapshots for new DOM contract*. Único snapshot `Verify` activo en `Tests.Integration` (`BUIButtonSnapshotTests`) regenerado para Server y Wasm; cambios revisados y documentados en el commit (density, disabled, shadow, loading a11y, transitions namespacing). El resto de los fallos de la suite (≈130) son pruebas basadas en aserciones explícitas sobre el DOM o `InputBase`/`ValueExpression` que rompieron por trabajo previo (INPUT-01, CORE-01, STD-*) y requieren actualización individual fuera del alcance de este ítem; quedan como deuda separada.
 
+### [x] MISC-05 — Triaje de los ~130 tests fallidos heredados de MISC-04
+- **Origen**: deuda separada documentada al cierre de MISC-04. Fallos repartidos entre (a) bugs reales de producción descubiertos por los tests, (b) contratos DOM obsoletos (border/shadow/var names), (c) selectores incorrectos (`.bui-datepicker`, `.bui-dialog[open]`).
+- **Archivos**:
+  - Producción: `IHasBorder.cs`, `BUIComponentAttributesBuilder.cs`, `BUIInputComponentBase.cs`, `BUIInputDateTime.razor`.
+  - Tests: `BUIComponentBaseTests.cs`, `BUIInputComponentBaseTests.cs`, `BUIButtonRenderingTests.cs`, `BUIButtonStateTests.cs`, `BUIInputDateTimeInteractionTests.cs`.
+- **Cambios**: corregir bugs reales y actualizar tests obsoletos. Distinguir explícitamente cada categoría en el commit.
+- **Aceptación**: `dotnet test` en verde (0 failed).
+
+> Resuelto en commit `43f29d1` — *MISC-05: triage 130 inherited test failures (real bugs + obsolete contracts)*. 5 bugs reales corregidos en producción: `IHasBorder.None()` perdía intención (no emitía var), `IHasError.Error` resolvía al `[Parameter]` crudo en vez de `IsError` validation-aware, `BUIInputComponentBase` no invocaba `PatchVolatileAttributes` (estados focus-driven congelados), `BuildComponentDataAttributes` no se reejecutaba en re-renders sin cambio de parámetro, y `BUIInputDateTime` permitía abrir el picker en `ReadOnly`. Tests actualizados al contrato DOM vigente (border shorthand, `data-bui-shadow`/`--bui-inline-*`, selectores `bui-component[data-bui-component=...]`, `.validation-message`, `FocusOutAsync` en lugar de `BlurAsync`, cultura fijada para test de 12h). Resultado: `dotnet test` 256/256 verdes.
+
 ---
 
 ## Notas
