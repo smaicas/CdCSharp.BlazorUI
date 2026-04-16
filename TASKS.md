@@ -371,13 +371,15 @@ Convenciones:
 
 > Resuelto en commit `a1ab554` — *MISC-02: document async / JS interop conventions*. Auditoría: `grep ConfigureAwait src/` devuelve 0 coincidencias — la convención se aplicaba implícitamente, ahora queda escrita en CLAUDE.md.
 
-### [ ] MISC-03 — `FeatureDefinitions` auditoría de cobertura
+### [x] MISC-03 — `FeatureDefinitions` auditoría de cobertura
 - **Origen**: hallazgos STD-04/05/06/07/10 indican atributos faltantes. Auditoría completa de qué atributos están en `FeatureDefinitions.DataAttributes` vs cuáles se usan directamente en razor/C#.
 - **Archivos**:
   - `src/CdCSharp.BlazorUI.Core/Components/FeatureDefinitions.cs`
   - búsqueda global de literales `"data-bui-*"` y `"--bui-*"` en `src/CdCSharp.BlazorUI/**`
 - **Cambios**: registrar constantes faltantes, sustituir literales.
 - **Aceptación**: cero literales `data-bui-*`/`--bui-inline-*` fuera de `FeatureDefinitions`, generators y `.razor.css`.
+
+> Resuelto en commit `f47bcee` — *MISC-03: register missing FeatureDefinitions constants and replace literals*. Añadidos 14 `DataAttributes` y 30+ `InlineVariables` constants. Alineado `PickerBase = "data-bui-picker-base"` con la familia CSS (BUIColorPicker recibe estilos por primera vez). Eliminadas emisiones manuales redundantes (`data-bui-data-collection`, `data-bui-picker-base`) en `BUIDataCollectionBase`/`BUIDatePicker`/`BUITimePicker`. Sustituidos los literales restantes en `BUIBadge`, `BUINotificationBadge`, `BUISwitch`, `BUISidebarLayout`, `BUIStackedLayout`, `BUIToast`, `BUITreeMenu`, `BUITreeSelector`, `BUIInputCheckbox`, `BUIInputRadio`, `BUIDataCards`, `BUIDataGrid`, `RowStylePattern.cs`. Auditoría: `grep -E '"data-bui-|"--bui-inline-' src/CdCSharp.BlazorUI/**/*.{cs,razor}` devuelve 0 coincidencias.
 
 ### [ ] MISC-04 — Snapshot tests cubrir cambios de contrato DOM
 - **Origen**: tras INPUT-01, STD-*, CORE-01 el DOM emitido cambia. Los snapshots `Verify` deben regenerarse y revisarse manualmente para confirmar que el cambio es intencional.
