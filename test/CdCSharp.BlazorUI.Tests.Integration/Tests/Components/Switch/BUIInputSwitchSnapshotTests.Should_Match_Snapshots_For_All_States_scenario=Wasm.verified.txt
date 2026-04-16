@@ -1,0 +1,56 @@
+﻿[
+  {
+    Name: Off,
+    Html:
+<bui-component data-bui-component="input-switch" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-kzme3olsp1><bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="bui-switch-<ID>" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="bui-switch-<ID>" role="switch" aria-checked="false" aria-describedby="bui-helper-<ID>" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Toggle</span></label></bui-component>
+
+            </bui-component>
+  },
+  {
+    Name: On,
+    Html:
+<bui-component data-bui-component="input-switch" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-kzme3olsp1><bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="true" b-6fmsys1qri><label class="bui-switch" for="bui-switch-<ID>" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="bui-switch-<ID>" role="switch" checked aria-checked="true" aria-describedby="bui-helper-<ID>" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Toggle</span></label></bui-component>
+
+            </bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="input-switch" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-kzme3olsp1><bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="true" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="bui-switch-<ID>" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="bui-switch-<ID>" role="switch" disabled aria-checked="false" aria-describedby="bui-helper-<ID>" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Disabled</span></label></bui-component>
+
+            </bui-component>
+  },
+  {
+    Name: Error,
+    Html:
+<bui-component data-bui-component="input-switch" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-kzme3olsp1><bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="bui-switch-<ID>" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="bui-switch-<ID>" role="switch" aria-checked="false" aria-describedby="bui-helper-<ID>" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Error</span></label></bui-component>
+
+            </bui-component>
+  },
+  {
+    Name: With_Helper,
+    Html:
+<bui-component data-bui-component="input-switch" data-bui-variant="default" data-bui-size="medium" data-bui-density="standard" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-kzme3olsp1><bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="bui-switch-<ID>" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="bui-switch-<ID>" role="switch" aria-checked="false" aria-describedby="bui-helper-<ID>" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Notify</span></label></bui-component>
+
+            <div id="bui-helper-<ID>" class="_bui-field-helper" b-tk6qfhhc0u>Send email alerts.</div></bui-component>
+  },
+  {
+    Name: Large_Compact,
+    Html:
+<bui-component data-bui-component="input-switch" data-bui-variant="default" data-bui-size="large" data-bui-density="compact" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-kzme3olsp1><bui-component data-bui-component="switch" data-bui-size="large" data-bui-density="compact" data-bui-disabled="false" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="bui-switch-<ID>" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="bui-switch-<ID>" role="switch" aria-checked="false" aria-describedby="bui-helper-<ID>" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Big</span></label></bui-component>
+
+            </bui-component>
+  }
+]

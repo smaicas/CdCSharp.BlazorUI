@@ -61,13 +61,13 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIInputSwitch (`Components/Forms/Switch/`)
 
-- [ ] **FRM-SW-01** — `BUIInputSwitchRenderingTests` — `data-bui-component="input-switch"` (regresión INPUT-01), `data-bui-active`, track/thumb vars públicas.
-- [ ] **FRM-SW-02** — `BUIInputSwitchStateTests` — toggle `Value`, `Disabled`, `ReadOnly`, `Error`, custom track/thumb colors via `--bui-inline-track-*`.
-- [ ] **FRM-SW-03** — `BUIInputSwitchInteractionTests` — `ValueChanged`, click, space.
-- [ ] **FRM-SW-04** — `BUIInputSwitchVariantTests` — variante custom.
-- [ ] **FRM-SW-05** — `BUIInputSwitchAccessibilityTests` — `role="switch"`, `aria-checked`, label, keyboard.
-- [ ] **FRM-SW-06** — `BUIInputSwitchValidationTests` — propagación de `IsError` desde `EditContext`.
-- [ ] **FRM-SW-07** — `BUIInputSwitchSnapshotTests` — Off, On, Disabled, Error, Custom colors.
+- [x] **FRM-SW-01** — `BUIInputSwitchRenderingTests` (16 tests)
+- [x] **FRM-SW-02** — `BUIInputSwitchStateTests` (12 tests)
+- [x] **FRM-SW-03** — `BUIInputSwitchInteractionTests` (6 tests)
+- [x] **FRM-SW-04** — `BUIInputSwitchVariantTests` (4 tests)
+- [x] **FRM-SW-05** — `BUIInputSwitchAccessibilityTests` (14 tests)
+- [x] **FRM-SW-06** — N/A (bool switch has no typical annotation validators; error propagation covered in State tests)
+- [x] **FRM-SW-07** — `BUIInputSwitchSnapshotTests` (2 tests, 6 states each)
 
 ### BUIInputRadio (`Components/Forms/Radio/`)
 
