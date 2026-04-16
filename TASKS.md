@@ -399,6 +399,16 @@ Convenciones:
 
 > Resuelto en commit `43f29d1` — *MISC-05: triage 130 inherited test failures (real bugs + obsolete contracts)*. 5 bugs reales corregidos en producción: `IHasBorder.None()` perdía intención (no emitía var), `IHasError.Error` resolvía al `[Parameter]` crudo en vez de `IsError` validation-aware, `BUIInputComponentBase` no invocaba `PatchVolatileAttributes` (estados focus-driven congelados), `BuildComponentDataAttributes` no se reejecutaba en re-renders sin cambio de parámetro, y `BUIInputDateTime` permitía abrir el picker en `ReadOnly`. Tests actualizados al contrato DOM vigente (border shorthand, `data-bui-shadow`/`--bui-inline-*`, selectores `bui-component[data-bui-component=...]`, `.validation-message`, `FocusOutAsync` en lugar de `BlurAsync`, cultura fijada para test de 12h). Resultado: `dotnet test` 256/256 verdes.
 
+### [x] MISC-06 — Triaje de los 10 tests fallidos en `CdCSharp.BlazorUI.SyntaxHighlight.Tests`
+- **Origen**: suite paralela a la de Integration. Categorías: (a) regresión real en `HtmlRenderer.GenerateStyles` que tenía comentadas las reglas del contenedor (`.SH-container` / `.SH-code`) aunque las propiedades públicas (`BackgroundColor`, `DefaultColor`, `FontFamily`, `FontSize`) seguían exponiéndose; (b) snapshots `Verify` desactualizados respecto al estado actual del tokenizer (whitespace de líneas en blanco que el código fuente ya no contiene + etiqueta `Private Methods` después de `#endregion` que nunca debió consumirse como parte de la directiva).
+- **Archivos**:
+  - Producción: `src/CdCSharp.BlazorUI.SyntaxHighlight/Rendering/HtmlRenderer.cs`.
+  - Snapshots: `test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/*.verified.txt` (CSharp CompleteClass, CSharp ModernCSharpFeatures, TypeScript CompleteModule).
+- **Cambios**: restaurar las reglas CSS del contenedor en `GenerateStyles` y regenerar los 3 snapshots.
+- **Aceptación**: `dotnet test test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/` en verde.
+
+> Resuelto en commit `6212570` — *MISC-06: restore HtmlRenderer container styles + regenerate stale snapshots*. Bug real: `HtmlRenderer.GenerateStyles` tenía comentadas las reglas `.SH-container` y `.SH-code`, anulando silenciosamente `BackgroundColor`/`DefaultColor`/`FontFamily`/`FontSize` aunque seguían siendo propiedades `init` públicas en `HtmlRenderOptions` (los temas `DarkTheme`/`LightTheme` perdían el fondo del contenedor). Snapshots regenerados: el tokenizer actual ya no captura el label tras `#endregion` (CSharp `AddSequences` exige coincidencia exacta con la directiva, comportamiento correcto) y los archivos de prueba ya no llevan whitespace en líneas en blanco. Resultado: `dotnet test` 314/314 verdes en SyntaxHighlight (570/570 totales con Integration).
+
 ---
 
 ## Notas
