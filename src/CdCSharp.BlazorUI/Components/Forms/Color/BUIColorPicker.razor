@@ -34,7 +34,7 @@
     <div class="bui-picker__row">
         @switch (OutputFormat)
         {
-            case ColorPickerOutputFormat.Hex:
+            case ColorOutputFormats.Hex:
                 <input type="text"
                        class="bui-picker__input"
                        style="flex:1"
@@ -91,7 +91,7 @@
 
     [Parameter] public CssColor? Value { get; set; }
     [Parameter] public EventCallback<CssColor?> ValueChanged { get; set; }
-    [Parameter] public ColorPickerOutputFormat OutputFormat { get; set; } = ColorPickerOutputFormat.Hex;
+    [Parameter] public ColorOutputFormats OutputFormat { get; set; } = ColorOutputFormats.Hex;
     [Parameter] public EventCallback OnRevert { get; set; }
     [Parameter] public bool ShowActions { get; set; } = true;
     [Parameter] public string RevertText { get; set; } = "Revert";
@@ -193,8 +193,8 @@
 
     private void CycleFormat() => OutputFormat = OutputFormat switch
     {
-        ColorPickerOutputFormat.Hex => ColorPickerOutputFormat.Rgb,
-        _ => ColorPickerOutputFormat.Hex
+        ColorOutputFormats.Hex => ColorOutputFormats.Rgb,
+        _ => ColorOutputFormats.Hex
     };
 
     private async Task HandleRevert() => await OnRevert.InvokeAsync();
@@ -248,5 +248,4 @@
 
     private async Task NotifyColorChanged() => await ValueChanged.InvokeAsync(GetCurrentColor());
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

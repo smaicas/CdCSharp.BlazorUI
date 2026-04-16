@@ -2,8 +2,7 @@
 
 <PageTitle>Checkbox — CdCSharp.BlazorUI</PageTitle>
 
-<DocPage Eyebrow="Component"
-         Title="Checkbox"
+<DocPage Eyebrow="Component" Title="Checkbox"
          Lede="Boolean input with label, helper text, and custom icons for checked/unchecked states.">
 
     <section class="doc-section">
@@ -32,6 +31,11 @@
     </section>
 
     <section class="doc-section">
+        <h2 class="doc-section__title">Density</h2>
+        <ComponentDemo Definition="@DensityDemo" />
+    </section>
+
+    <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
         <PropertyTable Properties="@_properties" />
     </section>
@@ -43,17 +47,26 @@
     private bool _primary = true;
     private bool _success;
     private bool _warning;
+    private bool _custom1;
+    private bool _custom2;
     private bool _small;
     private bool _medium = true;
     private bool _large;
     private bool _disabled = true;
     private bool _heart = true;
     private bool _star;
+    private bool _compactValue;
+    private bool _standardValue;
+    private bool _comfortableValue;
+    private bool? _indeterminateValue;
 
     private ComponentDemoDefinition BasicDemo => new()
     {
         CodeTitle = "Basic.razor",
-        Code = @"<BUIInputCheckbox @bind-Value=""_value"" Label=""Accept terms"" />",
+        Code =
+        """
+        <BUIInputCheckbox @bind-Value="_basic" Label="Accept terms" HelperText="You must accept to continue." />
+        """,
         Demo = RenderBasic()
     };
 
@@ -65,79 +78,115 @@
     private ComponentDemoDefinition ColorsDemo => new()
     {
         CodeTitle = "Colors.razor",
-        Code = @"<BUIInputCheckbox Color=""@PaletteColor.Primary"" Label=""Primary"" />
-<BUIInputCheckbox Color=""@PaletteColor.Success"" Label=""Success"" />
-<BUIInputCheckbox Color=""@PaletteColor.Warning"" Label=""Warning"" />",
+        Code =
+        """
+        <BUIInputCheckbox @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary" />
+        <BUIInputCheckbox @bind-Value="_success" Color="@PaletteColor.Success" Label="Success" />
+        <BUIInputCheckbox @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning" />
+        <BUIInputCheckbox @bind-Value="_custom" Color="#DDFFAA" Label="CustomHEX" />
+        <BUIInputCheckbox @bind-Value="_custom" Color="rgb(25,45,65)" Label="CustomRGB" />
+        """,
         Demo = RenderColors()
     };
 
     private RenderFragment RenderColors() => __builder =>
     {
-        <div class="demo-stack">
-            <BUIInputCheckbox @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary" />
-            <BUIInputCheckbox @bind-Value="_success" Color="@PaletteColor.Success" Label="Success" />
-            <BUIInputCheckbox @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning" />
-        </div>
+        <BUIInputCheckbox @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary" />
+        <BUIInputCheckbox @bind-Value="_success" Color="@PaletteColor.Success" Label="Success" />
+        <BUIInputCheckbox @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning" />
+        <BUIInputCheckbox @bind-Value="_custom1" Color="#DDFFAA" Label="CustomHEX" />
+        <BUIInputCheckbox @bind-Value="_custom2" Color="rgb(25,45,65)" Label="CustomRGB" />
     };
 
     private ComponentDemoDefinition SizesDemo => new()
     {
         CodeTitle = "Sizes.razor",
-        Code = @"<BUIInputCheckbox Size=""SizeEnum.Small"" Label=""Small"" />
-<BUIInputCheckbox Size=""SizeEnum.Medium"" Label=""Medium"" />
-<BUIInputCheckbox Size=""SizeEnum.Large"" Label=""Large"" />",
+        Code =
+        """
+        <BUIInputCheckbox @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
+        <BUIInputCheckbox @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
+        <BUIInputCheckbox @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
+        """,
         Demo = RenderSizes()
     };
 
     private RenderFragment RenderSizes() => __builder =>
     {
-        <div class="demo-row">
-            <BUIInputCheckbox @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
-            <BUIInputCheckbox @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
-            <BUIInputCheckbox @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
-        </div>
+        <BUIInputCheckbox @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
+        <BUIInputCheckbox @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
+        <BUIInputCheckbox @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
     };
 
     private ComponentDemoDefinition StatesDemo => new()
     {
         CodeTitle = "States.razor",
-        Code = @"<BUIInputCheckbox Disabled=""true"" Label=""Disabled"" />
-<BUIInputCheckbox Required=""true"" Label=""Required"" />",
+        Code =
+        """
+        <BUIInputCheckbox @bind-Value="_disabled" Disabled="true" Label="Disabled" />
+        <BUIInputCheckbox @bind-Value="_basic" Required="true" Label="Required" />
+        """,
         Demo = RenderStates()
     };
 
     private RenderFragment RenderStates() => __builder =>
     {
-        <div class="demo-stack">
-            <BUIInputCheckbox @bind-Value="_disabled" Disabled="true" Label="Disabled" />
-            <BUIInputCheckbox @bind-Value="_basic" Required="true" Label="Required" />
-        </div>
+        <BUIInputCheckbox @bind-Value="_disabled" Disabled="true" Label="Disabled" />
+        <BUIInputCheckbox @bind-Value="_basic" Required="true" Label="Required" />
     };
 
     private ComponentDemoDefinition IconsDemo => new()
     {
         CodeTitle = "Icons.razor",
-        Code = @"<BUIInputCheckbox CheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite""
-                   UncheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite_border""
-                   Color=""@PaletteColor.Error""
-                   Label=""Favorite"" />",
+        Code =
+        """
+        <BUIInputCheckbox @bind-Value="_heart" CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border" Color="@PaletteColor.Error" Label="Favorite" />
+        <BUIInputCheckbox @bind-Value="_star" CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star_border" Color="@PaletteColor.Warning" Label="Starred" />
+        """,
         Demo = RenderIcons()
     };
 
     private RenderFragment RenderIcons() => __builder =>
     {
-        <div class="demo-stack">
-            <BUIInputCheckbox @bind-Value="_heart"
-                              CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite"
-                              UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border"
-                              Color="@PaletteColor.Error"
-                              Label="Favorite" />
-            <BUIInputCheckbox @bind-Value="_star"
-                              CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star"
-                              UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star_border"
-                              Color="@PaletteColor.Warning"
-                              Label="Starred" />
-        </div>
+        <BUIInputCheckbox @bind-Value="_heart" CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border" Color="@PaletteColor.Error" Label="Favorite" />
+        <BUIInputCheckbox @bind-Value="_star" CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star"
+                          UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_star_border" Color="@PaletteColor.Warning" Label="Starred" />
+    };
+
+    private ComponentDemoDefinition DensityDemo => new()
+    {
+        Demo = RenderDensity(),
+        Code = 
+        """
+        <BUIInputCheckbox @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" /><br>
+        <BUIInputCheckbox @bind-Value="_standardValue" Label="Standard" Density="DensityEnum.Standard" /><br>
+        <BUIInputCheckbox @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+        """
+    };
+
+    private RenderFragment RenderDensity() => __builder =>
+    {
+        <BUIInputCheckbox @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" /><br>
+        <BUIInputCheckbox @bind-Value="_standardValue" Label="Standard" Density="DensityEnum.Standard" /><br>
+        <BUIInputCheckbox @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+    };
+
+    private ComponentDemoDefinition IndeterminateDemo => new()
+    {
+        Demo = RenderIndeterminate(),
+        Code =
+        """
+        <BUIInputCheckbox TValue="bool?" @bind-Value="_indeterminateValue" Label="Tristate Checkbox"
+                          HelperText="Click to cycle through: unchecked → indeterminate → checked" />
+        """
+    };
+
+    private RenderFragment RenderIndeterminate() => __builder =>
+    {
+        <BUIInputCheckbox TValue="bool?" @bind-Value="_indeterminateValue" Label="Tristate Checkbox"
+                          HelperText="Nullability activates tri-state" />
     };
 
     private readonly PropertyDefinition[] _properties =

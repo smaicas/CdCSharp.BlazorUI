@@ -36,7 +36,9 @@
 
     // IHasLoading
     [Parameter] public bool Loading { get; set; }
-    [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
+    [Parameter]
+    public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } =
+BUILoadingIndicatorVariant.CircularProgress;
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
@@ -69,11 +71,10 @@
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
     [Parameter] public string? Placeholder { get; set; } = "#000000";
-    [Parameter] public bool InputEditable { get; set; } = true;
     [Parameter] public bool ShowCopyButton { get; set; }
     [Parameter] public bool Clearable { get; set; }
     [Parameter] public ColorPickerDisplayMode DisplayMode { get; set; } = ColorPickerDisplayMode.Dropdown;
-    [Parameter] public ColorPickerOutputFormat OutputFormat { get; set; } = ColorPickerOutputFormat.Hex;
+    [Parameter] public ColorOutputFormats OutputFormat { get; set; }
     [Parameter] public string RevertText { get; set; } = "Revert";
     [Parameter] public int SelectionWidth { get; set; } = 200;
     [Parameter] public int SelectionHeight { get; set; } = 150;
@@ -82,7 +83,7 @@
 
     private bool HasValue => CurrentValue != null;
     private bool IsFloated => _isFocused || HasValue || _isDirty;
-    private string DisplayValue => CurrentValue?.ToString(GetDisplayFormat()) ?? "";
+    private string DisplayValue => CurrentValue?.ToString(OutputFormat) ?? "";
 
     public override void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     {
@@ -116,48 +117,35 @@
 
     private RenderFragment RenderInput() => __builder =>
     {
-        <bui-component @attributes="ComputedAttributes"
-                       @onkeydown="HandleKeyDown">
+        <bui-component @attributes="ComputedAttributes" @onkeydown="HandleKeyDown">
 
             <div class="bui-input__wrapper">
 
                 <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
-                <input type="text"
-                       id="@_inputId"
-                       class="bui-input__field"
-                       value="@DisplayValue"
-                       placeholder="@(IsFloated? Placeholder : null)"
-                       readonly="@(!InputEditable)"
-                       disabled="@IsDisabled"
-                       @onchange="HandleInputChange"
-                       @onfocus="HandleFocus"
-                       @onblur="HandleBlur"
-                       aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
-                       aria-describedby="@_helperTextId"
+                <input type="text" id="@_inputId" class="bui-input__field" value="@DisplayValue"
+                       placeholder="@(IsFloated? Placeholder : null)" readonly="@IsReadOnly" disabled="@IsDisabled"
+                       @onchange="HandleInputChange" @onfocus="HandleFocus" @onblur="HandleBlur"
+                       aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)" aria-describedby="@_helperTextId"
                        aria-invalid="@IsError.ToString().ToLowerInvariant()"
                        aria-required="@Required.ToString().ToLowerInvariant()" />
 
                 @if (ShowCopyButton && HasValue)
                 {
-                    <_BUIBtn Icon="@BUIIcons.UI.Copy"
-                             AriaLabel="Copy color"
-                             OnClick="(e)=> CopyToClipboard()"
-                             OnClickStopPropagation="true" />
+                    <BUITooltip AutoCloseAfterMs="1500" Trigger="TooltipTrigger.Click" Placement="TooltipPlacement.Top"
+                                Text="Copied!">
+                        <_BUIBtn Icon="@BUIIcons.UI.Copy" AriaLabel="Copy color" OnClick="(e) => CopyToClipboard()"
+                                 OnClickStopPropagation="false" />
+                    </BUITooltip>
                 }
 
                 @if (Clearable && (HasValue || _isDirty) && !Disabled)
                 {
-                    <_BUIBtn Icon="@BUIIcons.UI.Close"
-                             AriaLabel="Clear"
-                             OnClick="(e)=> Clear()"
-                             OnClickStopPropagation="true" />
+                    <_BUIBtn Icon="@BUIIcons.UI.Close" AriaLabel="Clear" OnClick="(e) => Clear()" OnClickStopPropagation="true" />
                 }
 
-                <_BUIBtn Icon="@BUIIcons.MaterialIconsRound.i_palette"
-                         Disabled="@IsDisabled"
-                         AriaLabel="Open color picker"
+                <_BUIBtn Icon="@BUIIcons.MaterialIconsRound.i_palette" Disabled="@IsDisabled" AriaLabel="Open color picker"
                          OnClick="(e)=> TogglePicker()">
                     <div class="bui-input-color__preview-chess">
                         <div class="bui-input-color__preview-color"
@@ -175,22 +163,12 @@
             {
                 @if (DisplayMode == ColorPickerDisplayMode.Modal)
                 {
-                    <BUIDialog @bind-Open="_isOpen"
-                               Closable="true"
-                               CloseOnOverlayClick="true"
-                               CloseOnEscape="true"
-                               MinWidth="auto"
+                    <BUIDialog @bind-Open="_isOpen" Closable="true" CloseOnOverlayClick="true" CloseOnEscape="true" MinWidth="auto"
                                MaxWidth="fit-content">
                         <Content>
-                            <BUIColorPicker @bind-Value="CurrentValue"
-                                            OutputFormat="OutputFormat"
-                                            SelectionWidth="SelectionWidth"
-                                            SelectionHeight="SelectionHeight"
-                                            Size="Size"
-                                            Density="Density"
-                                            ShowActions="true"
-                                            RevertText="@RevertText"
-                                            OnRevert="HandleRevert" />
+                            <BUIColorPicker @bind-Value="CurrentValue" OutputFormat="OutputFormat" SelectionWidth="SelectionWidth"
+                                            SelectionHeight="SelectionHeight" Size="Size" Density="Density" ShowActions="true"
+                                            RevertText="@RevertText" OnRevert="HandleRevert" />
                         </Content>
                     </BUIDialog>
                 }
@@ -198,25 +176,15 @@
                 {
                     <div class="bui-input-color__dropdown-overlay" @onclick="ClosePicker"></div>
                     <div class="bui-input-color__dropdown" @onclick:stopPropagation="true">
-                        <BUIColorPicker @bind-Value="CurrentValue"
-                                        OutputFormat="OutputFormat"
-                                        SelectionWidth="SelectionWidth"
-                                        SelectionHeight="SelectionHeight"
-                                        Size="Size"
-                                        Density="Density"
-                                        ShowActions="true"
-                                        RevertText="@RevertText"
+                        <BUIColorPicker @bind-Value="CurrentValue" OutputFormat="OutputFormat" SelectionWidth="SelectionWidth"
+                                        SelectionHeight="SelectionHeight" Size="Size" Density="Density" ShowActions="true" RevertText="@RevertText"
                                         OnRevert="HandleRevert" />
                     </div>
                 }
             }
 
-            <_BUIFieldHelper TValue="CssColor"
-                             Id="@_helperTextId"
-                             HelperText="@HelperText"
-                             ShowValidation="@IsError"
-                             EditContext="@EditContext"
-                             For="@ValueExpression" />
+            <_BUIFieldHelper TValue="CssColor" Id="@_helperTextId" HelperText="@HelperText" ShowValidation="@IsError"
+                             EditContext="@EditContext" For="@ValueExpression" />
 
         </bui-component>
     };
@@ -242,7 +210,7 @@
 
     private void HandleInputChange(ChangeEventArgs e)
     {
-        if (!InputEditable) return;
+        if (IsReadOnly) return;
 
         string? value = e.Value?.ToString();
 
@@ -296,12 +264,6 @@
             await ClipboardJs.CopyTextAsync(DisplayValue);
         }
     }
-
-    private ColorOutputFormats GetDisplayFormat() => OutputFormat switch
-    {
-        ColorPickerOutputFormat.Rgb => ColorOutputFormats.Rgba,
-        _ => ColorOutputFormats.HexA
-    };
 
     protected override bool TryParseValueFromString(string? value, out CssColor result, out string validationErrorMessage)
     {

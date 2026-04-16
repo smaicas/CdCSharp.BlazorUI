@@ -29,10 +29,6 @@ public enum ColorOutputFormats
     Rgba,
 
     /// <summary>
-    /// Will output the color elements without any decorator and without alpha. Example 12,15,26
-    /// </summary>
-    ColorElements,
-    /// <summary>
     /// Will output the color elements optimized for CSS usage.
     /// </summary>
     Optimized
@@ -575,7 +571,6 @@ public class CssColor : IEquatable<CssColor>
             ColorOutputFormats.HexA => Value,
             ColorOutputFormats.Rgb => $"rgb({R},{G},{B})",
             ColorOutputFormats.Rgba => $"rgba({R},{G},{B},{APercentage.ToString(CultureInfo.InvariantCulture)})",
-            ColorOutputFormats.ColorElements => $"{R},{G},{B}",
             ColorOutputFormats.Optimized => ToOptimizedFormat(),
             _ => Value
         };

@@ -9,7 +9,6 @@ public class DropdownOption<TOption> : ComponentBase, ISelectionOption, IDisposa
 {
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter] public IDropdownContainer? Container { get; set; }
-
     RenderFragment? ISelectionOption.Content => ChildContent ?? (builder => builder.AddContent(0, Text ?? Value?.ToString()));
     [Parameter] public bool Disabled { get; set; }
     string ISelectionOption.DisplayText => Text ?? Value?.ToString() ?? string.Empty;

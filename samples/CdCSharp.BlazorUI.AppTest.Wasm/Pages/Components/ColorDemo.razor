@@ -151,13 +151,13 @@
             <BUIGridItem Xs="12" Md="6">
                 <BUIInputColor @bind-Value="_hexValue"
                                Label="HEX Format"
-                               OutputFormat="ColorPickerOutputFormat.Hex" />
+                               OutputFormat="ColorOutputFormats.Hex" />
                 <p style="margin-top: 0.25rem; font-size: 0.875rem;">Value: @_hexValue?.ToString(ColorOutputFormats.HexA)</p>
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="6">
                 <BUIInputColor @bind-Value="_rgbValue"
                                Label="RGB Format"
-                               OutputFormat="ColorPickerOutputFormat.Rgb" />
+                               OutputFormat="ColorOutputFormats.Rgb" />
                 <p style="margin-top: 0.25rem; font-size: 0.875rem;">Value: @_rgbValue?.ToString(ColorOutputFormats.Rgba)</p>
             </BUIGridItem>
         </BUIGrid>
@@ -173,7 +173,6 @@
     {
         <BUIInputColor @bind-Value="_editableValue"
                        Label="Type a Color"
-                       InputEditable="true"
                        HelperText="Try typing #FF0000 or rgb(255,0,0)" />
         <p style="margin-top: 0.25rem; font-size: 0.875rem;">Current value: @(_editableValue?.ToString() ?? "None")</p>
     };
@@ -285,7 +284,7 @@
                 <BUIInputColor @bind-Value="_disabledValue" Label="Disabled" Disabled="true" />
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="6">
-                <BUIInputColor @bind-Value="_readOnlyValue" Label="Read Only" ReadOnly="true" InputEditable="false" />
+                <BUIInputColor @bind-Value="_readOnlyValue" Label="Read Only" ReadOnly="true" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -303,8 +302,7 @@
                        Variant="BUIInputVariant.Outlined"
                        Size="SizeEnum.Medium"
                        DisplayMode="ColorPickerDisplayMode.Dropdown"
-                       OutputFormat="ColorPickerOutputFormat.Hex"
-                       InputEditable="true"
+                       OutputFormat="ColorOutputFormats.Hex"
                        ShowCopyButton="true"
                        Clearable="true"
                        PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"

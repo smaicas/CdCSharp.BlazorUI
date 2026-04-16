@@ -44,9 +44,9 @@
     {
         CodeTitle = "Basic.razor",
         Code = @"<BUIInputDropdown TValue=""string"" @bind-Value=""_value"" Label=""Language"">
-    <DropdownOption TValue=""string"" Value=""en"">English</DropdownOption>
-    <DropdownOption TValue=""string"" Value=""es"">Spanish</DropdownOption>
-    <DropdownOption TValue=""string"" Value=""fr"">French</DropdownOption>
+    <DropdownOption TOption=""string"" Value=""en"">English</DropdownOption>
+    <DropdownOption TOption=""string"" Value=""es"">Spanish</DropdownOption>
+    <DropdownOption TOption=""string"" Value=""fr"">French</DropdownOption>
 </BUIInputDropdown>",
         Demo = RenderBasic()
     };
@@ -54,10 +54,10 @@
     private RenderFragment RenderBasic() => __builder =>
     {
         <BUIInputDropdown TValue="string" @bind-Value="_basic" Label="Language">
-            <DropdownOption TValue="string" Value="@("en")">English</DropdownOption>
-            <DropdownOption TValue="string" Value="@("es")">Spanish</DropdownOption>
-            <DropdownOption TValue="string" Value="@("fr")">French</DropdownOption>
-            <DropdownOption TValue="string" Value="@("de")">German</DropdownOption>
+            <DropdownOption TOption="string" Value="@("en")">English</DropdownOption>
+            <DropdownOption TOption="string" Value="@("es")">Spanish</DropdownOption>
+            <DropdownOption TOption="string" Value="@("fr")">French</DropdownOption>
+            <DropdownOption TOption="string" Value="@("de")">German</DropdownOption>
         </BUIInputDropdown>
     };
 
@@ -69,8 +69,8 @@
                    Label=""Country""
                    Searchable=""true""
                    SearchPlaceholder=""Type a country..."">
-    <DropdownOption TValue=""string"" Value=""us"">United States</DropdownOption>
-    <DropdownOption TValue=""string"" Value=""mx"">Mexico</DropdownOption>
+    <DropdownOption TOption=""string"" Value=""us"">United States</DropdownOption>
+    <DropdownOption TOption=""string"" Value=""mx"">Mexico</DropdownOption>
     ...
 </BUIInputDropdown>",
         Demo = RenderSearchable()
@@ -79,33 +79,33 @@
     private RenderFragment RenderSearchable() => __builder =>
     {
         <BUIInputDropdown TValue="string" @bind-Value="_searchable" Label="Country" Searchable="true" SearchPlaceholder="Type a country...">
-            <DropdownOption TValue="string" Value="@("us")">United States</DropdownOption>
-            <DropdownOption TValue="string" Value="@("mx")">Mexico</DropdownOption>
-            <DropdownOption TValue="string" Value="@("ca")">Canada</DropdownOption>
-            <DropdownOption TValue="string" Value="@("br")">Brazil</DropdownOption>
-            <DropdownOption TValue="string" Value="@("ar")">Argentina</DropdownOption>
-            <DropdownOption TValue="string" Value="@("es")">Spain</DropdownOption>
-            <DropdownOption TValue="string" Value="@("fr")">France</DropdownOption>
-            <DropdownOption TValue="string" Value="@("de")">Germany</DropdownOption>
-            <DropdownOption TValue="string" Value="@("uk")">United Kingdom</DropdownOption>
-            <DropdownOption TValue="string" Value="@("jp")">Japan</DropdownOption>
+            <DropdownOption TOption="string" Value="@("us")">United States</DropdownOption>
+            <DropdownOption TOption="string" Value="@("mx")">Mexico</DropdownOption>
+            <DropdownOption TOption="string" Value="@("ca")">Canada</DropdownOption>
+            <DropdownOption TOption="string" Value="@("br")">Brazil</DropdownOption>
+            <DropdownOption TOption="string" Value="@("ar")">Argentina</DropdownOption>
+            <DropdownOption TOption="string" Value="@("es")">Spain</DropdownOption>
+            <DropdownOption TOption="string" Value="@("fr")">France</DropdownOption>
+            <DropdownOption TOption="string" Value="@("de")">Germany</DropdownOption>
+            <DropdownOption TOption="string" Value="@("uk")">United Kingdom</DropdownOption>
+            <DropdownOption TOption="string" Value="@("jp")">Japan</DropdownOption>
         </BUIInputDropdown>
     };
 
     private ComponentDemoDefinition DisabledOptionDemo => new()
     {
         CodeTitle = "DisabledOption.razor",
-        Code = @"<DropdownOption TValue=""string"" Value=""kiwi"" Disabled=""true"">Kiwi (out of stock)</DropdownOption>",
+        Code = @"<DropdownOption TOption=""string"" Value=""kiwi"" Disabled=""true"">Kiwi (out of stock)</DropdownOption>",
         Demo = RenderDisabledOption()
     };
 
     private RenderFragment RenderDisabledOption() => __builder =>
     {
         <BUIInputDropdown TValue="string" @bind-Value="_disabled" Label="Fruit">
-            <DropdownOption TValue="string" Value="@("apple")">Apple</DropdownOption>
-            <DropdownOption TValue="string" Value="@("banana")">Banana</DropdownOption>
-            <DropdownOption TValue="string" Value="@("kiwi")" Disabled="true">Kiwi (out of stock)</DropdownOption>
-            <DropdownOption TValue="string" Value="@("orange")">Orange</DropdownOption>
+            <DropdownOption TOption="string" Value="@("apple")">Apple</DropdownOption>
+            <DropdownOption TOption="string" Value="@("banana")">Banana</DropdownOption>
+            <DropdownOption TOption="string" Value="@("kiwi")" Disabled="true">Kiwi (out of stock)</DropdownOption>
+            <DropdownOption TOption="string" Value="@("orange")">Orange</DropdownOption>
         </BUIInputDropdown>
     };
 
@@ -120,9 +120,9 @@
     {
         <div style="min-height: 220px; display: flex; align-items: flex-end;">
             <BUIInputDropdown TValue="string" @bind-Value="_placement" Label="Opens upward" Placement="DropdownPlacement.Top">
-                <DropdownOption TValue="string" Value="@("up")">Option 1</DropdownOption>
-                <DropdownOption TValue="string" Value="@("left")">Option 2</DropdownOption>
-                <DropdownOption TValue="string" Value="@("right")">Option 3</DropdownOption>
+                <DropdownOption TOption="string" Value="@("up")">Option 1</DropdownOption>
+                <DropdownOption TOption="string" Value="@("left")">Option 2</DropdownOption>
+                <DropdownOption TOption="string" Value="@("right")">Option 3</DropdownOption>
             </BUIInputDropdown>
         </div>
     };
