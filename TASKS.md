@@ -1,431 +1,401 @@
-# TASKS — Revisión Integral BlazorUI
+# TASKS — Cobertura de Tests de Componentes
 
-Origen: revisión exhaustiva de `src/CdCSharp.BlazorUI.Core` + `src/CdCSharp.BlazorUI/Components/**` contra estándares de `CLAUDE.md` (arquitectura `<bui-component>`, interfaces `IHas*`, familias CSS, `FeatureDefinitions`). Hallazgos verificados en código; agrupados por severidad y área.
+Objetivo: llevar la suite `test/CdCSharp.BlazorUI.Tests.Integration` a cobertura completa por componente, siguiendo el estándar establecido en `BUIButton` y documentado en `CLAUDE.md` (sección *Testing*).
 
 Convenciones:
-- **ID**: `[AREA]-NN` — referencia estable.
+- **ID**: `[AREA]-NN`.
 - **Estado**: `[ ]` pendiente, `[x]` hecho, `[~]` en curso, `[?]` requiere investigación previa.
-- Cada tarea incluye: *Origen* (por qué), *Archivos*, *Cambios*, *Aceptación*.
+- Cada tarea es **un archivo de test** con un único contexto (Rendering / State / Interaction / Variant / Accessibility / Snapshot / Validation / Integration).
+- **Ubicación**: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/<ComponentName>/<Component><Context>Tests.cs`.
+- **Siempre** `[Theory]` + `[MemberData(nameof(TestScenarios.All), ...)]` salvo indicación `OnlyServer` / `OnlyWasm`.
+
+## Referencia rápida de contextos por componente
+
+Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no aplique (p.ej. Variant en componentes sin variantes registradas).
+
+| Contexto | Debe cubrir |
+|---|---|
+| Rendering | Root `bui-component`, `data-bui-component`, `data-bui-variant`, `data-bui-size`, `data-bui-*` iniciales, children estructurales. |
+| State | Re-render tras cambio de props; volátiles (`Disabled`/`Loading`/`Error`/`ReadOnly`/`Required`/`FullWidth`/`Active`); preservación de `AdditionalAttributes`. |
+| Interaction | Handlers (`OnClick`, `ValueChanged`, `OnInput`, teclado); gating por estado; `EventCallback`; consumer razor cuando haya estado padre. |
+| Variant | Registro de variante custom vía `AddBlazorUIVariants` + aserción del marcador. |
+| Accessibility | `role`, `aria-*`, foco/teclado, `tabindex`, `label` asociada. |
+| Snapshot | `Verify` sobre estados representativos (Default/WithIcon/Loading/Disabled/Error/…). |
+| Validation | *(solo inputs)* `EditContext` + `DataAnnotations`; propagación de `IsError`; `ValidationMessage`. |
+| Integration | *(solo componentes compuestos)* Parent/child; cascading; registro de hijos. |
 
 ---
 
-## A. BUGS CRÍTICOS
+## A. ESTADO ACTUAL (baseline)
 
-### [x] CORE-01 — PatchVolatileAttributes omite estados Error/Loading/ReadOnly
-> Resuelto en commit `6bba694` — *CORE-01: extend PatchVolatileAttributes to cover Loading/Error/ReadOnly/Required/FullWidth*
-- **Origen**: `BUIComponentAttributesBuilder.BuildStyles` aplica Error/Loading/ReadOnly a `ComputedAttributes`, pero `PatchVolatileAttributes` (llamado en cada render de `BUIComponentBase.BuildRenderTree`) solo re-parchea `Active` y `Disabled`. Mid-render, cambios de validación que no pasan por `OnParametersSet` pueden dejar el atributo stale (el `HandleValidationStateChanged` en `BUIInputComponentBase:128` mitiga llamando a `BuildStyles` completo, pero el contrato de `PatchVolatileAttributes` es incompleto).
-- **Archivos**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:69-76`
-- **Cambios**:
-  - Añadir en `PatchVolatileAttributes` parches para `IHasError`, `IHasLoading`, `IHasReadOnly`, `IHasRequired`, `IHasFullWidth`.
-  - Decidir si también `IVariantComponent.CurrentVariant` debe refrescarse aquí.
-- **Aceptación**: cambio de `Error`/`Loading` en runtime sin re-llamar `BuildStyles` se refleja en los `data-bui-*` del DOM (test de integración con `Verify`).
+### [x] BASE-01 — `BUIButton` cubierto (estándar de referencia)
+- Rendering, State, Interaction, Variant, Snapshot verdes.
+- Accessibility comentado → ver `GEN-BUTTON-01`.
 
-### [x] INPUT-01 — `BUIInputSwitch` no aplica `ComputedAttributes` al root `<bui-component>`
-> Resuelto en commit `b55707d` — *INPUT-01: wrap BUIInputSwitch variant template in its own bui-component root*
-- **Origen**: `BUIInputSwitch.razor:50-68` propaga `@attributes="ComputedAttributes"` al componente hijo `<BUISwitch>`, que emite su propio `<bui-component data-bui-component="switch">`. Resultado: el `data-bui-component` queda como `switch` (no `input-switch`), y los data-attrs de estado del wrapper (IsError, IsLoading, IsReadOnly, floated, etc.) se pierden o se mezclan con los del hijo.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Switch/BUIInputSwitch.razor`
-- **Cambios**:
-  - Envolver el render en `<bui-component @attributes="ComputedAttributes"> ... </bui-component>`.
-  - Pasar estado al hijo `<BUISwitch>` por parámetros explícitos, sin spread de atributos.
-  - Revisar si el `.razor.css` del InputSwitch selecciona por `[data-bui-component="input-switch"]` o por `[data-bui-component="switch"]`; alinear tras el cambio.
-- **Aceptación**: DOM renderizado muestra `<bui-component data-bui-component="input-switch" data-bui-error data-bui-loading ...>` envolviendo al switch interno.
+### [~] BASE-02 — `BUICultureSelector` (parcial)
+- Tests actuales: `Server_BUICultureSelectorRenderingTests`, `Wasm_BUICultureSelectorRenderingTests` (dos clases por hosting).
+- Pendiente: unificar convención — renombrar a `BUICultureSelectorRenderingTests` con `[MemberData(nameof(TestScenarios.All))]`, splitear hosting-specific solo si el DOM diverge. Cubre en `LAY-CULT-*`.
 
-### [x] INPUT-02 — `async Task` sin `await` en HandleChange (InputText / InputTextArea)
-> Resuelto en commit `7401fb7` — *INPUT-02: drop spurious async from HandleChange in Text/TextArea*
-- **Origen**: firmas `async Task HandleChange(...)` que solo asignan `CurrentValueAsString`. Genera warning y `Task` completado sincrónicamente con overhead innecesario.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Forms/Text/BUIInputText.razor:123`
-  - `src/CdCSharp.BlazorUI/Components/Forms/TextArea/BUIInputTextArea.razor:~157` (verificar línea)
-- **Cambios**: cambiar firmas a `private void HandleChange(ChangeEventArgs e)`. Actualizar bindings `@onchange` (aceptan `EventCallback` y delegados no-async).
-- **Aceptación**: compilación sin warning `CS1998`. Tests existentes de Text/TextArea pasan.
+### [~] BASE-03 — `BUIInputDateTime` (parcial)
+- Tests actuales: `BUIInputDateTimeInteractionTests`. Falta Rendering/State/Accessibility/Snapshot/Validation. Cubre en `FRM-DT-*`.
 
-### [x] CORE-02 — JS dispose sin captura de `JSDisconnectedException`
-> Resuelto en commit `c82fd1f` — *CORE-02: guard JS behavior dispose against disconnected circuit*
-- **Origen**: `BUIComponentBase.DisposeAsync` (y equivalente en `BUIInputComponentBase:49-56`) llama a `_behaviorInstance.InvokeVoidAsync("dispose")` y `DisposeAsync()` sin try/catch. En Server, al cerrar circuit, `JSDisconnectedException` burbujea como excepción no observada y puede marcar el circuito como fallido.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI.Core/Abstractions/Components/BUIComponentBase.cs` (método `DisposeAsync`)
-  - `src/CdCSharp.BlazorUI.Core/Abstractions/Components/BUIInputComponentBase.cs:49-56`
-- **Cambios**: envolver en `try { ... } catch (JSDisconnectedException) { } catch (ObjectDisposedException) { }`. Buscar patrón ya usado en `ModuleJsInteropBase` y replicar.
-- **Aceptación**: cerrar pestaña/circuit mientras componente está montado no produce excepciones en logs.
+### [x] BASE-04 — `BUIComponentBase` / `BUIInputComponentBase` (Core)
+- Tests en `Tests/Core/BaseComponents/`. Ampliar solo si se añade nueva interface `IHas*` o constante en `FeatureDefinitions`.
 
-### [x] LAYOUT-01 — Memory leak en `BUIInitializer` (OnThemeChanged no desuscrito)
-> Resuelto en commit `784c93d` — *LAYOUT-01/02: activate IDisposable on Initializer and guard Toast host race*
-- **Origen**: suscribe a `ThemeInterop.OnThemeChanged` en `OnInitialized`/`OnAfterRenderAsync` pero no implementa `Dispose`/`IAsyncDisposable` para desuscribirse.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/BUIInitializer.razor`
-- **Cambios**: implementar `IDisposable` y desuscribir handler.
-- **Aceptación**: navegación repetida que monta/desmonta `BUIInitializer` no incrementa handlers en `ThemeInterop.OnThemeChanged`.
-
-### [x] LAYOUT-02 — Memory leak en `BUIToastHost` (ToastService.OnChange no desuscrito)
-> Resuelto en commit `784c93d` — *LAYOUT-01/02: activate IDisposable on Initializer and guard Toast host race*. Nota: la desuscripción ya existía; el fix añade guard `_disposed` contra race de `InvokeAsync` post-dispose.
-- **Origen**: suscripción a evento del servicio singleton sin cleanup; `InvokeAsync(StateHasChanged)` puede ejecutarse sobre instancia ya disposed.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/BUIToastHost.razor`
-- **Cambios**: implementar `IDisposable`, desuscribir `OnChange` en `Dispose`.
-- **Aceptación**: unmount de host no deja handler colgado.
-
-### [x] GENERIC-01 — `BUICodeBlock` `StateHasChanged` tras `Task.Delay` sin guard de disposal
-> Resuelto en commit `c31c608` — *GENERIC-01: tie CodeBlock copy-feedback delay to component lifetime*
-- **Origen**: `BUICodeBlock.razor:~74` — patrón `_copied=true; await Task.Delay(1500); StateHasChanged();`. Si usuario navega, llamada sobre componente disposed → warnings.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/CodeBlock/BUICodeBlock.razor`
-- **Cambios**: añadir `CancellationTokenSource` disposed en `Dispose`; pasar token a `Task.Delay`; comprobar token antes de `StateHasChanged`.
-- **Aceptación**: no hay warnings "Cannot update component" tras navegación post-copy.
-
-### [x] LAYOUT-03 — `BUIDialog`/`BUIDrawer` usan `Task.Delay(150)` fijo para fin de animación
-- **Origen**: detección de fin de transición por delay fijo. Frágil (varía con prefers-reduced-motion, `animation-duration` custom). Callback puede correr sobre instancia disposed.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/*`
-- **Cambios**: sustituir por listener JS `animationend`/`transitionend` vía `IModalJsInterop`. Cleanup en dispose.
-- **Aceptación**: ajuste de `animation-duration` via CSS var afecta tiempo real de cierre; reduced-motion no deja residuos.
-
-> Resuelto en commit `85bdfbc` — *LAYOUT-03: tie dialog/drawer close to animationend instead of fixed delay*
-
-### [x] LAYOUT-04 — `BUITreeMenu` timer con callbacks pendientes post-dispose
-- **Origen**: `_hoverDelayHandler` puede disparar tras `Dispose`. Suscripción a `NavigationManager.LocationChanged` se libera pero el timer no necesariamente.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeMenu.razor` (línea ~493)
-- **Cambios**: `Dispose` llama a `_hoverDelayHandler?.Dispose()` antes de desuscribir NavManager; verificar que todas las mutaciones de estado comprueben `!IsDisposed`.
-- **Aceptación**: tests unitarios con timer activo + dispose no fallan.
-
-> Resuelto en commit `e915239` — *LAYOUT-04: gate BUITreeMenu hover timer against disposal*
-
-### [x] LAYOUT-05 — `BUIModalHost` usa `async void HandleModalChange`
-> Resuelto en commit `239f404` — *LAYOUT-05: replace async void HandleModalChange with sync wrapper + async Task*
-- **Origen**: `async void` traga excepciones y corre fuera del ciclo de render. Debe ser `async Task` invocado con `InvokeAsync` o handler síncrono.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/BUIModalHost.razor:~39`
-- **Cambios**: cambiar firma a `private async Task HandleModalChange(...)` y suscribir con lambda que use `InvokeAsync`.
-- **Aceptación**: excepciones en handler se propagan y no matan silenciosamente el evento.
+### [x] BASE-05 — `ServiceRegistrationTests` / `VariantRegistryTests` / `CssColorSystemTests` (Library)
+- Mantener; ampliar al añadir extensiones de `AddBlazorUI*` o primitivas de color.
 
 ---
 
-## B. SEGURIDAD
+## B. FORMS — componentes de formulario
 
-### [x] SEC-01 — `BUISvgIcon` inyección de SVG arbitrario
-> Resuelto en commit `f9bb2f0` — *SEC-01: sanitize BUISvgIcon markup before rendering*. Sanitizador mínimo (strip script/iframe/object/embed/foreignObject + on\* + javascript:). Conservador; no sustituye un HTML sanitizer completo.
-- **Origen**: `@((MarkupString)Icon)` renderiza markup user-supplied sin sanear. Permite `<script>`, atributos `on*`, `<foreignObject>` con HTML.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Svg/BUISvgIcon.razor`
-- **Cambios**:
-  - Opción 1: exigir que `Icon` sea un enum/clave y resolver contra catálogo controlado (sin MarkupString).
-  - Opción 2: pasar por sanitizador (`HtmlSanitizer` o similar) que permita solo whitelist de tags/atributos SVG seguros.
-  - Documentar en XML-doc si se mantiene el pass-through sin sanitizar y se asume trust.
-- **Aceptación**: entrada `"<svg><script>alert(1)</script></svg>"` no ejecuta script en sample.
+### BUIInputCheckbox (`Components/Forms/Checkbox/`)
 
-### [x] SEC-02 — `BUICodeBlock` renderiza MarkupString de Highlighter sin validar
-> Auditoría sin cambio de código. `HtmlRenderer.Render` en `src/CdCSharp.BlazorUI.SyntaxHighlight/Rendering/HtmlRenderer.cs:44-60` escapa `<`, `>`, `&`, `"`, `'` en cada token antes de concatenar. El fallback en `BUICodeBlock.HighlightedCode` usa `HttpUtility.HtmlEncode`. No se detectó vector XSS. Seguimiento opcional: añadir test de regresión cuando el proyecto de tests referencie `CdCSharp.BlazorUI.SyntaxHighlight`.
-- **Origen**: confianza implícita en que `CdCSharp.BlazorUI.SyntaxHighlight` produce HTML seguro. Si la entrada contiene secuencias que el highlighter no escapa (edge cases), XSS posible.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Generic/CodeBlock/BUICodeBlock.razor:~61`
-  - `src/CdCSharp.BlazorUI.SyntaxHighlight/` (verificar escape de entidades)
-- **Cambios**:
-  - Auditar `Highlighter.Highlight` para garantizar escape de `<`, `>`, `&`, `"` en tokens.
-  - Añadir test con entrada maliciosa `"</pre><script>alert(1)</script>"`.
-- **Aceptación**: test de XSS rinde texto literal sin ejecutar.
+- [ ] **FRM-CHK-01** — `BUIInputCheckboxRenderingTests` — root + `data-bui-component="input-checkbox"`, `data-bui-checked`, `data-bui-indeterminate`, tamaño, color.
+- [ ] **FRM-CHK-02** — `BUIInputCheckboxStateTests` — toggle `Checked`, `Indeterminate`, `Disabled`, `ReadOnly`, `Error`; preservación de atributos.
+- [ ] **FRM-CHK-03** — `BUIInputCheckboxInteractionTests` — `ValueChanged`, click en label asociada, space key.
+- [ ] **FRM-CHK-04** — `BUIInputCheckboxVariantTests` — `BUIInputCheckboxVariant` custom.
+- [ ] **FRM-CHK-05** — `BUIInputCheckboxAccessibilityTests` — `role="checkbox"`, `aria-checked`, `aria-disabled`, label association.
+- [ ] **FRM-CHK-06** — `BUIInputCheckboxValidationTests` — `EditContext` + `[Required]` → `data-bui-error="true"` + `ValidationMessage`.
+- [ ] **FRM-CHK-07** — `BUIInputCheckboxSnapshotTests` — estados: Default, Checked, Indeterminate, Disabled, Error.
 
----
+### BUIInputSwitch (`Components/Forms/Switch/`)
 
-## C. ESTÁNDAR (CLAUDE.md) — Estado via `data-bui-*`, no clases CSS
+- [ ] **FRM-SW-01** — `BUIInputSwitchRenderingTests` — `data-bui-component="input-switch"` (regresión INPUT-01), `data-bui-active`, track/thumb vars públicas.
+- [ ] **FRM-SW-02** — `BUIInputSwitchStateTests` — toggle `Value`, `Disabled`, `ReadOnly`, `Error`, custom track/thumb colors via `--bui-inline-track-*`.
+- [ ] **FRM-SW-03** — `BUIInputSwitchInteractionTests` — `ValueChanged`, click, space.
+- [ ] **FRM-SW-04** — `BUIInputSwitchVariantTests` — variante custom.
+- [ ] **FRM-SW-05** — `BUIInputSwitchAccessibilityTests` — `role="switch"`, `aria-checked`, label, keyboard.
+- [ ] **FRM-SW-06** — `BUIInputSwitchValidationTests` — propagación de `IsError` desde `EditContext`.
+- [ ] **FRM-SW-07** — `BUIInputSwitchSnapshotTests` — Off, On, Disabled, Error, Custom colors.
 
-### [x] STD-01 — `BUITabs` usa clase CSS para tab activa
-> Resuelto en commit `d86659c` — *STD-01: express active tab state via data-bui-active, not a CSS modifier class*
-- **Origen**: `BUITabs.razor:~67` aplica `bui-tabs__tab--active` condicional en lugar de `data-bui-active`.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITabs.razor`
-  - `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITab.razor` (si aplica)
-  - `*.razor.css` correspondientes
-- **Cambios**:
-  - Eliminar modificador `--active`; emitir `data-bui-active="@(tab.Id == ActiveTab)"`.
-  - Selector CSS: `[data-bui-active="true"]`.
-  - Añadir `aria-selected` coherente.
-- **Aceptación**: DOM muestra `data-bui-active` en tab activa; CSS estiliza via atributo.
+### BUIInputRadio (`Components/Forms/Radio/`)
 
-### [x] STD-02 — `BUITreeMenu` usa clases para disabled/active/expanded
-- **Origen**: `BUITreeMenu.razor:240-244` aplica `bui-tree-menu__item--disabled/--active/--expanded`.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeMenu.razor` y `.razor.css`
-- **Cambios**: migrar a `data-bui-disabled`, `data-bui-active`, y atributo nuevo `data-bui-expanded` (registrar en `FeatureDefinitions.DataAttributes` si aún no existe).
-- **Aceptación**: CSS selecciona por atributos; no quedan clases modificador de estado en el HTML.
+- [ ] **FRM-RD-01** — `BUIInputRadioRenderingTests` — `data-bui-component="input-radio"`, `data-bui-orientation` (regresión STD-05), opciones renderizadas, `data-bui-active` por opción seleccionada.
+- [ ] **FRM-RD-02** — `BUIInputRadioStateTests` — cambio de `Value`; cambio de `Orientation`; `Disabled`, `ReadOnly`, `Error`; `Options` dinámicas.
+- [ ] **FRM-RD-03** — `BUIInputRadioInteractionTests` — `ValueChanged`, flechas arriba/abajo/izq/der (según `Orientation`), `Home`/`End`.
+- [ ] **FRM-RD-04** — `BUIInputRadioVariantTests` — `BUIInputRadioVariant`.
+- [ ] **FRM-RD-05** — `BUIInputRadioAccessibilityTests` — `role="radiogroup"`/`role="radio"`, `aria-checked`, roving tabindex.
+- [ ] **FRM-RD-06** — `BUIInputRadioValidationTests` — `[Required]` + sin selección.
+- [ ] **FRM-RD-07** — `BUIInputRadioSnapshotTests` — vertical/horizontal, selected/none, disabled.
 
-> Resuelto en commit `30e2f33` — *STD-02: express BUITreeMenu item state via data-bui-\* attributes*
+### BUIInputText (`Components/Forms/Text/`)
 
-### [x] STD-03 — `BUISwitch` emite `data-checked` fuera de `FeatureDefinitions`
-- **Origen**: hardcoded `data-checked` en vez de usar `FeatureDefinitions.DataAttributes.Active`.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Switch/BUISwitch.razor:~164`
-- **Cambios**: mapear semántica `checked` a `data-bui-active` (o registrar constante `Checked` en FeatureDefinitions si se prefiere separar semántica). Actualizar `.razor.css` del Switch y selectores dependientes.
-- **Aceptación**: sin strings literales `data-checked` en C#/razor.
+- [x] **FRM-TXT-01** — `BUIInputTextRenderingTests` — `data-bui-input-base`, `data-bui-component="input-text"`, `data-bui-variant` (outlined/filled/standard), `data-bui-floated` (regresión STD-10), prefix/suffix.
+- [x] **FRM-TXT-02** — `BUIInputTextStateTests` — cambio `Value`, `Disabled`, `ReadOnly`, `Error`, `Loading`, `Required`, `FullWidth`, `Label`, `HelperText`, `Placeholder`.
+- [x] **FRM-TXT-03** — `BUIInputTextInteractionTests` — `onchange` / `oninput`, `ValueChanged`, focus/blur → `data-bui-floated` cambia.
+- [x] **FRM-TXT-04** — `BUIInputTextVariantTests` — outlined/filled/standard emiten DOM correspondiente; variante custom.
+- [x] **FRM-TXT-05** — `BUIInputTextAccessibilityTests` — label asociada, `aria-invalid`, `aria-required`, `aria-describedby` → helper/validation.
+- [x] **FRM-TXT-06** — `BUIInputTextValidationTests` — `[Required]`, `[StringLength]`, `[RegularExpression]`; `ValidationMessage` en DOM.
+- [x] **FRM-TXT-07** — `BUIInputTextSnapshotTests` — outlined/filled/standard × empty/filled/error/disabled.
 
-> Resuelto en commit `34c2eaf` — *STD-03: route BUISwitch checked state through data-bui-active*
+### BUIInputNumber (`Components/Forms/Number/`)
 
-### [x] STD-04 — `BUIInputCheckbox` `data-checked` / `data-indeterminate` sin prefijo `bui-`
-- **Origen**: `BUIInputCheckbox.razor:99-105` emite `data-checked`/`data-indeterminate` directos. No siguen convención `data-bui-*` ni existen en `FeatureDefinitions`.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Forms/Checkbox/BUIInputCheckbox.razor`
-  - `src/CdCSharp.BlazorUI/Components/Forms/Checkbox/BUIInputCheckbox.razor.css`
-  - `src/CdCSharp.BlazorUI.Core/Components/FeatureDefinitions.cs` (añadir constantes si se mantienen separadas de Active)
-- **Cambios**: renombrar a `data-bui-checked` / `data-bui-indeterminate`, registrar constantes, actualizar selectores CSS.
-- **Aceptación**: convención homogénea con el resto de componentes.
+- [ ] **FRM-NUM-01** — `BUIInputNumberRenderingTests` — root, `data-bui-button-placement` (regresión STD-06), step buttons render.
+- [ ] **FRM-NUM-02** — `BUIInputNumberStateTests` — `Min`, `Max`, `Step`, `Disabled`, `ReadOnly`, `Error`, `FullWidth`.
+- [ ] **FRM-NUM-03** — `BUIInputNumberInteractionTests` — incremento/decremento por botones, flechas arriba/abajo, clamping a `Min`/`Max`, rechazo de entrada no-numérica.
+- [ ] **FRM-NUM-04** — `BUIInputNumberVariantTests` — outlined/filled/standard.
+- [ ] **FRM-NUM-05** — `BUIInputNumberAccessibilityTests` — `type="number"`, `aria-valuemin`/`valuemax`/`valuenow`.
+- [ ] **FRM-NUM-06** — `BUIInputNumberValidationTests` — `[Range]`, `[Required]`.
+- [ ] **FRM-NUM-07** — `BUIInputNumberSnapshotTests` — placements (start/end/split), con/sin error.
 
-> Resuelto en commit `edf099a` — *STD-04: prefix BUIInputCheckbox state attributes with bui-*
+### BUIInputTextArea (`Components/Forms/TextArea/`)
 
-### [x] STD-05 — `BUIInputRadio` `data-orientation` duplicado y sin prefijo
-- **Origen**: `BUIInputRadio.razor:87-91` emite `data-orientation` (sin prefijo) vía `BuildComponentDataAttributes`, y `BUIInputRadio.razor:96` también lo renderiza inline en markup → duplicado.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Radio/BUIInputRadio.razor` y `.razor.css`
-- **Cambios**:
-  - Eliminar atributo inline (línea ~96).
-  - Renombrar a `data-bui-orientation` en `BuildComponentDataAttributes`.
-  - Registrar `FeatureDefinitions.DataAttributes.Orientation`.
-  - Actualizar selector CSS.
-- **Aceptación**: un solo atributo `data-bui-orientation` en DOM.
+- [ ] **FRM-TA-01** — `BUIInputTextAreaRenderingTests` — root, `data-bui-resize`, `data-bui-autoresize` (regresión STD-07), rows/cols.
+- [ ] **FRM-TA-02** — `BUIInputTextAreaStateTests` — `Value`, `Disabled`, `ReadOnly`, `Error`, `Loading`, `AutoResize` flip.
+- [ ] **FRM-TA-03** — `BUIInputTextAreaInteractionTests` — `onchange`, `oninput`, focus → `data-bui-floated`.
+- [ ] **FRM-TA-04** — `BUIInputTextAreaVariantTests` — variantes.
+- [ ] **FRM-TA-05** — `BUIInputTextAreaAccessibilityTests` — label, `aria-invalid`.
+- [ ] **FRM-TA-06** — `BUIInputTextAreaValidationTests` — `[Required]`, `[StringLength]`.
+- [ ] **FRM-TA-07** — `BUIInputTextAreaSnapshotTests` — fixed / autoresize / resize directions.
 
-> Resuelto en commit `6e3237b` — *STD-05: dedupe and prefix BUIInputRadio orientation attribute*
+### BUIInputColor + BUIColorPicker (`Components/Forms/Color/`)
 
-### [x] STD-06 — `BUIInputNumber` `data-bui-button-placement` sin registrar
-- **Origen**: hardcoded en `BUIInputNumber.razor:~153`.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Forms/Number/BUIInputNumber.razor`
-  - `src/CdCSharp.BlazorUI.Core/Components/FeatureDefinitions.cs`
-- **Cambios**: añadir constante `FeatureDefinitions.DataAttributes.ButtonPlacement` (o más genérico si reusable), emitir vía `BuildComponentDataAttributes`.
-- **Aceptación**: atributo proviene de constante centralizada.
+- [ ] **FRM-COL-01** — `BUIInputColorRenderingTests` — root, preview swatch, input value format.
+- [ ] **FRM-COL-02** — `BUIInputColorStateTests` — `Value` (hex/rgb/hsl), `Format`, `DisplayMode`, `Disabled`.
+- [ ] **FRM-COL-03** — `BUIInputColorInteractionTests` — cambio de valor → `ValueChanged`; apertura del picker.
+- [ ] **FRM-COL-04** — `BUIColorPickerRenderingTests` — root, `data-bui-picker`, grid/slider/input subcomponents.
+- [ ] **FRM-COL-05** — `BUIColorPickerStateTests` — cambio de formato, cambio de color seleccionado, `Disabled`/`ReadOnly`.
+- [ ] **FRM-COL-06** — `BUIColorPickerInteractionTests` — click en cell, slider input, hex input.
+- [ ] **FRM-COL-07** — `BUIInputColorValidationTests` — `[Required]`, formato inválido.
+- [ ] **FRM-COL-08** — `BUIInputColorAccessibilityTests` — labels, `aria-label` en sliders.
+- [ ] **FRM-COL-09** — `BUIInputColorSnapshotTests` — cada `DisplayMode` × formato.
 
-> Resuelto en commit `93af7d0` — *STD-06: register ButtonPlacement attribute in FeatureDefinitions*
+### BUIInputDateTime + BUIDatePicker + BUITimePicker (`Components/Forms/DateAndTime/`)
 
-### [x] STD-07 — `BUIInputTextArea` `data-bui-resize` / `data-bui-autoresize` sin registrar
-- **Origen**: emitidos inline en markup; no existen en `FeatureDefinitions`.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Forms/TextArea/BUIInputTextArea.razor:~104-105`
-  - `FeatureDefinitions.cs`
-- **Cambios**: registrar constantes, mover a `BuildComponentDataAttributes`. Considerar exponer interface `IHasResize` si patrón se repite.
-- **Aceptación**: sin literales `data-bui-*` en markup razor.
+- [ ] **FRM-DT-01** — `BUIInputDateTimeRenderingTests` — root, `data-bui-component="input-date-time"`, placeholder, mask.
+- [ ] **FRM-DT-02** — `BUIInputDateTimeStateTests` — `Value`, `Min`, `Max`, `Disabled`, `ReadOnly`, `Format` (date/time/datetime).
+- [x] **FRM-DT-03** — `BUIInputDateTimeInteractionTests` — ya existe; revisar cobertura 12h culture + picker open en readonly.
+- [ ] **FRM-DT-04** — `BUIDatePickerRenderingTests` — grid, mes/año nav, cell selection.
+- [ ] **FRM-DT-05** — `BUIDatePickerInteractionTests` — navegación meses, selección día, rango.
+- [ ] **FRM-DT-06** — `BUITimePickerRenderingTests` — 12h/24h, hour/minute/second slots.
+- [ ] **FRM-DT-07** — `BUITimePickerInteractionTests` — selección hora, AM/PM, incremento.
+- [ ] **FRM-DT-08** — `BUIInputDateTimeAccessibilityTests` — `role="dialog"` al abrir, labels, teclado.
+- [ ] **FRM-DT-09** — `BUIInputDateTimeValidationTests` — `[Required]`, rango fuera de `Min`/`Max`.
+- [ ] **FRM-DT-10** — `BUIInputDateTimeSnapshotTests` — date / time / datetime × empty / filled / error.
 
-> Resuelto en commit `006b860` — *STD-07: register Resize/AutoResize attributes in FeatureDefinitions*
+### BUIInputDropdown + BUIInputDropdownTree + BUIDropdownContainer (`Components/Forms/Dropdown/`)
 
-### [x] STD-08 — `BUICard` usa var `--bui-card-inline-media-height` fuera de convención
-- **Origen**: convención es `--bui-inline-<prop>` (público, uniforme) o `--_<component>-<prop>` (privado). `--bui-card-inline-media-height` mezcla ambos.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Card/BUICard.razor` + `.razor.css`
-- **Cambios**: decidir si la altura de media es pública (renombrar a `--bui-inline-media-height` y usar `IHas*` adecuado) o privada (`--_card-media-height`).
-- **Aceptación**: convención alineada con el resto de componentes.
-
-> Resuelto en commit `96b016f` — *STD-08: align BUICard media-height var with private-var convention*
-
-### [x] STD-09 — `BUISwitch` private vars con prefijo no estándar
-- **Origen**: `BUISwitch.razor:171-178` usa `--track-inline-inactive-bg`, `--thumb-inline-active-bg`, `--thumb-inline-inactive-color`. Convención: `--bui-inline-*` para vars públicas y `--_switch-*` para privadas.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Switch/BUISwitch.razor` + `.razor.css`
-- **Cambios**: renombrar:
-  - Públicas (overridables): `--bui-inline-track-active`, `--bui-inline-track-inactive`, `--bui-inline-thumb-active`, `--bui-inline-thumb-inactive`.
-  - Privadas internas: `--_switch-track-active`, etc., resolviendo `var(--bui-inline-*, default)`.
-  - Si se mantiene parametrización por propiedades (`TrackColorInactive`, etc.), registrar en `BuildComponentCssVariables` contra las constantes públicas.
-- **Aceptación**: patrón privado/público coherente con `BUIButton.razor.css`.
-
-> Resuelto en commit `11cea70` — *STD-09: normalize BUISwitch CSS variable naming conventions*
-
-### [x] STD-10 — `data-bui-floated` emitido inline en markup (Text/Number/TextArea/Color/DateTime)
-- **Origen**: cada input mantiene su `_isFocused`/`_isDirty` y escribe `data-bui-floated="@IsFloated.ToString().ToLowerInvariant()"` en el razor. Debe fluir por `BuildComponentDataAttributes`.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI/Components/Forms/Text/BUIInputText.razor`
-  - `.../Number/BUIInputNumber.razor`
-  - `.../TextArea/BUIInputTextArea.razor`
-  - `.../Color/BUIColorPicker.razor` (si aplica)
-  - `.../DateAndTime/*`
-- **Cambios**:
-  - Registrar `FeatureDefinitions.DataAttributes.Floated` (si no existe).
-  - Override `BuildComponentDataAttributes` por componente que lea su estado interno.
-  - Llamar a `_styleBuilder.PatchVolatileAttributes`/`BuildStyles` (según alcance de CORE-01) al cambiar focus/dirty, o añadir `Floated` a volátiles.
-- **Aceptación**: sin literales `data-bui-floated` en razor; atributo cambia con focus/blur en DOM.
-
-> Resuelto en commit `3e76afe` — *STD-10: route data-bui-floated through BuildComponentDataAttributes*
-
-### [x] STD-11 — `BUIInputDropdown` no hereda `BUIInputComponentBase`
-- **Origen**: `BUIInputDropdown.razor` hereda `ComponentBase` implícito y compone `BUIDropdownContainer` (que sí hereda la base). Decisión deliberada pero causa inconsistencia: `Value`, `ValueExpression`, validación, `IsError` se gestionan en contenedor, no en el input público; API divergente con el resto.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Dropdown/BUIInputDropdown.razor` (+ code-behind)
-- **Cambios** (decisión previa):
-  - Opción A: mantener composición, documentar la razón en CLAUDE.md y añadir delegación de `IsError`/`IsDisabled`/etc. para consumidores.
-  - Opción B: refactor para que `BUIInputDropdown` herede `BUIInputComponentBase<TValue, BUIInputDropdown<TValue>, BUIInputVariant>` y `BUIDropdownContainer` sea detalle interno no-input.
-- **Aceptación**: API pública coherente — validaciones `EditContext`, `IHas*`, y DOM root consistentes entre inputs.
-
-> Resuelto en commit `289c57b` — *STD-11: document BUIInputDropdown composition pattern* (Opción A: composición documentada; delegación existente cubre validación/IHas* vía `ValueExpression` + parámetros reenviados).
+- [ ] **FRM-DD-01** — `BUIInputDropdownRenderingTests` — root, delegación a container (regresión STD-11), `data-bui-input-base` en container.
+- [ ] **FRM-DD-02** — `BUIInputDropdownStateTests` — `Value`, `Options`, `Placeholder`, `Disabled`, `ReadOnly`, `Error`, `IsOpen` flip.
+- [ ] **FRM-DD-03** — `BUIInputDropdownInteractionTests` — abrir/cerrar, selección de opción, flechas, Esc.
+- [ ] **FRM-DD-04** — `BUIInputDropdownVariantTests` — outlined/filled/standard.
+- [ ] **FRM-DD-05** — `BUIInputDropdownTreeRenderingTests` — tree dentro de dropdown.
+- [ ] **FRM-DD-06** — `BUIInputDropdownTreeInteractionTests` — expand/collapse + selección.
+- [ ] **FRM-DD-07** — `BUIInputDropdownAccessibilityTests` — `role="combobox"`/`listbox`, `aria-expanded`, `aria-activedescendant`.
+- [ ] **FRM-DD-08** — `BUIInputDropdownValidationTests` — `[Required]`, `EditContext` reflejado en container.
+- [ ] **FRM-DD-09** — `BUIInputDropdownSnapshotTests` — closed / open / with-selection / disabled.
+- [ ] **FRM-DD-10** — `BUIInputDropdownIntegrationTests` — uso dentro de `EditForm`, validación + submit.
 
 ---
 
-## D. DISPOSAL / PRERENDER
+## C. GENERIC — componentes genéricos
 
-### [x] DISP-01 — `BUIInputTextArea` JS interop sin guard prerender
-- **Origen**: `OnAfterRenderAsync` invoca JS sin comprobar estado de servidor/prerender. En SSR estático puede fallar.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/TextArea/BUIInputTextArea.razor:~89-97`
-- **Cambios**: verificar patrón del resto del repo (posiblemente `IsRenderingOnServer` o `OperatingSystem.IsBrowser()` según modelo) y aplicar guard. Usar `firstRender` + try/catch `InvalidOperationException`.
-- **Aceptación**: render bajo prerender server no lanza.
+### BUIButton (ya cubierto)
 
-> Resuelto en commit `49c748f` — *DISP-01: guard BUIInputTextArea JS init under prerender*
+- [ ] **GEN-BUTTON-01** — `BUIButtonAccessibilityTests` (descomentar + adaptar al contrato actual). Cubrir `aria-disabled`, `aria-busy` (loading), `aria-label`, `role`, `tabindex`, `Enter`/`Space`.
 
-### [x] DISP-02 — `BUIColorPicker` `UpdateHandlerPosition` sin guard
-- **Origen**: análogo a DISP-01 en `BUIColorPicker.razor:~113-115`.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Forms/Color/BUIColorPicker.razor`
-- **Cambios**: mismo patrón de guard.
-- **Aceptación**: idem.
+### BUIBadge + BUINotificationBadge (`Components/Generic/Badge/`)
 
-> Resuelto en commit `82a8f02` — *DISP-02: guard BUIColorPicker first-render JS call under prerender*
+- [ ] **GEN-BADGE-01** — `BUIBadgeRenderingTests` — root, color, placement, shape.
+- [ ] **GEN-BADGE-02** — `BUIBadgeStateTests` — cambio de content, visibility.
+- [ ] **GEN-BADGE-03** — `BUIBadgeVariantTests` — `BUIBadgeVariant`.
+- [ ] **GEN-BADGE-04** — `BUIBadgeAccessibilityTests` — `role="status"` o `aria-label` según semántica.
+- [ ] **GEN-BADGE-05** — `BUINotificationBadgeRenderingTests` — count, overflow max, dot mode.
+- [ ] **GEN-BADGE-06** — `BUINotificationBadgeStateTests` — incremento de count, reset a 0 (visibilidad).
+- [ ] **GEN-BADGE-07** — `BUIBadgeSnapshotTests` — variantes + placements.
 
-### [x] DISP-03 — `BUITreeSelector` sin `IDisposable`
-- **Origen**: crea `TreeNodeRegistry` y posibles suscripciones; no libera.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeSelector.razor` (+ code-behind)
-- **Cambios**: implementar `IAsyncDisposable`, limpiar registry y handlers.
-- **Aceptación**: test de unmount no retiene referencias.
+### BUICodeBlock (`Components/Generic/CodeBlock/`)
 
-> Resuelto en commit `6266a08` — *DISP-03: add IDisposable cleanup to BUITreeSelector*
+- [ ] **GEN-CODE-01** — `BUICodeBlockRenderingTests` — root, language attr, pre/code DOM, líneas numeradas si aplica.
+- [ ] **GEN-CODE-02** — `BUICodeBlockStateTests` — cambio de `Code`/`Language`; toggle `ShowLineNumbers`.
+- [ ] **GEN-CODE-03** — `BUICodeBlockInteractionTests` — botón copy → invoca `IClipboardJsInterop`, feedback temporizado vía CancellationToken.
+- [ ] **GEN-CODE-04** — `BUICodeBlockAccessibilityTests` — `aria-label` en copy button, screen-reader-friendly feedback.
+- [ ] **GEN-CODE-05** — `BUICodeBlockSnapshotTests` — cada lenguaje soportado × con/sin line numbers.
+- [ ] **GEN-CODE-06** — `BUICodeBlockSecurityTests` — input XSS (`</pre><script>alert(1)</script>`) → renderiza escapado (regresión SEC-02).
 
-### [x] DISP-04 — `BUITab` disposal síncrono con efecto lateral en padre
-- **Origen**: `Dispose()` desregistra del padre (`BUITabs`); si el padre re-renderiza durante dispose del hijo, posible race.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITab.razor(.cs)`, `BUITabs.razor(.cs)`
-- **Cambios**: hacer `UnregisterTab` thread-safe (lock o snapshot de colección) y no invocar `StateHasChanged` síncrono durante disposal; usar `InvokeAsync`.
-- **Aceptación**: tests de dispose de múltiples tabs no fallan.
+### BUILoadingIndicator (`Components/Generic/Loading/`)
 
-> Resuelto en commit `1a672c2` — *DISP-04: make BUITabs tab registry thread-safe and dispose-safe*
+- [ ] **GEN-LOAD-01** — `BUILoadingIndicatorRenderingTests` — root, `role="img"`, `aria-label` (regresión A11Y-01), variantes (spinner/dots/linear).
+- [ ] **GEN-LOAD-02** — `BUILoadingIndicatorStateTests` — cambio de variante, color, size, progreso (linear).
+- [ ] **GEN-LOAD-03** — `BUILoadingIndicatorVariantTests` — variante custom.
+- [ ] **GEN-LOAD-04** — `BUILoadingIndicatorAccessibilityTests` — `role="progressbar"` + `aria-valuenow/min/max` en linear determinate.
+- [ ] **GEN-LOAD-05** — `BUILoadingIndicatorSnapshotTests` — cada variante × indeterminate/determinate.
 
----
+### BUISvgIcon (`Components/Generic/Svg/`)
 
-## E. PERFORMANCE
+- [ ] **GEN-SVG-01** — `BUISvgIconRenderingTests` — root, catálogo conocido (`BUIIcons.*`), `viewBox`.
+- [ ] **GEN-SVG-02** — `BUISvgIconStateTests` — cambio de `Icon`, color, size.
+- [ ] **GEN-SVG-03** — `BUISvgIconVariantTests` — variante.
+- [ ] **GEN-SVG-04** — `BUISvgIconSecurityTests` — `SvgMarkupSanitizer` elimina `<script>`, `on*`, `<foreignObject>` (regresión SEC-01).
+- [ ] **GEN-SVG-05** — `BUISvgIconSnapshotTests` — 3–4 iconos representativos.
 
-### [x] PERF-01 — `BUIComponentAttributesBuilder` recrea diccionarios por render
-- **Origen**: `BuildStyles` asigna `ComputedAttributes = new Dictionary<...>(...)` cada llamada; también crea `cssVariables` local. Alto churn GC con muchos componentes.
-- **Archivos**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:12-67`
-- **Cambios**:
-  - Reutilizar `ComputedAttributes`: `ComputedAttributes.Clear()` en vez de `new`.
-  - Reutilizar un `Dictionary<string,string>` de instancia para `cssVariables` (campo privado + Clear).
-  - Medir impacto con benchmark simple.
-- **Aceptación**: sin regresión funcional (tests pasan). Perfil indica menos allocations en hot path de render.
+### BUISwitch (`Components/Generic/Switch/`)
 
-> Resuelto en commit `7e5a1b7` — *PERF-01: reuse ComputedAttributes and cssVariables dictionaries*
+- [ ] **GEN-SW-01** — `BUISwitchRenderingTests` — `data-bui-component="switch"`, `data-bui-active` (regresión STD-03), vars `--bui-inline-track-*`/`--bui-inline-thumb-*` (regresión STD-09).
+- [ ] **GEN-SW-02** — `BUISwitchStateTests` — toggle, `Disabled`.
+- [ ] **GEN-SW-03** — `BUISwitchInteractionTests` — click → toggle, space/enter.
+- [ ] **GEN-SW-04** — `BUISwitchAccessibilityTests` — `role="switch"`, `aria-checked` (regresión A11Y-04).
+- [ ] **GEN-SW-05** — `BUISwitchSnapshotTests` — off/on/disabled/custom colors.
 
-### [x] PERF-02 — `BuildInlineStyles` concatena con LINQ
-- **Origen**: `string.Join("; ", cssVariables.Select(kv => $"{kv.Key}: {kv.Value}"))` — `StringBuilder` sería más eficiente para N>4 vars.
-- **Archivos**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:221`
-- **Cambios**: construir con `StringBuilder` reutilizable (campo), cuidado con separador y orden estable.
-- **Aceptación**: mismo output; `Verify` snapshots inalterados.
+### BUITabs + BUITab (`Components/Generic/Tabs/`)
 
-> Resuelto en commit `43e5de1` — *PERF-02: build inline style string with a reusable StringBuilder*
+- [ ] **GEN-TABS-01** — `BUITabsRenderingTests` — root, `role="tablist"`, tabs hijos con `role="tab"`, `data-bui-active="true"` en activo (regresión STD-01), `aria-selected`.
+- [ ] **GEN-TABS-02** — `BUITabsStateTests` — cambio de tab activa, registro/desregistro de `BUITab` dinámicos.
+- [ ] **GEN-TABS-03** — `BUITabsInteractionTests` — click en tab, flechas izq/der, `Home`/`End` (regresión A11Y-02).
+- [ ] **GEN-TABS-04** — `BUITabsVariantTests` — `BUITabsVariant`.
+- [ ] **GEN-TABS-05** — `BUITabsAccessibilityTests` — `aria-controls`, `aria-selected`, focus management, roving tabindex.
+- [ ] **GEN-TABS-06** — `BUITabsSnapshotTests` — N tabs × tab activa distinta.
+- [ ] **GEN-TABS-07** — `BUITabsDisposalTests` — dispose de múltiples tabs thread-safe (regresión DISP-04).
 
-### [x] PERF-03 — `ColorClassGenerator` reflection no cacheada
-- **Origen**: `typeof(Color).GetProperties(...)` cada ejecución del source generator. Aunque se ejecuta en compile-time, ralentiza builds incrementales.
-- **Archivos**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/ColorClassGenerator.cs:~88`
-- **Cambios**: memoizar resultado en `static readonly` si el generator lo permite (ojo: source generators deben ser deterministas y stateless idealmente).
-- **Aceptación**: tiempo de build no degrada; output idéntico.
+### BUITreeMenu (`Components/Generic/Tree/TreeMenu/`)
 
-> Resuelto en commit `a296a18` — *PERF-03: cache System.Drawing.Color reflection in ColorClassGenerator*
+- [ ] **GEN-TM-01** — `BUITreeMenuRenderingTests` — root, `data-bui-disabled/active/expanded` en items (regresión STD-02), jerarquía.
+- [ ] **GEN-TM-02** — `BUITreeMenuStateTests` — expand/collapse, selected item, `NavigationManager.LocationChanged` actualiza activo.
+- [ ] **GEN-TM-03** — `BUITreeMenuInteractionTests` — click expand, hover (con timer de delay), click item, keyboard nav.
+- [ ] **GEN-TM-04** — `BUITreeMenuAccessibilityTests` — `role="tree"`/`treeitem"`, `aria-expanded`, `aria-selected`.
+- [ ] **GEN-TM-05** — `BUITreeMenuDisposalTests` — timer + nav subscription + disposal sin warnings (regresión LAYOUT-04).
+- [ ] **GEN-TM-06** — `BUITreeMenuSnapshotTests` — árbol colapsado/expandido/con-selección.
 
-### [x] PERF-04 — Reflection IHas* en cada render
-- **Origen**: `BuildStyles` chequea `component is IHas*` ~15 veces cada render. Patrón matching sobre interfaces es rápido, pero acumulado en arbol grande pesa. Opción: cachear flags por tipo.
-- **Archivos**: `BUIComponentAttributesBuilder.cs`
-- **Cambios**: `ConcurrentDictionary<Type, InterfaceFlags>` precalculada en primera instancia; iterar solo las ramas que el tipo implementa.
-- **Aceptación**: benchmark muestra mejora en árboles con cientos de componentes; tests pasan.
+### BUITreeSelector (`Components/Generic/Tree/TreeSelector/`)
 
-> Resuelto en commit `6c467c2` — *PERF-04: cache IHas* interface flags per component type*
+- [ ] **GEN-TS-01** — `BUITreeSelectorRenderingTests` — root, checkboxes por nodo, estado tri-state.
+- [ ] **GEN-TS-02** — `BUITreeSelectorStateTests` — selección parent propaga a children; children parciales marcan indeterminate en parent.
+- [ ] **GEN-TS-03** — `BUITreeSelectorInteractionTests` — check/uncheck, expand.
+- [ ] **GEN-TS-04** — `BUITreeSelectorDisposalTests` — `TreeNodeRegistry` liberado (regresión DISP-03).
+- [ ] **GEN-TS-05** — `BUITreeSelectorSnapshotTests` — selección total/parcial/ninguna.
 
----
+### DataCollections (`Components/Generic/DataCollections/`)
 
-## F. ACCESIBILIDAD
-
-### [x] A11Y-01 — `BUILoadingIndicator` sin role/aria
-- **Origen**: SVG sin `role="img"` ni `aria-label`; variante lineal sin ARIA live region.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Loading/*`
-- **Cambios**:
-  - Añadir `role="img" aria-label="@AriaLabel ?? DefaultLoadingLabel"`.
-  - Para variante lineal con progreso, envolver en `<div role="progressbar" aria-valuenow="..." aria-valuemin="0" aria-valuemax="100">`.
-- **Aceptación**: lighthouse/axe no reporta missing label.
-
-> Resuelto en commit `0eafd6f` — *A11Y-01: add role/aria attributes to BUILoadingIndicator*
-
-### [x] A11Y-02 — `BUITabs` navegación por teclado y ARIA
-- **Origen**: verificar implementación de `role="tablist"`, `role="tab"`, `aria-selected`, `aria-controls`, flechas izquierda/derecha, `Home`/`End`.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Generic/Tabs/BUITabs.razor`, `BUITab.razor`
-- **Cambios**: implementar patrón WAI-ARIA Authoring Practices para tabs.
-- **Aceptación**: test manual con teclado + screen reader.
-
-> Resuelto en commit `00da2fb` — *A11Y-02: keyboard nav + ARIA for BUITabs*
-
-### [x] A11Y-03 — `BUIDialog` focus trap y ESC
-- **Origen**: revisar si modal atrapa focus y cierra con ESC; requerido por WCAG 2.1.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/*`, `src/CdCSharp.BlazorUI/Services/JsInterop/IModalJsInterop.cs`
-- **Cambios**: asegurar focus trap via JS, handler ESC, restaurar focus al elemento previo al cerrar.
-- **Aceptación**: abrir dialog con teclado, tab ciclo dentro, ESC cierra, focus vuelve al botón origen.
-
-> Resuelto en commit `eb3277d` — *A11Y-03: harden focus trap for BUIDialog/BUIDrawer*
-
-### [x] A11Y-04 — `BUIInputSwitch`/`BUISwitch` labels y ARIA
-- **Origen**: revisar `aria-checked`, `role="switch"`, asociación label-input.
-- **Archivos**: Switch components.
-- **Cambios**: aplicar patrón WAI-ARIA switch.
-- **Aceptación**: axe no reporta missing-label.
-
-> Resuelto en commit `13b470b` — *A11Y-04: add role=switch + label association to BUISwitch*
+- [ ] **GEN-DC-01** — `BUIDataColumnRenderingTests` — registra en `DataColumnRegistry`, emite header correcto.
+- [ ] **GEN-DC-02** — `BUIDataGridRenderingTests` — root `data-bui-data-collection`, header + rows, paginación opcional.
+- [ ] **GEN-DC-03** — `BUIDataGridStateTests` — cambio de `Items`, sort, filter, page size.
+- [ ] **GEN-DC-04** — `BUIDataGridInteractionTests` — click header → sort, paginación, selección de row.
+- [ ] **GEN-DC-05** — `BUIDataGridAccessibilityTests` — `role="table"`, `role="row"`, `aria-sort`.
+- [ ] **GEN-DC-06** — `BUIDataCardsRenderingTests` — render items como cards.
+- [ ] **GEN-DC-07** — `BUIDataCardsStateTests` — cambio de items, layout.
+- [ ] **GEN-DC-08** — `BUIDataCollectionIntegrationTests` — grid ↔ cards con mismos `BUIDataColumn`.
+- [ ] **GEN-DC-09** — `BUIDataCollectionSnapshotTests` — grid vacío / con datos / sorted / paginated.
 
 ---
 
-## G. OTROS
+## D. LAYOUT — componentes de layout
 
-### [x] MISC-01 — `BUIThemeGenerator` silencia excepciones en import
-- **Origen**: `catch { }` vacío oculta errores de parseo de colores al importar paleta.
-- **Archivos**: `src/CdCSharp.BlazorUI/Components/Layout/ThemeGenerator/*:~145-189`
-- **Cambios**: capturar a variable `_importError` y renderizar feedback; o loguear vía `ILogger`.
-- **Aceptación**: import de JSON inválido muestra mensaje al usuario.
+### BUICard (`Components/Layout/Card/`)
 
-> Resuelto en commit `d030224` — *MISC-01: surface palette import errors in BUIThemeGenerator*
+- [ ] **LAY-CARD-01** — `BUICardRenderingTests` — root, slots (header/media/body/footer), `--_card-media-height` (regresión STD-08).
+- [ ] **LAY-CARD-02** — `BUICardStateTests` — cambio de contenido, `Shadow`, `Variant`.
+- [ ] **LAY-CARD-03** — `BUICardVariantTests` — `BUICardVariant`.
+- [ ] **LAY-CARD-04** — `BUICardSnapshotTests` — variantes × con/sin media.
 
-### [x] MISC-02 — Revisar llamadas JS con `ConfigureAwait(false)` server-side
-- **Origen**: `BUIComponentJsBehaviorBuilder:38` y otras. En Blazor, el contexto de síntesis es importante; `ConfigureAwait(false)` puede saltar el sync context de Server. Validar política en el repo (probablemente dejar tal cual).
-- **Archivos**: varios `Services/JsInterop/*`
-- **Cambios**: definir convención en CLAUDE.md si no está, aplicar uniformemente.
-- **Aceptación**: convención documentada; código coherente.
+### BUIDialog + BUIDrawer + BUIModalHost + BUIModalContainer (`Components/Layout/Dialog/`)
 
-> Resuelto en commit `a1ab554` — *MISC-02: document async / JS interop conventions*. Auditoría: `grep ConfigureAwait src/` devuelve 0 coincidencias — la convención se aplicaba implícitamente, ahora queda escrita en CLAUDE.md.
+- [ ] **LAY-DLG-01** — `BUIDialogRenderingTests` — root, open/closed, header/body/footer slots.
+- [ ] **LAY-DLG-02** — `BUIDialogStateTests` — abrir/cerrar vía `IsOpen`, click backdrop, `CloseOnBackdrop` flag.
+- [ ] **LAY-DLG-03** — `BUIDialogInteractionTests` — Esc cierra, botón close, callback `OnClose`.
+- [ ] **LAY-DLG-04** — `BUIDialogAccessibilityTests` — `role="dialog"`, `aria-modal`, focus trap, restauración de focus (regresión A11Y-03).
+- [ ] **LAY-DLG-05** — `BUIDrawerRenderingTests` — side (left/right/top/bottom), overlay.
+- [ ] **LAY-DLG-06** — `BUIDrawerInteractionTests` — Esc, swipe/drag si aplica.
+- [ ] **LAY-DLG-07** — `BUIModalHostRenderingTests` — host vacío; host con modal activo.
+- [ ] **LAY-DLG-08** — `BUIModalHostInteractionTests` — servicio `ModalService.Show(...)` → host renderiza modal; `Close()` → limpia.
+- [ ] **LAY-DLG-09** — `BUIModalContainerRenderingTests` — cambio de contenido, animation lifecycle basado en `animationend` (regresión LAYOUT-03).
+- [ ] **LAY-DLG-10** — `BUIDialogSnapshotTests` — open / closed / with-header-footer / drawer variants.
 
-### [x] MISC-03 — `FeatureDefinitions` auditoría de cobertura
-- **Origen**: hallazgos STD-04/05/06/07/10 indican atributos faltantes. Auditoría completa de qué atributos están en `FeatureDefinitions.DataAttributes` vs cuáles se usan directamente en razor/C#.
-- **Archivos**:
-  - `src/CdCSharp.BlazorUI.Core/Components/FeatureDefinitions.cs`
-  - búsqueda global de literales `"data-bui-*"` y `"--bui-*"` en `src/CdCSharp.BlazorUI/**`
-- **Cambios**: registrar constantes faltantes, sustituir literales.
-- **Aceptación**: cero literales `data-bui-*`/`--bui-inline-*` fuera de `FeatureDefinitions`, generators y `.razor.css`.
+### BUIGrid + BUIGridItem (`Components/Layout/Grid/`)
 
-> Resuelto en commit `f47bcee` — *MISC-03: register missing FeatureDefinitions constants and replace literals*. Añadidos 14 `DataAttributes` y 30+ `InlineVariables` constants. Alineado `PickerBase = "data-bui-picker-base"` con la familia CSS (BUIColorPicker recibe estilos por primera vez). Eliminadas emisiones manuales redundantes (`data-bui-data-collection`, `data-bui-picker-base`) en `BUIDataCollectionBase`/`BUIDatePicker`/`BUITimePicker`. Sustituidos los literales restantes en `BUIBadge`, `BUINotificationBadge`, `BUISwitch`, `BUISidebarLayout`, `BUIStackedLayout`, `BUIToast`, `BUITreeMenu`, `BUITreeSelector`, `BUIInputCheckbox`, `BUIInputRadio`, `BUIDataCards`, `BUIDataGrid`, `RowStylePattern.cs`. Auditoría: `grep -E '"data-bui-|"--bui-inline-' src/CdCSharp.BlazorUI/**/*.{cs,razor}` devuelve 0 coincidencias.
+- [ ] **LAY-GRID-01** — `BUIGridRenderingTests` — root, `columns`, `rows`, `gap` → `--bui-inline-*`.
+- [ ] **LAY-GRID-02** — `BUIGridItemRenderingTests` — `colspan`/`rowspan` vía CSS vars.
+- [ ] **LAY-GRID-03** — `BUIGridStateTests` — cambio de template.
+- [ ] **LAY-GRID-04** — `BUIGridSnapshotTests` — templates representativos.
 
-### [x] MISC-04 — Snapshot tests cubrir cambios de contrato DOM
-- **Origen**: tras INPUT-01, STD-*, CORE-01 el DOM emitido cambia. Los snapshots `Verify` deben regenerarse y revisarse manualmente para confirmar que el cambio es intencional.
-- **Archivos**: `test/CdCSharp.BlazorUI.Tests.Integration/**/*.verified.*`
-- **Cambios**: regenerar y revisar en PR separado o junto al cambio funcional.
-- **Aceptación**: diff de snapshots documentado en commit/PR.
+### BUISidebarLayout (`Components/Layout/SidebarLayout/`)
 
-> Resuelto en commit `8533fb0` — *MISC-04: regenerate BUIButton Verify snapshots for new DOM contract*. Único snapshot `Verify` activo en `Tests.Integration` (`BUIButtonSnapshotTests`) regenerado para Server y Wasm; cambios revisados y documentados en el commit (density, disabled, shadow, loading a11y, transitions namespacing). El resto de los fallos de la suite (≈130) son pruebas basadas en aserciones explícitas sobre el DOM o `InputBase`/`ValueExpression` que rompieron por trabajo previo (INPUT-01, CORE-01, STD-*) y requieren actualización individual fuera del alcance de este ítem; quedan como deuda separada.
+- [ ] **LAY-SIDE-01** — `BUISidebarLayoutRenderingTests` — root, side (left/right), colapsado.
+- [ ] **LAY-SIDE-02** — `BUISidebarLayoutStateTests` — toggle open/closed, `Side`.
+- [ ] **LAY-SIDE-03** — `BUISidebarLayoutInteractionTests` — click toggle, ESC.
+- [ ] **LAY-SIDE-04** — `BUISidebarLayoutSnapshotTests` — open/closed × side.
 
-### [x] MISC-05 — Triaje de los ~130 tests fallidos heredados de MISC-04
-- **Origen**: deuda separada documentada al cierre de MISC-04. Fallos repartidos entre (a) bugs reales de producción descubiertos por los tests, (b) contratos DOM obsoletos (border/shadow/var names), (c) selectores incorrectos (`.bui-datepicker`, `.bui-dialog[open]`).
-- **Archivos**:
-  - Producción: `IHasBorder.cs`, `BUIComponentAttributesBuilder.cs`, `BUIInputComponentBase.cs`, `BUIInputDateTime.razor`.
-  - Tests: `BUIComponentBaseTests.cs`, `BUIInputComponentBaseTests.cs`, `BUIButtonRenderingTests.cs`, `BUIButtonStateTests.cs`, `BUIInputDateTimeInteractionTests.cs`.
-- **Cambios**: corregir bugs reales y actualizar tests obsoletos. Distinguir explícitamente cada categoría en el commit.
-- **Aceptación**: `dotnet test` en verde (0 failed).
+### BUIStackedLayout (`Components/Layout/StackedLayout/`)
 
-> Resuelto en commit `43f29d1` — *MISC-05: triage 130 inherited test failures (real bugs + obsolete contracts)*. 5 bugs reales corregidos en producción: `IHasBorder.None()` perdía intención (no emitía var), `IHasError.Error` resolvía al `[Parameter]` crudo en vez de `IsError` validation-aware, `BUIInputComponentBase` no invocaba `PatchVolatileAttributes` (estados focus-driven congelados), `BuildComponentDataAttributes` no se reejecutaba en re-renders sin cambio de parámetro, y `BUIInputDateTime` permitía abrir el picker en `ReadOnly`. Tests actualizados al contrato DOM vigente (border shorthand, `data-bui-shadow`/`--bui-inline-*`, selectores `bui-component[data-bui-component=...]`, `.validation-message`, `FocusOutAsync` en lugar de `BlurAsync`, cultura fijada para test de 12h). Resultado: `dotnet test` 256/256 verdes.
+- [ ] **LAY-STK-01** — `BUIStackedLayoutRenderingTests` — root, header/footer/content slots.
+- [ ] **LAY-STK-02** — `BUIStackedLayoutSnapshotTests`.
 
-### [x] MISC-06 — Triaje de los 10 tests fallidos en `CdCSharp.BlazorUI.SyntaxHighlight.Tests`
-- **Origen**: suite paralela a la de Integration. Categorías: (a) regresión real en `HtmlRenderer.GenerateStyles` que tenía comentadas las reglas del contenedor (`.SH-container` / `.SH-code`) aunque las propiedades públicas (`BackgroundColor`, `DefaultColor`, `FontFamily`, `FontSize`) seguían exponiéndose; (b) snapshots `Verify` desactualizados respecto al estado actual del tokenizer (whitespace de líneas en blanco que el código fuente ya no contiene + etiqueta `Private Methods` después de `#endregion` que nunca debió consumirse como parte de la directiva).
-- **Archivos**:
-  - Producción: `src/CdCSharp.BlazorUI.SyntaxHighlight/Rendering/HtmlRenderer.cs`.
-  - Snapshots: `test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/*.verified.txt` (CSharp CompleteClass, CSharp ModernCSharpFeatures, TypeScript CompleteModule).
-- **Cambios**: restaurar las reglas CSS del contenedor en `GenerateStyles` y regenerar los 3 snapshots.
-- **Aceptación**: `dotnet test test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/` en verde.
+### BUIThemeSelector (`Components/Layout/ThemeSelector/`)
 
-> Resuelto en commit `6212570` — *MISC-06: restore HtmlRenderer container styles + regenerate stale snapshots*. Bug real: `HtmlRenderer.GenerateStyles` tenía comentadas las reglas `.SH-container` y `.SH-code`, anulando silenciosamente `BackgroundColor`/`DefaultColor`/`FontFamily`/`FontSize` aunque seguían siendo propiedades `init` públicas en `HtmlRenderOptions` (los temas `DarkTheme`/`LightTheme` perdían el fondo del contenedor). Snapshots regenerados: el tokenizer actual ya no captura el label tras `#endregion` (CSharp `AddSequences` exige coincidencia exacta con la directiva, comportamiento correcto) y los archivos de prueba ya no llevan whitespace en líneas en blanco. Resultado: `dotnet test` 314/314 verdes en SyntaxHighlight (570/570 totales con Integration).
+- [ ] **LAY-THS-01** — `BUIThemeSelectorRenderingTests` — root, lista de temas del `IThemeService`.
+- [ ] **LAY-THS-02** — `BUIThemeSelectorStateTests` — cambio de tema actual.
+- [ ] **LAY-THS-03** — `BUIThemeSelectorInteractionTests` — click → `IThemeJsInterop.ApplyTheme`.
+- [ ] **LAY-THS-04** — `BUIThemeSelectorVariantTests` — `BUIThemeSelectorVariant`.
+- [ ] **LAY-THS-05** — `BUIThemeSelectorAccessibilityTests` — `role="radiogroup"` si radio-like, labels.
+- [ ] **LAY-THS-06** — `BUIThemeSelectorSnapshotTests` — light/dark/custom.
+
+### BUIThemeGenerator + BUIThemeEditor + BUIThemePreview (`Components/Layout/ThemeGenerator/`)
+
+- [ ] **LAY-THG-01** — `BUIThemeGeneratorRenderingTests` — root, sub-slots editor + preview.
+- [ ] **LAY-THG-02** — `BUIThemeGeneratorInteractionTests` — edición de color propaga a preview, export/import JSON.
+- [ ] **LAY-THG-03** — `BUIThemeGeneratorValidationTests` — import de JSON inválido muestra mensaje (regresión MISC-01).
+- [ ] **LAY-THG-04** — `BUIThemeEditorRenderingTests` — controles por paleta.
+- [ ] **LAY-THG-05** — `BUIThemePreviewRenderingTests` — muestras de componentes con tema aplicado.
+- [ ] **LAY-THG-06** — `BUIThemeGeneratorSnapshotTests` — estado inicial y tras edición.
+
+### BUIToast + BUIToastHost (`Components/Layout/Toast/`)
+
+- [ ] **LAY-TOA-01** — `BUIToastRenderingTests` — root, severity, icon, close button.
+- [ ] **LAY-TOA-02** — `BUIToastStateTests` — auto-dismiss timer, pause on hover.
+- [ ] **LAY-TOA-03** — `BUIToastInteractionTests` — close manual, callback `OnDismiss`.
+- [ ] **LAY-TOA-04** — `BUIToastVariantTests` — `BUIToastVariant`.
+- [ ] **LAY-TOA-05** — `BUIToastHostRenderingTests` — posiciones (top-left/top-right/...), vacío/con toasts.
+- [ ] **LAY-TOA-06** — `BUIToastHostInteractionTests` — `IToastService.Show(...)` → host renderiza; dispose limpio (regresión LAYOUT-02).
+- [ ] **LAY-TOA-07** — `BUIToastAccessibilityTests` — `role="alert"` o `role="status"`, `aria-live`.
+- [ ] **LAY-TOA-08** — `BUIToastSnapshotTests` — severities × posiciones.
+
+### BUIInitializer (`Components/Layout/BUIInitializer.razor`)
+
+- [ ] **LAY-INIT-01** — `BUIInitializerRenderingTests` — monta sin markup visible (o minimal).
+- [ ] **LAY-INIT-02** — `BUIInitializerInteractionTests` — suscripción a `IThemeJsInterop.OnThemeChanged` + desuscripción en dispose (regresión LAYOUT-01).
+
+### BUIBlazorLayout (`Components/Layout/BUIBlazorLayout.razor`)
+
+- [ ] **LAY-BL-01** — `BUIBlazorLayoutRenderingTests` — `@Body` renderizado, `BUIToastHost`/`BUIModalHost` incluidos.
+- [ ] **LAY-BL-02** — `BUIBlazorLayoutIntegrationTests` — modal + toast simultáneos.
+
+### BUICultureSelector (`Components/Layout/` — ya presente en tests)
+
+- [ ] **LAY-CULT-01** — Refactor: fusionar `Server_BUICultureSelectorRenderingTests` + `Wasm_BUICultureSelectorRenderingTests` en `BUICultureSelectorRenderingTests` con `TestScenarios.All`.
+- [ ] **LAY-CULT-02** — `BUICultureSelectorStateTests` — cambio de culture.
+- [ ] **LAY-CULT-03** — `BUICultureSelectorInteractionTests` — selección → `ITestCultureService` recibe.
+- [ ] **LAY-CULT-04** — `BUICultureSelectorAccessibilityTests`.
+- [ ] **LAY-CULT-05** — `BUICultureSelectorSnapshotTests`.
 
 ---
+
+## E. CORE — base components (ampliaciones)
+
+### [ ] CORE-T-01 — `BUIComponentBaseTests` — cobertura de `PatchVolatileAttributes` post-CORE-01
+- Verificar que cambios runtime en `Error`/`Loading`/`ReadOnly`/`Required`/`FullWidth` refrescan `data-bui-*` sin full rebuild.
+
+### [ ] CORE-T-02 — `BUIComponentBaseTests` — `BuildComponentDataAttributes` reejecutado en re-render
+- Regresión MISC-05.
+
+### [ ] CORE-T-03 — `BUIInputComponentBaseTests` — `PatchVolatileAttributes` tras focus/blur
+- Regresión STD-10 + MISC-05.
+
+### [ ] CORE-T-04 — `BUIComponentAttributesBuilderTests` — cache de `IHas*` flags (regresión PERF-04)
+- Construir N instancias del mismo tipo; verificar que reflection se evalúa una vez.
+
+### [ ] CORE-T-05 — `FeatureDefinitionsTests` — ninguna constante huérfana
+- Enumerar reflectivamente; asegurar que cada `DataAttributes.*` y `InlineVariables.*` aparece al menos en un generator o componente (evita dead constants).
+
+---
+
+## F. LIBRARY — cross-cutting (ampliaciones)
+
+### [ ] LIB-01 — `CssColorSystemTests` — conversiones HSV↔RGB, mezcla `color-mix` fallback.
+
+### [ ] LIB-02 — `ServiceRegistrationTests` — `AddBlazorUILocalizationServer`/`Wasm` expuestos y no duplicados.
+
+### [ ] LIB-03 — `VariantRegistryTests` — multi-componente, sobreescritura, fallback a default.
+
+### [ ] LIB-04 — `PaletteColorTests` — cada `PaletteColor` resuelve a `var(--palette-*)` correcto.
+
+### [ ] LIB-05 — `BUIShadowPresetsTests` — `Elevation(n)` genera `--bui-inline-shadow` válido para cada n.
+
+### [ ] LIB-06 — `BUITransitionPresetsTests` — `HoverLift`/etc emite `data-bui-transitions` + vars correctas.
+
+---
+
+## G. INFRAESTRUCTURA DE TESTS (soporte)
+
+### [ ] INFRA-01 — Limpiar `<Compile Remove>` heredados en `.csproj`
+- Entradas obsoletas de snapshot paths con el `BlazorScenario.ToString()` completo. Verificar que ya no aplican y eliminar.
+
+### [ ] INFRA-02 — Helper `AssertBuiComponent(cut, kebabName)`
+- Extensión en `ComponentTestExtensions` para reducir boilerplate `cut.Find("bui-component").GetAttribute("data-bui-component").Should().Be(...)`.
+
+### [ ] INFRA-03 — Helper `RenderWithEditForm<TModel>(ctx, model, childBuilder)`
+- Facilita tests de Validation sin crear un consumer razor por caso.
+
+### [ ] INFRA-04 — Convención de nombres de snapshot
+- Hoy se usa `.UseParameters(scenario.Name)` → `_scenario=Server.verified.txt`. Mantener y documentar si se añaden más dimensiones (culture, theme, etc.).
+
+---
+
+## Orden sugerido de ataque
+
+1. **FRM-TXT-*** (Input text es la base de la familia; habilita pattern para Number/TextArea/Dropdown).
+2. **FRM-CHK/SW/RD-*** (inputs simples; cubren STD-03/04/05).
+3. **FRM-NUM/TA/DT/COL/DD-*** (inputs complejos).
+4. **GEN-BUTTON-01** (descomentar Accessibility del estándar).
+5. **GEN-BADGE/SVG/LOAD/SW/TABS-*** (genéricos simples).
+6. **GEN-TM/TS/DC-*** (genéricos complejos).
+7. **LAY-CARD/GRID/SIDE/STK-*** (layouts estáticos).
+8. **LAY-DLG/TOA/THG/THS-*** (layouts con servicios y JS).
+9. **LAY-INIT/BL/CULT-*** (cierre).
+10. **CORE-T-\* + LIB-\*** (en paralelo, cuando se detecten gaps desde tests de componente).
+11. **INFRA-\*** (refactor continuo conforme se repiten patrones).
 
 ## Notas
 
-- **CORE-01 y STD-10 están acoplados**: añadir `Floated` a volátiles (CORE-01) facilita implementar STD-10 limpiamente.
-- **STD-* comparten patrón**: crear primero las constantes en `FeatureDefinitions`, luego migrar componentes uno a uno.
-- **Orden sugerido de ataque**:
-  1. CORE-01, CORE-02 (base sólida para resto).
-  2. INPUT-01, INPUT-02 (bugs funcionales visibles).
-  3. SEC-01, SEC-02.
-  4. STD-01..11 por bloques (tabs → switch/checkbox → radio/number/textarea → card → dropdown → floated).
-  5. DISP-01..04 + LAYOUT-01..05.
-  6. PERF-*.
-  7. A11Y-*.
-  8. MISC-*.
-
-- **Claims descartados durante verificación** (no son bugs reales):
-  - `BUIComponentJsBehaviorBuilder.cs:30` lógica OR — es guard-clause correcto.
-  - `BUIInputComponentBase.cs:34` `field || Error` — uso válido de C# 13 `field` keyword.
-  - `BUIInputDropdown` herencia — es composición deliberada; reclasificado como inconsistencia API (STD-11) no bug.
+- Cada PR debe incluir también la regeneración de snapshots afectados (`*.verified.txt`).
+- Si un test descubre un bug real en producción, abrir una entrada en `done_TASKS.md`-sibling (nuevo `TASKS_bugs.md` o sección nueva aquí) y dejar el test **rojo** hasta arreglar, no silenciarlo.
+- Cuando un `IHas*` nuevo se añada al core, actualizar también `CORE-T-*` y `MISC-03` equivalent en memoria viva.

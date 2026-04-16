@@ -1,0 +1,137 @@
+﻿[
+  {
+    Name: Default_Outlined,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Name</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-z0qouln7lr />
+
+                
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Filled_With_Value,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="filled" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Name</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" value="filled value" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-z0qouln7lr />
+
+                
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Standard_With_Helper,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="standard" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Email</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-z0qouln7lr />
+
+                
+                </div>
+
+            <div id="bui-helper-<ID>" class="_bui-field-helper" b-tk6qfhhc0u>Your primary email address.</div></bui-component>
+  },
+  {
+    Name: Required,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Required Field<span class="bui-input__required">*</span></label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="true" required b-z0qouln7lr />
+
+                
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Disabled</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" disabled b-z0qouln7lr />
+
+                
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Loading,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="true" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Loading</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" disabled b-z0qouln7lr />
+
+                
+                <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="loading-indicator" data-bui-variant="circularprogress" data-bui-size="medium" role="status" aria-live="polite" aria-label="Loading" b-9uouee14ai><svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false" b-9uouee14ai><circle cx="25" cy="25" r="20" b-9uouee14ai></circle></svg></bui-component></div></div>
+
+            </bui-component>
+  },
+  {
+    Name: Error_State,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Error</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="true" aria-required="false" b-z0qouln7lr />
+
+                
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: With_Prefix_Suffix,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Website</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                <div class="_bui-addon bui-input__addon--prefix" b-gjdaj7dgdt><span>https://</span></div>
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-z0qouln7lr />
+
+                <div class="_bui-addon bui-input__addon--suffix" b-gjdaj7dgdt><span>.com</span></div>
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Sized_Large_Compact,
+    Html:
+<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="large" data-bui-density="compact" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Styled</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <input type="text" id="bui-input-<ID>" class="bui-input__field" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-z0qouln7lr />
+
+                
+                </div>
+
+            </bui-component>
+  }
+]

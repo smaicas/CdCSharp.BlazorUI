@@ -13,6 +13,10 @@ public static class VerifyConfig
         new(@"blazor:(onclick|onchange|oninput|onfocus|onblur|onsubmit)=""\d+""",
             RegexOptions.Compiled);
 
+    private static readonly Regex BuiGeneratedIdRegex =
+        new(@"bui-(input|helper)-[a-f0-9]{32}",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     [ModuleInitializer]
     public static void Init()
     {
@@ -30,6 +34,10 @@ public static class VerifyConfig
             text = OnClickRegex.Replace(
                 text,
                 @"blazor:$1=""<EVENT>""");
+
+            text = BuiGeneratedIdRegex.Replace(
+                text,
+                @"bui-$1-<ID>");
 
             sb.Clear();
             sb.Append(text);

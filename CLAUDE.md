@@ -167,9 +167,108 @@ Input components use `BUIInputComponentBase` (which already implements `IInputFa
 
 ## Testing
 
-- Integration tests (`test/CdCSharp.BlazorUI.Tests.Integration`) use **bUnit 2.x**, **Verify** for snapshots, **FluentAssertions**, **NSubstitute**, **xUnit**.
-- Tests are parameterized over Server vs. WASM hosting via `TestScenarios.All` / `.OnlyServer` / `.OnlyWasm` (see `Infrastructure/TestScenarios.cs` and `Contexts/`). Most component tests should run under both scenarios.
-- Verify produces `*.received.txt` / `*.verified.txt` snapshots; `received` files are gitignored but the `.csproj` also excludes some historical snapshot directories explicitly — don't be surprised by the `<Compile Remove>` entries.
+### Stack
+
+- **bUnit 2.x** — Blazor component renderer.
+- **xUnit** — test runner + `[Theory]` / `[Trait]` attributes.
+- **FluentAssertions** — preferred assertion style (`.Should().Be(...)`, `.Should().Contain(...)`).
+- **Verify** + **Verify.Xunit** + **Verify.Blazor** — snapshot testing (`*.verified.txt`).
+- **NSubstitute** — test doubles when an `I*` service cannot be faked locally.
+
+### Project layout
+
+- `test/CdCSharp.BlazorUI.Tests.Integration` — the main test assembly. Tests live under `Tests/`:
+  - `Tests/Components/<ComponentName>/` — one folder per BlazorUI component under test.
+  - `Tests/Core/BaseComponents/` — tests for `BUIComponentBase` / `BUIInputComponentBase`.
+  - `Tests/Library/` — cross-cutting library behaviour (DI registration, `CssColor`, `VariantRegistry`, etc.).
+- `test/CdCSharp.BlazorUI.Tests.Integration.Templates` — razor-based test subjects (stubs, consumers). Add a `.razor` here whenever a test needs more than a single component rendered with `ctx.Render<T>(...)` — e.g. to exercise cascading parameters, `EditForm` integration, or multi-component parent/child flows. Consumer names end in `Consumer`, base stubs end in `_TestStub`.
+- `test/CdCSharp.BlazorUI.Tests.Integration/Infrastructure/` — shared test plumbing:
+  - `Contexts/BlazorTestContextBase.cs` — inherits `BunitContext`, registers `AddBlazorUI()`, `JSRuntimeMode.Loose`, `FakeNavigationManager`. Never construct `BunitContext` directly.
+  - `Contexts/ServerTestContext.cs` / `WasmTestContext.cs` — add the hosting-specific localization package.
+  - `TestScenarios.cs` — parameter source exposing `All`, `OnlyServer`, `OnlyWasm` (each yields a `BlazorScenario(Name, CreateContext)`). Feeds `[MemberData]`.
+  - `Fakes/` — hand-rolled doubles (`FakeNavigationManager`, `FakeServerCultureService`, etc.).
+  - `VerifyConfig.cs` — module initializer that scrubs `blazor:elementReference` GUIDs and event IDs from snapshots.
+  - `ComponentTestExtensions.cs` — `GetNormalizedMarkup()` (CRLF→LF + trim) for stable snapshot input.
+
+### Per-component file layout (the standard — follow Button)
+
+One folder per component at `Tests/Components/<ComponentName>/`, one class per **context**:
+
+| File | Class | `[Trait]` | Scope |
+|---|---|---|---|
+| `<Component>RenderingTests.cs` | `<Component>RenderingTests` | `"Component Rendering"` | Initial DOM: root tag, `data-bui-*`, `--bui-inline-*` vars, presence of children. |
+| `<Component>StateTests.cs` | `<Component>StateTests` | `"Component State"` | Re-renders after parameter changes (color, size, loading, disabled, icons, ripple, custom attrs, volatile attrs). |
+| `<Component>InteractionTests.cs` | `<Component>InteractionTests` | `"Component Interaction"` | Click/change/input/keyboard handlers, `EventCallback` firing, disabled gating. |
+| `<Component>VariantTests.cs` | `<Component>VariantTests` | `"Component Variants"` | Custom variant registration via `AddBlazorUIVariants`, default vs. named variant rendering. |
+| `<Component>AccessibilityTests.cs` | `<Component>AccessibilityTests` | `"Component Accessibility"` | `role`, `aria-*`, keyboard nav, focus management, tab-index. |
+| `<Component>SnapshotTests.cs` | `<Component>SnapshotTests` | `"Component Snapshots"` | `Verify` over normalized markup across representative states (Default, WithIcon, Loading, Disabled, Elevated, etc.). |
+
+Not every component needs every file — only the contexts that apply. Families may also warrant `<Component>ValidationTests.cs` (inputs + `EditContext`) or `<Component>IntegrationTests.cs` (parent/child composition).
+
+### Test class conventions
+
+- **Namespace**: `CdCSharp.BlazorUI.Tests.Integration.Tests.Components.<ComponentName>` (mirror folder).
+- **Class name ends in the context** (`...RenderingTests`, `...StateTests`, …). One context per class.
+- **Attribute on class**: `[Trait("Component <Context>", "<ComponentName>")]` — drives test-explorer grouping.
+- **Every test is `[Theory]` with `[MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]`** by default so it runs under both Server and WASM. Use `OnlyServer` / `OnlyWasm` only when the behaviour is host-specific (e.g. circuit lifecycle, WASM-only localization).
+- **Test method name**: `Should_<ExpectedBehaviour>[_When_<Condition>]` (e.g. `Should_Render_With_Correct_DataAttributes`, `Should_Not_Fire_Click_When_Disabled`).
+- **Signature**: `public async Task Should_...(BlazorScenario scenario)`.
+- **Body skeleton**:
+  ```csharp
+  await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+  // Arrange
+  IRenderedComponent<BUIFoo> cut = ctx.Render<BUIFoo>(p => p.Add(c => c.X, ...));
+
+  // Act
+  cut.Render(p => p.Add(c => c.Y, ...));   // re-render, or cut.Find("...").Click();
+
+  // Assert
+  cut.Find("bui-component").GetAttribute("data-bui-...").Should().Be(...);
+  ```
+- Use `// Arrange` / `// Act` / `// Assert` banner comments — it is the project style, not optional.
+- Always dispose the context with `await using` — the `BunitContext` holds a `ServiceProvider`.
+
+### Assertion rules for DOM-bound tests
+
+These mirror the component architecture — don't drift from them:
+
+1. **Target the root via the custom tag**: `cut.Find("bui-component")`. Component identity is `data-bui-component="<kebab-name>"`, not a CSS class.
+2. **Read state from `data-bui-*` attributes**, not class lists. E.g. loading → `data-bui-loading="true"`; disabled → `data-bui-disabled="true"`; size → `data-bui-size="large"`. Mirrors rule 7 of the component standard.
+3. **Read styling from `--bui-inline-*` vars** in the root element's `style` attribute — `.GetAttribute("style").Should().Contain("--bui-inline-color: rgba(...)")`. Don't assert on private `--_<component>-*` vars.
+4. **BEM class assertions** (`.bui-button__icon--leading`) are allowed for structural children that live inside the component, but never for state.
+5. **User-supplied attributes** (`class`, `style`, `data-testid`, etc.) must be preserved through re-renders — assert this once per component in `StateTests`.
+6. **Volatile attributes**: when flipping `Disabled` / `Loading` / `Error` / `ReadOnly` / `Required` / `FullWidth` / `Active` at runtime, re-read the same `IElement` reference after `cut.Render(...)` and assert the new `data-bui-*` value — that exercises `BUIComponentAttributesBuilder.PatchVolatileAttributes`.
+
+### Interaction tests
+
+- For components whose public contract is a single callback, call `ctx.Render<BUIFoo>` directly and wire `.Add(c => c.OnClick, _ => ...)`.
+- For behaviours that depend on hosted usage (parent state, cascading params, `EditForm`), add a razor consumer under `test/CdCSharp.BlazorUI.Tests.Integration.Templates/Components/Consumers/Test<Component>Consumer.razor` and render that. See `TestBUIButtonConsumer` as the reference.
+- Assert the **callback side-effect** (counter, captured value) **and** the DOM side-effect (displayed count, new state) when both are reachable.
+
+### Variant tests
+
+Each component that exposes variants must have a test that:
+
+1. Builds a `BUIButtonVariant.Custom("X")` (or the component's own variant factory).
+2. Registers it via `ctx.Services.AddBlazorUIVariants(b => b.ForComponent<BUIFoo>().AddVariant(custom, foo => builder => { ... }))`.
+3. Renders with `.Add(c => c.Variant, customVariant)` and asserts that the custom render fragment ran (a marker class / text you emitted).
+
+### Snapshot tests (`Verify`)
+
+- Use the "representative states" pattern from `BUIButtonSnapshotTests`: define an array of `(Name, Builder)` tuples, render each, capture `cut.GetNormalizedMarkup()`, and `await Verify(results).UseParameters(scenario.Name)`.
+- One snapshot test per component is usually enough; spread the states across the `testCases` array rather than creating many methods.
+- `*.received.txt` is generated on diff — review, then rename to `*.verified.txt` to accept.
+- Scrubbers in `VerifyConfig` already strip `blazor:elementReference` GUIDs and event IDs — do not attempt to match them in assertions.
+- Snapshots live next to the test file. Historical snapshot paths appear as `<Compile Remove>` entries in the `.csproj`; ignore them.
+
+### Base-component tests
+
+`Tests/Core/BaseComponents/BUIComponentBaseTests.cs` + `BUIInputComponentBaseTests.cs` exercise the framework contract (`ComputedAttributes`, `PatchVolatileAttributes`, `BuildComponentDataAttributes`, validation wiring, `IHas*` reflection). When adding a new `IHas*` interface or a new `FeatureDefinitions` constant, extend these tests first — they catch regressions that per-component tests would miss.
+
+### Library tests
+
+`Tests/Library/` covers things with no single owning component: `ServiceRegistrationTests` (DI), `VariantRegistryTests`, `CssColorSystemTests`. New cross-cutting utilities (color math, registry behaviour, DI extensions) go here, not under `Components/`.
 
 ## Release / versioning
 
