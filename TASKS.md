@@ -381,11 +381,13 @@ Convenciones:
 
 > Resuelto en commit `f47bcee` — *MISC-03: register missing FeatureDefinitions constants and replace literals*. Añadidos 14 `DataAttributes` y 30+ `InlineVariables` constants. Alineado `PickerBase = "data-bui-picker-base"` con la familia CSS (BUIColorPicker recibe estilos por primera vez). Eliminadas emisiones manuales redundantes (`data-bui-data-collection`, `data-bui-picker-base`) en `BUIDataCollectionBase`/`BUIDatePicker`/`BUITimePicker`. Sustituidos los literales restantes en `BUIBadge`, `BUINotificationBadge`, `BUISwitch`, `BUISidebarLayout`, `BUIStackedLayout`, `BUIToast`, `BUITreeMenu`, `BUITreeSelector`, `BUIInputCheckbox`, `BUIInputRadio`, `BUIDataCards`, `BUIDataGrid`, `RowStylePattern.cs`. Auditoría: `grep -E '"data-bui-|"--bui-inline-' src/CdCSharp.BlazorUI/**/*.{cs,razor}` devuelve 0 coincidencias.
 
-### [ ] MISC-04 — Snapshot tests cubrir cambios de contrato DOM
+### [x] MISC-04 — Snapshot tests cubrir cambios de contrato DOM
 - **Origen**: tras INPUT-01, STD-*, CORE-01 el DOM emitido cambia. Los snapshots `Verify` deben regenerarse y revisarse manualmente para confirmar que el cambio es intencional.
 - **Archivos**: `test/CdCSharp.BlazorUI.Tests.Integration/**/*.verified.*`
 - **Cambios**: regenerar y revisar en PR separado o junto al cambio funcional.
 - **Aceptación**: diff de snapshots documentado en commit/PR.
+
+> Resuelto en commit `8533fb0` — *MISC-04: regenerate BUIButton Verify snapshots for new DOM contract*. Único snapshot `Verify` activo en `Tests.Integration` (`BUIButtonSnapshotTests`) regenerado para Server y Wasm; cambios revisados y documentados en el commit (density, disabled, shadow, loading a11y, transitions namespacing). El resto de los fallos de la suite (≈130) son pruebas basadas en aserciones explícitas sobre el DOM o `InputBase`/`ValueExpression` que rompieron por trabajo previo (INPUT-01, CORE-01, STD-*) y requieren actualización individual fuera del alcance de este ítem; quedan como deuda separada.
 
 ---
 
