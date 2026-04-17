@@ -182,7 +182,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-LOAD-04** — `BUILoadingIndicatorAccessibilityTests` — `role="progressbar"` + `aria-valuenow/min/max` en linear determinate.
 - [x] **GEN-LOAD-05** — `BUILoadingIndicatorSnapshotTests` — cada variante × indeterminate/determinate.
 
-### BUISvgIcon (`Components/Generic/Svg/`) — ✅ (commit pending)
+### BUISvgIcon (`Components/Generic/Svg/`) — ✅ `98a3b24`
 
 - [x] **GEN-SVG-01** — `BUISvgIconRenderingTests` — root, catálogo conocido (`BUIIcons.*`), `viewBox`.
 - [x] **GEN-SVG-02** — `BUISvgIconStateTests` — cambio de `Icon`, color, size.
@@ -190,13 +190,13 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-SVG-04** — `BUISvgIconSecurityTests` — `SvgMarkupSanitizer` elimina `<script>`, `on*`, `<foreignObject>` (regresión SEC-01).
 - [x] **GEN-SVG-05** — `BUISvgIconSnapshotTests` — 3–4 iconos representativos.
 
-### BUISwitch (`Components/Generic/Switch/`)
+### BUISwitch (`Components/Generic/Switch/`) — ✅ (commit pending)
 
-- [ ] **GEN-SW-01** — `BUISwitchRenderingTests` — `data-bui-component="switch"`, `data-bui-active` (regresión STD-03), vars `--bui-inline-track-*`/`--bui-inline-thumb-*` (regresión STD-09).
-- [ ] **GEN-SW-02** — `BUISwitchStateTests` — toggle, `Disabled`.
-- [ ] **GEN-SW-03** — `BUISwitchInteractionTests` — click → toggle, space/enter.
-- [ ] **GEN-SW-04** — `BUISwitchAccessibilityTests` — `role="switch"`, `aria-checked` (regresión A11Y-04).
-- [ ] **GEN-SW-05** — `BUISwitchSnapshotTests` — off/on/disabled/custom colors.
+- [x] **GEN-SW-01** — `BUISwitchRenderingTests` — `data-bui-component="switch"`, `data-bui-active` (regresión STD-03), vars `--bui-inline-track-*`/`--bui-inline-thumb-*` (regresión STD-09).
+- [x] **GEN-SW-02** — `BUISwitchStateTests` — toggle, `Disabled`.
+- [x] **GEN-SW-03** — `BUISwitchInteractionTests` — click → toggle, space/enter.
+- [x] **GEN-SW-04** — `BUISwitchAccessibilityTests` — `role="switch"`, `aria-checked` (regresión A11Y-04).
+- [x] **GEN-SW-05** — `BUISwitchSnapshotTests` — off/on/disabled/custom colors.
 
 ### BUITabs + BUITab (`Components/Generic/Tabs/`)
 

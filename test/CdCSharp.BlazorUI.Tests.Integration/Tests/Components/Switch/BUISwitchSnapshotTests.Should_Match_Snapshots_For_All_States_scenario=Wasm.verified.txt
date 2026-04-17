@@ -1,0 +1,37 @@
+﻿[
+  {
+    Name: Default_Off,
+    Html:
+<bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="snap-off" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="snap-off" role="switch" aria-checked="false" aria-label="Toggle" aria-describedby="" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span></label></bui-component>
+  },
+  {
+    Name: Default_On,
+    Html:
+<bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="true" b-6fmsys1qri><label class="bui-switch" for="snap-on" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="snap-on" role="switch" checked aria-checked="true" aria-label="Toggle" aria-describedby="" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span></label></bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="true" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="snap-disabled" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="snap-disabled" role="switch" disabled aria-checked="false" aria-label="Toggle" aria-describedby="" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span></label></bui-component>
+  },
+  {
+    Name: With_Label,
+    Html:
+<bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="false" b-6fmsys1qri><label class="bui-switch" for="snap-label" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="snap-label" role="switch" aria-checked="false" aria-describedby="" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span><span class="bui-switch__label" b-6fmsys1qri>Enable feature</span></label></bui-component>
+  },
+  {
+    Name: Custom_Colors,
+    Html:
+<bui-component data-bui-component="switch" data-bui-size="medium" data-bui-density="standard" data-bui-disabled="false" data-bui-active="false" style="--bui-inline-track-inactive-bg: #aaaaaa; --bui-inline-track-active-bg: #00aa00" b-6fmsys1qri><label class="bui-switch" for="snap-colors" blazor:onclick="<EVENT>" blazor:onclick:preventDefault b-6fmsys1qri><input type="checkbox" id="snap-colors" role="switch" aria-checked="false" aria-label="Toggle" aria-describedby="" class="bui-switch__input" b-6fmsys1qri />
+
+        <span class="bui-switch__track" aria-hidden="true" b-6fmsys1qri><span class="bui-switch__thumb" b-6fmsys1qri></span></span></label></bui-component>
+  }
+]
