@@ -1,0 +1,26 @@
+﻿[
+  {
+    Name: Underline_First_Active,
+    Html:
+<bui-component data-bui-component="tabs" data-bui-variant="underline" data-bui-size="medium" b-rx3puvv3wl><div class="bui-tabs__header" role="tablist" b-rx3puvv3wl><button type="button" role="tab" id="bui-tab-tab1" class="bui-tabs__tab" data-bui-active="true" aria-selected="true" aria-controls="bui-tabpanel-tab1" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab One</span></button><button type="button" role="tab" id="bui-tab-tab2" class="bui-tabs__tab" data-bui-active="false" aria-selected="false" aria-controls="bui-tabpanel-tab2" tabindex="-1" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab Two</span></button></div>
+                <div class="bui-tabs__content" role="tabpanel" id="bui-tabpanel-tab1" aria-labelledby="bui-tab-tab1" tabindex="0" b-rx3puvv3wl>Content One</div></bui-component>
+  },
+  {
+    Name: Underline_Second_Active,
+    Html:
+<bui-component data-bui-component="tabs" data-bui-variant="underline" data-bui-size="medium" b-rx3puvv3wl><div class="bui-tabs__header" role="tablist" b-rx3puvv3wl><button type="button" role="tab" id="bui-tab-tab1" class="bui-tabs__tab" data-bui-active="false" aria-selected="false" aria-controls="bui-tabpanel-tab1" tabindex="-1" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab One</span></button><button type="button" role="tab" id="bui-tab-tab2" class="bui-tabs__tab" data-bui-active="true" aria-selected="true" aria-controls="bui-tabpanel-tab2" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab Two</span></button></div>
+                <div class="bui-tabs__content" role="tabpanel" id="bui-tabpanel-tab2" aria-labelledby="bui-tab-tab2" tabindex="0" b-rx3puvv3wl>Content Two</div></bui-component>
+  },
+  {
+    Name: Pills_Variant,
+    Html:
+<bui-component data-bui-component="tabs" data-bui-variant="pills" data-bui-size="medium" b-rx3puvv3wl><div class="bui-tabs__header" role="tablist" b-rx3puvv3wl><button type="button" role="tab" id="bui-tab-tab1" class="bui-tabs__tab" data-bui-active="true" aria-selected="true" aria-controls="bui-tabpanel-tab1" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab One</span></button><button type="button" role="tab" id="bui-tab-tab2" class="bui-tabs__tab" data-bui-active="false" aria-selected="false" aria-controls="bui-tabpanel-tab2" tabindex="-1" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab Two</span></button></div>
+                <div class="bui-tabs__content" role="tabpanel" id="bui-tabpanel-tab1" aria-labelledby="bui-tab-tab1" tabindex="0" b-rx3puvv3wl>Content One</div></bui-component>
+  },
+  {
+    Name: Enclosed_Variant,
+    Html:
+<bui-component data-bui-component="tabs" data-bui-variant="enclosed" data-bui-size="medium" b-rx3puvv3wl><div class="bui-tabs__header" role="tablist" b-rx3puvv3wl><button type="button" role="tab" id="bui-tab-tab1" class="bui-tabs__tab" data-bui-active="true" aria-selected="true" aria-controls="bui-tabpanel-tab1" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab One</span></button><button type="button" role="tab" id="bui-tab-tab2" class="bui-tabs__tab" data-bui-active="false" aria-selected="false" aria-controls="bui-tabpanel-tab2" tabindex="-1" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rx3puvv3wl blazor:elementReference="<GUID>"><span class="bui-tabs__tab-label" b-rx3puvv3wl>Tab Two</span></button></div>
+                <div class="bui-tabs__content" role="tabpanel" id="bui-tabpanel-tab1" aria-labelledby="bui-tab-tab1" tabindex="0" b-rx3puvv3wl>Content One</div></bui-component>
+  }
+]

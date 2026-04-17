@@ -190,7 +190,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-SVG-04** — `BUISvgIconSecurityTests` — `SvgMarkupSanitizer` elimina `<script>`, `on*`, `<foreignObject>` (regresión SEC-01).
 - [x] **GEN-SVG-05** — `BUISvgIconSnapshotTests` — 3–4 iconos representativos.
 
-### BUISwitch (`Components/Generic/Switch/`) — ✅ (commit pending)
+### BUISwitch (`Components/Generic/Switch/`) — ✅ `da089f2`
 
 - [x] **GEN-SW-01** — `BUISwitchRenderingTests` — `data-bui-component="switch"`, `data-bui-active` (regresión STD-03), vars `--bui-inline-track-*`/`--bui-inline-thumb-*` (regresión STD-09).
 - [x] **GEN-SW-02** — `BUISwitchStateTests` — toggle, `Disabled`.
@@ -198,15 +198,15 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-SW-04** — `BUISwitchAccessibilityTests` — `role="switch"`, `aria-checked` (regresión A11Y-04).
 - [x] **GEN-SW-05** — `BUISwitchSnapshotTests` — off/on/disabled/custom colors.
 
-### BUITabs + BUITab (`Components/Generic/Tabs/`)
+### BUITabs + BUITab (`Components/Generic/Tabs/`) — ✅ (commit pending)
 
-- [ ] **GEN-TABS-01** — `BUITabsRenderingTests` — root, `role="tablist"`, tabs hijos con `role="tab"`, `data-bui-active="true"` en activo (regresión STD-01), `aria-selected`.
-- [ ] **GEN-TABS-02** — `BUITabsStateTests` — cambio de tab activa, registro/desregistro de `BUITab` dinámicos.
-- [ ] **GEN-TABS-03** — `BUITabsInteractionTests` — click en tab, flechas izq/der, `Home`/`End` (regresión A11Y-02).
-- [ ] **GEN-TABS-04** — `BUITabsVariantTests` — `BUITabsVariant`.
-- [ ] **GEN-TABS-05** — `BUITabsAccessibilityTests` — `aria-controls`, `aria-selected`, focus management, roving tabindex.
-- [ ] **GEN-TABS-06** — `BUITabsSnapshotTests` — N tabs × tab activa distinta.
-- [ ] **GEN-TABS-07** — `BUITabsDisposalTests` — dispose de múltiples tabs thread-safe (regresión DISP-04).
+- [x] **GEN-TABS-01** — `BUITabsRenderingTests` — root, `role="tablist"`, tabs hijos con `role="tab"`, `data-bui-active="true"` en activo (regresión STD-01), `aria-selected`.
+- [x] **GEN-TABS-02** — `BUITabsStateTests` — cambio de tab activa, registro/desregistro de `BUITab` dinámicos.
+- [x] **GEN-TABS-03** — `BUITabsInteractionTests` — click en tab, flechas izq/der, `Home`/`End` (regresión A11Y-02).
+- [x] **GEN-TABS-04** — `BUITabsVariantTests` — `BUITabsVariant`.
+- [x] **GEN-TABS-05** — `BUITabsAccessibilityTests` — `aria-controls`, `aria-selected`, focus management, roving tabindex.
+- [x] **GEN-TABS-06** — `BUITabsSnapshotTests` — N tabs × tab activa distinta.
+- [x] **GEN-TABS-07** — `BUITabsDisposalTests` — dispose de múltiples tabs thread-safe (regresión DISP-04).
 
 ### BUITreeMenu (`Components/Generic/Tree/TreeMenu/`)
 
