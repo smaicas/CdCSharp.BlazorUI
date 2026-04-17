@@ -227,15 +227,15 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### DataCollections (`Components/Generic/DataCollections/`)
 
-- [ ] **GEN-DC-01** — `BUIDataColumnRenderingTests` — registra en `DataColumnRegistry`, emite header correcto.
-- [ ] **GEN-DC-02** — `BUIDataGridRenderingTests` — root `data-bui-data-collection`, header + rows, paginación opcional.
-- [ ] **GEN-DC-03** — `BUIDataGridStateTests` — cambio de `Items`, sort, filter, page size.
-- [ ] **GEN-DC-04** — `BUIDataGridInteractionTests` — click header → sort, paginación, selección de row.
-- [ ] **GEN-DC-05** — `BUIDataGridAccessibilityTests` — `role="table"`, `role="row"`, `aria-sort`.
-- [ ] **GEN-DC-06** — `BUIDataCardsRenderingTests` — render items como cards.
-- [ ] **GEN-DC-07** — `BUIDataCardsStateTests` — cambio de items, layout.
-- [ ] **GEN-DC-08** — `BUIDataCollectionIntegrationTests` — grid ↔ cards con mismos `BUIDataColumn`.
-- [ ] **GEN-DC-09** — `BUIDataCollectionSnapshotTests` — grid vacío / con datos / sorted / paginated.
+- [x] **GEN-DC-01** — `BUIDataColumnRenderingTests` — registra en `DataColumnRegistry`, emite header correcto.
+- [x] **GEN-DC-02** — `BUIDataGridRenderingTests` — root `data-bui-data-collection`, header + rows, paginación opcional.
+- [x] **GEN-DC-03** — `BUIDataGridStateTests` — cambio de `Items`, sort, filter, page size.
+- [x] **GEN-DC-04** — `BUIDataGridInteractionTests` — click header → sort, paginación, selección de row.
+- [x] **GEN-DC-05** — `BUIDataGridAccessibilityTests` — `role="table"`, `role="row"`, `aria-sort`.
+- [x] **GEN-DC-06** — `BUIDataCardsRenderingTests` — render items como cards.
+- [x] **GEN-DC-07** — `BUIDataCardsStateTests` — cambio de items, layout.
+- [x] **GEN-DC-08** — `BUIDataCollectionIntegrationTests` — grid ↔ cards con mismos `BUIDataColumn`.
+- [x] **GEN-DC-09** — `BUIDataCollectionSnapshotTests` — grid vacío / con datos / sorted / paginated.
 
 ---
 
