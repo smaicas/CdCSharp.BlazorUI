@@ -243,10 +243,10 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUICard (`Components/Layout/Card/`)
 
-- [ ] **LAY-CARD-01** — `BUICardRenderingTests` — root, slots (header/media/body/footer), `--_card-media-height` (regresión STD-08).
-- [ ] **LAY-CARD-02** — `BUICardStateTests` — cambio de contenido, `Shadow`, `Variant`.
-- [ ] **LAY-CARD-03** — `BUICardVariantTests` — `BUICardVariant`.
-- [ ] **LAY-CARD-04** — `BUICardSnapshotTests` — variantes × con/sin media.
+- [x] **LAY-CARD-01** — `BUICardRenderingTests` — root, slots (header/media/body/footer), `--_card-media-height` (regresión STD-08).
+- [x] **LAY-CARD-02** — `BUICardStateTests` — cambio de contenido, `Shadow`, `Variant`.
+- [x] **LAY-CARD-03** — `BUICardVariantTests` — `BUICardVariant`.
+- [x] **LAY-CARD-04** — `BUICardSnapshotTests` — variantes × con/sin media.
 
 ### BUIDialog + BUIDrawer + BUIModalHost + BUIModalContainer (`Components/Layout/Dialog/`)
 

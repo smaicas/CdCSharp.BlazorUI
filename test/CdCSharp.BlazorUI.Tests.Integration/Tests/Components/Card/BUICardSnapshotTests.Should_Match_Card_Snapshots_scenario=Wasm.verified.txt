@@ -1,0 +1,22 @@
+﻿[
+  {
+    Name: Default,
+    Html: <bui-component data-bui-component="card" data-bui-variant="default" data-bui-clickable="false" data-bui-media-position="top" b-bhdyo2n8m9><div class="bui-card" blazor:onclick="<EVENT>" b-bhdyo2n8m9><div class="bui-card__content" b-bhdyo2n8m9>Card body</div></div></bui-component>
+  },
+  {
+    Name: WithHeader,
+    Html: <bui-component data-bui-component="card" data-bui-variant="default" data-bui-clickable="false" data-bui-media-position="top" b-bhdyo2n8m9><div class="bui-card" blazor:onclick="<EVENT>" b-bhdyo2n8m9><div class="bui-card__header" b-bhdyo2n8m9>Title</div><div class="bui-card__content" b-bhdyo2n8m9>Body</div></div></bui-component>
+  },
+  {
+    Name: WithMedia,
+    Html: <bui-component data-bui-component="card" data-bui-variant="default" style="--_card-media-height: 200px" data-bui-clickable="false" data-bui-media-position="top" b-bhdyo2n8m9><div class="bui-card" blazor:onclick="<EVENT>" b-bhdyo2n8m9><div class="bui-card__media" b-bhdyo2n8m9>img</div><div class="bui-card__content" b-bhdyo2n8m9>Body</div></div></bui-component>
+  },
+  {
+    Name: WithShadow,
+    Html: <bui-component data-bui-component="card" data-bui-variant="default" data-bui-shadow="true" style="--bui-inline-shadow: 0px 4px 8px 0px color-mix(in srgb, #000000 20%, transparent)" data-bui-clickable="false" data-bui-media-position="top" b-bhdyo2n8m9><div class="bui-card" blazor:onclick="<EVENT>" b-bhdyo2n8m9><div class="bui-card__content" b-bhdyo2n8m9>Body</div></div></bui-component>
+  },
+  {
+    Name: WithActions,
+    Html: <bui-component data-bui-component="card" data-bui-variant="default" data-bui-clickable="false" data-bui-media-position="top" b-bhdyo2n8m9><div class="bui-card" blazor:onclick="<EVENT>" b-bhdyo2n8m9><div class="bui-card__content" b-bhdyo2n8m9>Body</div><div class="bui-card__actions bui-card__actions--end" b-bhdyo2n8m9>Save</div></div></bui-component>
+  }
+]
