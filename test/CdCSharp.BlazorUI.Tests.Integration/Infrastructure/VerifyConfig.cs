@@ -21,6 +21,10 @@ public static class VerifyConfig
         new(@"data-pattern-id=""pattern_[a-f0-9]{32}""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private static readonly Regex DropdownIdRegex =
+        new(@"bui-dropdown-[a-f0-9]{32}",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     [ModuleInitializer]
     public static void Init()
     {
@@ -46,6 +50,10 @@ public static class VerifyConfig
             text = PatternIdRegex.Replace(
                 text,
                 @"data-pattern-id=""<PATTERN_ID>""");
+
+            text = DropdownIdRegex.Replace(
+                text,
+                @"bui-dropdown-<ID>");
 
             sb.Clear();
             sb.Append(text);

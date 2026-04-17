@@ -1,0 +1,77 @@
+﻿[
+  {
+    Name: Default_Closed,
+    Html:
+<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <button id="bui-dropdown-<ID>" type="button" class="bui-input__field bui-dropdown__trigger" blazor:onclick="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-expanded="false" aria-haspopup="listbox" aria-describedby="bui-helper-<ID>" b-5a7kq8u02k><span class="bui-dropdown__value bui-dropdown__placeholder" b-5a7kq8u02k></span>
+
+                    <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></bui-component></div></button>
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: With_Value,
+    Html:
+<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <button id="bui-dropdown-<ID>" type="button" class="bui-input__field bui-dropdown__trigger" blazor:onclick="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-expanded="false" aria-haspopup="listbox" aria-describedby="bui-helper-<ID>" b-5a7kq8u02k><span class="bui-dropdown__value " b-5a7kq8u02k>Option 1</span>
+
+                    <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></bui-component></div></button>
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <button id="bui-dropdown-<ID>" type="button" class="bui-input__field bui-dropdown__trigger" blazor:onclick="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" disabled aria-expanded="false" aria-haspopup="listbox" aria-describedby="bui-helper-<ID>" b-5a7kq8u02k><span class="bui-dropdown__value bui-dropdown__placeholder" b-5a7kq8u02k></span>
+
+                    <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></bui-component></div></button>
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: Required,
+    Html:
+<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select<span class="bui-input__required">*</span></label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <button id="bui-dropdown-<ID>" type="button" class="bui-input__field bui-dropdown__trigger" blazor:onclick="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-expanded="false" aria-haspopup="listbox" aria-describedby="bui-helper-<ID>" b-5a7kq8u02k><span class="bui-dropdown__value bui-dropdown__placeholder" b-5a7kq8u02k></span>
+
+                    <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></bui-component></div></button>
+                </div>
+
+            </bui-component>
+  },
+  {
+    Name: With_Helper,
+    Html:
+<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <button id="bui-dropdown-<ID>" type="button" class="bui-input__field bui-dropdown__trigger" blazor:onclick="<EVENT>" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-expanded="false" aria-haspopup="listbox" aria-describedby="bui-helper-<ID>" b-5a7kq8u02k><span class="bui-dropdown__value bui-dropdown__placeholder" b-5a7kq8u02k></span>
+
+                    <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg></bui-component></div></button>
+                </div>
+
+            <div id="bui-helper-<ID>" class="_bui-field-helper" b-tk6qfhhc0u>Pick one</div></bui-component>
+  }
+]
