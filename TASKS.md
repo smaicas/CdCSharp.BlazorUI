@@ -155,7 +155,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 - [x] **GEN-BUTTON-01** — `BUIButtonAccessibilityTests` (descomentar + adaptar al contrato actual). Cubrir `aria-disabled`, `aria-busy` (loading), `aria-label`, `role`, `tabindex`, `Enter`/`Space`.
 
-### BUIBadge + BUINotificationBadge (`Components/Generic/Badge/`) — ✅ (commit pending)
+### BUIBadge + BUINotificationBadge (`Components/Generic/Badge/`) — ✅ `6ff394a`
 
 - [x] **GEN-BADGE-01** — `BUIBadgeRenderingTests` — root, color, placement, shape.
 - [x] **GEN-BADGE-02** — `BUIBadgeStateTests` — cambio de content, visibility.
@@ -165,14 +165,14 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-BADGE-06** — `BUINotificationBadgeStateTests` — incremento de count, reset a 0 (visibilidad).
 - [x] **GEN-BADGE-07** — `BUIBadgeSnapshotTests` — variantes + placements.
 
-### BUICodeBlock (`Components/Generic/CodeBlock/`)
+### BUICodeBlock (`Components/Generic/CodeBlock/`) — ✅ (commit pending)
 
-- [ ] **GEN-CODE-01** — `BUICodeBlockRenderingTests` — root, language attr, pre/code DOM, líneas numeradas si aplica.
-- [ ] **GEN-CODE-02** — `BUICodeBlockStateTests` — cambio de `Code`/`Language`; toggle `ShowLineNumbers`.
-- [ ] **GEN-CODE-03** — `BUICodeBlockInteractionTests` — botón copy → invoca `IClipboardJsInterop`, feedback temporizado vía CancellationToken.
-- [ ] **GEN-CODE-04** — `BUICodeBlockAccessibilityTests` — `aria-label` en copy button, screen-reader-friendly feedback.
-- [ ] **GEN-CODE-05** — `BUICodeBlockSnapshotTests` — cada lenguaje soportado × con/sin line numbers.
-- [ ] **GEN-CODE-06** — `BUICodeBlockSecurityTests` — input XSS (`</pre><script>alert(1)</script>`) → renderiza escapado (regresión SEC-02).
+- [x] **GEN-CODE-01** — `BUICodeBlockRenderingTests` — root, language attr, pre/code DOM, líneas numeradas si aplica.
+- [x] **GEN-CODE-02** — `BUICodeBlockStateTests` — cambio de `Code`/`Language`; toggle `ShowLineNumbers`.
+- [x] **GEN-CODE-03** — `BUICodeBlockInteractionTests` — botón copy → invoca `IClipboardJsInterop`, feedback temporizado vía CancellationToken.
+- [x] **GEN-CODE-04** — `BUICodeBlockAccessibilityTests` — `aria-label` en copy button, screen-reader-friendly feedback.
+- [x] **GEN-CODE-05** — `BUICodeBlockSnapshotTests` — cada lenguaje soportado × con/sin line numbers.
+- [x] **GEN-CODE-06** — `BUICodeBlockSecurityTests` — input XSS (`</pre><script>alert(1)</script>`) → renderiza escapado (regresión SEC-02).
 
 ### BUILoadingIndicator (`Components/Generic/Loading/`)
 
