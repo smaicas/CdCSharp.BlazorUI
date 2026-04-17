@@ -219,11 +219,11 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUITreeSelector (`Components/Generic/Tree/TreeSelector/`)
 
-- [ ] **GEN-TS-01** — `BUITreeSelectorRenderingTests` — root, checkboxes por nodo, estado tri-state.
-- [ ] **GEN-TS-02** — `BUITreeSelectorStateTests` — selección parent propaga a children; children parciales marcan indeterminate en parent.
-- [ ] **GEN-TS-03** — `BUITreeSelectorInteractionTests` — check/uncheck, expand.
-- [ ] **GEN-TS-04** — `BUITreeSelectorDisposalTests` — `TreeNodeRegistry` liberado (regresión DISP-03).
-- [ ] **GEN-TS-05** — `BUITreeSelectorSnapshotTests` — selección total/parcial/ninguna.
+- [x] **GEN-TS-01** — `BUITreeSelectorRenderingTests` — root, checkboxes por nodo, estado tri-state.
+- [x] **GEN-TS-02** — `BUITreeSelectorStateTests` — selección parent propaga a children; children parciales marcan indeterminate en parent.
+- [x] **GEN-TS-03** — `BUITreeSelectorInteractionTests` — check/uncheck, expand.
+- [x] **GEN-TS-04** — `BUITreeSelectorDisposalTests` — `TreeNodeRegistry` liberado (regresión DISP-03).
+- [x] **GEN-TS-05** — `BUITreeSelectorSnapshotTests` — selección total/parcial/ninguna.
 
 ### DataCollections (`Components/Generic/DataCollections/`)
 
