@@ -14,7 +14,11 @@ public static class VerifyConfig
             RegexOptions.Compiled);
 
     private static readonly Regex BuiGeneratedIdRegex =
-        new(@"bui-(input|helper|checkbox|radio|switch|number|textarea|input-color)-[a-f0-9]{32}",
+        new(@"bui-(input|helper|checkbox|radio|switch|number|textarea|input-color|datetime)-[a-f0-9]{32}",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex PatternIdRegex =
+        new(@"data-pattern-id=""pattern_[a-f0-9]{32}""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     [ModuleInitializer]
@@ -38,6 +42,10 @@ public static class VerifyConfig
             text = BuiGeneratedIdRegex.Replace(
                 text,
                 @"bui-$1-<ID>");
+
+            text = PatternIdRegex.Replace(
+                text,
+                @"data-pattern-id=""<PATTERN_ID>""");
 
             sb.Clear();
             sb.Append(text);

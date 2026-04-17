@@ -1,0 +1,98 @@
+﻿[
+  {
+    Name: Default_Empty_DateOnly,
+    Html:
+<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <div id="bui-datetime-<ID>" class="bui-pattern bui-input__field" data-pattern-id="<PATTERN_ID>" data-has-value="false" tabindex="0" blazor:onfocus="<EVENT>" blazor:onfocusin="2" blazor:onfocusout="3" b-5h4081a6ho blazor:elementReference="<GUID>"></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Open picker" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation blazor:onclick:preventDefault b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V10h16v11zm0-13H4V5h16v3z"/></svg></bui-component></button>
+
+                </div>
+
+            
+
+            </bui-component>
+  },
+  {
+    Name: With_DateOnly_Value,
+    Html:
+<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <div id="bui-datetime-<ID>" class="bui-pattern bui-input__field" data-pattern-id="<PATTERN_ID>" data-has-value="true" tabindex="0" blazor:onfocus="<EVENT>" blazor:onfocusin="6" blazor:onfocusout="7" b-5h4081a6ho blazor:elementReference="<GUID>"><span class="bui-pattern__editable" contenteditable="true" spellcheck="false" data-index="0" data-maxlength="2" tabindex="-1" b-5h4081a6ho>15</span><span class="bui-pattern__separator" data-index="1" b-5h4081a6ho>/</span><span class="bui-pattern__editable" contenteditable="true" spellcheck="false" data-index="2" data-maxlength="2" tabindex="-1" b-5h4081a6ho>06</span><span class="bui-pattern__separator" data-index="3" b-5h4081a6ho>/</span><span class="bui-pattern__editable" contenteditable="true" spellcheck="false" data-index="4" data-maxlength="4" tabindex="-1" b-5h4081a6ho>2024</span></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Open picker" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation blazor:onclick:preventDefault b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V10h16v11zm0-13H4V5h16v3z"/></svg></bui-component></button>
+
+                </div>
+
+            
+
+            </bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <div id="bui-datetime-<ID>" class="bui-pattern bui-input__field" data-pattern-id="<PATTERN_ID>" data-has-value="false" tabindex="-1" blazor:onfocus="<EVENT>" blazor:onfocusin="10" blazor:onfocusout="11" b-5h4081a6ho blazor:elementReference="<GUID>"></div><button type="button" data-bui-size="small" class="_bui-btn" disabled tabindex="-1" aria-label="Open picker" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation blazor:onclick:preventDefault b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V10h16v11zm0-13H4V5h16v3z"/></svg></bui-component></button>
+
+                </div>
+
+            
+
+            </bui-component>
+  },
+  {
+    Name: ReadOnly,
+    Html:
+<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="true" data-bui-required="false" data-bui-floated="true" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <div id="bui-datetime-<ID>" class="bui-pattern bui-input__field" data-pattern-id="<PATTERN_ID>" data-has-value="true" tabindex="0" blazor:onfocus="<EVENT>" blazor:onfocusin="14" blazor:onfocusout="15" b-5h4081a6ho blazor:elementReference="<GUID>"><span class="bui-pattern__editable" contenteditable="false" spellcheck="false" data-index="0" data-maxlength="2" tabindex="-1" b-5h4081a6ho>15</span><span class="bui-pattern__separator" data-index="1" b-5h4081a6ho>/</span><span class="bui-pattern__editable" contenteditable="false" spellcheck="false" data-index="2" data-maxlength="2" tabindex="-1" b-5h4081a6ho>06</span><span class="bui-pattern__separator" data-index="3" b-5h4081a6ho>/</span><span class="bui-pattern__editable" contenteditable="false" spellcheck="false" data-index="4" data-maxlength="4" tabindex="-1" b-5h4081a6ho>2024</span></div><button type="button" data-bui-size="small" class="_bui-btn" disabled tabindex="-1" aria-label="Open picker" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation blazor:onclick:preventDefault b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V10h16v11zm0-13H4V5h16v3z"/></svg></bui-component></button>
+
+                </div>
+
+            
+
+            </bui-component>
+  },
+  {
+    Name: Error_State,
+    Html:
+<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <div id="bui-datetime-<ID>" class="bui-pattern bui-input__field" data-pattern-id="<PATTERN_ID>" data-has-value="false" tabindex="0" blazor:onfocus="<EVENT>" blazor:onfocusin="18" blazor:onfocusout="19" b-5h4081a6ho blazor:elementReference="<GUID>"></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Open picker" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation blazor:onclick:preventDefault b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V10h16v11zm0-13H4V5h16v3z"/></svg></bui-component></button>
+
+                </div>
+
+            
+
+            </bui-component>
+  },
+  {
+    Name: With_Helper_Text,
+    Html:
+<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+                
+
+                <div id="bui-datetime-<ID>" class="bui-pattern bui-input__field" data-pattern-id="<PATTERN_ID>" data-has-value="false" tabindex="0" blazor:onfocus="<EVENT>" blazor:onfocusin="22" blazor:onfocusout="23" b-5h4081a6ho blazor:elementReference="<GUID>"></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Open picker" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation blazor:onclick:preventDefault b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V10h16v11zm0-13H4V5h16v3z"/></svg></bui-component></button>
+
+                </div>
+
+            <div id="bui-helper-<ID>" class="_bui-field-helper" b-tk6qfhhc0u>Select a date</div>
+
+            </bui-component>
+  }
+]
