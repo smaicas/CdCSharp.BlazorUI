@@ -123,16 +123,16 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIInputDateTime + BUIDatePicker + BUITimePicker (`Components/Forms/DateAndTime/`)
 
-- [ ] **FRM-DT-01** — `BUIInputDateTimeRenderingTests` — root, `data-bui-component="input-date-time"`, placeholder, mask.
-- [ ] **FRM-DT-02** — `BUIInputDateTimeStateTests` — `Value`, `Min`, `Max`, `Disabled`, `ReadOnly`, `Format` (date/time/datetime).
+- [x] **FRM-DT-01** — `BUIInputDateTimeRenderingTests` — root, `data-bui-component="input-date-time"`, placeholder, mask. (82e0da4)
+- [x] **FRM-DT-02** — `BUIInputDateTimeStateTests` — `Value`, `Min`, `Max`, `Disabled`, `ReadOnly`, `Format` (date/time/datetime). (82e0da4)
 - [x] **FRM-DT-03** — `BUIInputDateTimeInteractionTests` — ya existe; revisar cobertura 12h culture + picker open en readonly.
-- [ ] **FRM-DT-04** — `BUIDatePickerRenderingTests` — grid, mes/año nav, cell selection.
-- [ ] **FRM-DT-05** — `BUIDatePickerInteractionTests` — navegación meses, selección día, rango.
-- [ ] **FRM-DT-06** — `BUITimePickerRenderingTests` — 12h/24h, hour/minute/second slots.
-- [ ] **FRM-DT-07** — `BUITimePickerInteractionTests` — selección hora, AM/PM, incremento.
-- [ ] **FRM-DT-08** — `BUIInputDateTimeAccessibilityTests` — `role="dialog"` al abrir, labels, teclado.
-- [ ] **FRM-DT-09** — `BUIInputDateTimeValidationTests` — `[Required]`, rango fuera de `Min`/`Max`.
-- [ ] **FRM-DT-10** — `BUIInputDateTimeSnapshotTests` — date / time / datetime × empty / filled / error.
+- [x] **FRM-DT-04** — `BUIDatePickerRenderingTests` — grid, mes/año nav, cell selection. (82e0da4)
+- [x] **FRM-DT-05** — `BUIDatePickerInteractionTests` — navegación meses, selección día, rango. (82e0da4)
+- [x] **FRM-DT-06** — `BUITimePickerRenderingTests` — 12h/24h, hour/minute/second slots. (82e0da4)
+- [x] **FRM-DT-07** — `BUITimePickerInteractionTests` — selección hora, AM/PM, incremento. (82e0da4)
+- [x] **FRM-DT-08** — `BUIInputDateTimeAccessibilityTests` — `role="dialog"` al abrir, labels, teclado. (82e0da4)
+- [x] **FRM-DT-09** — `BUIInputDateTimeValidationTests` — `[Required]`, rango fuera de `Min`/`Max`. (82e0da4)
+- [x] **FRM-DT-10** — `BUIInputDateTimeSnapshotTests` — date / time / datetime × empty / filled / error. (82e0da4)
 
 ### BUIInputDropdown + BUIInputDropdownTree + BUIDropdownContainer (`Components/Forms/Dropdown/`)
 
