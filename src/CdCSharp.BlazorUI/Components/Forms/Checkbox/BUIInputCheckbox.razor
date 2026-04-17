@@ -38,7 +38,7 @@
     protected override void OnInitialized()
     {
         Type valueType = typeof(TValue);
-        Type? underlyingType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+        Type underlyingType = Nullable.GetUnderlyingType(valueType) ?? valueType;
 
         if (underlyingType != typeof(bool))
             throw new InvalidOperationException(
@@ -111,6 +111,7 @@
                  role="checkbox"
                  aria-checked="@(IsIndeterminate ? "mixed" : IsChecked.ToString().ToLowerInvariant())"
                  aria-disabled="@IsDisabled.ToString().ToLowerInvariant()"
+                 aria-readonly="@IsReadOnly.ToString().ToLowerInvariant()"
                  aria-labelledby="@(string.IsNullOrWhiteSpace(Label) ? null : $"{_inputId}-label")"
                  aria-describedby="@_helperTextId"
                  tabindex="@(IsDisabled ? -1 : 0)"
@@ -150,6 +151,7 @@
     private async Task HandleClick(MouseEventArgs e)
     {
         if (IsDisabled) return;
+        if (IsReadOnly) return;
 
         if (typeof(TValue) == typeof(bool))
         {
