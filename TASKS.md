@@ -89,7 +89,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **FRM-TXT-06** — `BUIInputTextValidationTests` (14 tests)
 - [x] **FRM-TXT-07** — `BUIInputTextSnapshotTests` (2 tests, 9 states each)
 
-### BUIInputNumber (`Components/Forms/Number/`) — ✅ pending-hash
+### BUIInputNumber (`Components/Forms/Number/`) — ✅ `5cb9346`
 
 - [x] **FRM-NUM-01** — `BUIInputNumberRenderingTests` (8 tests)
 - [x] **FRM-NUM-02** — `BUIInputNumberStateTests` (6 tests)
