@@ -68,7 +68,7 @@ bui-component[{{picker}}] .{{title}} {
 bui-component[{{picker}}] .{{grid}} {
     display: grid;
     grid-template-columns: repeat(7, var(--_cell));
-    gap: 2px;
+    gap: calc(0.5rem * var(--bui-density-multiplier));
 }
 
 /* Cell */

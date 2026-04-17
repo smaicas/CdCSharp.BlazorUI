@@ -7,111 +7,203 @@
          Lede="One generic input for DateOnly, TimeOnly, DateTime, and DateTimeOffset. Culture-aware parsing and validation, plus standalone pickers.">
 
     <section class="doc-section">
+        <h2 class="doc-section__title">Basic usage</h2>
+        <ComponentDemo Definition="@BasicDemo"/>
+    </section>
+
+    <section class="doc-section">
         <h2 class="doc-section__title">Date input</h2>
         <p class="doc-section__description">Use <code>TValue="DateOnly"</code> for date-only input.</p>
-        <ComponentDemo Definition="@DateDemo" />
+        <ComponentDemo Definition="@DateDemo"/>
     </section>
 
     <section class="doc-section">
         <h2 class="doc-section__title">Time input</h2>
-        <ComponentDemo Definition="@TimeDemo" />
+        <ComponentDemo Definition="@TimeDemo"/>
     </section>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Full datetime</h2>
-        <ComponentDemo Definition="@DateTimeDemo" />
+        <h2 class="doc-section__title">Variants</h2>
+        <ComponentDemo Definition="@VariantsDemo"/>
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo"/>
     </section>
 
     <section class="doc-section">
         <h2 class="doc-section__title">Date picker</h2>
         <p class="doc-section__description"><code>BUIDatePicker</code> is a calendar-only component (no input).</p>
-        <ComponentDemo Definition="@DatePickerDemo" />
+        <p class="doc-section__description"><code>Density</code> parameter affects datepicker spacing</p>
+        <ComponentDemo Definition="@DatePickerDemo"/>
     </section>
 
     <section class="doc-section">
         <h2 class="doc-section__title">Time picker</h2>
         <p class="doc-section__description"><code>BUITimePicker</code> is a clock-only component (no input).</p>
-        <ComponentDemo Definition="@TimePickerDemo" />
+        <ComponentDemo Definition="@TimePickerDemo"/>
     </section>
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@_properties"/>
     </section>
 
 </DocPage>
 
 @code {
+    private DateTime? _dateBasic = DateTime.Today;
     private DateOnly? _date = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly? _time = new(14, 30);
-    private DateTime? _dateTime = DateTime.Now;
+    private DateTime? _outlinedValue = DateTime.Now;
+    private DateTime? _filledValue = DateTime.Now;
+    private DateTime? _standardValue = DateTime.Now;
+    private DateTime? _smallValue = DateTime.Now;
+    private DateTime? _mediumValue = DateTime.Now;
+    private DateTime? _largeValue = DateTime.Now;
+    private DateTime? _prefixValue = DateTime.Now;
+    private DateTime? _suffixValue = DateTime.Now;
     private DateOnly? _pickerDate = DateOnly.FromDateTime(DateTime.Today);
     private TimeOnly? _pickerTime = new(9, 0);
+
+    private ComponentDemoDefinition BasicDemo => new()
+    {
+        CodeTitle = "Date.razor",
+        Code =
+            """
+            BUIInputDateTime TValue="DateTime?" @bind-Value="_dateBasic" Label="Basic" HelperText="Select date and time"/>
+            """,
+        Demo = RenderBasic()
+    };
+
+    private RenderFragment RenderBasic() => __builder =>
+    {
+        <BUIInputDateTime TValue="DateTime?" @bind-Value="_dateBasic" Label="Basic" HelperText="Select date and time"/>
+    };
 
     private ComponentDemoDefinition DateDemo => new()
     {
         CodeTitle = "Date.razor",
-        Code = @"<BUIInputDateTime TValue=""DateOnly?""
-                  @bind-Value=""_date""
-                  Label=""Start date"" />",
+        Code =
+            """
+            <BUIInputDateTime TValue="DateOnly?" @bind-Value="_date" Label="Only Date" />
+            """,
         Demo = RenderDate()
     };
 
     private RenderFragment RenderDate() => __builder =>
     {
-        <BUIInputDateTime TValue="DateOnly?" @bind-Value="_date" Label="Start date" />
+        <BUIInputDateTime TValue="DateOnly?" @bind-Value="_date" Label="Only Date"/>
     };
 
     private ComponentDemoDefinition TimeDemo => new()
     {
         CodeTitle = "Time.razor",
-        Code = @"<BUIInputDateTime TValue=""TimeOnly?""
-                  @bind-Value=""_time""
-                  Label=""Meeting time"" />",
+        Code =
+            """
+            <BUIInputDateTime TValue="TimeOnly?" @bind-Value="_time" Label="Only time" />
+            """,
         Demo = RenderTime()
     };
 
     private RenderFragment RenderTime() => __builder =>
     {
-        <BUIInputDateTime TValue="TimeOnly?" @bind-Value="_time" Label="Meeting time" />
+        <BUIInputDateTime TValue="TimeOnly?" @bind-Value="_time" Label="Only time"/>
     };
 
-    private ComponentDemoDefinition DateTimeDemo => new()
+    private ComponentDemoDefinition VariantsDemo => new()
     {
-        CodeTitle = "DateTime.razor",
-        Code = @"<BUIInputDateTime TValue=""DateTime?""
-                  @bind-Value=""_dateTime""
-                  Label=""Appointment"" />",
-        Demo = RenderDateTime()
+        Demo = RenderVariants(),
+        Code =
+            """
+            <BUIInputDateTime @bind-Value="_outlinedValue" Label="Outlined" Variant="BUIInputVariant.Outlined"/>
+            <BUIInputDateTime @bind-Value="_filledValue" Label="Filled" Variant="BUIInputVariant.Filled"/>
+            <BUIInputDateTime @bind-Value="_standardValue" Label="Standard" Variant="BUIInputVariant.Standard"/>
+            """
     };
 
-    private RenderFragment RenderDateTime() => __builder =>
+    private RenderFragment RenderVariants() => __builder =>
     {
-        <BUIInputDateTime TValue="DateTime?" @bind-Value="_dateTime" Label="Appointment" />
+        <BUIInputDateTime @bind-Value="_outlinedValue" Label="Outlined" Variant="BUIInputVariant.Outlined"/>
+        <BUIInputDateTime @bind-Value="_filledValue" Label="Filled" Variant="BUIInputVariant.Filled"/>
+        <BUIInputDateTime @bind-Value="_standardValue" Label="Standard" Variant="BUIInputVariant.Standard"/>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code =
+            """
+            <BUIInputDateTime @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small"/>
+            <BUIInputDateTime @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium"/>
+            <BUIInputDateTime @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large"/>
+            """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small"/>
+        <BUIInputDateTime @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium"/>
+        <BUIInputDateTime @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large"/>
+    };
+
+    private ComponentDemoDefinition PrefixSuffixDemo => new()
+    {
+        Demo = RenderPrefixSuffix(),
+        Code =
+            """
+            <BUIInputDateTime @bind-Value="_prefixValue" Label="With Prefix Icon"
+                       PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" PrefixBackgroundColor="white" PrefixColor="black"/>
+            <BUIInputDateTime @bind-Value="_suffixValue" Label="With Prefix Icon"
+                       SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" SuffixBackgroundColor="white" SuffixColor="black"/>
+            """
+    };
+
+    private RenderFragment RenderPrefixSuffix() => __builder =>
+    {
+        <BUIInputDateTime @bind-Value="_prefixValue" Label="With Prefix Icon"
+                          PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" PrefixBackgroundColor="white" PrefixColor="black"/>
+        <BUIInputDateTime @bind-Value="_suffixValue" Label="With Prefix Icon"
+                          SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" SuffixBackgroundColor="white" SuffixColor="black"/>
     };
 
     private ComponentDemoDefinition DatePickerDemo => new()
     {
         CodeTitle = "DatePicker.razor",
-        Code = @"<BUIDatePicker @bind-Value=""_date"" />",
+        Code =
+            """
+            <BUIDatePicker Density="DensityEnum.Compact" @bind-Value="_pickerDate"/>
+            <BUIDatePicker Density="DensityEnum.Standard" @bind-Value="_pickerDate"/>
+            <BUIDatePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerDate"/>
+            """,
         Demo = RenderDatePicker()
     };
 
     private RenderFragment RenderDatePicker() => __builder =>
     {
-        <BUIDatePicker @bind-Value="_pickerDate" />
+        <BUIDatePicker Density="DensityEnum.Compact" @bind-Value="_pickerDate"/>
+        <BUIDatePicker Density="DensityEnum.Standard" @bind-Value="_pickerDate"/>
+        <BUIDatePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerDate"/>
     };
 
     private ComponentDemoDefinition TimePickerDemo => new()
     {
         CodeTitle = "TimePicker.razor",
-        Code = @"<BUITimePicker @bind-Value=""_time"" />",
+        Code =
+            """
+            <BUITimePicker Density="DensityEnum.Compact" @bind-Value="_pickerTime"/>
+            <BUITimePicker Density="DensityEnum.Standard" @bind-Value="_pickerTime"/>
+            <BUITimePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerTime"/>
+            """,
         Demo = RenderTimePicker()
     };
 
     private RenderFragment RenderTimePicker() => __builder =>
     {
-        <BUITimePicker @bind-Value="_pickerTime" />
+        <BUITimePicker Density="DensityEnum.Compact" @bind-Value="_pickerTime"/>
+        <BUITimePicker Density="DensityEnum.Standard" @bind-Value="_pickerTime"/>
+        <BUITimePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerTime"/>
     };
 
     private readonly PropertyDefinition[] _properties =
@@ -125,4 +217,5 @@
         new("BackgroundColor / Color", "string?", "null", "Custom colors"),
         new("PrefixIcon / SuffixIcon / PrefixText / SuffixText", "string?", "null", "Addons")
     ];
+
 }

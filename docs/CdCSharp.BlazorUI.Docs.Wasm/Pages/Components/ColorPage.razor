@@ -74,6 +74,7 @@
     private CssColor? _mediumValue;
     private CssColor? _largeValue;
     private CssColor? _prefixValue;
+    private CssColor? _suffixValue;
     private CssColor? _hex = new("#2a7fff");
     private CssColor? _rgba = new("rgba(42,127,255,1)");
     private CssColor? _hsl = new("#ff6b35");
@@ -146,7 +147,7 @@
                        PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"
                        PrefixBackgroundColor="white"
                        PrefixColor="black" />
-        <BUIInputColor @bind-Value="_prefixValue" Label="With Suffix Icon"
+        <BUIInputColor @bind-Value="_suffixValue" Label="With Suffix Icon"
                        SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"
                        SuffixBackgroundColor="white"
                        SuffixColor="black" />
@@ -157,7 +158,7 @@
     {
         <BUIInputColor @bind-Value="_prefixValue" Label="With Prefix Icon"
                        PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" PrefixBackgroundColor="white" PrefixColor="black" />
-        <BUIInputColor @bind-Value="_prefixValue" Label="With Prefix Icon"
+        <BUIInputColor @bind-Value="_suffixValue" Label="With Suffix Icon"
                        SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" SuffixBackgroundColor="white" SuffixColor="black" />
     };
 

@@ -12,19 +12,36 @@
     </section>
 
     <section class="doc-section">
+        <h2 class="doc-section__title">Variants</h2>
+        <ComponentDemo Definition="@VariantsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Box Placement</h2>
+        <p class="doc-section__description">Placement supports <code>Top, Bottom, TopStart, TopEnd, BottomStart, BottomEnd or Auto</code></p>
+        <p class="doc-section__description">Auto mode will position the box in the bottom if it has space. Otherwise it will position the box on top.</p>
+        <ComponentDemo Definition="@PlacementDemo" />
+    </section>
+
+    <section class="doc-section">
         <h2 class="doc-section__title">Searchable</h2>
         <p class="doc-section__description">Set <code>Searchable</code> to filter options by typing.</p>
         <ComponentDemo Definition="@SearchableDemo" />
     </section>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Disabled options</h2>
-        <ComponentDemo Definition="@DisabledOptionDemo" />
+        <h2 class="doc-section__title">Custom template when there are not items.</h2>
+        <ComponentDemo Definition="@NoOptionsDemo" />
     </section>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Placement</h2>
-        <ComponentDemo Definition="@PlacementDemo" />
+        <h2 class="doc-section__title">Disabled options</h2>
+        <ComponentDemo Definition="@DisabledOptionDemo" />
     </section>
 
     <section class="doc-section">
@@ -35,44 +52,255 @@
 </DocPage>
 
 @code {
-    private string? _basic = "en";
+    private int? _basicSingle;
+    private int? _basicMulti;
+    private string? _outlinedValue;
+    private string? _filledValue;
+    private string? _standardValue;
+    private string? _smallValue;
+    private string? _mediumValue;
+    private string? _largeValue;
+    private string? _topValue;
+    private string? _autoValue;
+    private string? _bottomValue;
     private string? _searchable = null;
+    private string? _noOptionsValue = null;
     private string? _disabled = "apple";
     private string? _placement = "up";
+
+    private List<string> _optionsStrings = new() { "Option 1", "Option 2", "Option 3", "Option 4", "Option 5" };
 
     private ComponentDemoDefinition BasicDemo => new()
     {
         CodeTitle = "Basic.razor",
-        Code = @"<BUIInputDropdown TValue=""string"" @bind-Value=""_value"" Label=""Language"">
-    <DropdownOption TOption=""string"" Value=""en"">English</DropdownOption>
-    <DropdownOption TOption=""string"" Value=""es"">Spanish</DropdownOption>
-    <DropdownOption TOption=""string"" Value=""fr"">French</DropdownOption>
-</BUIInputDropdown>",
+        Code =
+            """
+            <BUIInputDropdown @bind-Value="_basicSingle" Label="Single" HelperText="Single selection">
+                <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
+                <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
+                <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
+                <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_basicMulti" Label="Multi" HelperText="Multiple selection">
+                <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
+                <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
+                <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
+                <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
+            </BUIInputDropdown>
+            """,
         Demo = RenderBasic()
     };
 
     private RenderFragment RenderBasic() => __builder =>
     {
-        <BUIInputDropdown TValue="string" @bind-Value="_basic" Label="Language">
-            <DropdownOption TOption="string" Value="@("en")">English</DropdownOption>
-            <DropdownOption TOption="string" Value="@("es")">Spanish</DropdownOption>
-            <DropdownOption TOption="string" Value="@("fr")">French</DropdownOption>
-            <DropdownOption TOption="string" Value="@("de")">German</DropdownOption>
+        <BUIInputDropdown @bind-Value="_basicSingle" Label="Single" HelperText="Single selection">
+            <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
+            <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
+            <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
+            <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
         </BUIInputDropdown>
+
+        <BUIInputDropdown @bind-Value="_basicMulti" Label="Multi" HelperText="Multiple selection">
+            <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
+            <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
+            <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
+            <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition VariantsDemo => new()
+    {
+        Demo = RenderVariants(),
+        Code =
+            """
+            <BUIInputDropdown @bind-Value="_outlinedValue"
+                              Label="Outlined"
+                              Variant="BUIInputVariant.Outlined">
+                @foreach (var option in _optionsStrings)
+                {
+                    <DropdownOption Value="@option" Text="@option" />
+                }
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_filledValue"
+                              Label="Filled"
+                              Variant="BUIInputVariant.Filled">
+                @foreach (var option in _optionsStrings)
+                {
+                    <DropdownOption Value="@option" Text="@option" />
+                }
+            </BUIInputDropdown>
+
+            <BUIInputDropdown @bind-Value="_standardValue"
+                              Label="Standard"
+                              Variant="BUIInputVariant.Standard">
+                @foreach (var option in _optionsStrings)
+                {
+                    <DropdownOption Value="@option" Text="@option" />
+                }
+            </BUIInputDropdown>
+            """,
+    };
+
+    private RenderFragment RenderVariants() => __builder =>
+    {
+
+        <BUIInputDropdown @bind-Value="_outlinedValue"
+                          Label="Outlined"
+                          Variant="BUIInputVariant.Outlined">
+            @foreach (string option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+
+        <BUIInputDropdown @bind-Value="_filledValue"
+                          Label="Filled"
+                          Variant="BUIInputVariant.Filled">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+
+        <BUIInputDropdown @bind-Value="_standardValue"
+                          Label="Standard"
+                          Variant="BUIInputVariant.Standard">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        Demo = RenderSizes(),
+        Code =
+        """
+        <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        """
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition PlacementDemo => new()
+    {
+        Demo = RenderPlacement(),
+        Code = 
+        """
+        <BUIInputDropdown @bind-Value="_bottomValue"
+                          Label="Bottom Placement (Default)"
+                          Placement="DropdownPlacement.Bottom">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_topValue"
+                          Label="Top Placement"
+                          Placement="DropdownPlacement.Top">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_autoValue"
+                          Label="Auto Placement"
+                          Placement="DropdownPlacement.Auto">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        """
+    };
+
+    private RenderFragment RenderPlacement() => __builder =>
+    {
+        <BUIInputDropdown @bind-Value="_bottomValue"
+                          Label="Bottom Placement (Default)"
+                          Placement="DropdownPlacement.Bottom">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_topValue"
+                          Label="Top Placement"
+                          Placement="DropdownPlacement.Top">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_autoValue"
+                          Label="Auto Placement"
+                          Placement="DropdownPlacement.Auto">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+
     };
 
     private ComponentDemoDefinition SearchableDemo => new()
     {
         CodeTitle = "Searchable.razor",
-        Code = @"<BUIInputDropdown TValue=""string""
-                   @bind-Value=""_value""
-                   Label=""Country""
-                   Searchable=""true""
-                   SearchPlaceholder=""Type a country..."">
-    <DropdownOption TOption=""string"" Value=""us"">United States</DropdownOption>
-    <DropdownOption TOption=""string"" Value=""mx"">Mexico</DropdownOption>
-    ...
-</BUIInputDropdown>",
+        Code =
+        """
+        <BUIInputDropdown TValue="string" @bind-Value="_searchable" Label="Country" Searchable="true" SearchPlaceholder="Type a country...">
+            <DropdownOption TOption="string" Value="@("us")">United States</DropdownOption>
+            <DropdownOption TOption="string" Value="@("mx")">Mexico</DropdownOption>
+            <DropdownOption TOption="string" Value="@("ca")">Canada</DropdownOption>
+            <DropdownOption TOption="string" Value="@("br")">Brazil</DropdownOption>
+            <DropdownOption TOption="string" Value="@("ar")">Argentina</DropdownOption>
+            <DropdownOption TOption="string" Value="@("es")">Spain</DropdownOption>
+            <DropdownOption TOption="string" Value="@("fr")">France</DropdownOption>
+            <DropdownOption TOption="string" Value="@("de")">Germany</DropdownOption>
+            <DropdownOption TOption="string" Value="@("uk")">United Kingdom</DropdownOption>
+            <DropdownOption TOption="string" Value="@("jp")">Japan</DropdownOption>
+        </BUIInputDropdown>
+        """,
         Demo = RenderSearchable()
     };
 
@@ -89,6 +317,32 @@
             <DropdownOption TOption="string" Value="@("de")">Germany</DropdownOption>
             <DropdownOption TOption="string" Value="@("uk")">United Kingdom</DropdownOption>
             <DropdownOption TOption="string" Value="@("jp")">Japan</DropdownOption>
+        </BUIInputDropdown>
+    };
+
+    private ComponentDemoDefinition NoOptionsDemo => new()
+    {
+        Demo = RenderNoOptions(),
+        Code = 
+        """
+        <BUIInputDropdown TValue="string"
+                          @bind-Value="_noOptionsValue"
+                          Label="Empty Dropdown">
+            <NoOptionsTemplate>
+                <span>No items available</span>
+            </NoOptionsTemplate>
+        </BUIInputDropdown>
+        """
+    };
+
+    private RenderFragment RenderNoOptions() => __builder =>
+    {
+        <BUIInputDropdown TValue="string"
+                          @bind-Value="_noOptionsValue"
+                          Label="Empty Dropdown">
+            <NoOptionsTemplate>
+                <span>No items available</span>
+            </NoOptionsTemplate>
         </BUIInputDropdown>
     };
 
@@ -109,24 +363,6 @@
         </BUIInputDropdown>
     };
 
-    private ComponentDemoDefinition PlacementDemo => new()
-    {
-        CodeTitle = "Placement.razor",
-        Code = @"<BUIInputDropdown Placement=""DropdownPlacement.Top"" ... />",
-        Demo = RenderPlacement()
-    };
-
-    private RenderFragment RenderPlacement() => __builder =>
-    {
-        <div style="min-height: 220px; display: flex; align-items: flex-end;">
-            <BUIInputDropdown TValue="string" @bind-Value="_placement" Label="Opens upward" Placement="DropdownPlacement.Top">
-                <DropdownOption TOption="string" Value="@("up")">Option 1</DropdownOption>
-                <DropdownOption TOption="string" Value="@("left")">Option 2</DropdownOption>
-                <DropdownOption TOption="string" Value="@("right")">Option 3</DropdownOption>
-            </BUIInputDropdown>
-        </div>
-    };
-
     private readonly PropertyDefinition[] _properties =
     [
         new("Value", "TValue?", "default", "Bound value"),
@@ -143,4 +379,5 @@
         new("Disabled / ReadOnly / Required / IsLoading", "bool", "false", "State flags"),
         new("NoOptionsTemplate / NoResultsTemplate", "RenderFragment?", "null", "Empty-state customization")
     ];
+
 }

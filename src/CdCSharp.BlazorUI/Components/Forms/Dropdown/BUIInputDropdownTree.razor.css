@@ -1,8 +1,8 @@
-﻿::deep .bui-dropdown__tree-content {
+﻿.bui-dropdown__tree-content {
     padding: calc(0.5rem * var(--bui-size-multiplier, 1));
 }
 
-::deep .bui-dropdown__no-options {
+.bui-dropdown__no-options {
     padding: calc(0.75rem * var(--bui-size-multiplier, 1));
     text-align: center;
     opacity: 0.6;

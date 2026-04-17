@@ -1,12 +1,17 @@
 {
     "version": "0.2.0",
     "configurations": [
-
         {
             "name": "Launch Docs",
             "type": "blazorwasm",
             "request": "launch",
             "cwd": "${workspaceFolder}/docs/CdCSharp.BlazorUI.Docs.Wasm"
+        },
+        {
+            "name": "Launch Demo WASM",
+            "type": "blazorwasm",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/samples/CdCSharp.BlazorUI.AppTest.Wasm"
         }
     ]
 }

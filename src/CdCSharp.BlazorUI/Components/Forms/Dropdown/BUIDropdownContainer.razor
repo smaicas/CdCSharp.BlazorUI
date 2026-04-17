@@ -8,7 +8,6 @@
 @inherits BUIInputComponentBase<TValue, BUIDropdownContainer<TValue>, BUIInputVariant>
 @implements IHasSize
 @implements IHasLoading
-@implements IHasDensity
 @implements IHasShadow
 @implements IHasBorder
 @implements IHasColor
@@ -41,9 +40,6 @@
     // IHasLoading
     [Parameter] public bool Loading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
-
-    // IHasDensity
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }
