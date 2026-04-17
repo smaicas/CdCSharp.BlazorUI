@@ -1,0 +1,30 @@
+﻿[
+  {
+    Name: Spinner_Default,
+    Html: <bui-component data-bui-component="loading-indicator" data-bui-variant="spinner" data-bui-size="medium" role="status" aria-live="polite" aria-label="Loading" b-9uouee14ai><svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false" b-9uouee14ai><circle cx="25" cy="25" r="20" b-9uouee14ai></circle></svg></bui-component>
+  },
+  {
+    Name: Dots,
+    Html:
+<bui-component data-bui-component="loading-indicator" data-bui-variant="dots" data-bui-size="medium" role="status" aria-live="polite" aria-label="Loading" b-9uouee14ai><svg viewBox="0 0 40 10" role="img" aria-hidden="true" focusable="false" b-9uouee14ai><circle cx="5" cy="5" r="4" b-9uouee14ai></circle>
+                <circle cx="20" cy="5" r="4" b-9uouee14ai></circle>
+                <circle cx="35" cy="5" r="4" b-9uouee14ai></circle></svg></bui-component>
+  },
+  {
+    Name: Bars,
+    Html:
+<bui-component data-bui-component="loading-indicator" data-bui-variant="bars" data-bui-size="medium" role="status" aria-live="polite" aria-label="Loading" b-9uouee14ai><svg viewBox="0 0 24 30" role="img" aria-hidden="true" focusable="false" b-9uouee14ai><rect x="0" y="0" width="4" height="30" rx="2" b-9uouee14ai></rect>
+                <rect x="10" y="0" width="4" height="30" rx="2" b-9uouee14ai></rect>
+                <rect x="20" y="0" width="4" height="30" rx="2" b-9uouee14ai></rect></svg></bui-component>
+  },
+  {
+    Name: LinearIndeterminate,
+    Html:
+<bui-component data-bui-component="loading-indicator" data-bui-variant="linearindeterminate" data-bui-size="medium" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100" b-9uouee14ai><div class="bui-loading-linear bui-loading-linear--primary" b-9uouee14ai></div>
+            <div class="bui-loading-linear bui-loading-linear--secondary" b-9uouee14ai></div></bui-component>
+  },
+  {
+    Name: Spinner_Large_Custom_Label,
+    Html: <bui-component data-bui-component="loading-indicator" data-bui-variant="spinner" data-bui-size="large" role="status" aria-live="polite" aria-label="Uploading file" b-9uouee14ai><svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false" b-9uouee14ai><circle cx="25" cy="25" r="20" b-9uouee14ai></circle></svg></bui-component>
+  }
+]

@@ -165,7 +165,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-BADGE-06** — `BUINotificationBadgeStateTests` — incremento de count, reset a 0 (visibilidad).
 - [x] **GEN-BADGE-07** — `BUIBadgeSnapshotTests` — variantes + placements.
 
-### BUICodeBlock (`Components/Generic/CodeBlock/`) — ✅ (commit pending)
+### BUICodeBlock (`Components/Generic/CodeBlock/`) — ✅ `1a207ae`
 
 - [x] **GEN-CODE-01** — `BUICodeBlockRenderingTests` — root, language attr, pre/code DOM, líneas numeradas si aplica.
 - [x] **GEN-CODE-02** — `BUICodeBlockStateTests` — cambio de `Code`/`Language`; toggle `ShowLineNumbers`.
@@ -174,13 +174,13 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-CODE-05** — `BUICodeBlockSnapshotTests` — cada lenguaje soportado × con/sin line numbers.
 - [x] **GEN-CODE-06** — `BUICodeBlockSecurityTests` — input XSS (`</pre><script>alert(1)</script>`) → renderiza escapado (regresión SEC-02).
 
-### BUILoadingIndicator (`Components/Generic/Loading/`)
+### BUILoadingIndicator (`Components/Generic/Loading/`) — ✅ (commit pending)
 
-- [ ] **GEN-LOAD-01** — `BUILoadingIndicatorRenderingTests` — root, `role="img"`, `aria-label` (regresión A11Y-01), variantes (spinner/dots/linear).
-- [ ] **GEN-LOAD-02** — `BUILoadingIndicatorStateTests` — cambio de variante, color, size, progreso (linear).
-- [ ] **GEN-LOAD-03** — `BUILoadingIndicatorVariantTests` — variante custom.
-- [ ] **GEN-LOAD-04** — `BUILoadingIndicatorAccessibilityTests` — `role="progressbar"` + `aria-valuenow/min/max` en linear determinate.
-- [ ] **GEN-LOAD-05** — `BUILoadingIndicatorSnapshotTests` — cada variante × indeterminate/determinate.
+- [x] **GEN-LOAD-01** — `BUILoadingIndicatorRenderingTests` — root, `role="img"`, `aria-label` (regresión A11Y-01), variantes (spinner/dots/linear).
+- [x] **GEN-LOAD-02** — `BUILoadingIndicatorStateTests` — cambio de variante, color, size, progreso (linear).
+- [x] **GEN-LOAD-03** — `BUILoadingIndicatorVariantTests` — variante custom.
+- [x] **GEN-LOAD-04** — `BUILoadingIndicatorAccessibilityTests` — `role="progressbar"` + `aria-valuenow/min/max` en linear determinate.
+- [x] **GEN-LOAD-05** — `BUILoadingIndicatorSnapshotTests` — cada variante × indeterminate/determinate.
 
 ### BUISvgIcon (`Components/Generic/Svg/`)
 
