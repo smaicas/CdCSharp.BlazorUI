@@ -14,7 +14,7 @@ public static class VerifyConfig
             RegexOptions.Compiled);
 
     private static readonly Regex BuiGeneratedIdRegex =
-        new(@"bui-(input|helper|checkbox|radio|switch|number)-[a-f0-9]{32}",
+        new(@"bui-(input|helper|checkbox|radio|switch|number|textarea)-[a-f0-9]{32}",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     [ModuleInitializer]

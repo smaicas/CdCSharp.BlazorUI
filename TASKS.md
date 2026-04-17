@@ -99,15 +99,15 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **FRM-NUM-06** — `BUIInputNumberValidationTests` (7 tests)
 - [x] **FRM-NUM-07** — `BUIInputNumberSnapshotTests` (1 test, 7 states)
 
-### BUIInputTextArea (`Components/Forms/TextArea/`)
+### BUIInputTextArea (`Components/Forms/TextArea/`) — ✅ pending-hash
 
-- [ ] **FRM-TA-01** — `BUIInputTextAreaRenderingTests` — root, `data-bui-resize`, `data-bui-autoresize` (regresión STD-07), rows/cols.
-- [ ] **FRM-TA-02** — `BUIInputTextAreaStateTests` — `Value`, `Disabled`, `ReadOnly`, `Error`, `Loading`, `AutoResize` flip.
-- [ ] **FRM-TA-03** — `BUIInputTextAreaInteractionTests` — `onchange`, `oninput`, focus → `data-bui-floated`.
-- [ ] **FRM-TA-04** — `BUIInputTextAreaVariantTests` — variantes.
-- [ ] **FRM-TA-05** — `BUIInputTextAreaAccessibilityTests` — label, `aria-invalid`.
-- [ ] **FRM-TA-06** — `BUIInputTextAreaValidationTests` — `[Required]`, `[StringLength]`.
-- [ ] **FRM-TA-07** — `BUIInputTextAreaSnapshotTests` — fixed / autoresize / resize directions.
+- [x] **FRM-TA-01** — `BUIInputTextAreaRenderingTests` (10 tests)
+- [x] **FRM-TA-02** — `BUIInputTextAreaStateTests` (9 tests)
+- [x] **FRM-TA-03** — `BUIInputTextAreaInteractionTests` (7 tests)
+- [x] **FRM-TA-04** — `BUIInputTextAreaVariantTests` (4 tests)
+- [x] **FRM-TA-05** — `BUIInputTextAreaAccessibilityTests` (7 tests)
+- [x] **FRM-TA-06** — `BUIInputTextAreaValidationTests` (7 tests)
+- [x] **FRM-TA-07** — `BUIInputTextAreaSnapshotTests` (1 test, 8 states)
 
 ### BUIInputColor + BUIColorPicker (`Components/Forms/Color/`)
 
