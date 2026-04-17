@@ -210,12 +210,12 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUITreeMenu (`Components/Generic/Tree/TreeMenu/`)
 
-- [ ] **GEN-TM-01** — `BUITreeMenuRenderingTests` — root, `data-bui-disabled/active/expanded` en items (regresión STD-02), jerarquía.
-- [ ] **GEN-TM-02** — `BUITreeMenuStateTests` — expand/collapse, selected item, `NavigationManager.LocationChanged` actualiza activo.
-- [ ] **GEN-TM-03** — `BUITreeMenuInteractionTests` — click expand, hover (con timer de delay), click item, keyboard nav.
-- [ ] **GEN-TM-04** — `BUITreeMenuAccessibilityTests` — `role="tree"`/`treeitem"`, `aria-expanded`, `aria-selected`.
-- [ ] **GEN-TM-05** — `BUITreeMenuDisposalTests` — timer + nav subscription + disposal sin warnings (regresión LAYOUT-04).
-- [ ] **GEN-TM-06** — `BUITreeMenuSnapshotTests` — árbol colapsado/expandido/con-selección.
+- [x] **GEN-TM-01** — `BUITreeMenuRenderingTests` — root, `data-bui-disabled/active/expanded` en items (regresión STD-02), jerarquía.
+- [x] **GEN-TM-02** — `BUITreeMenuStateTests` — expand/collapse, selected item, `NavigationManager.LocationChanged` actualiza activo.
+- [x] **GEN-TM-03** — `BUITreeMenuInteractionTests` — click expand, hover (con timer de delay), click item, keyboard nav.
+- [x] **GEN-TM-04** — `BUITreeMenuAccessibilityTests` — `role="tree"`/`treeitem"`, `aria-expanded`, `aria-selected`.
+- [x] **GEN-TM-05** — `BUITreeMenuDisposalTests` — timer + nav subscription + disposal sin warnings (regresión LAYOUT-04).
+- [x] **GEN-TM-06** — `BUITreeMenuSnapshotTests` — árbol colapsado/expandido/con-selección.
 
 ### BUITreeSelector (`Components/Generic/Tree/TreeSelector/`)
 
