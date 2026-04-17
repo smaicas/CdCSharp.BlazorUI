@@ -109,17 +109,17 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **FRM-TA-06** — `BUIInputTextAreaValidationTests` (7 tests)
 - [x] **FRM-TA-07** — `BUIInputTextAreaSnapshotTests` (1 test, 8 states)
 
-### BUIInputColor + BUIColorPicker (`Components/Forms/Color/`)
+### BUIInputColor + BUIColorPicker (`Components/Forms/Color/`) — ✅ pending-hash
 
-- [ ] **FRM-COL-01** — `BUIInputColorRenderingTests` — root, preview swatch, input value format.
-- [ ] **FRM-COL-02** — `BUIInputColorStateTests` — `Value` (hex/rgb/hsl), `Format`, `DisplayMode`, `Disabled`.
-- [ ] **FRM-COL-03** — `BUIInputColorInteractionTests` — cambio de valor → `ValueChanged`; apertura del picker.
-- [ ] **FRM-COL-04** — `BUIColorPickerRenderingTests` — root, `data-bui-picker`, grid/slider/input subcomponents.
-- [ ] **FRM-COL-05** — `BUIColorPickerStateTests` — cambio de formato, cambio de color seleccionado, `Disabled`/`ReadOnly`.
-- [ ] **FRM-COL-06** — `BUIColorPickerInteractionTests` — click en cell, slider input, hex input.
-- [ ] **FRM-COL-07** — `BUIInputColorValidationTests` — `[Required]`, formato inválido.
-- [ ] **FRM-COL-08** — `BUIInputColorAccessibilityTests` — labels, `aria-label` en sliders.
-- [ ] **FRM-COL-09** — `BUIInputColorSnapshotTests` — cada `DisplayMode` × formato.
+- [x] **FRM-COL-01** — `BUIInputColorRenderingTests` (8 tests)
+- [x] **FRM-COL-02** — `BUIInputColorStateTests` (6 tests)
+- [x] **FRM-COL-03** — `BUIInputColorInteractionTests` (6 tests)
+- [x] **FRM-COL-04** — `BUIColorPickerRenderingTests` (8 tests)
+- [x] **FRM-COL-05** — `BUIColorPickerStateTests` (3 tests)
+- [x] **FRM-COL-06** — `BUIColorPickerInteractionTests` (4 tests)
+- [x] **FRM-COL-07** — `BUIInputColorValidationTests` (5 tests)
+- [x] **FRM-COL-08** — `BUIInputColorAccessibilityTests` (7 tests)
+- [x] **FRM-COL-09** — `BUIInputColorSnapshotTests` (1 test, 6 states)
 
 ### BUIInputDateTime + BUIDatePicker + BUITimePicker (`Components/Forms/DateAndTime/`)
 
