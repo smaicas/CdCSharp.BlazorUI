@@ -134,18 +134,18 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **FRM-DT-09** — `BUIInputDateTimeValidationTests` — `[Required]`, rango fuera de `Min`/`Max`. (82e0da4)
 - [x] **FRM-DT-10** — `BUIInputDateTimeSnapshotTests` — date / time / datetime × empty / filled / error. (82e0da4)
 
-### BUIInputDropdown + BUIInputDropdownTree + BUIDropdownContainer (`Components/Forms/Dropdown/`)
+### BUIInputDropdown + BUIInputDropdownTree + BUIDropdownContainer (`Components/Forms/Dropdown/`) — ✅ `4afc433`
 
-- [ ] **FRM-DD-01** — `BUIInputDropdownRenderingTests` — root, delegación a container (regresión STD-11), `data-bui-input-base` en container.
-- [ ] **FRM-DD-02** — `BUIInputDropdownStateTests` — `Value`, `Options`, `Placeholder`, `Disabled`, `ReadOnly`, `Error`, `IsOpen` flip.
-- [ ] **FRM-DD-03** — `BUIInputDropdownInteractionTests` — abrir/cerrar, selección de opción, flechas, Esc.
-- [ ] **FRM-DD-04** — `BUIInputDropdownVariantTests` — outlined/filled/standard.
-- [ ] **FRM-DD-05** — `BUIInputDropdownTreeRenderingTests` — tree dentro de dropdown.
-- [ ] **FRM-DD-06** — `BUIInputDropdownTreeInteractionTests` — expand/collapse + selección.
-- [ ] **FRM-DD-07** — `BUIInputDropdownAccessibilityTests` — `role="combobox"`/`listbox`, `aria-expanded`, `aria-activedescendant`.
-- [ ] **FRM-DD-08** — `BUIInputDropdownValidationTests` — `[Required]`, `EditContext` reflejado en container.
-- [ ] **FRM-DD-09** — `BUIInputDropdownSnapshotTests` — closed / open / with-selection / disabled.
-- [ ] **FRM-DD-10** — `BUIInputDropdownIntegrationTests` — uso dentro de `EditForm`, validación + submit.
+- [x] **FRM-DD-01** — `BUIInputDropdownRenderingTests` — root, delegación a container (regresión STD-11), `data-bui-input-base` en container.
+- [x] **FRM-DD-02** — `BUIInputDropdownStateTests` — `Value`, `Options`, `Placeholder`, `Disabled`, `ReadOnly`, `Error`, `IsOpen` flip.
+- [x] **FRM-DD-03** — `BUIInputDropdownInteractionTests` — abrir/cerrar, selección de opción, flechas, Esc.
+- [x] **FRM-DD-04** — `BUIInputDropdownVariantTests` — outlined/filled/standard.
+- [x] **FRM-DD-05** — `BUIInputDropdownTreeRenderingTests` — tree dentro de dropdown.
+- [x] **FRM-DD-06** — `BUIInputDropdownTreeInteractionTests` — expand/collapse + selección.
+- [x] **FRM-DD-07** — `BUIInputDropdownAccessibilityTests` — `role="combobox"`/`listbox`, `aria-expanded`, `aria-activedescendant`.
+- [x] **FRM-DD-08** — `BUIInputDropdownValidationTests` — `[Required]`, `EditContext` reflejado en container.
+- [x] **FRM-DD-09** — `BUIInputDropdownSnapshotTests` — closed / open / with-selection / disabled.
+- [x] **FRM-DD-10** — `BUIInputDropdownIntegrationTests` — uso dentro de `EditForm`, validación + submit.
 
 ---
 
@@ -153,17 +153,17 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIButton (ya cubierto)
 
-- [ ] **GEN-BUTTON-01** — `BUIButtonAccessibilityTests` (descomentar + adaptar al contrato actual). Cubrir `aria-disabled`, `aria-busy` (loading), `aria-label`, `role`, `tabindex`, `Enter`/`Space`.
+- [x] **GEN-BUTTON-01** — `BUIButtonAccessibilityTests` (descomentar + adaptar al contrato actual). Cubrir `aria-disabled`, `aria-busy` (loading), `aria-label`, `role`, `tabindex`, `Enter`/`Space`.
 
-### BUIBadge + BUINotificationBadge (`Components/Generic/Badge/`)
+### BUIBadge + BUINotificationBadge (`Components/Generic/Badge/`) — ✅ (commit pending)
 
-- [ ] **GEN-BADGE-01** — `BUIBadgeRenderingTests` — root, color, placement, shape.
-- [ ] **GEN-BADGE-02** — `BUIBadgeStateTests` — cambio de content, visibility.
-- [ ] **GEN-BADGE-03** — `BUIBadgeVariantTests` — `BUIBadgeVariant`.
-- [ ] **GEN-BADGE-04** — `BUIBadgeAccessibilityTests` — `role="status"` o `aria-label` según semántica.
-- [ ] **GEN-BADGE-05** — `BUINotificationBadgeRenderingTests` — count, overflow max, dot mode.
-- [ ] **GEN-BADGE-06** — `BUINotificationBadgeStateTests` — incremento de count, reset a 0 (visibilidad).
-- [ ] **GEN-BADGE-07** — `BUIBadgeSnapshotTests` — variantes + placements.
+- [x] **GEN-BADGE-01** — `BUIBadgeRenderingTests` — root, color, placement, shape.
+- [x] **GEN-BADGE-02** — `BUIBadgeStateTests` — cambio de content, visibility.
+- [x] **GEN-BADGE-03** — `BUIBadgeVariantTests` — `BUIBadgeVariant`.
+- [x] **GEN-BADGE-04** — `BUIBadgeAccessibilityTests` — `role="status"` o `aria-label` según semántica.
+- [x] **GEN-BADGE-05** — `BUINotificationBadgeRenderingTests` — count, overflow max, dot mode.
+- [x] **GEN-BADGE-06** — `BUINotificationBadgeStateTests` — incremento de count, reset a 0 (visibilidad).
+- [x] **GEN-BADGE-07** — `BUIBadgeSnapshotTests` — variantes + placements.
 
 ### BUICodeBlock (`Components/Generic/CodeBlock/`)
 
