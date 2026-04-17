@@ -174,7 +174,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-CODE-05** — `BUICodeBlockSnapshotTests` — cada lenguaje soportado × con/sin line numbers.
 - [x] **GEN-CODE-06** — `BUICodeBlockSecurityTests` — input XSS (`</pre><script>alert(1)</script>`) → renderiza escapado (regresión SEC-02).
 
-### BUILoadingIndicator (`Components/Generic/Loading/`) — ✅ (commit pending)
+### BUILoadingIndicator (`Components/Generic/Loading/`) — ✅ `227a3b0`
 
 - [x] **GEN-LOAD-01** — `BUILoadingIndicatorRenderingTests` — root, `role="img"`, `aria-label` (regresión A11Y-01), variantes (spinner/dots/linear).
 - [x] **GEN-LOAD-02** — `BUILoadingIndicatorStateTests` — cambio de variante, color, size, progreso (linear).
@@ -182,13 +182,13 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **GEN-LOAD-04** — `BUILoadingIndicatorAccessibilityTests` — `role="progressbar"` + `aria-valuenow/min/max` en linear determinate.
 - [x] **GEN-LOAD-05** — `BUILoadingIndicatorSnapshotTests` — cada variante × indeterminate/determinate.
 
-### BUISvgIcon (`Components/Generic/Svg/`)
+### BUISvgIcon (`Components/Generic/Svg/`) — ✅ (commit pending)
 
-- [ ] **GEN-SVG-01** — `BUISvgIconRenderingTests` — root, catálogo conocido (`BUIIcons.*`), `viewBox`.
-- [ ] **GEN-SVG-02** — `BUISvgIconStateTests` — cambio de `Icon`, color, size.
-- [ ] **GEN-SVG-03** — `BUISvgIconVariantTests` — variante.
-- [ ] **GEN-SVG-04** — `BUISvgIconSecurityTests` — `SvgMarkupSanitizer` elimina `<script>`, `on*`, `<foreignObject>` (regresión SEC-01).
-- [ ] **GEN-SVG-05** — `BUISvgIconSnapshotTests` — 3–4 iconos representativos.
+- [x] **GEN-SVG-01** — `BUISvgIconRenderingTests` — root, catálogo conocido (`BUIIcons.*`), `viewBox`.
+- [x] **GEN-SVG-02** — `BUISvgIconStateTests` — cambio de `Icon`, color, size.
+- [x] **GEN-SVG-03** — `BUISvgIconVariantTests` — variante.
+- [x] **GEN-SVG-04** — `BUISvgIconSecurityTests` — `SvgMarkupSanitizer` elimina `<script>`, `on*`, `<foreignObject>` (regresión SEC-01).
+- [x] **GEN-SVG-05** — `BUISvgIconSnapshotTests` — 3–4 iconos representativos.
 
 ### BUISwitch (`Components/Generic/Switch/`)
 
