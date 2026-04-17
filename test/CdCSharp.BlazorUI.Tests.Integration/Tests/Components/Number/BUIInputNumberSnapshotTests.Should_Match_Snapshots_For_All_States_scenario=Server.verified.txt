@@ -1,0 +1,92 @@
+﻿[
+  {
+    Name: Default_Empty,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="3" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-bag1hp0i4k blazor:elementReference="<GUID>"></input><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment" blazor:onmousedown="6" blazor:onmouseup="7" blazor:onmouseleave="8" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+            <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement" blazor:onmousedown="9" blazor:onmouseup="10" blazor:onmouseleave="11" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+            </div>
+
+        </bui-component>
+  },
+  {
+    Name: With_Value,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="true" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="42" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="14" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-bag1hp0i4k blazor:elementReference="<GUID>"></input><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment" blazor:onmousedown="17" blazor:onmouseup="18" blazor:onmouseleave="19" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+            <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement" blazor:onmousedown="20" blazor:onmouseup="21" blazor:onmouseleave="22" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+            </div>
+
+        </bui-component>
+  },
+  {
+    Name: Disabled,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="25" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" disabled b-bag1hp0i4k blazor:elementReference="<GUID>"></input><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" disabled tabindex="-1" aria-label="Increment" blazor:onmousedown="28" blazor:onmouseup="29" blazor:onmouseleave="30" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+            <button type="button" data-bui-size="small" class="_bui-btn" disabled tabindex="-1" aria-label="Decrement" blazor:onmousedown="31" blazor:onmouseup="32" blazor:onmouseleave="33" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+            </div>
+
+        </bui-component>
+  },
+  {
+    Name: Loading,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="true" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="36" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" disabled b-bag1hp0i4k blazor:elementReference="<GUID>"></input><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment" blazor:onmousedown="39" blazor:onmouseup="40" blazor:onmouseleave="41" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+            <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement" blazor:onmousedown="42" blazor:onmouseup="43" blazor:onmouseleave="44" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+            <div class="_bui-addon" b-gjdaj7dgdt><bui-component data-bui-component="loading-indicator" data-bui-variant="circularprogress" data-bui-size="medium" role="status" aria-live="polite" aria-label="Loading" b-9uouee14ai><svg viewBox="0 0 50 50" role="img" aria-hidden="true" focusable="false" b-9uouee14ai><circle cx="25" cy="25" r="20" b-9uouee14ai></circle></svg></bui-component></div></div>
+
+        </bui-component>
+  },
+  {
+    Name: No_Step_Buttons,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
+    <span class="bui-input__outline-trailing"></span></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="47" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-bag1hp0i4k blazor:elementReference="<GUID>"></input>
+            </div>
+
+        </bui-component>
+  },
+  {
+    Name: Left_Buttons,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="left" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
+    <span class="bui-input__outline-trailing"></span></div><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment" blazor:onmousedown="55" blazor:onmouseup="56" blazor:onmouseleave="57" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+            <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement" blazor:onmousedown="58" blazor:onmouseup="59" blazor:onmouseleave="60" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="52" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-bag1hp0i4k blazor:elementReference="<GUID>"></input>
+            </div>
+
+        </bui-component>
+  },
+  {
+    Name: With_Prefix_Suffix,
+    Html:
+<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+    <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Price</label></span>
+    <span class="bui-input__outline-trailing"></span></div><div class="_bui-addon bui-input__addon--prefix" b-gjdaj7dgdt><span>$</span></div>
+
+            <input id="bui-number-<ID>" type="text" inputmode="decimal" class="bui-input__field" value="" blazor:oninput="<EVENT>" blazor:onkeydown="<EVENT>" blazor:onwheel="63" blazor:onfocus="<EVENT>" blazor:onblur="<EVENT>" aria-describedby="bui-helper-<ID>" aria-invalid="false" aria-required="false" b-bag1hp0i4k blazor:elementReference="<GUID>"></input><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment" blazor:onmousedown="66" blazor:onmouseup="67" blazor:onmouseleave="68" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+            <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement" blazor:onmousedown="69" blazor:onmouseup="70" blazor:onmouseleave="71" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div><div class="_bui-addon bui-input__addon--suffix" b-gjdaj7dgdt><span>USD</span></div>
+            </div>
+
+        </bui-component>
+  }
+]

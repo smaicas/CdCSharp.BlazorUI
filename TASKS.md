@@ -89,15 +89,15 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **FRM-TXT-06** — `BUIInputTextValidationTests` (14 tests)
 - [x] **FRM-TXT-07** — `BUIInputTextSnapshotTests` (2 tests, 9 states each)
 
-### BUIInputNumber (`Components/Forms/Number/`)
+### BUIInputNumber (`Components/Forms/Number/`) — ✅ pending-hash
 
-- [ ] **FRM-NUM-01** — `BUIInputNumberRenderingTests` — root, `data-bui-button-placement` (regresión STD-06), step buttons render.
-- [ ] **FRM-NUM-02** — `BUIInputNumberStateTests` — `Min`, `Max`, `Step`, `Disabled`, `ReadOnly`, `Error`, `FullWidth`.
-- [ ] **FRM-NUM-03** — `BUIInputNumberInteractionTests` — incremento/decremento por botones, flechas arriba/abajo, clamping a `Min`/`Max`, rechazo de entrada no-numérica.
-- [ ] **FRM-NUM-04** — `BUIInputNumberVariantTests` — outlined/filled/standard.
-- [ ] **FRM-NUM-05** — `BUIInputNumberAccessibilityTests` — `type="number"`, `aria-valuemin`/`valuemax`/`valuenow`.
-- [ ] **FRM-NUM-06** — `BUIInputNumberValidationTests` — `[Range]`, `[Required]`.
-- [ ] **FRM-NUM-07** — `BUIInputNumberSnapshotTests` — placements (start/end/split), con/sin error.
+- [x] **FRM-NUM-01** — `BUIInputNumberRenderingTests` (8 tests)
+- [x] **FRM-NUM-02** — `BUIInputNumberStateTests` (6 tests)
+- [x] **FRM-NUM-03** — `BUIInputNumberInteractionTests` (11 tests)
+- [x] **FRM-NUM-04** — `BUIInputNumberVariantTests` (4 tests)
+- [x] **FRM-NUM-05** — `BUIInputNumberAccessibilityTests` (7 tests)
+- [x] **FRM-NUM-06** — `BUIInputNumberValidationTests` (7 tests)
+- [x] **FRM-NUM-07** — `BUIInputNumberSnapshotTests` (1 test, 7 states)
 
 ### BUIInputTextArea (`Components/Forms/TextArea/`)
 

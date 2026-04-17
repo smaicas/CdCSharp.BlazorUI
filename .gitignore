@@ -383,3 +383,6 @@ wwwroot/js/**/*.js.map
 /src/CdCSharp.BlazorUI/tsconfig.json
 /src/CdCSharp.BlazorUI/vite.config.js
 /src/CdCSharp.BlazorUI/vite.config.css.js
+
+# VS Code C# Dev Tools - Auto-generated runners
+.vscodecsdt/
