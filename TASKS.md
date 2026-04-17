@@ -109,7 +109,7 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 - [x] **FRM-TA-06** — `BUIInputTextAreaValidationTests` (7 tests)
 - [x] **FRM-TA-07** — `BUIInputTextAreaSnapshotTests` (1 test, 8 states)
 
-### BUIInputColor + BUIColorPicker (`Components/Forms/Color/`) — ✅ pending-hash
+### BUIInputColor + BUIColorPicker (`Components/Forms/Color/`) — ✅ `2f0ad6e`
 
 - [x] **FRM-COL-01** — `BUIInputColorRenderingTests` (8 tests)
 - [x] **FRM-COL-02** — `BUIInputColorStateTests` (6 tests)
