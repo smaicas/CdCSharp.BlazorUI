@@ -321,11 +321,11 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUICultureSelector (`Components/Layout/` — ya presente en tests)
 
-- [ ] **LAY-CULT-01** — Refactor: fusionar `Server_BUICultureSelectorRenderingTests` + `Wasm_BUICultureSelectorRenderingTests` en `BUICultureSelectorRenderingTests` con `TestScenarios.All`.
-- [ ] **LAY-CULT-02** — `BUICultureSelectorStateTests` — cambio de culture.
-- [ ] **LAY-CULT-03** — `BUICultureSelectorInteractionTests` — selección → `ITestCultureService` recibe.
-- [ ] **LAY-CULT-04** — `BUICultureSelectorAccessibilityTests`.
-- [ ] **LAY-CULT-05** — `BUICultureSelectorSnapshotTests`.
+- [x] **LAY-CULT-01** — Refactor: fusionar `Server_BUICultureSelectorRenderingTests` + `Wasm_BUICultureSelectorRenderingTests` en `BUICultureSelectorRenderingTests` con `TestScenarios.All`.
+- [x] **LAY-CULT-02** — `BUICultureSelectorStateTests` — cambio de culture.
+- [x] **LAY-CULT-03** — `BUICultureSelectorInteractionTests` — selección → `ITestCultureService` recibe.
+- [x] **LAY-CULT-04** — `BUICultureSelectorAccessibilityTests`.
+- [x] **LAY-CULT-05** — `BUICultureSelectorSnapshotTests`.
 
 ---
 

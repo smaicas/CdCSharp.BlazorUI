@@ -1,0 +1,1 @@
+﻿<select class="ui-culture-selector__select" value="en-US" blazor:onchange="<EVENT>" b-f2ka2k7dr7><option value="en-US" b-f2ka2k7dr7 selected>🇺🇸 English (United States)</option><option value="es-ES" b-f2ka2k7dr7>🇪🇸 Spanish (Spain)</option></select>
