@@ -1,22 +1,32 @@
-<div class="doc-page">
-    <header class="doc-page__header">
-        @if (!string.IsNullOrEmpty(Eyebrow))
-        {
-            <span class="doc-page__eyebrow">@Eyebrow</span>
-        }
-        <h1 class="doc-page__title">@Title</h1>
-        @if (!string.IsNullOrEmpty(Lede))
-        {
-            <p class="doc-page__lede">@Lede</p>
-        }
-    </header>
+@using CdCSharp.BlazorUI.Docs.Components
 
-    @ChildContent
-</div>
+<CascadingValue Value="_ctx" IsFixed="true">
+    <div class="doc-page">
+        <header class="doc-page__header">
+            @if (!string.IsNullOrEmpty(Eyebrow))
+            {
+                <span class="doc-page__eyebrow">@Eyebrow</span>
+            }
+            <h1 class="doc-page__title">@Title</h1>
+            @if (!string.IsNullOrEmpty(Lede))
+            {
+                <p class="doc-page__lede">@Lede</p>
+            }
+        </header>
+
+        @ChildContent
+    </div>
+</CascadingValue>
 
 @code {
     [Parameter] public string? Eyebrow { get; set; }
     [Parameter, EditorRequired] public string Title { get; set; } = default!;
     [Parameter] public string? Lede { get; set; }
+    [Parameter] public Type? PageType { get; set; }
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private DocDemoContext? _ctx;
+
+    protected override void OnParametersSet()
+        => _ctx = PageType is null ? null : new DocDemoContext(PageType);
 }

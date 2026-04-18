@@ -29,7 +29,7 @@
     </div>
 
     <div class="bui-code-block__content">
-        @HighlightedCode
+        @_highlightedCode
     </div>
 </bui-component>
 
@@ -51,21 +51,34 @@
     private Highlighter _highlighter = new Highlighter();
     private CancellationTokenSource _disposeCts = new();
 
-    private MarkupString HighlightedCode
-    {
-        get
-        {
-            if (Code == null) return (MarkupString)string.Empty;
+    private MarkupString _highlightedCode;
+    private string? _lastCode;
+    private SyntaxHighlightLanguage _lastLanguage;
 
-            try
-            {
-                string result = _highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
-                return (MarkupString)result;
-            }
-            catch
-            {
-                return (MarkupString)System.Web.HttpUtility.HtmlEncode(NormalizeIndentation(Code));
-            }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Code != _lastCode || Language != _lastLanguage)
+        {
+            _highlightedCode = ComputeHighlight();
+            _lastCode = Code;
+            _lastLanguage = Language;
+        }
+    }
+
+    private MarkupString ComputeHighlight()
+    {
+        if (Code == null) return (MarkupString)string.Empty;
+
+        try
+        {
+            string result = _highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
+            return (MarkupString)result;
+        }
+        catch
+        {
+            return (MarkupString)System.Web.HttpUtility.HtmlEncode(NormalizeIndentation(Code));
         }
     }
 

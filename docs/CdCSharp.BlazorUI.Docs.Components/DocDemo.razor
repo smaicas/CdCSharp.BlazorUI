@@ -1,0 +1,37 @@
+@using CdCSharp.BlazorUI.SyntaxHighlight
+
+<section class="doc-section">
+    @if (!string.IsNullOrEmpty(Title))
+    {
+        <h2 class="doc-section__title">@Title</h2>
+    }
+    @if (!string.IsNullOrEmpty(Description))
+    {
+        <p class="doc-section__description">@Description</p>
+    }
+    <ComponentDemo Definition="_definition" />
+</section>
+
+@code {
+    [CascadingParameter] public DocDemoContext? Ctx { get; set; }
+
+    [Parameter, EditorRequired] public string Key { get; set; } = default!;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string? CodeTitle { get; set; }
+    [Parameter] public SyntaxHighlightLanguage Language { get; set; } = SyntaxHighlightLanguage.Razor;
+    [Parameter, EditorRequired] public RenderFragment ChildContent { get; set; } = default!;
+
+    private ComponentDemoDefinition _definition = default!;
+
+    protected override void OnParametersSet()
+    {
+        _definition = new ComponentDemoDefinition
+        {
+            Code = Ctx?.Get(Key),
+            CodeTitle = CodeTitle,
+            Demo = ChildContent,
+            Language = Language
+        };
+    }
+}

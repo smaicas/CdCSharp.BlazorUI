@@ -6,64 +6,78 @@
 <PageTitle>Color Picker — CdCSharp.BlazorUI</PageTitle>
 
 <DocPage Eyebrow="@Loc["Component"]" Title="@Loc["Color Picker"]"
-         Lede="@Loc["Full-featured color input with HSL/RGB/Hex output, an inline or dropdown picker, copy and revert actions."]">
+         Lede="@Loc["Full-featured color input with HSL/RGB/Hex output, an inline or dropdown picker, copy and revert actions."]"
+         PageType="typeof(ColorPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]" CodeTitle="Basic.razor">
+        <BUIInputColor @bind-Value="_basic" Label="@Loc["Color"]" HelperText="@Loc["Pick anything, or paste a hex/rgb value."]" />
+    </DocDemo>
+
+    <DocDemo Key="Variants" Title="@Loc["Variants"]">
+        <BUIInputColor @bind-Value="_outlinedValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Outlined"]" />
+        <BUIInputColor @bind-Value="_filledValue" Variant="BUIInputVariant.Filled" Label="@Loc["Filled"]" />
+        <BUIInputColor @bind-Value="_standardValue" Variant="BUIInputVariant.Standard" Label="@Loc["Standard"]" />
+    </DocDemo>
+
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
+        <BUIInputColor @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small" />
+        <BUIInputColor @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="SizeEnum.Medium" />
+        <BUIInputColor @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large" />
+    </DocDemo>
+
+    <DocDemo Key="PrefixSuffix" Title="@Loc["Prefix & Suffix"]">
+        <BUIInputColor @bind-Value="_prefixValue" Label="@Loc["With Prefix Icon"]"
+                       PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"
+                       PrefixBackgroundColor="white"
+                       PrefixColor="black" />
+        <BUIInputColor @bind-Value="_suffixValue" Label="@Loc["With Suffix Icon"]"
+                       SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"
+                       SuffixBackgroundColor="white"
+                       SuffixColor="black" />
+    </DocDemo>
+
+    <DocDemo Key="Format" Title="@Loc["Output formats"]"
+             Description="@Loc["Pick the serialization format that matches your back-end."]"
+             CodeTitle="Format.razor">
+        <BUIInputColor @bind-Value="_hex" Label="@Loc["HEX"]" OutputFormat="ColorOutputFormats.Hex" />
+        <BUIInputColor @bind-Value="_hex" Label="@Loc["HEXA"]" OutputFormat="ColorOutputFormats.HexA" />
+        <BUIInputColor @bind-Value="_rgba" Label="@Loc["RGB"]" OutputFormat="ColorOutputFormats.Rgb" />
+        <BUIInputColor @bind-Value="_rgba" Label="@Loc["RGBA"]" OutputFormat="ColorOutputFormats.Rgba" />
+        <BUIInputColor @bind-Value="_rgba" Label="@Loc["Optimized"]" OutputFormat="ColorOutputFormats.Optimized" />
+    </DocDemo>
+
+    <DocDemo Key="DisplayMode" Title="@Loc["Display modes"]" CodeTitle="DisplayMode.razor">
+        <BUIInputColor @bind-Value="_inline" Label="@Loc["Dropdown"]" DisplayMode="ColorPickerDisplayMode.Dropdown" />
+        <BUIInputColor @bind-Value="_inline" Label="@Loc["Modal"]" DisplayMode="ColorPickerDisplayMode.Modal" />
+    </DocDemo>
+
+    <DocDemo Key="ClearCopy" Title="@Loc["Clearable"]" CodeTitle="Clear.razor">
+        <BUIInputColor @bind-Value="_clearableNull" HelperText="@Loc["Clear reverts to initial value (nullable)"]"
+                       Label="@Loc["Clearable Nullable"]" Clearable="true" ShowCopyButton="true" />
+        <BUIInputColor @bind-Value="_clearableNotNull" HelperText="@Loc["Clear reverts to initial value (not nullable)"]"
+                       Label="@Loc["Clearable NotNullable"]" Clearable="true" ShowCopyButton="true" />
+    </DocDemo>
+
+    <DocDemo Key="States" Title="@Loc["States"]">
+        <BUIInputColor @bind-Value="_requiredValue" Label="@Loc["Required"]" Required="true" HelperText="@Loc["Required"]" />
+        <BUIInputColor @bind-Value="_disabledValue" Label="@Loc["Disabled"]" Disabled="true" HelperText="@Loc["Disabled"]" />
+        <BUIInputColor @bind-Value="_readOnlyValue" Label="@Loc["Read Only"]" ReadOnly="true" HelperText="@Loc["ReadOnly"]" />
+    </DocDemo>
+
+    <DocDemo Key="CustomPickerSize" Title="@Loc["Custom Picker Size"]">
+        <BUIInputColor @bind-Value="_customPickerValue" Label="@Loc["Custom Picker Size"]"
+                       SelectionWidth="300" SelectionHeight="200"
+                       HelperText="@Loc["Custom picker size: 300x200"]" />
+    </DocDemo>
+
+    <DocDemo Key="Standalone" Title="@Loc["Standalone picker"]"
+             Description="@Loc["Use BUIColorPicker directly — no input field, just the picker."]"
+             CodeTitle="Standalone.razor">
+        <BUIColorPicker @bind-Value="_standalone" />
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Basic usage"]"</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Variants"]"</h2>
-        <ComponentDemo Definition="@VariantsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Sizes"]"</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Prefix & Suffix"]"</h2>
-        <ComponentDemo Definition="@PrefixSuffixDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Output formats"]"</h2>
-        <p class="doc-section__description">@Loc["Pick the serialization format that matches your back-end."]"</p>
-        <ComponentDemo Definition="@FormatDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Display modes"]"</h2>
-        <ComponentDemo Definition="@DisplayModeDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Clearable"]"</h2>
-        <ComponentDemo Definition="@ClearCopyDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["States"]"</h2>
-        <ComponentDemo Definition="@DisabledRequiredReadonlyDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Custom Picker Size"]"</h2>
-        <ComponentDemo Definition="@CustomPickerSizeDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Standalone picker"]"</h2>
-        <p class="doc-section__description">
-            @Loc["Use <code>BUIColorPicker</code> directly — no input field, just the picker."]"
-        </p>
-        <ComponentDemo Definition="@StandaloneDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">@Loc["Properties"]"</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIInputColorComponentInfo.Parameters" />
     </section>
 
@@ -90,189 +104,4 @@
     private CssColor? _customPickerValue;
     private CssColor _clearableNotNull = new CssColor("#FFFFFF");
     private CssColor? _standalone = new("#c41236");
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_basic" Label="{Loc["Color"]}" HelperText="{Loc["Pick anything, or paste a hex/rgb value."]}" />
-        """,
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_basic" Label="@Loc["Color"]" HelperText="@Loc["Pick anything, or paste a hex/rgb value."]" />
-    };
-
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        Demo = RenderVariants(),
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_outlinedValue" Variant="BUIInputVariant.Outlined" Label="{Loc["Outlined"]}" />
-        <BUIInputColor @bind-Value="_filledValue" Variant="BUIInputVariant.Filled" Label="{Loc["Filled"]}" />
-        <BUIInputColor @bind-Value="_standardValue" Variant="BUIInputVariant.Standard" Label="{Loc["Standard"]}" />
-        """
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_outlinedValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Outlined"]" />
-        <BUIInputColor @bind-Value="_filledValue" Variant="BUIInputVariant.Filled" Label="@Loc["Filled"]" />
-        <BUIInputColor @bind-Value="_standardValue" Variant="BUIInputVariant.Standard" Label="@Loc["Standard"]" />
-    };
-
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        Demo = RenderSizes(),
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_smallValue" Label="{Loc["Small"]}" Size="SizeEnum.Small" />
-        <BUIInputColor @bind-Value="_mediumValue" Label="{Loc["Medium (Default)"]}" Size="SizeEnum.Medium" />
-        <BUIInputColor @bind-Value="_largeValue" Label="{Loc["Large"]}" Size="SizeEnum.Large" />
-        """
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small" />
-        <BUIInputColor @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" (Default)" Size="SizeEnum.Medium" />
-        <BUIInputColor @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large" />
-    };
-
-    private ComponentDemoDefinition PrefixSuffixDemo => new()
-    {
-        Demo = RenderPrefixSuffix(),
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_prefixValue" Label="{Loc["With Prefix Icon"]}"
-                       PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"
-                       PrefixBackgroundColor="white"
-                       PrefixColor="black" />
-        <BUIInputColor @bind-Value="_suffixValue" Label="{Loc["With Suffix Icon"]}"
-                       SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette"
-                       SuffixBackgroundColor="white"
-                       SuffixColor="black" />
-        """
-    };
-
-    private RenderFragment RenderPrefixSuffix() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_prefixValue" Label="@Loc["With Prefix Icon"]"
-                       PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" PrefixBackgroundColor="white" PrefixColor="black" />
-        <BUIInputColor @bind-Value="_suffixValue" Label="@Loc["With Suffix Icon"]"
-                       SuffixIcon="@BUIIcons.MaterialIconsOutlined.i_palette" SuffixBackgroundColor="white" SuffixColor="black" />
-    };
-
-    private ComponentDemoDefinition FormatDemo => new()
-    {
-        CodeTitle = "Format.razor",
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_hex" Label="{Loc["HEX"]}" OutputFormat="ColorOutputFormats.Hex" />
-        <BUIInputColor @bind-Value="_hex" Label="{Loc["HEXA"]}" OutputFormat="ColorOutputFormats.HexA" />
-        <BUIInputColor @bind-Value="_rgba" Label="{Loc["RGB"]}" OutputFormat="ColorOutputFormats.Rgb" />
-        <BUIInputColor @bind-Value="_rgba" Label="{Loc["RGBA"]}" OutputFormat="ColorOutputFormats.Rgba" />
-        <BUIInputColor @bind-Value="_rgba" Label="{Loc["Optimized"]}" OutputFormat="ColorOutputFormats.Optimized" />
-        """,
-        Demo = RenderFormat()
-    };
-
-    private RenderFragment RenderFormat() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_hex" Label="@Loc["HEX"]" OutputFormat="ColorOutputFormats.Hex" />
-        <BUIInputColor @bind-Value="_hex" Label="@Loc["HEXA"]" OutputFormat="ColorOutputFormats.HexA" />
-        <BUIInputColor @bind-Value="_rgba" Label="@Loc["RGB"]" OutputFormat="ColorOutputFormats.Rgb" />
-        <BUIInputColor @bind-Value="_rgba" Label="@Loc["RGBA"]" OutputFormat="ColorOutputFormats.Rgba" />
-        <BUIInputColor @bind-Value="_rgba" Label="@Loc["Optimized"]" OutputFormat="ColorOutputFormats.Optimized" />
-    };
-
-    private ComponentDemoDefinition DisplayModeDemo => new()
-    {
-        CodeTitle = "DisplayMode.razor",
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_inline" Label="{Loc["Dropdown"]}" DisplayMode="ColorPickerDisplayMode.Dropdown" />
-        <BUIInputColor @bind-Value="_inline" Label="{Loc["Modal"]}" DisplayMode="ColorPickerDisplayMode.Modal" />
-        """,
-        Demo = RenderDisplayMode()
-    };
-
-    private RenderFragment RenderDisplayMode() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_inline" Label="@Loc["Dropdown"]" DisplayMode="ColorPickerDisplayMode.Dropdown" />
-        <BUIInputColor @bind-Value="_inline" Label="@Loc["Modal"]" DisplayMode="ColorPickerDisplayMode.Modal" />
-    };
-
-    private ComponentDemoDefinition ClearCopyDemo => new()
-    {
-        CodeTitle = "Clear.razor",
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_clearableNull" HelperText="{Loc["Clear reverts to initial value (nullable)"]}"
-                       Label="{Loc["Clearable Nullable"]}" Clearable="true" ShowCopyButton="true" />
-        <BUIInputColor @bind-Value="_clearableNotNull" HelperText="{Loc["Clear reverts to initial value (not nullable)"]}"
-                       Label="{Loc["Clearable NotNullable"]}" Clearable="true" ShowCopyButton="true" />
-        """,
-        Demo = RenderClearCopy()
-    };
-
-    private RenderFragment RenderClearCopy() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_clearableNull" HelperText="@Loc["Clear reverts to initial value (nullable)"]"
-                       Label="@Loc["Clearable Nullable"]" Clearable="true" ShowCopyButton="true" />
-        <BUIInputColor @bind-Value="_clearableNotNull" HelperText="@Loc["Clear reverts to initial value (not nullable)"]"
-                       Label="@Loc["Clearable NotNullable"]" Clearable="true" ShowCopyButton="true" />
-    };
-
-    private ComponentDemoDefinition DisabledRequiredReadonlyDemo => new()
-    {
-        Demo = RenderDisabledReadOnly(),
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_requiredValue" Label="{Loc["Required"]}" Required="true" HelperText="{Loc["Required"]}"/>
-        <BUIInputColor @bind-Value="_disabledValue" Label="{Loc["Disabled"]}" Disabled="true" HelperText="{Loc["Disabled"]}"/>
-        <BUIInputColor @bind-Value="_readOnlyValue" Label="{Loc["Read Only"]}" ReadOnly="true" HelperText="{Loc["ReadOnly"]}"/>
-        """
-    };
-
-    private RenderFragment RenderDisabledReadOnly() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_requiredValue" Label="@Loc["Required"]" Required="true" HelperText="@Loc["Required"]" />
-        <BUIInputColor @bind-Value="_disabledValue" Label="@Loc["Disabled"]" Disabled="true" HelperText="@Loc["Disabled"]" />
-        <BUIInputColor @bind-Value="_readOnlyValue" Label="@Loc["Read Only"]" ReadOnly="true" HelperText="@Loc["ReadOnly"]" />
-    };
-
-    private ComponentDemoDefinition CustomPickerSizeDemo => new()
-    {
-        Demo = RenderCustomPickerSize(),
-        Code =
-        $"""
-        <BUIInputColor @bind-Value="_customPickerValue" Label="{Loc["Custom Picker Size"]}"
-                       HelperText="{Loc["Custom picker size: 300x200"]}" />
-        """
-    };
-
-    private RenderFragment RenderCustomPickerSize() => __builder =>
-    {
-        <BUIInputColor @bind-Value="_customPickerValue" Label="@Loc["Custom Picker Size"]" SelectionWidth="300" SelectionHeight="200"
-                       HelperText="@Loc["Custom picker size: 300x200"]" />
-    };
-
-    private ComponentDemoDefinition StandaloneDemo => new()
-    {
-        CodeTitle = "Standalone.razor",
-        Code =
-        $"""
-        <BUIColorPicker @bind-Value="_standalone" />
-        """,
-        Demo = RenderStandalone()
-    };
-
-    private RenderFragment RenderStandalone() => __builder =>
-    {
-        <BUIColorPicker @bind-Value="_standalone" />
-    };
 }
