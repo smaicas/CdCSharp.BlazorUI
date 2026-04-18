@@ -271,4 +271,96 @@ public class BUIComponentBaseTests
         style.Should().StartWith("--bui-inline-color:");
         style.Should().Contain("display: flex;");
     }
+
+    // ---- CORE-T-01: PatchVolatileAttributes flips data-bui-* without full rebuild ----
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task PatchVolatileAttributes_Should_Update_Loading_Without_Full_Rebuild(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Loading, false));
+        cut.Find("div").GetAttribute("data-bui-loading").Should().Be("false");
+
+        // Act — flip volatile attribute
+        cut.Render(p => p.Add(c => c.Loading, true));
+
+        // Assert — attribute updated
+        cut.Find("div").GetAttribute("data-bui-loading").Should().Be("true");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task PatchVolatileAttributes_Should_Update_Error_Without_Full_Rebuild(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Error, false));
+        cut.Find("div").GetAttribute("data-bui-error").Should().Be("false");
+
+        // Act
+        cut.Render(p => p.Add(c => c.Error, true));
+
+        // Assert
+        cut.Find("div").GetAttribute("data-bui-error").Should().Be("true");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task PatchVolatileAttributes_Should_Update_Disabled_Without_Full_Rebuild(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Disabled, false));
+
+        // Act
+        cut.Render(p => p.Add(c => c.Disabled, true));
+
+        // Assert
+        cut.Find("div").GetAttribute("data-bui-disabled").Should().Be("true");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task PatchVolatileAttributes_Should_Update_FullWidth_Without_Full_Rebuild(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.FullWidth, false));
+
+        // Act
+        cut.Render(p => p.Add(c => c.FullWidth, true));
+
+        // Assert
+        cut.Find("div").GetAttribute("data-bui-fullwidth").Should().Be("true");
+    }
+
+    // ---- CORE-T-02: BuildComponentDataAttributes re-executes on re-render ----
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task BuildComponentDataAttributes_Should_Reexecute_On_ReRender(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange — initial render with color
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Color, "rgba(255,0,0,1)"));
+        cut.Find("div").GetAttribute("style").Should().Contain("--bui-inline-color: rgba(255,0,0,1)");
+
+        // Act — change color
+        cut.Render(p => p.Add(c => c.Color, "rgba(0,0,255,1)"));
+
+        // Assert — updated inline var reflects new color
+        cut.Find("div").GetAttribute("style").Should().Contain("--bui-inline-color: rgba(0,0,255,1)");
+    }
 }

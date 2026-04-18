@@ -469,4 +469,81 @@ public class CssColorSystemTests
             }
         }
     }
+
+    // ---- LIB-01: HsvColor conversions ----
+
+    [Theory]
+    [InlineData(255, 0, 0, 0, 1.0, 1.0)]       // red
+    [InlineData(0, 255, 0, 120, 1.0, 1.0)]     // green
+    [InlineData(0, 0, 255, 240, 1.0, 1.0)]     // blue
+    [InlineData(255, 255, 255, 0, 0.0, 1.0)]   // white
+    [InlineData(0, 0, 0, 0, 0.0, 0.0)]         // black
+    public void HsvColor_FromCssColor_Should_Produce_Correct_HSV(
+        int r, int g, int b, int expectedHue, double expectedSat, double expectedVal)
+    {
+        CssColor color = new(r, g, b, 255);
+        HsvColor hsv = HsvColor.FromCssColor(color);
+
+        hsv.Hue.Should().Be(expectedHue);
+        hsv.Saturation.Should().BeApproximately(expectedSat, 0.001);
+        hsv.Value.Should().BeApproximately(expectedVal, 0.001);
+    }
+
+    [Theory]
+    [InlineData(0, 1.0, 1.0, 255, 0, 0)]       // red
+    [InlineData(120, 1.0, 1.0, 0, 255, 0)]     // green
+    [InlineData(240, 1.0, 1.0, 0, 0, 255)]     // blue
+    [InlineData(0, 0.0, 1.0, 255, 255, 255)]   // white
+    [InlineData(0, 0.0, 0.0, 0, 0, 0)]         // black
+    public void HsvColor_ToCssColor_Should_Produce_Correct_RGB(
+        int hue, double saturation, double value, int expectedR, int expectedG, int expectedB)
+    {
+        HsvColor hsv = new(hue, saturation, value);
+        CssColor color = hsv.ToCssColor();
+
+        color.R.Should().Be((byte)expectedR);
+        color.G.Should().Be((byte)expectedG);
+        color.B.Should().Be((byte)expectedB);
+    }
+
+    [Theory]
+    [InlineData(255, 0, 0)]
+    [InlineData(0, 255, 0)]
+    [InlineData(0, 0, 255)]
+    [InlineData(128, 64, 32)]
+    [InlineData(0, 0, 0)]
+    [InlineData(255, 255, 255)]
+    public void HsvColor_RoundTrip_Should_Preserve_Color(int r, int g, int b)
+    {
+        CssColor original = new(r, g, b, 255);
+        HsvColor hsv = HsvColor.FromCssColor(original);
+        CssColor roundTripped = hsv.ToCssColor();
+
+        // Allow ±1 rounding error per channel
+        Math.Abs((int)roundTripped.R - r).Should().BeLessThanOrEqualTo(1);
+        Math.Abs((int)roundTripped.G - g).Should().BeLessThanOrEqualTo(1);
+        Math.Abs((int)roundTripped.B - b).Should().BeLessThanOrEqualTo(1);
+    }
+
+    [Fact]
+    public void HsvColor_WithHue_Should_Change_Only_Hue()
+    {
+        HsvColor original = new(120, 0.8, 0.9);
+        HsvColor modified = original.WithHue(240);
+
+        modified.Hue.Should().Be(240);
+        modified.Saturation.Should().Be(original.Saturation);
+        modified.Value.Should().Be(original.Value);
+    }
+
+    [Fact]
+    public void HsvColor_WithSaturation_Should_Change_Only_Saturation()
+    {
+        HsvColor original = new(120, 0.5, 0.9);
+        HsvColor modified = original.WithSaturation(1.0);
+
+        modified.Hue.Should().Be(original.Hue);
+        modified.Saturation.Should().Be(1.0);
+        modified.Value.Should().Be(original.Value);
+    }
 }

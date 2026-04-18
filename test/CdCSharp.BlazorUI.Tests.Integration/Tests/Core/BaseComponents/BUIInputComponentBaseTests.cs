@@ -338,4 +338,43 @@ public class BUIInputComponentBaseTests
     //}
 
     #endregion Input Logic & Validation Tests
+
+    // ---- CORE-T-03: PatchVolatileAttributes updates data-bui-* on re-render ----
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task PatchVolatileAttributes_Should_Update_Loading_On_Rerender(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        ctx.Services.AddSingleton(_jsInterop);
+
+        // Arrange
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.Loading, false));
+        cut.Find("input").GetAttribute("data-bui-loading").Should().Be("false");
+
+        // Act
+        cut.Render(p => p.Add(c => c.Loading, true));
+
+        // Assert
+        cut.Find("input").GetAttribute("data-bui-loading").Should().Be("true");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task PatchVolatileAttributes_Should_Update_FullWidth_On_Rerender(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        ctx.Services.AddSingleton(_jsInterop);
+
+        // Arrange
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.FullWidth, false));
+
+        // Act
+        cut.Render(p => p.Add(c => c.FullWidth, true));
+
+        // Assert
+        cut.Find("input").GetAttribute("data-bui-fullwidth").Should().Be("true");
+    }
 }
