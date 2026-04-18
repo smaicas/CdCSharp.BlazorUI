@@ -311,13 +311,13 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIInitializer (`Components/Layout/BUIInitializer.razor`)
 
-- [ ] **LAY-INIT-01** — `BUIInitializerRenderingTests` — monta sin markup visible (o minimal).
-- [ ] **LAY-INIT-02** — `BUIInitializerInteractionTests` — suscripción a `IThemeJsInterop.OnThemeChanged` + desuscripción en dispose (regresión LAYOUT-01).
+- [x] **LAY-INIT-01** — `BUIInitializerRenderingTests` — monta sin markup visible (o minimal).
+- [x] **LAY-INIT-02** — `BUIInitializerInteractionTests` — suscripción a `IThemeJsInterop.OnThemeChanged` + desuscripción en dispose (regresión LAYOUT-01).
 
 ### BUIBlazorLayout (`Components/Layout/BUIBlazorLayout.razor`)
 
-- [ ] **LAY-BL-01** — `BUIBlazorLayoutRenderingTests` — `@Body` renderizado, `BUIToastHost`/`BUIModalHost` incluidos.
-- [ ] **LAY-BL-02** — `BUIBlazorLayoutIntegrationTests` — modal + toast simultáneos.
+- [x] **LAY-BL-01** — `BUIBlazorLayoutRenderingTests` — `@Body` renderizado, `BUIToastHost`/`BUIModalHost` incluidos.
+- [x] **LAY-BL-02** — `BUIBlazorLayoutIntegrationTests` — modal + toast simultáneos.
 
 ### BUICultureSelector (`Components/Layout/` — ya presente en tests)
 
