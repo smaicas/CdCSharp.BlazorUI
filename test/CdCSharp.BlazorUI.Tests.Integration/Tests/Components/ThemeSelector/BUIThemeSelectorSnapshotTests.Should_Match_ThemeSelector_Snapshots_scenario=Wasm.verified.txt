@@ -1,0 +1,10 @@
+﻿[
+  {
+    Name: Default_Light,
+    Html: <bui-component data-bui-component="theme-selector" data-bui-variant="default" b-5rkzt1zjv2><button blazor:onclick="<EVENT>" b-5rkzt1zjv2><span class="bui-theme-switch__content " b-5rkzt1zjv2><span class="bui-theme-switch__icon" b-5rkzt1zjv2>☀️</span><span class="bui-theme-switch__label" b-5rkzt1zjv2>Light</span></span></button></bui-component>
+  },
+  {
+    Name: Default_NoIcon,
+    Html: <bui-component data-bui-component="theme-selector" data-bui-variant="default" b-5rkzt1zjv2><button blazor:onclick="<EVENT>" b-5rkzt1zjv2><span class="bui-theme-switch__content " b-5rkzt1zjv2><span class="bui-theme-switch__label" b-5rkzt1zjv2>Light</span></span></button></bui-component>
+  }
+]

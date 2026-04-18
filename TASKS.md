@@ -282,12 +282,12 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIThemeSelector (`Components/Layout/ThemeSelector/`)
 
-- [ ] **LAY-THS-01** — `BUIThemeSelectorRenderingTests` — root, lista de temas del `IThemeService`.
-- [ ] **LAY-THS-02** — `BUIThemeSelectorStateTests` — cambio de tema actual.
-- [ ] **LAY-THS-03** — `BUIThemeSelectorInteractionTests` — click → `IThemeJsInterop.ApplyTheme`.
-- [ ] **LAY-THS-04** — `BUIThemeSelectorVariantTests` — `BUIThemeSelectorVariant`.
-- [ ] **LAY-THS-05** — `BUIThemeSelectorAccessibilityTests` — `role="radiogroup"` si radio-like, labels.
-- [ ] **LAY-THS-06** — `BUIThemeSelectorSnapshotTests` — light/dark/custom.
+- [x] **LAY-THS-01** — `BUIThemeSelectorRenderingTests` — root, lista de temas del `IThemeService`.
+- [x] **LAY-THS-02** — `BUIThemeSelectorStateTests` — cambio de tema actual.
+- [x] **LAY-THS-03** — `BUIThemeSelectorInteractionTests` — click → `IThemeJsInterop.ApplyTheme`.
+- [x] **LAY-THS-04** — `BUIThemeSelectorVariantTests` — `BUIThemeSelectorVariant`.
+- [x] **LAY-THS-05** — `BUIThemeSelectorAccessibilityTests` — `role="radiogroup"` si radio-like, labels.
+- [x] **LAY-THS-06** — `BUIThemeSelectorSnapshotTests` — light/dark/custom.
 
 ### BUIThemeGenerator + BUIThemeEditor + BUIThemePreview (`Components/Layout/ThemeGenerator/`)
 
