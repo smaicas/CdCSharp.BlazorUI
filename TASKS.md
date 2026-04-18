@@ -270,10 +270,10 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUISidebarLayout (`Components/Layout/SidebarLayout/`)
 
-- [ ] **LAY-SIDE-01** — `BUISidebarLayoutRenderingTests` — root, side (left/right), colapsado.
-- [ ] **LAY-SIDE-02** — `BUISidebarLayoutStateTests` — toggle open/closed, `Side`.
-- [ ] **LAY-SIDE-03** — `BUISidebarLayoutInteractionTests` — click toggle, ESC.
-- [ ] **LAY-SIDE-04** — `BUISidebarLayoutSnapshotTests` — open/closed × side.
+- [x] **LAY-SIDE-01** — `BUISidebarLayoutRenderingTests` — root, side (left/right), colapsado.
+- [x] **LAY-SIDE-02** — `BUISidebarLayoutStateTests` — toggle open/closed, `Side`.
+- [x] **LAY-SIDE-03** — `BUISidebarLayoutInteractionTests` — click toggle, ESC.
+- [x] **LAY-SIDE-04** — `BUISidebarLayoutSnapshotTests` — open/closed × side.
 
 ### BUIStackedLayout (`Components/Layout/StackedLayout/`)
 

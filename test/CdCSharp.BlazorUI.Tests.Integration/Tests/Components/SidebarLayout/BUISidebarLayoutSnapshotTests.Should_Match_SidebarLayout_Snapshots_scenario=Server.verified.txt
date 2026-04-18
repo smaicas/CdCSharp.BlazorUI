@@ -1,0 +1,29 @@
+﻿[
+  {
+    Name: Closed_Start,
+    Html:
+<bui-component data-bui-component="sidebar-layout" data-bui-sidebar-side="start" data-bui-sidebar-open="false" data-bui-sticky-header="true" data-bui-sticky-sidebar="true" b-5ni0ohthgp><header class="bui-sidebar-layout__header" b-5ni0ohthgp><button type="button" class="bui-sidebar-layout__toggle" aria-label="Toggle navigation" aria-expanded="false" blazor:onclick="<EVENT>" b-5ni0ohthgp><span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span>
+                <span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span>
+                <span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span></button><div class="bui-sidebar-layout__header-content" b-5ni0ohthgp>Header</div></header>
+
+    <div class="bui-sidebar-layout__body" b-5ni0ohthgp><aside class="bui-sidebar-layout__sidebar" b-5ni0ohthgp><div class="bui-sidebar-layout__sidebar-inner" b-5ni0ohthgp>Nav</div></aside><main class="bui-sidebar-layout__main" b-5ni0ohthgp>Content</main></div></bui-component>
+  },
+  {
+    Name: Open_Start,
+    Html:
+<bui-component data-bui-component="sidebar-layout" data-bui-sidebar-side="start" data-bui-sidebar-open="true" data-bui-sticky-header="true" data-bui-sticky-sidebar="true" b-5ni0ohthgp><header class="bui-sidebar-layout__header" b-5ni0ohthgp><button type="button" class="bui-sidebar-layout__toggle" aria-label="Toggle navigation" aria-expanded="true" blazor:onclick="<EVENT>" b-5ni0ohthgp><span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span>
+                <span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span>
+                <span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span></button><div class="bui-sidebar-layout__header-content" b-5ni0ohthgp>Header</div></header>
+
+    <div class="bui-sidebar-layout__body" b-5ni0ohthgp><aside class="bui-sidebar-layout__sidebar" b-5ni0ohthgp><div class="bui-sidebar-layout__sidebar-inner" b-5ni0ohthgp>Nav</div></aside><div class="bui-sidebar-layout__scrim" blazor:onclick="<EVENT>" aria-hidden="true" b-5ni0ohthgp></div><main class="bui-sidebar-layout__main" b-5ni0ohthgp>Content</main></div></bui-component>
+  },
+  {
+    Name: Closed_End,
+    Html:
+<bui-component data-bui-component="sidebar-layout" data-bui-sidebar-side="end" data-bui-sidebar-open="false" data-bui-sticky-header="true" data-bui-sticky-sidebar="true" b-5ni0ohthgp><header class="bui-sidebar-layout__header" b-5ni0ohthgp><button type="button" class="bui-sidebar-layout__toggle" aria-label="Toggle navigation" aria-expanded="false" blazor:onclick="<EVENT>" b-5ni0ohthgp><span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span>
+                <span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span>
+                <span class="bui-sidebar-layout__toggle-bar" b-5ni0ohthgp></span></button></header>
+
+    <div class="bui-sidebar-layout__body" b-5ni0ohthgp><aside class="bui-sidebar-layout__sidebar" b-5ni0ohthgp><div class="bui-sidebar-layout__sidebar-inner" b-5ni0ohthgp></div></aside><main class="bui-sidebar-layout__main" b-5ni0ohthgp>Content</main></div></bui-component>
+  }
+]
