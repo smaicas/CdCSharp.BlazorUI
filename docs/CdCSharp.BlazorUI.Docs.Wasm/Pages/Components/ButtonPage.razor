@@ -58,7 +58,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIButtonComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -221,26 +221,4 @@
             <BUIButton Text="Material" Transitions="@BUITransitionPresets.MaterialButton" />
         </div>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Text", "string?", "null", "Button text"),
-        new("LeadingIcon", "string?", "null", "Icon displayed before the text"),
-        new("TrailingIcon", "string?", "null", "Icon displayed after the text"),
-        new("Variant", "BUIButtonVariant", "Default", "Visual variant"),
-        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
-        new("Density", "DensityEnum", "Standard", "Inter-element spacing"),
-        new("FullWidth", "bool", "false", "Stretch to container width"),
-        new("Disabled", "bool", "false", "Disabled state"),
-        new("Loading", "bool", "false", "Shows a loading indicator and disables clicks"),
-        new("LoadingIndicatorVariant", "BUILoadingIndicatorVariant?", "null", "Loading indicator style"),
-        new("BackgroundColor", "string?", "null", "Any CSS color — or a PaletteColor"),
-        new("Color", "string?", "null", "Text color"),
-        new("Shadow", "ShadowStyle?", "null", "Elevation / shadow (see BUIShadowPresets)"),
-        new("Border", "BorderStyle?", "null", "Border (see BUIBorderPresets)"),
-        new("DisableRipple", "bool", "false", "Disable click ripple effect"),
-        new("RippleColor", "string?", "null", "Custom ripple color"),
-        new("Transitions", "UITransitions?", "null", "Hover/click transitions"),
-        new("OnClick", "EventCallback<MouseEventArgs>", "—", "Click handler")
-    ];
 }

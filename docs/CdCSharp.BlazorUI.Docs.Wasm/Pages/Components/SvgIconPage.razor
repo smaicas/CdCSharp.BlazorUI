@@ -40,7 +40,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUISvgIconComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -158,12 +158,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Icon", "string", "—", "SVG path or value from BUIIcons.* sets"),
-        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
-        new("Color", "string?", "null", "Fill color — accepts palette vars, hex, rgb, currentColor"),
-        new("Title", "string?", "null", "Accessible title (shows as tooltip)"),
-        new("OnClick", "EventCallback", "—", "Click handler (also adds pointer cursor)")
-    ];
 }

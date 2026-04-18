@@ -1,27 +1,27 @@
 <div class="props">
     <BUIDataGrid Items="@Properties.ToList()" Density="DensityEnum.Compact">
         <Columns>
-            <BUIDataColumn TItem="PropertyDefinition" Property="@(p => p.Name)" Header="Property" Width="180px">
+            <BUIDataColumn TItem="ComponentParameterInfo" Property="@(p => p.ParameterName)" Header="Property" Width="180px">
                 <Template Context="prop">
-                    <code>@prop.Name</code>
+                    <code>@prop.ParameterName</code>
                 </Template>
             </BUIDataColumn>
-            <BUIDataColumn TItem="PropertyDefinition" Property="@(p => p.Type)" Header="Type" Width="200px">
+            <BUIDataColumn TItem="ComponentParameterInfo" Property="@(p => p.ParameterType)" Header="Type" Width="200px">
                 <Template Context="prop">
-                    <code>@prop.Type</code>
+                    <code>@prop.ParameterType</code>
                 </Template>
             </BUIDataColumn>
-            <BUIDataColumn TItem="PropertyDefinition" Property="@(p => p.Default)" Header="Default" Width="120px">
+            <BUIDataColumn TItem="ComponentParameterInfo" Property="@(p => p.ParameterDefault)" Header="Default" Width="120px">
                 <Template Context="prop">
-                    <code>@prop.Default</code>
+                    <code>@prop.ParameterDefault</code>
                 </Template>
             </BUIDataColumn>
-            <BUIDataColumn TItem="PropertyDefinition" Property="@(p => p.Description)" Header="Description" />
+            <BUIDataColumn TItem="ComponentParameterInfo" Property="@(p => p.ParameterDescription)" Header="Description" />
         </Columns>
     </BUIDataGrid>
 </div>
 
 @code {
     [Parameter, EditorRequired]
-    public IEnumerable<PropertyDefinition> Properties { get; set; } = [];
+    public ComponentParameterInfo[] Properties { get; set; } = [];
 }

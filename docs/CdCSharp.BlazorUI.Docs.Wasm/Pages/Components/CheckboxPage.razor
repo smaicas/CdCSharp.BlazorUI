@@ -37,7 +37,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties"/>
+        <PropertyTable Properties="@BUIInputCheckboxComponentInfo.Parameters"/>
     </section>
 
 </DocPage>
@@ -45,21 +45,21 @@
 @code {
     private bool _basic = true;
     private bool _primary = true;
-    private bool _success;
-    private bool _warning;
-    private bool _custom1;
-    private bool _custom2;
-    private bool _small;
+    private bool _success = true;
+    private bool _warning = true;
+    private bool _custom1 = true;
+    private bool _custom2 = true;
+    private bool _small = true;
     private bool _medium = true;
-    private bool _large;
+    private bool _large = true;
     private bool _readonly = true;
     private bool _disabled = true;
     private bool _heart = true;
-    private bool _star;
-    private bool _compactValue;
-    private bool _standardValue;
-    private bool _comfortableValue;
-    private bool? _indeterminateValue;
+    private bool _star = true;
+    private bool _compactValue = true;
+    private bool _standardValue = true;
+    private bool _comfortableValue = true;
+    private bool? _indeterminateValue = true;
 
     private ComponentDemoDefinition BasicDemo => new()
     {
@@ -84,7 +84,7 @@
             <BUIInputCheckbox @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary" />
             <BUIInputCheckbox @bind-Value="_success" Color="@PaletteColor.Success" Label="Success" />
             <BUIInputCheckbox @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning" />
-            <BUIInputCheckbox @bind-Value="_custom" Color="#DDFFAA" Label="CustomHEX" />
+            <BUIInputCheckbox @bind-Value="_custom" Color="#DDAAAA" Label="CustomHEX" />
             <BUIInputCheckbox @bind-Value="_custom" Color="rgb(25,45,65)" Label="CustomRGB" />
             """,
         Demo = RenderColors()
@@ -95,7 +95,7 @@
         <BUIInputCheckbox @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary"/>
         <BUIInputCheckbox @bind-Value="_success" Color="@PaletteColor.Success" Label="Success"/>
         <BUIInputCheckbox @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning"/>
-        <BUIInputCheckbox @bind-Value="_custom1" Color="#DDFFAA" Label="CustomHEX"/>
+        <BUIInputCheckbox @bind-Value="_custom1" Color="#DDAAAA" Label="CustomHEX" />
         <BUIInputCheckbox @bind-Value="_custom2" Color="rgb(25,45,65)" Label="CustomRGB"/>
     };
 
@@ -192,19 +192,5 @@
         <BUIInputCheckbox TValue="bool?" @bind-Value="_indeterminateValue" Label="Tristate Checkbox"
                           HelperText="Nullability activates tri-state"/>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "bool", "false", "Bound value"),
-        new("Label", "string?", "null", "Label text"),
-        new("HelperText", "string?", "null", "Helper text below"),
-        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
-        new("Color", "string?", "null", "Check color"),
-        new("CheckedIcon", "string?", "null", "Custom icon when checked"),
-        new("UncheckedIcon", "string?", "null", "Custom icon when unchecked"),
-        new("IndeterminateIcon", "string?", "null", "Icon for indeterminate state"),
-        new("Disabled", "bool", "false", "Disabled state"),
-        new("Required", "bool", "false", "Required marker")
-    ];
 
 }

@@ -29,7 +29,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUITabs</h3>
+        <PropertyTable Properties="@BUITabsComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUITab</h3>
+        <PropertyTable Properties="@BUITabComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -147,15 +152,4 @@
         </BUITabs>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("ActiveTab", "string?", "null", "Id of the active tab (two-way bindable)"),
-        new("Variant", "BUITabsVariant", "Underline", "Underline / Pills / Enclosed"),
-        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
-        new("FullWidth", "bool", "false", "Stretch tabs to fill the container"),
-        new("BUITab.Id", "string", "—", "Unique tab identifier (required)"),
-        new("BUITab.Label", "string", "—", "Tab label (required)"),
-        new("BUITab.Icon", "RenderFragment?", "null", "Optional icon before label"),
-        new("BUITab.Disabled", "bool", "false", "Disable the tab")
-    ];
 }

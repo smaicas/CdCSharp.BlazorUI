@@ -3,11 +3,12 @@
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 
 @namespace CdCSharp.BlazorUI.Components.Forms
+@attribute [GenerateComponentInfo]
 
 @inherits BUIInputComponentBase<CssColor, BUIInputColor, BUIInputVariant>
+
 @implements IHasSize
 @implements IHasLoading
-@implements IHasDensity
 @implements IHasShadow
 @implements IHasBorder
 @implements IHasColor
@@ -39,9 +40,6 @@
     [Parameter]
     public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } =
 BUILoadingIndicatorVariant.CircularProgress;
-
-    // IHasDensity
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }

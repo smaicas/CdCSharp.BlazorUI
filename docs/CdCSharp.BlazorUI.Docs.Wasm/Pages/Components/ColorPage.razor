@@ -60,7 +60,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIInputColorComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -271,16 +271,4 @@
     {
         <BUIColorPicker @bind-Value="_standalone" />
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "CssColor?", "null", "Bound color"),
-        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
-        new("DisplayMode", "ColorPickerDisplayMode", "Dropdown", "Dropdown / Inline"),
-        new("OutputFormat", "ColorPickerOutputFormat", "Hex", "Hex / Rgb / Rgba / Hsl / Hsla"),
-        new("Clearable", "bool", "false", "Show clear button"),
-        new("ShowCopyButton", "bool", "false", "Show copy-to-clipboard button"),
-        new("RevertText", "string", "Revert", "Label for revert action"),
-        new("SelectionWidth / SelectionHeight", "int", "200 / 150", "Picker dimensions")
-    ];
 }

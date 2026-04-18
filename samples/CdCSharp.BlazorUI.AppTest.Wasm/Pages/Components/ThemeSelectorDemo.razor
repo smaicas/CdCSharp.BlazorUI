@@ -16,9 +16,6 @@
 <h2>Custom Icon Map</h2>
 <ComponentDemo Definition="@IconMapDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -78,12 +75,4 @@
         { "light", BUIIcons.MaterialIconsOutlined.i_wb_sunny },
         { "dark", BUIIcons.MaterialIconsOutlined.i_nights_stay }
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("AvailableThemes", "string[]", "[\"light\", \"dark\"]", "List of available theme names"),
-        new("ShowIcon", "bool", "true", "Whether to show theme icon"),
-        new("IconMap", "Dictionary<string, string>?", "null", "Custom icons for each theme"),
-        new("OnThemeChanged", "EventCallback<string>", "-", "Fired when theme changes")
-    ];
 }

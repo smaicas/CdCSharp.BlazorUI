@@ -28,9 +28,6 @@
 <h2>Disabled</h2>
 <ComponentDemo Definition="@DisabledDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
 
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
@@ -171,18 +168,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-[
-    new("Value", "bool", "false", "Switch state"),
-        new("Label", "string?", "null", "Label text"),
-        new("HelperText", "string?", "null", "Helper text below switch"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Spacing density"),
-        new("Disabled", "bool", "false", "Disable switch"),
-        new("IconInactive", "string?", "null", "Icon when off"),
-        new("IconActive", "string?", "null", "Icon when on"),
-        new("TrackColorInactive", "CssColor?", "null", "Track color when off"),
-        new("TrackColorActive", "CssColor?", "null", "Track color when on")
-];
 }

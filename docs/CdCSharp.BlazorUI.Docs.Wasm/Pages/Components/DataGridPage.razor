@@ -41,7 +41,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIDataGridComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -221,24 +221,4 @@
         </BUIDataGrid>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Items", "IEnumerable<TItem>?", "null", "Data source"),
-        new("Columns", "RenderFragment", "—", "Column declarations"),
-        new("Sortable", "bool", "false", "Enable sorting"),
-        new("Filterable", "bool", "false", "Enable global text filter"),
-        new("PageSize", "int?", "null", "Rows per page (enables pagination)"),
-        new("ShowPageSizeSelector", "bool", "false", "Expose the page-size dropdown"),
-        new("SelectionMode", "SelectionMode", "None", "None / Single / Multiple"),
-        new("SelectedItems", "HashSet<TItem>?", "null", "Two-way bound selection set"),
-        new("Hoverable", "bool", "true", "Highlight rows on hover"),
-        new("Density / Size", "DensityEnum / SizeEnum", "Standard / Medium", "Compact / Standard / Comfortable"),
-        new("FixedHeader", "bool", "false", "Sticky header when scrolling"),
-        new("CellBorder / RowBorder / Border", "BorderStyle?", "null", "Border configuration"),
-        new("ItemPattern", "RowStylePattern?", "null", "Striped / zebra pattern"),
-        new("Loading / LoadingContent", "bool / RenderFragment?", "—", "Loading state"),
-        new("EmptyContent", "RenderFragment?", "null", "Custom empty state"),
-        new("FooterTemplate", "RenderFragment?", "null", "Footer row"),
-        new("OnRowClick / OnSort / OnFilter / OnPageChange", "EventCallback", "—", "Event hooks")
-    ];
 }

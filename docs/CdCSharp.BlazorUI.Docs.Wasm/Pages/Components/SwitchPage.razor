@@ -33,7 +33,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIInputSwitchComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -161,18 +161,4 @@
             <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="Disabled (off)" />
         </div>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "bool", "false", "Bound value"),
-        new("Label", "string?", "null", "Label text"),
-        new("HelperText", "string?", "null", "Helper text below"),
-        new("Size", "SizeEnum", "Medium", "Switch size"),
-        new("Density", "DensityEnum", "Standard", "Spacing"),
-        new("IconActive / IconInactive", "string?", "null", "Thumb icons per state"),
-        new("TrackColorActive / TrackColorInactive", "CssColor?", "null", "Custom track colors"),
-        new("Disabled", "bool", "false", "Disabled state"),
-        new("ReadOnly", "bool", "false", "Read-only state"),
-        new("Required", "bool", "false", "Required marker")
-    ];
 }

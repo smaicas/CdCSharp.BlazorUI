@@ -34,9 +34,6 @@
 <h2>Disabled Option</h2>
 <ComponentDemo Definition="@DisabledOptionDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
 
@@ -277,19 +274,4 @@
             <RadioOption Value="@("option3")">Available</RadioOption>
         </BUIInputRadio>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue", "-", "Selected value"),
-        new("Label", "string?", "null", "Group label"),
-        new("HelperText", "string?", "null", "Helper text"),
-        new("Orientation", "RadioOrientation", "Vertical", "Layout orientation"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Disabled", "bool", "false", "Disable entire group"),
-        new("Clearable", "bool", "false", "Show clear button"),
-        new("ClearText", "string", "Clear", "Clear button text"),
-        new("Color", "CssColor?", "null", "Custom radio color"),
-        new("CheckedIcon", "string?", "null", "Custom checked icon"),
-        new("UncheckedIcon", "string?", "null", "Custom unchecked icon")
-    ];
 }

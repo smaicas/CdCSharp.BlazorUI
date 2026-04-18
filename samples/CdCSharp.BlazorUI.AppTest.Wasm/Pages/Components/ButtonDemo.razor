@@ -43,9 +43,6 @@
 <h2>With Transitions</h2>
 <ComponentDemo Definition="@TransitionsDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
 
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
@@ -298,25 +295,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Text", "string?", "null", "Button text"),
-        new("LeadingIcon", "string?", "null", "Icon before text"),
-        new("TrailingIcon", "string?", "null", "Icon after text"),
-        new("Variant", "BUIButtonVariant", "Default", "Visual variant"),
-        new("Size", "SizeEnum", "Medium", "Button size"),
-        new("Density", "DensityEnum", "Standard", "Spacing density"),
-        new("FullWidth", "bool", "false", "Stretch to container width"),
-        new("Disabled", "bool", "false", "Disable button"),
-        new("Loading", "bool", "false", "Show loading indicator"),
-        new("LoadingIndicatorVariant", "BUILoadingIndicatorVariant?", "null", "Loading indicator style"),
-        new("BackgroundColor", "CssColor?", "null", "Custom background color"),
-        new("Color", "CssColor?", "null", "Custom text color"),
-        new("Shadow", "ShadowStyle?", "null", "Shadow style"),
-        new("Border", "BorderStyle?", "null", "Border style"),
-        new("DisableRipple", "bool", "false", "Disable ripple effect"),
-        new("Transitions", "UITransitions?", "null", "Hover/click transitions"),
-        new("OnClick", "EventCallback<MouseEventArgs>", "-", "Click handler")
-    ];
 }

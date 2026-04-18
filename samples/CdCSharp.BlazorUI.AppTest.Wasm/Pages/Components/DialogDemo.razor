@@ -457,21 +457,6 @@
             </Content>
         </BUIDialog>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Open", "bool", "false", "Controls dialog visibility"),
-        new("Title", "string?", "null", "Dialog title in header"),
-        new("Closable", "bool", "true", "Show close button"),
-        new("CloseOnOverlayClick", "bool", "true", "Close when clicking outside"),
-        new("CloseOnEscape", "bool", "true", "Close on Escape key"),
-        new("MinWidth", "string", "auto", "Minimum dialog width"),
-        new("MaxWidth", "string", "fit-content", "Maximum dialog width"),
-        new("MinHeight", "string?", "null", "Minimum dialog height"),
-        new("MaxHeight", "string?", "null", "Maximum dialog height"),
-        new("Content", "RenderFragment?", "null", "Main dialog content"),
-        new("Footer", "RenderFragment?", "null", "Footer content (for actions)")
-    ];
 }
 
 @* Sample components for programmatic modals *@

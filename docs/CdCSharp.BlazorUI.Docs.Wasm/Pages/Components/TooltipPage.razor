@@ -40,7 +40,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUITooltipComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -215,18 +215,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Text", "string?", "null", "Simple text content"),
-        new("TooltipContent", "RenderFragment?", "null", "Rich content (takes precedence over Text)"),
-        new("ChildContent", "RenderFragment", "—", "The trigger element"),
-        new("Placement", "TooltipPlacement", "Top", "12 positions (Top/Bottom/Left/Right × Start/center/End)"),
-        new("Trigger", "TooltipTrigger", "Hover", "Hover / Focus / HoverAndFocus / Click / Permanent"),
-        new("ShowDelay / LeaveDelay", "int?", "200 / 150", "ms before showing / hiding"),
-        new("AutoCloseAfterMs", "int?", "null", "Auto-close once visible"),
-        new("Interactive", "bool", "true", "Allow cursor to enter the tooltip"),
-        new("Arrow", "bool", "true", "Show arrow pointing to trigger"),
-        new("MaxWidth", "int?", "300", "Max width in pixels"),
-        new("Offset", "int", "8", "Gap from trigger in pixels")
-    ];
 }

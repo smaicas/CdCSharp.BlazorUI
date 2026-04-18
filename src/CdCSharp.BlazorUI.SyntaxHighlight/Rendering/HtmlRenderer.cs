@@ -69,7 +69,7 @@ public sealed class HtmlRenderer
         sb.AppendLine($"  font-family: {options.FontFamily};");
         sb.AppendLine($"  font-size: {options.FontSize};");
         sb.AppendLine("  padding: 1em;");
-        sb.AppendLine("  border-radius: 4px;");
+        sb.AppendLine("  border-radius: 0px;");
         sb.AppendLine("  overflow-x: auto;");
         sb.AppendLine("  margin: 0;");
         sb.AppendLine("}");

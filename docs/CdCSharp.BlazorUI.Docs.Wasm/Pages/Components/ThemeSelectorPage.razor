@@ -31,7 +31,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIThemeSelectorComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -75,13 +75,4 @@
             <span>Last change: <code>@_lastTheme</code></span>
         </div>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Variant", "BUIThemeSelectorVariant", "Default", "Default / SunMoon, or a custom registered variant."),
-        new("AvailableThemes", "string[]", "[\"light\", \"dark\"]", "Themes cycled through on each click."),
-        new("ShowIcon", "bool", "true", "Show the per-theme icon in the Default variant."),
-        new("ThemeIcons", "Dictionary<string,string>?", "null", "Map theme id -> icon character / emoji (Default variant)."),
-        new("OnThemeChanged", "EventCallback<string>", "—", "Fires with the newly active theme id.")
-    ];
 }

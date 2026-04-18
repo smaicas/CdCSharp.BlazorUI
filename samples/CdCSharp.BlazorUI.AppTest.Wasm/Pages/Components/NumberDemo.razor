@@ -52,9 +52,6 @@
 <h2>Culture Settings</h2>
 <ComponentDemo Definition="@CultureDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     private int? _basicValue = 0;
     private decimal? _labelValue = 10.5m;
@@ -357,25 +354,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue", "-", "The numeric value"),
-        new("Min", "TValue?", "null", "Minimum allowed value"),
-        new("Max", "TValue?", "null", "Maximum allowed value"),
-        new("Step", "decimal", "1", "Step increment/decrement amount"),
-        new("DecimalPlaces", "int?", "null", "Number of decimal places"),
-        new("AllowNegative", "bool", "true", "Allow negative values"),
-        new("ShowStepButtons", "bool", "true", "Show increment/decrement buttons"),
-        new("ButtonPlacement", "StepButtonPlacement", "Right", "Position of step buttons"),
-        new("UseThousandsSeparator", "bool", "false", "Format with thousands separator"),
-        new("Culture", "CultureInfo?", "null", "Culture for number formatting"),
-        new("EnableMouseWheel", "bool", "false", "Change value with mouse wheel"),
-        new("EnableAcceleration", "bool", "true", "Accelerate when holding buttons"),
-        new("AccelerationInitialDelay", "int", "400", "Initial delay before acceleration (ms)"),
-        new("AccelerationMinDelay", "int", "50", "Minimum delay between increments (ms)"),
-        new("AccelerationStepReduction", "int", "50", "Delay reduction per step (ms)"),
-        new("OnIncrement", "EventCallback<TValue?>", "-", "Fired on increment"),
-        new("OnDecrement", "EventCallback<TValue?>", "-", "Fired on decrement")
-    ];
 }

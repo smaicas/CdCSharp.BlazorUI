@@ -38,7 +38,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIDataCardsComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -203,22 +203,4 @@
             </Columns>
         </BUIDataCards>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Items", "IEnumerable<TItem>?", "null", "The data source."),
-        new("Columns", "RenderFragment?", "null", "Slot for <BUIDataColumn> entries."),
-        new("CardTemplate", "RenderFragment<TItem>?", "null", "Fully custom card markup (bypasses column rendering)."),
-        new("CardHeaderTemplate / CardFooterTemplate", "RenderFragment<TItem>?", "null", "Per-item header / footer slots when using default layout."),
-        new("MinCardWidth", "string?", "\"280px\"", "CSS min card width. Uses auto-fill grid when set."),
-        new("ColumnsCount", "int", "3", "Fixed column count when MinCardWidth is null."),
-        new("Gap", "string", "\"1rem\"", "Spacing between cards."),
-        new("Sortable / Filterable", "bool", "false", "Enable toolbar controls."),
-        new("SelectionMode", "SelectionMode", "None", "None / Single / Multiple."),
-        new("SelectedItems", "HashSet<TItem>?", "null", "Two-way bindable selected set."),
-        new("PageSize", "int?", "null", "Rows per page (enables pagination)."),
-        new("EnableVirtualization", "bool", "false", "Virtualize card rendering (requires Height)."),
-        new("CardBorder / CardShadow / CardBackground", "BorderStyle? / ShadowStyle? / string?", "null", "Per-card styling overrides."),
-        new("ItemPattern", "RowStylePattern?", "null", "Alternating-row / striped pattern for cards.")
-    ];
 }

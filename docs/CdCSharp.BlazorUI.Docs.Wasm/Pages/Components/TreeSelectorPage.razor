@@ -28,7 +28,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUITreeSelector</h3>
+        <PropertyTable Properties="@BUITreeSelectorComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUITreeSelectorItem</h3>
+        <PropertyTable Properties="@BUITreeSelectorItemComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -174,19 +179,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("SelectedKeys", "HashSet<string>?", "null", "Two-way bound selection"),
-        new("SelectionMode", "TreeSelectionMode", "Single", "Single / Multiple"),
-        new("ShowCheckboxes", "bool", "true", "Show checkbox in front of each node"),
-        new("ExpandedKeys / ExpandAll", "—", "—", "Expansion control"),
-        new("AnimateExpand", "bool", "true", "Animate expand/collapse"),
-        new("Items / KeySelector / ChildrenSelector", "—", "null", "Data-driven alternative"),
-        new("NodeTemplate", "RenderFragment<…>?", "null", "Custom node rendering"),
-        new("ExpandIcon / CollapseIcon", "string", "chevrons", "Chevron overrides"),
-        new("OnLoadChildren", "Func<…>?", "null", "Lazy-load children async"),
-        new("OnNodeClick / OnNodeExpand / OnNodeCollapse", "EventCallback", "—", "Events"),
-        new("BUITreeSelectorItem.Key / Text / Icon", "—", "—", "Node identity"),
-        new("BUITreeSelectorItem.Disabled / InitiallyExpanded", "bool", "false", "Initial state")
-    ];
 }

@@ -36,7 +36,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUIGrid</h3>
+        <PropertyTable Properties="@BUIGridComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUIGridItem</h3>
+        <PropertyTable Properties="@BUIGridItemComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -147,21 +152,4 @@
         </BUIGrid>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Columns", "int?", "12", "Total column count"),
-        new("Direction", "GridDirection", "Row", "Row / Column / RowReverse / ColumnReverse"),
-        new("JustifyContent", "GridJustifyContent", "Start", "Main-axis alignment"),
-        new("AlignItems", "GridAlignItems", "Stretch", "Cross-axis alignment"),
-        new("Wrap", "GridWrap", "Wrap", "Wrap / NoWrap / WrapReverse"),
-        new("Gap / RowGap / ColumnGap", "string?", "null", "Any CSS length"),
-        new("GapXs … GapXl / DirectionXs … DirectionXl", "—", "null", "Per-breakpoint overrides"),
-        new("MaxWidth", "string?", "null", "Contained max width"),
-        new("P/Pt/Pr/Pb/Pl/Px/Py, M/…", "string?", "null", "Padding / margin shortcuts"),
-        new("BUIGridItem.Span / Xs / Sm / Md / Lg / Xl", "int?", "null", "Column span (base + per-breakpoint)"),
-        new("BUIGridItem.Auto", "bool", "false", "Size to content"),
-        new("BUIGridItem.Offset / OffsetXs …", "int?", "null", "Column offset"),
-        new("BUIGridItem.Order / OrderXs …", "int?", "null", "Display order"),
-        new("BUIGridItem.HideXs … ShowXl", "bool", "false", "Breakpoint visibility")
-    ];
 }

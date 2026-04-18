@@ -41,7 +41,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUIDialog</h3>
+        <PropertyTable Properties="@BUIDialogComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUIDrawer</h3>
+        <PropertyTable Properties="@BUIDrawerComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -226,18 +231,4 @@ private async Task Show()
 <BUIButton Text=""Yes"" OnClick=""() => ModalReference.CloseAsync(true)"" />
 <BUIButton Text=""No""  OnClick=""() => ModalReference.CloseAsync(false)"" />";
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Open", "bool", "false", "Two-way bound open state"),
-        new("Title", "string?", "null", "Header title (ignored if <Header> slot is set)"),
-        new("Content / Footer / Header", "RenderFragment?", "null", "Slots"),
-        new("Closable", "bool", "true", "Show the × close button"),
-        new("CloseOnOverlayClick", "bool", "true", "Dismiss when clicking outside"),
-        new("CloseOnEscape", "bool", "true", "Dismiss on Esc"),
-        new("MinWidth / MaxWidth / MinHeight / MaxHeight", "string?", "—", "CSS lengths"),
-        new("FullScreen", "bool", "false", "Fill viewport"),
-        new("Drawer.Position", "DrawerPosition", "Left", "Left / Right / Top / Bottom"),
-        new("Drawer.Size", "string", "320px", "Drawer width (L/R) or height (T/B)"),
-        new("IModalService.ShowDialogAsync / ShowDrawerAsync", "Task<T?>", "—", "Programmatic API")
-    ];
 }

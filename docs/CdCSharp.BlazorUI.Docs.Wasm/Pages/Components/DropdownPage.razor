@@ -46,7 +46,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIInputDropdownComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -362,22 +362,4 @@
             <DropdownOption TOption="string" Value="@("orange")">Orange</DropdownOption>
         </BUIInputDropdown>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue?", "default", "Bound value"),
-        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
-        new("Searchable", "bool", "false", "Show search input"),
-        new("SearchPlaceholder", "string", "Search...", "Placeholder for search input"),
-        new("SearchMode", "SearchMode", "Smart", "Contains / StartsWith / Smart"),
-        new("Placement", "DropdownPlacement", "Auto", "Auto / Top / Bottom / BottomStart / BottomEnd / …"),
-        new("CloseOnSelect", "bool", "true", "Close after selection"),
-        new("MaxVisibleItems", "int", "8", "Items shown before scrolling"),
-        new("ItemHeight", "int", "40", "Item height in px (for virtualization)"),
-        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
-        new("Size / Density", "SizeEnum / DensityEnum", "—", "Sizing"),
-        new("Disabled / ReadOnly / Required / IsLoading", "bool", "false", "State flags"),
-        new("NoOptionsTemplate / NoResultsTemplate", "RenderFragment?", "null", "Empty-state customization")
-    ];
-
 }

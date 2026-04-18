@@ -35,7 +35,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIInputTextComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -145,24 +145,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "string?", "null", "Bound value"),
-        new("Label", "string?", "null", "Floating label"),
-        new("Placeholder", "string?", "null", "Placeholder text"),
-        new("HelperText", "string?", "null", "Helper / validation text"),
-        new("Variant", "BUIInputVariant", "Outlined", "Outlined / Filled / Standard"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Spacing density"),
-        new("Disabled", "bool", "false", "Disabled state"),
-        new("ReadOnly", "bool", "false", "Read-only state"),
-        new("Required", "bool", "false", "Required marker"),
-        new("Error", "bool", "false", "Validation error state"),
-        new("Loading", "bool", "false", "Loading indicator"),
-        new("PrefixText / PrefixIcon", "string?", "null", "Left addon"),
-        new("SuffixText / SuffixIcon", "string?", "null", "Right addon"),
-        new("BackgroundColor / Color", "string?", "null", "Custom colors"),
-        new("UpdateOnInput", "bool", "false", "Fire value updates on every keystroke"),
-        new("OnInput", "EventCallback<string>", "—", "Raw input event")
-    ];
 }

@@ -30,7 +30,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUICodeBlockComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -101,14 +101,4 @@
             <BUICodeBlock Size="SizeEnum.Large" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Large\" />")' />
         </div>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Code", "string", "\"\"", "The code body (EditorRequired). Leading indentation is auto-trimmed."),
-        new("Language", "SyntaxHighlightLanguage", "CSharp", "Language used for tokenization / highlighting."),
-        new("Title", "string?", "null", "Custom title shown in the header. Defaults to the language name."),
-        new("Size", "SizeEnum", "Medium", "Overall sizing (typography + paddings)."),
-        new("Border", "BorderStyle?", "null", "Custom border (defaults to theme border)."),
-        new("BackgroundColor", "string?", "null", "Background override. Defaults to the surface palette.")
-    ];
 }

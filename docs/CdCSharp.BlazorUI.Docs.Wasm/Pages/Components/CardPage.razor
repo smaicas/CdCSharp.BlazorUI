@@ -39,7 +39,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUICardComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -190,21 +190,4 @@
         </BUICard>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Header", "RenderFragment?", "null", "Content rendered above the body"),
-        new("Media", "RenderFragment?", "null", "Media slot (image, video, etc.)"),
-        new("ChildContent", "RenderFragment?", "null", "Body content"),
-        new("Actions", "RenderFragment?", "null", "Action buttons rendered at the bottom"),
-        new("MediaHeight", "string?", "null", "CSS height for the media slot"),
-        new("MediaPosition", "CardMediaPosition", "Top", "Top / AfterHeader / BeforeActions / Bottom"),
-        new("ActionsAlignment", "CardActionsAlignment", "End", "Start / Center / End / SpaceBetween"),
-        new("Clickable", "bool", "false", "Makes the entire card clickable"),
-        new("OnClick", "EventCallback<MouseEventArgs>", "—", "Click handler"),
-        new("Shadow", "ShadowStyle?", "null", "Elevation"),
-        new("Border", "BorderStyle?", "null", "Border"),
-        new("BackgroundColor", "string?", "null", "Card background"),
-        new("Color", "string?", "null", "Text color"),
-        new("Density", "DensityEnum", "Standard", "Internal spacing")
-    ];
 }

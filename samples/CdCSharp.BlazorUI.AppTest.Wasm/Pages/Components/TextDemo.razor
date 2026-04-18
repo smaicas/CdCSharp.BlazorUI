@@ -52,9 +52,6 @@
 <h2>Custom Colors</h2>
 <ComponentDemo Definition="@CustomColorsDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
 
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
@@ -344,27 +341,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "string?", "null", "Input value"),
-        new("Label", "string?", "null", "Label text"),
-        new("Placeholder", "string?", "null", "Placeholder text"),
-        new("HelperText", "string?", "null", "Helper text below input"),
-        new("Variant", "BUIInputVariant", "Outlined", "Visual variant (Outlined, Filled, Standard)"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Spacing density"),
-        new("Disabled", "bool", "false", "Disable input"),
-        new("ReadOnly", "bool", "false", "Read-only mode"),
-        new("Required", "bool", "false", "Mark as required"),
-        new("Loading", "bool", "false", "Show loading indicator"),
-        new("PrefixText", "string?", "null", "Text prefix"),
-        new("PrefixIcon", "string?", "null", "Icon prefix"),
-        new("SuffixText", "string?", "null", "Text suffix"),
-        new("SuffixIcon", "string?", "null", "Icon suffix"),
-        new("BackgroundColor", "CssColor?", "null", "Custom background color"),
-        new("Color", "CssColor?", "null", "Custom text color"),
-        new("Shadow", "ShadowStyle?", "null", "Shadow style"),
-        new("Border", "BorderStyle?", "null", "Border style")
-    ];
 }

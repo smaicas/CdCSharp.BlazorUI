@@ -48,7 +48,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIInputNumberComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -208,25 +208,4 @@
         <BUIInputNumber TValue="int" @bind-Value="_disabled" Label="Disabled" Disabled="true"/>
         <BUIInputNumber TValue="int" @bind-Value="_errorValue" Label="Error" Error="true" HelperText="Value out of range"/>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue", "default", "Bound numeric value"),
-        new("TValue", "type", "—", "int, long, decimal, double, float, short, sbyte, uint, ulong, byte, ushort"),
-        new("Min / Max", "TValue?", "null", "Value bounds"),
-        new("Step", "decimal", "1", "Increment / decrement step"),
-        new("DecimalPlaces", "int?", "null", "Fixed precision"),
-        new("AllowNegative", "bool", "true", "Permit negative values"),
-        new("UseThousandsSeparator", "bool", "false", "Format large numbers"),
-        new("Culture", "CultureInfo?", "null", "Culture for parsing/formatting"),
-        new("Variant", "BUIInputVariant", "Outlined", "Outlined / Filled / Standard"),
-        new("Size / Density", "SizeEnum / DensityEnum", "Medium / Standard", "Sizing"),
-        new("ShowStepButtons", "bool", "true", "Show inc/dec buttons"),
-        new("ButtonPlacement", "StepButtonPlacement", "Right", "Right / Left"),
-        new("EnableAcceleration", "bool", "true", "Speed up on long-press"),
-        new("EnableMouseWheel", "bool", "false", "Scroll to increment/decrement"),
-        new("Disabled / ReadOnly / Required / Error", "bool", "false", "State flags"),
-        new("PrefixText / SuffixText / PrefixIcon / SuffixIcon", "string?", "null", "Addons"),
-        new("OnIncrement / OnDecrement", "EventCallback<TValue?>", "—", "Step events")
-    ];
 }

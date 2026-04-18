@@ -25,7 +25,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUITreeMenu</h3>
+        <PropertyTable Properties="@BUITreeMenuComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUITreeMenuItem</h3>
+        <PropertyTable Properties="@BUITreeMenuItemComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -123,21 +128,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Items / KeySelector / ChildrenSelector", "—", "null", "Data-driven alternative to child components"),
-        new("ExpandedKeys", "HashSet<string>?", "null", "Two-way bound expansion state"),
-        new("ExpandAll", "bool", "false", "Start fully expanded"),
-        new("Orientation", "TreeMenuOrientation", "Vertical", "Vertical / Horizontal"),
-        new("Trigger", "TreeMenuTrigger", "Click", "Click / Hover"),
-        new("ExpandMode", "TreeMenuExpandMode", "Inline", "Inline / Flyout"),
-        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
-        new("Collapsible", "bool", "true", "Allow collapsing expanded nodes"),
-        new("HoverOpenDelay / HoverCloseDelay", "int (ms)", "150 / 300", "Hover-trigger timing"),
-        new("NodeTemplate", "RenderFragment<TreeMenuNode<TItem>>?", "null", "Custom node rendering"),
-        new("OnNodeClick / OnNavigate", "EventCallback", "—", "Events"),
-        new("BUITreeMenuItem.Text / Icon", "string / RenderFragment", "—", "Label and icon"),
-        new("BUITreeMenuItem.Href / Target / Match", "—", "—", "Navigation settings"),
-        new("BUITreeMenuItem.InitiallyExpanded / Disabled", "bool", "false", "Initial state")
-    ];
 }

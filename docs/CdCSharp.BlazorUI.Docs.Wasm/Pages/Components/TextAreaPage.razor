@@ -39,7 +39,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIInputTextAreaComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -162,19 +162,4 @@
             <BUIInputTextArea @bind-Value="_error" Label="Error" Error="true" HelperText="Invalid content" />
         </div>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "string?", "null", "Bound value"),
-        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
-        new("Rows", "int", "3", "Initial visible rows"),
-        new("MaxLength", "int?", "null", "Maximum character count"),
-        new("AutoResize", "bool", "false", "Grow with content"),
-        new("Resize", "TextAreaResize", "Vertical", "None / Both / Horizontal / Vertical"),
-        new("Variant", "BUIInputVariant", "Outlined", "Visual style"),
-        new("Size / Density", "SizeEnum / DensityEnum", "Medium / Standard", "Sizing"),
-        new("Disabled / ReadOnly / Required / Error", "bool", "false", "State flags"),
-        new("UpdateOnInput", "bool", "false", "Update on every keystroke"),
-        new("OnInput", "EventCallback<string>", "—", "Raw input event")
-    ];
 }

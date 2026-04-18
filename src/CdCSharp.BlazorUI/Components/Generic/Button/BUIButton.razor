@@ -1,4 +1,5 @@
 ﻿@namespace CdCSharp.BlazorUI.Components
+@attribute [GenerateComponentInfo]
 
 @inherits BUIVariantComponentBase<BUIButton, BUIButtonVariant>
 @implements IHasTransitions
@@ -20,6 +21,7 @@
 @code {
     /* ========= Public API ========= */
 
+    /// <summary>Customizable Button content.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string? Text { get; set; }
     [Parameter] public string? LeadingIcon { get; set; }

@@ -16,9 +16,6 @@
 <h2>Selected Date Display</h2>
 <ComponentDemo Definition="@SelectedDateDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     private DateOnly? _basicValue = DateOnly.FromDateTime(DateTime.Today);
     private DateOnly? _smallValue = DateOnly.FromDateTime(DateTime.Today);
@@ -105,12 +102,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "DateOnly", "-", "The selected date"),
-        new("ValueChanged", "EventCallback<DateOnly>", "-", "Fired when date changes"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Component density")
-    ];
 }

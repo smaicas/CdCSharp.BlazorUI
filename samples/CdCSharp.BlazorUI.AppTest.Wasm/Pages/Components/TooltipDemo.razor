@@ -78,11 +78,6 @@
         <h2>Permanent</h2>
         <ComponentDemo Definition="@PermanentDemo" />
     </section>
-
-    <section class="doc-section">
-        <h2>Properties</h2>
-        <PropertyTable Properties="@Properties" />
-    </section>
 </div>
 
 @code {
@@ -593,22 +588,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    /* ===================== PROPERTIES ===================== */
-
-    private List<PropertyDefinition> Properties =
-    [
-        new("Text", "string?", "null", "Simple text content for the tooltip"),
-        new("TooltipContent", "RenderFragment?", "null", "Rich content for the tooltip (takes precedence over Text)"),
-        new("ChildContent", "RenderFragment?", "null", "The element that triggers the tooltip"),
-        new("Placement", "TooltipPlacement", "Top", "Position relative to trigger: Top, TopStart, TopEnd, Bottom, BottomStart, BottomEnd, Left, LeftStart, LeftEnd, Right, RightStart, RightEnd"),
-        new("Trigger", "TooltipTrigger", "Hover", "How the tooltip is triggered: Hover, Focus, HoverAndFocus, Click, Permanent"),
-        new("ShowDelay", "int?", "200 / 0", "Delay in ms before showing. Default: 200 for Hover/Focus, 0 for Click/Permanent"),
-        new("LeaveDelay", "int?", "150 / 0", "Delay in ms before hiding when leaving trigger. Default: 150 for Hover/Focus, 0 for Click/Permanent"),
-        new("AutoCloseAfter", "int?", "null", "Auto-close tooltip after N milliseconds once visible. Works with all triggers."),
-        new("Arrow", "bool", "true", "Show arrow pointing to the trigger element"),
-        new("Interactive", "bool", "true", "Allow hovering over tooltip without it closing. Pauses LeaveDelay and AutoCloseAfter timers."),
-        new("MaxWidth", "int?", "300", "Maximum width in pixels"),
-        new("Offset", "int", "8", "Distance from trigger element in pixels")
-    ];
 }

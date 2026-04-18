@@ -47,7 +47,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties"/>
+        <PropertyTable Properties="@BUIInputDateTimeComponentInfo.Parameters"/>
     </section>
 
 </DocPage>
@@ -205,17 +205,4 @@
         <BUITimePicker Density="DensityEnum.Standard" @bind-Value="_pickerTime"/>
         <BUITimePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerTime"/>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("TValue", "type", "—", "DateOnly / TimeOnly / DateTime / DateTimeOffset (or nullable)"),
-        new("Value", "TValue?", "default", "Bound value"),
-        new("Label / Placeholder / HelperText", "string?", "null", "Descriptive text"),
-        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
-        new("Size / Density", "SizeEnum / DensityEnum", "—", "Sizing"),
-        new("Disabled / ReadOnly / Required", "bool", "false", "State flags"),
-        new("BackgroundColor / Color", "string?", "null", "Custom colors"),
-        new("PrefixIcon / SuffixIcon / PrefixText / SuffixText", "string?", "null", "Addons")
-    ];
-
 }

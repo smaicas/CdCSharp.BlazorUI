@@ -24,7 +24,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUILoadingIndicatorComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -134,10 +134,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Variant", "BUILoadingIndicatorVariant", "Spinner", "Spinner / CircularProgress / Ring / Dots / Bars / LinearIndeterminate"),
-        new("Size", "SizeEnum", "Medium", "Small / Medium / Large"),
-        new("Color", "string?", "null", "Color — accepts palette vars, hex, rgb, etc.")
-    ];
 }

@@ -40,12 +40,6 @@
         <h2>Custom borders</h2>
         <ComponentDemo Definition="@CustomBordersDemo" />
     </section>
-
-    <!-- PROPERTIES -->
-    <section class="doc-section">
-        <h2>BorderStyle properties</h2>
-        <PropertyTable Properties="@Properties" />
-    </section>
 </div>
 
 @code {
@@ -184,15 +178,5 @@ private BorderStyle _customBorderWithRadius =
             <BUIButton Text="Custom with Radius" Border="@_customBorderWithRadius" />
         </div>
         ;
-    };
-
-    /* ===================== PROPERTIES ===================== */
-
-    private List<PropertyDefinition> Properties = new()
-    {
-        new("Width", "string", "-", "Border width (e.g. 1px, 2px)"),
-        new("Style", "BorderStyleType", "-", "Line style (Solid, Dashed, Dotted, etc.)"),
-        new("Color", "CssColor", "-", "Border color"),
-        new("Radius", "int?", "null", "Corner radius in pixels"),
     };
 }

@@ -1,9 +1,8 @@
 ﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@attribute [GenerateComponentInfo]
 @using Microsoft.JSInterop
 
 @inherits BUIComponentBase
-@implements IHasSize
-@implements IHasDensity
 @implements IPickerFamilyComponent
 @implements IAsyncDisposable
 
@@ -97,8 +96,6 @@
     [Parameter] public string RevertText { get; set; } = "Revert";
     [Parameter] public int SelectionWidth { get; set; } = 200;
     [Parameter] public int SelectionHeight { get; set; } = 150;
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
 
     protected override void OnParametersSet()
     {

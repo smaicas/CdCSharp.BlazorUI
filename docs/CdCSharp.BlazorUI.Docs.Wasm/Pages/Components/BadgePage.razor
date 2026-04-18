@@ -36,7 +36,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUIBadge</h3>
+        <PropertyTable Properties="@BUIBadgeComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUINotificationBadge</h3>
+        <PropertyTable Properties="@BUINotificationBadgeComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -147,14 +152,4 @@
         </div>
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("ChildContent", "RenderFragment?", "null", "Badge content. When null, renders as a dot."),
-        new("Circular", "bool", "false", "Render as a circle (ideal for single character)"),
-        new("Size", "SizeEnum", "Medium", "Badge size"),
-        new("Color", "string?", "null", "Text color"),
-        new("BackgroundColor", "string?", "null", "Background color"),
-        new("Border", "BorderStyle?", "null", "Border"),
-        new("Shadow", "ShadowStyle?", "null", "Elevation")
-    ];
 }

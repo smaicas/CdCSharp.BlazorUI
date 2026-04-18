@@ -37,7 +37,13 @@
 	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
 
 	<ItemGroup>
-		<ProjectReference Include="..\CdCSharp.BlazorUI.Core.CodeGeneration\CdCSharp.BlazorUI.Core.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<!-- Inyecta todos los .razor como AdditionalFiles automáticamente.
+         El generador filtra internamente por @attribute [GenerateComponentInfo]. -->
+		<AdditionalFiles Include="$(MSBuildProjectDirectory)\**\*.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CdCSharp.BlazorUI.CodeGeneration\CdCSharp.BlazorUI.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\CdCSharp.BlazorUI.SyntaxHighlight\CdCSharp.BlazorUI.SyntaxHighlight.csproj" />
 	</ItemGroup>
 

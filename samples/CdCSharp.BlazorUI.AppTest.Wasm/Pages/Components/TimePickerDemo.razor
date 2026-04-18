@@ -16,9 +16,6 @@
 <h2>Selected Time Display</h2>
 <ComponentDemo Definition="@SelectedTimeDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     private TimeOnly? _basicValue = TimeOnly.FromDateTime(DateTime.Now);
     private TimeOnly? _smallValue = TimeOnly.FromDateTime(DateTime.Now);
@@ -105,12 +102,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TimeOnly", "-", "The selected time"),
-        new("ValueChanged", "EventCallback<TimeOnly>", "-", "Fired when time changes"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Component density")
-    ];
 }

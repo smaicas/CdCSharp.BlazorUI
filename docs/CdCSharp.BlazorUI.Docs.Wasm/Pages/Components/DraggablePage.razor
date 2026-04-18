@@ -25,7 +25,7 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+        <PropertyTable Properties="@BUIDraggableComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -119,14 +119,4 @@
             <BUIButton Text="Locked — can't drag" />
         </BUIDraggable>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("ChildContent", "RenderFragment?", "null", "Content to make draggable."),
-        new("OnDragStart", "EventCallback<DragEventArgs>", "—", "Fires on mousedown with client coordinates."),
-        new("OnDrag", "EventCallback<DragEventArgs>", "—", "Fires on every mousemove while dragging."),
-        new("OnDragEnd", "EventCallback<DragEventArgs>", "—", "Fires on mouseup."),
-        new("PreventDefault", "bool", "true", "Whether to preventDefault on mousedown (e.g. stops text selection)."),
-        new("Disabled", "bool", "false", "Ignore all drag attempts when true.")
-    ];
 }

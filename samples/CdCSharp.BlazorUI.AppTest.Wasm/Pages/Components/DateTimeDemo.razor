@@ -49,9 +49,6 @@
 <h2>Custom Format</h2>
 <ComponentDemo Definition="@CustomFormatDemo" /> *@
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     private DateTime? _basicValue = DateTime.Now;
     private DateTime? _labelValue = DateTime.Now.AddDays(7);
@@ -306,21 +303,4 @@
                           PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_event" />
     };
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue", "-", "The value (DateTime, DateTime?, DateOnly, DateOnly?, TimeOnly, TimeOnly?)"),
-        new("Label", "string?", "null", "Input label"),
-        new("Placeholder", "string?", "null", "Placeholder text"),
-        new("HelperText", "string?", "null", "Helper text"),
-        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Spacing density"),
-        new("Disabled", "bool", "false", "Disable input"),
-        new("Required", "bool", "false", "Mark as required"),
-        new("Loading", "bool", "false", "Show loading state"),
-        new("PrefixIcon", "string?", "null", "Icon prefix"),
-        new("SuffixIcon", "string?", "null", "Icon suffix"),
-        new("PrefixText", "string?", "null", "Text prefix"),
-        new("SuffixText", "string?", "null", "Text suffix")
-    ];
 }

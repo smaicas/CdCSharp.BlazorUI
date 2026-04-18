@@ -49,9 +49,6 @@
 <h2>With Helper Text</h2>
 <ComponentDemo Definition="@HelperTextDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     private string? _singleValue;
     private List<string> _multipleValue = new();
@@ -446,27 +443,6 @@
             <DropdownOption Value="@("opt3")">Option 3</DropdownOption>
         </BUIInputDropdown>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue", "-", "Selected value (single selection)"),
-        new("Values", "ICollection<TValue>", "-", "Selected values (multiple selection)"),
-        new("Label", "string?", "null", "Input label"),
-        new("Placeholder", "string?", "null", "Placeholder text"),
-        new("HelperText", "string?", "null", "Helper text below input"),
-        new("Variant", "BUIInputVariant", "Outlined", "Visual variant"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Density", "DensityEnum", "Standard", "Spacing density"),
-        new("Disabled", "bool", "false", "Disable dropdown"),
-        new("Required", "bool", "false", "Mark as required"),
-        new("IsLoading", "bool", "false", "Show loading state"),
-        new("Searchable", "bool", "false", "Enable search/filter"),
-        new("ShowSelectAll", "bool", "false", "Show select all option (multiple)"),
-        new("CloseOnSelect", "bool", "true", "Close dropdown on selection"),
-        new("NoOptionsText", "string?", "null", "Text when no options"),
-        new("Placement", "DropdownPlacement", "Auto", "Menu placement"),
-        new("MaxMenuHeight", "int", "320", "Maximum menu height (px)")
-    ];
 
     private class CountryOption
     {

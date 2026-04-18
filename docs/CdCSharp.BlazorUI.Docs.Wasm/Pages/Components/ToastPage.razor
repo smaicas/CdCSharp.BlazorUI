@@ -46,7 +46,12 @@
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@_properties" />
+
+        <h3 class="doc-section__subtitle">BUIToast</h3>
+        <PropertyTable Properties="@BUIToastComponentInfo.Parameters" />
+
+        <h3 class="doc-section__subtitle">BUIToastHost</h3>
+        <PropertyTable Properties="@BUIToastHostComponentInfo.Parameters" />
     </section>
 
 </DocPage>
@@ -204,17 +209,4 @@ Toast.Show(c, new() { Animation = ToastAnimation.None });",
             new ToastOptions { OnClick = () => _clicks++, Duration = TimeSpan.FromSeconds(6) });
     }
 
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Toast.Show(fragment, options?)", "string", "—", "Shows a toast, returns id"),
-        new("Toast.Close(id) / CloseAll()", "void", "—", "Dismiss"),
-        new("ToastOptions.Position", "ToastPosition", "TopRight", "Six anchor positions"),
-        new("ToastOptions.Duration", "TimeSpan", "4s", "Auto-dismiss delay"),
-        new("ToastOptions.AutoDismiss", "bool", "true", "False = persistent"),
-        new("ToastOptions.Closable", "bool", "true", "Show × button"),
-        new("ToastOptions.Animation", "ToastAnimationConfig", "SlideAndFade", "SlideAndFade / SlideOnly / FadeOnly / None"),
-        new("ToastOptions.CssClass", "string?", "null", "Extra class on the toast element"),
-        new("ToastOptions.OnClick", "Action?", "null", "Click callback"),
-        new("ToastOptions.Quick / Default / Long / Persistent", "static", "—", "Preset configurations")
-    ];
 }

@@ -31,9 +31,6 @@
 <h2>Indeterminate (Tri-State)</h2>
 <ComponentDemo Definition="@IndeterminateDemo" />
 
-<h2>Properties</h2>
-<PropertyTable Properties="@_properties" />
-
 @code {
     [CascadingParameter] public BUIPalette Palette { get; set; } = default!;
 
@@ -216,18 +213,4 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _properties =
-    [
-        new("Value", "TValue (bool or bool?)", "-", "Checkbox value"),
-        new("Label", "string?", "null", "Label text"),
-        new("HelperText", "string?", "null", "Helper text below checkbox"),
-        new("Size", "SizeEnum", "Medium", "Component size"),
-        new("Disabled", "bool", "false", "Disable checkbox"),
-        new("Required", "bool", "false", "Mark as required"),
-        new("Color", "CssColor?", "null", "Custom checkbox color"),
-        new("CheckedIcon", "string?", "null", "Custom checked icon"),
-        new("UncheckedIcon", "string?", "null", "Custom unchecked icon"),
-        new("IndeterminateIcon", "string?", "null", "Custom indeterminate icon")
-    ];
 }

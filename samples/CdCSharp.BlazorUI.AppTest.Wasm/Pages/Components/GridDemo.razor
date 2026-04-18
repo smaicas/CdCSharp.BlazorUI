@@ -58,12 +58,6 @@
 <h2>Grid Item - Spacing (Padding & Margin)</h2>
 <ComponentDemo Definition="@SpacingDemo" />
 
-<h2>Properties - BUIGrid</h2>
-<PropertyTable Properties="@_gridProperties" />
-
-<h2>Properties - BUIGridItem</h2>
-<PropertyTable Properties="@_gridItemProperties" />
-
 @code {
     private ComponentDemoDefinition BasicUsageDemo => new()
     {
@@ -539,29 +533,6 @@
             </BUIGridItem>
         </BUIGrid>
     };
-
-    private readonly PropertyDefinition[] _gridProperties =
-    [
-        new("Gap", "string?", "null", "Gap between items (CSS value)"),
-        new("Direction", "GridDirection", "Column", "Flex direction"),
-        new("AlignItems", "GridAlignItems?", "null", "Cross-axis alignment"),
-        new("JustifyContent", "GridJustifyContent?", "null", "Main-axis alignment"),
-        new("Wrap", "GridWrap?", "null", "Wrap behavior"),
-        new("ChildContent", "RenderFragment?", "null", "Grid items")
-    ];
-
-    private readonly PropertyDefinition[] _gridItemProperties =
-    [
-        new("Xs", "int/bool?", "null", "Columns on extra-small screens (1-12 or true for flex)"),
-        new("Sm", "int/bool?", "null", "Columns on small screens"),
-        new("Md", "int/bool?", "null", "Columns on medium screens"),
-        new("Lg", "int/bool?", "null", "Columns on large screens"),
-        new("Xl", "int/bool?", "null", "Columns on extra-large screens"),
-        new("Auto", "bool", "false", "Auto-size based on content"),
-        new("AlignSelf", "GridAlignSelf?", "null", "Individual cross-axis alignment"),
-        new("HideOn", "string?", "null", "Hide on specific breakpoint(s)"),
-        new("ShowOn", "string?", "null", "Show only on specific breakpoint(s)")
-    ];
 }
 
 <style>
