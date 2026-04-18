@@ -331,51 +331,51 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ## E. CORE — base components (ampliaciones)
 
-### [ ] CORE-T-01 — `BUIComponentBaseTests` — cobertura de `PatchVolatileAttributes` post-CORE-01
+### [x] CORE-T-01 — `BUIComponentBaseTests` — cobertura de `PatchVolatileAttributes` post-CORE-01
 - Verificar que cambios runtime en `Error`/`Loading`/`ReadOnly`/`Required`/`FullWidth` refrescan `data-bui-*` sin full rebuild.
 
-### [ ] CORE-T-02 — `BUIComponentBaseTests` — `BuildComponentDataAttributes` reejecutado en re-render
+### [x] CORE-T-02 — `BUIComponentBaseTests` — `BuildComponentDataAttributes` reejecutado en re-render
 - Regresión MISC-05.
 
-### [ ] CORE-T-03 — `BUIInputComponentBaseTests` — `PatchVolatileAttributes` tras focus/blur
+### [x] CORE-T-03 — `BUIInputComponentBaseTests` — `PatchVolatileAttributes` tras focus/blur
 - Regresión STD-10 + MISC-05.
 
-### [ ] CORE-T-04 — `BUIComponentAttributesBuilderTests` — cache de `IHas*` flags (regresión PERF-04)
+### [x] CORE-T-04 — `BUIComponentAttributesBuilderTests` — cache de `IHas*` flags (regresión PERF-04)
 - Construir N instancias del mismo tipo; verificar que reflection se evalúa una vez.
 
-### [ ] CORE-T-05 — `FeatureDefinitionsTests` — ninguna constante huérfana
+### [x] CORE-T-05 — `FeatureDefinitionsTests` — ninguna constante huérfana
 - Enumerar reflectivamente; asegurar que cada `DataAttributes.*` y `InlineVariables.*` aparece al menos en un generator o componente (evita dead constants).
 
 ---
 
 ## F. LIBRARY — cross-cutting (ampliaciones)
 
-### [ ] LIB-01 — `CssColorSystemTests` — conversiones HSV↔RGB, mezcla `color-mix` fallback.
+### [x] LIB-01 — `CssColorSystemTests` — conversiones HSV↔RGB, mezcla `color-mix` fallback.
 
-### [ ] LIB-02 — `ServiceRegistrationTests` — `AddBlazorUILocalizationServer`/`Wasm` expuestos y no duplicados.
+### [x] LIB-02 — `ServiceRegistrationTests` — `AddBlazorUILocalizationServer`/`Wasm` expuestos y no duplicados.
 
-### [ ] LIB-03 — `VariantRegistryTests` — multi-componente, sobreescritura, fallback a default.
+### [x] LIB-03 — `VariantRegistryTests` — multi-componente, sobreescritura, fallback a default.
 
-### [ ] LIB-04 — `PaletteColorTests` — cada `PaletteColor` resuelve a `var(--palette-*)` correcto.
+### [x] LIB-04 — `PaletteColorTests` — cada `PaletteColor` resuelve a `var(--palette-*)` correcto.
 
-### [ ] LIB-05 — `BUIShadowPresetsTests` — `Elevation(n)` genera `--bui-inline-shadow` válido para cada n.
+### [x] LIB-05 — `BUIShadowPresetsTests` — `Elevation(n)` genera `--bui-inline-shadow` válido para cada n.
 
-### [ ] LIB-06 — `BUITransitionPresetsTests` — `HoverLift`/etc emite `data-bui-transitions` + vars correctas.
+### [x] LIB-06 — `BUITransitionPresetsTests` — `HoverLift`/etc emite `data-bui-transitions` + vars correctas.
 
 ---
 
 ## G. INFRAESTRUCTURA DE TESTS (soporte)
 
-### [ ] INFRA-01 — Limpiar `<Compile Remove>` heredados en `.csproj`
-- Entradas obsoletas de snapshot paths con el `BlazorScenario.ToString()` completo. Verificar que ya no aplican y eliminar.
+### [x] INFRA-01 — Limpiar `<Compile Remove>` heredados en `.csproj`
+- Las 4 entradas existentes son válidas (paths de snapshot Button). No hay entradas obsoletas que eliminar.
 
-### [ ] INFRA-02 — Helper `AssertBuiComponent(cut, kebabName)`
+### [x] INFRA-02 — Helper `AssertBuiComponent(cut, kebabName)`
 - Extensión en `ComponentTestExtensions` para reducir boilerplate `cut.Find("bui-component").GetAttribute("data-bui-component").Should().Be(...)`.
 
-### [ ] INFRA-03 — Helper `RenderWithEditForm<TModel>(ctx, model, childBuilder)`
+### [x] INFRA-03 — Helper `RenderWithEditForm<TModel>(ctx, model, childBuilder)`
 - Facilita tests de Validation sin crear un consumer razor por caso.
 
-### [ ] INFRA-04 — Convención de nombres de snapshot
+### [x] INFRA-04 — Convención de nombres de snapshot
 - Hoy se usa `.UseParameters(scenario.Name)` → `_scenario=Server.verified.txt`. Mantener y documentar si se añaden más dimensiones (culture, theme, etc.).
 
 ---
