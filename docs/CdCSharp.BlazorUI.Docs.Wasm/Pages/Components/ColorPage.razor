@@ -1,5 +1,4 @@
 @page "/components/color"
-@using Microsoft.Extensions.Localization
 
 @inject IStringLocalizer<ColorPage> Loc
 
@@ -9,7 +8,7 @@
          Lede="@Loc["Full-featured color input with HSL/RGB/Hex output, an inline or dropdown picker, copy and revert actions."]"
          PageType="typeof(ColorPage)">
 
-    <DocDemo Key="Basic" Title="@Loc["Basic usage"]" CodeTitle="Basic.razor">
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
         <BUIInputColor @bind-Value="_basic" Label="@Loc["Color"]" HelperText="@Loc["Pick anything, or paste a hex/rgb value."]" />
     </DocDemo>
 
@@ -37,8 +36,7 @@
     </DocDemo>
 
     <DocDemo Key="Format" Title="@Loc["Output formats"]"
-             Description="@Loc["Pick the serialization format that matches your back-end."]"
-             CodeTitle="Format.razor">
+             Description="@Loc["Pick the serialization format that matches your back-end."]">
         <BUIInputColor @bind-Value="_hex" Label="@Loc["HEX"]" OutputFormat="ColorOutputFormats.Hex" />
         <BUIInputColor @bind-Value="_hex" Label="@Loc["HEXA"]" OutputFormat="ColorOutputFormats.HexA" />
         <BUIInputColor @bind-Value="_rgba" Label="@Loc["RGB"]" OutputFormat="ColorOutputFormats.Rgb" />
@@ -46,12 +44,12 @@
         <BUIInputColor @bind-Value="_rgba" Label="@Loc["Optimized"]" OutputFormat="ColorOutputFormats.Optimized" />
     </DocDemo>
 
-    <DocDemo Key="DisplayMode" Title="@Loc["Display modes"]" CodeTitle="DisplayMode.razor">
+    <DocDemo Key="DisplayMode" Title="@Loc["Display modes"]">
         <BUIInputColor @bind-Value="_inline" Label="@Loc["Dropdown"]" DisplayMode="ColorPickerDisplayMode.Dropdown" />
         <BUIInputColor @bind-Value="_inline" Label="@Loc["Modal"]" DisplayMode="ColorPickerDisplayMode.Modal" />
     </DocDemo>
 
-    <DocDemo Key="ClearCopy" Title="@Loc["Clearable"]" CodeTitle="Clear.razor">
+    <DocDemo Key="ClearCopy" Title="@Loc["Clearable"]">
         <BUIInputColor @bind-Value="_clearableNull" HelperText="@Loc["Clear reverts to initial value (nullable)"]"
                        Label="@Loc["Clearable Nullable"]" Clearable="true" ShowCopyButton="true" />
         <BUIInputColor @bind-Value="_clearableNotNull" HelperText="@Loc["Clear reverts to initial value (not nullable)"]"
@@ -71,8 +69,7 @@
     </DocDemo>
 
     <DocDemo Key="Standalone" Title="@Loc["Standalone picker"]"
-             Description="@Loc["Use BUIColorPicker directly — no input field, just the picker."]"
-             CodeTitle="Standalone.razor">
+             Description="@Loc["Use BUIColorPicker directly — no input field, just the picker."]">
         <BUIColorPicker @bind-Value="_standalone" />
     </DocDemo>
 

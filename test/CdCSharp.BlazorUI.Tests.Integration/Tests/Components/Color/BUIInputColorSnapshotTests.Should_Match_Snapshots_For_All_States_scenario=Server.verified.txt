@@ -2,7 +2,7 @@
   {
     Name: Default_Empty,
     Html:
-<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-color-<ID>" class="bui-input__label">Color</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -15,7 +15,7 @@
   {
     Name: With_Hex_Value,
     Html:
-<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-color-<ID>" class="bui-input__label">Color</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -28,7 +28,7 @@
   {
     Name: With_Rgba_Value,
     Html:
-<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-color-<ID>" class="bui-input__label">Color</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -41,7 +41,7 @@
   {
     Name: Disabled,
     Html:
-<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-color-<ID>" class="bui-input__label">Color</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -54,7 +54,7 @@
   {
     Name: Error_State,
     Html:
-<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-color-<ID>" class="bui-input__label">Color</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -67,7 +67,7 @@
   {
     Name: With_Helper,
     Html:
-<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-component="input-color" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" blazor:onkeydown="<EVENT>" b-7goedlu283><div class="bui-input__wrapper" b-7goedlu283><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-color-<ID>" class="bui-input__label">Color</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
