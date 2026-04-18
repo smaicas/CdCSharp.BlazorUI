@@ -291,12 +291,12 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIThemeGenerator + BUIThemeEditor + BUIThemePreview (`Components/Layout/ThemeGenerator/`)
 
-- [ ] **LAY-THG-01** — `BUIThemeGeneratorRenderingTests` — root, sub-slots editor + preview.
-- [ ] **LAY-THG-02** — `BUIThemeGeneratorInteractionTests` — edición de color propaga a preview, export/import JSON.
-- [ ] **LAY-THG-03** — `BUIThemeGeneratorValidationTests` — import de JSON inválido muestra mensaje (regresión MISC-01).
-- [ ] **LAY-THG-04** — `BUIThemeEditorRenderingTests` — controles por paleta.
-- [ ] **LAY-THG-05** — `BUIThemePreviewRenderingTests` — muestras de componentes con tema aplicado.
-- [ ] **LAY-THG-06** — `BUIThemeGeneratorSnapshotTests` — estado inicial y tras edición.
+- [x] **LAY-THG-01** — `BUIThemeGeneratorRenderingTests` — root, sub-slots editor + preview.
+- [x] **LAY-THG-02** — `BUIThemeGeneratorInteractionTests` — edición de color propaga a preview, export/import JSON.
+- [x] **LAY-THG-03** — `BUIThemeGeneratorValidationTests` — import de JSON inválido muestra mensaje (regresión MISC-01).
+- [x] **LAY-THG-04** — `BUIThemeEditorRenderingTests` — controles por paleta.
+- [x] **LAY-THG-05** — `BUIThemePreviewRenderingTests` — muestras de componentes con tema aplicado.
+- [x] **LAY-THG-06** — `BUIThemeGeneratorSnapshotTests` — estado inicial y tras edición.
 
 ### BUIToast + BUIToastHost (`Components/Layout/Toast/`)
 
