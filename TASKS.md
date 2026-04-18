@@ -277,8 +277,8 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIStackedLayout (`Components/Layout/StackedLayout/`)
 
-- [ ] **LAY-STK-01** — `BUIStackedLayoutRenderingTests` — root, header/footer/content slots.
-- [ ] **LAY-STK-02** — `BUIStackedLayoutSnapshotTests`.
+- [x] **LAY-STK-01** — `BUIStackedLayoutRenderingTests` — root, header/footer/content slots.
+- [x] **LAY-STK-02** — `BUIStackedLayoutSnapshotTests`.
 
 ### BUIThemeSelector (`Components/Layout/ThemeSelector/`)
 

@@ -1,0 +1,20 @@
+﻿[
+  {
+    Name: NoNav,
+    Html: <bui-component data-bui-component="stacked-layout" data-bui-sticky-header="true" data-bui-sticky-nav="false" data-bui-nav-open="false" b-ime3r7xq43><header class="bui-stacked-layout__header" b-ime3r7xq43><div class="bui-stacked-layout__header-content" b-ime3r7xq43>Header</div></header><main class="bui-stacked-layout__main" b-ime3r7xq43><div class="bui-stacked-layout__main-inner" b-ime3r7xq43>Content</div></main></bui-component>
+  },
+  {
+    Name: WithNav_Closed,
+    Html:
+<bui-component data-bui-component="stacked-layout" data-bui-sticky-header="true" data-bui-sticky-nav="false" data-bui-nav-open="false" b-ime3r7xq43><header class="bui-stacked-layout__header" b-ime3r7xq43><button type="button" class="bui-stacked-layout__toggle" aria-label="Toggle navigation" aria-expanded="false" blazor:onclick="<EVENT>" b-ime3r7xq43><span class="bui-stacked-layout__toggle-bar" b-ime3r7xq43></span>
+                <span class="bui-stacked-layout__toggle-bar" b-ime3r7xq43></span>
+                <span class="bui-stacked-layout__toggle-bar" b-ime3r7xq43></span></button><div class="bui-stacked-layout__header-content" b-ime3r7xq43>Header</div></header><nav class="bui-stacked-layout__nav" b-ime3r7xq43><div class="bui-stacked-layout__nav-inner" b-ime3r7xq43>Nav</div></nav><main class="bui-stacked-layout__main" b-ime3r7xq43><div class="bui-stacked-layout__main-inner" b-ime3r7xq43>Content</div></main></bui-component>
+  },
+  {
+    Name: WithNav_Open,
+    Html:
+<bui-component data-bui-component="stacked-layout" data-bui-sticky-header="true" data-bui-sticky-nav="false" data-bui-nav-open="true" b-ime3r7xq43><header class="bui-stacked-layout__header" b-ime3r7xq43><button type="button" class="bui-stacked-layout__toggle" aria-label="Toggle navigation" aria-expanded="true" blazor:onclick="<EVENT>" b-ime3r7xq43><span class="bui-stacked-layout__toggle-bar" b-ime3r7xq43></span>
+                <span class="bui-stacked-layout__toggle-bar" b-ime3r7xq43></span>
+                <span class="bui-stacked-layout__toggle-bar" b-ime3r7xq43></span></button><div class="bui-stacked-layout__header-content" b-ime3r7xq43>Header</div></header><nav class="bui-stacked-layout__nav" b-ime3r7xq43><div class="bui-stacked-layout__nav-inner" b-ime3r7xq43>Nav</div></nav><main class="bui-stacked-layout__main" b-ime3r7xq43><div class="bui-stacked-layout__main-inner" b-ime3r7xq43>Content</div></main></bui-component>
+  }
+]
