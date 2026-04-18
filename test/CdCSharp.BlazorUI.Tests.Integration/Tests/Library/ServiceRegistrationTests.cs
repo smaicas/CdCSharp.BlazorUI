@@ -2,6 +2,7 @@
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
+using CdCSharp.BlazorUI.Localization.Wasm;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
@@ -90,5 +91,67 @@ public class ServiceRegistrationTests : BunitContext
             provider.GetService(serviceType)
                 .Should().NotBeNull($"{serviceType.Name} should be resolvable");
         }
+    }
+
+    // LIB-02: Localization registration tests
+
+    [Fact(DisplayName = "AddBlazorUILocalizationServer_RegistersLocalizationSettings")]
+    public void AddBlazorUILocalizationServer_RegistersLocalizationSettings()
+    {
+        // Arrange
+        ServiceCollection services = new();
+        services.AddSingleton<IJSRuntime, FakeJsRuntime>();
+
+        // Act
+        services.AddBlazorUILocalizationServer(opts =>
+        {
+            opts.DefaultCulture = "es-ES";
+            opts.CultureCookieName = ".Test.Culture";
+        });
+        ServiceProvider provider = services.BuildServiceProvider();
+
+        // Assert
+        CdCSharp.BlazorUI.Localization.Server.LocalizationSettings? settings =
+            provider.GetService<CdCSharp.BlazorUI.Localization.Server.LocalizationSettings>();
+        settings.Should().NotBeNull();
+        settings!.DefaultCulture.Should().Be("es-ES");
+        settings.CultureCookieName.Should().Be(".Test.Culture");
+    }
+
+[Fact(DisplayName = "AddBlazorUILocalizationWasm_RegistersLocalizationSettings")]
+    public void AddBlazorUILocalizationWasm_RegistersLocalizationSettings()
+    {
+        // Arrange
+        ServiceCollection services = new();
+        services.AddSingleton<IJSRuntime, FakeJsRuntime>();
+
+        // Act
+        services.AddBlazorUILocalizationWasm(opts =>
+        {
+            opts.DefaultCulture = "de-DE";
+        });
+        ServiceProvider provider = services.BuildServiceProvider();
+
+        // Assert
+        CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings? settings =
+            provider.GetService<CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings>();
+        settings.Should().NotBeNull();
+        settings!.DefaultCulture.Should().Be("de-DE");
+    }
+
+    [Fact(DisplayName = "AddBlazorUILocalizationWasm_RegistersILocalizationPersistence")]
+    public void AddBlazorUILocalizationWasm_RegistersILocalizationPersistence()
+    {
+        // Arrange
+        ServiceCollection services = new();
+        services.AddSingleton<IJSRuntime, FakeJsRuntime>();
+
+        // Act
+        services.AddBlazorUILocalizationWasm();
+        ServiceProvider provider = services.BuildServiceProvider();
+
+        // Assert
+        ILocalizationPersistence? persistence = provider.GetService<ILocalizationPersistence>();
+        persistence.Should().NotBeNull();
     }
 }
