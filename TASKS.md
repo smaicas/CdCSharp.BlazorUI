@@ -263,10 +263,10 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIGrid + BUIGridItem (`Components/Layout/Grid/`)
 
-- [ ] **LAY-GRID-01** — `BUIGridRenderingTests` — root, `columns`, `rows`, `gap` → `--bui-inline-*`.
-- [ ] **LAY-GRID-02** — `BUIGridItemRenderingTests` — `colspan`/`rowspan` vía CSS vars.
-- [ ] **LAY-GRID-03** — `BUIGridStateTests` — cambio de template.
-- [ ] **LAY-GRID-04** — `BUIGridSnapshotTests` — templates representativos.
+- [x] **LAY-GRID-01** — `BUIGridRenderingTests` — root, `columns`, `rows`, `gap` → `--bui-inline-*`.
+- [x] **LAY-GRID-02** — `BUIGridItemRenderingTests` — `colspan`/`rowspan` vía CSS vars.
+- [x] **LAY-GRID-03** — `BUIGridStateTests` — cambio de template.
+- [x] **LAY-GRID-04** — `BUIGridSnapshotTests` — templates representativos.
 
 ### BUISidebarLayout (`Components/Layout/SidebarLayout/`)
 

@@ -1,0 +1,18 @@
+﻿[
+  {
+    Name: Default,
+    Html: <bui-component data-bui-component="grid" b-qh65871isl>content</bui-component>
+  },
+  {
+    Name: With3Columns,
+    Html: <bui-component data-bui-component="grid" style="--columns: 3; --gap: 1rem" b-qh65871isl></bui-component>
+  },
+  {
+    Name: ColumnDirection,
+    Html: <bui-component data-bui-component="grid" data-dir="column" style="--gap: 8px" b-qh65871isl></bui-component>
+  },
+  {
+    Name: WithMaxWidth,
+    Html: <bui-component data-bui-component="grid" data-contained="true" style="--columns: 12; --max-w: 1200px" b-qh65871isl></bui-component>
+  }
+]
