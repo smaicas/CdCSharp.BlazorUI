@@ -1,41 +1,64 @@
 @page "/components/grid"
 
-<PageTitle>Grid — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<GridPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Grid"
-         Lede="A 12-column responsive layout using BUIGrid + BUIGridItem. Breakpoint-aware spans, gaps, directions, offsets, and spacing.">
+<PageTitle>BlazorUI - BUIGrid</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIGrid"]"
+         Lede="@Loc["A 12-column responsive layout using BUIGrid + BUIGridItem. Breakpoint-aware spans, gaps, directions, offsets, and spacing."]"
+         PageType="typeof(GridPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]" Description="@Loc["Use integer Span (out of Columns, default 12) to size each item."]">
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Span="6"><div class="demo-grid-cell">@Loc["Span 6"]</div></BUIGridItem>
+            <BUIGridItem Span="6"><div class="demo-grid-cell">@Loc["Span 6"]</div></BUIGridItem>
+            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4"]</div></BUIGridItem>
+            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4"]</div></BUIGridItem>
+            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4"]</div></BUIGridItem>
+        </BUIGrid>
+    </DocDemo>
+
+    <DocDemo Key="Responsive" Title="@Loc["Responsive spans"]" Description="@Loc["Per-breakpoint spans (Xs, Sm, Md, Lg, Xl) override Span."]">
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:4 lg:3</div></BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:4 lg:3</div></BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:4 lg:3</div></BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="12" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:12 lg:3</div></BUIGridItem>
+        </BUIGrid>
+    </DocDemo>
+
+    <DocDemo Key="Auto" Title="@Loc["Auto items"]" Description="@Loc["Auto=\"true\" sizes an item to its content."]">
+        <BUIGrid Gap="1rem">
+            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Auto"]</div></BUIGridItem>
+            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Auto, wider content here"]</div></BUIGridItem>
+            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4 fills rest"]</div></BUIGridItem>
+        </BUIGrid>
+    </DocDemo>
+
+    <DocDemo Key="Direction" Title="@Loc["Direction & alignment"]">
+        <BUIGrid Direction="GridDirection.Column"
+                 AlignItems="GridAlignItems.Center"
+                 JustifyContent="GridJustifyContent.SpaceBetween"
+                 Gap="0.5rem">
+            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Item A"]</div></BUIGridItem>
+            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Item B"]</div></BUIGridItem>
+            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Item C"]</div></BUIGridItem>
+        </BUIGrid>
+    </DocDemo>
+
+    <DocDemo Key="Gaps" Title="@Loc["Gaps & spacing"]">
+        <BUIGrid RowGap="2rem" ColumnGap="0.5rem" P="1rem" style="background: color-mix(in oklab, var(--palette-primary) 6%, transparent); border-radius: 0.5rem;">
+            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
+            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
+            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
+            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
+            <BUIGridItem Span="6"><div class="demo-grid-cell">6</div></BUIGridItem>
+            <BUIGridItem Span="6"><div class="demo-grid-cell">6</div></BUIGridItem>
+        </BUIGrid>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <p class="doc-section__description">Use integer <code>Span</code> (out of <code>Columns</code>, default 12) to size each item.</p>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Responsive spans</h2>
-        <p class="doc-section__description">Per-breakpoint spans (<code>Xs</code>, <code>Sm</code>, <code>Md</code>, <code>Lg</code>, <code>Xl</code>) override <code>Span</code>.</p>
-        <ComponentDemo Definition="@ResponsiveDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Auto items</h2>
-        <p class="doc-section__description"><code>Auto="true"</code> sizes an item to its content.</p>
-        <ComponentDemo Definition="@AutoDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Direction &amp; alignment</h2>
-        <ComponentDemo Definition="@DirectionDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Gaps &amp; spacing</h2>
-        <ComponentDemo Definition="@GapsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
 
         <h3 class="doc-section__subtitle">BUIGrid</h3>
         <PropertyTable Properties="@BUIGridComponentInfo.Parameters" />
@@ -45,111 +68,3 @@
     </section>
 
 </DocPage>
-
-@code {
-    private RenderFragment Cell(string content) => __builder =>
-    {
-        <div class="demo-grid-cell">@content</div>
-    };
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"<BUIGrid Gap=""1rem"">
-    <BUIGridItem Span=""6"">6 cols</BUIGridItem>
-    <BUIGridItem Span=""6"">6 cols</BUIGridItem>
-    <BUIGridItem Span=""4"">4</BUIGridItem>
-    <BUIGridItem Span=""4"">4</BUIGridItem>
-    <BUIGridItem Span=""4"">4</BUIGridItem>
-</BUIGrid>",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIGrid Gap="1rem">
-            <BUIGridItem Span="6">@Cell("Span 6")</BUIGridItem>
-            <BUIGridItem Span="6">@Cell("Span 6")</BUIGridItem>
-            <BUIGridItem Span="4">@Cell("Span 4")</BUIGridItem>
-            <BUIGridItem Span="4">@Cell("Span 4")</BUIGridItem>
-            <BUIGridItem Span="4">@Cell("Span 4")</BUIGridItem>
-        </BUIGrid>
-    };
-
-    private ComponentDemoDefinition ResponsiveDemo => new()
-    {
-        CodeTitle = "Responsive.razor",
-        Code = @"<BUIGrid Gap=""1rem"">
-    <BUIGridItem Xs=""12"" Sm=""6"" Md=""4"" Lg=""3"">...</BUIGridItem>
-</BUIGrid>",
-        Demo = RenderResponsive()
-    };
-
-    private RenderFragment RenderResponsive() => __builder =>
-    {
-        <BUIGrid Gap="1rem">
-            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">@Cell("xs:12 sm:6 md:4 lg:3")</BUIGridItem>
-            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">@Cell("xs:12 sm:6 md:4 lg:3")</BUIGridItem>
-            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">@Cell("xs:12 sm:6 md:4 lg:3")</BUIGridItem>
-            <BUIGridItem Xs="12" Sm="6" Md="12" Lg="3">@Cell("xs:12 sm:6 md:12 lg:3")</BUIGridItem>
-        </BUIGrid>
-    };
-
-    private ComponentDemoDefinition AutoDemo => new()
-    {
-        CodeTitle = "Auto.razor",
-        Code = @"<BUIGridItem Auto=""true"">…</BUIGridItem>",
-        Demo = RenderAuto()
-    };
-
-    private RenderFragment RenderAuto() => __builder =>
-    {
-        <BUIGrid Gap="1rem">
-            <BUIGridItem Auto="true">@Cell("Auto")</BUIGridItem>
-            <BUIGridItem Auto="true">@Cell("Auto, wider content here")</BUIGridItem>
-            <BUIGridItem Span="4">@Cell("Span 4 fills rest")</BUIGridItem>
-        </BUIGrid>
-    };
-
-    private ComponentDemoDefinition DirectionDemo => new()
-    {
-        CodeTitle = "Direction.razor",
-        Code = @"<BUIGrid Direction=""GridDirection.Column""
-         AlignItems=""GridAlignItems.Center""
-         JustifyContent=""GridJustifyContent.SpaceBetween""
-         Gap=""0.5rem"">…</BUIGrid>",
-        Demo = RenderDirection()
-    };
-
-    private RenderFragment RenderDirection() => __builder =>
-    {
-        <BUIGrid Direction="GridDirection.Column"
-                 AlignItems="GridAlignItems.Center"
-                 JustifyContent="GridJustifyContent.SpaceBetween"
-                 Gap="0.5rem">
-            <BUIGridItem Auto="true">@Cell("Item A")</BUIGridItem>
-            <BUIGridItem Auto="true">@Cell("Item B")</BUIGridItem>
-            <BUIGridItem Auto="true">@Cell("Item C")</BUIGridItem>
-        </BUIGrid>
-    };
-
-    private ComponentDemoDefinition GapsDemo => new()
-    {
-        CodeTitle = "Gaps.razor",
-        Code = @"<BUIGrid RowGap=""2rem"" ColumnGap=""0.5rem"" P=""1rem"">…</BUIGrid>",
-        Demo = RenderGaps()
-    };
-
-    private RenderFragment RenderGaps() => __builder =>
-    {
-        <BUIGrid RowGap="2rem" ColumnGap="0.5rem" P="1rem" style="background: color-mix(in oklab, var(--palette-primary) 6%, transparent); border-radius: 0.5rem;">
-            <BUIGridItem Span="3">@Cell("3")</BUIGridItem>
-            <BUIGridItem Span="3">@Cell("3")</BUIGridItem>
-            <BUIGridItem Span="3">@Cell("3")</BUIGridItem>
-            <BUIGridItem Span="3">@Cell("3")</BUIGridItem>
-            <BUIGridItem Span="6">@Cell("6")</BUIGridItem>
-            <BUIGridItem Span="6">@Cell("6")</BUIGridItem>
-        </BUIGrid>
-    };
-
-}

@@ -1,51 +1,197 @@
 @page "/components/dropdown"
 
-<PageTitle>Dropdown — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<DropdownPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Dropdown"
-         Lede="Single-select list with keyboard navigation, search, and strongly-typed values. Options are declared as children.">
+<PageTitle>BlazorUI - BUIInputDropdown</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIInputDropdown"]"
+         Lede="@Loc["Single and multiple select list with keyboard navigation, search, and strongly-typed values. Options are declared as children."]"
+         PageType="typeof(DropdownPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <BUIInputDropdown @bind-Value="_basicSingle" Label="@Loc["Single"]" HelperText="@Loc["Single selection"]">
+            <DropdownOption TOption="int" Value="1">@Loc["Option 1"]</DropdownOption>
+            <DropdownOption TOption="int" Value="2">@Loc["Option 2"]</DropdownOption>
+            <DropdownOption TOption="int" Value="3">@Loc["Option 3"]</DropdownOption>
+            <DropdownOption TOption="int" Value="4">@Loc["Option 4"]</DropdownOption>
+        </BUIInputDropdown>
+
+        <BUIInputDropdown @bind-Value="_basicMulti" Label="@Loc["Multi"]" HelperText="@Loc["Multiple selection"]">
+            <DropdownOption TOption="int" Value="1">@Loc["Option 1"]</DropdownOption>
+            <DropdownOption TOption="int" Value="2">@Loc["Option 2"]</DropdownOption>
+            <DropdownOption TOption="int" Value="3">@Loc["Option 3"]</DropdownOption>
+            <DropdownOption TOption="int" Value="4">@Loc["Option 4"]</DropdownOption>
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="Variants" Title="@Loc["Variants"]">
+        <BUIInputDropdown @bind-Value="_outlinedValue"
+                          Label="@Loc["Outlined"]"
+                          Variant="BUIInputVariant.Outlined">
+            @foreach (string option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_filledValue"
+                          Label="@Loc["Filled"]"
+                          Variant="BUIInputVariant.Filled">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_standardValue"
+                          Label="@Loc["Standard"]"
+                          Variant="BUIInputVariant.Standard">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
+        <BUIInputDropdown @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="SizeEnum.Medium">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
+        <BUIInputDropdown @bind-Value="_colorValue" Label="@Loc["Custom Color"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_backgroundValue" Label="@Loc["Custom Background"]" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="BoxPlacement" Title="@Loc["Box Placement"]" Description="@_boxPlacementDesc">
+        <BUIInputDropdown @bind-Value="_bottomValue"
+                          Label="@Loc["Bottom Placement (Default)"]"
+                          Placement="DropdownPlacement.Bottom">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_topValue"
+                          Label="@Loc["Top Placement"]"
+                          Placement="DropdownPlacement.Top">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_autoValue"
+                          Label="@Loc["Auto Placement"]"
+                          Placement="DropdownPlacement.Auto">
+            @foreach (var option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="Searchable" Title="@Loc["Searchable"]" Description="@_searchableDesc">
+        <BUIInputDropdown TValue="string" @bind-Value="_searchable" Label="@Loc["Country"]" Searchable="true" SearchPlaceholder="@Loc["Type a country..."]">
+            <DropdownOption TOption="string" Value="@("us")">United States</DropdownOption>
+            <DropdownOption TOption="string" Value="@("mx")">Mexico</DropdownOption>
+            <DropdownOption TOption="string" Value="@("ca")">Canada</DropdownOption>
+            <DropdownOption TOption="string" Value="@("br")">Brazil</DropdownOption>
+            <DropdownOption TOption="string" Value="@("ar")">Argentina</DropdownOption>
+            <DropdownOption TOption="string" Value="@("es")">Spain</DropdownOption>
+            <DropdownOption TOption="string" Value="@("fr")">France</DropdownOption>
+            <DropdownOption TOption="string" Value="@("de")">Germany</DropdownOption>
+            <DropdownOption TOption="string" Value="@("uk")">United Kingdom</DropdownOption>
+            <DropdownOption TOption="string" Value="@("jp")">Japan</DropdownOption>
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="NoItemsTemplate" Title="@Loc["Custom template when there are not items."]">
+        <BUIInputDropdown TValue="string"
+                          @bind-Value="_noOptionsValue"
+                          Label="@Loc["Empty Dropdown"]">
+            <NoOptionsTemplate>
+                <span>@Loc["No items available"]</span>
+            </NoOptionsTemplate>
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
+        <BUIInputDropdown @bind-Value="_shadowDropValue" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(3)">
+            @foreach (string option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_pillDropValue" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill">
+            @foreach (string option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_roundedDropValue" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge">
+            @foreach (string option in _optionsStrings)
+            {
+                <DropdownOption Value="@option" Text="@option" />
+            }
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="States" Title="@Loc["States"]">
+        <BUIInputDropdown @bind-Value="_requiredValue" Label="@Loc["Required"]" Required="true" HelperText="@Loc["Required"]">
+            <DropdownOption TOption="int" Value="1">@Loc["Option 1"]</DropdownOption>
+            <DropdownOption TOption="int" Value="2" Disabled="true">@Loc["Option 2"]</DropdownOption>
+            <DropdownOption TOption="int" Value="3" Disabled="true">@Loc["Option 3"]</DropdownOption>
+            <DropdownOption TOption="int" Value="4">@Loc["Option 4"]</DropdownOption>
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_disabledValue" Label="@Loc["Disabled"]" Disabled="true" HelperText="@Loc["Disabled"]">
+            <DropdownOption TOption="int" Value="1">@Loc["Option 1"]</DropdownOption>
+            <DropdownOption TOption="int" Value="2" Disabled="true">@Loc["Option 2"]</DropdownOption>
+            <DropdownOption TOption="int" Value="3" Disabled="true">@Loc["Option 3"]</DropdownOption>
+            <DropdownOption TOption="int" Value="4">@Loc["Option 4"]</DropdownOption>
+        </BUIInputDropdown>
+        <BUIInputDropdown @bind-Value="_readOnlyValue" Label="@Loc["Read Only"]" ReadOnly="true" HelperText="@Loc["ReadOnly"]">
+            <DropdownOption TOption="int" Value="1">@Loc["Option 1"]</DropdownOption>
+            <DropdownOption TOption="int" Value="2" Disabled="true">@Loc["Option 2"]</DropdownOption>
+            <DropdownOption TOption="int" Value="3" Disabled="true">@Loc["Option 3"]</DropdownOption>
+            <DropdownOption TOption="int" Value="4">@Loc["Option 4"]</DropdownOption>
+        </BUIInputDropdown>
+    </DocDemo>
+
+    <DocDemo Key="DisabledOptions" Title="@Loc["Disabled options"]">
+        <BUIInputDropdown TValue="int?" @bind-Value="_disabledOptionValue" Label="@Loc["With disabled options"]">
+            <DropdownOption TOption="int" Value="1">@Loc["Option 1"]</DropdownOption>
+            <DropdownOption TOption="int" Value="2" Disabled="true">@Loc["Option 2"]</DropdownOption>
+            <DropdownOption TOption="int" Value="3" Disabled="true">@Loc["Option 3"]</DropdownOption>
+            <DropdownOption TOption="int" Value="4">@Loc["Option 4"]</DropdownOption>
+        </BUIInputDropdown>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Variants</h2>
-        <ComponentDemo Definition="@VariantsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Box Placement</h2>
-        <p class="doc-section__description">Placement supports <code>Top, Bottom, TopStart, TopEnd, BottomStart, BottomEnd or Auto</code></p>
-        <p class="doc-section__description">Auto mode will position the box in the bottom if it has space. Otherwise it will position the box on top.</p>
-        <ComponentDemo Definition="@PlacementDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Searchable</h2>
-        <p class="doc-section__description">Set <code>Searchable</code> to filter options by typing.</p>
-        <ComponentDemo Definition="@SearchableDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Custom template when there are not items.</h2>
-        <ComponentDemo Definition="@NoOptionsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Disabled options</h2>
-        <ComponentDemo Definition="@DisabledOptionDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIInputDropdownComponentInfo.Parameters" />
     </section>
 
@@ -60,306 +206,42 @@
     private string? _smallValue;
     private string? _mediumValue;
     private string? _largeValue;
+    private string? _colorValue;
+    private string? _backgroundValue;
     private string? _topValue;
     private string? _autoValue;
     private string? _bottomValue;
+    private int? _requiredValue;
+    private int? _disabledValue;
+    private int? _readOnlyValue;
     private string? _searchable = null;
     private string? _noOptionsValue = null;
-    private string? _disabled = "apple";
+    private int? _disabledOptionValue;
+    private string? _shadowDropValue;
+    private string? _pillDropValue;
+    private string? _roundedDropValue;
     private string? _placement = "up";
 
-    private List<string> _optionsStrings = new() { "Option 1", "Option 2", "Option 3", "Option 4", "Option 5" };
+    private List<string> _optionsStrings = new();
 
-    private ComponentDemoDefinition BasicDemo => new()
+    private string _boxPlacementDesc = string.Empty;
+    private string _searchableDesc = string.Empty;
+
+    protected override void OnInitialized()
     {
-        CodeTitle = "Basic.razor",
-        Code =
-            """
-            <BUIInputDropdown @bind-Value="_basicSingle" Label="Single" HelperText="Single selection">
-                <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
-                <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
-                <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
-                <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
-            </BUIInputDropdown>
+        base.OnInitialized();
+        _optionsStrings = [Loc["Option 1"], Loc["Option 2"], Loc["Option 3"], Loc["Option 4"], Loc["Option 5"]];
 
-            <BUIInputDropdown @bind-Value="_basicMulti" Label="Multi" HelperText="Multiple selection">
-                <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
-                <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
-                <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
-                <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
-            </BUIInputDropdown>
-            """,
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIInputDropdown @bind-Value="_basicSingle" Label="Single" HelperText="Single selection">
-            <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
-            <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
-            <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
-            <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
-        </BUIInputDropdown>
-
-        <BUIInputDropdown @bind-Value="_basicMulti" Label="Multi" HelperText="Multiple selection">
-            <DropdownOption TOption="int" Value="1">Option 1</DropdownOption>
-            <DropdownOption TOption="int" Value="2">Option 2</DropdownOption>
-            <DropdownOption TOption="int" Value="3">Option 3</DropdownOption>
-            <DropdownOption TOption="int" Value="4">Option 4</DropdownOption>
-        </BUIInputDropdown>
-    };
-
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        Demo = RenderVariants(),
-        Code =
-            """
-            <BUIInputDropdown @bind-Value="_outlinedValue"
-                              Label="Outlined"
-                              Variant="BUIInputVariant.Outlined">
-                @foreach (var option in _optionsStrings)
-                {
-                    <DropdownOption Value="@option" Text="@option" />
-                }
-            </BUIInputDropdown>
-
-            <BUIInputDropdown @bind-Value="_filledValue"
-                              Label="Filled"
-                              Variant="BUIInputVariant.Filled">
-                @foreach (var option in _optionsStrings)
-                {
-                    <DropdownOption Value="@option" Text="@option" />
-                }
-            </BUIInputDropdown>
-
-            <BUIInputDropdown @bind-Value="_standardValue"
-                              Label="Standard"
-                              Variant="BUIInputVariant.Standard">
-                @foreach (var option in _optionsStrings)
-                {
-                    <DropdownOption Value="@option" Text="@option" />
-                }
-            </BUIInputDropdown>
-            """,
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
-
-        <BUIInputDropdown @bind-Value="_outlinedValue"
-                          Label="Outlined"
-                          Variant="BUIInputVariant.Outlined">
-            @foreach (string option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-
-        <BUIInputDropdown @bind-Value="_filledValue"
-                          Label="Filled"
-                          Variant="BUIInputVariant.Filled">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-
-        <BUIInputDropdown @bind-Value="_standardValue"
-                          Label="Standard"
-                          Variant="BUIInputVariant.Standard">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-    };
-
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        Demo = RenderSizes(),
-        Code =
+        _boxPlacementDesc =
         """
-        <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
+        <p class="doc-section__description">Placement supports <code>Top, Bottom, TopStart, TopEnd, BottomStart, BottomEnd or Auto</code></p>
+        <p class="doc-section__description">Auto mode will position the box in the bottom if it has space. Otherwise it will position the box on top.</p>
+        """;
+
+        _searchableDesc =
         """
-    };
+        <p class="doc-section__description">Set <code>Searchable</code> to filter options by typing.</p>
+        """;
+    }
 
-    private RenderFragment RenderSizes() => __builder =>
-    {
-        <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-    };
-
-    private ComponentDemoDefinition PlacementDemo => new()
-    {
-        Demo = RenderPlacement(),
-        Code = 
-        """
-        <BUIInputDropdown @bind-Value="_bottomValue"
-                          Label="Bottom Placement (Default)"
-                          Placement="DropdownPlacement.Bottom">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_topValue"
-                          Label="Top Placement"
-                          Placement="DropdownPlacement.Top">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_autoValue"
-                          Label="Auto Placement"
-                          Placement="DropdownPlacement.Auto">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        """
-    };
-
-    private RenderFragment RenderPlacement() => __builder =>
-    {
-        <BUIInputDropdown @bind-Value="_bottomValue"
-                          Label="Bottom Placement (Default)"
-                          Placement="DropdownPlacement.Bottom">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_topValue"
-                          Label="Top Placement"
-                          Placement="DropdownPlacement.Top">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_autoValue"
-                          Label="Auto Placement"
-                          Placement="DropdownPlacement.Auto">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-
-    };
-
-    private ComponentDemoDefinition SearchableDemo => new()
-    {
-        CodeTitle = "Searchable.razor",
-        Code =
-        """
-        <BUIInputDropdown TValue="string" @bind-Value="_searchable" Label="Country" Searchable="true" SearchPlaceholder="Type a country...">
-            <DropdownOption TOption="string" Value="@("us")">United States</DropdownOption>
-            <DropdownOption TOption="string" Value="@("mx")">Mexico</DropdownOption>
-            <DropdownOption TOption="string" Value="@("ca")">Canada</DropdownOption>
-            <DropdownOption TOption="string" Value="@("br")">Brazil</DropdownOption>
-            <DropdownOption TOption="string" Value="@("ar")">Argentina</DropdownOption>
-            <DropdownOption TOption="string" Value="@("es")">Spain</DropdownOption>
-            <DropdownOption TOption="string" Value="@("fr")">France</DropdownOption>
-            <DropdownOption TOption="string" Value="@("de")">Germany</DropdownOption>
-            <DropdownOption TOption="string" Value="@("uk")">United Kingdom</DropdownOption>
-            <DropdownOption TOption="string" Value="@("jp")">Japan</DropdownOption>
-        </BUIInputDropdown>
-        """,
-        Demo = RenderSearchable()
-    };
-
-    private RenderFragment RenderSearchable() => __builder =>
-    {
-        <BUIInputDropdown TValue="string" @bind-Value="_searchable" Label="Country" Searchable="true" SearchPlaceholder="Type a country...">
-            <DropdownOption TOption="string" Value="@("us")">United States</DropdownOption>
-            <DropdownOption TOption="string" Value="@("mx")">Mexico</DropdownOption>
-            <DropdownOption TOption="string" Value="@("ca")">Canada</DropdownOption>
-            <DropdownOption TOption="string" Value="@("br")">Brazil</DropdownOption>
-            <DropdownOption TOption="string" Value="@("ar")">Argentina</DropdownOption>
-            <DropdownOption TOption="string" Value="@("es")">Spain</DropdownOption>
-            <DropdownOption TOption="string" Value="@("fr")">France</DropdownOption>
-            <DropdownOption TOption="string" Value="@("de")">Germany</DropdownOption>
-            <DropdownOption TOption="string" Value="@("uk")">United Kingdom</DropdownOption>
-            <DropdownOption TOption="string" Value="@("jp")">Japan</DropdownOption>
-        </BUIInputDropdown>
-    };
-
-    private ComponentDemoDefinition NoOptionsDemo => new()
-    {
-        Demo = RenderNoOptions(),
-        Code = 
-        """
-        <BUIInputDropdown TValue="string"
-                          @bind-Value="_noOptionsValue"
-                          Label="Empty Dropdown">
-            <NoOptionsTemplate>
-                <span>No items available</span>
-            </NoOptionsTemplate>
-        </BUIInputDropdown>
-        """
-    };
-
-    private RenderFragment RenderNoOptions() => __builder =>
-    {
-        <BUIInputDropdown TValue="string"
-                          @bind-Value="_noOptionsValue"
-                          Label="Empty Dropdown">
-            <NoOptionsTemplate>
-                <span>No items available</span>
-            </NoOptionsTemplate>
-        </BUIInputDropdown>
-    };
-
-    private ComponentDemoDefinition DisabledOptionDemo => new()
-    {
-        CodeTitle = "DisabledOption.razor",
-        Code = @"<DropdownOption TOption=""string"" Value=""kiwi"" Disabled=""true"">Kiwi (out of stock)</DropdownOption>",
-        Demo = RenderDisabledOption()
-    };
-
-    private RenderFragment RenderDisabledOption() => __builder =>
-    {
-        <BUIInputDropdown TValue="string" @bind-Value="_disabled" Label="Fruit">
-            <DropdownOption TOption="string" Value="@("apple")">Apple</DropdownOption>
-            <DropdownOption TOption="string" Value="@("banana")">Banana</DropdownOption>
-            <DropdownOption TOption="string" Value="@("kiwi")" Disabled="true">Kiwi (out of stock)</DropdownOption>
-            <DropdownOption TOption="string" Value="@("orange")">Orange</DropdownOption>
-        </BUIInputDropdown>
-    };
 }

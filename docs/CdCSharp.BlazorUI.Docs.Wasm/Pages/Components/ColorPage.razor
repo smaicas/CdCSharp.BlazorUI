@@ -2,9 +2,9 @@
 
 @inject IStringLocalizer<ColorPage> Loc
 
-<PageTitle>Color Picker — CdCSharp.BlazorUI</PageTitle>
+<PageTitle>BlazorUI - BUIInputColor</PageTitle>
 
-<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["Color Picker"]"
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIInputColor"]"
          Lede="@Loc["Full-featured color input with HSL/RGB/Hex output, an inline or dropdown picker, copy and revert actions."]"
          PageType="typeof(ColorPage)">
 
@@ -22,6 +22,11 @@
         <BUIInputColor @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small" />
         <BUIInputColor @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="SizeEnum.Medium" />
         <BUIInputColor @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large" />
+    </DocDemo>
+
+    <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
+        <BUIInputColor @bind-Value="_colorValue" Label="@Loc["Custom Color"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast" />
+        <BUIInputColor @bind-Value="_backgroundValue" Label="@Loc["Custom Background"]" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast" />
     </DocDemo>
 
     <DocDemo Key="PrefixSuffix" Title="@Loc["Prefix & Suffix"]">
@@ -56,6 +61,12 @@
                        Label="@Loc["Clearable NotNullable"]" Clearable="true" ShowCopyButton="true" />
     </DocDemo>
 
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
+        <BUIInputColor @bind-Value="_shadowValue" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+        <BUIInputColor @bind-Value="_pillValue" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
+        <BUIInputColor @bind-Value="_roundedValue" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+    </DocDemo>
+
     <DocDemo Key="States" Title="@Loc["States"]">
         <BUIInputColor @bind-Value="_requiredValue" Label="@Loc["Required"]" Required="true" HelperText="@Loc["Required"]" />
         <BUIInputColor @bind-Value="_disabledValue" Label="@Loc["Disabled"]" Disabled="true" HelperText="@Loc["Disabled"]" />
@@ -88,6 +99,8 @@
     private CssColor? _smallValue;
     private CssColor? _mediumValue;
     private CssColor? _largeValue;
+    private CssColor? _colorValue;
+    private CssColor? _backgroundValue;
     private CssColor? _prefixValue;
     private CssColor? _suffixValue;
     private CssColor? _hex = new("#2a7fff");
@@ -101,4 +114,7 @@
     private CssColor? _customPickerValue;
     private CssColor _clearableNotNull = new CssColor("#FFFFFF");
     private CssColor? _standalone = new("#c41236");
+    private CssColor? _shadowValue;
+    private CssColor? _pillValue;
+    private CssColor? _roundedValue;
 }

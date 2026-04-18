@@ -1,51 +1,79 @@
 @page "/components/toast"
 
 @inject IToastService Toast
+@inject IStringLocalizer<ToastPage> Loc
 
-<PageTitle>Toast — CdCSharp.BlazorUI</PageTitle>
+<PageTitle>BlazorUI - BUIToast</PageTitle>
 
-<DocPage Eyebrow="Component"
-         Title="Toast"
-         Lede="Transient notifications shown via IToastService. Six positions, configurable duration, animations, custom content.">
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIToast"]"
+         Lede="@Loc["Transient notifications shown via IToastService. Six positions, configurable duration, animations, custom content."]"
+         PageType="typeof(ToastPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <BUIButton Text="@Loc["Show toast"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Hello from a toast!"])))" />
+    </DocDemo>
+
+    <DocDemo Key="Positions" Title="@Loc["Positions"]">
+        <div class="demo-grid">
+            <BUIButton Text="@Loc["Top Left"]" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.TopLeft))" />
+            <BUIButton Text="@Loc["Top Center"]" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.TopCenter))" />
+            <BUIButton Text="@Loc["Top Right"]" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.TopRight))" />
+            <BUIButton Text="@Loc["Bottom Left"]" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.BottomLeft))" />
+            <BUIButton Text="@Loc["Bottom Center"]" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.BottomCenter))" />
+            <BUIButton Text="@Loc["Bottom Right"]" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.BottomRight))" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Durations" Title="@Loc["Durations"]">
+        <div class="demo-row">
+            <BUIButton Text="@Loc["Quick (2s)"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Quick (2s)"]), ToastOptions.Quick))" />
+            <BUIButton Text="@Loc["Default (4s)"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Default (4s)"]), ToastOptions.Default))" />
+            <BUIButton Text="@Loc["Long (8s)"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Long (8s)"]), ToastOptions.Long))" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Persistent" Title="@Loc["Persistent + closable"]">
+        <div class="demo-row">
+            <BUIButton Text="@Loc["Persistent (no dismiss)"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Stays until closed."]), ToastOptions.Persistent))" />
+            <BUIButton Text="@Loc["Not closable"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["No X button — wait it out."]), new ToastOptions { Closable = false }))" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Animations" Title="@Loc["Animations"]">
+        <div class="demo-row">
+            <BUIButton Text="@Loc["Slide & Fade"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Slide & Fade"]), new ToastOptions { Animation = ToastAnimation.SlideAndFade }))" />
+            <BUIButton Text="@Loc["Slide only"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Slide only"]), new ToastOptions { Animation = ToastAnimation.SlideOnly }))" />
+            <BUIButton Text="@Loc["Fade only"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Fade only"]), new ToastOptions { Animation = ToastAnimation.FadeOnly }))" />
+            <BUIButton Text="@Loc["None"]" OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["No animation"]), new ToastOptions { Animation = ToastAnimation.None }))" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Types" Title="@Loc["Typed helpers"]" Description="@Loc["Add toast-info / toast-success / toast-warning / toast-error CSS rules in your app, then pass CssClass."]">
+        <div class="demo-row">
+            <BUIButton Text="@Loc["Info"]" BackgroundColor="@PaletteColor.Info" Color="@PaletteColor.InfoContrast"
+                       OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Info toast"]), new ToastOptions { CssClass = "toast-info" }))" />
+            <BUIButton Text="@Loc["Success"]" BackgroundColor="@PaletteColor.Success" Color="@PaletteColor.SuccessContrast"
+                       OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Success!"]), new ToastOptions { CssClass = "toast-success" }))" />
+            <BUIButton Text="@Loc["Warning"]" BackgroundColor="@PaletteColor.Warning" Color="@PaletteColor.WarningContrast"
+                       OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Watch out."]), new ToastOptions { CssClass = "toast-warning" }))" />
+            <BUIButton Text="@Loc["Error"]" BackgroundColor="@PaletteColor.Error" Color="@PaletteColor.ErrorContrast"
+                       OnClick="@(() => Toast.Show(b => b.AddContent(0, Loc["Something broke."]), new ToastOptions { CssClass = "toast-error" }))" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Manage" Title="@Loc["Manage"]">
+        <div class="demo-row">
+            <BUIButton Text="@Loc["Show 3 toasts"]" OnClick="@ShowThree" />
+            <BUIButton Text="@Loc["Close all"]"
+                       BackgroundColor="@PaletteColor.Error"
+                       Color="@PaletteColor.ErrorContrast"
+                       OnClick="@(() => Toast.CloseAll())" />
+            <BUIButton Text="@($"{Loc["Clicks"]}: {_clicks}")" OnClick="@ShowClickable" />
+        </div>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Positions</h2>
-        <ComponentDemo Definition="@PositionsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Durations</h2>
-        <ComponentDemo Definition="@DurationDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Persistent + closable</h2>
-        <ComponentDemo Definition="@PersistentDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Animations</h2>
-        <ComponentDemo Definition="@AnimationsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Typed helpers</h2>
-        <p class="doc-section__description">Add <code>toast-info / toast-success / toast-warning / toast-error</code> CSS rules in your app, then pass <code>CssClass</code>.</p>
-        <ComponentDemo Definition="@TypesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Manage</h2>
-        <ComponentDemo Definition="@ManageDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
 
         <h3 class="doc-section__subtitle">BUIToast</h3>
         <PropertyTable Properties="@BUIToastComponentInfo.Parameters" />
@@ -59,139 +87,11 @@
 @code {
     private int _clicks;
 
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"@inject IToastService Toast
-
-<BUIButton Text=""Show toast"" OnClick=""@(() => Toast.Show(b => b.AddContent(0, ""Hello!"")))"" />",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIButton Text="Show toast" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Hello from a toast!")))" />
-    };
-
-    private ComponentDemoDefinition PositionsDemo => new()
-    {
-        CodeTitle = "Positions.razor",
-        Code = @"Toast.Show(content, new ToastOptions { Position = ToastPosition.TopRight });",
-        Demo = RenderPositions()
-    };
-
-    private RenderFragment RenderPositions() => __builder =>
-    {
-        <div class="demo-grid">
-            <BUIButton Text="Top Left" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.TopLeft))" />
-            <BUIButton Text="Top Center" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.TopCenter))" />
-            <BUIButton Text="Top Right" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.TopRight))" />
-            <BUIButton Text="Bottom Left" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.BottomLeft))" />
-            <BUIButton Text="Bottom Center" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.BottomCenter))" />
-            <BUIButton Text="Bottom Right" Size="SizeEnum.Small" OnClick="@(() => ShowAt(ToastPosition.BottomRight))" />
-        </div>
-    };
-
     private void ShowAt(ToastPosition position)
     {
         Toast.Show(b => b.AddContent(0, $"Toast at {position}"),
             new ToastOptions { Position = position });
     }
-
-    private ComponentDemoDefinition DurationDemo => new()
-    {
-        CodeTitle = "Duration.razor",
-        Code = @"Toast.Show(c, ToastOptions.Quick);      // 2s
-Toast.Show(c, ToastOptions.Default);    // 4s
-Toast.Show(c, ToastOptions.Long);       // 8s
-Toast.Show(c, new() { Duration = TimeSpan.FromSeconds(10) });",
-        Demo = RenderDuration()
-    };
-
-    private RenderFragment RenderDuration() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Quick (2s)" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Quick (2s)"), ToastOptions.Quick))" />
-            <BUIButton Text="Default (4s)" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Default (4s)"), ToastOptions.Default))" />
-            <BUIButton Text="Long (8s)" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Long (8s)"), ToastOptions.Long))" />
-        </div>
-    };
-
-    private ComponentDemoDefinition PersistentDemo => new()
-    {
-        CodeTitle = "Persistent.razor",
-        Code = @"Toast.Show(c, ToastOptions.Persistent);  // no auto-dismiss
-Toast.Show(c, new() { Closable = false });",
-        Demo = RenderPersistent()
-    };
-
-    private RenderFragment RenderPersistent() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Persistent (no dismiss)" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Stays until closed."), ToastOptions.Persistent))" />
-            <BUIButton Text="Not closable" OnClick="@(() => Toast.Show(b => b.AddContent(0, "No X button — wait it out."), new ToastOptions { Closable = false }))" />
-        </div>
-    };
-
-    private ComponentDemoDefinition AnimationsDemo => new()
-    {
-        CodeTitle = "Animations.razor",
-        Code = @"Toast.Show(c, new() { Animation = ToastAnimation.SlideAndFade });
-Toast.Show(c, new() { Animation = ToastAnimation.SlideOnly });
-Toast.Show(c, new() { Animation = ToastAnimation.FadeOnly });
-Toast.Show(c, new() { Animation = ToastAnimation.None });",
-        Demo = RenderAnimations()
-    };
-
-    private RenderFragment RenderAnimations() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Slide & Fade" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Slide & Fade"), new ToastOptions { Animation = ToastAnimation.SlideAndFade }))" />
-            <BUIButton Text="Slide only" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Slide only"), new ToastOptions { Animation = ToastAnimation.SlideOnly }))" />
-            <BUIButton Text="Fade only" OnClick="@(() => Toast.Show(b => b.AddContent(0, "Fade only"), new ToastOptions { Animation = ToastAnimation.FadeOnly }))" />
-            <BUIButton Text="None" OnClick="@(() => Toast.Show(b => b.AddContent(0, "No animation"), new ToastOptions { Animation = ToastAnimation.None }))" />
-        </div>
-    };
-
-    private ComponentDemoDefinition TypesDemo => new()
-    {
-        CodeTitle = "Types.razor",
-        Code = @"Toast.Show(content, new ToastOptions { CssClass = ""toast-success"" });",
-        Demo = RenderTypes()
-    };
-
-    private RenderFragment RenderTypes() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Info" BackgroundColor="@PaletteColor.Info" Color="@PaletteColor.InfoContrast"
-                       OnClick="@(() => Toast.Show(b => b.AddContent(0, "Info toast"), new ToastOptions { CssClass = "toast-info" }))" />
-            <BUIButton Text="Success" BackgroundColor="@PaletteColor.Success" Color="@PaletteColor.SuccessContrast"
-                       OnClick="@(() => Toast.Show(b => b.AddContent(0, "Success!"), new ToastOptions { CssClass = "toast-success" }))" />
-            <BUIButton Text="Warning" BackgroundColor="@PaletteColor.Warning" Color="@PaletteColor.WarningContrast"
-                       OnClick="@(() => Toast.Show(b => b.AddContent(0, "Watch out."), new ToastOptions { CssClass = "toast-warning" }))" />
-            <BUIButton Text="Error" BackgroundColor="@PaletteColor.Error" Color="@PaletteColor.ErrorContrast"
-                       OnClick="@(() => Toast.Show(b => b.AddContent(0, "Something broke."), new ToastOptions { CssClass = "toast-error" }))" />
-        </div>
-    };
-
-    private ComponentDemoDefinition ManageDemo => new()
-    {
-        CodeTitle = "Manage.razor",
-        Code = @"Toast.CloseAll();",
-        Demo = RenderManage()
-    };
-
-    private RenderFragment RenderManage() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIButton Text="Show 3 toasts" OnClick="@ShowThree" />
-            <BUIButton Text="Close all"
-                       BackgroundColor="@PaletteColor.Error"
-                       Color="@PaletteColor.ErrorContrast"
-                       OnClick="@(() => Toast.CloseAll())" />
-            <BUIButton Text="@($"Clicks: {_clicks}")" OnClick="@ShowClickable" />
-        </div>
-    };
 
     private void ShowThree()
     {
@@ -205,8 +105,7 @@ Toast.Show(c, new() { Animation = ToastAnimation.None });",
 
     private void ShowClickable()
     {
-        Toast.Show(b => b.AddContent(0, "Click me to bump counter"),
+        Toast.Show(b => b.AddContent(0, Loc["Click me to bump counter"].Value),
             new ToastOptions { OnClick = () => _clicks++, Duration = TimeSpan.FromSeconds(6) });
     }
-
 }

@@ -1,43 +1,83 @@
 @page "/components/datacards"
 
-<PageTitle>DataCards — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<DataCardsPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="DataCards"
-         Lede="The same column-driven data pipeline as DataGrid, rendered as a responsive card grid — sorting, filtering, pagination, selection, custom templates.">
+<PageTitle>BlazorUI - BUIDataCards</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIDataCards"]"
+         Lede="@Loc["The same column-driven data pipeline as DataGrid, rendered as a responsive card grid — sorting, filtering, pagination, selection, custom templates."]"
+         PageType="typeof(DataCardsPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]" Description="@Loc["Declare BUIDataColumn entries for the fields to surface. Cards lay out automatically via MinCardWidth."]">
+        <BUIDataCards TItem="Product" Items="_products" MinCardWidth="240px">
+            <Columns>
+                <BUIDataColumn TItem="Product" Header="@Loc["Name"]" Property="@(p => p.Name)" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Category"]" Property="@(p => p.Category)" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Price"]" Property="@(p => p.Price)" Format="C" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Stock"]" Property="@(p => p.Stock)" />
+            </Columns>
+        </BUIDataCards>
+    </DocDemo>
+
+    <DocDemo Key="Template" Title="@Loc["Custom card template"]" Description="@Loc["Provide a CardTemplate to completely own the card layout per item."]">
+        <BUIDataCards TItem="Product" Items="_products" MinCardWidth="220px">
+            <Columns>
+                <BUIDataColumn TItem="Product" Header="@Loc["Name"]" Property="@(p => p.Name)" />
+            </Columns>
+            <CardTemplate Context="p">
+                <div style="padding: 1rem;">
+                    <h4 style="margin: 0 0 .25rem 0;">@p.Name</h4>
+                    <span style="opacity:.7;">@p.Category</span>
+                    <div style="margin-top: .75rem; font-weight: 600;">@p.Price.ToString("C")</div>
+                    <div style="margin-top: .25rem; font-size: .85em; color: var(--palette-@(p.Stock == 0 ? "error" : "success"));">
+                        @(p.Stock == 0 ? Loc["Out of stock"].Value : $"{p.Stock} {Loc["in stock"]}")
+                    </div>
+                </div>
+            </CardTemplate>
+        </BUIDataCards>
+    </DocDemo>
+
+    <DocDemo Key="FilterSort" Title="@Loc["Filtering & sorting"]" Description="@Loc["Enable Filterable and Sortable to get a toolbar with search and sort controls."]">
+        <BUIDataCards TItem="Product" Items="_products" Filterable="true" Sortable="true" PageSize="4" MinCardWidth="220px">
+            <Columns>
+                <BUIDataColumn TItem="Product" Header="@Loc["Name"]" Property="@(p => p.Name)" Sortable="true" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Category"]" Property="@(p => p.Category)" Sortable="true" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Price"]" Property="@(p => p.Price)" Sortable="true" Format="C" />
+            </Columns>
+        </BUIDataCards>
+    </DocDemo>
+
+    <DocDemo Key="Selection" Title="@Loc["Selection"]" Description="@Loc["SelectionMode.Multiple adds a checkbox per card and exposes the set via @bind-SelectedItems."]">
+        <div>
+            <BUIDataCards TItem="Product"
+                          Items="_products"
+                          SelectionMode="SelectionMode.Multiple"
+                          @bind-SelectedItems="_selected"
+                          MinCardWidth="220px">
+                <Columns>
+                    <BUIDataColumn TItem="Product" Header="@Loc["Name"]" Property="@(p => p.Name)" />
+                    <BUIDataColumn TItem="Product" Header="@Loc["Price"]" Property="@(p => p.Price)" Format="C" />
+                </Columns>
+            </BUIDataCards>
+            <p style="margin-top: 1rem; opacity:.7;">@Loc["Selected"]: @_selected.Count @Loc["item(s)"]</p>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="CardStyling" Title="@Loc["Card styling"]" Description="@Loc["Use CardBorder, CardShadow, and CardBackground for quick tweaks without CSS."]">
+        <BUIDataCards TItem="Product" Items="_products"
+                      CardBorder="@BUIBorderPresets.RoundedLarge"
+                      CardShadow="@BUIShadowPresets.Elevation(2)"
+                      MinCardWidth="220px">
+            <Columns>
+                <BUIDataColumn TItem="Product" Header="@Loc["Name"]" Property="@(p => p.Name)" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Category"]" Property="@(p => p.Category)" />
+                <BUIDataColumn TItem="Product" Header="@Loc["Price"]" Property="@(p => p.Price)" Format="C" />
+            </Columns>
+        </BUIDataCards>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <p class="doc-section__description">Declare <code>&lt;BUIDataColumn&gt;</code> entries for the fields to surface. Cards lay out automatically via <code>MinCardWidth</code>.</p>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Custom card template</h2>
-        <p class="doc-section__description">Provide a <code>CardTemplate</code> to completely own the card layout per item.</p>
-        <ComponentDemo Definition="@TemplateDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Filtering &amp; sorting</h2>
-        <p class="doc-section__description">Enable <code>Filterable</code> and <code>Sortable</code> to get a toolbar with search and sort controls.</p>
-        <ComponentDemo Definition="@FilterSortDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Selection</h2>
-        <p class="doc-section__description"><code>SelectionMode.Multiple</code> adds a checkbox per card and exposes the set via <code>@@bind-SelectedItems</code>.</p>
-        <ComponentDemo Definition="@SelectionDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Card styling</h2>
-        <p class="doc-section__description">Use <code>CardBorder</code>, <code>CardShadow</code>, and <code>CardBackground</code> for quick tweaks without CSS.</p>
-        <ComponentDemo Definition="@StyleDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIDataCardsComponentInfo.Parameters" />
     </section>
 
@@ -57,150 +97,4 @@
     ];
 
     private HashSet<Product> _selected = [];
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"<BUIDataCards TItem=""Product"" Items=""_products"" MinCardWidth=""240px"">
-    <Columns>
-        <BUIDataColumn TItem=""Product"" Header=""Name""     Property=""@(p => p.Name)"" />
-        <BUIDataColumn TItem=""Product"" Header=""Category"" Property=""@(p => p.Category)"" />
-        <BUIDataColumn TItem=""Product"" Header=""Price""    Property=""@(p => p.Price)"" Format=""C"" />
-        <BUIDataColumn TItem=""Product"" Header=""Stock""    Property=""@(p => p.Stock)"" />
-    </Columns>
-</BUIDataCards>",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIDataCards TItem="Product" Items="_products" MinCardWidth="240px">
-            <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
-                <BUIDataColumn TItem="Product" Header="Category" Property="@(p => p.Category)" />
-                <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Format="C" />
-                <BUIDataColumn TItem="Product" Header="Stock" Property="@(p => p.Stock)" />
-            </Columns>
-        </BUIDataCards>
-    };
-
-    private ComponentDemoDefinition TemplateDemo => new()
-    {
-        CodeTitle = "Template.razor",
-        Code = @"<BUIDataCards TItem=""Product"" Items=""_products"">
-    <Columns>
-        <BUIDataColumn TItem=""Product"" Header=""Name"" Property=""@(p => p.Name)"" />
-    </Columns>
-    <CardTemplate Context=""p"">
-        <div style=""padding: 1rem;"">
-            <h4 style=""margin: 0 0 .25rem 0;"">@p.Name</h4>
-            <span style=""color: var(--palette-surfacecontrast); opacity:.7;"">@p.Category</span>
-            <div style=""margin-top: .75rem; font-weight: 600;"">@p.Price.ToString(""C"")</div>
-        </div>
-    </CardTemplate>
-</BUIDataCards>",
-        Demo = RenderTemplate()
-    };
-
-    private RenderFragment RenderTemplate() => __builder =>
-    {
-        <BUIDataCards TItem="Product" Items="_products" MinCardWidth="220px">
-            <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
-            </Columns>
-            <CardTemplate Context="p">
-                <div style="padding: 1rem;">
-                    <h4 style="margin: 0 0 .25rem 0;">@p.Name</h4>
-                    <span style="opacity:.7;">@p.Category</span>
-                    <div style="margin-top: .75rem; font-weight: 600;">@p.Price.ToString("C")</div>
-                    <div style="margin-top: .25rem; font-size: .85em; color: var(--palette-@(p.Stock == 0 ? "error" : "success"));">
-                        @(p.Stock == 0 ? "Out of stock" : $"{p.Stock} in stock")
-                    </div>
-                </div>
-            </CardTemplate>
-        </BUIDataCards>
-    };
-
-    private ComponentDemoDefinition FilterSortDemo => new()
-    {
-        CodeTitle = "FilterSort.razor",
-        Code = @"<BUIDataCards TItem=""Product"" Items=""_products""
-               Filterable=""true""
-               Sortable=""true""
-               PageSize=""4"">
-    <Columns>
-        <BUIDataColumn TItem=""Product"" Header=""Name""     Property=""@(p => p.Name)""     Sortable=""true"" />
-        <BUIDataColumn TItem=""Product"" Header=""Category"" Property=""@(p => p.Category)"" Sortable=""true"" />
-        <BUIDataColumn TItem=""Product"" Header=""Price""    Property=""@(p => p.Price)""    Sortable=""true"" Format=""C"" />
-    </Columns>
-</BUIDataCards>",
-        Demo = RenderFilterSort()
-    };
-
-    private RenderFragment RenderFilterSort() => __builder =>
-    {
-        <BUIDataCards TItem="Product" Items="_products" Filterable="true" Sortable="true" PageSize="4" MinCardWidth="220px">
-            <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" Sortable="true" />
-                <BUIDataColumn TItem="Product" Header="Category" Property="@(p => p.Category)" Sortable="true" />
-                <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Sortable="true" Format="C" />
-            </Columns>
-        </BUIDataCards>
-    };
-
-    private ComponentDemoDefinition SelectionDemo => new()
-    {
-        CodeTitle = "Selection.razor",
-        Code = @"<BUIDataCards TItem=""Product""
-               Items=""_products""
-               SelectionMode=""SelectionMode.Multiple""
-               @bind-SelectedItems=""_selected"">
-    <Columns>...</Columns>
-</BUIDataCards>",
-        Demo = RenderSelection()
-    };
-
-    private RenderFragment RenderSelection() => __builder =>
-    {
-        <div>
-            <BUIDataCards TItem="Product"
-                          Items="_products"
-                          SelectionMode="SelectionMode.Multiple"
-                          @bind-SelectedItems="_selected"
-                          MinCardWidth="220px">
-                <Columns>
-                    <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
-                    <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Format="C" />
-                </Columns>
-            </BUIDataCards>
-            <p style="margin-top: 1rem; color: var(--palette-surfacecontrast); opacity:.7;">
-                Selected: @_selected.Count item(s)
-            </p>
-        </div>
-    };
-
-    private ComponentDemoDefinition StyleDemo => new()
-    {
-        CodeTitle = "Style.razor",
-        Code = @"<BUIDataCards TItem=""Product"" Items=""_products""
-               CardBorder=""@BUIBorderPresets.RoundedLarge""
-               CardShadow=""@BUIShadowPresets.Elevation(2)"">
-    <Columns>...</Columns>
-</BUIDataCards>",
-        Demo = RenderStyle()
-    };
-
-    private RenderFragment RenderStyle() => __builder =>
-    {
-        <BUIDataCards TItem="Product" Items="_products"
-                      CardBorder="@BUIBorderPresets.RoundedLarge"
-                      CardShadow="@BUIShadowPresets.Elevation(2)"
-                      MinCardWidth="220px">
-            <Columns>
-                <BUIDataColumn TItem="Product" Header="Name" Property="@(p => p.Name)" />
-                <BUIDataColumn TItem="Product" Header="Category" Property="@(p => p.Category)" />
-                <BUIDataColumn TItem="Product" Header="Price" Property="@(p => p.Price)" Format="C" />
-            </Columns>
-        </BUIDataCards>
-    };
 }

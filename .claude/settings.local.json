@@ -30,7 +30,9 @@
       "Bash(find \"V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI\" -name \"IThemeJsInterop*\" -exec cat {} \\\\;)",
       "Bash(dotnet script -e ' *)",
       "Bash(powershell *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "WebSearch",
+      "WebFetch(domain:www.nuget.org)"
     ]
   }
 }

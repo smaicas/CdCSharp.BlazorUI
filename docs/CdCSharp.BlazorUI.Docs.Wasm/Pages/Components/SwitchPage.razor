@@ -1,38 +1,57 @@
 @page "/components/switch"
 
-<PageTitle>Switch — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<SwitchPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Switch"
-         Lede="Toggle-style boolean input with optional icons in the thumb and custom track colors.">
+<PageTitle>BlazorUI - BUIInputSwitch</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIInputSwitch"]"
+         Lede="@Loc["Toggle-style boolean input with optional icons in the thumb and custom track colors."]"
+         PageType="typeof(SwitchPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <BUIInputSwitch @bind-Value="_basic" Label="@Loc["Enable notifications"]" HelperText="@Loc["Receive updates about account activity."]" />
+    </DocDemo>
+
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
+        <div class="demo-row">
+            <BUIInputSwitch @bind-Value="_small" Size="SizeEnum.Small" Label="@Loc["Small"]" />
+            <BUIInputSwitch @bind-Value="_medium" Size="SizeEnum.Medium" Label="@Loc["Medium"]" />
+            <BUIInputSwitch @bind-Value="_large" Size="SizeEnum.Large" Label="@Loc["Large"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Colors" Title="@Loc["Colors"]">
+        <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_colorPrimary" TrackColorActive="@PaletteColor.Primary" Label="@Loc["Primary"]" />
+            <BUIInputSwitch @bind-Value="_colorSuccess" TrackColorActive="@PaletteColor.Success" Label="@Loc["Success"]" />
+            <BUIInputSwitch @bind-Value="_colorError" TrackColorActive="@PaletteColor.Error" Label="@Loc["Error"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Icons" Title="@Loc["With icons"]">
+        <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_wifi"
+                            IconActive="@BUIIcons.MaterialIconsOutlined.i_wifi"
+                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_wifi_off"
+                            Label="@Loc["Wi-Fi"]" />
+            <BUIInputSwitch @bind-Value="_bluetooth"
+                            IconActive="@BUIIcons.MaterialIconsOutlined.i_bluetooth"
+                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_bluetooth_disabled"
+                            Label="@Loc["Bluetooth"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="States" Title="@Loc["States"]">
+        <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_required" Label="@Loc["Required"]" Required="true" />
+            <BUIInputSwitch @bind-Value="_readonly" Label="@Loc["ReadOnly"]" ReadOnly="true" />
+            <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="@Loc["Disabled (on)"]" />
+            <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="@Loc["Disabled (off)"]" />
+        </div>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Colors</h2>
-        <ComponentDemo Definition="@ColorsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">With icons</h2>
-        <ComponentDemo Definition="@IconsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">States</h2>
-        <ComponentDemo Definition="@StatesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIInputSwitchComponentInfo.Parameters" />
     </section>
 
@@ -52,113 +71,4 @@
     private bool _readonly = true;
     private bool _disabledOn = true;
     private bool _disabledOff;
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code =
-            """
-            <BUIInputSwitch @bind-Value="_value"
-                            Label="Enable notifications"
-                            HelperText="Receive updates about account activity." />
-            """,
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIInputSwitch @bind-Value="_basic" Label="Enable notifications" HelperText="Receive updates about account activity." />
-    };
-
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        CodeTitle = "Sizes.razor",
-        Code =
-            """
-            <BUIInputSwitch Size="SizeEnum.Small" Label="Small" />
-            <BUIInputSwitch Size="SizeEnum.Medium" Label="Medium" />
-            <BUIInputSwitch Size="SizeEnum.Large" Label="Large" />
-            """,
-        Demo = RenderSizes()
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIInputSwitch @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
-            <BUIInputSwitch @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
-            <BUIInputSwitch @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
-        </div>
-    };
-
-    private ComponentDemoDefinition ColorsDemo => new()
-    {
-        CodeTitle = "Colors.razor",
-        Code =
-            """
-            <BUIInputSwitch @bind-Value="_colorPrimary" TrackColorActive="@PaletteColor.Primary" Label="Primary" />
-            <BUIInputSwitch @bind-Value="_colorSuccess" TrackColorActive="@PaletteColor.Success" Label="Success" />
-            <BUIInputSwitch @bind-Value="_colorError" TrackColorActive="@PaletteColor.Error" Label="Error" />
-            """,
-        Demo = RenderColors()
-    };
-
-    private RenderFragment RenderColors() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputSwitch @bind-Value="_colorPrimary" TrackColorActive="@PaletteColor.Primary" Label="Primary" />
-            <BUIInputSwitch @bind-Value="_colorSuccess" TrackColorActive="@PaletteColor.Success" Label="Success" />
-            <BUIInputSwitch @bind-Value="_colorError" TrackColorActive="@PaletteColor.Error" Label="Error" />
-        </div>
-    };
-
-    private ComponentDemoDefinition IconsDemo => new()
-    {
-        CodeTitle = "Icons.razor",
-        Code =
-            """
-            <BUIInputSwitch @bind-Value="_wifi"
-                            IconActive="@BUIIcons.MaterialIconsOutlined.i_wifi"
-                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_wifi_off"
-                            Label="Wi-Fi" />
-            """,
-        Demo = RenderIcons()
-    };
-
-    private RenderFragment RenderIcons() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputSwitch @bind-Value="_wifi"
-                            IconActive="@BUIIcons.MaterialIconsOutlined.i_wifi"
-                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_wifi_off"
-                            Label="Wi-Fi" />
-            <BUIInputSwitch @bind-Value="_bluetooth"
-                            IconActive="@BUIIcons.MaterialIconsOutlined.i_bluetooth"
-                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_bluetooth_disabled"
-                            Label="Bluetooth" />
-        </div>
-    };
-
-    private ComponentDemoDefinition StatesDemo => new()
-    {
-        CodeTitle = "States.razor",
-        Code =
-            """
-            <BUIInputSwitch Label="Required" Required="true" />
-            <BUIInputSwitch @bind-Value="_readonly" Label="ReadOnly" ReadOnly="true" />
-            <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="Disabled (on)" />
-            <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="Disabled (off)" />
-            """,
-        Demo = RenderStates()
-    };
-
-    private RenderFragment RenderStates() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputSwitch @bind-Value="_required" Label="Required" Required="true" />
-            <BUIInputSwitch @bind-Value="_readonly" Label="ReadOnly" ReadOnly="true" />
-            <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="Disabled (on)" />
-            <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="Disabled (off)" />
-        </div>
-    };
 }

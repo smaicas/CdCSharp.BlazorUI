@@ -1,44 +1,72 @@
 @page "/components/textarea"
 
-<PageTitle>TextArea — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<TextAreaPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="TextArea"
-         Lede="Multi-line text input with auto-resize, character limits, and the full InputText API surface.">
+<PageTitle>BlazorUI - BUIInputTextArea</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIInputTextArea"]"
+         Lede="@Loc["Multi-line text input with auto-resize, character limits, and the full InputText API surface."]"
+         PageType="typeof(TextAreaPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <BUIInputTextArea @bind-Value="_basic" Label="@Loc["Description"]" HelperText="@Loc["Keep it short."]" />
+    </DocDemo>
+
+    <DocDemo Key="Variants" Title="@Loc["Variants"]">
+        <div class="demo-stack">
+            <BUIInputTextArea @bind-Value="_outlined" Variant="BUIInputVariant.Outlined" Label="@Loc["Outlined"]" />
+            <BUIInputTextArea @bind-Value="_filled" Variant="BUIInputVariant.Filled" Label="@Loc["Filled"]" />
+            <BUIInputTextArea @bind-Value="_standard" Variant="BUIInputVariant.Standard" Label="@Loc["Standard"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
+        <div class="demo-stack">
+            <BUIInputTextArea @bind-Value="_small" Size="SizeEnum.Small" Label="@Loc["Small"]" />
+            <BUIInputTextArea @bind-Value="_medium" Size="SizeEnum.Medium" Label="@Loc["Medium (Default)"]" />
+            <BUIInputTextArea @bind-Value="_large" Size="SizeEnum.Large" Label="@Loc["Large"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
+        <BUIInputTextArea @bind-Value="_colorValue" Label="@Loc["Custom Color"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast" />
+        <BUIInputTextArea @bind-Value="_backgroundValue" Label="@Loc["Custom Background"]" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast" />
+    </DocDemo>
+
+    <DocDemo Key="AutoResize" Title="@Loc["Auto-resize"]" Description="@Loc["Grows with its content — no scrollbar until needed."]">
+        <BUIInputTextArea @bind-Value="_auto" Label="@Loc["Notes"]" AutoResize="true" Rows="2" />
+    </DocDemo>
+
+    <DocDemo Key="Rows" Title="@Loc["Rows & max length"]">
+        <BUIInputTextArea @bind-Value="_rows" Label="@Loc["Bio"]" Rows="5" MaxLength="200" HelperText="@($"{_rows.Length}/200")" />
+    </DocDemo>
+
+    <DocDemo Key="Resize" Title="@Loc["Resize behavior"]">
+        <div class="demo-stack">
+            <BUIInputTextArea @bind-Value="_resizeNone" Label="@Loc["No resize"]" Resize="TextAreaResize.None" />
+            <BUIInputTextArea @bind-Value="_resizeBoth" Label="@Loc["Both axes"]" Resize="TextAreaResize.Both" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
+        <div class="demo-stack">
+            <BUIInputTextArea @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+            <BUIInputTextArea @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
+            <BUIInputTextArea @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="States" Title="@Loc["States"]">
+        <div class="demo-stack">
+            <BUIInputTextArea @bind-Value="_required" Label="@Loc["Required"]" Required="true" />
+            <BUIInputTextArea @bind-Value="_readonly" Label="@Loc["Read-only"]" ReadOnly="true" />
+            <BUIInputTextArea @bind-Value="_disabled" Label="@Loc["Disabled"]" Disabled="true" />
+            <BUIInputTextArea @bind-Value="_error" Label="@Loc["Error"]" Error="true" HelperText="@Loc["Invalid content"]" />
+        </div>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Variants</h2>
-        <ComponentDemo Definition="@VariantsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Auto-resize</h2>
-        <p class="doc-section__description">Grows with its content — no scrollbar until needed.</p>
-        <ComponentDemo Definition="@AutoResizeDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Rows &amp; max length</h2>
-        <ComponentDemo Definition="@RowsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Resize behavior</h2>
-        <ComponentDemo Definition="@ResizeDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">States</h2>
-        <ComponentDemo Definition="@StatesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIInputTextAreaComponentInfo.Parameters" />
     </section>
 
@@ -49,117 +77,20 @@
     private string _outlined = "";
     private string _filled = "";
     private string _standard = "";
+    private string _small = "";
+    private string _medium = "";
+    private string _large = "";
+    private string _colorValue = "";
+    private string _backgroundValue = "";
     private string _auto = "Type to watch me grow...";
     private string _rows = "";
     private string _resizeNone = "";
     private string _resizeBoth = "";
+    private string _shadow = "";
+    private string _pill = "";
+    private string _rounded = "";
     private string _disabled = "Disabled value";
     private string _readonly = "Read-only value";
     private string _required = "";
     private string _error = "invalid content";
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code =
-            """
-            <BUIInputTextArea @bind-Value="_value" Label="Description" HelperText="Keep it short." />
-            """,
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIInputTextArea @bind-Value="_basic" Label="Description" HelperText="Keep it short." />
-    };
-
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        Demo = RenderVariants(),
-        Code =
-            """
-            <BUIInputTextArea @bind-Value="_outlined" Variant="BUIInputVariant.Outlined" Label="Outlined" />
-            <BUIInputTextArea @bind-Value="_filled" Variant="BUIInputVariant.Filled" Label="Filled" />
-            <BUIInputTextArea @bind-Value="_standard" Variant="BUIInputVariant.Standard" Label="Standard" />
-            """
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputTextArea @bind-Value="_outlined" Variant="BUIInputVariant.Outlined" Label="Outlined" />
-            <BUIInputTextArea @bind-Value="_filled" Variant="BUIInputVariant.Filled" Label="Filled" />
-            <BUIInputTextArea @bind-Value="_standard" Variant="BUIInputVariant.Standard" Label="Standard" />
-        </div>
-    };
-
-    private ComponentDemoDefinition AutoResizeDemo => new()
-    {
-        CodeTitle = "AutoResize.razor",
-        Code =
-            """
-            <BUIInputTextArea @bind-Value="_value" Label="Notes" AutoResize="true" Rows="2" />
-            """,
-        Demo = RenderAutoResize()
-    };
-
-    private RenderFragment RenderAutoResize() => __builder =>
-    {
-        <BUIInputTextArea @bind-Value="_auto" Label="Notes" AutoResize="true" Rows="2" />
-    };
-
-    private ComponentDemoDefinition RowsDemo => new()
-    {
-        CodeTitle = "Rows.razor",
-        Code =
-            """
-            <BUIInputTextArea @bind-Value="_value" Label="Bio" Rows="5" MaxLength="200" />
-            """,
-        Demo = RenderRows()
-    };
-
-    private RenderFragment RenderRows() => __builder =>
-    {
-        <BUIInputTextArea @bind-Value="_rows" Label="Bio" Rows="5" MaxLength="200" HelperText="@($"{_rows.Length}/200")" />
-    };
-
-    private ComponentDemoDefinition ResizeDemo => new()
-    {
-        Demo = RenderResize(),
-        Code =
-            """
-            <BUIInputTextArea Label="No resize" Resize="TextAreaResize.None" />
-            <BUIInputTextArea Label="Both axes" Resize="TextAreaResize.Both" />
-            """
-    };
-
-    private RenderFragment RenderResize() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputTextArea @bind-Value="_resizeNone" Label="No resize" Resize="TextAreaResize.None" />
-            <BUIInputTextArea @bind-Value="_resizeBoth" Label="Both axes" Resize="TextAreaResize.Both" />
-        </div>
-    };
-
-    private ComponentDemoDefinition StatesDemo => new()
-    {
-        Demo = RenderStates(),
-        Code =
-            """
-            <BUIInputTextArea Label="Required" Required="true" />
-            <BUIInputTextArea Label="Read-only" ReadOnly="true" />
-            <BUIInputTextArea Label="Disabled" Disabled="true" />
-            <BUIInputTextArea Label="Error" Error="true" HelperText="Invalid content" />
-            """
-    };
-
-    private RenderFragment RenderStates() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputTextArea @bind-Value="_required" Label="Required" Required="true" />
-            <BUIInputTextArea @bind-Value="_readonly" Label="Read-only" ReadOnly="true" />
-            <BUIInputTextArea @bind-Value="_disabled" Label="Disabled" Disabled="true" />
-            <BUIInputTextArea @bind-Value="_error" Label="Error" Error="true" HelperText="Invalid content" />
-        </div>
-    };
 }

@@ -1,40 +1,66 @@
 @page "/components/text"
 
-<PageTitle>InputText — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<InputTextPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="InputText"
-         Lede="Single-line text input with outlined, filled, and standard variants. Prefix/suffix slots, validation, and EditForm support built in.">
+<PageTitle>BlazorUI - BUIInputText</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIInputText"]"
+         Lede="@Loc["Single-line text input with outlined, filled, and standard variants. Prefix/suffix slots, validation, and EditForm support built in."]"
+         PageType="typeof(InputTextPage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <BUIInputText @bind-Value="_basic" Label="@Loc["Your name"]" HelperText="@Loc["As it appears on your ID."]" />
+    </DocDemo>
+
+    <DocDemo Key="Variants" Title="@Loc["Variants"]" Description="@Loc["Three visual styles for every form aesthetic."]">
+        <div class="demo-stack">
+            <BUIInputText @bind-Value="_outlined" Variant="BUIInputVariant.Outlined" Label="@Loc["Outlined"]" />
+            <BUIInputText @bind-Value="_filled" Variant="BUIInputVariant.Filled" Label="@Loc["Filled"]" />
+            <BUIInputText @bind-Value="_standard" Variant="BUIInputVariant.Standard" Label="@Loc["Standard"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
+        <div class="demo-stack">
+            <BUIInputText @bind-Value="_small" Size="SizeEnum.Small" Label="@Loc["Small"]" />
+            <BUIInputText @bind-Value="_medium" Size="SizeEnum.Medium" Label="@Loc["Medium (Default)"]" />
+            <BUIInputText @bind-Value="_large" Size="SizeEnum.Large" Label="@Loc["Large"]" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
+        <BUIInputText @bind-Value="_colorValue" Label="@Loc["Custom Color"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast" />
+        <BUIInputText @bind-Value="_backgroundValue" Label="@Loc["Custom Background"]" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast" />
+    </DocDemo>
+
+    <DocDemo Key="PrefixSuffix" Title="@Loc["Prefix & Suffix"]" Description="@Loc["Add icons or text to either side of the input."]">
+        <div class="demo-stack">
+            <BUIInputText @bind-Value="_url" Label="@Loc["Website"]" PrefixText="https://" />
+            <BUIInputText @bind-Value="_search" Label="@Loc["Search"]" PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_search" />
+            <BUIInputText @bind-Value="_domain" Label="@Loc["Domain"]" SuffixText=".com" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
+        <div class="demo-stack">
+            <BUIInputText @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+            <BUIInputText @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
+            <BUIInputText @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="States" Title="@Loc["States"]">
+        <div class="demo-stack">
+            <BUIInputText @bind-Value="_disabled" Label="@Loc["Disabled"]" Disabled="true" />
+            <BUIInputText @bind-Value="_readonly" Label="@Loc["Read-only"]" ReadOnly="true" />
+            <BUIInputText @bind-Value="_required" Label="@Loc["Required"]" Required="true" />
+            <BUIInputText @bind-Value="_error" Label="@Loc["Error"]" Error="true" HelperText="@Loc["Invalid email"]" />
+            <BUIInputText @bind-Value="_loading" Label="@Loc["Loading"]" Loading="true" />
+        </div>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Variants</h2>
-        <p class="doc-section__description">Three visual styles for every form aesthetic.</p>
-        <ComponentDemo Definition="@VariantsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Prefix &amp; suffix</h2>
-        <p class="doc-section__description">Add icons or text to either side of the input.</p>
-        <ComponentDemo Definition="@PrefixSuffixDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">States</h2>
-        <ComponentDemo Definition="@StatesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIInputTextComponentInfo.Parameters" />
     </section>
 
@@ -45,104 +71,20 @@
     private string _outlined = "";
     private string _filled = "";
     private string _standard = "";
-    private string _url = "https://";
-    private string _search = "";
-    private string _domain = "";
-    private string _disabled = "Disabled value";
-    private string _readonly = "Read-only value";
-    private string _error = "invalid@";
     private string _small = "";
     private string _medium = "";
     private string _large = "";
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"<BUIInputText @bind-Value=""_value""
-              Label=""Your name""
-              HelperText=""As it appears on your ID."" />",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIInputText @bind-Value="_basic" Label="Your name" HelperText="As it appears on your ID." />
-    };
-
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        CodeTitle = "Variants.razor",
-        Code = @"<BUIInputText Variant=""BUIInputVariant.Outlined"" Label=""Outlined"" />
-<BUIInputText Variant=""BUIInputVariant.Filled""   Label=""Filled"" />
-<BUIInputText Variant=""BUIInputVariant.Standard"" Label=""Standard"" />",
-        Demo = RenderVariants()
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputText @bind-Value="_outlined" Variant="BUIInputVariant.Outlined" Label="Outlined" />
-            <BUIInputText @bind-Value="_filled" Variant="BUIInputVariant.Filled" Label="Filled" />
-            <BUIInputText @bind-Value="_standard" Variant="BUIInputVariant.Standard" Label="Standard" />
-        </div>
-    };
-
-    private ComponentDemoDefinition PrefixSuffixDemo => new()
-    {
-        CodeTitle = "PrefixSuffix.razor",
-        Code = @"<BUIInputText Label=""Website"" PrefixText=""https://"" />
-<BUIInputText Label=""Search"" PrefixIcon=""@BUIIcons.MaterialIconsOutlined.i_search"" />
-<BUIInputText Label=""Domain"" SuffixText="".com"" />",
-        Demo = RenderPrefixSuffix()
-    };
-
-    private RenderFragment RenderPrefixSuffix() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputText @bind-Value="_url" Label="Website" PrefixText="https://" />
-            <BUIInputText @bind-Value="_search" Label="Search" PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_search" />
-            <BUIInputText @bind-Value="_domain" Label="Domain" SuffixText=".com" />
-        </div>
-    };
-
-    private ComponentDemoDefinition StatesDemo => new()
-    {
-        CodeTitle = "States.razor",
-        Code = @"<BUIInputText Label=""Disabled""  Disabled=""true"" />
-<BUIInputText Label=""Read-only"" ReadOnly=""true"" />
-<BUIInputText Label=""Required""  Required=""true"" />
-<BUIInputText Label=""Error""     Error=""true"" HelperText=""Invalid email"" />
-<BUIInputText Label=""Loading""   Loading=""true"" />",
-        Demo = RenderStates()
-    };
-
-    private RenderFragment RenderStates() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputText @bind-Value="_disabled" Label="Disabled" Disabled="true" />
-            <BUIInputText @bind-Value="_readonly" Label="Read-only" ReadOnly="true" />
-            <BUIInputText @bind-Value="_basic" Label="Required" Required="true" />
-            <BUIInputText @bind-Value="_error" Label="Error" Error="true" HelperText="Invalid email" />
-            <BUIInputText @bind-Value="_basic" Label="Loading" Loading="true" />
-        </div>
-    };
-
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        CodeTitle = "Sizes.razor",
-        Code = @"<BUIInputText Size=""SizeEnum.Small""  Label=""Small"" />
-<BUIInputText Size=""SizeEnum.Medium"" Label=""Medium"" />
-<BUIInputText Size=""SizeEnum.Large""  Label=""Large"" />",
-        Demo = RenderSizes()
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputText @bind-Value="_small" Size="SizeEnum.Small" Label="Small" />
-            <BUIInputText @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" />
-            <BUIInputText @bind-Value="_large" Size="SizeEnum.Large" Label="Large" />
-        </div>
-    };
-
+    private string _colorValue = "";
+    private string _backgroundValue = "";
+    private string _url = "https://";
+    private string _search = "";
+    private string _domain = "";
+    private string _shadow = "";
+    private string _pill = "";
+    private string _rounded = "";
+    private string _disabled = "Disabled value";
+    private string _readonly = "Read-only value";
+    private string _required = "";
+    private string _error = "invalid@";
+    private string _loading = "";
 }

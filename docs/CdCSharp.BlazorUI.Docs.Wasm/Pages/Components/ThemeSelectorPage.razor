@@ -1,36 +1,35 @@
 @page "/components/themeselector"
 
-<PageTitle>Theme Selector — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<ThemeSelectorPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Theme Selector"
-         Lede="Toggle between light, dark, and any custom theme you register. Persists the choice to localStorage and flips the data-theme attribute on &lt;html&gt;.">
+<PageTitle>BlazorUI - BUIThemeSelector</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIThemeSelector"]"
+         Lede="@Loc["Toggle between light, dark, and any custom theme you register. Persists the choice to localStorage and flips the data-theme attribute on html."]"
+         PageType="typeof(ThemeSelectorPage)">
+
+    <DocDemo Key="Default" Title="@Loc["Default variant"]" Description="@Loc["A labeled button with an icon that reflects the current theme."]">
+        <BUIThemeSelector />
+    </DocDemo>
+
+    <DocDemo Key="SunMoon" Title="@Loc["Sun / Moon variant"]" Description="@Loc["The compact switch used in the docs header: a BUISwitch with sun and moon icons."]">
+        <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
+    </DocDemo>
+
+    <DocDemo Key="CustomThemes" Title="@Loc["Custom themes list"]" Description="@Loc["Cycle through a custom list — not limited to light / dark."]">
+        <BUIThemeSelector AvailableThemes="@(new[] { "light", "dark" })" />
+    </DocDemo>
+
+    <DocDemo Key="Event" Title="@Loc["Hook onto change events"]">
+        <div class="demo-row">
+            <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon"
+                              OnThemeChanged="@(t => { _lastTheme = t; StateHasChanged(); })" />
+            <span>@Loc["Last change"]: <code>@_lastTheme</code></span>
+        </div>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Default variant</h2>
-        <p class="doc-section__description">A labeled button with an icon that reflects the current theme.</p>
-        <ComponentDemo Definition="@DefaultDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sun / Moon variant</h2>
-        <p class="doc-section__description">The compact switch used in the docs header: a <code>BUISwitch</code> with sun and moon icons.</p>
-        <ComponentDemo Definition="@SunMoonDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Custom themes list</h2>
-        <p class="doc-section__description">Cycle through a custom list — not limited to light / dark.</p>
-        <ComponentDemo Definition="@CustomThemesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Hook onto change events</h2>
-        <ComponentDemo Definition="@EventDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIThemeSelectorComponentInfo.Parameters" />
     </section>
 
@@ -38,41 +37,4 @@
 
 @code {
     private string _lastTheme = "(unchanged)";
-
-    private ComponentDemoDefinition DefaultDemo => new()
-    {
-        CodeTitle = "Default.razor",
-        Code = @"<BUIThemeSelector />",
-        Demo = @<BUIThemeSelector />
-    };
-
-    private ComponentDemoDefinition SunMoonDemo => new()
-    {
-        CodeTitle = "SunMoon.razor",
-        Code = @"<BUIThemeSelector Variant=""BUIThemeSelectorVariant.SunMoon"" />",
-        Demo = @<BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon" />
-    };
-
-    private ComponentDemoDefinition CustomThemesDemo => new()
-    {
-        CodeTitle = "CustomThemes.razor",
-        Code = @"<BUIThemeSelector AvailableThemes=""@(new[] { ""light"", ""dark"", ""sepia"" })"" />",
-        Demo = @<BUIThemeSelector AvailableThemes="@(new[] { "light", "dark" })" />
-    };
-
-    private ComponentDemoDefinition EventDemo => new()
-    {
-        CodeTitle = "Event.razor",
-        Code = @"<BUIThemeSelector OnThemeChanged=""@(t => _lastTheme = t)"" />",
-        Demo = RenderEventDemo()
-    };
-
-    private RenderFragment RenderEventDemo() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon"
-                              OnThemeChanged="@(t => { _lastTheme = t; StateHasChanged(); })" />
-            <span>Last change: <code>@_lastTheme</code></span>
-        </div>
-    };
 }

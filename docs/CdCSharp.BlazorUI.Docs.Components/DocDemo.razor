@@ -7,7 +7,7 @@
     }
     @if (!string.IsNullOrEmpty(Description))
     {
-        <p class="doc-section__description">@Description</p>
+        <p class="doc-section__description">@((MarkupString)Description)</p>
     }
     <ComponentDemo Definition="_definition" />
 </section>

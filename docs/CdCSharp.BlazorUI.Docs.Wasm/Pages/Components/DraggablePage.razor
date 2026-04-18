@@ -1,30 +1,44 @@
 @page "/components/draggable"
 
-<PageTitle>Draggable — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<DraggablePage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Draggable"
-         Lede="Make any element mouse-draggable with fine-grained events. Renders its child content untouched — positioning is up to you.">
+<PageTitle>BlazorUI - BUIDraggable</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIDraggable"]"
+         Lede="@Loc["Make any element mouse-draggable with fine-grained events. Renders its child content untouched — positioning is up to you."]"
+         PageType="typeof(DraggablePage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]" Description="@Loc["Wrap anything in BUIDraggable and listen to OnDrag. Client coordinates are reported in DragEventArgs."]">
+        <div style="position: relative; height: 180px; border: 1px dashed var(--palette-border); border-radius: .5rem; overflow: hidden;">
+            <BUIDraggable OnDragStart="HandleBasicStart" OnDrag="HandleBasicDrag">
+                <div style="@BasicBoxStyle">
+                    @Loc["Drag me"]
+                </div>
+            </BUIDraggable>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Events" Title="@Loc["Lifecycle events"]" Description="@Loc["Fires OnDragStart on mousedown, OnDrag continuously, and OnDragEnd on release."]">
+        <div>
+            <BUIDraggable OnDragStart="@(_ => { _lastEvent = Loc["start"]; _dragTicks = 0; })"
+                          OnDrag="@(_ => _dragTicks++)"
+                          OnDragEnd="@(_ => _lastEvent = Loc["end"])">
+                <BUIButton Text="@Loc["Drag me and watch the counter"]" />
+            </BUIDraggable>
+            <p style="margin-top: 1rem;">
+                @Loc["Last event"]: <code>@_lastEvent</code> · @Loc["Tick count"]: <code>@_dragTicks</code>
+            </p>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Disabled" Title="@Loc["Disabled"]">
+        <BUIDraggable Disabled="true">
+            <BUIButton Text="@Loc["Locked — can't drag"]" />
+        </BUIDraggable>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <p class="doc-section__description">Wrap anything in <code>&lt;BUIDraggable&gt;</code> and listen to <code>OnDrag</code>. Client coordinates are reported in <code>DragEventArgs</code>.</p>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Lifecycle events</h2>
-        <p class="doc-section__description">Fires <code>OnDragStart</code> on mousedown, <code>OnDrag</code> continuously, and <code>OnDragEnd</code> on release.</p>
-        <ComponentDemo Definition="@EventsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Disabled</h2>
-        <ComponentDemo Definition="@DisabledDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
         <PropertyTable Properties="@BUIDraggableComponentInfo.Parameters" />
     </section>
 
@@ -37,27 +51,6 @@
 
     private string _lastEvent = "(none)";
     private int _dragTicks;
-
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"<BUIDraggable OnDragStart=""HandleStart""
-              OnDrag=""HandleDrag"">
-    <div style=""@GetBoxStyle()"">Drag me</div>
-</BUIDraggable>",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <div style="position: relative; height: 180px; border: 1px dashed var(--palette-border); border-radius: .5rem; overflow: hidden;">
-            <BUIDraggable OnDragStart="HandleBasicStart" OnDrag="HandleBasicDrag">
-                <div style="@BasicBoxStyle">
-                    Drag me
-                </div>
-            </BUIDraggable>
-        </div>
-    };
 
     private string BasicBoxStyle =>
         $"position: absolute; left: {_x}px; top: {_y}px; user-select: none; " +
@@ -78,45 +71,4 @@
         _x = _originX + (e.ClientX - _startX);
         _y = _originY + (e.ClientY - _startY);
     }
-
-    private ComponentDemoDefinition EventsDemo => new()
-    {
-        CodeTitle = "Events.razor",
-        Code = @"<BUIDraggable OnDragStart=""@(_ => _lastEvent = ""start"")""
-              OnDrag=""@(_ => _dragTicks++)""
-              OnDragEnd=""@(_ => _lastEvent = ""end"")"">
-    ...
-</BUIDraggable>",
-        Demo = RenderEvents()
-    };
-
-    private RenderFragment RenderEvents() => __builder =>
-    {
-        <div>
-            <BUIDraggable OnDragStart="@(_ => { _lastEvent = "start"; _dragTicks = 0; })"
-                          OnDrag="@(_ => _dragTicks++)"
-                          OnDragEnd="@(_ => _lastEvent = "end")">
-                <BUIButton Text="Drag me and watch the counter" />
-            </BUIDraggable>
-            <p style="margin-top: 1rem;">
-                Last event: <code>@_lastEvent</code> · Tick count: <code>@_dragTicks</code>
-            </p>
-        </div>
-    };
-
-    private ComponentDemoDefinition DisabledDemo => new()
-    {
-        CodeTitle = "Disabled.razor",
-        Code = @"<BUIDraggable Disabled=""true"">
-    <BUIButton Text=""Locked"" />
-</BUIDraggable>",
-        Demo = RenderDisabled()
-    };
-
-    private RenderFragment RenderDisabled() => __builder =>
-    {
-        <BUIDraggable Disabled="true">
-            <BUIButton Text="Locked — can't drag" />
-        </BUIDraggable>
-    };
 }

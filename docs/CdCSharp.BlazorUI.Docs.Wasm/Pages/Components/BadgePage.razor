@@ -1,41 +1,84 @@
 @page "/components/badge"
 
-<PageTitle>Badge — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<BadgePage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Badge"
-         Lede="Compact label for status, counts, or tags. Circular, dot-only, or with content — use it anywhere.">
+<PageTitle>BlazorUI - BUIBadge</PageTitle>
+
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIBadge"]"
+         Lede="@Loc["Compact label for status, counts, or tags. Circular, dot-only, or with content — use it anywhere."]"
+         PageType="typeof(BadgePage)">
+
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <div class="demo-row">
+            <BUIBadge>@Loc["New"]</BUIBadge>
+            <BUIBadge>12</BUIBadge>
+            <BUIBadge>
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+                @Loc["Featured"]
+            </BUIBadge>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Dot" Title="@Loc["Dot badge"]" Description="@Loc["An empty badge renders as a dot — perfect as an unread indicator."]">
+        <div class="demo-row">
+            <BUIBadge />
+            <BUIBadge BackgroundColor="@PaletteColor.Success" />
+            <BUIBadge BackgroundColor="@PaletteColor.Warning" />
+            <BUIBadge BackgroundColor="@PaletteColor.Error" />
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Circular" Title="@Loc["Circular"]" Description="@Loc["Use Circular for single-digit or icon badges."]">
+        <div class="demo-row">
+            <BUIBadge Circular="true">1</BUIBadge>
+            <BUIBadge Circular="true" BackgroundColor="@PaletteColor.Success">9</BUIBadge>
+            <BUIBadge Circular="true" BackgroundColor="@PaletteColor.Error">!</BUIBadge>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Colors" Title="@Loc["Colors"]">
+        <div class="demo-row">
+            <BUIBadge BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast">@Loc["Primary"]</BUIBadge>
+            <BUIBadge BackgroundColor="@PaletteColor.Success" Color="@PaletteColor.SuccessContrast">@Loc["Success"]</BUIBadge>
+            <BUIBadge BackgroundColor="@PaletteColor.Warning" Color="@PaletteColor.WarningContrast">@Loc["Warning"]</BUIBadge>
+            <BUIBadge BackgroundColor="@PaletteColor.Error" Color="@PaletteColor.ErrorContrast">@Loc["Error"]</BUIBadge>
+            <BUIBadge BackgroundColor="@PaletteColor.Info" Color="@PaletteColor.InfoContrast">@Loc["Info"]</BUIBadge>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
+        <div class="demo-row">
+            <BUIBadge Shadow="@BUIShadowPresets.Elevation(3)">@Loc["Elevated"]</BUIBadge>
+            <BUIBadge Border="@BUIBorderPresets.Pill" BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast">@Loc["Pill"]</BUIBadge>
+            <BUIBadge Border="@BUIBorderPresets.RoundedLarge" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast">@Loc["Rounded"]</BUIBadge>
+            <BUIBadge Border="@BUIBorderPresets.Default">@Loc["Bordered"]</BUIBadge>
+        </div>
+    </DocDemo>
+
+    <DocDemo Key="Notification" Title="@Loc["Notification badge"]" Description="@Loc["BUINotificationBadge overlays a badge onto any child content."]">
+        <div class="demo-row" style="gap: 2rem;">
+            <BUINotificationBadge>
+                <ChildContent>
+                    <BUIButton Text="@Loc["Messages"]" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_mail" />
+                </ChildContent>
+                <BadgeContent>4</BadgeContent>
+            </BUINotificationBadge>
+            <BUINotificationBadge>
+                <ChildContent>
+                    <BUIButton Text="@Loc["Inbox"]" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_inbox" />
+                </ChildContent>
+                <BadgeContent>99+</BadgeContent>
+            </BUINotificationBadge>
+            <BUINotificationBadge>
+                <ChildContent>
+                    <BUIButton Text="@Loc["Alerts"]" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_notifications" />
+                </ChildContent>
+            </BUINotificationBadge>
+        </div>
+    </DocDemo>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Dot badge</h2>
-        <p class="doc-section__description">An empty badge renders as a dot — perfect as an unread indicator.</p>
-        <ComponentDemo Definition="@DotDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Circular</h2>
-        <p class="doc-section__description">Use <code>Circular</code> for single-digit or icon badges.</p>
-        <ComponentDemo Definition="@CircularDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Colors</h2>
-        <ComponentDemo Definition="@ColorsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Notification badge</h2>
-        <p class="doc-section__description"><code>BUINotificationBadge</code> overlays a badge onto any child content.</p>
-        <ComponentDemo Definition="@NotificationDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
 
         <h3 class="doc-section__subtitle">BUIBadge</h3>
         <PropertyTable Properties="@BUIBadgeComponentInfo.Parameters" />
@@ -45,111 +88,3 @@
     </section>
 
 </DocPage>
-
-@code {
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"<BUIBadge>New</BUIBadge>",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIBadge>New</BUIBadge>
-            <BUIBadge>12</BUIBadge>
-            <BUIBadge>
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
-                Featured
-            </BUIBadge>
-        </div>
-    };
-
-    private ComponentDemoDefinition DotDemo => new()
-    {
-        CodeTitle = "Dot.razor",
-        Code = @"<BUIBadge />",
-        Demo = RenderDot()
-    };
-
-    private RenderFragment RenderDot() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIBadge />
-            <BUIBadge BackgroundColor="@PaletteColor.Success" />
-            <BUIBadge BackgroundColor="@PaletteColor.Warning" />
-            <BUIBadge BackgroundColor="@PaletteColor.Error" />
-        </div>
-    };
-
-    private ComponentDemoDefinition CircularDemo => new()
-    {
-        CodeTitle = "Circular.razor",
-        Code = @"<BUIBadge Circular=""true"">9</BUIBadge>",
-        Demo = RenderCircular()
-    };
-
-    private RenderFragment RenderCircular() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIBadge Circular="true">1</BUIBadge>
-            <BUIBadge Circular="true" BackgroundColor="@PaletteColor.Success">9</BUIBadge>
-            <BUIBadge Circular="true" BackgroundColor="@PaletteColor.Error">!</BUIBadge>
-        </div>
-    };
-
-    private ComponentDemoDefinition ColorsDemo => new()
-    {
-        CodeTitle = "Colors.razor",
-        Code = @"<BUIBadge BackgroundColor=""@PaletteColor.Primary"" Color=""@PaletteColor.PrimaryContrast"">Primary</BUIBadge>",
-        Demo = RenderColors()
-    };
-
-    private RenderFragment RenderColors() => __builder =>
-    {
-        <div class="demo-row">
-            <BUIBadge BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast">Primary</BUIBadge>
-            <BUIBadge BackgroundColor="@PaletteColor.Success" Color="@PaletteColor.SuccessContrast">Success</BUIBadge>
-            <BUIBadge BackgroundColor="@PaletteColor.Warning" Color="@PaletteColor.WarningContrast">Warning</BUIBadge>
-            <BUIBadge BackgroundColor="@PaletteColor.Error" Color="@PaletteColor.ErrorContrast">Error</BUIBadge>
-            <BUIBadge BackgroundColor="@PaletteColor.Info" Color="@PaletteColor.InfoContrast">Info</BUIBadge>
-        </div>
-    };
-
-    private ComponentDemoDefinition NotificationDemo => new()
-    {
-        CodeTitle = "Notification.razor",
-        Code = @"<BUINotificationBadge>
-    <ChildContent>
-        <BUIButton Text=""Messages"" LeadingIcon=""@BUIIcons.MaterialIconsOutlined.i_mail"" />
-    </ChildContent>
-    <BadgeContent>4</BadgeContent>
-</BUINotificationBadge>",
-        Demo = RenderNotification()
-    };
-
-    private RenderFragment RenderNotification() => __builder =>
-    {
-        <div class="demo-row" style="gap: 2rem;">
-            <BUINotificationBadge>
-                <ChildContent>
-                    <BUIButton Text="Messages" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_mail" />
-                </ChildContent>
-                <BadgeContent>4</BadgeContent>
-            </BUINotificationBadge>
-            <BUINotificationBadge>
-                <ChildContent>
-                    <BUIButton Text="Inbox" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_inbox" />
-                </ChildContent>
-                <BadgeContent>99+</BadgeContent>
-            </BUINotificationBadge>
-            <BUINotificationBadge>
-                <ChildContent>
-                    <BUIButton Text="Alerts" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_notifications" />
-                </ChildContent>
-            </BUINotificationBadge>
-        </div>
-    };
-
-}

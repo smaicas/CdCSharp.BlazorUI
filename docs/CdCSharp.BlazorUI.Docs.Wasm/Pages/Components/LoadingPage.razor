@@ -1,49 +1,14 @@
 @page "/components/loading"
 
-<PageTitle>Loading — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<LoadingPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Loading Indicator"
-         Lede="Six animation variants for progress, activity, and waiting states. Size- and color-aware.">
+<PageTitle>BlazorUI - BUILoadingIndicator</PageTitle>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Variants</h2>
-        <p class="doc-section__description">Six built-in animations covering every common case.</p>
-        <ComponentDemo Definition="@VariantsDemo" />
-    </section>
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUILoadingIndicator"]"
+         Lede="@Loc["Six animation variants for progress, activity, and waiting states. Size- and color-aware."]"
+         PageType="typeof(LoadingPage)">
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Colors</h2>
-        <ComponentDemo Definition="@ColorsDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@BUILoadingIndicatorComponentInfo.Parameters" />
-    </section>
-
-</DocPage>
-
-@code {
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        CodeTitle = "Variants.razor",
-        Code = @"<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Spinner"" />
-<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.CircularProgress"" />
-<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Ring"" />
-<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Dots"" />
-<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.Bars"" />
-<BUILoadingIndicator Variant=""BUILoadingIndicatorVariant.LinearIndeterminate"" />",
-        Demo = RenderVariants()
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
+    <DocDemo Key="Variants" Title="@Loc["Variants"]" Description="@Loc["Six built-in animations covering every common case."]">
         <div class="demo-grid">
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Variant="BUILoadingIndicatorVariant.Spinner" />
@@ -70,68 +35,53 @@
                 <span>LinearIndeterminate</span>
             </div>
         </div>
-    };
+    </DocDemo>
 
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        CodeTitle = "Sizes.razor",
-        Code = @"<BUILoadingIndicator Size=""SizeEnum.Small"" />
-<BUILoadingIndicator Size=""SizeEnum.Medium"" />
-<BUILoadingIndicator Size=""SizeEnum.Large"" />",
-        Demo = RenderSizes()
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
         <div class="demo-grid">
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Size="SizeEnum.Small" />
-                <span>Small</span>
+                <span>@Loc["Small"]</span>
             </div>
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Size="SizeEnum.Medium" />
-                <span>Medium</span>
+                <span>@Loc["Medium"]</span>
             </div>
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Size="SizeEnum.Large" />
-                <span>Large</span>
+                <span>@Loc["Large"]</span>
             </div>
         </div>
-    };
+    </DocDemo>
 
-    private ComponentDemoDefinition ColorsDemo => new()
-    {
-        CodeTitle = "Colors.razor",
-        Code = @"<BUILoadingIndicator Color=""@PaletteColor.Primary"" />
-<BUILoadingIndicator Color=""@PaletteColor.Secondary"" />
-<BUILoadingIndicator Color=""@PaletteColor.Error"" />",
-        Demo = RenderColors()
-    };
-
-    private RenderFragment RenderColors() => __builder =>
-    {
+    <DocDemo Key="Colors" Title="@Loc["Colors"]">
         <div class="demo-grid">
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Color="@PaletteColor.Primary" />
-                <span>Primary</span>
+                <span>@Loc["Primary"]</span>
             </div>
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Color="@PaletteColor.Secondary" />
-                <span>Secondary</span>
+                <span>@Loc["Secondary"]</span>
             </div>
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Color="@PaletteColor.Error" />
-                <span>Error</span>
+                <span>@Loc["Error"]</span>
             </div>
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Color="@PaletteColor.Success" />
-                <span>Success</span>
+                <span>@Loc["Success"]</span>
             </div>
             <div class="demo-grid__cell">
                 <BUILoadingIndicator Color="@PaletteColor.Warning" />
-                <span>Warning</span>
+                <span>@Loc["Warning"]</span>
             </div>
         </div>
-    };
+    </DocDemo>
 
-}
+    <section class="doc-section">
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
+        <PropertyTable Properties="@BUILoadingIndicatorComponentInfo.Parameters" />
+    </section>
+
+</DocPage>

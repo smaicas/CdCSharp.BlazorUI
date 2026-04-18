@@ -1,50 +1,64 @@
 @page "/components/number"
 
-<PageTitle>Number — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<NumberPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="InputNumber"
-         Lede="Strongly-typed numeric input with min/max, stepper buttons, acceleration, and culture-aware formatting.">
+<PageTitle>BlazorUI - BUIInputNumber</PageTitle>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUIInputNumber"]"
+         Lede="@Loc["Strongly-typed numeric input with min/max, stepper buttons, acceleration, and culture-aware formatting."]"
+         PageType="typeof(NumberPage)">
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Variants</h2>
-        <ComponentDemo Definition="@VariantsDemo" />
-    </section>
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
+        <BUIInputNumber TValue="int" @bind-Value="_basic" Label="@Loc["Quantity"]" />
+    </DocDemo>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
+    <DocDemo Key="Variants" Title="@Loc["Variants"]">
+        <BUIInputNumber TValue="int" @bind-Value="_outlinedValue" Label="@Loc["Outlined"]" Variant="BUIInputVariant.Outlined" />
+        <BUIInputNumber TValue="int" @bind-Value="_filledValue" Label="@Loc["Filled"]" Variant="BUIInputVariant.Filled" />
+        <BUIInputNumber TValue="int" @bind-Value="_standardValue" Label="@Loc["Standard"]" Variant="BUIInputVariant.Standard" />
+    </DocDemo>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Min &amp; max</h2>
-        <ComponentDemo Definition="@MinMaxDemo" />
-    </section>
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
+        <BUIInputNumber TValue="int" @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small" />
+        <BUIInputNumber TValue="int" @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="SizeEnum.Medium" />
+        <BUIInputNumber TValue="int" @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large" />
+    </DocDemo>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Decimals &amp; step</h2>
-        <ComponentDemo Definition="@DecimalDemo" />
-    </section>
+    <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
+        <BUIInputNumber @bind-Value="_colorValue" Label="@Loc["Custom Color"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast" />
+        <BUIInputNumber @bind-Value="_backgroundValue" Label="@Loc["Custom Background"]" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast" />
+    </DocDemo>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Step buttons placement</h2>
-        <ComponentDemo Definition="@PlacementDemo" />
-    </section>
+    <DocDemo Key="PrefixSuffix" Title="@Loc["Prefix & Suffix"]">
+        <BUIInputNumber TValue="decimal" @bind-Value="_price" PrefixText="$" Label="@Loc["Price"]" Step="0.01m" DecimalPlaces="2" />
+        <BUIInputNumber TValue="int" @bind-Value="_percentage" SuffixText="%" Label="@Loc["Discount"]" Min="0" Max="100" />
+    </DocDemo>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Prefix / suffix</h2>
-        <ComponentDemo Definition="@PrefixSuffixDemo" />
-    </section>
+    <DocDemo Key="MinMax" Title="@Loc["Min & Max"]">
+        <BUIInputNumber TValue="int" @bind-Value="_minMax" Min="0" Max="100" Label="@Loc["Progress"]" HelperText="@Loc["Clamped between 0 and 100."]" />
+    </DocDemo>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">States</h2>
-        <ComponentDemo Definition="@StatesDemo" />
-    </section>
+    <DocDemo Key="MinMax" Title="@Loc["Decimals & Step"]">
+        <BUIInputNumber TValue="decimal" @bind-Value="_decimal" Step="0.1m" DecimalPlaces="2" Label="@Loc["Price"]" />
+    </DocDemo>
+
+    <DocDemo Key="StepsPlacement" Title="@Loc["Step Buttons Placement"]">
+        <BUIInputNumber TValue="int" @bind-Value="_leftPlacement" ButtonPlacement="StepButtonPlacement.Left" Label="@Loc["Left"]" />
+        <BUIInputNumber TValue="int" @bind-Value="_splitPlacement" ButtonPlacement="StepButtonPlacement.Right" Label="@Loc["Right (default)"]" />
+    </DocDemo>
+
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
+        <BUIInputNumber TValue="int" @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+        <BUIInputNumber TValue="int" @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
+        <BUIInputNumber TValue="int" @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+    </DocDemo>
+
+    <DocDemo Key="States" Title="@Loc["States"]">
+        <BUIInputNumber TValue="int" @bind-Value="_required" Label="@Loc["Required"]" Required="true" />
+        <BUIInputNumber TValue="int" @bind-Value="_readonly" Label="@Loc["ReadOnly"]" ReadOnly="true" />
+        <BUIInputNumber TValue="int" @bind-Value="_disabled" Label="@Loc["Disabled"]" Disabled="true" />
+        <BUIInputNumber TValue="int" @bind-Value="_errorValue" Label="@Loc["Error"]" Error="true" HelperText="@Loc["Parametrized error"]" />
+    </DocDemo>
 
     <section class="doc-section">
         <h2 class="doc-section__title">Properties</h2>
@@ -61,6 +75,8 @@
     private int _smallValue;
     private int _mediumValue;
     private int _largeValue;
+    private int _colorValue;
+    private int _backgroundValue;
     private int _minMax = 50;
     private decimal _decimal = 0.5m;
     private int _leftPlacement;
@@ -71,141 +87,8 @@
     private int _readonly = 42;
     private int _disabled = 42;
     private int _errorValue = -5;
+    private int _shadow;
+    private int _pill;
+    private int _rounded;
 
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code =
-            """
-            <BUIInputNumber TValue="int" @bind-Value="_value" Label="Quantity" />
-            """,
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
-        <BUIInputNumber TValue="int" @bind-Value="_basic" Label="Quantity" />
-    };
-
-    private ComponentDemoDefinition VariantsDemo => new()
-    {
-        Demo = RenderVariants(),
-        Code =
-            """
-            <BUIInputNumber TValue="int" @bind-Value="_outlinedValue" Label="Outlined" Variant="BUIInputVariant.Outlined" />
-            <BUIInputNumber TValue="int" @bind-Value="_filledValue" Label="Filled" Variant="BUIInputVariant.Filled" />
-            <BUIInputNumber TValue="int" @bind-Value="_standardValue" Label="Standard" Variant="BUIInputVariant.Standard" />
-            """
-    };
-
-    private RenderFragment RenderVariants() => __builder =>
-    {
-        <BUIInputNumber TValue="int" @bind-Value="_outlinedValue" Label="Outlined" Variant="BUIInputVariant.Outlined"/>
-        <BUIInputNumber TValue="int" @bind-Value="_filledValue" Label="Filled" Variant="BUIInputVariant.Filled"/>
-        <BUIInputNumber TValue="int" @bind-Value="_standardValue" Label="Standard" Variant="BUIInputVariant.Standard"/>
-    };
-
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        Demo = RenderSizes(),
-        Code =
-            """
-            <BUIInputNumber TValue="int" @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
-            <BUIInputNumber TValue="int" @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
-            <BUIInputNumber TValue="int" @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
-            """
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
-        <BUIInputNumber TValue="int" @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small"/>
-        <BUIInputNumber TValue="int" @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium"/>
-        <BUIInputNumber TValue="int" @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large"/>
-    };
-
-    private ComponentDemoDefinition MinMaxDemo => new()
-    {
-        CodeTitle = "MinMax.razor",
-        Code =
-            """
-            <BUIInputNumber TValue="int" @bind-Value="_minMax" Min="0" Max="100" Label="Progress" HelperText="Clamped between 0 and 100." />
-            """,
-        Demo = RenderMinMax()
-    };
-
-    private RenderFragment RenderMinMax() => __builder =>
-    {
-        <BUIInputNumber TValue="int" @bind-Value="_minMax" Min="0" Max="100" Label="Progress" HelperText="Clamped between 0 and 100."/>
-    };
-
-    private ComponentDemoDefinition DecimalDemo => new()
-    {
-        CodeTitle = "Decimal.razor",
-        Code =
-            """
-            <BUIInputNumber TValue="decimal" @bind-Value="_decimal" Step="0.1m" DecimalPlaces="2" Label="Price" />
-            """,
-        Demo = RenderDecimal()
-    };
-
-    private RenderFragment RenderDecimal() => __builder =>
-    {
-        <BUIInputNumber TValue="decimal" @bind-Value="_decimal" Step="0.1m" DecimalPlaces="2" Label="Price"/>
-    };
-
-    private ComponentDemoDefinition PlacementDemo => new()
-    {
-        Demo = RenderPlacement(),
-        Code =
-            """
-            <BUIInputNumber TValue="int" @bind-Value="_leftPlacement" ButtonPlacement="StepButtonPlacement.Left" Label="Left" />
-            <BUIInputNumber TValue="int" @bind-Value="_splitPlacement" ButtonPlacement="StepButtonPlacement.Right" Label="Right (default)" />
-            """
-    };
-
-    private RenderFragment RenderPlacement() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputNumber TValue="int" @bind-Value="_leftPlacement" ButtonPlacement="StepButtonPlacement.Left" Label="Left"/>
-            <BUIInputNumber TValue="int" @bind-Value="_splitPlacement" ButtonPlacement="StepButtonPlacement.Right" Label="Right (default)"/>
-        </div>
-    };
-
-    private ComponentDemoDefinition PrefixSuffixDemo => new()
-    {
-        Demo = RenderPrefixSuffix(),
-        Code =
-            """
-            <BUIInputNumber TValue="decimal" @bind-Value="_price" PrefixText="$" Label="Price" Step="0.01m" DecimalPlaces="2" />
-            <BUIInputNumber TValue="int" @bind-Value="_percentage" SuffixText="%" Label="Discount" Min="0" Max="100" />
-            """
-    };
-
-    private RenderFragment RenderPrefixSuffix() => __builder =>
-    {
-        <div class="demo-stack">
-            <BUIInputNumber TValue="decimal" @bind-Value="_price" PrefixText="$" Label="Price" Step="0.01m" DecimalPlaces="2"/>
-            <BUIInputNumber TValue="int" @bind-Value="_percentage" SuffixText="%" Label="Discount" Min="0" Max="100"/>
-        </div>
-    };
-
-    private ComponentDemoDefinition StatesDemo => new()
-    {
-        Demo = RenderStates(),
-        Code =
-            """
-            <BUIInputNumber TValue="int" Label="Required" Required="true" />
-            <BUIInputNumber TValue="int" Label="ReadOnly" ReadOnly="true" />
-            <BUIInputNumber TValue="int" Label="Disabled" Disabled="true" />
-            <BUIInputNumber TValue="int" Label="Error" Error="true" HelperText="Value out of range" />
-            """
-    };
-
-    private RenderFragment RenderStates() => __builder =>
-    {
-        <BUIInputNumber TValue="int" @bind-Value="_required" Label="Required" Required="true"/>
-        <BUIInputNumber TValue="int" @bind-Value="_readonly" Label="ReadOnly" ReadOnly="true"/>
-        <BUIInputNumber TValue="int" @bind-Value="_disabled" Label="Disabled" Disabled="true"/>
-        <BUIInputNumber TValue="int" @bind-Value="_errorValue" Label="Error" Error="true" HelperText="Value out of range"/>
-    };
 }

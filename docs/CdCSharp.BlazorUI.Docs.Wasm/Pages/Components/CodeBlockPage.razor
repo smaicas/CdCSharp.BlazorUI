@@ -1,104 +1,57 @@
 @page "/components/codeblock"
 
-<PageTitle>Code Block — CdCSharp.BlazorUI</PageTitle>
+@inject IStringLocalizer<CodeBlockPage> Loc
 
-<DocPage Eyebrow="Component"
-         Title="Code Block"
-         Lede="Syntax-highlighted code with a title, language label, and one-click copy. Auto-dedents, auto-formats.">
+<PageTitle>BlazorUI - BUICodeBlock</PageTitle>
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Basic usage</h2>
-        <ComponentDemo Definition="@BasicDemo" />
-    </section>
+<DocPage Eyebrow="@Loc["Component"]" Title="@Loc["BUICodeBlock"]"
+         Lede="@Loc["Syntax-highlighted code with a title, language label, and one-click copy. Auto-dedents, auto-formats."]"
+         PageType="typeof(CodeBlockPage)">
 
-    <section class="doc-section">
-        <h2 class="doc-section__title">Languages</h2>
-        <p class="doc-section__description">Pick from any <code>SyntaxHighlightLanguage</code> — CSharp, Razor, TypeScript, Css, Json.</p>
-        <ComponentDemo Definition="@LanguagesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Custom title</h2>
-        <p class="doc-section__description">Set <code>Title</code> to override the language badge with a filename or custom label.</p>
-        <ComponentDemo Definition="@TitleDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Sizes</h2>
-        <ComponentDemo Definition="@SizesDemo" />
-    </section>
-
-    <section class="doc-section">
-        <h2 class="doc-section__title">Properties</h2>
-        <PropertyTable Properties="@BUICodeBlockComponentInfo.Parameters" />
-    </section>
-
-</DocPage>
-
-@code {
-    private ComponentDemoDefinition BasicDemo => new()
-    {
-        CodeTitle = "Basic.razor",
-        Code = @"<BUICodeBlock Language=""SyntaxHighlightLanguage.CSharp""
-              Code=""@(""var name = \""BlazorUI\"";"")"" />",
-        Demo = RenderBasic()
-    };
-
-    private RenderFragment RenderBasic() => __builder =>
-    {
+    <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
         <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
                       Code="@("var name = \"BlazorUI\";\nConsole.WriteLine($\"Hello {name}!\");")" />
-    };
+    </DocDemo>
 
-    private ComponentDemoDefinition LanguagesDemo => new()
-    {
-        CodeTitle = "Languages.razor",
-        Code = @"<BUICodeBlock Language=""SyntaxHighlightLanguage.Razor"" Code=""..."" />
-<BUICodeBlock Language=""SyntaxHighlightLanguage.Css""   Code=""..."" />
-<BUICodeBlock Language=""SyntaxHighlightLanguage.Json""  Code=""..."" />",
-        Demo = RenderLanguages()
-    };
-
-    private RenderFragment RenderLanguages() => __builder =>
-    {
+    <DocDemo Key="Languages" Title="@Loc["Languages"]" Description="@Loc["Pick from any SyntaxHighlightLanguage — CSharp, Razor, TypeScript, Css, Json."]">
         <div class="demo-stack">
             <BUICodeBlock Language="SyntaxHighlightLanguage.Razor" Code="@("<BUIButton Text=\"Save\" />")" />
             <BUICodeBlock Language="SyntaxHighlightLanguage.Css" Code="@(".bui-demo { color: var(--palette-primary); }")" />
             <BUICodeBlock Language="SyntaxHighlightLanguage.Json" Code="@("{\n  \"name\": \"BlazorUI\",\n  \"version\": \"1.0.0\"\n}")" />
         </div>
-    };
+    </DocDemo>
 
-    private ComponentDemoDefinition TitleDemo => new()
-    {
-        CodeTitle = "Title.razor",
-        Code = @"<BUICodeBlock Title=""Program.cs""
-              Language=""SyntaxHighlightLanguage.CSharp""
-              Code=""..."" />",
-        Demo = RenderTitle()
-    };
-
-    private RenderFragment RenderTitle() => __builder =>
-    {
+    <DocDemo Key="Title" Title="@Loc["Custom title"]" Description="@Loc["Set Title to override the language badge with a filename or custom label."]">
         <BUICodeBlock Title="Program.cs"
                       Language="SyntaxHighlightLanguage.CSharp"
                       Code="@("builder.Services.AddBlazorUI();\nawait builder.Build().RunAsync();")" />
-    };
+    </DocDemo>
 
-    private ComponentDemoDefinition SizesDemo => new()
-    {
-        CodeTitle = "Sizes.razor",
-        Code = @"<BUICodeBlock Size=""SizeEnum.Small""  ... />
-<BUICodeBlock Size=""SizeEnum.Medium"" ... />
-<BUICodeBlock Size=""SizeEnum.Large""  ... />",
-        Demo = RenderSizes()
-    };
-
-    private RenderFragment RenderSizes() => __builder =>
-    {
+    <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
         <div class="demo-stack">
             <BUICodeBlock Size="SizeEnum.Small" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Small\" />")' />
             <BUICodeBlock Size="SizeEnum.Medium" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Medium\" />")' />
             <BUICodeBlock Size="SizeEnum.Large" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Large\" />")' />
         </div>
-    };
-}
+    </DocDemo>
+
+    <DocDemo Key="Border" Title="@Loc["Border"]">
+        <div class="demo-stack">
+            <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
+                          Code="@("// Rounded large")"
+                          Border="@BUIBorderPresets.RoundedLarge" />
+            <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
+                          Code="@("// Primary border")"
+                          Border="@BUIBorderPresets.Primary" />
+            <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
+                          Code="@("// Dotted border")"
+                          Border="@BUIBorderPresets.Dotted" />
+        </div>
+    </DocDemo>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">@Loc["Properties"]</h2>
+        <PropertyTable Properties="@BUICodeBlockComponentInfo.Parameters" />
+    </section>
+
+</DocPage>
