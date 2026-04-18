@@ -25,6 +25,10 @@ public static class VerifyConfig
         new(@"bui-dropdown-[a-f0-9]{32}",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+    private static readonly Regex DialogTitleIdRegex =
+        new(@"dialog-title-[a-f0-9]{32}",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     [ModuleInitializer]
     public static void Init()
     {
@@ -54,6 +58,10 @@ public static class VerifyConfig
             text = DropdownIdRegex.Replace(
                 text,
                 @"bui-dropdown-<ID>");
+
+            text = DialogTitleIdRegex.Replace(
+                text,
+                @"dialog-title-<ID>");
 
             sb.Clear();
             sb.Append(text);

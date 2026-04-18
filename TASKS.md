@@ -250,16 +250,16 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIDialog + BUIDrawer + BUIModalHost + BUIModalContainer (`Components/Layout/Dialog/`)
 
-- [ ] **LAY-DLG-01** — `BUIDialogRenderingTests` — root, open/closed, header/body/footer slots.
-- [ ] **LAY-DLG-02** — `BUIDialogStateTests` — abrir/cerrar vía `IsOpen`, click backdrop, `CloseOnBackdrop` flag.
-- [ ] **LAY-DLG-03** — `BUIDialogInteractionTests` — Esc cierra, botón close, callback `OnClose`.
-- [ ] **LAY-DLG-04** — `BUIDialogAccessibilityTests` — `role="dialog"`, `aria-modal`, focus trap, restauración de focus (regresión A11Y-03).
-- [ ] **LAY-DLG-05** — `BUIDrawerRenderingTests` — side (left/right/top/bottom), overlay.
-- [ ] **LAY-DLG-06** — `BUIDrawerInteractionTests` — Esc, swipe/drag si aplica.
-- [ ] **LAY-DLG-07** — `BUIModalHostRenderingTests` — host vacío; host con modal activo.
-- [ ] **LAY-DLG-08** — `BUIModalHostInteractionTests` — servicio `ModalService.Show(...)` → host renderiza modal; `Close()` → limpia.
-- [ ] **LAY-DLG-09** — `BUIModalContainerRenderingTests` — cambio de contenido, animation lifecycle basado en `animationend` (regresión LAYOUT-03).
-- [ ] **LAY-DLG-10** — `BUIDialogSnapshotTests` — open / closed / with-header-footer / drawer variants.
+- [x] **LAY-DLG-01** — `BUIDialogRenderingTests` — root, open/closed, header/body/footer slots.
+- [x] **LAY-DLG-02** — `BUIDialogStateTests` — abrir/cerrar vía `IsOpen`, click backdrop, `CloseOnBackdrop` flag.
+- [x] **LAY-DLG-03** — `BUIDialogInteractionTests` — Esc cierra, botón close, callback `OnClose`.
+- [x] **LAY-DLG-04** — `BUIDialogAccessibilityTests` — `role="dialog"`, `aria-modal`, focus trap, restauración de focus (regresión A11Y-03).
+- [x] **LAY-DLG-05** — `BUIDrawerRenderingTests` — side (left/right/top/bottom), overlay.
+- [x] **LAY-DLG-06** — `BUIDrawerInteractionTests` — Esc, swipe/drag si aplica.
+- [x] **LAY-DLG-07** — `BUIModalHostRenderingTests` — host vacío; host con modal activo.
+- [x] **LAY-DLG-08** — `BUIModalHostInteractionTests` — servicio `ModalService.Show(...)` → host renderiza modal; `Close()` → limpia.
+- [x] **LAY-DLG-09** — `BUIModalContainerRenderingTests` — cambio de contenido, animation lifecycle basado en `animationend` (regresión LAYOUT-03).
+- [x] **LAY-DLG-10** — `BUIDialogSnapshotTests` — open / closed / with-header-footer / drawer variants.
 
 ### BUIGrid + BUIGridItem (`Components/Layout/Grid/`)
 

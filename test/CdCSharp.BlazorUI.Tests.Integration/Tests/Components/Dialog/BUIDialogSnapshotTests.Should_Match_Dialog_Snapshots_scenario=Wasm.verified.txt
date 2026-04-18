@@ -1,0 +1,27 @@
+﻿[
+  {
+    Name: Closed,
+    Html: 
+  },
+  {
+    Name: Open_NoContent,
+    Html:
+<div class="bui-dialog-host" blazor:onkeydown="<EVENT>" tabindex="-1" b-q6mb5tszmc blazor:elementReference="<GUID>"><div class="bui-dialog-overlay " blazor:onclick="<EVENT>" b-q6mb5tszmc></div>
+
+        <div class="bui-dialog " blazor:onclick:stopPropagation role="dialog" aria-modal="true" aria-labelledby="dialog-title-<ID>" style="min-width: 300px; max-width: 90vw; max-height: 90vh" b-q6mb5tszmc blazor:elementReference="<GUID>"><div class="bui-dialog__header" b-q6mb5tszmc><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Close" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></bui-component></button></div></div></div>
+  },
+  {
+    Name: Open_WithTitle,
+    Html:
+<div class="bui-dialog-host" blazor:onkeydown="<EVENT>" tabindex="-1" b-q6mb5tszmc blazor:elementReference="<GUID>"><div class="bui-dialog-overlay " blazor:onclick="<EVENT>" b-q6mb5tszmc></div>
+
+        <div class="bui-dialog " blazor:onclick:stopPropagation role="dialog" aria-modal="true" aria-labelledby="dialog-title-<ID>" style="min-width: 300px; max-width: 90vw; max-height: 90vh" b-q6mb5tszmc blazor:elementReference="<GUID>"><div class="bui-dialog__header" b-q6mb5tszmc><h2 id="dialog-title-<ID>" class="bui-dialog__title" b-q6mb5tszmc>Dialog Title</h2><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Close" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></bui-component></button></div><div class="bui-dialog__content" b-q6mb5tszmc>Body text</div></div></div>
+  },
+  {
+    Name: Open_WithFooter,
+    Html:
+<div class="bui-dialog-host" blazor:onkeydown="<EVENT>" tabindex="-1" b-q6mb5tszmc blazor:elementReference="<GUID>"><div class="bui-dialog-overlay " blazor:onclick="<EVENT>" b-q6mb5tszmc></div>
+
+        <div class="bui-dialog " blazor:onclick:stopPropagation role="dialog" aria-modal="true" aria-labelledby="dialog-title-<ID>" style="min-width: 300px; max-width: 90vw; max-height: 90vh" b-q6mb5tszmc blazor:elementReference="<GUID>"><div class="bui-dialog__header" b-q6mb5tszmc><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Close" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></bui-component></button></div><div class="bui-dialog__content" b-q6mb5tszmc>Body</div><div class="bui-dialog__footer" b-q6mb5tszmc>OK | Cancel</div></div></div>
+  }
+]
