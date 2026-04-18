@@ -1,0 +1,14 @@
+﻿[
+  {
+    Name: Default_Closable,
+    Html: <bui-component data-bui-component="toast" data-bui-variant="default" data-bui-position="top-right" data-bui-animation="slide-fade" data-bui-closing="false" data-bui-paused="false" style="--bui-toast-animation-duration: 300ms; --bui-toast-animation-easing: ease-out" blazor:onmouseenter="1" blazor:onmouseleave="2" blazor:onclick="<EVENT>" b-7e74rw331s><div class="bui-toast__content" b-7e74rw331s>Hello World</div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Close" blazor:onclick="<EVENT>" blazor:onclick:stopPropagation b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></bui-component></button></bui-component>
+  },
+  {
+    Name: TopLeft_NoClose,
+    Html: <bui-component data-bui-component="toast" data-bui-variant="default" data-bui-position="top-left" data-bui-animation="slide-fade" data-bui-closing="false" data-bui-paused="false" style="--bui-toast-animation-duration: 300ms; --bui-toast-animation-easing: ease-out" blazor:onmouseenter="5" blazor:onmouseleave="6" blazor:onclick="<EVENT>" b-7e74rw331s><div class="bui-toast__content" b-7e74rw331s>Top Left</div></bui-component>
+  },
+  {
+    Name: BottomRight_NoClose,
+    Html: <bui-component data-bui-component="toast" data-bui-variant="default" data-bui-position="bottom-right" data-bui-animation="slide-fade" data-bui-closing="false" data-bui-paused="false" style="--bui-toast-animation-duration: 300ms; --bui-toast-animation-easing: ease-out" blazor:onmouseenter="8" blazor:onmouseleave="9" blazor:onclick="<EVENT>" b-7e74rw331s><div class="bui-toast__content" b-7e74rw331s>Bottom Right</div></bui-component>
+  }
+]

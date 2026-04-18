@@ -300,14 +300,14 @@ Todas las filas comparten el mismo set base. Marcar `—` cuando un contexto no 
 
 ### BUIToast + BUIToastHost (`Components/Layout/Toast/`)
 
-- [ ] **LAY-TOA-01** — `BUIToastRenderingTests` — root, severity, icon, close button.
-- [ ] **LAY-TOA-02** — `BUIToastStateTests` — auto-dismiss timer, pause on hover.
-- [ ] **LAY-TOA-03** — `BUIToastInteractionTests` — close manual, callback `OnDismiss`.
-- [ ] **LAY-TOA-04** — `BUIToastVariantTests` — `BUIToastVariant`.
-- [ ] **LAY-TOA-05** — `BUIToastHostRenderingTests` — posiciones (top-left/top-right/...), vacío/con toasts.
-- [ ] **LAY-TOA-06** — `BUIToastHostInteractionTests` — `IToastService.Show(...)` → host renderiza; dispose limpio (regresión LAYOUT-02).
-- [ ] **LAY-TOA-07** — `BUIToastAccessibilityTests` — `role="alert"` o `role="status"`, `aria-live`.
-- [ ] **LAY-TOA-08** — `BUIToastSnapshotTests` — severities × posiciones.
+- [x] **LAY-TOA-01** — `BUIToastRenderingTests` — root, severity, icon, close button.
+- [x] **LAY-TOA-02** — `BUIToastStateTests` — auto-dismiss timer, pause on hover.
+- [x] **LAY-TOA-03** — `BUIToastInteractionTests` — close manual, callback `OnDismiss`.
+- [x] **LAY-TOA-04** — `BUIToastVariantTests` — `BUIToastVariant`.
+- [x] **LAY-TOA-05** — `BUIToastHostRenderingTests` — posiciones (top-left/top-right/...), vacío/con toasts.
+- [x] **LAY-TOA-06** — `BUIToastHostInteractionTests` — `IToastService.Show(...)` → host renderiza; dispose limpio (regresión LAYOUT-02).
+- [x] **LAY-TOA-07** — `BUIToastAccessibilityTests` — `role="alert"` o `role="status"`, `aria-live`.
+- [x] **LAY-TOA-08** — `BUIToastSnapshotTests` — severidades × posiciones.
 
 ### BUIInitializer (`Components/Layout/BUIInitializer.razor`)
 
