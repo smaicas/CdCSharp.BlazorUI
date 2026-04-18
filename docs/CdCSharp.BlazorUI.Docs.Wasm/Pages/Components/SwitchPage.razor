@@ -17,13 +17,18 @@
     </section>
 
     <section class="doc-section">
+        <h2 class="doc-section__title">Colors</h2>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
+
+    <section class="doc-section">
         <h2 class="doc-section__title">With icons</h2>
         <ComponentDemo Definition="@IconsDemo" />
     </section>
 
     <section class="doc-section">
-        <h2 class="doc-section__title">Disabled</h2>
-        <ComponentDemo Definition="@DisabledDemo" />
+        <h2 class="doc-section__title">States</h2>
+        <ComponentDemo Definition="@StatesDemo" />
     </section>
 
     <section class="doc-section">
@@ -38,17 +43,25 @@
     private bool _small = true;
     private bool _medium = true;
     private bool _large = true;
+    private bool _colorPrimary = true;
+    private bool _colorSuccess;
+    private bool _colorError = true;
     private bool _wifi = true;
     private bool _bluetooth;
+    private bool _required;
+    private bool _readonly = true;
     private bool _disabledOn = true;
     private bool _disabledOff;
 
     private ComponentDemoDefinition BasicDemo => new()
     {
         CodeTitle = "Basic.razor",
-        Code = @"<BUIInputSwitch @bind-Value=""_value""
-                Label=""Enable notifications""
-                HelperText=""Receive updates about account activity."" />",
+        Code =
+            """
+            <BUIInputSwitch @bind-Value="_value"
+                            Label="Enable notifications"
+                            HelperText="Receive updates about account activity." />
+            """,
         Demo = RenderBasic()
     };
 
@@ -60,9 +73,12 @@
     private ComponentDemoDefinition SizesDemo => new()
     {
         CodeTitle = "Sizes.razor",
-        Code = @"<BUIInputSwitch Size=""SizeEnum.Small"" />
-<BUIInputSwitch Size=""SizeEnum.Medium"" />
-<BUIInputSwitch Size=""SizeEnum.Large"" />",
+        Code =
+            """
+            <BUIInputSwitch Size="SizeEnum.Small" Label="Small" />
+            <BUIInputSwitch Size="SizeEnum.Medium" Label="Medium" />
+            <BUIInputSwitch Size="SizeEnum.Large" Label="Large" />
+            """,
         Demo = RenderSizes()
     };
 
@@ -75,13 +91,37 @@
         </div>
     };
 
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        CodeTitle = "Colors.razor",
+        Code =
+            """
+            <BUIInputSwitch @bind-Value="_colorPrimary" TrackColorActive="@PaletteColor.Primary" Label="Primary" />
+            <BUIInputSwitch @bind-Value="_colorSuccess" TrackColorActive="@PaletteColor.Success" Label="Success" />
+            <BUIInputSwitch @bind-Value="_colorError" TrackColorActive="@PaletteColor.Error" Label="Error" />
+            """,
+        Demo = RenderColors()
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_colorPrimary" TrackColorActive="@PaletteColor.Primary" Label="Primary" />
+            <BUIInputSwitch @bind-Value="_colorSuccess" TrackColorActive="@PaletteColor.Success" Label="Success" />
+            <BUIInputSwitch @bind-Value="_colorError" TrackColorActive="@PaletteColor.Error" Label="Error" />
+        </div>
+    };
+
     private ComponentDemoDefinition IconsDemo => new()
     {
         CodeTitle = "Icons.razor",
-        Code = @"<BUIInputSwitch @bind-Value=""_value""
-                IconActive=""@BUIIcons.MaterialIconsOutlined.i_wifi""
-                IconInactive=""@BUIIcons.MaterialIconsOutlined.i_wifi_off""
-                Label=""Wi-Fi"" />",
+        Code =
+            """
+            <BUIInputSwitch @bind-Value="_wifi"
+                            IconActive="@BUIIcons.MaterialIconsOutlined.i_wifi"
+                            IconInactive="@BUIIcons.MaterialIconsOutlined.i_wifi_off"
+                            Label="Wi-Fi" />
+            """,
         Demo = RenderIcons()
     };
 
@@ -99,17 +139,24 @@
         </div>
     };
 
-    private ComponentDemoDefinition DisabledDemo => new()
+    private ComponentDemoDefinition StatesDemo => new()
     {
-        CodeTitle = "Disabled.razor",
-        Code = @"<BUIInputSwitch Disabled=""true"" Label=""Disabled (on)"" />
-<BUIInputSwitch Disabled=""true"" Label=""Disabled (off)"" />",
-        Demo = RenderDisabled()
+        CodeTitle = "States.razor",
+        Code =
+            """
+            <BUIInputSwitch Label="Required" Required="true" />
+            <BUIInputSwitch @bind-Value="_readonly" Label="ReadOnly" ReadOnly="true" />
+            <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="Disabled (on)" />
+            <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="Disabled (off)" />
+            """,
+        Demo = RenderStates()
     };
 
-    private RenderFragment RenderDisabled() => __builder =>
+    private RenderFragment RenderStates() => __builder =>
     {
         <div class="demo-stack">
+            <BUIInputSwitch @bind-Value="_required" Label="Required" Required="true" />
+            <BUIInputSwitch @bind-Value="_readonly" Label="ReadOnly" ReadOnly="true" />
             <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="Disabled (on)" />
             <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="Disabled (off)" />
         </div>
@@ -125,6 +172,7 @@
         new("IconActive / IconInactive", "string?", "null", "Thumb icons per state"),
         new("TrackColorActive / TrackColorInactive", "CssColor?", "null", "Custom track colors"),
         new("Disabled", "bool", "false", "Disabled state"),
+        new("ReadOnly", "bool", "false", "Read-only state"),
         new("Required", "bool", "false", "Required marker")
     ];
 }

@@ -12,6 +12,16 @@
     </section>
 
     <section class="doc-section">
+        <h2 class="doc-section__title">Colors</h2>
+        <ComponentDemo Definition="@ColorsDemo" />
+    </section>
+
+    <section class="doc-section">
+        <h2 class="doc-section__title">Sizes</h2>
+        <ComponentDemo Definition="@SizesDemo" />
+    </section>
+
+    <section class="doc-section">
         <h2 class="doc-section__title">Orientation</h2>
         <ComponentDemo Definition="@OrientationDemo" />
     </section>
@@ -36,6 +46,12 @@
 
 @code {
     private string? _basic = "medium";
+    private string? _primary = "a";
+    private string? _success = "a";
+    private string? _warning;
+    private string? _small = "a";
+    private string? _medium = "a";
+    private string? _large = "a";
     private string? _horizontal = "standard";
     private string? _clearable = "paid";
     private string? _icon = "heart";
@@ -43,11 +59,14 @@
     private ComponentDemoDefinition BasicDemo => new()
     {
         CodeTitle = "Basic.razor",
-        Code = @"<BUIInputRadio @bind-Value=""_value"" Label=""Size"">
-    <RadioOption Value=""@(""small"")"">Small</RadioOption>
-    <RadioOption Value=""@(""medium"")"">Medium</RadioOption>
-    <RadioOption Value=""@(""large"")"">Large</RadioOption>
-</BUIInputRadio>",
+        Code =
+            """
+            <BUIInputRadio @bind-Value="_value" Label="Size" HelperText="Choose a shirt size.">
+                <RadioOption Value="@("small")">Small</RadioOption>
+                <RadioOption Value="@("medium")">Medium</RadioOption>
+                <RadioOption Value="@("large")">Large</RadioOption>
+            </BUIInputRadio>
+            """,
         Demo = RenderBasic()
     };
 
@@ -60,16 +79,93 @@
         </BUIInputRadio>
     };
 
+    private ComponentDemoDefinition ColorsDemo => new()
+    {
+        CodeTitle = "Colors.razor",
+        Code =
+            """
+            <BUIInputRadio @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary">
+                <RadioOption Value="@("a")">Option A</RadioOption>
+                <RadioOption Value="@("b")">Option B</RadioOption>
+            </BUIInputRadio>
+            <BUIInputRadio @bind-Value="_success" Color="@PaletteColor.Success" Label="Success">
+                <RadioOption Value="@("a")">Option A</RadioOption>
+                <RadioOption Value="@("b")">Option B</RadioOption>
+            </BUIInputRadio>
+            <BUIInputRadio @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning">
+                <RadioOption Value="@("a")">Option A</RadioOption>
+                <RadioOption Value="@("b")">Option B</RadioOption>
+            </BUIInputRadio>
+            """,
+        Demo = RenderColors()
+    };
+
+    private RenderFragment RenderColors() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_primary" Color="@PaletteColor.Primary" Label="Primary" Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("a")">Option A</RadioOption>
+            <RadioOption Value="@("b")">Option B</RadioOption>
+        </BUIInputRadio>
+        <BUIInputRadio @bind-Value="_success" Color="@PaletteColor.Success" Label="Success" Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("a")">Option A</RadioOption>
+            <RadioOption Value="@("b")">Option B</RadioOption>
+        </BUIInputRadio>
+        <BUIInputRadio @bind-Value="_warning" Color="@PaletteColor.Warning" Label="Warning" Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("a")">Option A</RadioOption>
+            <RadioOption Value="@("b")">Option B</RadioOption>
+        </BUIInputRadio>
+    };
+
+    private ComponentDemoDefinition SizesDemo => new()
+    {
+        CodeTitle = "Sizes.razor",
+        Code =
+            """
+            <BUIInputRadio @bind-Value="_small" Size="SizeEnum.Small" Label="Small">
+                <RadioOption Value="@("a")">Option A</RadioOption>
+                <RadioOption Value="@("b")">Option B</RadioOption>
+            </BUIInputRadio>
+            <BUIInputRadio @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium">
+                <RadioOption Value="@("a")">Option A</RadioOption>
+                <RadioOption Value="@("b")">Option B</RadioOption>
+            </BUIInputRadio>
+            <BUIInputRadio @bind-Value="_large" Size="SizeEnum.Large" Label="Large">
+                <RadioOption Value="@("a")">Option A</RadioOption>
+                <RadioOption Value="@("b")">Option B</RadioOption>
+            </BUIInputRadio>
+            """,
+        Demo = RenderSizes()
+    };
+
+    private RenderFragment RenderSizes() => __builder =>
+    {
+        <BUIInputRadio @bind-Value="_small" Size="SizeEnum.Small" Label="Small" Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("a")">Option A</RadioOption>
+            <RadioOption Value="@("b")">Option B</RadioOption>
+        </BUIInputRadio>
+        <BUIInputRadio @bind-Value="_medium" Size="SizeEnum.Medium" Label="Medium" Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("a")">Option A</RadioOption>
+            <RadioOption Value="@("b")">Option B</RadioOption>
+        </BUIInputRadio>
+        <BUIInputRadio @bind-Value="_large" Size="SizeEnum.Large" Label="Large" Orientation="RadioOrientation.Horizontal">
+            <RadioOption Value="@("a")">Option A</RadioOption>
+            <RadioOption Value="@("b")">Option B</RadioOption>
+        </BUIInputRadio>
+    };
+
     private ComponentDemoDefinition OrientationDemo => new()
     {
         CodeTitle = "Orientation.razor",
-        Code = @"<BUIInputRadio @bind-Value=""_value""
-               Orientation=""RadioOrientation.Horizontal""
-               Label=""Density"">
-    <RadioOption Value=""@(""compact"")"">Compact</RadioOption>
-    <RadioOption Value=""@(""standard"")"">Standard</RadioOption>
-    <RadioOption Value=""@(""cozy"")"">Cozy</RadioOption>
-</BUIInputRadio>",
+        Code =
+            """
+            <BUIInputRadio @bind-Value="_value"
+                           Orientation="RadioOrientation.Horizontal"
+                           Label="Density">
+                <RadioOption Value="@("compact")">Compact</RadioOption>
+                <RadioOption Value="@("standard")">Standard</RadioOption>
+                <RadioOption Value="@("cozy")">Cozy</RadioOption>
+            </BUIInputRadio>
+            """,
         Demo = RenderOrientation()
     };
 
@@ -85,14 +181,17 @@
     private ComponentDemoDefinition ClearableDemo => new()
     {
         CodeTitle = "Clearable.razor",
-        Code = @"<BUIInputRadio @bind-Value=""_value""
-               Clearable=""true""
-               ClearText=""No preference""
-               Label=""Payment status"">
-    <RadioOption Value=""@(""paid"")"">Paid</RadioOption>
-    <RadioOption Value=""@(""pending"")"">Pending</RadioOption>
-    <RadioOption Value=""@(""overdue"")"">Overdue</RadioOption>
-</BUIInputRadio>",
+        Code =
+            """
+            <BUIInputRadio @bind-Value="_value"
+                           Clearable="true"
+                           ClearText="No preference"
+                           Label="Payment status">
+                <RadioOption Value="@("paid")">Paid</RadioOption>
+                <RadioOption Value="@("pending")">Pending</RadioOption>
+                <RadioOption Value="@("overdue")">Overdue</RadioOption>
+            </BUIInputRadio>
+            """,
         Demo = RenderClearable()
     };
 
@@ -108,14 +207,17 @@
     private ComponentDemoDefinition IconsDemo => new()
     {
         CodeTitle = "Icons.razor",
-        Code = @"<BUIInputRadio @bind-Value=""_value""
-               CheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite""
-               UncheckedIcon=""@BUIIcons.MaterialIconsOutlined.i_favorite_border""
-               Color=""@PaletteColor.Error""
-               Label=""Pick a reaction"">
-    <RadioOption Value=""@(""heart"")"">Heart</RadioOption>
-    <RadioOption Value=""@(""star"")"">Star</RadioOption>
-</BUIInputRadio>",
+        Code =
+            """
+            <BUIInputRadio @bind-Value="_value"
+                           CheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite"
+                           UncheckedIcon="@BUIIcons.MaterialIconsOutlined.i_favorite_border"
+                           Color="@PaletteColor.Error"
+                           Label="Pick a reaction">
+                <RadioOption Value="@("heart")">Heart</RadioOption>
+                <RadioOption Value="@("star")">Star</RadioOption>
+            </BUIInputRadio>
+            """,
         Demo = RenderIcons()
     };
 

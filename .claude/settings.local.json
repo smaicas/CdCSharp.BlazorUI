@@ -24,7 +24,13 @@
       "Bash(cp CSharpSnapshotTests.Tokenize_CompleteClass_MatchesSnapshot.received.txt CSharpSnapshotTests.Tokenize_CompleteClass_MatchesSnapshot.verified.txt)",
       "Bash(cp CSharpSnapshotTests.Tokenize_ModernCSharpFeatures_MatchesSnapshot.received.txt CSharpSnapshotTests.Tokenize_ModernCSharpFeatures_MatchesSnapshot.verified.txt)",
       "Bash(cp TypeScriptSnapshotTests.Tokenize_CompleteModule_MatchesSnapshot.received.txt TypeScriptSnapshotTests.Tokenize_CompleteModule_MatchesSnapshot.verified.txt)",
-      "Bash(ls test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/*.received.txt)"
+      "Bash(ls test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/Snapshots/*.received.txt)",
+      "Bash(ls *.received.txt)",
+      "Bash(find \"V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI/Components/Layout\" -name \"BUIGrid*\" -exec cat {} \\\\;)",
+      "Bash(find \"V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI\" -name \"IThemeJsInterop*\" -exec cat {} \\\\;)",
+      "Bash(dotnet script -e ' *)",
+      "Bash(powershell *)",
+      "Bash(git commit *)"
     ]
   }
 }

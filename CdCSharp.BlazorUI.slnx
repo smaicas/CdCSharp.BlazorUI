@@ -19,6 +19,10 @@
     <File Path=".github/workflows/publish.yml" />
     <File Path=".gitignore" />
   </Folder>
+  <Folder Name="/_root/">
+    <File Path="CLAUDE.md" />
+    <File Path="TASKS.md" />
+  </Folder>
   <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj" Id="a67069d5-56c2-49fa-adec-656079117b53" />
   <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI.Core.CodeGeneration/CdCSharp.BlazorUI.Core.CodeGeneration.csproj" Id="6ba20f9a-6292-42d8-a0d8-b45440bef1ea" />
   <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj" Id="4d42e187-5c5c-441e-a3bf-59ecb330e6e6" />
