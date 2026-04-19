@@ -1,0 +1,92 @@
+﻿[
+  {
+    Name: Default,
+    Html:
+<bui-component data-bui-component="time-picker" data-bui-picker-base="true" data-bui-size="medium" data-bui-density="standard" b-kyu0uarxem><div class="bui-picker__row" b-kyu0uarxem><button type="button" data-bui-size="medium" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>12h</button>
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;" b-kyu0uarxem><div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="12" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <span class="bui-picker__separator" b-kyu0uarxem>:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="00" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>AM</button></div></bui-component>
+  },
+  {
+    Name: With_Value_14_35,
+    Html:
+<bui-component data-bui-component="time-picker" data-bui-picker-base="true" data-bui-size="medium" data-bui-density="standard" b-kyu0uarxem><div class="bui-picker__row" b-kyu0uarxem><button type="button" data-bui-size="medium" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>12h</button>
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;" b-kyu0uarxem><div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="02" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <span class="bui-picker__separator" b-kyu0uarxem>:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="35" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>PM</button></div></bui-component>
+  },
+  {
+    Name: With_Value_09_05,
+    Html:
+<bui-component data-bui-component="time-picker" data-bui-picker-base="true" data-bui-size="medium" data-bui-density="standard" b-kyu0uarxem><div class="bui-picker__row" b-kyu0uarxem><button type="button" data-bui-size="medium" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>12h</button>
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;" b-kyu0uarxem><div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="09" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <span class="bui-picker__separator" b-kyu0uarxem>:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="05" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>AM</button></div></bui-component>
+  },
+  {
+    Name: Midnight,
+    Html:
+<bui-component data-bui-component="time-picker" data-bui-picker-base="true" data-bui-size="medium" data-bui-density="standard" b-kyu0uarxem><div class="bui-picker__row" b-kyu0uarxem><button type="button" data-bui-size="medium" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>12h</button>
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;" b-kyu0uarxem><div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="12" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <span class="bui-picker__separator" b-kyu0uarxem>:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="00" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>AM</button></div></bui-component>
+  },
+  {
+    Name: Large_Size,
+    Html:
+<bui-component data-bui-component="time-picker" data-bui-picker-base="true" data-bui-size="large" data-bui-density="standard" b-kyu0uarxem><div class="bui-picker__row" b-kyu0uarxem><button type="button" data-bui-size="large" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>12h</button>
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;" b-kyu0uarxem><div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="02" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <span class="bui-picker__separator" b-kyu0uarxem>:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="35" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>PM</button></div></bui-component>
+  },
+  {
+    Name: Compact_Density,
+    Html:
+<bui-component data-bui-component="time-picker" data-bui-picker-base="true" data-bui-size="medium" data-bui-density="compact" b-kyu0uarxem><div class="bui-picker__row" b-kyu0uarxem><button type="button" data-bui-size="medium" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>12h</button>
+
+        <div class="bui-picker__row" style="flex:1; justify-content:center;" b-kyu0uarxem><div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="02" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement hour" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
+
+            <span class="bui-picker__separator" b-kyu0uarxem>:</span>
+
+            <div style="display:flex; flex-direction:column; align-items:center; gap:0.25rem;" b-kyu0uarxem><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
+                <input type="text" class="_bui-simple-input" value="35" blazor:onchange="<EVENT>" blazor:oninput="<EVENT>" maxlength="2" b-u15o21b5jf />
+                <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement minute" blazor:onclick="<EVENT>" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div></div><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" blazor:onclick="<EVENT>" b-u5flo7i9ja>PM</button></div></bui-component>
+  }
+]

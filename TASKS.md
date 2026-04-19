@@ -160,7 +160,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `ade7fb7` — *test(forms): snapshot + accessibility coverage for BUIColorPicker*
   > Nota: `BUIColorPicker` no expone `Disabled`/`ReadOnly` como parámetros (no es un input). Los estados snapshot se basan en props reales: `Value`, `OutputFormat`, `ShowActions`, `RevertText`, `SelectionWidth/Height`. Validación queda cubierta por `BUIInputColorValidationTests` (el input que compone el picker).
 
-### [ ] FORM-COV-02 — `BUIDatePicker` + `BUITimePicker` (State, Validation, Accessibility, Snapshot)
+### [x] FORM-COV-02 — `BUIDatePicker` + `BUITimePicker` (State, Validation, Accessibility, Snapshot)
 - **Origen**: ambos solo tienen `Rendering` + `Interaction`. Son componentes grandes con lógica de navegación calendario/horas y selección; merecen cobertura completa.
 - **Archivos**:
   - Fuente:
@@ -174,6 +174,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - A11y: `role="grid"`, `aria-selected`, flechas de teclado para navegación.
   - Snapshot: estados clave con cultura `en-US` fijada.
 - **Aceptación**: cobertura alineada con el estándar del repo para inputs; snapshots estables cross-culture (usar `VerifyConfig`).
+  > Resuelto en commit `8505f8b` — *test(forms): state + a11y + snapshots for BUIDatePicker and BUITimePicker*
+  > Nota: las fuentes actuales no implementan `min/max`, días deshabilitados, `role="grid"`, `aria-selected` ni navegación por flechas; los tests cubren el comportamiento real (Value → CurrentMonth sync, Size/Density, nav buttons aria-label, steppers hora/minuto, formato 12/24h por cultura, AM/PM toggle). Los puntos del spec no implementados quedan pendientes como feature work, no como tests.
 
 ### [x] FORM-COV-03 — `BUIInputOutline` / `BUIInputLoading` / `BUIInputPrefix` / `BUIInputSuffix` / `_BUIFieldHelper` (Rendering)
 - **Origen**: componentes internos del "input family" usados por Text/Number/TextArea/Dropdown/Color/DateTime. Sin tests directos. Regresiones en notch/label/outline quedan ocultas hasta que un input las hereda.
