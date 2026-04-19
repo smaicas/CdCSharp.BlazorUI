@@ -175,7 +175,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Snapshot: estados clave con cultura `en-US` fijada.
 - **Aceptación**: cobertura alineada con el estándar del repo para inputs; snapshots estables cross-culture (usar `VerifyConfig`).
 
-### [ ] FORM-COV-03 — `BUIInputOutline` / `BUIInputLoading` / `BUIInputPrefix` / `BUIInputSuffix` / `_BUIFieldHelper` (Rendering)
+### [x] FORM-COV-03 — `BUIInputOutline` / `BUIInputLoading` / `BUIInputPrefix` / `BUIInputSuffix` / `_BUIFieldHelper` (Rendering)
 - **Origen**: componentes internos del "input family" usados por Text/Number/TextArea/Dropdown/Color/DateTime. Sin tests directos. Regresiones en notch/label/outline quedan ocultas hasta que un input las hereda.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Forms/Internal/*.razor`
@@ -190,6 +190,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Prefix/suffix con `RenderFragment` arbitrario renderiza el contenido dentro del wrapper correcto.
   - `_BUIFieldHelper` muestra `ValidationMessage` cuando hay error, o `HelperText` si no.
 - **Aceptación**: BEM y vars de familia estables; cualquier rename rompe test específico en vez de dispersar fallos.
+  > Resuelto en commit `fa03d67` — *test(forms): rendering coverage for input family internals*
 
 ---
 
