@@ -103,7 +103,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `0c2bd9a` — *test(core): direct unit tests for SearchAlgorithms*
   > Nota: `SearchResult` no expone `MatchedIndices`; la parte de highlight indices queda fuera de scope (N/A).
 
-### [ ] CORE-COV-08 — `DelayedActionHandler` + `TimingUtilities` tests
+### [x] CORE-COV-08 — `DelayedActionHandler` + `TimingUtilities` tests
 - **Origen**: `DelayedActionHandler` es el timer reutilizable por `BUITreeMenu` (LAYOUT-04) y `BUIToast` (auto-dismiss); su disposal y concurrency se tocaron en bug-fixes pero no hay tests unitarios.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Utilities/DelayedActionHandler.cs`, `TimingUtilities.cs`
@@ -114,6 +114,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - `Dispose` libera el timer y cancela callback en vuelo.
   - Callback post-dispose no invocado (guard).
 - **Aceptación**: comportamiento determinista bajo `Task.Delay` real y bajo control de reloj si hay abstracción.
+  > Resuelto en commit `41942dd` — *test(core): direct unit tests for DelayedActionHandler and TimingUtilities*
 
 ### [ ] CORE-COV-09 — `LightTheme` / `DarkTheme` palette invariants
 - **Origen**: los temas definen la paleta base usada por todo `_themes.css`. No hay tests que aseguren que todas las claves de `BUIThemePaletteBase` estén pobladas con `CssColor` válidos, ni contraste mínimo entre `Surface` y `SurfaceContrast`.
