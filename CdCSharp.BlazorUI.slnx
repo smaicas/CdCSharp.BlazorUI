@@ -9,6 +9,9 @@
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/samples/CdCSharp.BlazorUI.AppTest.Wasm/CdCSharp.BlazorUI.AppTest.Wasm.csproj" Id="0fdf0470-1472-4082-98f6-08ce7101e926" />
   </Folder>
   <Folder Name="/test/">
+    <Project Path="test/CdCSharp.BlazorUI.CodeGeneration.Tests/CdCSharp.BlazorUI.CodeGeneration.Tests.csproj" Id="a5aa3c1e-8ee3-4288-8168-703abe7433d0" />
+    <Project Path="test/CdCSharp.BlazorUI.Core.CodeGeneration.Tests/CdCSharp.BlazorUI.Core.CodeGeneration.Tests.csproj" Id="4a42929d-fb4f-467e-b175-d220206f122a" />
+    <Project Path="test/CdCSharp.BlazorUI.Docs.CodeGeneration.Tests/CdCSharp.BlazorUI.Docs.CodeGeneration.Tests.csproj" Id="bc5dec00-a3ce-4348-b5b0-d7901af29c65" />
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/test/CdCSharp.BlazorUI.SyntaxHighlight.Tests/CdCSharp.BlazorUI.SyntaxHighlight.Tests.csproj" Id="15dbd024-6662-408e-a091-75d50b191b54" />
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/test/CdCSharp.BlazorUI.Tests.Integration.Templates/CdCSharp.BlazorUI.Tests.Integration.Templates.csproj" Id="5dc784c4-634b-4043-b718-1fd61d48d14b" />
     <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/test/CdCSharp.BlazorUI.Tests.Integration/CdCSharp.BlazorUI.Tests.Integration.csproj" Id="adba42f4-5632-4ee9-8656-917fa72c6c0a" />
@@ -22,7 +25,7 @@
   </Folder>
   <Folder Name="/_root/">
     <File Path="CLAUDE.md" />
-    <File Path="TASKS.md" />
+    <File Path="done2_TASKS.md" />
   </Folder>
   <Project Path="src/CdCSharp.BlazorUI.CodeGeneration/CdCSharp.BlazorUI.CodeGeneration.csproj" Id="96bbc2e4-007e-4f7d-973b-8c83686462df" />
   <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj" Id="a67069d5-56c2-49fa-adec-656079117b53" />

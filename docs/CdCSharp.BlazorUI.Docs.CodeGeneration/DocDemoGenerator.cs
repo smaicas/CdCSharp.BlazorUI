@@ -27,6 +27,10 @@ public sealed class DocDemoGenerator : IIncrementalGenerator
         @"(?m)^\s*@namespace\s+([\w.]+)\s*$",
         RegexOptions.Compiled);
 
+    private static readonly Regex LocDirective = new(
+        @"@Loc\[""([^""]*)""\]",
+        RegexOptions.Compiled);
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         IncrementalValueProvider<(string? RootNamespace, string? ProjectDir)> globals =
@@ -74,18 +78,14 @@ public sealed class DocDemoGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.Append("partial class ").AppendLine(cls);
         sb.AppendLine("{");
-        sb.AppendLine("    internal static readonly global::System.Collections.Generic.IReadOnlyDictionary<string, string> __DocDemoCodes");
-        sb.AppendLine("        = new global::System.Collections.Generic.Dictionary<string, string>(global::System.StringComparer.Ordinal)");
+        sb.AppendLine("    internal global::System.Collections.Generic.IReadOnlyDictionary<string, string> __GetDocDemoCodes()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        return new global::System.Collections.Generic.Dictionary<string, string>(global::System.StringComparer.Ordinal)");
         sb.AppendLine("        {");
         foreach (DemoBlock d in demos)
-        {
-            sb.Append("            [\"")
-              .Append(EscapeLiteral(d.Key))
-              .Append("\"] = \"")
-              .Append(EscapeLiteral(d.Code))
-              .AppendLine("\",");
-        }
+            AppendDemoEntry(sb, d);
         sb.AppendLine("        };");
+        sb.AppendLine("    }");
         sb.AppendLine("}");
 
         string hint = $"{ns.Replace('.', '_')}_{cls}.DocDemos.g.cs";
@@ -247,6 +247,50 @@ public sealed class DocDemoGenerator : IIncrementalGenerator
             }
         }
         return sb.ToString();
+    }
+
+    private static void AppendDemoEntry(StringBuilder sb, DemoBlock d)
+    {
+        int dollars = Math.Max(2, Math.Max(MaxRun(d.Code, '{'), MaxRun(d.Code, '}')) + 1);
+        string transformed = TransformContent(d.Code, dollars);
+        int fence = Math.Max(3, MaxRun(transformed, '"') + 1);
+        string quotes = new('"', fence);
+        string dollarPrefix = new('$', dollars);
+
+        sb.Append("            [\"")
+          .Append(EscapeLiteral(d.Key))
+          .Append("\"] = ")
+          .Append(dollarPrefix)
+          .Append(quotes)
+          .AppendLine();
+
+        foreach (string line in transformed.Replace("\r\n", "\n").Split('\n'))
+        {
+            if (line.Length == 0)
+                sb.AppendLine();
+            else
+                sb.Append("                ").AppendLine(line);
+        }
+
+        sb.Append("                ").Append(quotes).AppendLine(",");
+    }
+
+    private static string TransformContent(string code, int dollars)
+    {
+        string open = new('{', dollars);
+        string close = new('}', dollars);
+        return LocDirective.Replace(code, m => open + "Loc[\"" + m.Groups[1].Value + "\"]" + close);
+    }
+
+    private static int MaxRun(string s, char target)
+    {
+        int max = 0, cur = 0;
+        foreach (char c in s)
+        {
+            if (c == target) { cur++; if (cur > max) max = cur; }
+            else cur = 0;
+        }
+        return max;
     }
 
     private readonly record struct RazorInput(string Path, string Text, string? RootNamespace, string? ProjectDir);

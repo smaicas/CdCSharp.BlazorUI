@@ -32,7 +32,11 @@
       "Bash(powershell *)",
       "Bash(git commit *)",
       "WebSearch",
-      "WebFetch(domain:www.nuget.org)"
+      "WebFetch(domain:www.nuget.org)",
+      "Bash(xargs -0 -I {} sh -c 'grep -l \"PageType=\\\\\"typeof\" \"{}\" || true')",
+      "Bash(awk NR==63 || NR==66 *)",
+      "Bash(awk NR>=105 && NR<=115 *)",
+      "Bash(awk NR>=1 && NR<=50 *)"
     ]
   }
 }
