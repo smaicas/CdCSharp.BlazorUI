@@ -198,7 +198,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 
 ## C. COBERTURA COMPONENTES GENERIC
 
-### [ ] GEN-COV-01 — `BUINotificationBadge` (Accessibility, Interaction, Snapshot)
+### [x] GEN-COV-01 — `BUINotificationBadge` (Accessibility, Interaction, Snapshot)
 - **Origen**: solo tiene `Rendering` + `State`. El badge de notificaciones se usa como indicador aria-live; falta cobertura.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Generic/Badge/BUINotificationBadge.razor`
@@ -211,6 +211,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Interaction: click/keyboard sobre badge con acción (si aplica).
   - Snapshot: estados `0` (oculto), `1..99`, `99+`, con `Dot` variant.
 - **Aceptación**: contrato a11y coherente con patrón de notificación.
+  > Resuelto en commit `e58e539` — *test(generic): a11y + interaction + snapshots for BUINotificationBadge*
+  > Nota: `BUINotificationBadge` no emite `role="status"`/`aria-live` por defecto ni expone callbacks propios — los tests validan que el componente acepta esos atributos vía `AdditionalAttributes` (proyectados al root) y que el click del host `ChildContent` no es interceptado por el wrapper. Snapshots cubren `Dot`, count numérico, `99+`, `BottomLeft`, `Large`, `Non_Circular`, y host con `<button>`.
 
 ### [ ] GEN-COV-02 — `BUITreeSelector` (Accessibility, Variant)
 - **Origen**: `BUITreeSelector` tiene `Rendering/State/Interaction/Disposal/Snapshot` pero no `Accessibility` ni `Variants`.
