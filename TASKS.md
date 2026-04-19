@@ -315,7 +315,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `2e8c3d1` — *test(layout): state + interaction + a11y for BUIStackedLayout (LAY-COV-07)*
   > Nota: el toggle sólo se renderiza cuando hay slot `Nav` **y** `ShowToggle=true`; tests cubren ambos gates. Landmarks son nativos (`<header>`/`<nav>`/`<main>`), `aria-expanded` sincroniza con `_navOpen`. Variables CSS emitidas vía `FeatureDefinitions.InlineVariables.Layout*` (`--bui-inline-header-height`, `--bui-inline-nav-columns`, `--bui-inline-nav-col-min`, `--bui-inline-nav-gap`, `--bui-inline-content-max-width`).
 
-### [ ] LAY-COV-08 — `BUIThemeGenerator` (State, Accessibility) + `BUIThemeEditor` / `BUIThemePreview` (Interaction, State, Snapshot)
+### [x] LAY-COV-08 — `BUIThemeGenerator` (State, Accessibility) + `BUIThemeEditor` / `BUIThemePreview` (Interaction, State, Snapshot)
+  > Resuelto en commit `19e2955` — *test(lay-cov-08): add ThemeGenerator/Editor/Preview State + A11y + Snapshot coverage*
 - **Origen**: `BUIThemeGenerator` tiene `Rendering/Interaction/Validation/Snapshot` pero no `State/Accessibility`. `BUIThemeEditor` y `BUIThemePreview` solo `Rendering`. Componentes con mucha lógica de UI (input de paleta, exportar/importar).
 - **Archivos**:
   - Fuente:
