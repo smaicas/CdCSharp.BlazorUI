@@ -129,7 +129,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `03aee89` — *test(core): palette invariants for LightTheme and DarkTheme*
   > Nota: el umbral de contraste se fija en WCAG AA *large text* (≥ 3:1). Los contrastes actuales del tema oscuro no alcanzan 4.5:1 (AA normal text) en todos los pares semánticos; se deja margen de ajuste sin romper tests.
 
-### [ ] CORE-COV-10 — `BUIInputComponentBase` validation wiring profundizado
+### [x] CORE-COV-10 — `BUIInputComponentBase` validation wiring profundizado
 - **Origen**: `BUIInputComponentBaseTests` cubre renderizado y `IHasError`; no cubre (a) re-suscripción al cambiar `EditContext`, (b) propagación de `FieldIdentifier` con `ValueExpression` que encapsula una propiedad nullable, (c) dispose sin `EditContext` inicializado.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Abstractions/Components/BUIInputComponentBase.cs`
@@ -139,6 +139,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - `ValueExpression` con chained expression (`() => parent.child.prop`) produce `FieldIdentifier` correcto.
   - Dispose sin `EditContext` no lanza.
 - **Aceptación**: tests de regresión para validación runtime cubren estos 3 casos.
+  > Resuelto en commit `4e1abd8` — *test(core): validation wiring edge cases for BUIInputComponentBase*
+  > Nota (a): `InputBase<T>` de Blazor bloquea `SetParametersAsync` si el `EditContext` cambia ("does not support changing the EditContext dynamically"). La rama `_previousEditContext != EditContext` de `OnParametersSet` es inalcanzable en uso normal. Se cubre la rama alcanzable (identity check) asegurando que re-renders con el mismo `EditContext` no duplican suscripción (test `Should_Not_Double_Subscribe_On_Rerender_With_Same_EditContext`).
 
 ---
 

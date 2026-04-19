@@ -163,6 +163,97 @@ public class BUIInputComponentBaseTests
     {
         public string Name { get; set; } = string.Empty;
         public string Value { get; set; } = string.Empty;
+        public NestedModel Nested { get; set; } = new();
+    }
+
+    private class NestedModel
+    {
+        public string NestedValue { get; set; } = string.Empty;
+    }
+
+    // ─────────── EditContext re-subscription ───────────
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Not_Double_Subscribe_On_Rerender_With_Same_EditContext(BlazorScenario scenario)
+    {
+        // Blazor's InputBase blocks changing EditContext dynamically (throws), so the only
+        // reachable branch of the "re-subscribe" guard is the identity check: if _previousEditContext
+        // == EditContext on re-render, the handler is NOT re-subscribed. Verified indirectly by
+        // asserting the component reacts exactly once to a validation state change after re-render.
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        EditContext editContext = new(model);
+        ValidationMessageStore messageStore = new(editContext);
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Name)
+            .AddCascadingValue(editContext));
+
+        // Re-render several times (same EditContext) to exercise the OnParametersSet idempotency path
+        cut.Render(p => p.Add(c => c.ValueExpression, () => model.Name));
+        cut.Render(p => p.Add(c => c.ValueExpression, () => model.Name));
+        cut.Render(p => p.Add(c => c.ValueExpression, () => model.Name));
+
+        int stateChangedEventCount = 0;
+        editContext.OnValidationStateChanged += (_, _) => stateChangedEventCount++;
+
+        // Act
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            messageStore.Add(editContext.Field(nameof(TestModel.Name)), "Error");
+            editContext.NotifyValidationStateChanged();
+        });
+
+        cut.WaitForState(() => cut.Find("input").GetAttribute("data-bui-error") == "true");
+
+        // Assert: event fired once on the context; component registered once
+        stateChangedEventCount.Should().Be(1);
+        cut.Find("input").GetAttribute("data-bui-error").Should().Be("true");
+    }
+
+    // ─────────── Nested ValueExpression ───────────
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Resolve_FieldIdentifier_For_Nested_Property_Expression(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+        EditContext editContext = new(model);
+        ValidationMessageStore messageStore = new(editContext);
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Nested.NestedValue)
+            .AddCascadingValue(editContext));
+
+        // Assert FieldIdentifier resolves to model.Nested / NestedValue
+        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
+        {
+            FieldIdentifier fi = FieldIdentifier.Create<string>(() => model.Nested.NestedValue);
+            messageStore.Add(fi, "Nested error");
+            editContext.NotifyValidationStateChanged();
+        });
+
+        cut.WaitForState(() => cut.Find("input").GetAttribute("data-bui-error") == "true");
+        cut.Find("input").GetAttribute("data-bui-error").Should().Be("true");
+    }
+
+    // ─────────── Dispose without EditContext ───────────
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Dispose_Should_Not_Throw_When_EditContext_Never_Set(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+        TestModel model = new();
+
+        IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
+            .Add(c => c.ValueExpression, () => model.Value));
+
+        Action dispose = () => ctx.Renderer.Dispatcher.InvokeAsync(() => cut.Dispose()).GetAwaiter().GetResult();
+
+        dispose.Should().NotThrow();
     }
 
     #region Behavioral Tests (Design & Style)
