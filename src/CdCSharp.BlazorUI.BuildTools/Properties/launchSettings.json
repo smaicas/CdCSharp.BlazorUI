@@ -6,7 +6,8 @@
     },
     "BUILD": {
       "commandName": "Project",
-      "commandLineArgs": "\"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\CdCSharp.BlazorUI\""
+      "commandLineArgs": "\"V:\\Work\\CdCSharp\\Projects\\BlazorUI\\src\\CdCSharp.BlazorUI\"",
+      "hotReloadEnabled": false
     }
   }
 }

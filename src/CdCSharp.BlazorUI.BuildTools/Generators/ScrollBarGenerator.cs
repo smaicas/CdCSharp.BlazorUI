@@ -24,33 +24,33 @@ public class ScrollBarGenerator : IAssetGenerator
     scrollbar-color: var(--palette-primary) var(--palette-surface);
 }
 
-    /* WebKit (Chrome, Edge, Safari) */
-    *::- webkit - scrollbar {
-width: 10px;
-height: 10px; /* horizontal también */
+/* WebKit (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
 
-*::- webkit - scrollbar - track {
-background: var(--palette - surface);
-    border - radius: 8px;
+*::-webkit-scrollbar-track {
+    background: var(--palette-surface);
+    border-radius: 8px;
 }
 
-*::- webkit - scrollbar - thumb {
-background: var(--palette - primary);
-    border - radius: 8px;
-border: 2px solid var(--palette - surface); /* efecto padding */
+*::-webkit-scrollbar-thumb {
+    background: var(--palette-primary);
+    border-radius: 8px;
+    border: 2px solid var(--palette-surface);
 }
 
-*::- webkit - scrollbar - thumb:hover {
-            background: var(--palette - secondary);
-        }
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--palette-secondary);
+}
 
-        *::- webkit - scrollbar - thumb:active {
-            background: var(--palette - info);
-        }
+*::-webkit-scrollbar-thumb:active {
+    background: var(--palette-info);
+}
 
-    *::- webkit - scrollbar - corner {
-background: var(--palette - surface);
+*::-webkit-scrollbar-corner {
+    background: var(--palette-surface);
 }
 """;
     }
