@@ -272,15 +272,17 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `d52789a` — *test(layout): state tests for BUIDialog/BUIDrawer transitions (LAY-COV-03)*
   > Nota: los componentes no usan `data-bui-active` para la fase de cierre; usan clases modificadoras `bui-dialog--closing` / `bui-drawer--closing` y `bui-*-overlay--closing`. Los tests observan la transición vía un `IModalJsInterop` fake que controla la promesa `WaitForAnimationEndAsync` con un `TaskCompletionSource`, expuesto como gate para observar el DOM intermedio antes del cierre final.
 
-### [ ] LAY-COV-04 — `BUIGrid` (Accessibility, Variant)
+### [x] LAY-COV-04 — `BUIGrid` (Accessibility, Variant)
 - **Origen**: `BUIGrid` tiene `Rendering/State/Snapshot`; falta `Variant` y `Accessibility` (role grid si aplica; tabindex si interactivo).
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/Grid/BUIGrid.razor`, `BUIGridItem.razor`
-  - Nuevos: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/Grid/BUIGridAccessibilityTests.cs`, `BUIGridVariantTests.cs`
+  - Nuevos: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/Grid/BUIGridAccessibilityTests.cs`
 - **Cambios**:
   - A11y: si el grid expone `role`, verificar; si no, verificar ausencia (es layout puro).
   - Variants: registrar variante custom.
 - **Aceptación**: contrato semántico explícito.
+  > Resuelto en commit `cfae706` — *test(layout): a11y coverage for BUIGrid / BUIGridItem (LAY-COV-04)*
+  > Nota: `BUIGrid` y `BUIGridItem` no implementan `IVariantComponent` ni exponen parámetro `Variant` — son primitivas de layout puramente presentacionales. El fichero `BUIGridVariantTests.cs` no aplica y se omite intencionadamente. Los tests a11y verifican ausencia por defecto de `role`/`aria-*`/`tabindex`, forwarding de `AdditionalAttributes` para opt-in a `role="list"`/`"listitem"`/`aria-label`, preservación de headings anidados, y que el flag `HideXs` sólo emite `data-hide-xs` sin `aria-hidden` (la ocultación es CSS media-query).
 
 ### [x] LAY-COV-05 — `BUIInitializer` (Disposal)
 - **Origen**: LAYOUT-01 resolvió el memory leak, pero no hay `BUIInitializerDisposalTests` que proteja contra regresión (desuscripción de `OnThemeChanged`).
