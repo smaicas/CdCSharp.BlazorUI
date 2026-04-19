@@ -60,10 +60,9 @@
                        Label="@Loc["Clearable NotNullable"]" Clearable="true" ShowCopyButton="true" />
     </DocDemo>
 
-    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-        <BUIInputColor @bind-Value="_shadowValue" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
-        <BUIInputColor @bind-Value="_pillValue" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
-        <BUIInputColor @bind-Value="_roundedValue" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow"]">
+        <BUIInputColor @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Elevation Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+        <BUIInputColor @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Custom Shadow"]" Shadow="@(ShadowStyle.Create(5, 10, 0.14f, color: "purple"))" />
     </DocDemo>
 
     <DocDemo Key="States" Title="@Loc["States"]">

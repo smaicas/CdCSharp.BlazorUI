@@ -9,7 +9,6 @@
 @implements IHasSize
 @implements IHasLoading
 @implements IHasShadow
-@implements IHasBorder
 @implements IHasColor
 @implements IHasBackgroundColor
 @implements IHasPrefix
@@ -40,9 +39,6 @@
     // IHasLoading
     [Parameter] public bool Loading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
-
-    // IHasBorder
-    [Parameter] public BorderStyle? Border { get; set; }
 
     // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }

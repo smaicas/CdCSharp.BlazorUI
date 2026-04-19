@@ -1,5 +1,4 @@
 ﻿using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Css;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -26,9 +25,6 @@ public class InputFamilyGenerator : IAssetGenerator
 
         string inlineBg = FeatureDefinitions.InlineVariables.BackgroundColor;
         string inlineColor = FeatureDefinitions.InlineVariables.Color;
-        string inlineBorder = FeatureDefinitions.InlineVariables.Border;
-        string inlineBorderBottom = FeatureDefinitions.InlineVariables.BorderBottom;
-        string inlineRadius = FeatureDefinitions.InlineVariables.BorderRadius;
 
         string wrapper = FeatureDefinitions.CssClasses.Input.Wrapper;
         string field = FeatureDefinitions.CssClasses.Input.Field;
@@ -66,7 +62,7 @@ bui-component[{{inputBase}}] {
     --_input-h: calc(3.5rem * {{V(sizeMult, "1")}});
     --_input-px: 1rem;
     --_input-py: 0.75rem;
-    --_input-radius: {{V(inlineRadius, "4px")}};
+    --_input-radius: 4px;
     --_input-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
     --_input-scale: 0.75;
     --_input-floated-size: calc(1rem * var(--_input-scale) * {{V(sizeMult, "1")}});
@@ -75,7 +71,7 @@ bui-component[{{inputBase}}] {
     --_input-focus-color: var(--palette-highlight);
     --_input-error-color: var(--palette-error);
 
-    --_input-border-color: {{V(inlineBorder, "var(--palette-border)")}};
+    --_input-border-color: var(--palette-border);
     --_input-border-width: 1px;
 
     --_wrapper-bg: transparent;
@@ -87,6 +83,8 @@ bui-component[{{inputBase}}] {
 
     --_addon-offset: 0rem;
     --_outline-leading-width: calc(var(--_input-px) - 4px + var(--_addon-offset));
+
+    border-radius: var(--_input-radius);
 }
 
 /* === WRAPPER === */
@@ -270,12 +268,12 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonPrefix}} {
 }
 
 /* ========================================
-   VARIANT: FILLED
+   VARIANT: FILLED 
    ======================================== */
 
 bui-component[{{inputBase}}][{{variant}}="filled"] {
     --_wrapper-bg: {{V(inlineBg, "color-mix(in srgb, var(--palette-surfacecontrast) 6%, transparent)")}};
-    --_wrapper-radius: 4px 4px 0 0;
+    --_wrapper-radius: var(--_input-radius) var(--_input-radius) 0 0;
     --_wrapper-pt: calc(0.75rem * {{V(sizeMult, "1")}});
     --_outline-leading-width: calc(var(--_input-px) + var(--_addon-offset));
 }
@@ -321,7 +319,7 @@ bui-component[{{inputBase}}][{{variant}}="filled"][{{error}}="true"] .{{outlineT
 
 bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonPrefix}} {
     border-radius: 0;
-    border-start-start-radius: 4px;
+    border-start-start-radius: var(--_input-radius);
 }
 
 /* ========================================

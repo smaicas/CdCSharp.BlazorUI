@@ -41,10 +41,9 @@
             <BUIInputTextArea @bind-Value="_resizeBoth" Label="@Loc["Both axes"]" Resize="TextAreaResize.Both" />
     </DocDemo>
 
-    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-            <BUIInputTextArea @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
-            <BUIInputTextArea @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
-            <BUIInputTextArea @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow"]">
+        <BUIInputTextArea @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Elevation Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+        <BUIInputTextArea @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Custom Shadow"]" Shadow="@(ShadowStyle.Create(5, 10, 0.14f, color: "purple"))" />
     </DocDemo>
 
     <DocDemo Key="States" Title="@Loc["States"]">
@@ -75,7 +74,7 @@
     private string _rows = "";
     private string _resizeNone = "";
     private string _resizeBoth = "";
-    private string _shadow = "";
+    private string _shadowValue = "";
     private string _pill = "";
     private string _rounded = "";
     private string _disabled = "Disabled value";

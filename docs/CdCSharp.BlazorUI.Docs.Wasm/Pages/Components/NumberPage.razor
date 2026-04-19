@@ -46,10 +46,9 @@
         <BUIInputNumber TValue="int" @bind-Value="_splitPlacement" ButtonPlacement="StepButtonPlacement.Right" Label="@Loc["Right (default)"]" />
     </DocDemo>
 
-    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-        <BUIInputNumber TValue="int" @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
-        <BUIInputNumber TValue="int" @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
-        <BUIInputNumber TValue="int" @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow"]">
+        <BUIInputNumber @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Elevation Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+        <BUIInputNumber @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Custom Shadow"]" Shadow="@(ShadowStyle.Create(5, 10, 0.14f, color: "purple"))" />
     </DocDemo>
 
     <DocDemo Key="States" Title="@Loc["States"]">
@@ -86,7 +85,7 @@
     private int _readonly = 42;
     private int _disabled = 42;
     private int _errorValue = -5;
-    private int _shadow;
+    private int _shadowValue;
     private int _pill;
     private int _rounded;
 

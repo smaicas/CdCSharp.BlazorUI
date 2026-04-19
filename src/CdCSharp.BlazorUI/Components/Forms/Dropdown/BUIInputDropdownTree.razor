@@ -16,14 +16,12 @@
                       ValueExpression="@ValueExpression"
                       Variant="@Variant"
                       Size="@Size"
-                      Density="@Density"
                       Disabled="@Disabled"
                       Loading="@IsLoading"
                       LoadingIndicatorVariant="@LoadingIndicatorVariant"
                       Required="@Required"
                       ReadOnly="@ReadOnly"
                       Shadow="@Shadow"
-                      Border="@Border"
                       Color="@Color"
                       BackgroundColor="@BackgroundColor"
                       Label="@Label"
@@ -89,9 +87,7 @@
     [Parameter] public BUILoadingIndicatorVariant? LoadingIndicatorVariant { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
     [Parameter] public ShadowStyle? Shadow { get; set; }
-    [Parameter] public BorderStyle? Border { get; set; }
     [Parameter] public string? Color { get; set; }
     [Parameter] public string? BackgroundColor { get; set; }
 

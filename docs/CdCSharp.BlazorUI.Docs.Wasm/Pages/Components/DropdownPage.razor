@@ -133,20 +133,16 @@
         </BUIInputDropdown>
     </DocDemo>
 
-    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-        <BUIInputDropdown @bind-Value="_shadowDropValue" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(3)">
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow"]">
+        <BUIInputDropdown @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Elevation Shadow"]"
+                          Shadow="@BUIShadowPresets.Elevation(2)">
             @foreach (string option in _optionsStrings)
             {
                 <DropdownOption Value="@option" Text="@option" />
             }
         </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_pillDropValue" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill">
-            @foreach (string option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_roundedDropValue" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge">
+        <BUIInputDropdown @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Custom Shadow"]"
+                          Shadow="@(ShadowStyle.Create(5, 10, 0.14f, color: "purple"))">
             @foreach (string option in _optionsStrings)
             {
                 <DropdownOption Value="@option" Text="@option" />
@@ -211,7 +207,7 @@
     private string? _searchable = null;
     private string? _noOptionsValue = null;
     private int? _disabledOptionValue;
-    private string? _shadowDropValue;
+    private string? _shadowValue;
     private string? _pillDropValue;
     private string? _roundedDropValue;
     private string? _placement = "up";

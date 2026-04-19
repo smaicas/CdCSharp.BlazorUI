@@ -34,10 +34,9 @@
             <BUIInputText @bind-Value="_domain" Label="@Loc["Domain"]" SuffixText=".com" />
     </DocDemo>
 
-    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-            <BUIInputText @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
-            <BUIInputText @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
-            <BUIInputText @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
+    <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow"]">
+        <BUIInputText @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Elevation Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
+        <BUIInputText @bind-Value="_shadowValue" Variant="BUIInputVariant.Outlined" Label="@Loc["Custom Shadow"]" Shadow="@(ShadowStyle.Create(5, 10, 0.14f, color: "purple"))" />
     </DocDemo>
 
     <DocDemo Key="States" Title="@Loc["States"]">
@@ -68,7 +67,7 @@
     private string _url = "https://";
     private string _search = "";
     private string _domain = "";
-    private string _shadow = "";
+    private string _shadowValue = "";
     private string _pill = "";
     private string _rounded = "";
     private string _disabled = "Disabled value";

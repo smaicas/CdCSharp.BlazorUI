@@ -12,7 +12,6 @@
 @implements IHasLoading
 @implements IHasDensity
 @implements IHasShadow
-@implements IHasBorder
 @implements IHasColor
 @implements IHasBackgroundColor
 @implements IHasPrefix
@@ -47,9 +46,6 @@
 
     // IHasDensity
     [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-
-    // IHasBorder
-    [Parameter] public BorderStyle? Border { get; set; }
 
     // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }
