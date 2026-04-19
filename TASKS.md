@@ -295,13 +295,15 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: regresión del leak hace fallar el test.
   > Resuelto en commit `8344dbe` — *test(layout): disposal tests for BUIInitializer (LAY-COV-05)*
 
-### [ ] LAY-COV-06 — `BUISidebarLayout` (Accessibility)
+### [x] LAY-COV-06 — `BUISidebarLayout` (Accessibility)
 - **Origen**: faltan aserciones a11y. Sidebar requiere `aria-expanded`/`aria-controls` para el toggle, y region para el sidebar.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/SidebarLayout/BUISidebarLayout.razor`
   - Nuevo: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/SidebarLayout/BUISidebarLayoutAccessibilityTests.cs`
 - **Cambios**: ARIA de toggle + regiones landmark (`<aside>`, `role="complementary"` según diseño).
 - **Aceptación**: axe limpio.
+  > Resuelto en commit `ad8c9fe` — *test(layout): a11y coverage for BUISidebarLayout (LAY-COV-06)*
+  > Nota: el componente usa elementos landmark semánticos (`<header>`/`<aside>`/`<main>`) sin `role="complementary"` explícito — `<aside>` ya expone el rol implícito. Tampoco emite `aria-controls` en el toggle porque el sidebar es un único hermano y la relación es DOM-local; `aria-expanded` sí se sincroniza con `_sidebarOpen`. El scrim se marca `aria-hidden="true"`. Tests validan el contrato real + que consumidores pueden anidar `<nav aria-label>` dentro del slot Sidebar para enriquecer semántica.
 
 ### [ ] LAY-COV-07 — `BUIStackedLayout` (State, Interaction, Accessibility)
 - **Origen**: solo `Rendering` + `Snapshot`. Faltan state (cambio de layout, responsive), interaction (toggle si aplica), a11y.
