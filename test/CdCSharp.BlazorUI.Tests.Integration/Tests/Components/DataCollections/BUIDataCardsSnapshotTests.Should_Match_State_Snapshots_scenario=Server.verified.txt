@@ -1,0 +1,19 @@
+﻿[
+  {
+    Name: Empty,
+    Html:
+<bui-component data-bui-component="data-cards" data-bui-variant="default" data-bui-data-collection="true" data-bui-size="medium" data-bui-density="standard" data-bui-hoverable="true" b-rydbkg88v9><div class="bui-dc__empty" b-rydbkg88v9><span class="bui-dc__empty-icon" b-rydbkg88v9>📋</span>
+                    <p class="bui-dc__empty-text" b-rydbkg88v9>No data available</p></div></bui-component>
+  },
+  {
+    Name: Loading,
+    Html: <bui-component data-bui-component="data-cards" data-bui-variant="default" data-bui-data-collection="true" data-bui-size="medium" data-bui-density="standard" data-bui-hoverable="true" b-rydbkg88v9><div class="bui-dc__loading" b-rydbkg88v9>Loading...</div></bui-component>
+  },
+  {
+    Name: Selectable,
+    Html:
+<bui-component data-bui-component="data-cards" data-bui-variant="default" data-bui-data-collection="true" data-bui-size="medium" data-bui-density="standard" data-bui-hoverable="true" b-rydbkg88v9><div class="bui-datacards__grid" style="gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))" role="list" b-rydbkg88v9><article class="bui-datacards__card  bui-datacards__card--interactive" role="option" aria-selected="false" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rydbkg88v9><div class="bui-datacards__card-select" b-rydbkg88v9><span class="_bui-checkmark" role="checkbox" aria-checked="false" aria-readonly="false" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></bui-component></span></div><div class="bui-datacards__card-body" b-rydbkg88v9><div class="bui-datacards__field" b-rydbkg88v9><span class="bui-datacards__field-label" b-rydbkg88v9>Name</span>
+                            <span class="bui-datacards__field-value" b-rydbkg88v9>Alice</span></div></div></article><article class="bui-datacards__card  bui-datacards__card--interactive" role="option" aria-selected="false" tabindex="0" blazor:onclick="<EVENT>" blazor:onkeydown="<EVENT>" b-rydbkg88v9><div class="bui-datacards__card-select" b-rydbkg88v9><span class="_bui-checkmark" role="checkbox" aria-checked="false" aria-readonly="false" aria-disabled="false" b-e9nwnc4pid><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="medium" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 19H6c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v12c0 .55-.45 1-1 1zm1-16H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg></bui-component></span></div><div class="bui-datacards__card-body" b-rydbkg88v9><div class="bui-datacards__field" b-rydbkg88v9><span class="bui-datacards__field-label" b-rydbkg88v9>Name</span>
+                            <span class="bui-datacards__field-value" b-rydbkg88v9>Bob</span></div></div></article></div></bui-component>
+  }
+]
