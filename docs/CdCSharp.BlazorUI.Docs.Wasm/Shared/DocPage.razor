@@ -1,5 +1,7 @@
 @using CdCSharp.BlazorUI.Docs.Components
 
+@inject NavigationManager Nav
+
 <CascadingValue Value="_ctx" IsFixed="true">
     <div class="doc-page">
         <header class="doc-page__header">
@@ -18,6 +20,11 @@
     </div>
 </CascadingValue>
 
+@if (ShowPerformanceDashboard())
+{
+    <CdCSharp.BlazorUI.Components.Diagnostics.BUIPerformanceDashboard />
+}
+
 @code {
     [Parameter] public string? Eyebrow { get; set; }
     [Parameter, EditorRequired] public string Title { get; set; } = default!;
@@ -29,4 +36,15 @@
 
     protected override void OnParametersSet()
         => _ctx = PageInstance is null ? null : new DocDemoContext(PageInstance);
+
+    private bool ShowPerformanceDashboard()
+    {
+#if DEBUG
+    var uri = new Uri(Nav.Uri);
+    var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+    return query["perf"] != null || query["performance"] != null;
+#else
+        return false;
+#endif
+    }
 }

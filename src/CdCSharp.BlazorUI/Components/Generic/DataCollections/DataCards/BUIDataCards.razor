@@ -60,7 +60,16 @@
                             <option value="">None</option>
                             @foreach (DataColumnRegistration<TItem> col in CachedSortableColumns)
                             {
-                                <option value="@col.Header">@col.Header</option>
+                                <option value="@col.Header">
+                                    @if (col.HeaderTemplate != null)
+                                    {
+                                        @col.HeaderTemplate
+                                    }
+                                    else
+                                    {
+                                        @col.Header
+                                    }
+                                </option>
                             }
                         </_BUIInSelect>
                         @if (!string.IsNullOrEmpty(State.SortColumn))
@@ -246,7 +255,16 @@
                     @foreach (DataColumnRegistration<TItem> col in VisibleColumns)
                     {
                         <div class="bui-datacards__field">
-                            <span class="bui-datacards__field-label">@col.Header</span>
+                            <span class="bui-datacards__field-label">
+                                @if (col.HeaderTemplate != null)
+                                {
+                                    @col.HeaderTemplate
+                                }
+                                else
+                                {
+                                    @col.Header
+                                }
+                            </span>
                             <span class="bui-datacards__field-value">
                                 @if (col.Template != null)
                                 {

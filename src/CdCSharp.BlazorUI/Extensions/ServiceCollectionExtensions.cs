@@ -3,6 +3,7 @@ using CdCSharp.BlazorUI.Components.Forms;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Components.Layout.Services;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
+using CdCSharp.BlazorUI.Core.Diagnostics;
 using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
 
@@ -33,6 +34,10 @@ public static class ServiceCollectionExtensions
 
         // Toast
         services.AddScoped<IToastService, ToastService>();
+
+#if DEBUG
+        services.AddSingleton<IBUIPerformanceService, BUIPerformanceService>();
+#endif
 
         return services;
     }

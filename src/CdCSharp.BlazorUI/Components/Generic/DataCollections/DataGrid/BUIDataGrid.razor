@@ -103,7 +103,16 @@
                                         <button type="button"
                                                 class="bui-datagrid__sort-btn"
                                                 @onclick="() => HandleSort(col)">
-                                            <span>@col.Header</span>
+                                            <span>
+                                                @if (col.HeaderTemplate != null)
+                                                {
+                                                    @col.HeaderTemplate
+                                                }
+                                                else
+                                                {
+                                                    @col.Header
+                                                }
+                                            </span>
                                             <span class="bui-datagrid__sort-icon" aria-hidden="true">
                                                 @if (State.SortColumn == col.Header)
                                                 {
@@ -121,7 +130,14 @@
                                     }
                                     else
                                     {
-                                        @col.Header
+                                        @if (col.HeaderTemplate != null)
+                                        {
+                                            @col.HeaderTemplate
+                                        }
+                                        else
+                                        {
+                                            @col.Header
+                                        }
                                     }
                                 </th>
                             }

@@ -47,7 +47,6 @@
     </DocDemo>
 
     <DocDemo Key="Selection" Title="@Loc["Multiple selection"]">
-        <div class="demo-stack">
             <div>@Loc["Selected"]: <strong>@_selected.Count</strong></div>
             <BUIDataGrid TItem="Person"
                          Items="_people"
@@ -60,7 +59,6 @@
                     <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="@Loc["Age"]" />
                 </Columns>
             </BUIDataGrid>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Template" Title="@Loc["Custom templates"]" Description="@Loc["Use Template with context to render any markup inside a cell."]">
@@ -88,7 +86,6 @@
     </DocDemo>
 
     <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-        <div class="demo-stack">
             <BUIDataGrid Items="_people" Shadow="@BUIShadowPresets.Elevation(3)">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="@Loc["Name"]" />
@@ -101,7 +98,6 @@
                     <BUIDataColumn TItem="Person" Property="@(p => p.Age)" Header="@Loc["Age"]" />
                 </Columns>
             </BUIDataGrid>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

@@ -43,6 +43,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="Components\Diagnostics\BUIPerformanceDashboard.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="Components\Diagnostics\BUIPerformanceDashboard.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.CodeGeneration\CdCSharp.BlazorUI.CodeGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\CdCSharp.BlazorUI.SyntaxHighlight\CdCSharp.BlazorUI.SyntaxHighlight.csproj" />
 	</ItemGroup>

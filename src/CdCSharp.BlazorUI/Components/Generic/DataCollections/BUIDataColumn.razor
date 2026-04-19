@@ -16,6 +16,7 @@
     [Parameter] public bool Filterable { get; set; }
     [Parameter] public string? Format { get; set; }
     [Parameter] public string? Header { get; set; }
+    [Parameter] public RenderFragment? HeaderTemplate { get; set; }
     [Parameter] public string? HeaderClass { get; set; }
     [Parameter] public Expression<Func<TItem, object?>>? Property { get; set; }
     [Parameter] public bool Sortable { get; set; }
@@ -50,6 +51,7 @@
                 _registration = new DataColumnRegistration<TItem>
                 {
                     Header = Header ?? _propertyName,
+                    HeaderTemplate = HeaderTemplate,
                     ValueSelector = _compiledSelector,
                     Template = Template,
                     Format = Format,
@@ -69,6 +71,7 @@
             else if (_registration != null)
             {
                 _registration.Header = Header ?? _propertyName;
+                _registration.HeaderTemplate = HeaderTemplate;
                 _registration.ValueSelector = _compiledSelector;
                 _registration.Template = Template;
                 _registration.Format = Format;

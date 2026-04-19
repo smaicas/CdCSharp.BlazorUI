@@ -15,7 +15,6 @@
     </DocDemo>
 
     <DocDemo Key="Placements" Title="@Loc["Placements"]" Description="@Loc["Four sides × three alignments (Start, center, End)."]">
-        <div class="demo-grid" style="padding: 2.5rem 0;">
             <BUITooltip Text="@Loc["Top"]" Placement="TooltipPlacement.Top"><BUIButton Text="@Loc["Top"]" Size="SizeEnum.Small" /></BUITooltip>
             <BUITooltip Text="@Loc["Bottom"]" Placement="TooltipPlacement.Bottom"><BUIButton Text="@Loc["Bottom"]" Size="SizeEnum.Small" /></BUITooltip>
             <BUITooltip Text="@Loc["Left"]" Placement="TooltipPlacement.Left"><BUIButton Text="@Loc["Left"]" Size="SizeEnum.Small" /></BUITooltip>
@@ -24,11 +23,9 @@
             <BUITooltip Text="@Loc["TopEnd"]" Placement="TooltipPlacement.TopEnd"><BUIButton Text="@Loc["TopEnd"]" Size="SizeEnum.Small" /></BUITooltip>
             <BUITooltip Text="@Loc["BottomStart"]" Placement="TooltipPlacement.BottomStart"><BUIButton Text="@Loc["BottomStart"]" Size="SizeEnum.Small" /></BUITooltip>
             <BUITooltip Text="@Loc["BottomEnd"]" Placement="TooltipPlacement.BottomEnd"><BUIButton Text="@Loc["BottomEnd"]" Size="SizeEnum.Small" /></BUITooltip>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Triggers" Title="@Loc["Triggers"]">
-        <div class="demo-row">
             <BUITooltip Text="@Loc["Hover (default)"]" Trigger="TooltipTrigger.Hover">
                 <BUIButton Text="@Loc["Hover"]" />
             </BUITooltip>
@@ -41,11 +38,9 @@
             <BUITooltip Text="@Loc["Hover or focus"]" Trigger="TooltipTrigger.HoverAndFocus">
                 <BUIButton Text="@Loc["Hover + Focus"]" />
             </BUITooltip>
-        </div>
     </DocDemo>
 
     <DocDemo Key="RichContent" Title="@Loc["Rich content"]" Description="@Loc["Use TooltipContent and ChildContent slots."]">
-        <div class="demo-row">
             <BUITooltip>
                 <ChildContent>
                     <BUIButton Text="@Loc["With icon + text"]" />
@@ -73,22 +68,18 @@
                     </div>
                 </TooltipContent>
             </BUITooltip>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Interactive" Title="@Loc["Interactive + auto-close"]">
-        <div class="demo-row">
             <BUITooltip Text="@Loc["Closes in 2s"]" AutoCloseAfterMs="2000">
                 <BUIButton Text="@Loc["Auto-close 2s"]" />
             </BUITooltip>
             <BUITooltip Text="@Loc["Hover into tooltip to keep it open"]" Interactive="true" AutoCloseAfterMs="3000">
                 <BUIButton Text="@Loc["Interactive + auto-close"]" />
             </BUITooltip>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Delays" Title="@Loc["Delays + offset"]">
-        <div class="demo-row">
             <BUITooltip Text="@Loc["Instant show"]" ShowDelay="0">
                 <BUIButton Text="@Loc["No show delay"]" />
             </BUITooltip>
@@ -101,7 +92,6 @@
             <BUITooltip Text="@Loc["No arrow"]" Arrow="false">
                 <BUIButton Text="@Loc["No arrow"]" />
             </BUITooltip>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

@@ -1,5 +1,6 @@
 ﻿using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Components;
+using CdCSharp.BlazorUI.Core.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.JSInterop;
@@ -10,6 +11,16 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 {
     private readonly BUIComponentAttributesBuilder _styleBuilder = new();
     private IJSObjectReference? _behaviorInstance;
+
+#if DEBUG
+    [Inject] private IBUIPerformanceService? PerformanceService { get; set; }
+    private readonly System.Diagnostics.Stopwatch _stopwatch = new();
+    private System.Diagnostics.Stopwatch? _initStopwatch;
+
+    [Parameter]
+    public bool TrackPerformanceEnabled { get; set; } = true;
+
+#endif
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
@@ -41,6 +52,80 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
         // Default: no custom data attributes
     }
 
+    protected override void OnInitialized()
+    {
+#if DEBUG
+        if (TrackPerformanceEnabled)
+        {
+            _initStopwatch = System.Diagnostics.Stopwatch.StartNew();
+        }
+#endif
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+#if DEBUG
+        if (TrackPerformanceEnabled)
+        {
+            _stopwatch.Restart();
+        }
+#endif
+        base.OnParametersSet();
+        _styleBuilder.BuildStyles(this, AdditionalAttributes);
+#if DEBUG
+        if (TrackPerformanceEnabled)
+        {
+            _stopwatch.Stop();
+            PerformanceService?.RecordParametersSet(
+                GetType().Name,
+                _stopwatch.Elapsed.TotalMilliseconds);
+        }
+#endif
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+#if DEBUG
+            if (TrackPerformanceEnabled)
+            {
+                _initStopwatch?.Stop();
+                PerformanceService?.RecordInit(
+                    GetType().Name,
+                    _initStopwatch?.Elapsed.TotalMilliseconds ?? 0);
+            }
+#endif
+            _behaviorInstance = await BUIComponentJsBehaviorBuilder
+                .For(this, BehaviorJsInterop)
+                .BuildAndAttachAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+#if DEBUG
+        if (TrackPerformanceEnabled)
+        {
+            _stopwatch.Restart();
+        }
+#endif
+        _styleBuilder.PatchVolatileAttributes(this);
+        base.BuildRenderTree(builder);
+#if DEBUG
+        if (TrackPerformanceEnabled)
+        {
+            _stopwatch.Stop();
+            PerformanceService?.RecordRenderTreeBuild(
+                GetType().Name,
+                _stopwatch.Elapsed.TotalMilliseconds);
+        }
+#endif
+    }
+
     public virtual async ValueTask DisposeAsync()
     {
         if (_behaviorInstance != null)
@@ -63,29 +148,5 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
                 // Disposal raced with in-flight call being cancelled
             }
         }
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _behaviorInstance = await BUIComponentJsBehaviorBuilder
-                .For(this, BehaviorJsInterop)
-                .BuildAndAttachAsync();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        _styleBuilder.BuildStyles(this, AdditionalAttributes);
-    }
-
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        _styleBuilder.PatchVolatileAttributes(this);
-        base.BuildRenderTree(builder);
     }
 }

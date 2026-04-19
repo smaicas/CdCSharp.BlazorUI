@@ -11,6 +11,7 @@ public sealed class DataColumnRegistration<TItem>
     public bool Filterable { get; set; }
     public string? Format { get; set; }
     public string? Header { get; set; }
+    public RenderFragment? HeaderTemplate { get; set; }
     public string? HeaderClass { get; set; }
     public bool Sortable { get; set; }
     public RenderFragment<TItem>? Template { get; set; }

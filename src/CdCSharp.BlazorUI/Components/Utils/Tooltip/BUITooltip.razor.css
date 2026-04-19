@@ -25,6 +25,7 @@
     width: max-content;
     max-width: var(--bui-tooltip-max-width, 300px);
     word-wrap: break-word;
+    white-space:break-spaces;
 }
 
 .bui-tooltip__arrow {

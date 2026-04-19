@@ -1,7 +1,7 @@
 {
-  "name": "CdCSharp.BlazorUI Docs",
+  "name": "BlazorUI Docs",
   "short_name": "BlazorUI",
-  "description": "Official documentation for CdCSharp.BlazorUI — a modern Blazor component library for .NET 10.",
+  "description": "Official documentation for BlazorUI — a modern Blazor component library for .NET 10.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
