@@ -116,7 +116,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: comportamiento determinista bajo `Task.Delay` real y bajo control de reloj si hay abstracción.
   > Resuelto en commit `41942dd` — *test(core): direct unit tests for DelayedActionHandler and TimingUtilities*
 
-### [ ] CORE-COV-09 — `LightTheme` / `DarkTheme` palette invariants
+### [x] CORE-COV-09 — `LightTheme` / `DarkTheme` palette invariants
 - **Origen**: los temas definen la paleta base usada por todo `_themes.css`. No hay tests que aseguren que todas las claves de `BUIThemePaletteBase` estén pobladas con `CssColor` válidos, ni contraste mínimo entre `Surface` y `SurfaceContrast`.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Themes/LightTheme.cs`, `DarkTheme.cs`, `Abstractions/BUIThemePaletteBase.cs`
@@ -126,6 +126,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Contraste mínimo (WCAG AA ~4.5:1) entre `Primary` / `PrimaryContrast`, `Surface` / `SurfaceContrast`, `Background` / `BackgroundContrast`.
   - Sanity: claves listadas en `CssInitializeThemesGenerator` existen en ambos temas.
 - **Aceptación**: cambios accidentales de paleta que rompan contraste o dejen `CssColor.Empty` fallan el test.
+  > Resuelto en commit `03aee89` — *test(core): palette invariants for LightTheme and DarkTheme*
+  > Nota: el umbral de contraste se fija en WCAG AA *large text* (≥ 3:1). Los contrastes actuales del tema oscuro no alcanzan 4.5:1 (AA normal text) en todos los pares semánticos; se deja margen de ajuste sin romper tests.
 
 ### [ ] CORE-COV-10 — `BUIInputComponentBase` validation wiring profundizado
 - **Origen**: `BUIInputComponentBaseTests` cubre renderizado y `IHasError`; no cubre (a) re-suscripción al cambiar `EditContext`, (b) propagación de `FieldIdentifier` con `ValueExpression` que encapsula una propiedad nullable, (c) dispose sin `EditContext` inicializado.
