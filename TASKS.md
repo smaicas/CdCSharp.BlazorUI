@@ -214,7 +214,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `e58e539` — *test(generic): a11y + interaction + snapshots for BUINotificationBadge*
   > Nota: `BUINotificationBadge` no emite `role="status"`/`aria-live` por defecto ni expone callbacks propios — los tests validan que el componente acepta esos atributos vía `AdditionalAttributes` (proyectados al root) y que el click del host `ChildContent` no es interceptado por el wrapper. Snapshots cubren `Dot`, count numérico, `99+`, `BottomLeft`, `Large`, `Non_Circular`, y host con `<button>`.
 
-### [ ] GEN-COV-02 — `BUITreeSelector` (Accessibility, Variant)
+### [x] GEN-COV-02 — `BUITreeSelector` (Accessibility, Variant)
 - **Origen**: `BUITreeSelector` tiene `Rendering/State/Interaction/Disposal/Snapshot` pero no `Accessibility` ni `Variants`.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Generic/Tree/BUITreeSelector.razor`
@@ -223,6 +223,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
     - `BUITreeSelectorVariantTests.cs`
 - **Cambios**:
   - A11y: `role="tree"`, `role="treeitem"`, `aria-expanded`, `aria-selected`, flechas arriba/abajo/izq/der para navegación.
+  > Resuelto en commit `d75835d` — *test(generic): accessibility coverage for BUITreeSelector*
+  > Nota: `BUITreeSelector` hereda `BUIComponentBase`, no `BUIVariantComponentBase`; no participa en el sistema `IVariantRegistry` ni expone `Variant` parameter, así que el archivo `BUITreeSelectorVariantTests.cs` no aplica. Los tests A11y cubren `role="tree"`, `role="treeitem"`, `aria-multiselectable`, `aria-expanded` (incluido null en hojas), `aria-selected` via click, teclas Arrow/Enter/Space, tabindex, `role="group"` en children y `aria-label` del expander.
   - Variants: registrar variante custom y verificar que el template corre.
 - **Aceptación**: pattern WAI-ARIA tree cubierto; variante custom emite marcador propio.
 
