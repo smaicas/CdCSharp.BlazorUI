@@ -23,7 +23,7 @@ public class BUITreeSelectorDisposalTests
             .Add(c => c.KeySelector, m => m.Key));
 
         // Act + Assert
-        var act = () => { cut.Instance.Dispose(); return Task.CompletedTask; };
+        Func<Task> act = () => { cut.Instance.Dispose(); return Task.CompletedTask; };
         await act.Should().NotThrowAsync();
     }
 
@@ -44,7 +44,7 @@ public class BUITreeSelectorDisposalTests
 
         // Act — select item then dispose
         cut.FindAll(".bui-tree-selector__node-content")[0].Click();
-        var act = () => { cut.Instance.Dispose(); return Task.CompletedTask; };
+        Func<Task> act = () => { cut.Instance.Dispose(); return Task.CompletedTask; };
         await act.Should().NotThrowAsync();
     }
 }

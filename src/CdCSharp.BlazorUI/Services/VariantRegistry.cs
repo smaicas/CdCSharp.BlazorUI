@@ -61,10 +61,7 @@ internal sealed class VariantRegistryInitializer : IVariantRegistryInitializer
 {
     private readonly Action<VariantBuilder> _configure;
 
-    public VariantRegistryInitializer(Action<VariantBuilder> configure)
-    {
-        _configure = configure;
-    }
+    public VariantRegistryInitializer(Action<VariantBuilder> configure) => _configure = configure;
 
     public void Initialize(IVariantRegistry registry)
     {

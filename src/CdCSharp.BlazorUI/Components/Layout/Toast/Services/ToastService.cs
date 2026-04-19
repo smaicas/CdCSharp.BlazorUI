@@ -132,10 +132,7 @@ public sealed class ToastService : IToastService
         ShowFragment(fragment, options);
     }
 
-    public void Show<TComponent>(ToastOptions? options = null) where TComponent : IComponent
-    {
-        Show<TComponent>(null, options);
-    }
+    public void Show<TComponent>(ToastOptions? options = null) where TComponent : IComponent => Show<TComponent>(null, options);
 
     public void Show<TComponent>(IDictionary<string, object?>? parameters, ToastOptions? options = null) where TComponent : IComponent
     {

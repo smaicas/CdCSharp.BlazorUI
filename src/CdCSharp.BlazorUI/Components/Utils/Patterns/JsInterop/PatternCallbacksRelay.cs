@@ -21,10 +21,7 @@ public sealed class PatternCallbacksRelay : IDisposable
 
     public DotNetObjectReference<PatternCallbacksRelay> DotNetReference { get; }
 
-    public void Dispose()
-    {
-        DotNetReference.Dispose();
-    }
+    public void Dispose() => DotNetReference.Dispose();
 
     [JSInvokable]
     public Task OnPaste(string text)

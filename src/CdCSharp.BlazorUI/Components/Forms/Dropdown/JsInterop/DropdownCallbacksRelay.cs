@@ -18,10 +18,7 @@ public sealed class DropdownCallbacksRelay : IDisposable
 
     public DotNetObjectReference<DropdownCallbacksRelay> DotNetReference { get; }
 
-    public void Dispose()
-    {
-        DotNetReference.Dispose();
-    }
+    public void Dispose() => DotNetReference.Dispose();
 
     [JSInvokable]
     public Task OnClickOutside()

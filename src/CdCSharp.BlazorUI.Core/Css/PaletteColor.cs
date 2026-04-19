@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CdCSharp.BlazorUI.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public sealed class PaletteColor
 {
@@ -32,7 +28,10 @@ public sealed class PaletteColor
     public static PaletteColor Shadow => new("--palette-shadow");
     public static PaletteColor White => new("--palette-white");
 
-    public static implicit operator string(PaletteColor p) => $"var({p._variable})";
+    public static implicit operator string(PaletteColor p)
+    {
+        return $"var({p._variable})";
+    }
 
     public override string ToString() => $"var({_variable})";
 }

@@ -1,8 +1,8 @@
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
+using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.DataCollections;
 

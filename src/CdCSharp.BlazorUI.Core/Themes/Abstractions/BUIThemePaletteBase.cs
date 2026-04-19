@@ -1,5 +1,4 @@
 ﻿using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Css;
 using System.Reflection;
 
 namespace CdCSharp.BlazorUI.Core.Theming.Abstractions;
@@ -80,8 +79,5 @@ public abstract class BUIThemePaletteBase
         return variables;
     }
 
-    private static string ToCssVariableName(string propertyName)
-    {
-        return propertyName.ToLowerInvariant();
-    }
+    private static string ToCssVariableName(string propertyName) => propertyName.ToLowerInvariant();
 }

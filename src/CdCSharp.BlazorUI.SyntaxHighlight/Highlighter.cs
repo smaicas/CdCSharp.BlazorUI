@@ -48,10 +48,7 @@ public sealed class Highlighter
         return _renderer.Render(tokens, Options);
     }
 
-    public void RegisterLanguage(string name, LanguageDefinition definition)
-    {
-        _languages[name] = definition;
-    }
+    public void RegisterLanguage(string name, LanguageDefinition definition) => _languages[name] = definition;
 
     public void RegisterLanguage(string[] aliases, LanguageDefinition definition)
     {

@@ -1,6 +1,6 @@
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 using CdCSharp.BlazorUI.Core.Themes;
+using CdCSharp.BlazorUI.Core.Theming.Abstractions;
 using FluentAssertions;
 using System.Reflection;
 

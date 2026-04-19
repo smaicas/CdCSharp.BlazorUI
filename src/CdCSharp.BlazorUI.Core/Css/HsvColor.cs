@@ -46,9 +46,15 @@ public readonly struct HsvColor : IEquatable<HsvColor>
         return new HsvColor((int)Math.Round(h), Math.Round(s, 4), Math.Round(v, 4));
     }
 
-    public static bool operator !=(HsvColor left, HsvColor right) => !left.Equals(right);
+    public static bool operator !=(HsvColor left, HsvColor right)
+    {
+        return !left.Equals(right);
+    }
 
-    public static bool operator ==(HsvColor left, HsvColor right) => left.Equals(right);
+    public static bool operator ==(HsvColor left, HsvColor right)
+    {
+        return left.Equals(right);
+    }
 
     public bool Equals(HsvColor other) =>
         Hue == other.Hue &&

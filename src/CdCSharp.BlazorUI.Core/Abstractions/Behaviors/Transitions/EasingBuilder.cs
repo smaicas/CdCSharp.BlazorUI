@@ -43,7 +43,10 @@ public class EasingBuilder
     { }
 
     // Implicit conversion
-    public static implicit operator string(EasingBuilder builder) => builder.Build();
+    public static implicit operator string(EasingBuilder builder)
+    {
+        return builder.Build();
+    }
 
     public string Build() => _value;
 

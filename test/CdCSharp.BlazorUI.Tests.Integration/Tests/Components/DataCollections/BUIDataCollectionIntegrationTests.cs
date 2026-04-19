@@ -1,9 +1,10 @@
+using AngleSharp.Dom;
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.DataCollections;
 
@@ -59,7 +60,7 @@ public class BUIDataCollectionIntegrationTests
             .Add(c => c.Columns, Columns));
 
         // Assert
-        var cells = cut.FindAll("[role='gridcell']");
+        IReadOnlyList<IElement> cells = cut.FindAll("[role='gridcell']");
         cells[0].TextContent.Should().Be("Alice");
         cells[1].TextContent.Should().Be("30");
     }
@@ -76,7 +77,7 @@ public class BUIDataCollectionIntegrationTests
             .Add(c => c.Columns, Columns));
 
         // Assert — card has Name=Alice, Age=30
-        var values = cut.FindAll(".bui-datacards__field-value");
+        IReadOnlyList<IElement> values = cut.FindAll(".bui-datacards__field-value");
         values[0].TextContent.Should().Be("Alice");
         values[1].TextContent.Should().Be("30");
     }

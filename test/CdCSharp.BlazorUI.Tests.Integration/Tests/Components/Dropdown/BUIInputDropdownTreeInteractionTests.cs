@@ -13,7 +13,7 @@ public class BUIInputDropdownTreeInteractionTests
 {
     private record TreeNode(string Key, string Name, List<TreeNode>? Children = null);
 
-    
+
     private class DummyModel { public string? Value { get; set; } }
     private static readonly DummyModel _dm = new();
     private static readonly Expression<Func<string?>> _expr = () => _dm.Value;

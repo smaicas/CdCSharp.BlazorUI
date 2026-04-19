@@ -1,10 +1,10 @@
-using System.Linq.Expressions;
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using System.Linq.Expressions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.DataCollections;
 

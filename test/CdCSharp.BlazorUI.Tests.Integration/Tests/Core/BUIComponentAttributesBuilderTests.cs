@@ -4,8 +4,6 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components.BaseComponents;
 using FluentAssertions;
-using Microsoft.JSInterop;
-using NSubstitute;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core;
 

@@ -10,10 +10,7 @@ public sealed class LanguageDefinitionBuilder
     private bool _caseSensitive = true;
     private int _nextPriority = 1000;
 
-    internal LanguageDefinitionBuilder(string name)
-    {
-        _name = name;
-    }
+    internal LanguageDefinitionBuilder(string name) => _name = name;
 
     public LanguageDefinitionBuilder AddBalanced(
         TokenType tokenType,
@@ -28,10 +25,7 @@ public sealed class LanguageDefinitionBuilder
         return this;
     }
 
-    public LanguageDefinitionBuilder AddBlockComment(string start, string end, int? priority = null)
-    {
-        return AddDelimited(TokenType.Comment, start, end, multiline: true, priority: priority);
-    }
+    public LanguageDefinitionBuilder AddBlockComment(string start, string end, int? priority = null) => AddDelimited(TokenType.Comment, start, end, multiline: true, priority: priority);
 
     public LanguageDefinitionBuilder AddContextualKeywords(
     TokenType tokenType,
@@ -72,10 +66,7 @@ public sealed class LanguageDefinitionBuilder
         return this;
     }
 
-    public LanguageDefinitionBuilder AddLineComment(string start, int? priority = null)
-    {
-        return AddDelimited(TokenType.Comment, start, "\n", multiline: false, priority: priority);
-    }
+    public LanguageDefinitionBuilder AddLineComment(string start, int? priority = null) => AddDelimited(TokenType.Comment, start, "\n", multiline: false, priority: priority);
 
     public LanguageDefinitionBuilder AddMarkup(int? priority = null)
     {
@@ -146,15 +137,9 @@ public sealed class LanguageDefinitionBuilder
         string end,
         string? escape = "\\",
         TokenType tokenType = TokenType.String,
-        int? priority = null)
-    {
-        return AddDelimited(tokenType, start, end, escape, multiline: true, priority: priority);
-    }
+        int? priority = null) => AddDelimited(tokenType, start, end, escape, multiline: true, priority: priority);
 
-    public LanguageDefinition Build()
-    {
-        return new LanguageDefinition(_name, _caseSensitive, [.. _rules]);
-    }
+    public LanguageDefinition Build() => new(_name, _caseSensitive, [.. _rules]);
 
     public LanguageDefinitionBuilder CaseSensitive(bool value = true)
     {

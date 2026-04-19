@@ -1,6 +1,6 @@
-using System.Reflection;
 using CdCSharp.BlazorUI.Components;
 using FluentAssertions;
+using System.Reflection;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core;
 
@@ -14,11 +14,9 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core;
 public class FeatureDefinitionsTests
 {
     [Fact]
-    public void DataAttributes_Component_Should_Follow_Bui_Prefix_Convention()
-    {
+    public void DataAttributes_Component_Should_Follow_Bui_Prefix_Convention() =>
         // Assert — data-bui-component is the root data attribute
         FeatureDefinitions.DataAttributes.Component.Should().StartWith("data-bui-");
-    }
 
     [Fact]
     public void DataAttributes_All_Should_Start_With_Data_Bui()
@@ -81,10 +79,7 @@ public class FeatureDefinitionsTests
     }
 
     [Fact]
-    public void Tags_Component_Should_Be_Bui_Component()
-    {
-        FeatureDefinitions.Tags.Component.Should().Be("bui-component");
-    }
+    public void Tags_Component_Should_Be_Bui_Component() => FeatureDefinitions.Tags.Component.Should().Be("bui-component");
 
     private static IEnumerable<string> GetStringConstants(Type type)
     {

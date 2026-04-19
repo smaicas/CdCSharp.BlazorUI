@@ -1,10 +1,9 @@
 using Bunit;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Dialog;
 

@@ -48,10 +48,7 @@ public abstract class BUITreeNodeBase<TRegistration> : ComponentBase
 
     protected abstract string GenerateDefaultKey();
 
-    protected override void OnInitialized()
-    {
-        ResolvedKey = Key ?? GenerateDefaultKey();
-    }
+    protected override void OnInitialized() => ResolvedKey = Key ?? GenerateDefaultKey();
 
     protected override void OnParametersSet()
     {

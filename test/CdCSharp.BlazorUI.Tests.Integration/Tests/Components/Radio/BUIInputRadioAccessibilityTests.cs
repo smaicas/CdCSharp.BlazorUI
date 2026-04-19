@@ -1,6 +1,5 @@
 using AngleSharp.Dom;
 using Bunit;
-using CdCSharp.BlazorUI.Components.Forms;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components.Consumers;
@@ -42,7 +41,7 @@ public class BUIInputRadioAccessibilityTests
         IRenderedComponent<TestBUIInputRadioConsumer> cut = ctx.Render<TestBUIInputRadioConsumer>(p => p
             .Add(c => c.SelectedValue, "opt1"));
 
-        var options = cut.FindAll(".bui-radio__option");
+        IReadOnlyList<IElement> options = cut.FindAll(".bui-radio__option");
         options[0].GetAttribute("aria-checked").Should().Be("true");
         options[1].GetAttribute("aria-checked").Should().Be("false");
         options[2].GetAttribute("aria-checked").Should().Be("false");
@@ -57,7 +56,7 @@ public class BUIInputRadioAccessibilityTests
         IRenderedComponent<TestBUIInputRadioConsumer> cut = ctx.Render<TestBUIInputRadioConsumer>(p => p
             .Add(c => c.Option3Disabled, true));
 
-        var options = cut.FindAll(".bui-radio__option");
+        IReadOnlyList<IElement> options = cut.FindAll(".bui-radio__option");
         options[0].GetAttribute("aria-disabled").Should().Be("false");
         options[2].GetAttribute("aria-disabled").Should().Be("true");
     }
@@ -71,7 +70,7 @@ public class BUIInputRadioAccessibilityTests
         IRenderedComponent<TestBUIInputRadioConsumer> cut = ctx.Render<TestBUIInputRadioConsumer>(p => p
             .Add(c => c.Option3Disabled, true));
 
-        var options = cut.FindAll(".bui-radio__option");
+        IReadOnlyList<IElement> options = cut.FindAll(".bui-radio__option");
         options[0].GetAttribute("tabindex").Should().Be("0");
         options[2].GetAttribute("tabindex").Should().Be("-1");
     }

@@ -320,10 +320,7 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         }
     }
 
-    protected async Task HandleFilterInputChange(string? value)
-    {
-        await HandleFilterChange(new ChangeEventArgs { Value = value });
-    }
+    protected async Task HandleFilterInputChange(string? value) => await HandleFilterChange(new ChangeEventArgs { Value = value });
 
     protected async Task ClearFilterClicked(MouseEventArgs e) => ClearFilter();
 
@@ -366,10 +363,7 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
         await NotifySelectionChanged();
     }
 
-    protected bool IsAllSelected()
-    {
-        return ProcessedItems.Any() && ProcessedItems.All(State.IsSelected);
-    }
+    protected bool IsAllSelected() => ProcessedItems.Any() && ProcessedItems.All(State.IsSelected);
 
     protected async Task NotifySelectionChanged()
     {

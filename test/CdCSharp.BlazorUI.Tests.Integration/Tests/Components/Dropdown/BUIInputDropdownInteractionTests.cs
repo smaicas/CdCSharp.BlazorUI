@@ -11,7 +11,7 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Dropdown;
 [Trait("Component Interaction", "BUIInputDropdown")]
 public class BUIInputDropdownInteractionTests
 {
-    
+
     private class DummyModel { public string? Value { get; set; } }
     private static readonly DummyModel _dm = new();
     private static readonly Expression<Func<string?>> _expr = () => _dm.Value;

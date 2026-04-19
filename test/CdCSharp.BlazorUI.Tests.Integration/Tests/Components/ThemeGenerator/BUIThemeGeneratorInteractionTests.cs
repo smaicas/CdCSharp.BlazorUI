@@ -1,3 +1,4 @@
+using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -36,7 +37,7 @@ public class BUIThemeGeneratorInteractionTests
         IRenderedComponent<BUIThemeGenerator> cut = ctx.Render<BUIThemeGenerator>();
 
         // Act — click Export JSON button (second action group, first button)
-        var actionGroups = cut.FindAll(".bui-theme-generator__actions-group");
+        IReadOnlyList<IElement> actionGroups = cut.FindAll(".bui-theme-generator__actions-group");
         actionGroups[1].QuerySelector("button")!.Click();
 
         // Assert — export code block should be visible

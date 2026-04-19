@@ -1,10 +1,10 @@
-using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace CdCSharp.BlazorUI.CodeGeneration.Tests.Infrastructure;
 

@@ -1,11 +1,10 @@
 using Bunit;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.ThemeSelector;
 

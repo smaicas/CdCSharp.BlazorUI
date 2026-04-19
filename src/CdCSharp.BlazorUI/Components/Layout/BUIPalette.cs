@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-
-namespace CdCSharp.BlazorUI.Components.Layout;
+﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
 public sealed class BUIPalette
 {
@@ -26,7 +24,10 @@ public sealed class BUIPalette
 
     public BUIPalette(IReadOnlyDictionary<string, string> palette)
     {
-        CssColor C(string key) => new(palette[key]);
+        CssColor C(string key)
+        {
+            return new(palette[key]);
+        }
 
         Background = C("--palette-background");
         BackgroundContrast = C("--palette-backgroundcontrast");

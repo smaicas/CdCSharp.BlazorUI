@@ -16,10 +16,7 @@ internal class WasmLocalizationPersistence : ILocalizationPersistence
     private readonly IJSRuntime _jsRuntime;
     private IJSObjectReference? _module;
 
-    public WasmLocalizationPersistence(IJSRuntime jsRuntime)
-    {
-        _jsRuntime = jsRuntime;
-    }
+    public WasmLocalizationPersistence(IJSRuntime jsRuntime) => _jsRuntime = jsRuntime;
 
     public async Task<string?> GetStoredCultureAsync()
     {

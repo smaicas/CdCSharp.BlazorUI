@@ -99,10 +99,7 @@ internal sealed class AllRowStylePattern : RowStylePattern
 {
     private readonly string _backgroundColor;
 
-    internal AllRowStylePattern(string backgroundColor)
-    {
-        _backgroundColor = backgroundColor;
-    }
+    internal AllRowStylePattern(string backgroundColor) => _backgroundColor = backgroundColor;
 
     internal override bool IsCssExpressible => true;
 
@@ -124,10 +121,7 @@ internal sealed class CustomRowStylePattern : RowStylePattern
 {
     private readonly Func<int, RowStyle?> _selector;
 
-    internal CustomRowStylePattern(Func<int, RowStyle?> selector)
-    {
-        _selector = selector;
-    }
+    internal CustomRowStylePattern(Func<int, RowStyle?> selector) => _selector = selector;
 
     internal override bool IsCssExpressible => false;
 

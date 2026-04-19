@@ -17,10 +17,7 @@ public class DropdownOption<TOption> : ComponentBase, ISelectionOption, IDisposa
     [Parameter, EditorRequired] public TOption? Value { get; set; }
     object? ISelectionOption.Value => Value;
 
-    public void Dispose()
-    {
-        Container?.UnregisterOption(this);
-    }
+    public void Dispose() => Container?.UnregisterOption(this);
 
     protected override void OnInitialized()
     {

@@ -1,3 +1,4 @@
+using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -9,14 +10,11 @@ namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.ThemeGenerator;
 [Trait("Component Validation", "BUIThemeGenerator")]
 public class BUIThemeGeneratorValidationTests
 {
-    private static void OpenImportDialog(IRenderedComponent<BUIThemeGenerator> cut)
-    {
-        cut.Find(".bui-theme-generator__actions-group button").Click();
-    }
+    private static void OpenImportDialog(IRenderedComponent<BUIThemeGenerator> cut) => cut.Find(".bui-theme-generator__actions-group button").Click();
 
     private static void ClickImportButton(IRenderedComponent<BUIThemeGenerator> cut)
     {
-        var btn = cut.FindAll("[role='dialog'] button")
+        IElement? btn = cut.FindAll("[role='dialog'] button")
             .FirstOrDefault(b => b.TextContent.Trim() == "Import");
         btn?.Click();
     }

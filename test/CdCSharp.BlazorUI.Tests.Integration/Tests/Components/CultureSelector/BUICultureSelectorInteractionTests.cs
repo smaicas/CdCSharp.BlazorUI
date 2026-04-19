@@ -1,12 +1,12 @@
 using AngleSharp.Dom;
 using Bunit;
-using System.Globalization;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
+using System.Globalization;
 using ServerSelector = CdCSharp.BlazorUI.Components.Server.BUICultureSelector;
-using WasmSelector = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector;
 using ServerVariant = CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant;
+using WasmSelector = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector;
 using WasmVariant = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.CultureSelector;
@@ -27,14 +27,14 @@ public class BUICultureSelectorInteractionTests
         {
             ctx.Render<ServerSelector>(p => p
                 .Add(c => c.Variant, ServerVariant.Dropdown)
-                .Add(c => c.OnCultureChanged, (CultureInfo ci) => { captured = ci; }))
+                .Add(c => c.OnCultureChanged, (CultureInfo ci) => captured = ci))
                 .Find("select").Change("es-ES");
         }
         else
         {
             ctx.Render<WasmSelector>(p => p
                 .Add(c => c.Variant, WasmVariant.Dropdown)
-                .Add(c => c.OnCultureChanged, (CultureInfo ci) => { captured = ci; }))
+                .Add(c => c.OnCultureChanged, (CultureInfo ci) => captured = ci))
                 .Find("select").Change("es-ES");
         }
 
@@ -84,21 +84,21 @@ public class BUICultureSelectorInteractionTests
 
         if (scenario.Name == "Server")
         {
-            var cut = ctx.Render<ServerSelector>(p => p
+            IRenderedComponent<ServerSelector> cut = ctx.Render<ServerSelector>(p => p
                 .Add(c => c.Variant, ServerVariant.Flags)
-                .Add(c => c.OnCultureChanged, (CultureInfo ci) => { captured = ci; }));
+                .Add(c => c.OnCultureChanged, (CultureInfo ci) => captured = ci));
             buttons = cut.FindAll("button");
         }
         else
         {
-            var cut = ctx.Render<WasmSelector>(p => p
+            IRenderedComponent<WasmSelector> cut = ctx.Render<WasmSelector>(p => p
                 .Add(c => c.Variant, WasmVariant.Flags)
-                .Add(c => c.OnCultureChanged, (CultureInfo ci) => { captured = ci; }));
+                .Add(c => c.OnCultureChanged, (CultureInfo ci) => captured = ci));
             buttons = cut.FindAll("button");
         }
 
         // Act — click a non-disabled (non-active) button
-        var clickable = buttons.FirstOrDefault(b => b.GetAttribute("disabled") == null);
+        IElement? clickable = buttons.FirstOrDefault(b => b.GetAttribute("disabled") == null);
         clickable?.Click();
 
         // Assert — callback fired if there was a non-active button

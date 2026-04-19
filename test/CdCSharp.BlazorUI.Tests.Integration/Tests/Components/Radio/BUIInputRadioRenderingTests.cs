@@ -1,6 +1,5 @@
 using AngleSharp.Dom;
 using Bunit;
-using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Components.Forms;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
@@ -101,7 +100,7 @@ public class BUIInputRadioRenderingTests
         IRenderedComponent<TestBUIInputRadioConsumer> cut = ctx.Render<TestBUIInputRadioConsumer>(p => p
             .Add(c => c.SelectedValue, "opt2"));
 
-        var options = cut.FindAll(".bui-radio__option");
+        IReadOnlyList<IElement> options = cut.FindAll(".bui-radio__option");
         options[0].GetAttribute("aria-checked").Should().Be("false");
         options[1].GetAttribute("aria-checked").Should().Be("true");
         options[2].GetAttribute("aria-checked").Should().Be("false");

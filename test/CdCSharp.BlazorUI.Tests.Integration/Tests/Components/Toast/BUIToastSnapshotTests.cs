@@ -1,10 +1,8 @@
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Components.Layout.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
-using VerifyXunit;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Toast;
 

@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-
-namespace CdCSharp.BlazorUI.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasShadow
 {

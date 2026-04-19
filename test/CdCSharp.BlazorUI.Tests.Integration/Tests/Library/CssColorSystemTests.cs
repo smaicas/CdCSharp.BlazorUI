@@ -1,5 +1,4 @@
 ﻿using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Css;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Library;

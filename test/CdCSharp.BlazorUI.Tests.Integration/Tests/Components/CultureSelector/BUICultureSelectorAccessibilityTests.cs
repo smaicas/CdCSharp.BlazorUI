@@ -4,8 +4,8 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
 using ServerSelector = CdCSharp.BlazorUI.Components.Server.BUICultureSelector;
-using WasmSelector = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector;
 using ServerVariant = CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant;
+using WasmSelector = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector;
 using WasmVariant = CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.CultureSelector;

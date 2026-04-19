@@ -63,10 +63,7 @@ public sealed class ComponentVariantBuilder<TComponent>
 {
     private readonly IVariantRegistry _registry;
 
-    internal ComponentVariantBuilder(IVariantRegistry registry)
-    {
-        _registry = registry;
-    }
+    internal ComponentVariantBuilder(IVariantRegistry registry) => _registry = registry;
 
     /// <summary>
     /// Registers a custom variant with its render template
@@ -92,10 +89,7 @@ public sealed class VariantBuilder
 {
     private readonly IVariantRegistry _registry;
 
-    internal VariantBuilder(IVariantRegistry registry)
-    {
-        _registry = registry;
-    }
+    internal VariantBuilder(IVariantRegistry registry) => _registry = registry;
 
     /// <summary>
     /// Start configuration for a specific component type
@@ -110,9 +104,6 @@ public sealed class VariantBuilder
     /// </code>
     /// </example>
     public ComponentVariantBuilder<TComponent> ForComponent<TComponent>()
-        where TComponent : ComponentBase
-    {
-        return new ComponentVariantBuilder<TComponent>(_registry);
-    }
+        where TComponent : ComponentBase => new(_registry);
 }
 #endregion

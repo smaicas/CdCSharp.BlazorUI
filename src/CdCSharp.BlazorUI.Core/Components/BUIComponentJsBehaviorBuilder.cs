@@ -20,10 +20,7 @@ internal sealed class BUIComponentJsBehaviorBuilder
 
     public static BUIComponentJsBehaviorBuilder For(
         ComponentBase component,
-        IBehaviorJsInterop jsInterop)
-    {
-        return new(component, jsInterop);
-    }
+        IBehaviorJsInterop jsInterop) => new(component, jsInterop);
 
     public async Task<IJSObjectReference?> BuildAndAttachAsync()
     {

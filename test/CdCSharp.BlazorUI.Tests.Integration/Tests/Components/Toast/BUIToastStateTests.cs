@@ -1,5 +1,4 @@
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using CdCSharp.BlazorUI.Components.Layout;
 using CdCSharp.BlazorUI.Components.Layout.Services;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;

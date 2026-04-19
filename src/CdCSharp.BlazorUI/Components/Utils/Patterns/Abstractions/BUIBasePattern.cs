@@ -147,18 +147,13 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
 
     protected abstract PatternState CreatePatternState();
 
-    protected virtual ValueTask DisposeAsyncCore()
-    {
-        return ValueTask.CompletedTask;
-    }
+    protected virtual ValueTask DisposeAsyncCore() => ValueTask.CompletedTask;
 
     protected abstract void InitializeFromText(string? text);
 
-    protected virtual string NormalizeSeparators(string text)
-    {
+    protected virtual string NormalizeSeparators(string text) =>
         // Default implementation - can be overridden
-        return text;
-    }
+        text;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -202,11 +197,9 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
         return true;
     }
 
-    protected virtual string ToggleValue(string currentValue, string placeholder)
-    {
+    protected virtual string ToggleValue(string currentValue, string placeholder) =>
         // Implementación por defecto - puede ser override
-        return currentValue;
-    }
+        currentValue;
 
     protected abstract bool ValidateComplete(string text);
 

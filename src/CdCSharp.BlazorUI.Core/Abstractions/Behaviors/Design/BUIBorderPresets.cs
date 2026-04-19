@@ -1,6 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Css;
-
-namespace CdCSharp.BlazorUI.Components;
+﻿namespace CdCSharp.BlazorUI.Components;
 
 public static class BUIBorderPresets
 {
@@ -63,7 +61,7 @@ public static class BUIBorderPresets
         BorderStyle.Create()
             .All("2px", BorderStyleType.Solid, BUIColor.Gray.Default);
 
-    public static BorderStyle Subtle => 
+    public static BorderStyle Subtle =>
         BorderStyle.Create()
             .All("1px", BorderStyleType.Solid, BUIColor.Gray.Lighten3);
 

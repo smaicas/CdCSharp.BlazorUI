@@ -1,3 +1,4 @@
+using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -58,7 +59,7 @@ public class BUITabsStateTests
             .Add(c => c.ActiveTab, "tab2"));
 
         // Assert — second tab button has active
-        var tabs = cut.FindAll("[role='tab']");
+        IReadOnlyList<IElement> tabs = cut.FindAll("[role='tab']");
         tabs[0].GetAttribute("data-bui-active").Should().Be("false");
         tabs[1].GetAttribute("data-bui-active").Should().Be("true");
     }

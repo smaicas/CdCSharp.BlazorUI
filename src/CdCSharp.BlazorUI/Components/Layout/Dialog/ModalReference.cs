@@ -29,8 +29,5 @@ public class ModalReference
         return Task.CompletedTask;
     }
 
-    internal void Cancel()
-    {
-        _resultSource.TrySetCanceled();
-    }
+    internal void Cancel() => _resultSource.TrySetCanceled();
 }

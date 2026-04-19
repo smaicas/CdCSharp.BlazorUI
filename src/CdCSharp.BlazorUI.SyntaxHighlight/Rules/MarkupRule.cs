@@ -6,10 +6,7 @@ public sealed class MarkupRule : ITokenRule
 {
     private const int MaxTagLength = 10000;
 
-    public MarkupRule(int priority = 0)
-    {
-        Priority = priority;
-    }
+    public MarkupRule(int priority = 0) => Priority = priority;
 
     public int Priority { get; }
 

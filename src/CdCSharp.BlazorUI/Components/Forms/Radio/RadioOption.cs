@@ -13,10 +13,7 @@ public class RadioOption<TOption> : ComponentBase, IRadioOption, IDisposable
     object? IRadioOption.RawValue => Value;
     [Parameter, EditorRequired] public TOption? Value { get; set; }
 
-    public void Dispose()
-    {
-        Container?.UnregisterOption(this);
-    }
+    public void Dispose() => Container?.UnregisterOption(this);
 
     protected override void OnInitialized()
     {

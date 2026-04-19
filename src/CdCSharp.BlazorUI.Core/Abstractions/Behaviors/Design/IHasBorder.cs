@@ -97,8 +97,10 @@ public sealed class BorderStyle
             Radius = _radius?.ToCss()
         };
 
-        static string? ToVarValue(Border? border) =>
-            border is null ? null : border.IsNone ? "none" : border.ToCss();
+        static string? ToVarValue(Border? border)
+        {
+            return border is null ? null : border.IsNone ? "none" : border.ToCss();
+        }
     }
 
     public string? GetColorCss()

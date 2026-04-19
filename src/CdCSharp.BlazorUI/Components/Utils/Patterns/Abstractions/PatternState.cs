@@ -21,8 +21,5 @@ public sealed class PatternState
         ));
     }
 
-    public string GetFullText()
-    {
-        return string.Join("", Spans.Select(s => s.DisplayValue));
-    }
+    public string GetFullText() => string.Join("", Spans.Select(s => s.DisplayValue));
 }

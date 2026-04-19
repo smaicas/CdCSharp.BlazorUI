@@ -73,13 +73,7 @@
     </DocDemo>
 
     <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
-        <BUIInputDropdown @bind-Value="_colorValue" Label="@Loc["Custom Color"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast">
-            @foreach (var option in _optionsStrings)
-            {
-                <DropdownOption Value="@option" Text="@option" />
-            }
-        </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_backgroundValue" Label="@Loc["Custom Background"]" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast">
+        <BUIInputDropdown @bind-Value="_colorValue" Label="@Loc["Custom Color & Background"]" Color="@PaletteColor.Secondary" BackgroundColor="@PaletteColor.SecondaryContrast">
             @foreach (var option in _optionsStrings)
             {
                 <DropdownOption Value="@option" Text="@option" />

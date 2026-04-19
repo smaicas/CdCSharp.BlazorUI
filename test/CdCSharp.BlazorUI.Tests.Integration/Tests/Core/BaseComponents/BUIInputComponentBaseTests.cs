@@ -150,10 +150,7 @@ public class BUIInputComponentBaseTests
             .Add(c => c.ValueExpression, () => model.Value));
 
         // Simulamos cambio en el input (ejecuta CurrentValueAsString = value)
-        await ctx.Renderer.Dispatcher.InvokeAsync(() =>
-        {
-            cut.Find("input").Change("updated");
-        });
+        await ctx.Renderer.Dispatcher.InvokeAsync(() => cut.Find("input").Change("updated"));
 
         cut.Instance.Value.Should().Be("updated");
     }

@@ -54,15 +54,12 @@ public class ServiceRegistrationTests : BunitContext
         bool templateCalled = false;
 
         // Act
-        services.AddBlazorUIVariants(builder =>
-        {
-            builder.ForComponent<TestVariantComponent>()
+        services.AddBlazorUIVariants(builder => builder.ForComponent<TestVariantComponent>()
                 .AddVariant(customVariant, _ =>
                 {
                     templateCalled = true;
                     return __builder => { };
-                });
-        });
+                }));
 
         ServiceProvider provider = services.BuildServiceProvider();
         IVariantRegistry registry = provider.GetRequiredService<IVariantRegistry>();
@@ -118,7 +115,7 @@ public class ServiceRegistrationTests : BunitContext
         settings.CultureCookieName.Should().Be(".Test.Culture");
     }
 
-[Fact(DisplayName = "AddBlazorUILocalizationWasm_RegistersLocalizationSettings")]
+    [Fact(DisplayName = "AddBlazorUILocalizationWasm_RegistersLocalizationSettings")]
     public void AddBlazorUILocalizationWasm_RegistersLocalizationSettings()
     {
         // Arrange
@@ -126,10 +123,7 @@ public class ServiceRegistrationTests : BunitContext
         services.AddSingleton<IJSRuntime, FakeJsRuntime>();
 
         // Act
-        services.AddBlazorUILocalizationWasm(opts =>
-        {
-            opts.DefaultCulture = "de-DE";
-        });
+        services.AddBlazorUILocalizationWasm(opts => opts.DefaultCulture = "de-DE");
         ServiceProvider provider = services.BuildServiceProvider();
 
         // Assert

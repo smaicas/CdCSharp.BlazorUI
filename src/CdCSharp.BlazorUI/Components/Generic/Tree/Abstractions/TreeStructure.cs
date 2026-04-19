@@ -9,10 +9,7 @@ public sealed class TreeStructure<TNode, TItem>
     private readonly Func<TreeNodeBuildContext<TItem>, TNode> _nodeFactory;
     private readonly Dictionary<string, TNode> _nodeMap = [];
 
-    public TreeStructure(Func<TreeNodeBuildContext<TItem>, TNode> nodeFactory)
-    {
-        _nodeFactory = nodeFactory;
-    }
+    public TreeStructure(Func<TreeNodeBuildContext<TItem>, TNode> nodeFactory) => _nodeFactory = nodeFactory;
 
     public IReadOnlySet<string> ExpandedKeys => _expandedKeys;
     public IReadOnlyDictionary<string, TNode> NodeMap => _nodeMap;
@@ -46,10 +43,7 @@ public sealed class TreeStructure<TNode, TItem>
 
     public void CollapseAll() => _expandedKeys.Clear();
 
-    public void Expand(string key)
-    {
-        _expandedKeys.Add(key);
-    }
+    public void Expand(string key) => _expandedKeys.Add(key);
 
     public void ExpandAll()
     {
@@ -124,10 +118,7 @@ public sealed class TreeStructure<TNode, TItem>
         }
     }
 
-    public void RegisterNode(TNode node)
-    {
-        _nodeMap[node.Key] = node;
-    }
+    public void RegisterNode(TNode node) => _nodeMap[node.Key] = node;
 
     public void SetExpandedKeys(IEnumerable<string>? keys)
     {

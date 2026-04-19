@@ -37,7 +37,7 @@ public class BUIInputColorInteractionTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         Model model = new() { Value = new CssColor("#ff0000") };
-        CssColor? captured = new CssColor("#ff0000");
+        CssColor? captured = new("#ff0000");
         IRenderedComponent<BUIInputColor> cut = ctx.Render<BUIInputColor>(p => p
             .Add(c => c.Value, new CssColor("#ff0000"))
             .Add(c => c.ValueExpression, () => model.Value)

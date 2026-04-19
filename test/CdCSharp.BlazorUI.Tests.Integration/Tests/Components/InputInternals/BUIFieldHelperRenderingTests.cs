@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components.Internal;
@@ -6,6 +5,7 @@ using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Linq.Expressions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.InputInternals;
 

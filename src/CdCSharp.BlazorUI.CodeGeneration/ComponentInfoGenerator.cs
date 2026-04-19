@@ -14,6 +14,10 @@
 //       .cs → .cs   → sube BaseType en Roslyn sin límite hasta object
 // ─────────────────────────────────────────────────────────────────────────────
 
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,10 +25,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace CdCSharp.BlazorUI.Generator;
 
@@ -33,24 +33,24 @@ namespace CdCSharp.BlazorUI.Generator;
 // ─────────────────────────────────────────────────────────────
 
 internal sealed record ParameterData(
-    string  Name,
-    string  Type,
+    string Name,
+    string Type,
     string? Default,
     string? Description);
 
 internal sealed record ComponentData(
-    string                       Namespace,
-    string                       ComponentName,
+    string Namespace,
+    string ComponentName,
     IReadOnlyList<ParameterData> Parameters);
 
 /// <summary>Toda la información extraída de un único archivo .razor.</summary>
 internal sealed record RazorFileData(
-    string                       FilePath,
-    string                       ComponentName,        // del nombre de archivo
-    string?                      DeclaredNamespace,    // de @namespace
-    string?                      InheritsRaw,          // de @inherits (texto en crudo)
+    string FilePath,
+    string ComponentName,        // del nombre de archivo
+    string? DeclaredNamespace,    // de @namespace
+    string? InheritsRaw,          // de @inherits (texto en crudo)
     IReadOnlyList<ParameterData> OwnParameters,        // [Parameter] propios del @code
-    bool                         GenerateInfo);        // true si @attribute [GenerateComponentInfo]
+    bool GenerateInfo);        // true si @attribute [GenerateComponentInfo]
 
 // ─────────────────────────────────────────────────────────────
 //  Shared sources — se inyectan en la compilación de BlazorUI
@@ -128,7 +128,7 @@ public sealed class ComponentInfoGenerator : IIncrementalGenerator
             // Mapa nombre simple → datos del .razor.
             // En caso de colisión de nombre (misma clase en distintas carpetas)
             // gana el primero encontrado; ese escenario es un error de diseño del proyecto.
-            Dictionary<string, RazorFileData> razorMap = new Dictionary<string, RazorFileData>(StringComparer.Ordinal);
+            Dictionary<string, RazorFileData> razorMap = new(StringComparer.Ordinal);
             foreach (RazorFileData? f in razorFiles)
             {
                 if (!razorMap.ContainsKey(f.ComponentName))
@@ -140,8 +140,8 @@ public sealed class ComponentInfoGenerator : IIncrementalGenerator
                 if (!razorData.GenerateInfo) continue;
 
                 IReadOnlyList<ParameterData> allParams = InheritanceResolver.Resolve(razorData, razorMap, compilation);
-                string ns        = razorData.DeclaredNamespace ?? "CdCSharp.BlazorUI.Components";
-                ComponentData data      = new ComponentData(ns, razorData.ComponentName, allParams);
+                string ns = razorData.DeclaredNamespace ?? "CdCSharp.BlazorUI.Components";
+                ComponentData data = new(ns, razorData.ComponentName, allParams);
 
                 spc.AddSource(
                     $"{razorData.ComponentName}ComponentInfo.g.cs",
@@ -182,19 +182,19 @@ internal static class RazorParser
         string? text = file.GetText(ct)?.ToString();
         if (string.IsNullOrEmpty(text)) return null;
 
-        string fileName     = System.IO.Path.GetFileNameWithoutExtension(file.Path);
-        string? ns           = s_nsRx.Match(text!)      is { Success: true } nm ? nm.Groups[1].Value.Trim() : null;
-        string? inheritsRaw  = s_inheritsRx.Match(text!) is { Success: true } im ? im.Groups[1].Value.Trim() : null;
+        string fileName = System.IO.Path.GetFileNameWithoutExtension(file.Path);
+        string? ns = s_nsRx.Match(text!) is { Success: true } nm ? nm.Groups[1].Value.Trim() : null;
+        string? inheritsRaw = s_inheritsRx.Match(text!) is { Success: true } im ? im.Groups[1].Value.Trim() : null;
         bool generateInfo = s_generateRx.IsMatch(text!);
-        IReadOnlyList<ParameterData> ownParams    = ParseCodeBlock(text!, ct);
+        IReadOnlyList<ParameterData> ownParams = ParseCodeBlock(text!, ct);
 
         return new RazorFileData(
-            FilePath:          file.Path,
-            ComponentName:     fileName,
+            FilePath: file.Path,
+            ComponentName: fileName,
             DeclaredNamespace: ns,
-            InheritsRaw:       inheritsRaw,
-            OwnParameters:     ownParams,
-            GenerateInfo:      generateInfo);
+            InheritsRaw: inheritsRaw,
+            OwnParameters: ownParams,
+            GenerateInfo: generateInfo);
     }
 
     // ── Parseo del bloque @code { } ──────────────────────────
@@ -213,23 +213,23 @@ internal static class RazorParser
             $"partial class __Temp__ {{\n{codeContent}\n}}";
 
         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(wrappedSource, s_parseOptions, cancellationToken: ct);
-        CompilationUnitSyntax root       = syntaxTree.GetCompilationUnitRoot(ct);
+        CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot(ct);
 
-        ClassDeclarationSyntax? classDecl  = root.DescendantNodes()
+        ClassDeclarationSyntax? classDecl = root.DescendantNodes()
                              .OfType<ClassDeclarationSyntax>()
                              .FirstOrDefault();
 
         if (classDecl is null) return Array.Empty<ParameterData>();
 
-        List<ParameterData> result = new List<ParameterData>();
+        List<ParameterData> result = new();
         foreach (PropertyDeclarationSyntax prop in classDecl.Members.OfType<PropertyDeclarationSyntax>())
         {
             if (!IsParameterProperty(prop)) continue;
 
             result.Add(new ParameterData(
-                Name:        prop.Identifier.Text,
-                Type:        prop.Type.ToString(),
-                Default:     prop.Initializer?.Value.ToString(),
+                Name: prop.Identifier.Text,
+                Type: prop.Type.ToString(),
+                Default: prop.Initializer?.Value.ToString(),
                 Description: XmlSummary(prop)));
         }
 
@@ -246,13 +246,13 @@ internal static class RazorParser
         if (!match.Success) return null;
 
         // Posición de la llave '{' de apertura del @code
-        int openBrace      = match.Index + match.Length - 1;
-        int depth          = 0;
-        bool inLineComment  = false;
+        int openBrace = match.Index + match.Length - 1;
+        int depth = 0;
+        bool inLineComment = false;
         bool inBlockComment = false;
-        bool inString       = false;
-        bool inChar         = false;
-        char prev           = '\0';
+        bool inString = false;
+        bool inChar = false;
+        char prev = '\0';
 
         for (int i = openBrace; i < content.Length; i++)
         {
@@ -302,12 +302,12 @@ internal static class RazorParser
     private static bool IsParameterProperty(PropertyDeclarationSyntax prop)
     {
         foreach (AttributeListSyntax attrList in prop.AttributeLists)
-        foreach (AttributeSyntax attr in attrList.Attributes)
-        {
+            foreach (AttributeSyntax attr in attrList.Attributes)
+            {
                 string name = attr.Name.ToString();
-            if (name is "Parameter" or "ParameterAttribute")
-                return true;
-        }
+                if (name is "Parameter" or "ParameterAttribute")
+                    return true;
+            }
         return false;
     }
 
@@ -323,7 +323,7 @@ internal static class RazorParser
                 if (node is not XmlElementSyntax el) continue;
                 if (el.StartTag.Name.ToString() != "summary") continue;
 
-                StringBuilder raw = new StringBuilder();
+                StringBuilder raw = new();
                 foreach (XmlNodeSyntax cn in el.Content)
                     raw.Append(cn.ToString());
 
@@ -358,13 +358,13 @@ internal static class InheritanceResolver
     ///   (mezcla) .razor → .razor → .cs → .cs → …
     /// </summary>
     public static IReadOnlyList<ParameterData> Resolve(
-        RazorFileData                          root,
-        Dictionary<string, RazorFileData>      razorMap,
-        Compilation                            compilation)
+        RazorFileData root,
+        Dictionary<string, RazorFileData> razorMap,
+        Compilation compilation)
     {
-        List<ParameterData> result  = new List<ParameterData>();
-        HashSet<string> seen    = new HashSet<string>(StringComparer.Ordinal);
-        HashSet<string> visited = new HashSet<string>(StringComparer.Ordinal); // protección anti-ciclo
+        List<ParameterData> result = new();
+        HashSet<string> seen = new(StringComparer.Ordinal);
+        HashSet<string> visited = new(StringComparer.Ordinal); // protección anti-ciclo
 
         CollectFromRazor(root, razorMap, compilation, seen, result, visited);
         return result;
@@ -373,12 +373,12 @@ internal static class InheritanceResolver
     // ── Recolección desde un nodo .razor ────────────────────
 
     private static void CollectFromRazor(
-        RazorFileData                          component,
-        Dictionary<string, RazorFileData>      razorMap,
-        Compilation                            compilation,
-        HashSet<string>                        seen,
-        List<ParameterData>                    result,
-        HashSet<string>                        visited)
+        RazorFileData component,
+        Dictionary<string, RazorFileData> razorMap,
+        Compilation compilation,
+        HashSet<string> seen,
+        List<ParameterData> result,
+        HashSet<string> visited)
     {
         if (!visited.Add(component.ComponentName)) return; // anti-ciclo
 
@@ -407,9 +407,9 @@ internal static class InheritanceResolver
     // ── Recolección desde un nodo .cs (Roslyn) ──────────────
 
     private static void CollectFromCompilation(
-        string              typeName,
-        Compilation         compilation,
-        HashSet<string>     seen,
+        string typeName,
+        Compilation compilation,
+        HashSet<string> seen,
         List<ParameterData> result)
     {
         INamedTypeSymbol? symbol = FindType(compilation, typeName);
@@ -422,12 +422,12 @@ internal static class InheritanceResolver
             foreach (IPropertySymbol member in current.GetMembers().OfType<IPropertySymbol>())
             {
                 if (!seen.Add(member.Name)) continue;
-                if (!IsParameter(member))    continue;
+                if (!IsParameter(member)) continue;
 
                 result.Add(new ParameterData(
-                    Name:        member.Name,
-                    Type:        TypeString(member),
-                    Default:     DefaultValue(member),
+                    Name: member.Name,
+                    Type: TypeString(member),
+                    Default: DefaultValue(member),
                     Description: XmlSummaryFromSymbol(member)));
             }
 
@@ -478,10 +478,10 @@ internal static class InheritanceResolver
     }
 
     private static readonly SymbolDisplayFormat s_typeFormat = new(
-        globalNamespaceStyle:   SymbolDisplayGlobalNamespaceStyle.Omitted,
+        globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameOnly,
-        genericsOptions:        SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions:   SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+        genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
+        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
 
     private static string TypeString(IPropertySymbol prop) =>
         prop.Type.ToDisplayString(s_typeFormat);
@@ -509,7 +509,7 @@ internal static class InheritanceResolver
                     if (node is not XmlElementSyntax el) continue;
                     if (el.StartTag.Name.ToString() != "summary") continue;
 
-                    StringBuilder raw = new StringBuilder();
+                    StringBuilder raw = new();
                     foreach (XmlNodeSyntax cn in el.Content) raw.Append(cn.ToString());
 
                     string text = Regex.Replace(raw.ToString(), @"<[^>]+>", string.Empty);
@@ -530,7 +530,7 @@ internal static class Emitter
 {
     public static string Emit(ComponentData data)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         sb.AppendLine("// <auto-generated/>");
         sb.AppendLine("#nullable enable");

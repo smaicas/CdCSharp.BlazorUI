@@ -4,10 +4,7 @@ namespace CdCSharp.BlazorUI.Components.Layout.Services;
 
 public sealed class ToastState
 {
-    public ToastState()
-    {
-        StartedAt = DateTime.UtcNow;
-    }
+    public ToastState() => StartedAt = DateTime.UtcNow;
 
     public RenderFragment Content { get; init; }
     public DateTime CreatedAt { get; } = DateTime.UtcNow;

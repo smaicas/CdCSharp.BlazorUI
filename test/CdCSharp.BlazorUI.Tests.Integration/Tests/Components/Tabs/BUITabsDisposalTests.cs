@@ -35,7 +35,7 @@ public class BUITabsDisposalTests
         cut.FindAll("[role='tab']").Should().HaveCount(2);
 
         // Act + Assert — dispose does not throw
-        var act = async () => await cut.Instance.DisposeAsync();
+        Func<Task> act = async () => await cut.Instance.DisposeAsync();
         await act.Should().NotThrowAsync();
     }
 
