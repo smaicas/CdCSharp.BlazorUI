@@ -232,7 +232,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 
 ## D. COBERTURA COMPONENTES LAYOUT
 
-### [ ] LAY-COV-01 — `BUIBlazorLayout` (Snapshot, State)
+### [x] LAY-COV-01 — `BUIBlazorLayout` (Snapshot, State)
 - **Origen**: solo `Rendering` + `Integration`. Falta snapshot de estructura (header/sidebar/main) y tests de estado para theme/culture providers.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/BUIBlazorLayout.razor`
@@ -243,8 +243,10 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Snapshot con `HeaderContent`/`SidebarContent`/`ChildContent`.
   - State: cambio de tema propaga a `<html data-theme>` o equivalente.
 - **Aceptación**: layout estable entre builds; cambios de tema reflejados.
+  > Resuelto en commit `70cd8d6` — *test(layout): state + snapshots for BUIBlazorLayout (LAY-COV-01)*
+  > Nota: `BUIBlazorLayout` no expone `HeaderContent`/`SidebarContent` como parámetros — solo `Body` vía `LayoutComponentBase`. Snapshots varían markup dentro de `Body`. Tema propaga vía `CascadingValue<BUIPalette>` (no `<html data-theme>`; ese atributo lo setea el script inline del `HeadContent`, fuera del scope renderizable). State cubre: `InitializeAsync("dark")`, recarga de paleta al dispararse `OnThemeChanged`, y `BUIPalette` cascading recibido por un consumer dentro del Body.
 
-### [ ] LAY-COV-02 — `BUICard` (Accessibility, Interaction)
+### [x] LAY-COV-02 — `BUICard` (Accessibility, Interaction)
 - **Origen**: tiene `Rendering/State/Variant/Snapshot` pero no `Accessibility` ni `Interaction` (card clickable).
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/Card/BUICard.razor`
@@ -255,16 +257,20 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - A11y: si `OnClick` → `role="button"`, `tabindex="0"`, teclado Enter/Space.
   - Interaction: callback dispara por click y teclado.
 - **Aceptación**: card accionable cumple patrón button.
+  > Resuelto en commit `7f1f403` — *test(layout): a11y + interaction coverage for BUICard (LAY-COV-02)*
+  > Nota: `BUICard` no emite `role="button"`/`tabindex`/keyboard handlers por sí mismo — el click vive en un `<div>` interno y el único hint semántico es `data-bui-clickable`. Los tests a11y validan el contrato de pass-through (`AdditionalAttributes` proyectan `role`/`tabindex`/`aria-*` al root) y la preservación de headings en el slot `Header`. Interacción por teclado (Enter/Space) queda fuera de scope como feature work, no como test fallido.
 
-### [ ] LAY-COV-03 — `BUIDialog` / `BUIDrawer` (State)
+### [x] LAY-COV-03 — `BUIDialog` / `BUIDrawer` (State)
 - **Origen**: `BUIDialog` tiene `Rendering/Interaction/Accessibility/Snapshot` pero no `StateTests` que verifique transiciones `Open/Opening/Closing/Closed` ni propagación de `data-bui-transitions`.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/BUIDialog.razor`, `BUIDrawer.razor`
-  - Nuevos: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/Dialog/BUIDialogStateTests.cs`
+  - Nuevos: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/Dialog/BUIDialogStateTests.cs`, `BUIDrawerStateTests.cs`
 - **Cambios**:
   - Transición `IsOpen: false→true→false`: estados intermedios observables en DOM, `animationend` cierra.
   - Atributo `data-bui-active` refleja apertura (no clase modificador).
 - **Aceptación**: transiciones LAYOUT-03 protegidas por test.
+  > Resuelto en commit `d52789a` — *test(layout): state tests for BUIDialog/BUIDrawer transitions (LAY-COV-03)*
+  > Nota: los componentes no usan `data-bui-active` para la fase de cierre; usan clases modificadoras `bui-dialog--closing` / `bui-drawer--closing` y `bui-*-overlay--closing`. Los tests observan la transición vía un `IModalJsInterop` fake que controla la promesa `WaitForAnimationEndAsync` con un `TaskCompletionSource`, expuesto como gate para observar el DOM intermedio antes del cierre final.
 
 ### [ ] LAY-COV-04 — `BUIGrid` (Accessibility, Variant)
 - **Origen**: `BUIGrid` tiene `Rendering/State/Snapshot`; falta `Variant` y `Accessibility` (role grid si aplica; tabindex si interactivo).
@@ -276,7 +282,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Variants: registrar variante custom.
 - **Aceptación**: contrato semántico explícito.
 
-### [ ] LAY-COV-05 — `BUIInitializer` (Disposal)
+### [x] LAY-COV-05 — `BUIInitializer` (Disposal)
 - **Origen**: LAYOUT-01 resolvió el memory leak, pero no hay `BUIInitializerDisposalTests` que proteja contra regresión (desuscripción de `OnThemeChanged`).
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/BUIInitializer.razor`
@@ -285,6 +291,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Montar/desmontar N veces; contar suscriptores de `ThemeInterop.OnThemeChanged` ≤ 0/1 sostenidamente.
   - Dispose no lanza `JSDisconnectedException`.
 - **Aceptación**: regresión del leak hace fallar el test.
+  > Resuelto en commit `8344dbe` — *test(layout): disposal tests for BUIInitializer (LAY-COV-05)*
 
 ### [ ] LAY-COV-06 — `BUISidebarLayout` (Accessibility)
 - **Origen**: faltan aserciones a11y. Sidebar requiere `aria-expanded`/`aria-controls` para el toggle, y region para el sidebar.
