@@ -66,7 +66,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: todos los casos del contrato documentado cubiertos.
   > Resuelto en commit `dfbc8d2` — *test(core): direct unit tests for SelectionState and SelectionTypeInfo*
 
-### [ ] CORE-COV-05 — `BUIBorderPresets` + `IHasBorder` tests
+### [x] CORE-COV-05 — `BUIBorderPresets` + `IHasBorder` tests
 - **Origen**: `BUIBorderPresets.None/Thin/Medium/Thick/Rounded/Circle/etc.` sin tests; `IHasBorder.BorderCssValues` tiene lógica de conversión a `--bui-inline-border*`.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Abstractions/Behaviors/Design/BUIBorderPresets.cs`, `IHasBorder.cs`
@@ -76,6 +76,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Test de `None()` que emita la variable a `none` (regresión del bug documentado en MISC-05).
   - Test de composición con `With*` fluent builders.
 - **Aceptación**: cada preset produce un diccionario de variables conocido y estable.
+  > Resuelto en commit `6f27ab0` — *test(core): direct unit tests for BUIBorderPresets and BorderStyle*
 
 ### [ ] CORE-COV-06 — `BUITransitionBuilder` + `EasingBuilder` tests directos
 - **Origen**: `BUITransitionPresetsTests` cubre los presets; los *builders* fluentes (`.Duration(...)`, `.Delay(...)`, `.Easing(...)`, `.Custom(...)`) no tienen tests aislados.
