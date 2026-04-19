@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -32,6 +33,12 @@ public static class VerifyConfig
     [ModuleInitializer]
     public static void Init()
     {
+        CultureInfo enUs = new("en-US");
+        CultureInfo.DefaultThreadCurrentCulture = enUs;
+        CultureInfo.DefaultThreadCurrentUICulture = enUs;
+        CultureInfo.CurrentCulture = enUs;
+        CultureInfo.CurrentUICulture = enUs;
+
         VerifierSettings.DontScrubGuids();
         VerifierSettings.DontScrubDateTimes();
 
