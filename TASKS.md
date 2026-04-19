@@ -338,7 +338,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 
 ## E. COBERTURA DATA COLLECTIONS
 
-### [ ] DC-COV-01 — `BUIDataCards` (Interaction, Accessibility, Variant, Snapshot)
+### [x] DC-COV-01 — `BUIDataCards` (Interaction, Accessibility, Variant, Snapshot)
+  > Resuelto en commit `e4bb5d1` — *test(dc-cov-01): add BUIDataCards Interaction + A11y + Variant + Snapshot coverage*
 - **Origen**: solo tiene `Rendering/State`. `BUIDataGrid` sí tiene la suite completa; alinearlo.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Generic/DataCollections/BUIDataCards.razor`
