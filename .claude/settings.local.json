@@ -40,7 +40,8 @@
       "Bash(mv -f test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/InputDateTime/BUIInputDateTimeSnapshotTests.Should_Match_Snapshots_For_All_States_scenario=Server.received.txt test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/InputDateTime/BUIInputDateTimeSnapshotTests.Should_Match_Snapshots_For_All_States_scenario=Server.verified.txt)",
       "Bash(mv -f test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/InputDateTime/BUIInputDateTimeSnapshotTests.Should_Match_Snapshots_For_All_States_scenario=Wasm.received.txt test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/InputDateTime/BUIInputDateTimeSnapshotTests.Should_Match_Snapshots_For_All_States_scenario=Wasm.verified.txt)",
       "Bash(git -C V:/Work/CdCSharp/Projects/BlazorUI log --oneline)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Read(//tmp/**)"
     ]
   },
   "outputStyle": "default"

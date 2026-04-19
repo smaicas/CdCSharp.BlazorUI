@@ -386,6 +386,59 @@ bui-component[{{inputBase}}][{{variant}}="standard"] .{{helper}},
 bui-component[{{inputBase}}][{{variant}}="standard"] .{{validation}} {
     padding-inline-start: 0;
 }
+
+/* ========================================
+   VARIANT: FLAT
+   Sin bordes ni fondo. Label flota sobre el campo.
+   ======================================== */
+
+bui-component[{{inputBase}}][{{variant}}="flat"] {
+    --_wrapper-pt: calc(1rem * {{V(sizeMult, "1")}});
+    --_wrapper-radius: 0;
+    --_wrapper-bg: transparent;
+    --_outline-leading-width: var(--_addon-offset);
+}
+
+/* Outline: sin ningún borde */
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{outlineLeading}},
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{outlineNotch}},
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{outlineTrailing}} {
+    border: none;
+}
+
+/* Sin padding lateral en el field (como standard) */
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{field}} {
+    padding-inline: 0;
+}
+
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{label}} {
+    padding-inline-start: 0;
+}
+
+/* Label: resting state */
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{label}} {
+    transform: translateY(calc((var(--_input-h) + var(--_wrapper-pt)) / 2 - 0.5em));
+}
+
+/* Label: floated state */
+bui-component[{{inputBase}}][{{variant}}="flat"][{{floated}}="true"] .{{label}} {
+    font-size: var(--_input-floated-size);
+    transform: translateY(calc(var(--_wrapper-pt) * 0.25));
+}
+
+/* Focus state: sin borde, solo cambio de color en label (ya cubierto por :focus-within .label) */
+
+/* Error state */
+bui-component[{{inputBase}}][{{variant}}="flat"][{{error}}="true"] .{{label}} {
+    color: var(--_input-error-color);
+}
+
+/* Helper/validation sin padding lateral */
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{helper}},
+bui-component[{{inputBase}}][{{variant}}="flat"] .{{validation}} {
+    padding-inline-start: 0;
+}
+
 """;
     }
 }

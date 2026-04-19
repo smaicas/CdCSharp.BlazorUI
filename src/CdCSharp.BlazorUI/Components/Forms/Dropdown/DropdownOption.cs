@@ -1,5 +1,4 @@
-﻿// File: Components/Forms/Dropdown/DropdownOption.cs
-using CdCSharp.BlazorUI.Components.Forms.Dropdown;
+﻿using CdCSharp.BlazorUI.Components.Forms.Dropdown;
 using CdCSharp.BlazorUI.Core.Components.Selection;
 using Microsoft.AspNetCore.Components;
 

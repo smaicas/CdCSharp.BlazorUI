@@ -5,6 +5,7 @@ public class BUIInputVariant : Variant
     public static readonly BUIInputVariant Filled = new("Filled");
     public static readonly BUIInputVariant Outlined = new("Outlined");
     public static readonly BUIInputVariant Standard = new("Standard");
+    public static readonly BUIInputVariant Flat = new("Flat");
 
     public BUIInputVariant(string name) : base(name)
     {

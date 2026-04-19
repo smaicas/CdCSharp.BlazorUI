@@ -1,0 +1,124 @@
+﻿@namespace CdCSharp.BlazorUI.Components
+@attribute [GenerateComponentInfo]
+
+@typeparam TValue
+
+@inherits BUIVariantComponentBase<BUISelect<TValue>, BUISelectVariant>
+@implements IHasSize
+@implements IHasDisabled
+@implements IHasFullWidth
+@implements IHasColor
+@implements IHasBackgroundColor
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    /* ── Value binding ── */
+    [Parameter] public TValue? Value { get; set; }
+    [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
+
+    /* ── IHasSize ── */
+    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+
+    /* ── IHasDisabled ── */
+    [Parameter] public bool Disabled { get; set; }
+    public bool IsDisabled => Disabled;
+
+    /* ── IHasFullWidth ── */
+    [Parameter] public bool FullWidth { get; set; }
+
+    /* ── IHasColor / IHasBackgroundColor ── */
+    [Parameter] public string? Color { get; set; }
+    [Parameter] public string? BackgroundColor { get; set; }
+
+    /* ── States ── */
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public bool ReadOnly { get; set; }
+
+    /* ── Labeling ── */
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+
+    /* ── Options ── */
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /* ── Variant ── */
+    public override BUISelectVariant DefaultVariant => BUISelectVariant.Default;
+
+    protected override IReadOnlyDictionary<BUISelectVariant, Func<BUISelect<TValue>, RenderFragment>> BuiltInTemplates { get; } =
+        new Dictionary<BUISelectVariant, Func<BUISelect<TValue>, RenderFragment>>
+        {
+            [BUISelectVariant.Default] = c => c.RenderDefault()
+        };
+
+    /* ── Render ── */
+
+    private RenderFragment RenderDefault() => __builder =>
+    {
+        <bui-component @attributes="ComputedAttributes">
+
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <label class="bui-select__label">
+                    @Label
+                    @if (Required)
+                    {
+                        <span class="bui-field__required" aria-hidden="true">*</span>
+                    }
+                </label>
+            }
+
+            <div class="bui-select__control">
+                <select class="bui-select__native"
+                        value="@Value"
+                        disabled="@IsDisabled"
+                        required="@Required"
+                        aria-required="@Required.ToString().ToLowerInvariant()"
+                        @onchange="OnChangeAsync">
+                    @ChildContent
+                </select>
+
+                <span class="bui-select__arrow" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(HelperText))
+            {
+                <span class="bui-field__helper">@HelperText</span>
+            }
+
+        </bui-component>
+    };
+
+    /* ── Events ── */
+
+    private async Task OnChangeAsync(ChangeEventArgs e)
+    {
+        if (ReadOnly || IsDisabled) return;
+
+        TValue? parsed = ParseValue(e.Value?.ToString());
+        Value = parsed;
+        await ValueChanged.InvokeAsync(parsed);
+    }
+
+    private static TValue? ParseValue(string? raw)
+    {
+        if (string.IsNullOrEmpty(raw)) return default;
+        try
+        {
+            Type target = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+            return (TValue?)Convert.ChangeType(raw, target);
+        }
+        catch
+        {
+            return default;
+        }
+    }
+}

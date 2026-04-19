@@ -90,7 +90,8 @@
         {
             [BUIInputVariant.Outlined] = c => c.RenderDropdown(),
             [BUIInputVariant.Filled] = c => c.RenderDropdown(),
-            [BUIInputVariant.Standard] = c => c.RenderDropdown()
+            [BUIInputVariant.Standard] = c => c.RenderDropdown(),
+            [BUIInputVariant.Flat] = c => c.RenderDropdown()
         };
 
     private bool IsFloated => _isFocused || HasValue || IsOpen;

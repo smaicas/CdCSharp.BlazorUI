@@ -1,5 +1,4 @@
-﻿// File: Core/Utilities/TimingUtilities.cs
-namespace CdCSharp.BlazorUI.Core.Utilities;
+﻿namespace CdCSharp.BlazorUI.Core.Utilities;
 
 public static class TimingUtilities
 {

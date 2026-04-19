@@ -1,5 +1,6 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Localization.Wasm
+@using CdCSharp.BlazorUI.Components
 @using Microsoft.AspNetCore.Components
 @using Microsoft.Extensions.Localization
 @using System.Globalization
@@ -14,7 +15,6 @@
 @inject ILocalizationPersistence LocalizationPersistence
 @inject LocalizationSettings LocalizationSettings
 @inject IStringLocalizer<BUICultureSelector> Localizer
-@inject IJSRuntime JSRuntime
 
 @{
     base.BuildRenderTree(__builder);
@@ -40,24 +40,22 @@
         new Dictionary<BUICultureSelectorVariant, Func<BUICultureSelector, RenderFragment>>
         {
             [BUICultureSelectorVariant.Dropdown] = c => c.RenderDropdown(),
-            [BUICultureSelectorVariant.Flags] = c => c.RenderFlags()
+            [BUICultureSelectorVariant.Flags]    = c => c.RenderFlags()
         };
 
     private RenderFragment RenderDropdown() => __builder =>
     {
-        <select class="ui-culture-selector__select"
-                value="@_currentCulture.Name"
-                @onchange="OnCultureChangeAsync">
+        <BUISelect TValue="string"
+                   Value="@_currentCulture.Name"
+                   ValueChanged="@OnDropdownCultureChanged"
+                   Size="@Size">
             @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
             {
                 <option value="@culture.Name">
                     @if (ShowFlag)
                     {
                         @GetFlag(culture.Name)
-                        @if (ShowName)
-                        {
-                            <text>&nbsp;</text>
-                        }
+                        @if (ShowName) { <text> </text> }
                     }
                     @if (ShowName)
                     {
@@ -65,24 +63,24 @@
                     }
                 </option>
             }
-        </select>
+        </BUISelect>
     };
 
     private RenderFragment RenderFlags() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes">
-            <div class="ui-culture-selector__flag-list">
+            <div class="bui-culture-selector__flag-list">
                 @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
                 {
                     bool isActive = culture.Name == _currentCulture.Name;
-                    <button class="ui-culture-selector__flag-button @(isActive ? "active" : "")"
+                    <button class="bui-culture-selector__flag-button @(isActive ? "active" : "")"
                             @onclick="() => SetCultureAsync(culture.Name)"
                             title="@culture.DisplayName"
                             disabled="@isActive">
                         @GetFlag(culture.Name)
                         @if (ShowName)
                         {
-                            <span class="ui-culture-selector__flag-label">@culture.DisplayName</span>
+                            <span class="bui-culture-selector__flag-label">@culture.DisplayName</span>
                         }
                     </button>
                 }
@@ -90,12 +88,10 @@
         </bui-component>
     };
 
-    private async Task OnCultureChangeAsync(ChangeEventArgs e)
+    private async Task OnDropdownCultureChanged(string? cultureName)
     {
-        if (e.Value is string cultureName)
-        {
+        if (!string.IsNullOrEmpty(cultureName))
             await SetCultureAsync(cultureName);
-        }
     }
 
     private async Task SetCultureAsync(string cultureName)
@@ -111,16 +107,11 @@
 
         try
         {
-            // WASM: Guardar en localStorage y recargar
             await LocalizationPersistence.SetStoredCultureAsync(cultureName);
-
             Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
 
-            // Invoke callback if provided
             if (OnCultureChanged.HasDelegate)
-            {
                 await OnCultureChanged.InvokeAsync(newCulture);
-            }
         }
         catch (Exception ex)
         {
@@ -160,5 +151,4 @@
         "UK-UA" => "🇺🇦",
         _ => "🌐"
     };
-
 }

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
+    <ProjectReference Include="..\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
   </ItemGroup>
 
 </Project>
