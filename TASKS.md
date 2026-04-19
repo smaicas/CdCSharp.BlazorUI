@@ -78,7 +78,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: cada preset produce un diccionario de variables conocido y estable.
   > Resuelto en commit `6f27ab0` — *test(core): direct unit tests for BUIBorderPresets and BorderStyle*
 
-### [ ] CORE-COV-06 — `BUITransitionBuilder` + `EasingBuilder` tests directos
+### [x] CORE-COV-06 — `BUITransitionBuilder` + `EasingBuilder` tests directos
 - **Origen**: `BUITransitionPresetsTests` cubre los presets; los *builders* fluentes (`.Duration(...)`, `.Delay(...)`, `.Easing(...)`, `.Custom(...)`) no tienen tests aislados.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Abstractions/Behaviors/Transitions/BUITransitionBuilder.cs`, `EasingBuilder.cs`, `BUITransitions.cs`
@@ -88,6 +88,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - `EasingBuilder.CubicBezier(x1,y1,x2,y2)` genera `cubic-bezier(...)` correcto.
   - Composición múltiple: varias `.Add(...)` no se pisan.
 - **Aceptación**: transiciones materializadas = especificación CSS esperada.
+  > Resuelto en commit `c7a96de` — *test(core): direct unit tests for BUITransitionBuilder and EasingBuilder*
 
 ### [ ] CORE-COV-07 — `SearchAlgorithms` tests
 - **Origen**: `src/CdCSharp.BlazorUI.Core/Search/SearchAlgorithms.cs` implementa fuzzy/contains/startswith usado en Dropdown/Tree; sin tests.
