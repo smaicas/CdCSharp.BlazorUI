@@ -1,0 +1,154 @@
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Core.Components;
+using FluentAssertions;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using NSubstitute;
+
+namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Core.BaseComponents;
+
+/// <summary>
+/// Direct unit tests for <see cref="BUIComponentJsBehaviorBuilder" />.
+/// Pins the dispatch contract (IJsBehavior gate, IHasRipple → RippleConfiguration,
+/// DisableRipple/HasAnyBehavior short-circuits, IBehaviorJsInterop wiring)
+/// without going through <c>OnAfterRenderAsync</c>.
+/// </summary>
+[Trait("Core", "BUIComponentJsBehaviorBuilder")]
+public class BUIComponentJsBehaviorBuilderTests
+{
+    [Fact]
+    public async Task BuildAndAttachAsync_Should_Return_Null_When_Component_Is_Not_IJsBehavior()
+    {
+        IBehaviorJsInterop interop = Substitute.For<IBehaviorJsInterop>();
+        PlainComponent component = new();
+
+        BUIComponentJsBehaviorBuilder builder = BUIComponentJsBehaviorBuilder.For(component, interop);
+
+        IJSObjectReference? result = await builder.BuildAndAttachAsync();
+
+        result.Should().BeNull();
+        await interop.DidNotReceive().AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>());
+    }
+
+    [Fact]
+    public async Task BuildAndAttachAsync_Should_Return_Null_When_IJsBehavior_Has_No_Configured_Behaviors()
+    {
+        IBehaviorJsInterop interop = Substitute.For<IBehaviorJsInterop>();
+        EmptyJsBehavior component = new();
+
+        BUIComponentJsBehaviorBuilder builder = BUIComponentJsBehaviorBuilder.For(component, interop);
+
+        IJSObjectReference? result = await builder.BuildAndAttachAsync();
+
+        result.Should().BeNull();
+        await interop.DidNotReceive().AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>());
+    }
+
+    [Fact]
+    public async Task BuildAndAttachAsync_Should_Skip_Ripple_When_DisableRipple_Is_True()
+    {
+        IBehaviorJsInterop interop = Substitute.For<IBehaviorJsInterop>();
+        RippleComponent component = new() { DisableRipple = true };
+
+        BUIComponentJsBehaviorBuilder builder = BUIComponentJsBehaviorBuilder.For(component, interop);
+
+        IJSObjectReference? result = await builder.BuildAndAttachAsync();
+
+        result.Should().BeNull();
+        await interop.DidNotReceive().AttachBehaviorsAsync(Arg.Any<BehaviorConfiguration>());
+    }
+
+    [Fact]
+    public async Task BuildAndAttachAsync_Should_Populate_RippleConfiguration_When_Enabled()
+    {
+        IBehaviorJsInterop interop = Substitute.For<IBehaviorJsInterop>();
+        IJSObjectReference jsRef = Substitute.For<IJSObjectReference>();
+        BehaviorConfiguration? captured = null;
+        interop
+            .AttachBehaviorsAsync(Arg.Do<BehaviorConfiguration>(c => captured = c))
+            .Returns(new ValueTask<IJSObjectReference>(jsRef));
+
+        RippleComponent component = new()
+        {
+            DisableRipple = false,
+            RippleColor = "#abcdef",
+            RippleDurationMs = 250
+        };
+
+        BUIComponentJsBehaviorBuilder builder = BUIComponentJsBehaviorBuilder.For(component, interop);
+
+        IJSObjectReference? result = await builder.BuildAndAttachAsync();
+
+        result.Should().BeSameAs(jsRef);
+        captured.Should().NotBeNull();
+        captured!.HasAnyBehavior.Should().BeTrue();
+        captured.Ripple.Should().NotBeNull();
+        captured.Ripple!.Color.Should().Be("#abcdef");
+        captured.Ripple.Duration.Should().Be(250);
+    }
+
+    [Fact]
+    public async Task BuildAndAttachAsync_Should_Return_Null_When_Interop_Is_Null()
+    {
+        RippleComponent component = new();
+
+        BUIComponentJsBehaviorBuilder builder = BUIComponentJsBehaviorBuilder.For(component, null!);
+
+        IJSObjectReference? result = await builder.BuildAndAttachAsync();
+
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task BuildAndAttachAsync_Should_Accept_Null_RippleColor_And_Duration()
+    {
+        IBehaviorJsInterop interop = Substitute.For<IBehaviorJsInterop>();
+        IJSObjectReference jsRef = Substitute.For<IJSObjectReference>();
+        BehaviorConfiguration? captured = null;
+        interop
+            .AttachBehaviorsAsync(Arg.Do<BehaviorConfiguration>(c => captured = c))
+            .Returns(new ValueTask<IJSObjectReference>(jsRef));
+
+        RippleComponent component = new()
+        {
+            RippleColor = null,
+            RippleDurationMs = null
+        };
+
+        BUIComponentJsBehaviorBuilder builder = BUIComponentJsBehaviorBuilder.For(component, interop);
+
+        await builder.BuildAndAttachAsync();
+
+        captured.Should().NotBeNull();
+        captured!.Ripple.Should().NotBeNull();
+        captured.Ripple!.Color.Should().BeNull();
+        captured.Ripple.Duration.Should().BeNull();
+    }
+
+    [Fact]
+    public void For_Factory_Should_Return_Fresh_Instance_Each_Call()
+    {
+        IBehaviorJsInterop interop = Substitute.For<IBehaviorJsInterop>();
+        RippleComponent component = new();
+
+        BUIComponentJsBehaviorBuilder a = BUIComponentJsBehaviorBuilder.For(component, interop);
+        BUIComponentJsBehaviorBuilder b = BUIComponentJsBehaviorBuilder.For(component, interop);
+
+        a.Should().NotBeSameAs(b);
+    }
+
+    // ─────────── Stubs ───────────
+
+    private sealed class PlainComponent : ComponentBase;
+
+    private sealed class EmptyJsBehavior : ComponentBase, IJsBehavior;
+
+    private sealed class RippleComponent : ComponentBase, IHasRipple
+    {
+        public bool DisableRipple { get; set; }
+        public string? RippleColor { get; set; }
+        public int? RippleDurationMs { get; set; }
+
+        public ElementReference GetRippleContainer() => default;
+    }
+}

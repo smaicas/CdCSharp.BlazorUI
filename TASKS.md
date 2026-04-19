@@ -30,7 +30,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: nuevos tests verdes; mutación manual (eliminar un `case` en `BuildStyles`) produce fallo localizado.
   > Resuelto en commit `0d5a948` — *test(core): direct unit tests for BUIComponentAttributesBuilder*
 
-### [ ] CORE-COV-02 — `BUIComponentJsBehaviorBuilder` tests directos
+### [x] CORE-COV-02 — `BUIComponentJsBehaviorBuilder` tests directos
 - **Origen**: el pipeline de `IJsBehavior` (composición `IHasRipple` + otros) se ejecuta en `OnAfterRenderAsync` sin tests aislados. Cambios en la lógica de dispatch de módulos JS pueden romper el wiring silenciosamente.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentJsBehaviorBuilder.cs`
@@ -41,6 +41,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Test de dispose: tras `DisposeAsync`, no hay módulos pendientes; `JSDisconnectedException` se absorbe.
   - Test de guard: primer render false → no inicializa; re-render con parámetros cambiados no duplica.
 - **Aceptación**: invocaciones JS esperadas por combinación de `IJsBehavior`; dispose sin excepciones observables.
+  > Resuelto en commit `16a18a6` — *test(core): direct unit tests for BUIComponentJsBehaviorBuilder*
 
 ### [ ] CORE-COV-03 — `VariantHelper` tests directos
 - **Origen**: `VariantRegistryTests` cubre el registro/DI, pero la helper `VariantHelper.ResolveTemplate`/fallbacks/merge con `BuiltInTemplates` no se prueba directamente.
