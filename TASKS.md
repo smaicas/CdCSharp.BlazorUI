@@ -54,7 +54,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: matriz {registered | missing | default} cubierta con valores esperados.
   > Resuelto en commit `8fdf619` — *test(core): direct unit tests for VariantHelper*
 
-### [ ] CORE-COV-04 — `SelectionState` + `SelectionTypeInfo` tests
+### [x] CORE-COV-04 — `SelectionState` + `SelectionTypeInfo` tests
 - **Origen**: `src/CdCSharp.BlazorUI.Core/Components/Selection/*.cs` sin tests. Selection es la base de dropdown/tree/radio/check con lógica de single/multi/mixed.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Components/Selection/SelectionState.cs`, `SelectionTypeInfo.cs`, `ISelectionOption.cs`
@@ -64,6 +64,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - `SelectionTypeInfo.Detect<T>()` para `T`, `T[]`, `List<T>`, `IReadOnlyList<T>`, `HashSet<T>`.
   - Normalización en single cuando se pasa una colección (debe tomar el primero o lanzar según contrato).
 - **Aceptación**: todos los casos del contrato documentado cubiertos.
+  > Resuelto en commit `dfbc8d2` — *test(core): direct unit tests for SelectionState and SelectionTypeInfo*
 
 ### [ ] CORE-COV-05 — `BUIBorderPresets` + `IHasBorder` tests
 - **Origen**: `BUIBorderPresets.None/Thin/Medium/Thick/Rounded/Circle/etc.` sin tests; `IHasBorder.BorderCssValues` tiene lógica de conversión a `--bui-inline-border*`.
