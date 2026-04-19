@@ -8,8 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Dialog;
 
-[Trait("Component State", "BUIDialog")]
-public class BUIDialogStateTests
+[Trait("Component State", "BUIDrawer")]
+public class BUIDrawerStateTests
 {
     private sealed class ControllableModalInterop : IModalJsInterop
     {
@@ -33,14 +33,13 @@ public class BUIDialogStateTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Show_Dialog_When_Open_Becomes_True(BlazorScenario scenario)
+    public async Task Should_Show_Drawer_When_Open_Becomes_True(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         // Arrange
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
+        IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
             .Add(c => c.Open, false));
-
         cut.FindAll("[role='dialog']").Should().BeEmpty();
 
         // Act
@@ -52,14 +51,13 @@ public class BUIDialogStateTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Hide_Dialog_When_Open_Becomes_False(BlazorScenario scenario)
+    public async Task Should_Hide_Drawer_When_Open_Becomes_False(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         // Arrange
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
+        IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
             .Add(c => c.Open, true));
-
         cut.Find("[role='dialog']").Should().NotBeNull();
 
         // Act
@@ -71,16 +69,53 @@ public class BUIDialogStateTests
 
     [Theory]
     [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Render_Overlay_When_Open(BlazorScenario scenario)
+    public async Task Should_Reflect_Position_In_Modifier_Class(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        foreach (DrawerPosition position in Enum.GetValues<DrawerPosition>())
+        {
+            // Arrange & Act
+            IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
+                .Add(c => c.Open, true)
+                .Add(c => c.Position, position));
+
+            // Assert
+            cut.Find(".bui-drawer").ClassList.Should()
+                .Contain($"bui-drawer--{position.ToString().ToLowerInvariant()}");
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Apply_Size_As_Width_For_Left_Right(BlazorScenario scenario)
     {
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         // Arrange & Act
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
-            .Add(c => c.Open, true));
+        IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
+            .Add(c => c.Open, true)
+            .Add(c => c.Position, DrawerPosition.Left)
+            .Add(c => c.Size, "280px"));
 
         // Assert
-        cut.Find(".bui-dialog-overlay").Should().NotBeNull();
+        cut.Find(".bui-drawer").GetAttribute("style").Should().Contain("width: 280px");
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task Should_Apply_Size_As_Height_For_Top_Bottom(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange & Act
+        IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
+            .Add(c => c.Open, true)
+            .Add(c => c.Position, DrawerPosition.Top)
+            .Add(c => c.Size, "180px"));
+
+        // Assert
+        cut.Find(".bui-drawer").GetAttribute("style").Should().Contain("height: 180px");
     }
 
     [Theory]
@@ -91,22 +126,21 @@ public class BUIDialogStateTests
         ControllableModalInterop interop = RegisterControllable(ctx);
 
         // Arrange
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
+        IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
             .Add(c => c.Open, true));
+        cut.Find(".bui-drawer").ClassList.Contains("bui-drawer--closing").Should().BeFalse();
 
-        cut.Find(".bui-dialog").ClassList.Contains("bui-dialog--closing").Should().BeFalse();
-
-        // Act — initiate close; animation gate is still open
-        _ = cut.InvokeAsync(async () => await ClickOverlayAsync(cut));
+        // Act
+        cut.Find(".bui-drawer-overlay").Click();
         cut.WaitForState(
-            () => cut.FindAll(".bui-dialog.bui-dialog--closing").Count == 1,
+            () => cut.FindAll(".bui-drawer.bui-drawer--closing").Count == 1,
             TimeSpan.FromSeconds(1));
 
-        // Assert — during the animation, the --closing modifier is present
-        cut.Find(".bui-dialog").ClassList.Contains("bui-dialog--closing").Should().BeTrue();
-        cut.Find(".bui-dialog-overlay").ClassList.Contains("bui-dialog-overlay--closing").Should().BeTrue();
+        // Assert
+        cut.Find(".bui-drawer").ClassList.Contains("bui-drawer--closing").Should().BeTrue();
+        cut.Find(".bui-drawer-overlay").ClassList.Contains("bui-drawer-overlay--closing").Should().BeTrue();
 
-        // Finish — release animation, dialog eventually unmounts
+        // Finish
         interop.AnimationGate.SetResult(true);
         cut.WaitForState(
             () => cut.FindAll("[role='dialog']").Count == 0,
@@ -122,70 +156,21 @@ public class BUIDialogStateTests
 
         // Arrange
         bool? emitted = null;
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
+        IRenderedComponent<BUIDrawer> cut = ctx.Render<BUIDrawer>(p => p
             .Add(c => c.Open, true)
             .Add(c => c.OpenChanged, v => emitted = v));
 
         // Act
-        _ = cut.InvokeAsync(async () => await ClickOverlayAsync(cut));
+        cut.Find(".bui-drawer-overlay").Click();
         cut.WaitForState(
-            () => cut.FindAll(".bui-dialog--closing").Count == 1,
+            () => cut.FindAll(".bui-drawer--closing").Count == 1,
             TimeSpan.FromSeconds(1));
-
-        // Still animating — OpenChanged not yet emitted
         emitted.Should().BeNull();
 
-        // Release
         interop.AnimationGate.SetResult(true);
         cut.WaitForState(() => emitted is not null, TimeSpan.FromSeconds(1));
 
         // Assert
         emitted.Should().BeFalse();
-    }
-
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Apply_FullScreen_Styles_When_Enabled(BlazorScenario scenario)
-    {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
-
-        // Arrange & Act
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
-            .Add(c => c.Open, true)
-            .Add(c => c.FullScreen, true));
-
-        // Assert
-        string style = cut.Find(".bui-dialog").GetAttribute("style") ?? "";
-        style.Should().Contain("width: 100vw");
-        style.Should().Contain("height: 100vh");
-        style.Should().Contain("border-radius: 0");
-    }
-
-    [Theory]
-    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
-    public async Task Should_Apply_Custom_Size_Constraints(BlazorScenario scenario)
-    {
-        await using BlazorTestContextBase ctx = scenario.CreateContext();
-
-        // Arrange & Act
-        IRenderedComponent<BUIDialog> cut = ctx.Render<BUIDialog>(p => p
-            .Add(c => c.Open, true)
-            .Add(c => c.MinWidth, "400px")
-            .Add(c => c.MaxWidth, "800px")
-            .Add(c => c.MinHeight, "200px")
-            .Add(c => c.MaxHeight, "600px"));
-
-        // Assert
-        string style = cut.Find(".bui-dialog").GetAttribute("style") ?? "";
-        style.Should().Contain("min-width: 400px");
-        style.Should().Contain("max-width: 800px");
-        style.Should().Contain("min-height: 200px");
-        style.Should().Contain("max-height: 600px");
-    }
-
-    private static Task ClickOverlayAsync(IRenderedComponent<BUIDialog> cut)
-    {
-        cut.Find(".bui-dialog-overlay").Click();
-        return Task.CompletedTask;
     }
 }
