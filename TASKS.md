@@ -355,7 +355,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Snapshot: estados default/empty/loading.
 - **Aceptación**: paridad con `BUIDataGrid` en tipos de test.
 
-### [ ] DC-COV-02 — `BUIDataColumn` (State, Interaction)
+### [x] DC-COV-02 — `BUIDataColumn` (State, Interaction)
+  > Resuelto en commit `6f1e2a3` — *test(dc-cov-02): add BUIDataColumn State + Interaction coverage*
 - **Origen**: solo `Rendering`. La columna tiene lógica de sort/filter/templating que no se ejercita.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Generic/DataCollections/BUIDataColumn.razor`
