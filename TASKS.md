@@ -146,7 +146,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 
 ## B. COBERTURA COMPONENTES FORMS
 
-### [ ] FORM-COV-01 — `BUIColorPicker` (Snapshot + Accessibility + Validation)
+### [x] FORM-COV-01 — `BUIColorPicker` (Snapshot + Accessibility + Validation)
 - **Origen**: `BUIColorPicker` tiene solo `Rendering/Interaction/State`. Le faltan snapshots y a11y; no hay tests de validación aunque compone `BUIInputColor` que sí.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Forms/Color/BUIColorPicker.razor`
@@ -157,6 +157,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Snapshot: estados representativos (default, con `Value` fijo HSV, disabled, readonly, con slider visible).
   - A11y: `role`/`aria-*` de sliders HSV; tabindex; labels de campos hex/alpha.
 - **Aceptación**: snapshots verified generados; axe/aserciones ARIA pasan.
+  > Resuelto en commit `ade7fb7` — *test(forms): snapshot + accessibility coverage for BUIColorPicker*
+  > Nota: `BUIColorPicker` no expone `Disabled`/`ReadOnly` como parámetros (no es un input). Los estados snapshot se basan en props reales: `Value`, `OutputFormat`, `ShowActions`, `RevertText`, `SelectionWidth/Height`. Validación queda cubierta por `BUIInputColorValidationTests` (el input que compone el picker).
 
 ### [ ] FORM-COV-02 — `BUIDatePicker` + `BUITimePicker` (State, Validation, Accessibility, Snapshot)
 - **Origen**: ambos solo tienen `Rendering` + `Interaction`. Son componentes grandes con lógica de navegación calendario/horas y selección; merecen cobertura completa.
