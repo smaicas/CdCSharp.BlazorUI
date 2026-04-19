@@ -305,13 +305,15 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   > Resuelto en commit `ad8c9fe` — *test(layout): a11y coverage for BUISidebarLayout (LAY-COV-06)*
   > Nota: el componente usa elementos landmark semánticos (`<header>`/`<aside>`/`<main>`) sin `role="complementary"` explícito — `<aside>` ya expone el rol implícito. Tampoco emite `aria-controls` en el toggle porque el sidebar es un único hermano y la relación es DOM-local; `aria-expanded` sí se sincroniza con `_sidebarOpen`. El scrim se marca `aria-hidden="true"`. Tests validan el contrato real + que consumidores pueden anidar `<nav aria-label>` dentro del slot Sidebar para enriquecer semántica.
 
-### [ ] LAY-COV-07 — `BUIStackedLayout` (State, Interaction, Accessibility)
+### [x] LAY-COV-07 — `BUIStackedLayout` (State, Interaction, Accessibility)
 - **Origen**: solo `Rendering` + `Snapshot`. Faltan state (cambio de layout, responsive), interaction (toggle si aplica), a11y.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI/Components/Layout/StackedLayout/BUIStackedLayout.razor`
   - Nuevos: `BUIStackedLayoutStateTests.cs`, `BUIStackedLayoutInteractionTests.cs`, `BUIStackedLayoutAccessibilityTests.cs` bajo `Tests/Components/StackedLayout/`.
 - **Cambios**: parámetros de layout modifican data-attrs del root; regiones semánticas correctas.
 - **Aceptación**: estándar de layout completo.
+  > Resuelto en commit `2e8c3d1` — *test(layout): state + interaction + a11y for BUIStackedLayout (LAY-COV-07)*
+  > Nota: el toggle sólo se renderiza cuando hay slot `Nav` **y** `ShowToggle=true`; tests cubren ambos gates. Landmarks son nativos (`<header>`/`<nav>`/`<main>`), `aria-expanded` sincroniza con `_navOpen`. Variables CSS emitidas vía `FeatureDefinitions.InlineVariables.Layout*` (`--bui-inline-header-height`, `--bui-inline-nav-columns`, `--bui-inline-nav-col-min`, `--bui-inline-nav-gap`, `--bui-inline-content-max-width`).
 
 ### [ ] LAY-COV-08 — `BUIThemeGenerator` (State, Accessibility) + `BUIThemeEditor` / `BUIThemePreview` (Interaction, State, Snapshot)
 - **Origen**: `BUIThemeGenerator` tiene `Rendering/Interaction/Validation/Snapshot` pero no `State/Accessibility`. `BUIThemeEditor` y `BUIThemePreview` solo `Rendering`. Componentes con mucha lógica de UI (input de paleta, exportar/importar).
