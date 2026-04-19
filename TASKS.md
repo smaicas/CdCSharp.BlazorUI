@@ -43,7 +43,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: invocaciones JS esperadas por combinación de `IJsBehavior`; dispose sin excepciones observables.
   > Resuelto en commit `16a18a6` — *test(core): direct unit tests for BUIComponentJsBehaviorBuilder*
 
-### [ ] CORE-COV-03 — `VariantHelper` tests directos
+### [x] CORE-COV-03 — `VariantHelper` tests directos
 - **Origen**: `VariantRegistryTests` cubre el registro/DI, pero la helper `VariantHelper.ResolveTemplate`/fallbacks/merge con `BuiltInTemplates` no se prueba directamente.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Components/Variants/VariantHelper.cs`
@@ -52,6 +52,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Casos: template registrado (usa custom), sin template registrado (usa built-in), variante desconocida (usa default variant).
   - Verificar que un componente `BUIVariantComponentBase` pasado al helper resuelve el delegate correcto.
 - **Aceptación**: matriz {registered | missing | default} cubierta con valores esperados.
+  > Resuelto en commit `8fdf619` — *test(core): direct unit tests for VariantHelper*
 
 ### [ ] CORE-COV-04 — `SelectionState` + `SelectionTypeInfo` tests
 - **Origen**: `src/CdCSharp.BlazorUI.Core/Components/Selection/*.cs` sin tests. Selection es la base de dropdown/tree/radio/check con lógica de single/multi/mixed.
