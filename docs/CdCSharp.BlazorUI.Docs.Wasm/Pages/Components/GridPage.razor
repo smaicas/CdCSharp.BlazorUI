@@ -10,28 +10,28 @@
 
     <DocDemo Key="Basic" Title="@Loc["Basic usage"]" Description="@Loc["Use integer Span (out of Columns, default 12) to size each item."]">
         <BUIGrid Gap="1rem">
-            <BUIGridItem Span="6"><div class="demo-grid-cell">@Loc["Span 6"]</div></BUIGridItem>
-            <BUIGridItem Span="6"><div class="demo-grid-cell">@Loc["Span 6"]</div></BUIGridItem>
-            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4"]</div></BUIGridItem>
-            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4"]</div></BUIGridItem>
-            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4"]</div></BUIGridItem>
+            <BUIGridItem Span="6">@Loc["Span 6"]</BUIGridItem>
+            <BUIGridItem Span="6">@Loc["Span 6"]</BUIGridItem>
+            <BUIGridItem Span="4">@Loc["Span 4"]</BUIGridItem>
+            <BUIGridItem Span="4">@Loc["Span 4"]</BUIGridItem>
+            <BUIGridItem Span="4">@Loc["Span 4"]</BUIGridItem>
         </BUIGrid>
     </DocDemo>
 
     <DocDemo Key="Responsive" Title="@Loc["Responsive spans"]" Description="@Loc["Per-breakpoint spans (Xs, Sm, Md, Lg, Xl) override Span."]">
         <BUIGrid Gap="1rem">
-            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:4 lg:3</div></BUIGridItem>
-            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:4 lg:3</div></BUIGridItem>
-            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:4 lg:3</div></BUIGridItem>
-            <BUIGridItem Xs="12" Sm="6" Md="12" Lg="3"><div class="demo-grid-cell">xs:12 sm:6 md:12 lg:3</div></BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">xs:12 sm:6 md:4 lg:3</BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">xs:12 sm:6 md:4 lg:3</BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="4" Lg="3">xs:12 sm:6 md:4 lg:3</BUIGridItem>
+            <BUIGridItem Xs="12" Sm="6" Md="12" Lg="3">xs:12 sm:6 md:12 lg:3</BUIGridItem>
         </BUIGrid>
     </DocDemo>
 
     <DocDemo Key="Auto" Title="@Loc["Auto items"]" Description="@Loc["Auto=\"true\" sizes an item to its content."]">
         <BUIGrid Gap="1rem">
-            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Auto"]</div></BUIGridItem>
-            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Auto, wider content here"]</div></BUIGridItem>
-            <BUIGridItem Span="4"><div class="demo-grid-cell">@Loc["Span 4 fills rest"]</div></BUIGridItem>
+            <BUIGridItem Auto="true">@Loc["Auto"]</BUIGridItem>
+            <BUIGridItem Auto="true">@Loc["Auto, wider content here"]</BUIGridItem>
+            <BUIGridItem Span="4">@Loc["Span 4 fills rest"]</BUIGridItem>
         </BUIGrid>
     </DocDemo>
 
@@ -40,20 +40,20 @@
                  AlignItems="GridAlignItems.Center"
                  JustifyContent="GridJustifyContent.SpaceBetween"
                  Gap="0.5rem">
-            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Item A"]</div></BUIGridItem>
-            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Item B"]</div></BUIGridItem>
-            <BUIGridItem Auto="true"><div class="demo-grid-cell">@Loc["Item C"]</div></BUIGridItem>
+            <BUIGridItem Auto="true">@Loc["Item A"]</BUIGridItem>
+            <BUIGridItem Auto="true">@Loc["Item B"]</BUIGridItem>
+            <BUIGridItem Auto="true">@Loc["Item C"]</BUIGridItem>
         </BUIGrid>
     </DocDemo>
 
     <DocDemo Key="Gaps" Title="@Loc["Gaps & spacing"]">
         <BUIGrid RowGap="2rem" ColumnGap="0.5rem" P="1rem" style="background: color-mix(in oklab, var(--palette-primary) 6%, transparent); border-radius: 0.5rem;">
-            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
-            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
-            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
-            <BUIGridItem Span="3"><div class="demo-grid-cell">3</div></BUIGridItem>
-            <BUIGridItem Span="6"><div class="demo-grid-cell">6</div></BUIGridItem>
-            <BUIGridItem Span="6"><div class="demo-grid-cell">6</div></BUIGridItem>
+            <BUIGridItem Span="3">3</BUIGridItem>
+            <BUIGridItem Span="3">3</BUIGridItem>
+            <BUIGridItem Span="3">3</BUIGridItem>
+            <BUIGridItem Span="3">3</BUIGridItem>
+            <BUIGridItem Span="6">6</BUIGridItem>
+            <BUIGridItem Span="6">6</BUIGridItem>
         </BUIGrid>
     </DocDemo>
 

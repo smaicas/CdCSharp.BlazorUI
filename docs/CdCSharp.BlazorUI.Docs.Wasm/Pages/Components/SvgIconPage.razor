@@ -13,51 +13,41 @@
     </DocDemo>
 
     <DocDemo Key="Material" Title="@Loc["Material Icons"]" Description="@Loc["Use BUIIcons.MaterialIconsOutlined, .MaterialIconsRound, .MaterialIconsSharp, or .MaterialIconsFilled."]">
-        <div class="demo-row">
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_favorite" />
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" />
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_settings" />
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_search" />
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_cart" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="UI" Title="@Loc["UI Icons"]" Description="@Loc["A curated set for UI chrome: BUIIcons.UI.*."]">
-        <div class="demo-row">
             <BUISvgIcon Icon="@BUIIcons.UI.Home" />
             <BUISvgIcon Icon="@BUIIcons.UI.Search" />
             <BUISvgIcon Icon="@BUIIcons.UI.Settings" />
             <BUISvgIcon Icon="@BUIIcons.UI.Notifications" />
             <BUISvgIcon Icon="@BUIIcons.UI.Email" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-        <div class="demo-row" style="align-items: center;">
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Medium" />
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Large" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Colors" Title="@Loc["Colors"]">
-        <div class="demo-row">
             <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Primary" />
             <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Secondary" />
             <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Error" />
             <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Success" />
             <BUISvgIcon Icon="@BUIIcons.UI.Favorite" Color="@PaletteColor.Warning" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Clickable" Title="@Loc["Clickable"]">
-        <div class="demo-row" style="align-items: center;">
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_thumb_up"
                         Color="@PaletteColor.Primary"
                         Size="SizeEnum.Large"
                         OnClick="@(() => _clickCount++)" />
             <span>@Loc["Clicked"] @_clickCount @Loc["times"]</span>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

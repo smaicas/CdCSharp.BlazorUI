@@ -9,9 +9,6 @@
          PageInstance="this">
 
     <DocDemo Key="Single" Title="@Loc["Single selection"]">
-        <div class="demo-stack">
-            <div>@Loc["Selected"]: <code>@string.Join(", ", _single)</code></div>
-            <div class="demo-panel" style="max-width: 360px;">
                 <BUITreeSelector TItem="object"
                                  SelectedKeys="_single"
                                  SelectedKeysChanged="@(k => { _single = k; StateHasChanged(); })"
@@ -26,14 +23,9 @@
                     </BUITreeSelectorItem>
                     <BUITreeSelectorItem Text="@Loc["Gamma"]" Key="gamma" />
                 </BUITreeSelector>
-            </div>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Checkboxes" Title="@Loc["Multiple with checkboxes"]">
-        <div class="demo-stack">
-            <div>@Loc["Selected"]: <code>@string.Join(", ", _checkbox)</code></div>
-            <div class="demo-panel" style="max-width: 360px;">
                 <BUITreeSelector TItem="object"
                                  SelectedKeys="_checkbox"
                                  SelectedKeysChanged="@(k => { _checkbox = k; StateHasChanged(); })"
@@ -55,12 +47,9 @@
                         </ChildContent>
                     </BUITreeSelectorItem>
                 </BUITreeSelector>
-            </div>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Expanded" Title="@Loc["Fully expanded"]">
-        <div class="demo-panel" style="max-width: 360px;">
             <BUITreeSelector TItem="object"
                              SelectedKeys="_expanded"
                              SelectedKeysChanged="@(k => { _expanded = k; StateHasChanged(); })"
@@ -80,11 +69,9 @@
                     </ChildContent>
                 </BUITreeSelectorItem>
             </BUITreeSelector>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Icons" Title="@Loc["With icons"]">
-        <div class="demo-panel" style="max-width: 360px;">
             <BUITreeSelector TItem="object"
                              SelectedKeys="_icons"
                              SelectedKeysChanged="@(k => { _icons = k; StateHasChanged(); })"
@@ -97,7 +84,6 @@
                 </BUITreeSelectorItem>
                 <BUITreeSelectorItem Text="@Loc["Messages"]" Key="mail" Icon="@BUIIcons.UI.Email" />
             </BUITreeSelector>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

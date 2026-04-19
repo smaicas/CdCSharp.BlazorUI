@@ -24,13 +24,11 @@
                 <p>@Loc["Are you sure you want to proceed?"]</p>
             </Content>
             <Footer>
-                <div class="demo-row" style="justify-content: flex-end;">
                     <BUIButton Text="@Loc["Cancel"]" OnClick="@(() => _footer = false)" />
                     <BUIButton Text="@Loc["Confirm"]"
                                BackgroundColor="@PaletteColor.Primary"
                                Color="@PaletteColor.PrimaryContrast"
                                OnClick="@(() => _footer = false)" />
-                </div>
             </Footer>
         </BUIDialog>
     </DocDemo>
@@ -66,12 +64,10 @@
     </DocDemo>
 
     <DocDemo Key="DrawerPositions" Title="@Loc["Drawer positions"]">
-        <div class="demo-row">
             <BUIButton Text="@Loc["Left"]" OnClick="@(() => _left = true)" />
             <BUIButton Text="@Loc["Right"]" OnClick="@(() => _right = true)" />
             <BUIButton Text="@Loc["Top"]" OnClick="@(() => _top = true)" />
             <BUIButton Text="@Loc["Bottom"]" OnClick="@(() => _bottom = true)" />
-        </div>
 
         <BUIDrawer @bind-Open="_left" Position="DrawerPosition.Left">
             <ChildContent>

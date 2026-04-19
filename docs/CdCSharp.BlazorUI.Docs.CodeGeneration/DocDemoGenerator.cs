@@ -1,10 +1,10 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 
 namespace CdCSharp.BlazorUI.Docs.CodeGeneration;
 
@@ -220,7 +220,7 @@ public sealed class DocDemoGenerator : IIncrementalGenerator
             {
                 bool allWs = true;
                 for (int k = 0; k < min; k++)
-                    if (l[k] != ' ' && l[k] != '\t') { allWs = false; break; }
+                    if (l[k] is not ' ' and not '\t') { allWs = false; break; }
                 sb.Append(allWs ? l.Substring(min) : l);
             }
             else

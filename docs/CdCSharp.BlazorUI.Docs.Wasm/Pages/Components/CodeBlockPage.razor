@@ -14,11 +14,9 @@
     </DocDemo>
 
     <DocDemo Key="Languages" Title="@Loc["Languages"]" Description="@Loc["Pick from any SyntaxHighlightLanguage — CSharp, Razor, TypeScript, Css, Json."]">
-        <div class="demo-stack">
             <BUICodeBlock Language="SyntaxHighlightLanguage.Razor" Code="@("<BUIButton Text=\"Save\" />")" />
             <BUICodeBlock Language="SyntaxHighlightLanguage.Css" Code="@(".bui-demo { color: var(--palette-primary); }")" />
             <BUICodeBlock Language="SyntaxHighlightLanguage.Json" Code="@("{\n  \"name\": \"BlazorUI\",\n  \"version\": \"1.0.0\"\n}")" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Title" Title="@Loc["Custom title"]" Description="@Loc["Set Title to override the language badge with a filename or custom label."]">
@@ -28,15 +26,12 @@
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-        <div class="demo-stack">
             <BUICodeBlock Size="SizeEnum.Small" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Small\" />")' />
             <BUICodeBlock Size="SizeEnum.Medium" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Medium\" />")' />
             <BUICodeBlock Size="SizeEnum.Large" Language="SyntaxHighlightLanguage.Razor" Code='@("<BUIButton Text=\"Large\" />")' />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Border" Title="@Loc["Border"]">
-        <div class="demo-stack">
             <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
                           Code="@("// Rounded large")"
                           Border="@BUIBorderPresets.RoundedLarge" />
@@ -46,7 +41,6 @@
             <BUICodeBlock Language="SyntaxHighlightLanguage.CSharp"
                           Code="@("// Dotted border")"
                           Border="@BUIBorderPresets.Dotted" />
-        </div>
     </DocDemo>
 
     <section class="doc-section">

@@ -13,23 +13,18 @@
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-        <div class="demo-row">
             <BUIInputSwitch @bind-Value="_small" Size="SizeEnum.Small" Label="@Loc["Small"]" />
             <BUIInputSwitch @bind-Value="_medium" Size="SizeEnum.Medium" Label="@Loc["Medium"]" />
             <BUIInputSwitch @bind-Value="_large" Size="SizeEnum.Large" Label="@Loc["Large"]" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Colors" Title="@Loc["Colors"]">
-        <div class="demo-stack">
             <BUIInputSwitch @bind-Value="_colorPrimary" TrackColorActive="@PaletteColor.Primary" Label="@Loc["Primary"]" />
             <BUIInputSwitch @bind-Value="_colorSuccess" TrackColorActive="@PaletteColor.Success" Label="@Loc["Success"]" />
             <BUIInputSwitch @bind-Value="_colorError" TrackColorActive="@PaletteColor.Error" Label="@Loc["Error"]" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Icons" Title="@Loc["With icons"]">
-        <div class="demo-stack">
             <BUIInputSwitch @bind-Value="_wifi"
                             IconActive="@BUIIcons.MaterialIconsOutlined.i_wifi"
                             IconInactive="@BUIIcons.MaterialIconsOutlined.i_wifi_off"
@@ -38,16 +33,13 @@
                             IconActive="@BUIIcons.MaterialIconsOutlined.i_bluetooth"
                             IconInactive="@BUIIcons.MaterialIconsOutlined.i_bluetooth_disabled"
                             Label="@Loc["Bluetooth"]" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="States" Title="@Loc["States"]">
-        <div class="demo-stack">
             <BUIInputSwitch @bind-Value="_required" Label="@Loc["Required"]" Required="true" />
             <BUIInputSwitch @bind-Value="_readonly" Label="@Loc["ReadOnly"]" ReadOnly="true" />
             <BUIInputSwitch @bind-Value="_disabledOn" Disabled="true" Label="@Loc["Disabled (on)"]" />
             <BUIInputSwitch @bind-Value="_disabledOff" Disabled="true" Label="@Loc["Disabled (off)"]" />
-        </div>
     </DocDemo>
 
     <section class="doc-section">

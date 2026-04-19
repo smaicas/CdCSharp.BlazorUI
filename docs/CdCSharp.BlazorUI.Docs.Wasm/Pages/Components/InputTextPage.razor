@@ -13,19 +13,15 @@
     </DocDemo>
 
     <DocDemo Key="Variants" Title="@Loc["Variants"]" Description="@Loc["Three visual styles for every form aesthetic."]">
-        <div class="demo-stack">
             <BUIInputText @bind-Value="_outlined" Variant="BUIInputVariant.Outlined" Label="@Loc["Outlined"]" />
             <BUIInputText @bind-Value="_filled" Variant="BUIInputVariant.Filled" Label="@Loc["Filled"]" />
             <BUIInputText @bind-Value="_standard" Variant="BUIInputVariant.Standard" Label="@Loc["Standard"]" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-        <div class="demo-stack">
             <BUIInputText @bind-Value="_small" Size="SizeEnum.Small" Label="@Loc["Small"]" />
             <BUIInputText @bind-Value="_medium" Size="SizeEnum.Medium" Label="@Loc["Medium (Default)"]" />
             <BUIInputText @bind-Value="_large" Size="SizeEnum.Large" Label="@Loc["Large"]" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
@@ -34,29 +30,23 @@
     </DocDemo>
 
     <DocDemo Key="PrefixSuffix" Title="@Loc["Prefix & Suffix"]" Description="@Loc["Add icons or text to either side of the input."]">
-        <div class="demo-stack">
             <BUIInputText @bind-Value="_url" Label="@Loc["Website"]" PrefixText="https://" />
             <BUIInputText @bind-Value="_search" Label="@Loc["Search"]" PrefixIcon="@BUIIcons.MaterialIconsOutlined.i_search" />
             <BUIInputText @bind-Value="_domain" Label="@Loc["Domain"]" SuffixText=".com" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-        <div class="demo-stack">
             <BUIInputText @bind-Value="_shadow" Label="@Loc["Shadow"]" Shadow="@BUIShadowPresets.Elevation(2)" />
             <BUIInputText @bind-Value="_pill" Label="@Loc["Pill border"]" Border="@BUIBorderPresets.Pill" />
             <BUIInputText @bind-Value="_rounded" Label="@Loc["Rounded"]" Border="@BUIBorderPresets.RoundedLarge" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="States" Title="@Loc["States"]">
-        <div class="demo-stack">
             <BUIInputText @bind-Value="_disabled" Label="@Loc["Disabled"]" Disabled="true" />
             <BUIInputText @bind-Value="_readonly" Label="@Loc["Read-only"]" ReadOnly="true" />
             <BUIInputText @bind-Value="_required" Label="@Loc["Required"]" Required="true" />
             <BUIInputText @bind-Value="_error" Label="@Loc["Error"]" Error="true" HelperText="@Loc["Invalid email"]" />
             <BUIInputText @bind-Value="_loading" Label="@Loc["Loading"]" Loading="true" />
-        </div>
     </DocDemo>
 
     <section class="doc-section">

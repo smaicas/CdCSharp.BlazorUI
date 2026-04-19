@@ -48,7 +48,6 @@
     </DocDemo>
 
     <DocDemo Key="Selection" Title="@Loc["Selection"]" Description="@Loc["SelectionMode.Multiple adds a checkbox per card and exposes the set via @bind-SelectedItems."]">
-        <div>
             <BUIDataCards TItem="Product"
                           Items="_products"
                           SelectionMode="SelectionMode.Multiple"
@@ -59,8 +58,6 @@
                     <BUIDataColumn TItem="Product" Header="@Loc["Price"]" Property="@(p => p.Price)" Format="C" />
                 </Columns>
             </BUIDataCards>
-            <p style="margin-top: 1rem; opacity:.7;">@Loc["Selected"]: @_selected.Count @Loc["item(s)"]</p>
-        </div>
     </DocDemo>
 
     <DocDemo Key="CardStyling" Title="@Loc["Card styling"]" Description="@Loc["Use CardBorder, CardShadow, and CardBackground for quick tweaks without CSS."]">

@@ -9,7 +9,6 @@
          PageInstance="this">
 
     <DocDemo Key="Basic" Title="@Loc["Basic usage"]" Description="@Loc["Declare BUITreeMenuItems — nest them via ChildContent."]">
-        <div class="demo-panel" style="max-width: 320px;">
             <BUITreeMenu TItem="object" Size="SizeEnum.Medium">
                 <BUITreeMenuItem Text="@Loc["Dashboard"]" Icon="@BUIIcons.UI.Home" />
                 <BUITreeMenuItem Text="@Loc["Projects"]" Icon="@BUIIcons.UI.Folder" InitiallyExpanded="true">
@@ -26,7 +25,6 @@
                 </BUITreeMenuItem>
                 <BUITreeMenuItem Text="@Loc["Team"]" Icon="@BUIIcons.UI.Settings" />
             </BUITreeMenu>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Horizontal" Title="@Loc["Horizontal (top bar)"]">
@@ -52,7 +50,6 @@
     </DocDemo>
 
     <DocDemo Key="Hover" Title="@Loc["Hover trigger"]" Description="@Loc["Open submenus on hover instead of click."]">
-        <div class="demo-panel" style="max-width: 320px;">
             <BUITreeMenu TItem="object" Trigger="TreeMenuTrigger.Hover" HoverOpenDelay="100">
                 <BUITreeMenuItem Text="@Loc["Hover me"]" Icon="@BUIIcons.UI.Settings">
                     <ChildContent>
@@ -62,7 +59,6 @@
                     </ChildContent>
                 </BUITreeMenuItem>
             </BUITreeMenu>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

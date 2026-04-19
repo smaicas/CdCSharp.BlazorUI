@@ -9,54 +9,43 @@
          PageInstance="this">
 
     <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
-        <div class="demo-row">
             <BUIBadge>@Loc["New"]</BUIBadge>
             <BUIBadge>12</BUIBadge>
             <BUIBadge>
                 <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
                 @Loc["Featured"]
             </BUIBadge>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Dot" Title="@Loc["Dot badge"]" Description="@Loc["An empty badge renders as a dot — perfect as an unread indicator."]">
-        <div class="demo-row">
             <BUIBadge />
             <BUIBadge BackgroundColor="@PaletteColor.Success" />
             <BUIBadge BackgroundColor="@PaletteColor.Warning" />
             <BUIBadge BackgroundColor="@PaletteColor.Error" />
-        </div>
     </DocDemo>
 
     <DocDemo Key="Circular" Title="@Loc["Circular"]" Description="@Loc["Use Circular for single-digit or icon badges."]">
-        <div class="demo-row">
             <BUIBadge Circular="true">1</BUIBadge>
             <BUIBadge Circular="true" BackgroundColor="@PaletteColor.Success">9</BUIBadge>
             <BUIBadge Circular="true" BackgroundColor="@PaletteColor.Error">!</BUIBadge>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Colors" Title="@Loc["Colors"]">
-        <div class="demo-row">
             <BUIBadge BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast">@Loc["Primary"]</BUIBadge>
             <BUIBadge BackgroundColor="@PaletteColor.Success" Color="@PaletteColor.SuccessContrast">@Loc["Success"]</BUIBadge>
             <BUIBadge BackgroundColor="@PaletteColor.Warning" Color="@PaletteColor.WarningContrast">@Loc["Warning"]</BUIBadge>
             <BUIBadge BackgroundColor="@PaletteColor.Error" Color="@PaletteColor.ErrorContrast">@Loc["Error"]</BUIBadge>
             <BUIBadge BackgroundColor="@PaletteColor.Info" Color="@PaletteColor.InfoContrast">@Loc["Info"]</BUIBadge>
-        </div>
     </DocDemo>
 
     <DocDemo Key="ShadowAndBorder" Title="@Loc["Shadow & Border"]">
-        <div class="demo-row">
             <BUIBadge Shadow="@BUIShadowPresets.Elevation(3)">@Loc["Elevated"]</BUIBadge>
             <BUIBadge Border="@BUIBorderPresets.Pill" BackgroundColor="@PaletteColor.Primary" Color="@PaletteColor.PrimaryContrast">@Loc["Pill"]</BUIBadge>
             <BUIBadge Border="@BUIBorderPresets.RoundedLarge" BackgroundColor="@PaletteColor.Secondary" Color="@PaletteColor.SecondaryContrast">@Loc["Rounded"]</BUIBadge>
             <BUIBadge Border="@BUIBorderPresets.Default">@Loc["Bordered"]</BUIBadge>
-        </div>
     </DocDemo>
 
     <DocDemo Key="Notification" Title="@Loc["Notification badge"]" Description="@Loc["BUINotificationBadge overlays a badge onto any child content."]">
-        <div class="demo-row" style="gap: 2rem;">
             <BUINotificationBadge>
                 <ChildContent>
                     <BUIButton Text="@Loc["Messages"]" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_mail" />
@@ -74,7 +63,6 @@
                     <BUIButton Text="@Loc["Alerts"]" LeadingIcon="@BUIIcons.MaterialIconsOutlined.i_notifications" />
                 </ChildContent>
             </BUINotificationBadge>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

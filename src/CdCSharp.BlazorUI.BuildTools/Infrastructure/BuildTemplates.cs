@@ -20,6 +20,7 @@ public class BuildTemplates
 /* 2. Theme Variables */
 @import './_themes.css';
 @import './_initialize-themes.css';
+@import './_scrollbar.css';
 
 /* 3. Universal Component Styles */
 @import './_tokens.css';

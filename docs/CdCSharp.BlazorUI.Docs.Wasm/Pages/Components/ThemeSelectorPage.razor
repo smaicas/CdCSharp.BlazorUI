@@ -21,11 +21,9 @@
     </DocDemo>
 
     <DocDemo Key="Event" Title="@Loc["Hook onto change events"]">
-        <div class="demo-row">
             <BUIThemeSelector Variant="BUIThemeSelectorVariant.SunMoon"
                               OnThemeChanged="@(t => { _lastTheme = t; StateHasChanged(); })" />
             <span>@Loc["Last change"]: <code>@_lastTheme</code></span>
-        </div>
     </DocDemo>
 
     <section class="doc-section">

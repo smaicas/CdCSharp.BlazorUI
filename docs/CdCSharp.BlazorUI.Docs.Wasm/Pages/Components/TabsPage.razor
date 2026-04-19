@@ -11,13 +11,13 @@
     <DocDemo Key="Basic" Title="@Loc["Basic usage"]">
         <BUITabs @bind-ActiveTab="_basic">
             <BUITab Id="overview" Label="@Loc["Overview"]">
-                <div class="demo-panel">@Loc["Overview content — the first tab is active by default."]</div>
+                @Loc["Overview content — the first tab is active by default."]
             </BUITab>
             <BUITab Id="details" Label="@Loc["Details"]">
-                <div class="demo-panel">@Loc["Details content."]</div>
+                @Loc["Details content."]
             </BUITab>
             <BUITab Id="reviews" Label="@Loc["Reviews"]">
-                <div class="demo-panel">@Loc["Reviews content."]</div>
+                @Loc["Reviews content."]
             </BUITab>
         </BUITabs>
     </DocDemo>
@@ -26,24 +26,24 @@
         <div class="demo-stack">
             <BUITabs Variant="BUITabsVariant.Pills" @bind-ActiveTab="_pills">
                 <BUITab Id="account" Label="@Loc["Account"]">
-                    <div class="demo-panel">@Loc["Account settings."]</div>
+                    @Loc["Account settings."]
                 </BUITab>
                 <BUITab Id="billing" Label="@Loc["Billing"]">
-                    <div class="demo-panel">@Loc["Billing details."]</div>
+                    @Loc["Billing details."]
                 </BUITab>
                 <BUITab Id="team" Label="@Loc["Team"]">
-                    <div class="demo-panel">@Loc["Team members."]</div>
+                    @Loc["Team members."]
                 </BUITab>
             </BUITabs>
             <BUITabs Variant="BUITabsVariant.Enclosed" @bind-ActiveTab="_enclosed">
                 <BUITab Id="profile" Label="@Loc["Profile"]">
-                    <div class="demo-panel">@Loc["Profile tab."]</div>
+                    @Loc["Profile tab."]
                 </BUITab>
                 <BUITab Id="notifications" Label="@Loc["Notifications"]">
-                    <div class="demo-panel">@Loc["Notifications tab."]</div>
+                    @Loc["Notifications tab."]
                 </BUITab>
                 <BUITab Id="security" Label="@Loc["Security"]">
-                    <div class="demo-panel">@Loc["Security tab."]</div>
+                    @Loc["Security tab."]
                 </BUITab>
             </BUITabs>
         </div>
@@ -52,13 +52,13 @@
     <DocDemo Key="FullWidth" Title="@Loc["Full width"]">
         <BUITabs FullWidth="true" @bind-ActiveTab="_full">
             <BUITab Id="inbox" Label="@Loc["Inbox"]">
-                <div class="demo-panel">@Loc["Inbox."]</div>
+                @Loc["Inbox."]
             </BUITab>
             <BUITab Id="sent" Label="@Loc["Sent"]">
-                <div class="demo-panel">@Loc["Sent messages."]</div>
+                @Loc["Sent messages."]
             </BUITab>
             <BUITab Id="archive" Label="@Loc["Archive"]">
-                <div class="demo-panel">@Loc["Archive."]</div>
+                @Loc["Archive."]
             </BUITab>
         </BUITabs>
     </DocDemo>
@@ -66,13 +66,13 @@
     <DocDemo Key="Disabled" Title="@Loc["Disabled tab"]">
         <BUITabs @bind-ActiveTab="_disabled">
             <BUITab Id="general" Label="@Loc["General"]">
-                <div class="demo-panel">@Loc["General settings."]</div>
+                @Loc["General settings."]
             </BUITab>
             <BUITab Id="pro" Label="@Loc["Pro features"]" Disabled="true">
-                <div class="demo-panel">@Loc["Unreachable content."]</div>
+                @Loc["Unreachable content."]
             </BUITab>
             <BUITab Id="about" Label="@Loc["About"]">
-                <div class="demo-panel">@Loc["About page."]</div>
+                @Loc["About page."]
             </BUITab>
         </BUITabs>
     </DocDemo>
