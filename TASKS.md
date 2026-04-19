@@ -90,7 +90,7 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
 - **Aceptación**: transiciones materializadas = especificación CSS esperada.
   > Resuelto en commit `c7a96de` — *test(core): direct unit tests for BUITransitionBuilder and EasingBuilder*
 
-### [ ] CORE-COV-07 — `SearchAlgorithms` tests
+### [x] CORE-COV-07 — `SearchAlgorithms` tests
 - **Origen**: `src/CdCSharp.BlazorUI.Core/Search/SearchAlgorithms.cs` implementa fuzzy/contains/startswith usado en Dropdown/Tree; sin tests.
 - **Archivos**:
   - Fuente: `src/CdCSharp.BlazorUI.Core/Search/SearchAlgorithms.cs`, `SearchMode.cs`, `SearchResult.cs`
@@ -100,6 +100,8 @@ Origen: auditoría de `src/CdCSharp.BlazorUI.Core` y `src/CdCSharp.BlazorUI` com
   - Fuzzy: puntuación ordenada y estable; query superset del texto no matchea.
   - `SearchResult.MatchedIndices` cubre los índices correctos para highlight.
 - **Aceptación**: matriz de modos × entradas cubierta; ranking de fuzzy estable.
+  > Resuelto en commit `0c2bd9a` — *test(core): direct unit tests for SearchAlgorithms*
+  > Nota: `SearchResult` no expone `MatchedIndices`; la parte de highlight indices queda fuera de scope (N/A).
 
 ### [ ] CORE-COV-08 — `DelayedActionHandler` + `TimingUtilities` tests
 - **Origen**: `DelayedActionHandler` es el timer reutilizable por `BUITreeMenu` (LAYOUT-04) y `BUIToast` (auto-dismiss); su disposal y concurrency se tocaron en bug-fixes pero no hay tests unitarios.
