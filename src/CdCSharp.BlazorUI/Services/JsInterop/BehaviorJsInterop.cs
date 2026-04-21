@@ -4,7 +4,7 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components;
 
-public sealed class BehaviorJsInterop : ModuleJsInteropBase, IBehaviorJsInterop
+internal sealed class BehaviorJsInterop : ModuleJsInteropBase, IBehaviorJsInterop
 {
     public BehaviorJsInterop(IJSRuntime jsRuntime)
         : base(jsRuntime, JSModulesReference.BehaviorsJs)

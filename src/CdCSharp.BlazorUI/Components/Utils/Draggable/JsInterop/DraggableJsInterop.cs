@@ -15,7 +15,7 @@ public interface IDraggableJsInterop
     ValueTask StopDragAsync(string componentId);
 }
 
-public sealed class DraggableJsInterop : ModuleJsInteropBase, IDraggableJsInterop
+internal sealed class DraggableJsInterop : ModuleJsInteropBase, IDraggableJsInterop
 {
     public DraggableJsInterop(IJSRuntime jsRuntime)
         : base(jsRuntime, JSModulesReference.Draggable)

@@ -20,7 +20,7 @@ public interface IDropdownJsInterop
         string componentId);
 }
 
-public sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsInterop
+internal sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsInterop
 {
     public DropdownJsInterop(IJSRuntime jsRuntime)
         : base(jsRuntime, JSModulesReference.Dropdown)

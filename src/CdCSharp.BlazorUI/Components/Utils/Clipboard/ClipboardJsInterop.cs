@@ -9,7 +9,7 @@ public interface IClipboardJsInterop
     ValueTask CopyTextAsync(string text);
 }
 
-public sealed class ClipboardJsInterop
+internal sealed class ClipboardJsInterop
     : ModuleJsInteropBase, IClipboardJsInterop
 {
     public ClipboardJsInterop(IJSRuntime jsRuntime)

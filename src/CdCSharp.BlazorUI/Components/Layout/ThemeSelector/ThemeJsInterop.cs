@@ -19,7 +19,7 @@ public interface IThemeJsInterop
     ValueTask<Dictionary<string, string>> GetPaletteAsync();
 }
 
-public sealed class ThemeJsInterop(IJSRuntime jsRuntime)
+internal sealed class ThemeJsInterop(IJSRuntime jsRuntime)
     : ModuleJsInteropBase(jsRuntime, JSModulesReference.ThemeJs),
       IThemeJsInterop
 {

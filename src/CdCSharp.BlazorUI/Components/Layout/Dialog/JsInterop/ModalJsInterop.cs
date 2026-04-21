@@ -18,7 +18,7 @@ public interface IModalJsInterop
     ValueTask WaitForAnimationEndAsync(ElementReference element, int fallbackMs);
 }
 
-public sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
+internal sealed class ModalJsInterop : ModuleJsInteropBase, IModalJsInterop
 {
     public ModalJsInterop(IJSRuntime jsRuntime)
         : base(jsRuntime, JSModulesReference.Modal)

@@ -12,7 +12,7 @@ public interface ITextAreaJsInterop
     ValueTask InitializeAutoResizeAsync(ElementReference textarea, string textareaId);
 }
 
-public sealed class TextAreaJsInterop : ModuleJsInteropBase, ITextAreaJsInterop
+internal sealed class TextAreaJsInterop : ModuleJsInteropBase, ITextAreaJsInterop
 {
     public TextAreaJsInterop(IJSRuntime jsRuntime)
         : base(jsRuntime, JSModulesReference.TextArea)

@@ -25,7 +25,7 @@ public interface IPatternJsInterop
     ValueTask UpdateSpanValueAsync(string componentId, int index, string value);
 }
 
-public sealed class PatternJsInterop
+internal sealed class PatternJsInterop
     : ModuleJsInteropBase, IPatternJsInterop
 {
     public PatternJsInterop(IJSRuntime jsRuntime)

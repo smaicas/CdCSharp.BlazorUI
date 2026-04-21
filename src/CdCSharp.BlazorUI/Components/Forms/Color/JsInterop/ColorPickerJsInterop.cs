@@ -12,7 +12,7 @@ public interface IColorPickerJsInterop
     ValueTask SetHandlerPositionAsync(ElementReference handler, double x, double y);
 }
 
-public sealed class ColorPickerJsInterop : ModuleJsInteropBase, IColorPickerJsInterop
+internal sealed class ColorPickerJsInterop : ModuleJsInteropBase, IColorPickerJsInterop
 {
     public ColorPickerJsInterop(IJSRuntime jsRuntime)
         : base(jsRuntime, JSModulesReference.ColorPicker)
