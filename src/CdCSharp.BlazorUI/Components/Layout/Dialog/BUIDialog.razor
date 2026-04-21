@@ -177,9 +177,10 @@
         }
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         _disposed = true;
         await CleanupAsync();
+        await base.DisposeAsync();
     }
 }

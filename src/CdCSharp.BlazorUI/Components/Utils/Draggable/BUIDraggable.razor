@@ -55,12 +55,13 @@
         await OnDragEnd.InvokeAsync(new DragEventArgs { ClientX = clientX, ClientY = clientY });
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         if (_isDragging)
         {
             await JsInterop.StopDragAsync(_componentId);
         }
         _callbacksRelay?.Dispose();
+        await base.DisposeAsync();
     }
 }
