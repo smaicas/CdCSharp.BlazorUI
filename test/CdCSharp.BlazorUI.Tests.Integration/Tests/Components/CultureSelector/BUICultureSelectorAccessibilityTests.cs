@@ -22,9 +22,9 @@ public class BUICultureSelectorAccessibilityTests
         // Arrange & Act
         IReadOnlyList<IElement> buttons = scenario.Name == "Server"
             ? ctx.Render<ServerSelector>(p => p.Add(c => c.Variant, ServerVariant.Flags))
-                  .FindAll(".ui-culture-selector__flag-button")
+                  .FindAll(".bui-culture-selector__flag-button")
             : ctx.Render<WasmSelector>(p => p.Add(c => c.Variant, WasmVariant.Flags))
-                  .FindAll(".ui-culture-selector__flag-button");
+                  .FindAll(".bui-culture-selector__flag-button");
 
         // Assert
         buttons.Should().NotBeEmpty();

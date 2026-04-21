@@ -45,7 +45,7 @@
 
     private RenderFragment RenderDropdown() => __builder =>
     {
-        <select class="ui-culture-selector__select"
+        <select class="bui-culture-selector__select"
                 value="@_currentCulture.Name"
                 @onchange="OnCultureChangeAsync">
             @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
@@ -71,18 +71,18 @@
     private RenderFragment RenderFlags() => __builder =>
     {
         <bui-component @attributes="ComputedAttributes">
-            <div class="ui-culture-selector__flag-list">
+            <div class="bui-culture-selector__flag-list">
                 @foreach (CultureInfo culture in LocalizationSettings.SupportedCultures)
                 {
                     bool isActive = culture.Name == _currentCulture.Name;
-                    <button class="ui-culture-selector__flag-button @(isActive ? "active" : "")"
+                    <button class="bui-culture-selector__flag-button @(isActive ? "active" : "")"
                             @onclick="() => SetCultureAsync(culture.Name)"
                             title="@culture.DisplayName"
                             disabled="@isActive">
                         @GetFlag(culture.Name)
                         @if (ShowName)
                         {
-                            <span class="ui-culture-selector__flag-label">@culture.DisplayName</span>
+                            <span class="bui-culture-selector__flag-label">@culture.DisplayName</span>
                         }
                     </button>
                 }

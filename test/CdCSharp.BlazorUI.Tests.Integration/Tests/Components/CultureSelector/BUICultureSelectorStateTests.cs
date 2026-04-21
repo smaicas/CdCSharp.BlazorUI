@@ -43,11 +43,11 @@ public class BUICultureSelectorStateTests
             ? ctx.Render<ServerSelector>(p => p
                 .Add(c => c.Variant, ServerVariant.Flags)
                 .Add(c => c.ShowFlag, true)
-                .Add(c => c.ShowName, false)).FindAll(".ui-culture-selector__flag-label")
+                .Add(c => c.ShowName, false)).FindAll(".bui-culture-selector__flag-label")
             : ctx.Render<WasmSelector>(p => p
                 .Add(c => c.Variant, WasmVariant.Flags)
                 .Add(c => c.ShowFlag, true)
-                .Add(c => c.ShowName, false)).FindAll(".ui-culture-selector__flag-label");
+                .Add(c => c.ShowName, false)).FindAll(".bui-culture-selector__flag-label");
 
         // Assert
         labels.Should().BeEmpty();
