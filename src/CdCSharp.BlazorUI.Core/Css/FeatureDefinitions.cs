@@ -3,8 +3,12 @@
 /// <summary>
 /// Central definition of all CSS-related constants used by the BUI component library. Organized by
 /// purpose and usage context.
+///
+/// INTERNAL: this surface is part of the library's private CSS/DOM contract and is subject
+/// to change between minor versions. Consumers that need to read or compose a small set of
+/// framework-driven keys must use the public facade <c>CdCSharp.BlazorUI.Core.Css.BUIStylingKeys</c>.
 /// </summary>
-public static class FeatureDefinitions
+internal static class FeatureDefinitions
 {
     public static class ComponentVariables
     {
