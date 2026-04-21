@@ -36,15 +36,12 @@ public class ColorClassGenerator : IIncrementalGenerator
                 predicate: static (s, _) => IsClassWithAutogenerateCssColorsAttribute(s),
                 transform: static (ctx, _) => GetSemanticTarget(ctx))
             .Where(static m => m is not null)
-            .Select(static (m, _) => m!);
+            .Select(static (m, _) => m!.Value);
 
-        IncrementalValueProvider<(Compilation Left, ImmutableArray<ClassToGenerate> Right)> compilationAndClasses =
-            context.CompilationProvider.Combine(classDeclarations.Collect());
-
-        context.RegisterSourceOutput(compilationAndClasses, (spc, source) => Execute(source.Right, spc));
+        context.RegisterSourceOutput(classDeclarations.Collect(), static (spc, source) => Execute(source, spc));
     }
 
-    private record ClassToGenerate(INamedTypeSymbol Symbol, int VariantLevels);
+    private readonly record struct ClassToGenerate(string NamespaceName, string ClassName, int VariantLevels);
 
     private static ClassToGenerate? GetSemanticTarget(GeneratorSyntaxContext context)
     {
@@ -69,7 +66,10 @@ public class ColorClassGenerator : IIncrementalGenerator
                     variantLevels = levels;
                 }
 
-                return new ClassToGenerate(classSymbol, variantLevels);
+                return new ClassToGenerate(
+                    classSymbol.ContainingNamespace.ToDisplayString(),
+                    classSymbol.Name,
+                    variantLevels);
             }
         }
 
@@ -98,18 +98,16 @@ public class ColorClassGenerator : IIncrementalGenerator
         return false;
     }
 
-    private void Execute(ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
+    private static void Execute(ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
     {
         if (classes.IsDefaultOrEmpty)
             return;
 
         foreach (ClassToGenerate classToGenerate in classes.Distinct())
         {
-            INamedTypeSymbol classSymbol = classToGenerate.Symbol;
             int variantLevels = classToGenerate.VariantLevels;
-
-            string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
-            string className = classSymbol.Name;
+            string namespaceName = classToGenerate.NamespaceName;
+            string className = classToGenerate.ClassName;
 
             ClassDeclarationSyntax classSyntax = GenerateClassDeclaration(className);
 
@@ -162,7 +160,7 @@ public class ColorClassGenerator : IIncrementalGenerator
         }
     }
 
-    private ClassDeclarationSyntax GenerateClassDeclaration(string className) =>
+    private static ClassDeclarationSyntax GenerateClassDeclaration(string className) =>
         SyntaxFactory.ClassDeclaration(className)
             .AddAttributeLists(
                 SyntaxFactory.AttributeList(
@@ -176,13 +174,13 @@ public class ColorClassGenerator : IIncrementalGenerator
                 SyntaxFactory.Token(SyntaxKind.StaticKeyword),
                 SyntaxFactory.Token(SyntaxKind.PartialKeyword));
 
-    private ClassDeclarationSyntax GenerateInnerClassDeclaration(string name) =>
+    private static ClassDeclarationSyntax GenerateInnerClassDeclaration(string name) =>
         SyntaxFactory.ClassDeclaration(name)
             .AddModifiers(
                 SyntaxFactory.Token(SyntaxKind.PublicKeyword),
                 SyntaxFactory.Token(SyntaxKind.StaticKeyword));
 
-    private PropertyDeclarationSyntax GenerateProperty(string name, string initializer)
+    private static PropertyDeclarationSyntax GenerateProperty(string name, string initializer)
     {
         return SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName("CssColor"), name)
             .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword),
