@@ -9,10 +9,10 @@
   },
   {
     Name: ColumnDirection,
-    Html: <bui-component data-bui-component="grid" data-dir="column" style="--gap: 8px" b-qh65871isl></bui-component>
+    Html: <bui-component data-dir="column" data-bui-component="grid" style="--gap: 8px" b-qh65871isl></bui-component>
   },
   {
     Name: WithMaxWidth,
-    Html: <bui-component data-bui-component="grid" data-contained="true" style="--columns: 12; --max-w: 1200px" b-qh65871isl></bui-component>
+    Html: <bui-component data-contained="true" data-bui-component="grid" style="--columns: 12; --max-w: 1200px" b-qh65871isl></bui-component>
   }
 ]

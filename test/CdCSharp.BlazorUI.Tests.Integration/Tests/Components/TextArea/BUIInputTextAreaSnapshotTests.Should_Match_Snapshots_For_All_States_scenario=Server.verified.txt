@@ -2,7 +2,7 @@
   {
     Name: Default_Outlined,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Notes</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -17,7 +17,7 @@
   {
     Name: With_Value,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="true" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="true" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Notes</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -32,7 +32,7 @@
   {
     Name: AutoResize_Enabled,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="vertical" data-bui-autoresize="true" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="vertical" data-bui-autoresize="true" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Notes</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -47,7 +47,7 @@
   {
     Name: Resize_None,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="none" data-bui-autoresize="false" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="none" data-bui-autoresize="false" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Notes</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -62,7 +62,7 @@
   {
     Name: Resize_Both,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="both" data-bui-autoresize="false" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="both" data-bui-autoresize="false" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Notes</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -77,7 +77,7 @@
   {
     Name: Disabled,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Disabled</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -92,7 +92,7 @@
   {
     Name: Error_State,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Error</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -107,7 +107,7 @@
   {
     Name: With_Prefix_Suffix,
     Html:
-<bui-component data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-resize="vertical" data-bui-autoresize="false" data-bui-floated="false" data-bui-component="input-text-area" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-953abuzrqt><div class="bui-input__wrapper" b-953abuzrqt><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-textarea-<ID>" class="bui-input__label">Notes</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 <div class="_bui-addon bui-input__addon--prefix" b-gjdaj7dgdt><span>PRE</span></div>

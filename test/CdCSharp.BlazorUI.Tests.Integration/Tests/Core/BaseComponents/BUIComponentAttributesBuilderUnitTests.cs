@@ -397,6 +397,66 @@ public class BUIComponentAttributesBuilderUnitTests
         builder.ComputedAttributes["data-bui-custom"].Should().Be("patched");
     }
 
+    // ---------- BASE-02: framework owns the contract keys ----------
+
+    [Fact]
+    public void BuildStyles_Should_Preserve_Framework_DataAttributes_Over_Component_Overrides()
+    {
+        BUIComponentAttributesBuilder builder = new();
+        ContractHijackingStub component = new() { DisabledFlag = true };
+
+        builder.BuildStyles(component, null);
+
+        builder.ComputedAttributes[FeatureDefinitions.DataAttributes.Component]
+            .Should().Be("contract-hijacking-stub",
+                "framework-owned data-bui-component must not be overridable by a component hook");
+        builder.ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled]
+            .Should().Be("true",
+                "framework-owned data-bui-disabled must reflect IHasDisabled, not the hook's override");
+    }
+
+    [Fact]
+    public void BuildStyles_Should_Preserve_Framework_InlineVariables_Over_Component_Overrides()
+    {
+        BUIComponentAttributesBuilder builder = new();
+        ContractHijackingStub component = new() { ColorValue = "rgba(10,20,30,1)" };
+
+        builder.BuildStyles(component, null);
+
+        string style = (string)builder.ComputedAttributes["style"];
+        style.Should().Contain("--bui-inline-color: rgba(10,20,30,1)",
+            "framework-owned --bui-inline-color must win over a component override");
+        style.Should().NotContain("HIJACKED");
+    }
+
+    [Fact]
+    public void BuildStyles_Should_Allow_Component_Keys_That_Do_Not_Collide()
+    {
+        BUIComponentAttributesBuilder builder = new();
+        ContractHijackingStub component = new();
+
+        builder.BuildStyles(component, null);
+
+        builder.ComputedAttributes["data-bui-custom-extra"].Should().Be("ok");
+        ((string)builder.ComputedAttributes["style"]).Should().Contain("--bui-inline-custom-extra: 99px");
+    }
+
+    [Fact]
+    public void PatchVolatileAttributes_Should_Preserve_Framework_Volatile_State_Over_Component_Overrides()
+    {
+        BUIComponentAttributesBuilder builder = new();
+        ContractHijackingStub component = new() { DisabledFlag = true };
+
+        builder.BuildStyles(component, null);
+
+        component.DisabledFlag = false;
+        builder.PatchVolatileAttributes(component);
+
+        builder.ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled]
+            .Should().Be("false",
+                "PatchVolatileAttributes must refresh data-bui-disabled from IHasDisabled and ignore the component override");
+    }
+
     // ---------- Type info cache (PERF-04) ----------
 
     [Fact]
@@ -484,6 +544,29 @@ public class BUIComponentAttributesBuilderUnitTests
 
         public void BuildComponentCssVariables(Dictionary<string, string> cssVariables) =>
             cssVariables["--bui-inline-custom"] = "42px";
+    }
+
+    private sealed class ContractHijackingStub : ComponentBase, IBuiltComponent, IHasDisabled, IHasColor
+    {
+        public bool DisabledFlag { get; set; }
+        public bool Disabled { get => DisabledFlag; set => DisabledFlag = value; }
+        public bool IsDisabled => DisabledFlag;
+
+        public string? ColorValue { get; set; }
+        public string? Color { get => ColorValue; set => ColorValue = value; }
+
+        public void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
+        {
+            dataAttributes[FeatureDefinitions.DataAttributes.Component] = "HIJACKED";
+            dataAttributes[FeatureDefinitions.DataAttributes.Disabled] = "HIJACKED";
+            dataAttributes["data-bui-custom-extra"] = "ok";
+        }
+
+        public void BuildComponentCssVariables(Dictionary<string, string> cssVariables)
+        {
+            cssVariables[FeatureDefinitions.InlineVariables.Color] = "HIJACKED";
+            cssVariables["--bui-inline-custom-extra"] = "99px";
+        }
     }
 
     private sealed class FullFeaturedStub : ComponentBase,

@@ -2,7 +2,7 @@
   {
     Name: Default_Outlined,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Name</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -17,7 +17,7 @@
   {
     Name: Filled_With_Value,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="filled" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="true" data-bui-component="input-text" data-bui-variant="filled" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Name</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -32,7 +32,7 @@
   {
     Name: Standard_With_Helper,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="standard" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="standard" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Email</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -47,7 +47,7 @@
   {
     Name: Required,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Required Field<span class="bui-input__required">*</span></label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -62,7 +62,7 @@
   {
     Name: Disabled,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Disabled</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -77,7 +77,7 @@
   {
     Name: Loading,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="true" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="true" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Loading</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -92,7 +92,7 @@
   {
     Name: Error_State,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Error</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -107,7 +107,7 @@
   {
     Name: With_Prefix_Suffix,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Website</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 <div class="_bui-addon bui-input__addon--prefix" b-gjdaj7dgdt><span>https://</span></div>
@@ -122,7 +122,7 @@
   {
     Name: Sized_Large_Compact,
     Html:
-<bui-component data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="large" data-bui-density="compact" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-text" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="large" data-bui-density="compact" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z0qouln7lr><div class="bui-input__wrapper" b-z0qouln7lr><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-input-<ID>" class="bui-input__label">Styled</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 

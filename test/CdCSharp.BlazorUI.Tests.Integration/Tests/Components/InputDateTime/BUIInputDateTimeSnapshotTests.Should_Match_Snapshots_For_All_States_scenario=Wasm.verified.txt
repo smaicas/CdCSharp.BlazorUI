@@ -2,7 +2,7 @@
   {
     Name: Default_Empty_DateOnly,
     Html:
-<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -18,7 +18,7 @@
   {
     Name: With_DateOnly_Value,
     Html:
-<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="true" data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -34,7 +34,7 @@
   {
     Name: Disabled,
     Html:
-<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -50,7 +50,7 @@
   {
     Name: ReadOnly,
     Html:
-<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="true" data-bui-required="false" data-bui-floated="true" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="true" data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="true" data-bui-required="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -66,7 +66,7 @@
   {
     Name: Error_State,
     Html:
-<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="true" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -82,7 +82,7 @@
   {
     Name: With_Helper_Text,
     Html:
-<bui-component data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="input-date-time" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-z863hhbl2i><div class="bui-input__wrapper" b-z863hhbl2i><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-datetime-<ID>" class="bui-input__label">Date</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 

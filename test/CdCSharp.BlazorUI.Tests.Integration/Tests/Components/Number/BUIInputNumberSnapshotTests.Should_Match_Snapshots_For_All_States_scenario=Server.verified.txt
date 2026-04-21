@@ -2,7 +2,7 @@
   {
     Name: Default_Empty,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="right" data-bui-floated="false" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
     <span class="bui-input__outline-trailing"></span></div>
 
@@ -15,7 +15,7 @@
   {
     Name: With_Value,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="true" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="right" data-bui-floated="true" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
     <span class="bui-input__outline-trailing"></span></div>
 
@@ -28,7 +28,7 @@
   {
     Name: Disabled,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="right" data-bui-floated="false" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
     <span class="bui-input__outline-trailing"></span></div>
 
@@ -41,7 +41,7 @@
   {
     Name: Loading,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="true" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="right" data-bui-floated="false" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="true" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
     <span class="bui-input__outline-trailing"></span></div>
 
@@ -54,7 +54,7 @@
   {
     Name: No_Step_Buttons,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="right" data-bui-floated="false" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
     <span class="bui-input__outline-trailing"></span></div>
 
@@ -66,7 +66,7 @@
   {
     Name: Left_Buttons,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="left" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="left" data-bui-floated="false" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Qty</label></span>
     <span class="bui-input__outline-trailing"></span></div><div class="bui-input__step-buttons" b-bag1hp0i4k><button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Increment" blazor:onmousedown="55" blazor:onmouseup="56" blazor:onmouseleave="57" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></bui-component></button>
             <button type="button" data-bui-size="small" class="_bui-btn" tabindex="0" aria-label="Decrement" blazor:onmousedown="58" blazor:onmouseup="59" blazor:onmouseleave="60" b-u5flo7i9ja><bui-component data-bui-component="svg-icon" data-bui-variant="default" data-bui-size="small" b-n5zxe25bhw><svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" b-n5zxe25bhw><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></bui-component></button></div>
@@ -79,7 +79,7 @@
   {
     Name: With_Prefix_Suffix,
     Html:
-<bui-component data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-button-placement="right" data-bui-floated="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-button-placement="right" data-bui-floated="false" data-bui-component="input-number" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-density="standard" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" b-bag1hp0i4k><div class="bui-input__wrapper" b-bag1hp0i4k><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-number-<ID>" class="bui-input__label">Price</label></span>
     <span class="bui-input__outline-trailing"></span></div><div class="_bui-addon bui-input__addon--prefix" b-gjdaj7dgdt><span>$</span></div>
 

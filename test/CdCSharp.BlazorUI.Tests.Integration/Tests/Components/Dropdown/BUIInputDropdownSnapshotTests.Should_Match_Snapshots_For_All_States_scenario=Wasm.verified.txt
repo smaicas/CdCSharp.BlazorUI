@@ -2,7 +2,7 @@
   {
     Name: Default_Closed,
     Html:
-<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -17,7 +17,7 @@
   {
     Name: With_Value,
     Html:
-<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="true" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="true" data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -32,7 +32,7 @@
   {
     Name: Disabled,
     Html:
-<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="true" data-bui-readonly="false" data-bui-required="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -47,7 +47,7 @@
   {
     Name: Required,
     Html:
-<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="true" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select<span class="bui-input__required">*</span></label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 
@@ -62,7 +62,7 @@
   {
     Name: With_Helper,
     Html:
-<bui-component data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-floated="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
+<bui-component data-bui-floated="false" data-bui-component="dropdown-container" data-bui-variant="outlined" data-bui-input-base="true" data-bui-size="medium" data-bui-loading="false" data-bui-error="false" data-bui-disabled="false" data-bui-readonly="false" data-bui-required="false" data-bui-dropdown-open="false" data-bui-placement="auto" b-5a7kq8u02k><div class="bui-input__wrapper" b-5a7kq8u02k blazor:elementReference=""><div class="bui-input__outline" aria-hidden="true"><span class="bui-input__outline-leading"></span>
     <span class="bui-input__outline-notch"><label for="bui-dropdown-<ID>" class="bui-input__label">Select</label></span>
     <span class="bui-input__outline-trailing"></span></div>
                 

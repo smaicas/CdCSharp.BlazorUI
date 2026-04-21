@@ -100,6 +100,15 @@ internal sealed class BUIComponentAttributesBuilder
         TypeInfo typeInfo = GetTypeInfo(component.GetType());
         ComponentFeatures flags = typeInfo.Features;
 
+        // Component-supplied keys are contributed first so that the framework-owned keys below
+        // overwrite any collision. Components may only add *new* data-attrs / inline vars.
+        if ((flags & ComponentFeatures.BuiltComponent) != 0)
+        {
+            IBuiltComponent builtFirst = (IBuiltComponent)component;
+            builtFirst.BuildComponentDataAttributes(ComputedAttributes);
+            builtFirst.BuildComponentCssVariables(cssVariables);
+        }
+
         ComputedAttributes[FeatureDefinitions.DataAttributes.Component] = typeInfo.ComponentName;
 
         if ((flags & ComponentFeatures.Variant) != 0)
@@ -208,19 +217,17 @@ internal sealed class BUIComponentAttributesBuilder
             }
         }
 
-        if ((flags & ComponentFeatures.BuiltComponent) != 0)
-        {
-            IBuiltComponent built = (IBuiltComponent)component;
-            built.BuildComponentDataAttributes(ComputedAttributes);
-            built.BuildComponentCssVariables(cssVariables);
-        }
-
         BuildInlineStyles(cssVariables);
     }
 
     public void PatchVolatileAttributes(ComponentBase component)
     {
         ComponentFeatures flags = GetTypeInfo(component.GetType()).Features;
+
+        // Component-supplied data attributes first so that volatile framework state (below)
+        // wins on any key collision. See IBuiltComponent XML doc for the ordering contract.
+        if ((flags & ComponentFeatures.BuiltComponent) != 0)
+            ((IBuiltComponent)component).BuildComponentDataAttributes(ComputedAttributes);
 
         if ((flags & ComponentFeatures.Active) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = ((IHasActive)component).IsActive.ToString().ToLowerInvariant();
@@ -236,11 +243,6 @@ internal sealed class BUIComponentAttributesBuilder
             ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).Required.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.FullWidth) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = ((IHasFullWidth)component).FullWidth.ToString().ToLowerInvariant();
-
-        // Component-supplied data attributes can also change between renders without a parameter
-        // change (e.g. focus-driven floated state). Refresh them every render to keep DOM in sync.
-        if ((flags & ComponentFeatures.BuiltComponent) != 0)
-            ((IBuiltComponent)component).BuildComponentDataAttributes(ComputedAttributes);
     }
 
     private static string ToKebabCaseComponentName(string value)

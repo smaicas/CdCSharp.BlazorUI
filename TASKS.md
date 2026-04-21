@@ -122,6 +122,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-01` — Regresión de 3 tests en `BUICultureSelector` (solo scenario Wasm)
 
+- **Estado**: ✅ Resuelto (commit `5f6604e`)
 - **Severidad**: Critical
 - **Esfuerzo**: M
 - **Alcance**:
@@ -141,6 +142,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-02` — `DisposeAsync` oculta (hides) el miembro base en tres componentes — disposal nunca invocado vía contrato base
 
+- **Estado**: ✅ Resuelto (commit `a8cec9f`)
 - **Severidad**: Critical
 - **Esfuerzo**: XS
 - **Alcance**:
@@ -208,6 +210,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-01` — Reset CSS elimina `:focus-visible` globalmente (WCAG 2.4.7)
 
+- **Estado**: ✅ Resuelto (commit `f90e50c`)
 - **Severidad**: Critical
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/ResetGenerator.cs:51`.
@@ -220,6 +223,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-02` — `.targets` no propaga `ExitCode` de BuildTools y reglas `<Exec>` silencian errores
 
+- **Estado**: ✅ Resuelto (commit `95cb3a0`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets:19‑27`.
@@ -232,6 +236,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-03` — `DataCollectionFamilyCssGenerator` no usa `FeatureDefinitions` (todo hardcoded) e introduce `@media (max-width: 768px)` contra estándar
 
+- **Estado**: ✅ Resuelto (commit `5063c4c`)
 - **Severidad**: Critical
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/Families/DataCollectionFamilyCssGenerator.cs` (todo el archivo).
@@ -263,6 +268,7 @@ _(ninguno registrado todavía)_
 
 ### `GEN-01` — `ColorClassGenerator` emite `INamedTypeSymbol` al pipeline incremental: caching roto, regeneración completa por cualquier cambio
 
+- **Estado**: ✅ Resuelto (commit `44dbd63`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/ColorClassGenerator.cs:33-46`.
@@ -278,6 +284,7 @@ _(ninguno registrado todavía)_
 
 ### `API-01` — Clases concretas de JS interop marcadas `public sealed`: 9 implementaciones expuestas como superficie pública hacen inmutables los detalles de integración JS
 
+- **Estado**: ✅ Resuelto (commit `d611e6e`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**:
@@ -302,6 +309,7 @@ _(ninguno registrado todavía)_
 
 ### `API-02` — `FeatureDefinitions` es `public static class`: todas las constantes `data-bui-*` / `--bui-inline-*` / `bui-*` quedan congeladas como contrato público
 
+- **Estado**: ✅ Resuelto (commit `be3ec9b`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Css/FeatureDefinitions.cs:7` (namespace `CdCSharp.BlazorUI.Components`).
@@ -339,6 +347,7 @@ _(ninguno registrado todavía)_
 
 ### `GEN-02` — Predicado de `ColorClassGenerator` matchea cualquier atributo cuyo nombre *contenga* `"AutogenerateCssColors"`
 
+- **Estado**: ✅ Resuelto (commit `f8439ff`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/ColorClassGenerator.cs:17,60,78-84`.
@@ -370,6 +379,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-02` — `BuildComponentDataAttributes` se invoca *después* de las data‑attrs del framework: un override puede sobrescribir `data-bui-*` del contrato
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:103-217` (`BuildStyles`) y `:242-244` (`PatchVolatileAttributes`).
@@ -385,6 +395,7 @@ _(ninguno registrado todavía)_
 
 ### `COMP-TOASTHOST-01` — `BUIToastHost` emite múltiples `<bui-component>` root sin `@attributes="ComputedAttributes"`: viola estándar de componente 1 y 2
 
+- **Estado**: ✅ Resuelto (commit `9400931`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/BUIToastHost.razor:12-29`.

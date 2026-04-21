@@ -1,7 +1,7 @@
 ﻿[
   {
     Name: Dot_Mode,
-    Html: <bui-component data-bui-component="badge" data-bui-variant="default" data-bui-size="medium" data-bui-dot="true" b-krjiov2kz1><span class="bui-badge" b-krjiov2kz1></span></bui-component>
+    Html: <bui-component data-bui-dot="true" data-bui-component="badge" data-bui-variant="default" data-bui-size="medium" b-krjiov2kz1><span class="bui-badge" b-krjiov2kz1></span></bui-component>
   },
   {
     Name: With_Content,
@@ -9,7 +9,7 @@
   },
   {
     Name: Circular_With_Content,
-    Html: <bui-component data-bui-component="badge" data-bui-variant="default" data-bui-size="medium" data-bui-circular="true" b-krjiov2kz1><span class="bui-badge" b-krjiov2kz1>99</span></bui-component>
+    Html: <bui-component data-bui-circular="true" data-bui-component="badge" data-bui-variant="default" data-bui-size="medium" b-krjiov2kz1><span class="bui-badge" b-krjiov2kz1>99</span></bui-component>
   },
   {
     Name: Large_Size,
@@ -18,7 +18,7 @@
   {
     Name: Notification_Badge_TopRight,
     Html:
-<bui-component data-bui-component="notification-badge" data-bui-variant="default" data-bui-size="small" data-bui-position="topright" b-9ph06sefyw>
-            <div class="bui-notification-badge__indicator" b-9ph06sefyw><bui-component data-bui-component="badge" data-bui-variant="default" data-bui-size="small" data-bui-circular="true" b-krjiov2kz1><span class="bui-badge" b-krjiov2kz1>3</span></bui-component></div></bui-component>
+<bui-component data-bui-position="topright" data-bui-component="notification-badge" data-bui-variant="default" data-bui-size="small" b-9ph06sefyw>
+            <div class="bui-notification-badge__indicator" b-9ph06sefyw><bui-component data-bui-circular="true" data-bui-component="badge" data-bui-variant="default" data-bui-size="small" b-krjiov2kz1><span class="bui-badge" b-krjiov2kz1>3</span></bui-component></div></bui-component>
   }
 ]
