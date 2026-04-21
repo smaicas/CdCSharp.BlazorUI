@@ -73,6 +73,32 @@ public class ColorClassGeneratorTests
     }
 
     [Fact]
+    public async Task Should_Not_Generate_For_Attribute_With_Colliding_Substring_Name()
+    {
+        const string collidingAttribute = """
+            using System;
+
+            namespace TestNs;
+
+            [AttributeUsage(AttributeTargets.Class)]
+            public sealed class FakeAutogenerateCssColorsHelperAttribute : Attribute { }
+            """;
+
+        const string source = """
+            namespace TestNs;
+
+            [FakeAutogenerateCssColorsHelper]
+            public static partial class NotAPalette { }
+            """;
+
+        string output = GeneratorTestHarness.Run(
+            new ColorClassGenerator(),
+            sources: [AttributeSource, collidingAttribute, source]);
+
+        await Verify(output);
+    }
+
+    [Fact]
     public async Task Should_Generate_For_Multiple_Classes()
     {
         const string source = """

@@ -14,7 +14,8 @@ namespace CdCSharp.BlazorUI.Core.CodeGeneration;
 [Generator]
 public class ColorClassGenerator : IIncrementalGenerator
 {
-    public const string AttributeNameContains = "AutogenerateCssColors";
+    public const string AttributeShortName = "AutogenerateCssColors";
+    public const string AttributeShortNameSuffix = "AutogenerateCssColorsAttribute";
 
     private readonly record struct NamedColor(string Name, byte R, byte G, byte B, byte A);
 
@@ -57,7 +58,7 @@ public class ColorClassGenerator : IIncrementalGenerator
 
         foreach (AttributeData attribute in classSymbol.GetAttributes())
         {
-            if (attribute.AttributeClass?.Name.Contains(AttributeNameContains) == true)
+            if (attribute.AttributeClass?.Name == AttributeShortNameSuffix)
             {
                 int variantLevels = 5;
 
@@ -77,10 +78,24 @@ public class ColorClassGenerator : IIncrementalGenerator
 
     private static bool IsClassWithAutogenerateCssColorsAttribute(SyntaxNode syntaxNode)
     {
-        return syntaxNode is ClassDeclarationSyntax classDecl &&
-               classDecl.AttributeLists
-                   .SelectMany(al => al.Attributes)
-                   .Any(a => a.Name.ToString().Contains(AttributeNameContains));
+        if (syntaxNode is not ClassDeclarationSyntax classDecl)
+            return false;
+
+        foreach (AttributeListSyntax attributeList in classDecl.AttributeLists)
+        {
+            foreach (AttributeSyntax attribute in attributeList.Attributes)
+            {
+                string name = attribute.Name.ToString();
+                int lastDot = name.LastIndexOf('.');
+                if (lastDot >= 0)
+                    name = name.Substring(lastDot + 1);
+
+                if (name == AttributeShortName || name == AttributeShortNameSuffix)
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     private void Execute(ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
