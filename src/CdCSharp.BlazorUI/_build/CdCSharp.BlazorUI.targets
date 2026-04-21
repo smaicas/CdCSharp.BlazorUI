@@ -15,19 +15,45 @@
 
 		<Message Text="Building BlazorUI assets..." Importance="high" />
 
-		<!-- Use exe if exists (Windows) or DLL otherwise -->
+		<!-- Log tool versions (best-effort; do not fail build if a probe command is missing) -->
+		<Exec Command="node --version" ConsoleToMSBuild="true" ContinueOnError="true" IgnoreStandardErrorWarningFormat="true">
+			<Output TaskParameter="ConsoleOutput" PropertyName="_NodeVersion" />
+		</Exec>
+		<Exec Command="npm --version" ConsoleToMSBuild="true" ContinueOnError="true" IgnoreStandardErrorWarningFormat="true">
+			<Output TaskParameter="ConsoleOutput" PropertyName="_NpmVersion" />
+		</Exec>
+		<Message Text="BlazorUI BuildTools exe=$(BuildToolsExe) dll=$(BuildToolsDll)" Importance="high" />
+		<Message Text="BlazorUI toolchain: node=$(_NodeVersion) npm=$(_NpmVersion)" Importance="high" />
+
+		<!-- Use exe if exists (Windows) or DLL otherwise. Capture ExitCode; do NOT continue on error. -->
 		<Exec Command="&quot;$(BuildToolsExe)&quot; &quot;$(BlazorUIProjectPath)&quot;"
 			  Condition="Exists('$(BuildToolsExe)')"
 			  ConsoleToMSBuild="true"
-			  ContinueOnError="false" />
+			  ContinueOnError="false"
+			  IgnoreExitCode="false">
+			<Output TaskParameter="ExitCode" PropertyName="_BuildToolsExit" />
+		</Exec>
 
 		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; &quot;$(BlazorUIProjectPath)&quot;"
 			  Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
 			  ConsoleToMSBuild="true"
-			  ContinueOnError="false" />
+			  ContinueOnError="false"
+			  IgnoreExitCode="false">
+			<Output TaskParameter="ExitCode" PropertyName="_BuildToolsExit" />
+		</Exec>
 
-		<!-- Include generated files -->
-		<ItemGroup>
+		<!-- Hard-fail if BuildTools reported a non-zero ExitCode -->
+		<Error Text="BlazorUI BuildTools failed with exit code $(_BuildToolsExit)."
+			   Condition="'$(_BuildToolsExit)' != '' AND '$(_BuildToolsExit)' != '0'" />
+
+		<!-- Hard-fail if expected artifacts are missing (pipeline ran but produced nothing) -->
+		<Error Text="BlazorUI BuildTools did not produce '$(BlazorUIProjectPath)\CssBundle'. Asset generation step failed silently."
+			   Condition="!Exists('$(BlazorUIProjectPath)\CssBundle')" />
+		<Error Text="BlazorUI BuildTools did not produce '$(BlazorUIProjectPath)\wwwroot\css\blazorui.css'. Vite bundle step failed silently."
+			   Condition="!Exists('$(BlazorUIProjectPath)\wwwroot\css\blazorui.css')" />
+
+		<!-- Include generated files only after all gates passed -->
+		<ItemGroup Condition="'$(_BuildToolsExit)' == '0'">
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
