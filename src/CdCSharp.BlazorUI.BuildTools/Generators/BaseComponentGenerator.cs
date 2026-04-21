@@ -24,6 +24,8 @@ public class BaseComponentGenerator : IAssetGenerator
         sb.AppendLine();
         sb.AppendLine(GetStateStyles());
         sb.AppendLine();
+        sb.AppendLine(GetFocusSystem());
+        sb.AppendLine();
         sb.AppendLine(GetShadowSystem());
         sb.AppendLine();
         sb.AppendLine(GetUtilities());
@@ -97,6 +99,19 @@ public class BaseComponentGenerator : IAssetGenerator
 
 {{FeatureDefinitions.Tags.Component}}[{{FeatureDefinitions.DataAttributes.FullWidth}}="true"] {
     width: 100%;
+}
+""";
+
+    private static string GetFocusSystem() => $$"""
+/* ========================================
+   FOCUS SYSTEM
+   WCAG 2.4.7 Focus Visible.
+   ======================================== */
+
+{{FeatureDefinitions.Tags.Component}}:focus-visible,
+{{FeatureDefinitions.Tags.Component}} :focus-visible {
+    outline: var(--bui-highlight-outline);
+    outline-offset: var(--bui-highlight-outline-offset);
 }
 """;
 

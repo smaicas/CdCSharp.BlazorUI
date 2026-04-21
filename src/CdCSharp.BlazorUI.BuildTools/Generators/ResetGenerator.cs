@@ -48,8 +48,6 @@ button, input, select, textarea {
     outline: none;
 }
 
-:focus-visible{ outline: none; }
-
 button { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-inline-size: 100%; }
