@@ -1,4 +1,5 @@
-﻿using CdCSharp.BuildTools;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,13 +12,33 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     public string FileName => "_data-collection-family.css";
     public string Name => "Data Collection Family";
 
-    public async Task<string> GetContent() => """
+    public async Task<string> GetContent()
+    {
+        string root = FeatureDefinitions.Tags.Component;
+        string dc = FeatureDefinitions.DataAttributes.DataCollectionBase;
+        string density = FeatureDefinitions.DataAttributes.Density;
+
+        string toolbar = FeatureDefinitions.CssClasses.DataCollection.Toolbar;
+        string toolbarSpacer = FeatureDefinitions.CssClasses.DataCollection.ToolbarSpacer;
+        string filter = FeatureDefinitions.CssClasses.DataCollection.Filter;
+        string selectionInfo = FeatureDefinitions.CssClasses.DataCollection.SelectionInfo;
+        string pageSize = FeatureDefinitions.CssClasses.DataCollection.PageSize;
+        string pagination = FeatureDefinitions.CssClasses.DataCollection.Pagination;
+        string paginationInfo = FeatureDefinitions.CssClasses.DataCollection.PaginationInfo;
+        string paginationControls = FeatureDefinitions.CssClasses.DataCollection.PaginationControls;
+        string checkbox = FeatureDefinitions.CssClasses.DataCollection.Checkbox;
+        string empty = FeatureDefinitions.CssClasses.DataCollection.Empty;
+        string emptyIcon = FeatureDefinitions.CssClasses.DataCollection.EmptyIcon;
+        string emptyText = FeatureDefinitions.CssClasses.DataCollection.EmptyText;
+        string loading = FeatureDefinitions.CssClasses.DataCollection.Loading;
+
+        return $$"""
 /* ========================================
    Data Collection Family Styles
    Auto-generated - Do not edit manually
    ======================================== */
 
-[data-bui-data-collection] {
+{{root}}[{{dc}}] {
     --_dc-padding-x: 1rem;
     --_dc-padding-y: 0.75rem;
     --_dc-header-bg: color-mix(in oklab, var(--palette-surface) 95%, var(--palette-primary));
@@ -30,7 +51,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     --_dc-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
     --_dc-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
     --_dc-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
-    
+
     display: block;
     width: 100%;
     background-color: var(--_dc-background);
@@ -43,7 +64,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 }
 
 /* === TOOLBAR === */
-[data-bui-data-collection] .bui-dc__toolbar {
+{{root}}[{{dc}}] .{{toolbar}} {
     display: flex;
     align-items: center;
     gap: calc(1rem * var(--bui-density-multiplier, 1));
@@ -52,12 +73,12 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     border-bottom: 1px solid var(--palette-border);
 }
 
-[data-bui-data-collection] .bui-dc__toolbar-spacer {
+{{root}}[{{dc}}] .{{toolbarSpacer}} {
     flex: 1;
 }
 
 /* === FILTER === */
-[data-bui-data-collection] .bui-dc__filter {
+{{root}}[{{dc}}] .{{filter}} {
     position: relative;
     display: flex;
     align-items: center;
@@ -66,7 +87,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 }
 
 /* === SELECTION INFO === */
-[data-bui-data-collection] .bui-dc__selection-info {
+{{root}}[{{dc}}] .{{selectionInfo}} {
     display: flex;
     align-items: center;
     gap: calc(0.5rem * var(--bui-density-multiplier, 1));
@@ -75,7 +96,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 }
 
 /* === PAGE SIZE SELECTOR === */
-[data-bui-data-collection] .bui-dc__page-size {
+{{root}}[{{dc}}] .{{pageSize}} {
     display: flex;
     align-items: center;
     gap: calc(0.5rem * var(--bui-density-multiplier, 1));
@@ -83,7 +104,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 }
 
 /* === PAGINATION === */
-[data-bui-data-collection] .bui-dc__pagination {
+{{root}}[{{dc}}] .{{pagination}} {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -92,20 +113,20 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     background: var(--_dc-header-bg);
 }
 
-[data-bui-data-collection] .bui-dc__pagination-info {
+{{root}}[{{dc}}] .{{paginationInfo}} {
     font-size: 0.875rem;
     color: var(--palette-surfacecontrast);
     opacity: 0.8;
 }
 
-[data-bui-data-collection] .bui-dc__pagination-controls {
+{{root}}[{{dc}}] .{{paginationControls}} {
     display: flex;
     align-items: center;
     gap: calc(0.25rem * var(--bui-density-multiplier, 1));
 }
 
 /* === CHECKBOX (shared) === */
-[data-bui-data-collection] .bui-dc__checkbox {
+{{root}}[{{dc}}] .{{checkbox}} {
     cursor: pointer;
     width: 1.125rem;
     height: 1.125rem;
@@ -113,7 +134,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 }
 
 /* === EMPTY STATE === */
-[data-bui-data-collection] .bui-dc__empty {
+{{root}}[{{dc}}] .{{empty}} {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -125,18 +146,18 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     text-align: center;
 }
 
-[data-bui-data-collection] .bui-dc__empty-icon {
+{{root}}[{{dc}}] .{{emptyIcon}} {
     font-size: 3rem;
     opacity: 0.5;
 }
 
-[data-bui-data-collection] .bui-dc__empty-text {
+{{root}}[{{dc}}] .{{emptyText}} {
     margin: 0;
     font-size: 1rem;
 }
 
 /* === LOADING STATE === */
-[data-bui-data-collection] .bui-dc__loading {
+{{root}}[{{dc}}] .{{loading}} {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -144,37 +165,15 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 }
 
 /* === DENSITY: Padding overrides === */
-[data-bui-data-collection][data-bui-density="compact"] {
+{{root}}[{{dc}}][{{density}}="compact"] {
     --_dc-padding-x: 0.5rem;
     --_dc-padding-y: 0.375rem;
 }
 
-[data-bui-data-collection][data-bui-density="comfortable"] {
+{{root}}[{{dc}}][{{density}}="comfortable"] {
     --_dc-padding-x: 1.5rem;
     --_dc-padding-y: 1rem;
 }
-
-/* === RESPONSIVE === */
-@media (max-width: 768px) {
-    [data-bui-data-collection] .bui-dc__toolbar {
-        flex-wrap: wrap;
-    }
-
-    [data-bui-data-collection] .bui-dc__filter {
-        flex: 1 1 100%;
-        order: -1;
-        margin-bottom: 0.5rem;
-    }
-
-    [data-bui-data-collection] .bui-dc__pagination {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: stretch;
-    }
-
-    [data-bui-data-collection] .bui-dc__pagination-controls {
-        justify-content: center;
-    }
-}
 """;
+    }
 }

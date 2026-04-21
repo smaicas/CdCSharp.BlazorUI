@@ -69,6 +69,26 @@ internal static class FeatureDefinitions
         }
 
         /// <summary>
+        /// Data-collection family component class names.
+        /// </summary>
+        public static class DataCollection
+        {
+            public const string Toolbar = "bui-dc__toolbar";
+            public const string ToolbarSpacer = "bui-dc__toolbar-spacer";
+            public const string Filter = "bui-dc__filter";
+            public const string SelectionInfo = "bui-dc__selection-info";
+            public const string PageSize = "bui-dc__page-size";
+            public const string Pagination = "bui-dc__pagination";
+            public const string PaginationInfo = "bui-dc__pagination-info";
+            public const string PaginationControls = "bui-dc__pagination-controls";
+            public const string Checkbox = "bui-dc__checkbox";
+            public const string Empty = "bui-dc__empty";
+            public const string EmptyIcon = "bui-dc__empty-icon";
+            public const string EmptyText = "bui-dc__empty-text";
+            public const string Loading = "bui-dc__loading";
+        }
+
+        /// <summary>
         /// Picker family component class names.
         /// </summary>
         public static class Picker
