@@ -28,6 +28,7 @@
     <File Path="CLAUDE.md" />
     <File Path="done2_TASKS.md" />
     <File Path="done3_TASKS.md" />
+    <File Path="TASKS.md" />
   </Folder>
   <Project Path="src/CdCSharp.BlazorUI.CodeGeneration/CdCSharp.BlazorUI.CodeGeneration.csproj" Id="96bbc2e4-007e-4f7d-973b-8c83686462df" />
   <Project Path="V:/Work/CdCSharp/Projects/BlazorUI/src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj" Id="a67069d5-56c2-49fa-adec-656079117b53" />
