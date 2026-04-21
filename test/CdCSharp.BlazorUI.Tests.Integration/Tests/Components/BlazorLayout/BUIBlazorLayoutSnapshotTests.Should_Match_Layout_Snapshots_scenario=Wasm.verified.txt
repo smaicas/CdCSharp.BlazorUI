@@ -1,14 +1,22 @@
 ﻿[
   {
     Name: EmptyBody,
-    Html: 
+    Html: <bui-component data-bui-component="toast-host" b-jjlcwqbow7></bui-component>
   },
   {
     Name: SimpleBody,
-    Html: <main class="app-main">Hello</main>
+    Html:
+<main class="app-main">Hello</main>
+
+
+<bui-component data-bui-component="toast-host" b-jjlcwqbow7></bui-component>
   },
   {
     Name: StructuredBody,
-    Html: <header class="app-header">H</header><aside class="app-sidebar">S</aside><main class="app-main">M</main>
+    Html:
+<header class="app-header">H</header><aside class="app-sidebar">S</aside><main class="app-main">M</main>
+
+
+<bui-component data-bui-component="toast-host" b-jjlcwqbow7></bui-component>
   }
 ]

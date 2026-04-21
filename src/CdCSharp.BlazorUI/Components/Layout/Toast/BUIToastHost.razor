@@ -10,22 +10,24 @@
 @inject IToastService ToastService
 
 <CascadingValue Value="_toastService" IsFixed="true">
-    @foreach (ToastPosition position in Enum.GetValues<ToastPosition>())
-    {
-        IEnumerable<ToastState> toastsInPosition = GetToastsForPosition(position);
-        @if (toastsInPosition.Any())
+    <bui-component @attributes="ComputedAttributes">
+        @foreach (ToastPosition position in Enum.GetValues<ToastPosition>())
         {
-            <bui-component data-bui-component="toast-host"
-                           data-bui-position="@GetPositionValue(position)">
-                @foreach (ToastState toast in toastsInPosition)
-                {
-                    <BUIToast @key="toast.Id"
-                              State="toast"
-                              OnCloseAnimationComplete="HandleAnimationComplete" />
-                }
-            </bui-component>
+            IEnumerable<ToastState> toastsInPosition = GetToastsForPosition(position);
+            @if (toastsInPosition.Any())
+            {
+                <div class="bui-toast-host__position"
+                     data-bui-position="@GetPositionValue(position)">
+                    @foreach (ToastState toast in toastsInPosition)
+                    {
+                        <BUIToast @key="toast.Id"
+                                  State="toast"
+                                  OnCloseAnimationComplete="HandleAnimationComplete" />
+                    }
+                </div>
+            }
         }
-    }
+    </bui-component>
 </CascadingValue>
 
 @code {
