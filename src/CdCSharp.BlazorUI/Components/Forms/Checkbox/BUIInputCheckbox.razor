@@ -73,7 +73,7 @@
             }
             if (bool.TryParse(value, out bool boolResult))
             {
-                result = (TValue)(object?)(bool?)boolResult!;
+                result = (TValue)(object)(bool?)boolResult;
                 return true;
             }
             result = default!;
