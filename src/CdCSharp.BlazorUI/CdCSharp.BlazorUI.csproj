@@ -13,6 +13,20 @@
 	  </Content>
 	</ItemGroup>
 
+	<!--
+		Exclude build-time scaffolding from the generated .nupkg. These files are created
+		by BuildTools at the project root during maintainer build and are only relevant
+		to the maintainer pipeline — consumers never need them. See ARCH-03 / D-03.
+	-->
+	<ItemGroup>
+		<Content Remove="package.json" />
+		<Content Remove="package-lock.json" />
+		<Content Remove="tsconfig.json" />
+		<Content Remove="vite.config.js" />
+		<Content Remove="vite.config.css.js" />
+		<Content Remove=".npmrc" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<InternalsVisibleTo Include="CdCSharp.BlazorUI.Tests.Integration" />
 	</ItemGroup>
@@ -24,13 +38,18 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
 	</ItemGroup>
-	<!-- Ship the targets file alongside the package so consumers import it automatically. -->
+
+	<!--
+		Ship the consumer-facing (no-op) targets file so MSBuild auto-imports it on restore.
+		The real build pipeline lives in CdCSharp.BlazorUI.Dev.targets, which is NOT packed
+		and is only imported for monorepo builds below.
+	-->
 	<ItemGroup>
 		<None Include="_build\CdCSharp.BlazorUI.targets" Pack="true" PackagePath="build\" />
 	</ItemGroup>
 
-	<!-- Import targets locally for development. -->
-	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
+	<!-- Dev-only import: regenerates CSS + JS assets for the maintainer build. -->
+	<Import Project="_build\CdCSharp.BlazorUI.Dev.targets" Condition="Exists('_build\CdCSharp.BlazorUI.Dev.targets')" />
 
 	<ItemGroup>
 		<!-- Feed every .razor to the incremental generator; it filters by [GenerateComponentInfo]. -->

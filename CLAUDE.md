@@ -32,7 +32,12 @@ CI (`.github/workflows/publish.yml`) builds projects in a specific order: CodeGe
 
 ## Build pipeline (non-standard — read before touching the build)
 
-`src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets` is imported both locally and into consumer projects via the NuGet `build/` folder. It runs `CdCSharp.BlazorUI.BuildTools` (a separate console executable, not an MSBuild task) as a `BeforeBuild` step.
+The build pipeline is split across two `.targets` files to keep maintainer-only asset generation out of the consumer's build:
+
+- **`src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.Dev.targets`** — imported *only* in the monorepo (via a `Condition="Exists(...)"` import in the csproj). Runs `CdCSharp.BlazorUI.BuildTools` (a separate console executable, not an MSBuild task) as a `BeforeBuild` step, regenerating the CSS bundle and Vite/TypeScript scaffolding.
+- **`src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets`** — the *consumer-facing* targets file that ships inside the NuGet package under `build/`. By design (F1 decision D-03) this file is a no-op: the bundled CSS (`wwwroot/css/blazorui.css`) and the minified JS under `wwwroot/js/**` are produced by the maintainer build and ship as StaticWebAssets inside the `.nupkg` (see `staticwebassets/` in the pack listing). Consumers do **not** run BuildTools, Node, npm, or Vite — the Razor SDK on their side serves the pre-bundled assets from the restored package.
+
+When modifying the build pipeline, edit `CdCSharp.BlazorUI.Dev.targets`. Keep `CdCSharp.BlazorUI.targets` minimal — any asset-generation work placed there will run inside the consumer's build and fail in environments without the BuildTools toolchain installed.
 
 `CdCSharp.BlazorUI.BuildTools` is itself a thin host — it depends on the third-party NuGet package `CdCSharp.BuildTools` (authored by the same owner; see `<PackageReference Include="CdCSharp.BuildTools" Version="1.0.3" />`). That package provides the asset-generation framework: the `[AssetGenerator]` / `[BuildTemplate]` attributes, `IAssetGenerator`, and the `BuildToolsManager.Build(projectPath)` entry point invoked from `Program.cs`. The local project only contributes (a) the generator classes under `Generators/` that produce BlazorUI's CSS, and (b) the template classes under `Infrastructure/BuildTemplates.cs` that materialize the npm/Vite/TypeScript config files. When adding or modifying generated output, work within this contract: `IAssetGenerator` classes set `FileName`/`Name` and return the file body from `GetContent()`; `[BuildTemplate("relative/path")]`-attributed static methods return literal file contents.
 

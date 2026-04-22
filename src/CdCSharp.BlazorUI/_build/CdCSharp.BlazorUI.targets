@@ -1,99 +1,21 @@
 <Project>
+	<!--
+		Consumer-facing targets file. Shipped inside the NuGet package under `build/` and
+		imported automatically by MSBuild on restore.
+
+		By design (F1 decision D-03) this file does NOTHING: the CSS bundle and JS files
+		are pre-bundled by the maintainer, ship as StaticWebAssets under `staticwebassets/`
+		in the `.nupkg`, and are served to the consumer's app by the Razor SDK without any
+		build-time generation. Consumers therefore do not need Node, npm, Vite, or the
+		`CdCSharp.BlazorUI.BuildTools` tool installed.
+
+		The monorepo's own build pipeline (that regenerates the CSS bundle) lives in
+		`CdCSharp.BlazorUI.Dev.targets`, which is only imported locally and is NOT shipped
+		in the package.
+	-->
 	<PropertyGroup>
-		<BlazorUIBuildEnabled Condition="'$(BlazorUIBuildEnabled)' == ''">true</BlazorUIBuildEnabled>
-		<BlazorUIProjectPath Condition="'$(BlazorUIProjectPath)' == ''">$(MSBuildProjectDirectory)</BlazorUIProjectPath>
-		<BuildToolsProject>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\CdCSharp.BlazorUI.BuildTools.csproj</BuildToolsProject>
-		<BuildToolsExe>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.exe</BuildToolsExe>
-		<BuildToolsDll>$(MSBuildProjectDirectory)\..\CdCSharp.BlazorUI.BuildTools\bin\$(Configuration)\net10.0\CdCSharp.BlazorUI.BuildTools.dll</BuildToolsDll>
+		<!-- Back-compat: if a consumer inherited an earlier targets version that
+		     set BlazorUIBuildEnabled, treat it as a no-op here. -->
+		<BlazorUIBuildEnabled Condition="'$(BlazorUIBuildEnabled)' == ''">false</BlazorUIBuildEnabled>
 	</PropertyGroup>
-
-	<!-- Main build target -->
-	<Target Name="BuildBlazorUIAssets"
-			BeforeTargets="BeforeBuild"
-			DependsOnTargets="EnsureBuildToolsCompiled"
-			Condition="'$(BlazorUIBuildEnabled)' == 'true'">
-
-		<Message Text="Building BlazorUI assets..." Importance="high" />
-
-		<!-- Log tool versions (best-effort; do not fail build if a probe command is missing) -->
-		<Exec Command="node --version" ConsoleToMSBuild="true" ContinueOnError="true" IgnoreStandardErrorWarningFormat="true">
-			<Output TaskParameter="ConsoleOutput" PropertyName="_NodeVersion" />
-		</Exec>
-		<Exec Command="npm --version" ConsoleToMSBuild="true" ContinueOnError="true" IgnoreStandardErrorWarningFormat="true">
-			<Output TaskParameter="ConsoleOutput" PropertyName="_NpmVersion" />
-		</Exec>
-		<Message Text="BlazorUI BuildTools exe=$(BuildToolsExe) dll=$(BuildToolsDll)" Importance="high" />
-		<Message Text="BlazorUI toolchain: node=$(_NodeVersion) npm=$(_NpmVersion)" Importance="high" />
-
-		<!-- Use exe if exists (Windows) or DLL otherwise. Capture ExitCode; do NOT continue on error. -->
-		<Exec Command="&quot;$(BuildToolsExe)&quot; &quot;$(BlazorUIProjectPath)&quot;"
-			  Condition="Exists('$(BuildToolsExe)')"
-			  ConsoleToMSBuild="true"
-			  ContinueOnError="false"
-			  IgnoreExitCode="false">
-			<Output TaskParameter="ExitCode" PropertyName="_BuildToolsExit" />
-		</Exec>
-
-		<Exec Command="dotnet &quot;$(BuildToolsDll)&quot; &quot;$(BlazorUIProjectPath)&quot;"
-			  Condition="!Exists('$(BuildToolsExe)') AND Exists('$(BuildToolsDll)')"
-			  ConsoleToMSBuild="true"
-			  ContinueOnError="false"
-			  IgnoreExitCode="false">
-			<Output TaskParameter="ExitCode" PropertyName="_BuildToolsExit" />
-		</Exec>
-
-		<!-- Hard-fail if BuildTools reported a non-zero ExitCode -->
-		<Error Text="BlazorUI BuildTools failed with exit code $(_BuildToolsExit)."
-			   Condition="'$(_BuildToolsExit)' != '' AND '$(_BuildToolsExit)' != '0'" />
-
-		<!-- Hard-fail if expected artifacts are missing (pipeline ran but produced nothing) -->
-		<Error Text="BlazorUI BuildTools did not produce '$(BlazorUIProjectPath)\CssBundle'. Asset generation step failed silently."
-			   Condition="!Exists('$(BlazorUIProjectPath)\CssBundle')" />
-		<Error Text="BlazorUI BuildTools did not produce '$(BlazorUIProjectPath)\wwwroot\css\blazorui.css'. Vite bundle step failed silently."
-			   Condition="!Exists('$(BlazorUIProjectPath)\wwwroot\css\blazorui.css')" />
-
-		<!-- Include generated files only after all gates passed -->
-		<ItemGroup Condition="'$(_BuildToolsExit)' == '0'">
-			<Content Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
-			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
-			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
-		</ItemGroup>
-
-	</Target>
-
-	<!-- Ensure BuildTools is compiled -->
-	<Target Name="EnsureBuildToolsCompiled"
-			BeforeTargets="BuildBlazorUIAssets">
-
-		<Message Text="Ensuring BuildTools is compiled..." Importance="normal" />
-
-		<MSBuild Projects="$(BuildToolsProject)"
-				 Targets="Build"
-				 Properties="Configuration=$(Configuration)" />
-	</Target>
-	<!-- Clean target -->
-	<Target Name="CleanBlazorUIAssets" BeforeTargets="Clean">
-		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" />
-		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
-		<!-- Clean output -->
-		<ItemGroup>
-			<BlazorUICssFiles Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
-			<BlazorUIJsFiles Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
-			<BlazorUIJsMapFiles Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
-		</ItemGroup>
-
-		<Delete Files="@(BlazorUICssFiles)" />
-		<Delete Files="@(BlazorUIJsFiles)" />
-		<Delete Files="@(BlazorUIJsMapFiles)" />
-
-		<!-- Clean configuration files -->
-		<Delete Files="$(BlazorUIProjectPath)\package.json" TreatErrorsAsWarnings="true" />
-		<Delete Files="$(BlazorUIProjectPath)\package-lock.json" TreatErrorsAsWarnings="true" />
-		<Delete Files="$(BlazorUIProjectPath)\tsconfig.json" TreatErrorsAsWarnings="true" />
-		<Delete Files="$(BlazorUIProjectPath)\vite.config.js" TreatErrorsAsWarnings="true" />
-		<Delete Files="$(BlazorUIProjectPath)\vite.config.css.js" TreatErrorsAsWarnings="true" />
-		<Delete Files="$(BlazorUIProjectPath)\.npmrc" TreatErrorsAsWarnings="true" />
-
-		<Message Text="BlazorUI assets cleaned successfully!" Importance="high" />
-	</Target>
 </Project>

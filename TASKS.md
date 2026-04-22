@@ -198,6 +198,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-03` — `CdCSharp.BlazorUI.targets` distribuido vía NuGet usa rutas locales
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Critical
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets`.
@@ -256,7 +257,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-04` — `Localization.Server` y `Localization.Wasm` no se publican
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `48fdc3a`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `.github/workflows/publish.yml`, `src/CdCSharp.BlazorUI.Localization.{Server,Wasm}/*.csproj`.
