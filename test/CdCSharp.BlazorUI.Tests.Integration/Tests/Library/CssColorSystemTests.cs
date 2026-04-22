@@ -141,10 +141,10 @@ public class CssColorSystemTests
     [InlineData("#GGHHII")]              // invalid hex characters
     [InlineData("#12345")]               // invalid hex length
     [InlineData("#123456789")]           // invalid hex length
-    public void CssColor_Constructor_Throws_ForInvalidStrings(string invalidValue)
+    public void CssColor_Constructor_Throws_ForInvalidStrings(string? invalidValue)
     {
         // Arrange
-        Action act = () => new CssColor(invalidValue);
+        Action act = () => new CssColor(invalidValue!);
 
         // Act & Assert
         act.Should().Throw<ArgumentException>();

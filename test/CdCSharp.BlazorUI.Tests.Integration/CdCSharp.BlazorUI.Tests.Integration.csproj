@@ -5,6 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <!--
+      BLD-10: silence nullable-reference noise in test code. bUnit query helpers
+      (Find/FindAll) and IElement.GetAttribute return nullable strings that tests
+      treat as required-by-contract; asserting via FluentAssertions is enough
+      coverage without annotating every call. Listed explicitly so future signal
+      (CS8765 overrides, CS0105 duplicate usings, etc.) still surfaces.
+    -->
+    <NoWarn>$(NoWarn);CS8603;CS8620;CS8600;CS8602;CS8669</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

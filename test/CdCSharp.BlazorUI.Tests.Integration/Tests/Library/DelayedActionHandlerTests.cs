@@ -39,7 +39,7 @@ public class DelayedActionHandlerTests
             return Task.CompletedTask;
         }, TimeSpan.FromMilliseconds(200));
 
-        await Task.Delay(20);
+        await Task.Delay(20, TestContext.Current.CancellationToken);
         handler.Cancel();
         await run;
 
@@ -58,7 +58,7 @@ public class DelayedActionHandlerTests
             return Task.CompletedTask;
         }, TimeSpan.FromMilliseconds(200));
 
-        await Task.Delay(30);
+        await Task.Delay(30, TestContext.Current.CancellationToken);
 
         Task second = handler.ExecuteWithDelayAsync(() =>
         {
@@ -83,7 +83,7 @@ public class DelayedActionHandlerTests
             return Task.CompletedTask;
         }, TimeSpan.FromMilliseconds(500));
 
-        await Task.Delay(20);
+        await Task.Delay(20, TestContext.Current.CancellationToken);
         handler.Dispose();
         await run;
 
@@ -140,7 +140,7 @@ public class DelayedActionHandlerTests
             return Task.CompletedTask;
         }, TimeSpan.FromMilliseconds(500));
 
-        await Task.Delay(20);
+        await Task.Delay(20, TestContext.Current.CancellationToken);
 
         Task second = handler.ExecuteWithDelayAsync(() =>
         {
@@ -168,7 +168,7 @@ public class DelayedActionHandlerTests
         debounced();
         debounced();
 
-        await Task.Delay(250);
+        await Task.Delay(250, TestContext.Current.CancellationToken);
 
         invocations.Should().Be(1);
     }
@@ -182,9 +182,9 @@ public class DelayedActionHandlerTests
             TimeSpan.FromMilliseconds(50));
 
         debounced();
-        await Task.Delay(150);
+        await Task.Delay(150, TestContext.Current.CancellationToken);
         debounced();
-        await Task.Delay(150);
+        await Task.Delay(150, TestContext.Current.CancellationToken);
 
         invocations.Should().Be(2);
     }
@@ -201,7 +201,7 @@ public class DelayedActionHandlerTests
         debounced(2);
         debounced(3);
 
-        await Task.Delay(250);
+        await Task.Delay(250, TestContext.Current.CancellationToken);
 
         captured.Should().Be(3);
     }

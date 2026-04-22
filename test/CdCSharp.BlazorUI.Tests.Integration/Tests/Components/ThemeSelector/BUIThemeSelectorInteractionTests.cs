@@ -29,7 +29,7 @@ public class BUIThemeSelectorInteractionTests
         cut.Find("button").Click();
 
         // Assert — wait for async switch (Task.Delay(50) inside SwitchTheme)
-        await Task.Delay(100);
+        await Task.Delay(100, Xunit.TestContext.Current.CancellationToken);
         await fake.Received(1).ToggleThemeAsync(Arg.Any<string[]>());
     }
 
@@ -51,7 +51,7 @@ public class BUIThemeSelectorInteractionTests
 
         // Act
         cut.Find("button").Click();
-        await Task.Delay(100);
+        await Task.Delay(100, Xunit.TestContext.Current.CancellationToken);
 
         // Assert
         capturedTheme.Should().Be("dark");

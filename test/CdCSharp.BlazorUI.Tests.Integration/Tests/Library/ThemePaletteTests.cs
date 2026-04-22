@@ -1,6 +1,5 @@
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Themes;
-using CdCSharp.BlazorUI.Themes;
 using FluentAssertions;
 using System.Reflection;
 

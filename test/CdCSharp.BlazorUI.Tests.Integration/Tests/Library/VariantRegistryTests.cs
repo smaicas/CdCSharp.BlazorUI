@@ -1,5 +1,6 @@
 using Bunit;
 using CdCSharp.BlazorUI.Abstractions;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;

@@ -136,7 +136,7 @@ public class BUIInitializerDisposalTests
 
         // Act — async void handler catches JSDisconnectedException
         fake.RaiseThemeChanged("light");
-        await Task.Delay(100);
+        await Task.Delay(100, Xunit.TestContext.Current.CancellationToken);
 
         // Assert — no exception escaped; component still alive
         cut.FindAll(".child").Should().HaveCount(1);
@@ -159,7 +159,7 @@ public class BUIInitializerDisposalTests
 
         // Act
         fake.RaiseThemeChanged("light");
-        await Task.Delay(100);
+        await Task.Delay(100, Xunit.TestContext.Current.CancellationToken);
 
         // Assert — no exception escaped
         cut.FindAll(".child").Should().HaveCount(1);

@@ -64,7 +64,7 @@ public class BUIToastInteractionTests
             .Add(c => c.State, state)
             .Add(c => c.OnCloseAnimationComplete, id => capturedId = id));
 
-        await Task.Delay(50);
+        await Task.Delay(50, Xunit.TestContext.Current.CancellationToken);
 
         // Assert
         capturedId.Should().Be(state.Id);
