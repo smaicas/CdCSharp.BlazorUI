@@ -17,7 +17,7 @@ public class TreeNodeRegistration
     public string? Icon { get; init; }
     public bool InitiallyExpanded { get; init; }
     public bool IsDisabled { get; init; }
-    public string Key { get; init; }
+    public required string Key { get; init; }
     public RenderFragment? NodeContent { get; init; }
     public string? ParentKey { get; init; }
     public string? Text { get; init; }

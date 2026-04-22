@@ -421,7 +421,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-04` — Desfase de nullabilidad en overrides de `TryParseValueFromString` y similares (CS8765 × 4)
 
-- **Estado**: ✅ Resuelto (commit `<PENDING>`) — overrides alineados con `InputBase<TValue>`: `[MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage`.
+- **Estado**: ✅ Resuelto (commit `eac436d`) — overrides alineados con `InputBase<TValue>`: `[MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:
@@ -436,6 +436,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-05` — Propiedades `non‑nullable` sin inicializar en tipos expuestos (CS8618 × 11)
 
+- **Estado**: ✅ Resuelto (commit `<PENDING>`) — 11 propiedades convertidas a `required` en `TreeNodeBase`, `TreeNodeBuildContext`, `TreeNodeEventArgs`, `TreeNodeRegistration`, `ModalState`, `ToastState`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:

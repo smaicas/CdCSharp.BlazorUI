@@ -11,7 +11,7 @@ public sealed class TreeNodeBuildContext<TItem>
     public string? Icon { get; init; }
     public bool IsDisabled { get; init; }
     public TItem? Item { get; init; }
-    public string Key { get; init; }
+    public required string Key { get; init; }
     public object? Parent { get; init; }
     public string? Text { get; init; }
 }

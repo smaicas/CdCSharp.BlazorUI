@@ -14,7 +14,7 @@ public abstract class TreeNodeBase<TItem, TSelf> : ITreeNode<TItem>
     public string? Icon { get; init; }
     public bool IsDisabled { get; init; }
     public TItem? Item { get; init; }
-    public string Key { get; init; }
+    public required string Key { get; init; }
     ITreeNode? ITreeNode.Parent => ParentNode;
     ITreeNode<TItem>? ITreeNode<TItem>.Parent => ParentNode;
     public TSelf? ParentNode { get; init; }

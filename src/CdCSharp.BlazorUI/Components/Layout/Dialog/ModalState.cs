@@ -8,12 +8,12 @@ public enum ModalType
 
 public sealed class ModalState
 {
-    public Type ComponentType { get; init; }
-    public string Id { get; init; }
+    public required Type ComponentType { get; init; }
+    public required string Id { get; init; }
     public bool IsAnimatingOut { get; set; }
     public bool IsVisible { get; set; } = true;
-    public ModalOptionsBase Options { get; init; }
+    public required ModalOptionsBase Options { get; init; }
     public Dictionary<string, object?>? Parameters { get; init; }
-    public ModalReference Reference { get; init; }
+    public required ModalReference Reference { get; init; }
     public ModalType Type { get; init; }
 }

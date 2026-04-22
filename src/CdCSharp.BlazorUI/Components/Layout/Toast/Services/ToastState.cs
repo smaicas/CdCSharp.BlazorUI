@@ -6,14 +6,14 @@ public sealed class ToastState
 {
     public ToastState() => StartedAt = DateTime.UtcNow;
 
-    public RenderFragment Content { get; init; }
+    public required RenderFragment Content { get; init; }
     public DateTime CreatedAt { get; } = DateTime.UtcNow;
     public CancellationTokenSource? DismissTokenSource { get; set; }
     public TimeSpan ElapsedBeforePause { get; set; } = TimeSpan.Zero;
     public Guid Id { get; } = Guid.NewGuid();
     public bool IsClosing { get; set; }
     public bool IsPaused { get; set; }
-    public ToastOptions Options { get; init; }
+    public required ToastOptions Options { get; init; }
 
     public double ProgressPercentage
     {

@@ -5,6 +5,6 @@ public sealed class TreeNodeEventArgs<TNode> : EventArgs
 {
     public int Depth { get; init; }
     public bool IsExpanded { get; init; }
-    public string Key { get; init; }
-    public TNode Node { get; init; }
+    public required string Key { get; init; }
+    public required TNode Node { get; init; }
 }
