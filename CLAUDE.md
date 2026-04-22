@@ -109,6 +109,25 @@ Consequences for contributors:
 - **Order-sensitive**: `BuildStyles` calls `BuildComponentDataAttributes` / `BuildComponentCssVariables` *before* `BuildInlineStyles` flattens the variable dictionary into `style`, so component-supplied vars participate in the final inline `style` string alongside framework ones.
 - `IJsBehavior`-derived interfaces (like `IHasRipple`) additionally participate in the `BUIComponentJsBehaviorBuilder` pipeline in `OnAfterRenderAsync` — they're not purely CSS-driven.
 
+### State parameters: `[Parameter] X` vs computed `IsX`
+
+The four input-style state axes (`Disabled`, `Error`, `ReadOnly`, `Required`) and the behavioral axis `Active` follow a two-surface contract on their `IHas*` interface:
+
+- **`[Parameter] public bool X { get; set; }`** — *force from outside*. The parent can pin the state explicitly; it acts as an OR on top of the internal evaluation.
+- **`public bool IsX { get; }`** — the *computed truth*. Combines the parameter with any internal condition the component evaluates. This is what `aria-*` attributes, the `disabled`/`readonly` HTML attributes on the rendered element, any JS-behavior gating, and `BUIComponentAttributesBuilder` must read. Components never use the raw `X` parameter for rendering decisions.
+
+The base contract is `IsX = X || <internal>`. The internal part depends on the component:
+
+| Axis | Internal condition layered on top of the parameter |
+|---|---|
+| `IsDisabled` | `Disabled \|\| (this is IHasLoading l && l.Loading)` — loading implies disabled. |
+| `IsError` | `Error \|\| <field has validation messages from EditContext>` — native `EditForm` validation drives the visual error state even when the consumer does not pass `Error=true`. In `BUIInputComponentBase<TValue>` this is cached in `_lastValidationError`, updated in `OnParametersSet` and `HandleValidationStateChanged`. |
+| `IsReadOnly` | `ReadOnly` only, by default. |
+| `IsRequired` | `Required` only, by default (annotation-driven `Required` could layer in later). |
+| `IsActive` | `Active` plus any component-owned notion of "currently active" (hover/focus/open/etc. when applicable). |
+
+The `IHas*` interfaces carry **both** members: `X` (the override) and `IsX` (the truth). `BUIComponentAttributesBuilder` emits `data-bui-<axis>` using `IsX` only, both in `BuildStyles` and in `PatchVolatileAttributes`. If you add a new state axis, follow the same shape: interface exposes `X` + `IsX`, component implements `IsX = X || <internal>`, builder reads `IsX`.
+
 ## CSS architecture
 
 Two distinct CSS layers ship with the library, and new components must respect the boundary between them.

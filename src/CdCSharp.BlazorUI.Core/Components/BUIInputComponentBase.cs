@@ -1,6 +1,4 @@
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Abstractions;
-using CdCSharp.BlazorUI.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -25,21 +23,20 @@ public abstract class BUIInputComponentBase<TValue> :
     private readonly BUIComponentPipeline _pipeline = new();
     private FieldIdentifier _fieldIdentifier;
     private EditContext? _previousEditContext;
+    private bool _lastValidationError;
 
-    // Common parameters for all inputs
+    // Common parameters for all inputs — "force from outside": parent overrides the computed state.
+    // The computed truth lives in IsX below. See CLAUDE.md §"State parameters".
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public bool Required { get; set; }
     [Parameter] public bool Error { get; set; }
 
-    // Computed states - available for all inputs
+    // Computed states — source of truth for gating, aria-* and the attributes builder.
     public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.Loading);
-    public bool IsError { get => field || Error; private set; }
+    public bool IsError => Error || _lastValidationError;
     public bool IsReadOnly => ReadOnly;
     public bool IsRequired => Required;
-
-    // Validation-aware override: surface effective error state to the attributes builder.
-    bool IHasError.Error => IsError;
 
     // This is what components will use with @attributes
     protected Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
@@ -114,8 +111,6 @@ public abstract class BUIInputComponentBase<TValue> :
 
     protected override void OnParametersSet()
     {
-        UpdateErrorState();
-
         _pipeline.BuildStyles(this, AdditionalAttributes);
 
         // Only re-subscribe if EditContext actually changed
@@ -135,7 +130,11 @@ public abstract class BUIInputComponentBase<TValue> :
             }
 
             _fieldIdentifier = FieldIdentifier.Create(ValueExpression);
-            IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+            _lastValidationError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
+        }
+        else
+        {
+            _lastValidationError = false;
         }
 
         base.OnParametersSet();
@@ -143,27 +142,17 @@ public abstract class BUIInputComponentBase<TValue> :
 
     private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
     {
-        bool hadErrors = IsError;
-        UpdateErrorState();
-
-        if (hadErrors != IsError)
+        bool current = EditContext != null && ValueExpression != null
+            && EditContext.GetValidationMessages(_fieldIdentifier).Any();
+        if (current != _lastValidationError)
         {
-            // En lugar de llamar a OnParametersSet (que re-suscribe eventos), llamamos directamente
-            // a la reconstrucción de estilos y notificamos el cambio.
+            _lastValidationError = current;
+            // Full rebuild instead of PatchVolatileAttributes: Razor-generated BuildRenderTree on
+            // derived .razor files does not call base.BuildRenderTree, so the patching hook is
+            // bypassed. Rebuilding styles here (identical to the post-change path of OnParametersSet)
+            // keeps data-bui-error in sync for the next render.
             _pipeline.BuildStyles(this, AdditionalAttributes);
             StateHasChanged();
-        }
-    }
-
-    private void UpdateErrorState()
-    {
-        if (EditContext != null && ValueExpression != null)
-        {
-            IsError = EditContext.GetValidationMessages(_fieldIdentifier).Any();
-        }
-        else
-        {
-            IsError = false;
         }
     }
 }

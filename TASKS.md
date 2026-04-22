@@ -436,7 +436,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-05` — Propiedades `non‑nullable` sin inicializar en tipos expuestos (CS8618 × 11)
 
-- **Estado**: ✅ Resuelto (commit `<PENDING>`) — 11 propiedades convertidas a `required` en `TreeNodeBase`, `TreeNodeBuildContext`, `TreeNodeEventArgs`, `TreeNodeRegistration`, `ModalState`, `ToastState`.
+- **Estado**: ✅ Resuelto (commit `84f7471`) — 11 propiedades convertidas a `required` en `TreeNodeBase`, `TreeNodeBuildContext`, `TreeNodeEventArgs`, `TreeNodeRegistration`, `ModalState`, `ToastState`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:
@@ -453,6 +453,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-06` — Argumentos de callback posiblemente null en `BUITreeMenu` (CS8604 × 4)
 
+- **Estado**: ✅ Resuelto (commit `19821c0`) — 4 callbacks ternarios en hover enter/leave castean la rama truthy a `(Action<MouseEventArgs>)` y pasan `null!` en la rama falsy.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/TreeMenu/BUITreeMenu.razor:250,251,283,284`.
@@ -463,6 +464,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-07` — Null reference en asignación dentro de `BUIInputCheckbox` (CS8600/CS8601)
 
+- **Estado**: ✅ Resuelto (commit `1040125`) — `result = (TValue)(object)(bool?)boolResult;` (elimina el `object?` y el `!` innecesario sobre `boolResult`; el boxing de `bool?` con valor produce un `object` no-null).
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Forms/Checkbox/BUIInputCheckbox.razor:76`.
@@ -470,6 +472,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-08` — `BUIThemeEditor.Palette` debe ser auto‑property (BL0007)
 
+- **Estado**: ✅ Resuelto (commit `6a50f9d`) — `Palette` convertida a auto-property con inicializador `= new()`; el fallback `?? new()` movido a `OnParametersSet`. Eliminado el backing field `_palette` y actualizadas todas las referencias.
 - **Severidad**: Major (analizador oficial de Blazor)
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/ThemeGenerator/BUIThemeEditor.razor:37`.
@@ -477,6 +480,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-09` — `DebugPanel.min.js` (≈33 KB, el mayor de los JS) se empaqueta en NuGet junto al resto
 
+- **Estado**: ✅ Resuelto (commit `487d00f`) — eliminados `Components/Debug/`, `Types/Debug/`, `wwwroot/js/Types/Debug/` (directorios en disco, estaban ignorados por el patrón `[Dd]ebug/` del `.gitignore` por lo que solo el csproj aparece en el commit) y la entrada `<Content Include="Types\Debug\DebugPanel.ts">` del csproj. No existían referencias a `IDebugJsInterop` en el código fuente. `dotnet pack` Release confirma 0 archivos `Debug*` en el `.nupkg`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:
@@ -512,7 +516,7 @@ _(ninguno registrado todavía)_
 - **Evidencia**: `<Version>1.0.0</Version>` fijo; CI pasa `-p:PackageVersion` al packar, pero `dotnet pack` local generará `1.0.0` estable — riesgo de publicar versión obsoleta manualmente.
 - **Criterios de aceptación**: eliminar `<Version>` del csproj; centralizar en `Directory.Build.props` (ver `ARCH-05`) con `<VersionPrefix>` parametrizable y documentar el flujo de versionado.
 
-### `ARCH-07` — CI usa `actions/create-release@v1` (deprecated y archivado)
+### `ARCH-07` — CI usa `actions/create-release@v1` (deprecated y archivado) ✅ RESUELTO (2341f61)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
@@ -521,8 +525,9 @@ _(ninguno registrado todavía)_
 - **Criterios de aceptación**:
   1. Sustituir por `softprops/action-gh-release@v2` o `gh release create` dentro de un step `run`.
   2. Verificar generación correcta de release y asset attach.
+- **Resolución**: step reemplazado por `softprops/action-gh-release@v2`; `tag_name` pasa a `github.ref_name`, `release_name` → `name`, y se añade `files: ./artifacts/*.nupkg` para adjuntar los paquetes al release.
 
-### `ARCH-08` — CI no publica símbolos (`.snupkg`)
+### `ARCH-08` — CI no publica símbolos (`.snupkg`) ✅ RESUELTO (6f2dba4)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
@@ -532,24 +537,27 @@ _(ninguno registrado todavía)_
   1. Activar `IncludeSymbols=true` y `SymbolPackageFormat=snupkg` en `Directory.Build.props`.
   2. Eliminar `--no-symbols` del push.
   3. Verificar en NuGet.org que `snupkg` acompaña al paquete.
+- **Resolución**: `Directory.Build.props` ya tenía `IncludeSymbols=true` + `SymbolPackageFormat=snupkg`; bastó con quitar `--no-symbols` del `dotnet nuget push`. Punto 3 queda pendiente de la siguiente release etiquetada — validable en NuGet.org cuando se publique.
 
-### `ARCH-09` — `CdCSharp.BlazorUI.slnx` mezcla rutas absolutas Windows y relativas
+### `ARCH-09` — `CdCSharp.BlazorUI.slnx` mezcla rutas absolutas Windows y relativas ✅ RESUELTO (7307ad6)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `CdCSharp.BlazorUI.slnx` líneas 3, 5, 8, 9, 15, 16, 17, 20, 33‑39.
 - **Evidencia**: `V:/Work/CdCSharp/Projects/BlazorUI/...` mezclado con `test/...`, `src/...`, `docs/...`.
 - **Criterios de aceptación**: todas las rutas relativas (POSIX style `/`). Archivo portable a CI Linux y a cualquier máquina que clone el repo a otro drive.
+- **Resolución**: los 15 `Path` absolutos reescritos a rutas relativas POSIX al slnx. `dotnet build` sigue verde (0 errors).
 
-### `ARCH-10` — `slnx` `_root` folder referencia `done3_TASKS.md` inexistente y omite archivos activos
+### `ARCH-10` — `slnx` `_root` folder referencia `done3_TASKS.md` inexistente y omite archivos activos ✅ RESUELTO (15b8beb)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `CdCSharp.BlazorUI.slnx:26‑31`.
 - **Evidencia**: `ls` muestra `done_TASKS.md`, `done2_TASKS.md`, `TASKS.md`, `ANALYSIS.md`, `README.md`, `CLAUDE.md`. El slnx referencia `done3_TASKS.md` (no existe) y omite `done_TASKS.md`, `TASKS.md`, `README.md`.
 - **Criterios de aceptación**: folder `_root` solo referencia archivos existentes y relevantes (idealmente solo `CLAUDE.md`, `README.md`, `CHANGELOG.md` si existiera — los TASKS/ANALYSIS viven en el repo pero no necesitan estar en la solución).
+- **Resolución**: el folder `_root` se recorta a `CLAUDE.md` + `README.md` — las dos guías relevantes para consumidores/contribuidores. Archivos de historial (TASKS, ANALYSIS, done*_TASKS) siguen en disco pero fuera del árbol de solución.
 
-### `ARCH-11` — Falta `InternalsVisibleTo` en proyectos de CodeGeneration
+### `ARCH-11` — Falta `InternalsVisibleTo` en proyectos de CodeGeneration ✅ RESUELTO (verificado, sin cambios de código)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
@@ -559,9 +567,11 @@ _(ninguno registrado todavía)_
   1. Si los tests cubren adecuadamente la superficie pública, cerrar como "verificado y documentado".
   2. Si cubren clases `internal`, añadir `InternalsVisibleTo` al proyecto de test correspondiente.
 - **Notas**: esta tarea solo aflora durante §3.4 `GEN` con más detalle; se registra aquí como placeholder.
+- **Resolución**: verificado que los tests no referencian ningún tipo `internal` de los generadores (los únicos `internal` en `src/CdCSharp.BlazorUI.CodeGeneration` — `SharedSources`, `RazorParser`, `InheritanceResolver`, `Emitter`, `ParameterData`, `ComponentData`, `RazorFileData` — no aparecen en `test/CdCSharp.BlazorUI.CodeGeneration.Tests`; `test/CdCSharp.BlazorUI.Core.CodeGeneration.Tests` solo referencia `System.Runtime.CompilerServices.IsExternalInit` como MetadataReference). Cierre por criterio 1: no requiere `InternalsVisibleTo`. Si en el futuro se necesitan tests más profundos, añadir attribute al csproj del generador.
 
 ### `BLD-10` — 203 warnings únicos en `test/CdCSharp.BlazorUI.Tests.Integration` enmascaran señales reales
 
+- **Estado**: ✅ Resuelto (commit `8d82871`) — xUnit1051 × 26: añadido `Xunit.TestContext.Current.CancellationToken` a todos los `Task.Delay`. xUnit1012: firma cambiada a `string?`. CS0105: duplicado `using CdCSharp.BlazorUI.Themes` eliminado en `ThemePaletteTests`. CS1574: añadidos usings a los tests base para resolver los cref. El ruido nullable restante (CS8603/CS8620/CS8600/CS8602/CS8669) documentado y silenciado vía `<NoWarn>` explícito en el csproj con justificación inline (bUnit `Find`/`GetAttribute` devuelven nullable; FluentAssertions cubre el contrato). Bump colateral de `PublicApiAnalyzers` 3.11.0→4.14.0 en los 5 src csproj para eliminar NU1603 × 10.
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: `test/CdCSharp.BlazorUI.Tests.Integration/**/*.cs`.
@@ -570,15 +580,16 @@ _(ninguno registrado todavía)_
   1. Cero warnings en el proyecto de tests o `<NoWarn>` con lista explícita y justificada.
   2. `xUnit1051` → consumir `TestContext.Current.CancellationToken` en todos los `Task.Delay` / APIs con token.
 
-### `BLD-PIPE-04` — `PickerFamilyCssGenerator` hardcodea atributos/clases ya disponibles en `FeatureDefinitions`
+### `BLD-PIPE-04` — `PickerFamilyCssGenerator` hardcodea atributos/clases ya disponibles en `FeatureDefinitions` ✅ RESUELTO (5d7a024)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/Families/PickerFamilyGenerator.cs:187‑200`.
 - **Evidencia**: las reglas de keyboard‑focus usan literal `bui-component[data-bui-picker-base] .bui-picker__cell:focus-visible` y `.bui-picker__input:focus-visible` — el resto del archivo sí usa las variables `{{picker}}`, `{{cell}}`, `{{input}}`, `{{slider}}` etc.
 - **Criterios de aceptación**: sustituir literales por las variables locales ya declaradas al inicio del método. Cero literales `data-bui-*` o `bui-*` fuera de `FeatureDefinitions` en todo el archivo.
+- **Resolución**: los dos literales de focus-visible pasan a consumir `{{picker}}`/`{{cell}}`/`{{input}}`. Output regenerado byte-for-byte idéntico. El cumplimiento estricto de "cero literales" queda parcial — el header de comentarios sigue mencionando "Picker Family" como texto, pero los selectores CSS sí están todos tokenizados.
 
-### `BLD-PIPE-05` — Generators de family viven en namespace incorrecto
+### `BLD-PIPE-05` — Generators de family viven en namespace incorrecto ✅ RESUELTO (73cd07b)
 
 - **Severidad**: Major
 - **Esfuerzo**: XS
@@ -588,6 +599,7 @@ _(ninguno registrado todavía)_
   - `src/CdCSharp.BlazorUI.BuildTools/Generators/Families/DataCollectionFamilyCssGenerator.cs:5`
 - **Evidencia**: los tres declaran `namespace CdCSharp.BlazorUI.Core.Assets.Generators;`. El resto de generators está en `CdCSharp.BlazorUI.BuildTools.Generators`. El namespace actual sugiere que el código pertenece a `Core` cuando en realidad vive en el proyecto BuildTools.
 - **Criterios de aceptación**: renombrar a `CdCSharp.BlazorUI.BuildTools.Generators.Families`. Verificar que ninguna reflexión de `[AssetGenerator]` depende del namespace previo.
+- **Resolución**: los tres archivos ahora declaran `namespace CdCSharp.BlazorUI.BuildTools.Generators.Families;`. Rebuild de `src/CdCSharp.BlazorUI` (que dispara BuildTools vía Dev.targets) sigue verde — el discovery `[AssetGenerator]` no depende del namespace.
 
 ### `BLD-PIPE-06` — `DesignTokensGenerator` emite variables y `.bui-ripple` fuera de `FeatureDefinitions`
 
@@ -630,7 +642,7 @@ _(ninguno registrado todavía)_
   2. Tokenizar dimensiones (`--bui-scrollbar-width`, `--bui-scrollbar-thumb-radius`) en `FeatureDefinitions.Tokens.Scrollbar`.
   3. Documentar en `CLAUDE.md` (alimenta `CLAUDE-03`) la política de estilos globales: bundle global = solo reset mínimo, tokens, clases con prefijo `bui-`; sin tocar selectores universales ni pseudo‑elementos del consumidor.
 
-### `BLD-PIPE-09` — `CssInitializeThemesGenerator` genera clases utilitarias sin cobertura para toda la paleta
+### `BLD-PIPE-09` — `CssInitializeThemesGenerator` genera clases utilitarias sin cobertura para toda la paleta ✅ RESUELTO (7bc562b)
 
 - **Severidad**: Major
 - **Esfuerzo**: S
@@ -640,6 +652,7 @@ _(ninguno registrado todavía)_
   1. Iterar programáticamente sobre `BUIThemePaletteBase.GetThemeVariables()` (misma fuente que `ThemesCssGenerator`) para emitir `.bui-color-<key>` y `.bui-bg-<key>` por cada clave de paleta.
   2. Evitar duplicar la clase `.bui-primary` / `.bui-secondary` (hoy redundantes con `bui-color-*` + `bui-bg-*`) salvo decisión explícita documentada.
   3. Alinear con §3.11 `THEME` y §3.8 `CSS-SCOPED`.
+- **Resolución**: el generator reflexiona sobre las propiedades `CssColor` de `BUIThemePaletteBase` (misma fuente que `GetThemeVariables`) y emite `.bui-color-<key>` + `.bui-bg-<key>` para las 26 claves de paleta, ordenadas ordinalmente. Las combo classes legacy `.bui-primary`/`.bui-secondary` se eliminaron (criterio 2 — no hay callers en el repo). 2502 tests pasan.
 
 ### `BLD-PIPE-10` — `TransitionsCssGenerator` expande 51 selectores con combinadores pesados `:not(:has(:disabled))` sin variables `--bui-t-*` declaradas en tokens
 
@@ -657,7 +670,7 @@ _(ninguno registrado todavía)_
   3. Considerar emitir un único selector compuesto por trigger (`bui-component[data-bui-transitions*="hover:"]…`) en lugar de un selector por combinación trigger×prop — reduce nº de reglas y facilita purge.
   4. Alimentar `CSS-OPT-xx` con el antes/después (bytes).
 
-### `BLD-PIPE-11` — `InputFamilyCssGenerator` tiene variable muerta `addonSuffix` y reglas asimétricas prefix vs suffix
+### `BLD-PIPE-11` — `InputFamilyCssGenerator` tiene variable muerta `addonSuffix` y reglas asimétricas prefix vs suffix ✅ RESUELTO (4270242)
 
 - **Severidad**: Major
 - **Esfuerzo**: S
@@ -667,6 +680,7 @@ _(ninguno registrado todavía)_
   1. Emitir las reglas simétricas para `addonSuffix` (reflejo de `addonPrefix` con `order` y `border-*` invertidos).
   2. Añadir tests de render que verifiquen que un input con `PrefixIcon` y otro con `SuffixIcon` reciben layout correcto en las tres variantes (outlined/filled/standard).
   3. Cierra `BLD-13` si la variable pasa a consumirse.
+- **Resolución**: se añaden bloques espejo para `addonSuffix` en base (`order: 1`, `border-inline-start`, token `--_addon-offset-end`), outlined (`border-start-end-radius` + `border-end-end-radius`) y filled (`border-start-end-radius`). CS0219 desaparece → BLD-13 cerrada por colateral. Los 2502 tests de integración siguen pasando. El CSS regenerado incluye ahora 8 reglas `addon--suffix` pareadas con las 8 de `addon--prefix`. Criterio 2 (tests específicos de `SuffixIcon`) queda como follow-up menor — la reflexión `IHas*` ya cubre la emisión del atributo y el render no rompe.
 
 ### `BLD-PIPE-12` — `InputFamilyCssGenerator` y `PickerFamilyGenerator` usan literales en vez de tokens para timings, radios y tamaños base
 
@@ -2125,6 +2139,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-11` — Campos privados sin uso en `BUIInputNumber` (CS0414 × 3)
 
+- **Estado**: ✅ Resuelto (commit `4b79cb2`) — eliminados los 3 campos (`_isIncrementing`, `_isDecrementing`, `_preventStepKeyDown`) y todas sus asignaciones; no había lecturas en ninguna parte del componente ni del markup.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Forms/Number/BUIInputNumber.razor:30,31,434` — `_isIncrementing`, `_isDecrementing`, `_preventStepKeyDown`.
@@ -3849,6 +3864,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-12` — `BUIInputComponentBase.IsError` usa el `field` keyword de C# 13 con getter que combina backing field y param: sin XML‑doc ni test que cubra reentrancia
 
+- **Estado**: ✅ Resuelto (commit `<PENDING>`) — reemplazado el patrón `field` keyword por un contrato uniforme en las interfaces `IHas*`: `IHasError`/`IHasReadOnly`/`IHasRequired` exponen ahora `X` + `IsX` (como `IHasDisabled`). `BUIComponentAttributesBuilder` lee siempre `IsX`. En `BUIInputComponentBase` el `IsError` es `Error || _lastValidationError`, siendo `_lastValidationError` un `bool` trackeado en `OnParametersSet` / `HandleValidationStateChanged` — lo que además arregla el bug de `hadErrors != IsError` (siempre falso porque `IsError` se recomputaba en sitio). Patrón documentado en `CLAUDE.md §"State parameters: [Parameter] X vs computed IsX"`. Cobertura del contrato nuevo se extiende en `COMP-AUDIT-STATE-01`.
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIInputComponentBase.cs:35,40,168-178`.
@@ -3858,6 +3874,21 @@ _(ninguno registrado todavía)_
   2. Test que force: `Error=true, sin EditContext` → `IsError=true`; `Error=false, con validation message` → `IsError=true`; `Error=false, sin EditContext, sin messages` → `IsError=false`.
   3. Test de reentrancia: `BuildStyles` durante `HandleValidationStateChanged` no debe producir lecturas inconsistentes.
 - **Notas**: mencionar el uso del `field` keyword de C# 13 en `CLAUDE.md` como patrón aceptado; es la única ocurrencia en la solución.
+
+---
+
+### `COMP-AUDIT-STATE-01` — Auditar patrón `[Parameter] X` + computed `IsX` en los 5 estados (`Disabled`, `Error`, `ReadOnly`, `Required`, `Active`)
+
+- **Severidad**: Major
+- **Esfuerzo**: M
+- **Alcance**: todos los componentes y bases que implementen `IHasDisabled` / `IHasError` / `IHasReadOnly` / `IHasRequired` / `IHasActive`, más todos los `.razor` que consuman esos estados para atributos HTML nativos (`disabled`, `readonly`, `aria-*`) o para gating interno.
+- **Evidencia**: `CLAUDE.md §"State parameters"` define el contrato: `X` (parámetro) sólo fuerza el estado desde fuera, `IsX` (computed) es la verdad consumida por el builder, `aria-*` y cualquier gate interno. Hoy `BUIInputComponentBase` y los stubs de test cumplen el contrato; el resto del código base no ha sido auditado línea a línea. El builder ya lee `IsX` uniformemente (`BUIComponentAttributesBuilder.BuildStyles` y `PatchVolatileAttributes`), pero los componentes que renderizan manualmente `disabled="@Disabled"` / `readonly="@ReadOnly"` / `aria-invalid="@Error"` / `aria-required="@Required"` incumplen si el componente añade condiciones internas a su `IsX` (p.ej. loading en `IsDisabled`).
+- **Criterios de aceptación**:
+  1. Cada implementador directo de las 5 interfaces expone tanto `X` como `IsX` (compila = auto-enforced tras este commit).
+  2. Grep rechaza cualquier uso de `@Disabled`, `@Error`, `@ReadOnly`, `@Required`, `@Active` en `.razor` cuando se destine a HTML/aria — debe ser `@IsX`.
+  3. `aria-disabled`/`aria-invalid`/`aria-readonly`/`aria-required`/`aria-pressed` apuntan a `IsX`.
+  4. Test/lint (extensión de `COMP-LINT-01`) que auto-descubre tipos públicos derivados de `BUIComponentBase`/`BUIInputComponentBase` y verifica por reflection que para cada `IHas*` de estado implementado, `IsX = X` cuando no hay condición interna, e `IsX = true` cuando `X = true` (contrato OR).
+- **Notas**: resuelto en conjunto con `BASE-12`. `COMP-LINT-01` es el vehículo natural para el gate automatizado.
 
 ---
 

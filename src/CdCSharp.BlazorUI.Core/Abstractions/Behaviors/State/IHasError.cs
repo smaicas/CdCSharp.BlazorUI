@@ -3,4 +3,5 @@
 public interface IHasError
 {
     bool Error { get; }
+    bool IsError { get; }
 }

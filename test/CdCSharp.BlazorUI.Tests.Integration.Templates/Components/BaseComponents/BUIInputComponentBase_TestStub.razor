@@ -17,7 +17,7 @@
        @attributes="ComputedAttributes"
        value="@CurrentValueAsString"
        disabled="@IsDisabled"
-       readonly="@ReadOnly"
+       readonly="@IsReadOnly"
        @onchange="@(e => CurrentValueAsString = e.Value?.ToString())" />
 
 @code {

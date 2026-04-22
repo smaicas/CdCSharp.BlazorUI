@@ -579,6 +579,7 @@ public class BUIComponentAttributesBuilderUnitTests
         public bool Loading { get; set; }
         public bool ErrorFlag { get; set; }
         public bool Error => ErrorFlag;
+        public bool IsError => ErrorFlag;
         public bool DisabledFlag { get; set; }
         public bool Disabled { get => DisabledFlag; set => DisabledFlag = value; }
         public bool IsDisabled => DisabledFlag;
@@ -587,7 +588,9 @@ public class BUIComponentAttributesBuilderUnitTests
         public bool IsActive => ActiveFlag;
         public bool ReadOnlyFlag { get; set; }
         public bool ReadOnly => ReadOnlyFlag;
+        public bool IsReadOnly => ReadOnlyFlag;
         public bool RequiredFlag { get; set; }
         public bool Required => RequiredFlag;
+        public bool IsRequired => RequiredFlag;
     }
 }

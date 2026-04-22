@@ -3,4 +3,5 @@
 public interface IHasReadOnly
 {
     bool ReadOnly { get; }
+    bool IsReadOnly { get; }
 }

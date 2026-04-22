@@ -133,15 +133,15 @@ internal sealed class BUIComponentAttributesBuilder
         if ((flags & ComponentFeatures.Loading) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = ((IHasLoading)component).Loading.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.Error) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = ((IHasError)component).Error.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = ((IHasError)component).IsError.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.Disabled) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = ((IHasDisabled)component).IsDisabled.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.Active) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = ((IHasActive)component).IsActive.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.ReadOnly) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = ((IHasReadOnly)component).ReadOnly.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = ((IHasReadOnly)component).IsReadOnly.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.Required) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).Required.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).IsRequired.ToString().ToLowerInvariant();
 
         if ((flags & ComponentFeatures.Prefix) != 0)
         {
@@ -236,11 +236,11 @@ internal sealed class BUIComponentAttributesBuilder
         if ((flags & ComponentFeatures.Loading) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = ((IHasLoading)component).Loading.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.Error) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = ((IHasError)component).Error.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = ((IHasError)component).IsError.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.ReadOnly) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = ((IHasReadOnly)component).ReadOnly.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = ((IHasReadOnly)component).IsReadOnly.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.Required) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).Required.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).IsRequired.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.FullWidth) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = ((IHasFullWidth)component).FullWidth.ToString().ToLowerInvariant();
     }
