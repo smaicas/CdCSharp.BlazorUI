@@ -335,7 +335,7 @@ _(ninguno registrado todavía)_
 
 ### `API-03` — Sin `Microsoft.CodeAnalysis.PublicApiAnalyzers` / `PublicAPI.{Shipped,Unshipped}.txt`: cualquier PR puede romper la API sin que CI lo detecte
 
-- **Estado**: ✅ Resuelto parcialmente (baseline instalado, commit `<PENDING>`) — analyzer + archivos vacíos en los 5 proyectos publicables, workflow documentado en `CLAUDE.md` → "Public API tracking". Criterio 4 (gate CI) y criterio 5 (poblar `PublicAPI.Shipped.txt`) quedan pendientes hasta que API-01/02/04/06/08..14 cierren y BLD-03 active `TreatWarningsAsErrors`.
+- **Estado**: ✅ Resuelto parcialmente (baseline instalado, commit `8a94bd7`) — analyzer + archivos vacíos en los 5 proyectos publicables, workflow documentado en `CLAUDE.md` → "Public API tracking". Criterio 4 (gate CI) y criterio 5 (poblar `PublicAPI.Shipped.txt`) quedan pendientes hasta que API-01/02/04/06/08..14 cierren y BLD-03 active `TreatWarningsAsErrors`.
 - **Severidad**: Critical
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj`, `src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj`.
@@ -421,6 +421,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-04` — Desfase de nullabilidad en overrides de `TryParseValueFromString` y similares (CS8765 × 4)
 
+- **Estado**: ✅ Resuelto (commit `<PENDING>`) — overrides alineados con `InputBase<TValue>`: `[MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:

@@ -1,5 +1,6 @@
 @using System.Globalization
 @using System.Text
+@using System.Diagnostics.CodeAnalysis
 @using CdCSharp.BlazorUI.Abstractions
 
 @namespace CdCSharp.BlazorUI.Components.Forms
@@ -727,21 +728,23 @@
         return result.ToString();
     }
 
-    protected override bool TryParseValueFromString(string? value, out TValue? result, out string validationErrorMessage)
+    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
     {
-        validationErrorMessage = string.Empty;
+        validationErrorMessage = null;
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            result = default;
+            result = default!;
             return true;
         }
 
-        if (TryParseInput(value, out result))
+        if (TryParseInput(value, out TValue? parsed))
         {
+            result = parsed!;
             return true;
         }
 
+        result = default!;
         validationErrorMessage = $"'{value}' is not a valid number.";
         return false;
     }
