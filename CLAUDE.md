@@ -276,6 +276,25 @@ Each component that exposes variants must have a test that:
 
 `Tests/Library/` covers things with no single owning component: `ServiceRegistrationTests` (DI), `VariantRegistryTests`, `CssColorSystemTests`. New cross-cutting utilities (color math, registry behaviour, DI extensions) go here, not under `Components/`.
 
+## Public API tracking
+
+Every publishable project (`CdCSharp.BlazorUI.Core`, `CdCSharp.BlazorUI`, `CdCSharp.BlazorUI.SyntaxHighlight`, `CdCSharp.BlazorUI.Localization.Server`, `CdCSharp.BlazorUI.Localization.Wasm`) has `Microsoft.CodeAnalysis.PublicApiAnalyzers` enabled with two sidecar files at the project root:
+
+- `PublicAPI.Shipped.txt` — the API surface currently released to NuGet. Do not hand-edit mid-release.
+- `PublicAPI.Unshipped.txt` — additions/removals staged for the next release.
+
+Workflow when you change the public surface:
+
+1. Build. The analyzer raises `RS0016` (missing declaration) for new public members and `RS0017` (stale declaration) for removed ones. Both ship with a Roslyn code-fix — *Add to public API* / *Remove from public API* — that appends the line to `PublicAPI.Unshipped.txt` automatically.
+2. Review `Unshipped.txt` as part of the PR; reviewers use it as the diff of the public contract.
+3. On release, move all `Unshipped.txt` lines into `Shipped.txt` (plain concatenation, then clear `Unshipped.txt`). The release workflow does not do this automatically — it is a manual maintainer step.
+
+Rules:
+
+- Types that must remain `public` for Razor SDK / reflection / DI but should not appear in consumer IntelliSense get `[EditorBrowsable(EditorBrowsableState.Never)]` instead of being internalized. See `BUIBasePattern` for the canonical example (Razor-generated partial class forces `public`).
+- Nested types and members declared `public` inside an `internal` parent still count as part of the API surface to the analyzer — collapse them to `internal` rather than fighting `RS0016`.
+- `InternalsVisibleTo` does not affect the analyzer; the tracked surface is what the compiler would emit for an external consumer.
+
 ## Release / versioning
 
 Versioning is driven by `.github/workflows/publish.yml`:

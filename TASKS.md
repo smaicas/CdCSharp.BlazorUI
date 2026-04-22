@@ -335,6 +335,7 @@ _(ninguno registrado todavía)_
 
 ### `API-03` — Sin `Microsoft.CodeAnalysis.PublicApiAnalyzers` / `PublicAPI.{Shipped,Unshipped}.txt`: cualquier PR puede romper la API sin que CI lo detecte
 
+- **Estado**: ✅ Resuelto parcialmente (baseline instalado, commit `<PENDING>`) — analyzer + archivos vacíos en los 5 proyectos publicables, workflow documentado en `CLAUDE.md` → "Public API tracking". Criterio 4 (gate CI) y criterio 5 (poblar `PublicAPI.Shipped.txt`) quedan pendientes hasta que API-01/02/04/06/08..14 cierren y BLD-03 active `TreatWarningsAsErrors`.
 - **Severidad**: Critical
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj`, `src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj`.
@@ -771,6 +772,7 @@ _(ninguno registrado todavía)_
 
 ### `API-07` — Namespace-splitting en Core incoherente: mezcla `CdCSharp.BlazorUI.Components` con `CdCSharp.BlazorUI.Core.*`
 
+- **Estado**: ✅ Resuelto (commit `2649b5d`) — 3 namespaces públicos definitivos: `CdCSharp.BlazorUI.Components`, `CdCSharp.BlazorUI.Abstractions`, `CdCSharp.BlazorUI.Themes`. Todos los `CdCSharp.BlazorUI.Core.*` eliminados del espacio público (el nombre del assembly `CdCSharp.BlazorUI.Core` permanece sin cambios — es ortogonal al namespace).
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: proyecto `src/CdCSharp.BlazorUI.Core/` — 9 namespaces distintos.
