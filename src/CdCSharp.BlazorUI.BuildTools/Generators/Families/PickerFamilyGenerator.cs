@@ -184,12 +184,12 @@ bui-component[{{picker}}] .{{preview}} > div {
    KEYBOARD FOCUS INDICATORS
    ======================================== */
 
-bui-component[data-bui-picker-base] .bui-picker__cell:focus-visible {
+bui-component[{{picker}}] .{{cell}}:focus-visible {
     outline: var(--bui-highlight-outline);
     outline-offset: var(--bui-highlight-outline-offset);
 }
 
-bui-component[data-bui-picker-base] .bui-picker__input:focus-visible {
+bui-component[{{picker}}] .{{input}}:focus-visible {
     outline: var(--bui-highlight-outline);
     outline-offset: var(--bui-highlight-outline-offset);
 }
