@@ -1,4 +1,4 @@
-﻿@typeparam TValue
+@typeparam TValue
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 @attribute [GenerateComponentInfo]
@@ -26,11 +26,11 @@
                 {
                     @if (IsChecked)
                     {
-                        <BUISvgIcon Size="SizeEnum.Small" Icon="@IconActive" class="bui-switch__icon" />
+                        <BUISvgIcon Size="BUISize.Small" Icon="@IconActive" class="bui-switch__icon" />
                     }
                     else
                     {
-                        <BUISvgIcon Size="SizeEnum.Small" Icon="@IconInactive" class="bui-switch__icon" />
+                        <BUISvgIcon Size="BUISize.Small" Icon="@IconInactive" class="bui-switch__icon" />
                     }
                 }
             </span>
@@ -49,8 +49,8 @@
 
     /* ===== Design ===== */
 
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     /* ===== State ===== */
 

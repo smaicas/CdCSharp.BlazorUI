@@ -44,7 +44,7 @@ public class BUINotificationBadgeSnapshotTests
             {
                 Name = "Large_Size",
                 Html = ctx.Render<BUINotificationBadge>(p => p
-                    .Add(c => c.Size, SizeEnum.Large)
+                    .Add(c => c.Size, BUISize.Large)
                     .Add(c => c.BadgeContent, b => b.AddContent(0, "5"))).GetNormalizedMarkup()
             },
             new

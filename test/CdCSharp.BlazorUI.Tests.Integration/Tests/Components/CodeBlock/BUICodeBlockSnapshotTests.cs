@@ -37,7 +37,7 @@ public class BUICodeBlockSnapshotTests
                 Name = "Large_Size",
                 Html = ctx.Render<BUICodeBlock>(p => p
                     .Add(c => c.Code, "var x = 1;")
-                    .Add(c => c.Size, SizeEnum.Large)).GetNormalizedMarkup()
+                    .Add(c => c.Size, BUISize.Large)).GetNormalizedMarkup()
             },
             new
             {

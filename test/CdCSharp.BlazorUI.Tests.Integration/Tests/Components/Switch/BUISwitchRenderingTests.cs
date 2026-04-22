@@ -97,7 +97,7 @@ public class BUISwitchRenderingTests
         IRenderedComponent<BUISwitch<bool>> cut = ctx.Render<BUISwitch<bool>>(p => p
             .Add(c => c.OptionInactive, false)
             .Add(c => c.OptionActive, true)
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Components.Layout
+@using CdCSharp.BlazorUI.Components.Layout
 @using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 
@@ -32,7 +32,7 @@
     [Inject] private IClipboardJsInterop ClipboardJs { get; set; } = default!;
 
     // IHasSize
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     // IHasLoading
     [Parameter] public bool Loading { get; set; }

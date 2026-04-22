@@ -165,7 +165,7 @@ public class BUIInputCheckboxStateTests
         cut.Render(p => p
             .Add(c => c.AdditionalAttributes, extra)
             .Add(c => c.Disabled, true)
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         IElement root = cut.Find("bui-component");
         root.GetAttribute("data-testid").Should().Be("accept-cb");

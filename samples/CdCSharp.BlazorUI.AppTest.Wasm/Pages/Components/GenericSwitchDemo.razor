@@ -1,4 +1,4 @@
-﻿@page "/demo/genericswitch"
+@page "/demo/genericswitch"
 
 <PageTitle>Generic Switch - CdCSharp.BlazorUI</PageTitle>
 
@@ -90,13 +90,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUISwitch @bind-Value="_smallValue" OptionInactive="true" OptionActive="false" Label="Small" Size="SizeEnum.Small" />
+                <BUISwitch @bind-Value="_smallValue" OptionInactive="true" OptionActive="false" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_mediumValue" OptionInactive="true" OptionActive="false" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUISwitch @bind-Value="_mediumValue" OptionInactive="true" OptionActive="false" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_largeValue" OptionInactive="true" OptionActive="false" Label="Large" Size="SizeEnum.Large" />
+                <BUISwitch @bind-Value="_largeValue" OptionInactive="true" OptionActive="false" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -111,13 +111,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUISwitch @bind-Value="_compactValue" OptionInactive="true" OptionActive="false" Label="Compact" Density="DensityEnum.Compact" />
+                <BUISwitch @bind-Value="_compactValue" OptionInactive="true" OptionActive="false" Label="Compact" Density="BUIDensity.Compact" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_standardValue" OptionInactive="true" OptionActive="false" Label="Standard (Default)" Density="DensityEnum.Standard" />
+                <BUISwitch @bind-Value="_standardValue" OptionInactive="true" OptionActive="false" Label="Standard (Default)" Density="BUIDensity.Standard" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUISwitch @bind-Value="_comfortableValue" OptionInactive="true" OptionActive="false" Label="Comfortable" Density="DensityEnum.Comfortable" />
+                <BUISwitch @bind-Value="_comfortableValue" OptionInactive="true" OptionActive="false" Label="Comfortable" Density="BUIDensity.Comfortable" />
             </BUIGridItem>
         </BUIGrid>
     };

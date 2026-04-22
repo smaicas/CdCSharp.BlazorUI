@@ -1,4 +1,4 @@
-﻿@page "/demo/textarea"
+@page "/demo/textarea"
 
 <PageTitle>TextArea - CdCSharp.BlazorUI</PageTitle>
 
@@ -188,13 +188,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputTextArea @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+                <BUIInputTextArea @bind-Value="_smallValue" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputTextArea @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUIInputTextArea @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputTextArea @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+                <BUIInputTextArea @bind-Value="_largeValue" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };

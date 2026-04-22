@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 @namespace CdCSharp.BlazorUI.Components
@@ -85,7 +85,7 @@
                                     @if (SelectionMode == SelectionMode.Multiple)
                                     {
                                         <_BUIBtn Icon="@GetSelectAllIcon()"
-                                                 Size="SizeEnum.Small"
+                                                 Size="BUISize.Small"
                                                  AriaLabel="@(IsAllSelected() ? "Deselect all" : "Select all")"
                                                  OnClick="HandleSelectAllClick" />
                                     }
@@ -118,11 +118,11 @@
                                                 {
                                                     @if (State.SortDirection == SortDirection.Ascending)
                                                     {
-                                                        <BUISvgIcon Icon="@BUIIcons.UI.ArrowUpward" Size="SizeEnum.Small" />
+                                                        <BUISvgIcon Icon="@BUIIcons.UI.ArrowUpward" Size="BUISize.Small" />
                                                     }
                                                     else if (State.SortDirection == SortDirection.Descending)
                                                     {
-                                                        <BUISvgIcon Icon="@BUIIcons.UI.ArrowDownward" Size="SizeEnum.Small" />
+                                                        <BUISvgIcon Icon="@BUIIcons.UI.ArrowDownward" Size="BUISize.Small" />
                                                     }
                                                 }
                                             </span>

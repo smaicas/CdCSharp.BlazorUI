@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
 
 @namespace CdCSharp.BlazorUI.Components.Forms
 @attribute [GenerateComponentInfo]
@@ -25,14 +25,14 @@
     private bool _isDirty;
 
     // IHasSize
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     // IHasLoading
     [Parameter] public bool Loading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
 
     // IHasDensity
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }

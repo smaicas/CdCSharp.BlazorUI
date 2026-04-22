@@ -115,8 +115,8 @@ public class BUIInputNumberRenderingTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         IRenderedComponent<BUIInputNumber<int>> cut = ctx.Render<BUIInputNumber<int>>(p => p
-            .Add(c => c.Size, SizeEnum.Large)
-            .Add(c => c.Density, DensityEnum.Compact)
+            .Add(c => c.Size, BUISize.Large)
+            .Add(c => c.Density, BUIDensity.Compact)
             .Add(c => c.Color, "rgba(10,20,30,1)"));
 
         IElement root = cut.Find("bui-component");

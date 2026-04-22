@@ -1,4 +1,4 @@
-﻿@page "/demo/badge"
+@page "/demo/badge"
 
 <PageTitle>Badge - CdCSharp.BlazorUI</PageTitle>
 
@@ -69,7 +69,7 @@
     private RenderFragment RenderIcon() => __builder =>
     {
         <BUIBadge>
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Small" />
             Featured
         </BUIBadge>
     };
@@ -145,13 +145,13 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUIBadge Size="SizeEnum.Small">Small</BUIBadge>
+                <BUIBadge Size="BUISize.Small">Small</BUIBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIBadge Size="SizeEnum.Medium">Medium</BUIBadge>
+                <BUIBadge Size="BUISize.Medium">Medium</BUIBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIBadge Size="SizeEnum.Large">Large</BUIBadge>
+                <BUIBadge Size="BUISize.Large">Large</BUIBadge>
             </BUIGridItem>
         </BUIGrid>
     };
@@ -202,7 +202,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Position="BadgePosition.TopRight">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -210,7 +210,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Position="BadgePosition.TopLeft">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -218,7 +218,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Position="BadgePosition.BottomRight">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -226,7 +226,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Position="BadgePosition.BottomLeft">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -234,7 +234,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.TopRight">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -242,7 +242,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.TopLeft">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -250,7 +250,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.BottomRight">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -258,7 +258,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge Border="BorderStyle.Create().Radius(9999)" Position="BadgePosition.BottomLeft">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Notifications" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>5</BadgeContent>
                 </BUINotificationBadge>
@@ -278,7 +278,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge>
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="BUISize.Large" />
                     </ChildContent>
                 </BUINotificationBadge>
             </BUIGridItem>
@@ -308,7 +308,7 @@
                         <BUIButton OnClick="@(() => { })">Updates</BUIButton>
                     </ChildContent>
                     <BadgeContent>
-                        <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+                        <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Small" />
                     </BadgeContent>
                 </BUINotificationBadge>
             </BUIGridItem>
@@ -327,7 +327,7 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge BackgroundColor="@Palette.Error" Color="@Palette.ErrorContrast">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>!</BadgeContent>
                 </BUINotificationBadge>
@@ -335,14 +335,14 @@
             <BUIGridItem Auto="true">
                 <BUINotificationBadge BackgroundColor="@Palette.Success" Color="@Palette.SuccessContrast">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="BUISize.Large" />
                     </ChildContent>
                 </BUINotificationBadge>
             </BUIGridItem>
             <BUIGridItem Auto="true">
                 <BUINotificationBadge BackgroundColor="@Palette.Warning" Color="@Palette.WarningContrast">
                     <ChildContent>
-                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.Email" Size="BUISize.Large" />
                     </ChildContent>
                     <BadgeContent>3</BadgeContent>
                 </BUINotificationBadge>

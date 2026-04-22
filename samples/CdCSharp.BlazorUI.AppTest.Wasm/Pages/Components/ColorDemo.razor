@@ -1,4 +1,4 @@
-﻿@page "/demo/color"
+@page "/demo/color"
 
 <PageTitle>Color Picker - CdCSharp.BlazorUI</PageTitle>
 
@@ -218,13 +218,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem Xs="12" Md="4">
-                <BUIInputColor @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+                <BUIInputColor @bind-Value="_smallValue" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="4">
-                <BUIInputColor @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUIInputColor @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="4">
-                <BUIInputColor @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+                <BUIInputColor @bind-Value="_largeValue" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -300,7 +300,7 @@
         <BUIInputColor @bind-Value="_combinedValue"
                        Label="Full Featured"
                        Variant="BUIInputVariant.Outlined"
-                       Size="SizeEnum.Medium"
+                       Size="BUISize.Medium"
                        DisplayMode="ColorPickerDisplayMode.Dropdown"
                        OutputFormat="ColorOutputFormats.Hex"
                        ShowCopyButton="true"

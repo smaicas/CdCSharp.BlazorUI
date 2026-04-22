@@ -25,11 +25,11 @@ public class BUIDatePickerSnapshotTests
 
             new { Name = "Large_Size", Builder = (Action<ComponentParameterCollectionBuilder<BUIDatePicker>>)(p => p
                 .Add(c => c.Value, new DateOnly(2024, 6, 15))
-                .Add(c => c.Size, SizeEnum.Large)) },
+                .Add(c => c.Size, BUISize.Large)) },
 
             new { Name = "Compact_Density", Builder = (Action<ComponentParameterCollectionBuilder<BUIDatePicker>>)(p => p
                 .Add(c => c.Value, new DateOnly(2024, 6, 15))
-                .Add(c => c.Density, DensityEnum.Compact)) }
+                .Add(c => c.Density, BUIDensity.Compact)) }
         };
 
         var results = testCases.Select(testCase =>

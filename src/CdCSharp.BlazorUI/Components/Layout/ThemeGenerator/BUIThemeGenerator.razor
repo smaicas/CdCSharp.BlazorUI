@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Layout
+@namespace CdCSharp.BlazorUI.Components.Layout
 
 @using CdCSharp.BlazorUI.Components.Forms
 @using CdCSharp.BlazorUI.Components.Layout
@@ -26,15 +26,15 @@
     <div class="bui-theme-generator__actions">
         <div class="bui-theme-generator__actions-group">
             <span class="bui-theme-generator__actions-label">Import</span>
-            <BUIButton Text="JSON" OnClick="OpenImportDialog" Size="SizeEnum.Small" />
+            <BUIButton Text="JSON" OnClick="OpenImportDialog" Size="BUISize.Small" />
         </div>
         <div class="bui-theme-generator__actions-group">
             <span class="bui-theme-generator__actions-label">Export</span>
-            <BUIButton Text="JSON" OnClick="@(() => ShowExport("JSON", GenerateJson()))" Size="SizeEnum.Small" />
-            <BUIButton Text="CSS" OnClick="@(() => ShowExport("CSS", GenerateCss()))" Size="SizeEnum.Small" />
-            <BUIButton Text="C#" OnClick="@(() => ShowExport("C#", GenerateCSharp()))" Size="SizeEnum.Small" />
+            <BUIButton Text="JSON" OnClick="@(() => ShowExport("JSON", GenerateJson()))" Size="BUISize.Small" />
+            <BUIButton Text="CSS" OnClick="@(() => ShowExport("CSS", GenerateCss()))" Size="BUISize.Small" />
+            <BUIButton Text="C#" OnClick="@(() => ShowExport("C#", GenerateCSharp()))" Size="BUISize.Small" />
         </div>
-        <BUIButton Text="Reset" OnClick="Reset" Size="SizeEnum.Small" />
+        <BUIButton Text="Reset" OnClick="Reset" Size="BUISize.Small" />
     </div>
 
     <div class="bui-theme-generator__preview-container" style="@GetPreviewStyles()">

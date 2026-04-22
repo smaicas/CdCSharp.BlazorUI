@@ -52,19 +52,19 @@
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-        <BUIInputDropdown @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small">
+        <BUIInputDropdown @bind-Value="_smallValue" Label="@Loc["Small"]" Size="BUISize.Small">
             @foreach (var option in _optionsStrings)
             {
                 <DropdownOption Value="@option" Text="@option" />
             }
         </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="SizeEnum.Medium">
+        <BUIInputDropdown @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="BUISize.Medium">
             @foreach (var option in _optionsStrings)
             {
                 <DropdownOption Value="@option" Text="@option" />
             }
         </BUIInputDropdown>
-        <BUIInputDropdown @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large">
+        <BUIInputDropdown @bind-Value="_largeValue" Label="@Loc["Large"]" Size="BUISize.Large">
             @foreach (var option in _optionsStrings)
             {
                 <DropdownOption Value="@option" Text="@option" />

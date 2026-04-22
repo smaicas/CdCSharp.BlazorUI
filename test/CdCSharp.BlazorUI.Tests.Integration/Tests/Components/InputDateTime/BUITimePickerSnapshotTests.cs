@@ -30,11 +30,11 @@ public class BUITimePickerSnapshotTests
 
             new { Name = "Large_Size", Builder = (Action<ComponentParameterCollectionBuilder<BUITimePicker>>)(p => p
                 .Add(c => c.Value, new TimeOnly(14, 35))
-                .Add(c => c.Size, SizeEnum.Large)) },
+                .Add(c => c.Size, BUISize.Large)) },
 
             new { Name = "Compact_Density", Builder = (Action<ComponentParameterCollectionBuilder<BUITimePicker>>)(p => p
                 .Add(c => c.Value, new TimeOnly(14, 35))
-                .Add(c => c.Density, DensityEnum.Compact)) }
+                .Add(c => c.Density, BUIDensity.Compact)) }
         };
 
         var results = testCases.Select(testCase =>

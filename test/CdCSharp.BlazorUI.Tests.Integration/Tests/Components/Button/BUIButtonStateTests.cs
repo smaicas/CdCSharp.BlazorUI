@@ -1,4 +1,4 @@
-﻿using AngleSharp.Dom;
+using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -45,14 +45,14 @@ public class BUIButtonStateTests
         // Arrange
         IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
             .Add(c => c.Text, "Multi-State")
-            .Add(c => c.Size, SizeEnum.Medium)
+            .Add(c => c.Size, BUISize.Medium)
             .Add(c => c.Variant, BUIButtonVariant.Default));
 
         IElement component = cut.Find("bui-component");
 
         // Act & Assert - Change multiple properties
         cut.Render(p => p
-            .Add(c => c.Size, SizeEnum.Large)
+            .Add(c => c.Size, BUISize.Large)
             .Add(c => c.Shadow, BUIShadowPresets.Elevation(4)));
 
         component.GetAttribute("data-bui-size").Should().Be("large");
@@ -133,7 +133,7 @@ public class BUIButtonStateTests
         // Act - Change other properties
         cut.Render(p => p
             .Add(c => c.Disabled, true)
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         // Assert - Custom attributes preserved
         IElement component = cut.Find("bui-component");

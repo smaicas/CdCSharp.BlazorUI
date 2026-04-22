@@ -1,4 +1,4 @@
-﻿@page "/demo/datacards"
+@page "/demo/datacards"
 
 @using CdCSharp.BlazorUI.Components
 
@@ -669,7 +669,7 @@
     {
         <div>
             <h4>Compact</h4>
-            <BUIDataCards Items="_compactData" Density="DensityEnum.Compact">
+            <BUIDataCards Items="_compactData" Density="BUIDensity.Compact">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
@@ -678,7 +678,7 @@
             </BUIDataCards>
 
             <h4 style="margin-top: 2rem;">Standard (Default)</h4>
-            <BUIDataCards Items="_standardData" Density="DensityEnum.Standard">
+            <BUIDataCards Items="_standardData" Density="BUIDensity.Standard">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
@@ -687,7 +687,7 @@
             </BUIDataCards>
 
             <h4 style="margin-top: 2rem;">Comfortable</h4>
-            <BUIDataCards Items="_comfortableData" Density="DensityEnum.Comfortable">
+            <BUIDataCards Items="_comfortableData" Density="BUIDensity.Comfortable">
                 <Columns>
                     <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
                     <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />

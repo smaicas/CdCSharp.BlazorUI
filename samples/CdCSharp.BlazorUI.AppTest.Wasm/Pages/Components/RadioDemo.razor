@@ -1,4 +1,4 @@
-﻿@page "/demo/radio"
+@page "/demo/radio"
 
 <PageTitle>Radio - CdCSharp.BlazorUI</PageTitle>
 
@@ -127,19 +127,19 @@
     {
         <BUIGrid Gap="2rem">
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
+                <BUIInputRadio @bind-Value="_smallValue" Label="Small" Size="BUISize.Small">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
+                <BUIInputRadio @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
+                <BUIInputRadio @bind-Value="_largeValue" Label="Large" Size="BUISize.Large">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
@@ -187,19 +187,19 @@
     {
         <BUIGrid Gap="2rem">
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact">
+                <BUIInputRadio @bind-Value="_compactValue" Label="Compact" Density="BUIDensity.Compact">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_standardValue" Label="Standard (Default)" Density="DensityEnum.Standard">
+                <BUIInputRadio @bind-Value="_standardValue" Label="Standard (Default)" Density="BUIDensity.Standard">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputRadio @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable">
+                <BUIInputRadio @bind-Value="_comfortableValue" Label="Comfortable" Density="BUIDensity.Comfortable">
                     <RadioOption Value="@("option1")">Option 1</RadioOption>
                     <RadioOption Value="@("option2")">Option 2</RadioOption>
                 </BUIInputRadio>

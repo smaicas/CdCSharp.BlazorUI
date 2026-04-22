@@ -27,9 +27,9 @@
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-        <BUIInputDateTime @bind-Value="_smallValue" Label="@Loc["Small"]" Size="SizeEnum.Small" />
-        <BUIInputDateTime @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="SizeEnum.Medium" />
-        <BUIInputDateTime @bind-Value="_largeValue" Label="@Loc["Large"]" Size="SizeEnum.Large" />
+        <BUIInputDateTime @bind-Value="_smallValue" Label="@Loc["Small"]" Size="BUISize.Small" />
+        <BUIInputDateTime @bind-Value="_mediumValue" Label="@Loc["Medium (Default)"]" Size="BUISize.Medium" />
+        <BUIInputDateTime @bind-Value="_largeValue" Label="@Loc["Large"]" Size="BUISize.Large" />
     </DocDemo>
 
     <DocDemo Key="ColorAndBackground" Title="@Loc["Color & Background"]">
@@ -55,15 +55,15 @@
     </DocDemo>
 
     <DocDemo Key="DatePicker" Title="@Loc["Date Picker"]" Description="@_datePickerDesc">
-        <BUIDatePicker Density="DensityEnum.Compact" @bind-Value="_pickerDate" />
-        <BUIDatePicker Density="DensityEnum.Standard" @bind-Value="_pickerDate" />
-        <BUIDatePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerDate" />
+        <BUIDatePicker Density="BUIDensity.Compact" @bind-Value="_pickerDate" />
+        <BUIDatePicker Density="BUIDensity.Standard" @bind-Value="_pickerDate" />
+        <BUIDatePicker Density="BUIDensity.Comfortable" @bind-Value="_pickerDate" />
     </DocDemo>
 
     <DocDemo Key="TimePicker" Title="@Loc["Time Picker"]" Description="@_timePickerDesc">
-        <BUITimePicker Density="DensityEnum.Compact" @bind-Value="_pickerTime" />
-        <BUITimePicker Density="DensityEnum.Standard" @bind-Value="_pickerTime" />
-        <BUITimePicker Density="DensityEnum.Comfortable" @bind-Value="_pickerTime" />
+        <BUITimePicker Density="BUIDensity.Compact" @bind-Value="_pickerTime" />
+        <BUITimePicker Density="BUIDensity.Standard" @bind-Value="_pickerTime" />
+        <BUITimePicker Density="BUIDensity.Comfortable" @bind-Value="_pickerTime" />
     </DocDemo>
 
     <section class="doc-section">

@@ -65,8 +65,8 @@ public class BUIInputTextSnapshotTests
 
             new { Name = "Sized_Large_Compact", Builder = (Action<ComponentParameterCollectionBuilder<BUIInputText>>)(p => p
                 .Add(c => c.Label, "Styled")
-                .Add(c => c.Size, SizeEnum.Large)
-                .Add(c => c.Density, DensityEnum.Compact)
+                .Add(c => c.Size, BUISize.Large)
+                .Add(c => c.Density, BUIDensity.Compact)
                 .Add(c => c.ValueExpression, () => model.Value)) }
         };
 

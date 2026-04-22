@@ -106,7 +106,7 @@ public class BUISvgIconRenderingTests
         // Arrange & Act
         IRenderedComponent<BUISvgIcon> cut = ctx.Render<BUISvgIcon>(p => p
             .Add(c => c.Icon, SimpleIcon)
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Components.Utils
+@using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.SyntaxHighlight
 
 @namespace CdCSharp.BlazorUI.Components
@@ -39,7 +39,7 @@
     [Parameter] public string? Title { get; set; }
 
     // IHasSize
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     // IHasBorder
     [Parameter] public BorderStyle? Border { get; set; }

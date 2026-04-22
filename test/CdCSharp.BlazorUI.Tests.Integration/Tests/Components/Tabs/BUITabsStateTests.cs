@@ -73,14 +73,14 @@ public class BUITabsStateTests
         // Arrange
         IRenderedComponent<BUITabs> cut = ctx.Render<BUITabs>(p => p
             .Add(c => c.ChildContent, TwoTabs)
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("small");
 
         // Act
         cut.Render(p => p
             .Add(c => c.ChildContent, TwoTabs)
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

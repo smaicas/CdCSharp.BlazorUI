@@ -38,7 +38,7 @@ public class BUIBadgeSnapshotTests
             {
                 Name = "Large_Size",
                 Html = ctx.Render<BUIBadge>(p => p
-                    .Add(c => c.Size, SizeEnum.Large)
+                    .Add(c => c.Size, BUISize.Large)
                     .Add(c => c.ChildContent, b => b.AddContent(0, "New"))).GetNormalizedMarkup()
             },
             new

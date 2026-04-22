@@ -1,4 +1,4 @@
-﻿@page "/utilities/icons"
+@page "/utilities/icons"
 @using System.Reflection
 @using CdCSharp.BlazorUI.Components
 
@@ -75,7 +75,7 @@
                 {
                     <div class="icon-card" title="Click para copiar nombre" @onclick="() => CopyToClipboard(category.Name, icon.Name)">
                         <div class="icon-preview">
-                            <BUISvgIcon Icon="@icon.Value" Size="SizeEnum.Large" />
+                            <BUISvgIcon Icon="@icon.Value" Size="BUISize.Large" />
                         </div>
                         <div class="icon-info">
                             <span class="icon-name">@icon.Name</span>

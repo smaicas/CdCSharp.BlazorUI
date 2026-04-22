@@ -1,4 +1,4 @@
-﻿@page "/demo/toast"
+@page "/demo/toast"
 @using CdCSharp.BlazorUI.Components.Layout.Services
 @inject IToastService ToastService
 
@@ -107,7 +107,7 @@
             b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
             b.OpenComponent<BUISvgIcon>(2);
             b.AddAttribute(3, "Icon", BUIIcons.UI.Info);
-            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.AddAttribute(4, "Size", BUISize.Small);
             b.CloseComponent();
             b.OpenElement(5, "span");
             b.AddContent(6, "This is an info message.");
@@ -124,7 +124,7 @@
             b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
             b.OpenComponent<BUISvgIcon>(2);
             b.AddAttribute(3, "Icon", BUIIcons.UI.CheckCircle);
-            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.AddAttribute(4, "Size", BUISize.Small);
             b.CloseComponent();
             b.OpenElement(5, "span");
             b.AddContent(6, "Operation completed successfully!");
@@ -141,7 +141,7 @@
             b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
             b.OpenComponent<BUISvgIcon>(2);
             b.AddAttribute(3, "Icon", BUIIcons.UI.Warning);
-            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.AddAttribute(4, "Size", BUISize.Small);
             b.CloseComponent();
             b.OpenElement(5, "span");
             b.AddContent(6, "Warning: Please check your input.");
@@ -158,7 +158,7 @@
             b.AddAttribute(1, "style", "display: flex; align-items: center; gap: 0.5rem;");
             b.OpenComponent<BUISvgIcon>(2);
             b.AddAttribute(3, "Icon", BUIIcons.UI.Error);
-            b.AddAttribute(4, "Size", SizeEnum.Small);
+            b.AddAttribute(4, "Size", BUISize.Small);
             b.CloseComponent();
             b.OpenElement(5, "span");
             b.AddContent(6, "Error: Something went wrong!");
@@ -179,26 +179,26 @@
             <BUIGridItem>
                 <BUIGrid Direction="GridDirection.Row" Gap="0.5rem">
                     <BUIGridItem Auto="true">
-                        <BUIButton Text="Top Left" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopLeft))" />
+                        <BUIButton Text="Top Left" Size="BUISize.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopLeft))" />
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
-                        <BUIButton Text="Top Center" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopCenter))" />
+                        <BUIButton Text="Top Center" Size="BUISize.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopCenter))" />
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
-                        <BUIButton Text="Top Right" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopRight))" />
+                        <BUIButton Text="Top Right" Size="BUISize.Small" OnClick="@(() => ShowPositionToast(ToastPosition.TopRight))" />
                     </BUIGridItem>
                 </BUIGrid>
             </BUIGridItem>
             <BUIGridItem>
                 <BUIGrid Direction="GridDirection.Row" Gap="0.5rem">
                     <BUIGridItem Auto="true">
-                        <BUIButton Text="Bottom Left" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomLeft))" />
+                        <BUIButton Text="Bottom Left" Size="BUISize.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomLeft))" />
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
-                        <BUIButton Text="Bottom Center" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomCenter))" />
+                        <BUIButton Text="Bottom Center" Size="BUISize.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomCenter))" />
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
-                        <BUIButton Text="Bottom Right" Size="SizeEnum.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomRight))" />
+                        <BUIButton Text="Bottom Right" Size="BUISize.Small" OnClick="@(() => ShowPositionToast(ToastPosition.BottomRight))" />
                     </BUIGridItem>
                 </BUIGrid>
             </BUIGridItem>

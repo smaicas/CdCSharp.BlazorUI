@@ -1,4 +1,4 @@
-﻿using AngleSharp.Dom;
+using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -65,8 +65,8 @@ public class BUIComponentBaseTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Size, SizeEnum.Large)
-            .Add(c => c.Density, DensityEnum.Compact)
+            .Add(c => c.Size, BUISize.Large)
+            .Add(c => c.Density, BUIDensity.Compact)
             .Add(c => c.FullWidth, true)
             .Add(c => c.Loading, true)
             .Add(c => c.Error, true)

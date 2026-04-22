@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@namespace CdCSharp.BlazorUI.Components.Forms
 @attribute [GenerateComponentInfo]
 
 @inherits BUIInputComponentBase<bool, BUIInputSwitch, BUIInputSwitchVariant>
@@ -13,8 +13,8 @@
     private string _inputId = $"bui-switch-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";
 
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }

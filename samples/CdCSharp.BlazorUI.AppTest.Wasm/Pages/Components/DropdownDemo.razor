@@ -1,4 +1,4 @@
-﻿@page "/demo/dropdown"
+@page "/demo/dropdown"
 
 <PageTitle>Dropdown - CdCSharp.BlazorUI</PageTitle>
 
@@ -220,7 +220,7 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small">
+                <BUIInputDropdown @bind-Value="_smallValue" Label="Small" Size="BUISize.Small">
                     @foreach (var option in _options)
                     {
                         <DropdownOption Value="@option" Text="@option" />
@@ -228,7 +228,7 @@
                 </BUIInputDropdown>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium">
+                <BUIInputDropdown @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium">
                     @foreach (var option in _options)
                     {
                         <DropdownOption Value="@option" Text="@option" />
@@ -236,7 +236,7 @@
                 </BUIInputDropdown>
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large">
+                <BUIInputDropdown @bind-Value="_largeValue" Label="Large" Size="BUISize.Large">
                     @foreach (var option in _options)
                     {
                         <DropdownOption Value="@option" Text="@option" />
@@ -399,7 +399,7 @@
                 <BUIInputDropdown TValue="string"
                                   @bind-Value="_compactValue"
                                   Label="Compact"
-                                  Density="DensityEnum.Compact">
+                                  Density="BUIDensity.Compact">
                     <DropdownOption Value="@("a")">Option A</DropdownOption>
                     <DropdownOption Value="@("b")">Option B</DropdownOption>
                 </BUIInputDropdown>
@@ -408,7 +408,7 @@
                 <BUIInputDropdown TValue="string"
                                   @bind-Value="_standardDensity"
                                   Label="Standard"
-                                  Density="DensityEnum.Standard">
+                                  Density="BUIDensity.Standard">
                     <DropdownOption Value="@("a")">Option A</DropdownOption>
                     <DropdownOption Value="@("b")">Option B</DropdownOption>
                 </BUIInputDropdown>
@@ -417,7 +417,7 @@
                 <BUIInputDropdown TValue="string"
                                   @bind-Value="_comfortableValue"
                                   Label="Comfortable"
-                                  Density="DensityEnum.Comfortable">
+                                  Density="BUIDensity.Comfortable">
                     <DropdownOption Value="@("a")">Option A</DropdownOption>
                     <DropdownOption Value="@("b")">Option B</DropdownOption>
                 </BUIInputDropdown>

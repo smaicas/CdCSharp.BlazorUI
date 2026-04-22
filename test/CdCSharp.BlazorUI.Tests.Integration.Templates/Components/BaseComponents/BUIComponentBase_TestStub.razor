@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components
 @using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Core.Css
 
@@ -24,8 +24,8 @@
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [Parameter] public SizeEnum Size { get; set; }
-    [Parameter] public DensityEnum Density { get; set; }
+    [Parameter] public BUISize Size { get; set; }
+    [Parameter] public BUIDensity Density { get; set; }
     [Parameter] public string? Color { get; set; }
     [Parameter] public string? BackgroundColor { get; set; }
     [Parameter] public ShadowStyle? Shadow { get; set; }

@@ -1,4 +1,4 @@
-﻿@page "/demo/text"
+@page "/demo/text"
 
 <PageTitle>Text Input - CdCSharp.BlazorUI</PageTitle>
 
@@ -155,13 +155,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputText @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+                <BUIInputText @bind-Value="_smallValue" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputText @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUIInputText @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputText @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+                <BUIInputText @bind-Value="_largeValue" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -176,13 +176,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputText @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+                <BUIInputText @bind-Value="_compactValue" Label="Compact" Density="BUIDensity.Compact" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputText @bind-Value="_standardDensity" Label="Standard (Default)" Density="DensityEnum.Standard" />
+                <BUIInputText @bind-Value="_standardDensity" Label="Standard (Default)" Density="BUIDensity.Standard" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputText @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+                <BUIInputText @bind-Value="_comfortableValue" Label="Comfortable" Density="BUIDensity.Comfortable" />
             </BUIGridItem>
         </BUIGrid>
     };

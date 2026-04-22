@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@namespace CdCSharp.BlazorUI.Components.Forms
 @attribute [GenerateComponentInfo]
 @using System.Globalization
 
@@ -53,8 +53,8 @@
 @code {
     [Parameter] public TimeOnly? Value { get; set; }
     [Parameter] public EventCallback<TimeOnly?> ValueChanged { get; set; }
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     private int Hour;
     private int Minute;

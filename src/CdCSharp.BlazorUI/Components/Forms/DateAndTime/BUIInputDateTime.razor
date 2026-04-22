@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+@using System.Globalization
 @using CdCSharp.BlazorUI.Components.Layout
 @using CdCSharp.BlazorUI.Components.Utils
 
@@ -40,14 +40,14 @@
     private TimeOnly TimeValue { get; set; } = TimeOnly.FromDateTime(DateTime.Now);
 
     // IHasSize
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     // IHasLoading
     [Parameter] public bool Loading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant LoadingIndicatorVariant { get; set; } = BUILoadingIndicatorVariant.CircularProgress;
 
     // IHasDensity
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     // IHasShadow
     [Parameter] public ShadowStyle? Shadow { get; set; }

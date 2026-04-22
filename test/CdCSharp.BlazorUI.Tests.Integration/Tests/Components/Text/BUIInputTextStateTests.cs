@@ -199,7 +199,7 @@ public class BUIInputTextStateTests
             .Add(c => c.ValueExpression, () => model.Value)
             .Add(c => c.AdditionalAttributes, extra)
             .Add(c => c.Disabled, true)
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         IElement root = cut.Find("bui-component");
         root.GetAttribute("data-testid").Should().Be("email-field");

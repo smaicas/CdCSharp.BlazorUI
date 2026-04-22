@@ -1,4 +1,4 @@
-﻿@page "/demo/tooltip"
+@page "/demo/tooltip"
 
 @using CdCSharp.BlazorUI.Components
 @using CdCSharp.BlazorUI.Core.Css
@@ -114,17 +114,17 @@
                 <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.Center">
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Top Start" Placement="TooltipPlacement.TopStart">
-                            <BUIButton Text="TopStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="TopStart" Size="BUISize.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Top" Placement="TooltipPlacement.Top">
-                            <BUIButton Text="Top" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="Top" Size="BUISize.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Top End" Placement="TooltipPlacement.TopEnd">
-                            <BUIButton Text="TopEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="TopEnd" Size="BUISize.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                 </BUIGrid>
@@ -135,17 +135,17 @@
                         <BUIGrid Gap="1rem">
                             <BUIGridItem>
                                 <BUITooltip Text="Left Start" Placement="TooltipPlacement.LeftStart">
-                                    <BUIButton Text="LeftStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="LeftStart" Size="BUISize.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                             <BUIGridItem>
                                 <BUITooltip Text="Left" Placement="TooltipPlacement.Left">
-                                    <BUIButton Text="Left" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="Left" Size="BUISize.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                             <BUIGridItem>
                                 <BUITooltip Text="Left End" Placement="TooltipPlacement.LeftEnd">
-                                    <BUIButton Text="LeftEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="LeftEnd" Size="BUISize.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                         </BUIGrid>
@@ -154,17 +154,17 @@
                         <BUIGrid Gap="1rem">
                             <BUIGridItem>
                                 <BUITooltip Text="Right Start" Placement="TooltipPlacement.RightStart">
-                                    <BUIButton Text="RightStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="RightStart" Size="BUISize.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                             <BUIGridItem>
                                 <BUITooltip Text="Right" Placement="TooltipPlacement.Right">
-                                    <BUIButton Text="Right" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="Right" Size="BUISize.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                             <BUIGridItem>
                                 <BUITooltip Text="Right End" Placement="TooltipPlacement.RightEnd">
-                                    <BUIButton Text="RightEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                                    <BUIButton Text="RightEnd" Size="BUISize.Small" OnClick="@(() => { })" />
                                 </BUITooltip>
                             </BUIGridItem>
                         </BUIGrid>
@@ -175,17 +175,17 @@
                 <BUIGrid Direction="GridDirection.Row" Gap="1rem" JustifyContent="GridJustifyContent.Center">
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Bottom Start" Placement="TooltipPlacement.BottomStart">
-                            <BUIButton Text="BottomStart" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="BottomStart" Size="BUISize.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Bottom" Placement="TooltipPlacement.Bottom">
-                            <BUIButton Text="Bottom" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="Bottom" Size="BUISize.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                     <BUIGridItem Auto="true">
                         <BUITooltip Text="Bottom End" Placement="TooltipPlacement.BottomEnd">
-                            <BUIButton Text="BottomEnd" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="BottomEnd" Size="BUISize.Small" OnClick="@(() => { })" />
                         </BUITooltip>
                     </BUIGridItem>
                 </BUIGrid>
@@ -343,7 +343,7 @@
                     <TooltipContent>
                         <div>
                             <p style="margin: 0 0 0.5rem 0;">You can interact with this tooltip!</p>
-                            <BUIButton Text="Click me" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                            <BUIButton Text="Click me" Size="BUISize.Small" OnClick="@(() => { })" />
                         </div>
                     </TooltipContent>
                 </BUITooltip>
@@ -532,7 +532,7 @@
         <BUIGrid Direction="GridDirection.Row" Gap="2rem" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
                 <BUITooltip Text="Tooltip on icon">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_help" Size="SizeEnum.Large" Color="@Palette.Primary" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsRound.i_help" Size="BUISize.Large" Color="@Palette.Primary" />
                 </BUITooltip>
             </BUIGridItem>
             <BUIGridItem Auto="true">

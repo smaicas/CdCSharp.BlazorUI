@@ -1,4 +1,4 @@
-﻿@page "/demo/button"
+@page "/demo/button"
 
 <PageTitle>Button - CdCSharp.BlazorUI</PageTitle>
 
@@ -113,13 +113,13 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUIButton Text="Small" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                <BUIButton Text="Small" Size="BUISize.Small" OnClick="@(() => { })" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIButton Text="Medium (Default)" Size="SizeEnum.Medium" OnClick="@(() => { })" />
+                <BUIButton Text="Medium (Default)" Size="BUISize.Medium" OnClick="@(() => { })" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIButton Text="Large" Size="SizeEnum.Large" OnClick="@(() => { })" />
+                <BUIButton Text="Large" Size="BUISize.Large" OnClick="@(() => { })" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -134,13 +134,13 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUIButton Text="Compact" Density="DensityEnum.Compact" OnClick="@(() => { })" />
+                <BUIButton Text="Compact" Density="BUIDensity.Compact" OnClick="@(() => { })" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIButton Text="Standard (Default)" Density="DensityEnum.Standard" OnClick="@(() => { })" />
+                <BUIButton Text="Standard (Default)" Density="BUIDensity.Standard" OnClick="@(() => { })" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUIButton Text="Comfortable" Density="DensityEnum.Comfortable" OnClick="@(() => { })" />
+                <BUIButton Text="Comfortable" Density="BUIDensity.Comfortable" OnClick="@(() => { })" />
             </BUIGridItem>
         </BUIGrid>
     };

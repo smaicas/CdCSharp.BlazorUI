@@ -72,7 +72,7 @@ public class BUIBadgeStateTests
 
         // Arrange & Act
         IRenderedComponent<BUIBadge> cut = ctx.Render<BUIBadge>(p => p
-            .Add(c => c.Size, SizeEnum.Large)
+            .Add(c => c.Size, BUISize.Large)
             .Add(c => c.ChildContent, b => b.AddContent(0, "X")));
 
         // Assert

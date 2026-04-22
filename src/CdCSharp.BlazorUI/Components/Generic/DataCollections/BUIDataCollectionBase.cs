@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Abstractions.Components;
+using CdCSharp.BlazorUI.Core.Abstractions.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -29,8 +29,8 @@ public abstract class BUIDataCollectionBase<TItem, TComponent, TVariant>
 
     [Parameter] public RenderFragment? Columns { get; set; }
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public bool Hoverable { get; set; } = true;
     [Parameter] public ShadowStyle? Shadow { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using AngleSharp.Dom;
+using AngleSharp.Dom;
 using Bunit;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
@@ -264,8 +264,8 @@ public class BUIInputComponentBaseTests
 
         IRenderedComponent<BUIInputComponentBase_TestStub> cut = ctx.Render<BUIInputComponentBase_TestStub>(p => p
             .Add(c => c.ValueExpression, () => model.Value) // Referencia a propiedad
-            .Add(c => c.Size, SizeEnum.Small)
-            .Add(c => c.Density, DensityEnum.Compact)
+            .Add(c => c.Size, BUISize.Small)
+            .Add(c => c.Density, BUIDensity.Compact)
             .Add(c => c.FullWidth, true)
             .Add(c => c.Shadow, BUIShadowPresets.Elevation(4))
         );

@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
 @namespace CdCSharp.BlazorUI.Components
 @attribute [GenerateComponentInfo]
 
@@ -16,7 +16,7 @@
     [Parameter] public RenderFragment? BadgeContent { get; set; }
     [Parameter] public BadgePosition Position { get; set; } = BadgePosition.TopRight;
     [Parameter] public bool Circular { get; set; } = true;
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Small;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Small;
     [Parameter] public string? Color { get; set; }
     [Parameter] public string? BackgroundColor { get; set; }
     [Parameter] public BorderStyle? Border { get; set; }

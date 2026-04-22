@@ -105,7 +105,7 @@ public class BUICodeBlockRenderingTests
         // Arrange & Act
         IRenderedComponent<BUICodeBlock> cut = ctx.Render<BUICodeBlock>(p => p
             .Add(c => c.Code, "var x = 1;")
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

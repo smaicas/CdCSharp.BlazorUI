@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public enum DensityEnum
+public enum BUIDensity
 {
     Comfortable,
     Standard,

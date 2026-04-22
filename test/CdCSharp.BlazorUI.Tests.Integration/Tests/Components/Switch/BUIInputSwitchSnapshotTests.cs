@@ -39,8 +39,8 @@ public class BUIInputSwitchSnapshotTests
 
             new { Name = "Large_Compact", Builder = (Action<ComponentParameterCollectionBuilder<BUIInputSwitch>>)(p => p
                 .Add(c => c.Label, "Big")
-                .Add(c => c.Size, SizeEnum.Large)
-                .Add(c => c.Density, DensityEnum.Compact)) }
+                .Add(c => c.Size, BUISize.Large)
+                .Add(c => c.Density, BUIDensity.Compact)) }
         };
 
         var results = testCases.Select(testCase =>

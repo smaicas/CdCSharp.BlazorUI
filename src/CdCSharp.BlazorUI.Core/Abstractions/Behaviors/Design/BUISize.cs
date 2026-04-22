@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public enum SizeEnum
+public enum BUISize
 {
     Small,
     Medium,

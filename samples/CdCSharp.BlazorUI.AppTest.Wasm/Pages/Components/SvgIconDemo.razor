@@ -1,4 +1,4 @@
-﻿@page "/demo/svgicon"
+@page "/demo/svgicon"
 
 <PageTitle>Svg Icon - CdCSharp.BlazorUI</PageTitle>
 
@@ -105,13 +105,13 @@
     {
         <BUIGrid Gap="1rem" Direction="GridDirection.Row" AlignItems="GridAlignItems.Center">
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Medium" />
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem Auto="true">
-                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Large" />
+                <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -165,7 +165,7 @@
         <div>
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_thumb_up"
                         Color="@Palette.Primary"
-                        Size="SizeEnum.Large"
+                        Size="BUISize.Large"
                         OnClick="@HandleIconClick" />
             <p>Clicked @_clickCount times</p>
         </div>

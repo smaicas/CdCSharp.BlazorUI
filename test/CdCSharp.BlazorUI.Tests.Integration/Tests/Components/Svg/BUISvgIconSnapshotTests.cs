@@ -38,7 +38,7 @@ public class BUISvgIconSnapshotTests
                 Name = "Star_Large",
                 Html = ctx.Render<BUISvgIcon>(p => p
                     .Add(c => c.Icon, StarIcon)
-                    .Add(c => c.Size, SizeEnum.Large)).GetNormalizedMarkup()
+                    .Add(c => c.Size, BUISize.Large)).GetNormalizedMarkup()
             },
             new
             {

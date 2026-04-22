@@ -1,4 +1,4 @@
-﻿using Bunit;
+using Bunit;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
@@ -18,7 +18,7 @@ public class BUIButtonRenderingTests
         // Arrange & Act
         IRenderedComponent<BUIButton> cut = ctx.Render<BUIButton>(p => p
             .Add(c => c.Text, "Test Button")
-            .Add(c => c.Size, SizeEnum.Large)
+            .Add(c => c.Size, BUISize.Large)
             .Add(c => c.BackgroundColor, PaletteColor.Background)
             .Add(c => c.Color, PaletteColor.BackgroundContrast)
 

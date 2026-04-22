@@ -23,9 +23,9 @@ public class BUIComponentAttributesBuilderTests
 
         // Arrange — render same type twice
         IRenderedComponent<BUIComponentBase_TestStub> cut1 = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
         IRenderedComponent<BUIComponentBase_TestStub> cut2 = ctx.Render<BUIComponentBase_TestStub>(p => p
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Act — read component name attribute (derived from type cache)
         string? name1 = cut1.Find("div").GetAttribute("data-bui-component");

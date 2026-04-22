@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Core.Abstractions.Components
+@using CdCSharp.BlazorUI.Core.Abstractions.Components
 @using CdCSharp.BlazorUI.Localization.Server
 @using Microsoft.AspNetCore.Components
 @using Microsoft.Extensions.Localization
@@ -21,7 +21,7 @@
 }
 
 @code {
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public bool ShowFlag { get; set; } = true;
     [Parameter] public bool ShowName { get; set; } = true;
     [Parameter] public EventCallback<CultureInfo> OnCultureChanged { get; set; }

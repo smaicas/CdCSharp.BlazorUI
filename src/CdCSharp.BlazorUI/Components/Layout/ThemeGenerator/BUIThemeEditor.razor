@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Layout
+@namespace CdCSharp.BlazorUI.Components.Layout
 
 @using CdCSharp.BlazorUI.Components
 @using CdCSharp.BlazorUI.Components.Forms
@@ -20,8 +20,8 @@
                                            Value="_palette[key]"
                                            ValueChanged="c => HandleColorChanged(key, c)"
                                            ValueExpression="@(() => _palette[key])"
-                                           Size="SizeEnum.Small"
-                                           Density="DensityEnum.Compact" />
+                                           Size="BUISize.Small"
+                                           Density="BUIDensity.Compact" />
                         </BUIGridItem>
                     }
                 }

@@ -1,4 +1,4 @@
-﻿@page "/demo/checkbox"
+@page "/demo/checkbox"
 
 <PageTitle>Checkbox - CdCSharp.BlazorUI</PageTitle>
 
@@ -98,13 +98,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+                <BUIInputCheckbox @bind-Value="_smallValue" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUIInputCheckbox @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+                <BUIInputCheckbox @bind-Value="_largeValue" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -143,13 +143,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+                <BUIInputCheckbox @bind-Value="_compactValue" Label="Compact" Density="BUIDensity.Compact" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_standardValue" Label="Standard (Default)" Density="DensityEnum.Standard" />
+                <BUIInputCheckbox @bind-Value="_standardValue" Label="Standard (Default)" Density="BUIDensity.Standard" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputCheckbox @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+                <BUIInputCheckbox @bind-Value="_comfortableValue" Label="Comfortable" Density="BUIDensity.Comfortable" />
             </BUIGridItem>
         </BUIGrid>
     };

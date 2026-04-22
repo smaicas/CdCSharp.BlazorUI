@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@namespace CdCSharp.BlazorUI.Components.Forms
 
 @if (HasPrefix)
 {
@@ -14,5 +14,5 @@
     private bool HasPrefix => !string.IsNullOrWhiteSpace(PrefixText) || !string.IsNullOrWhiteSpace(PrefixIcon);
     [Parameter] public string? PrefixText { get; set; }
     [Parameter] public string? PrefixIcon { get; set; }
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 }

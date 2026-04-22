@@ -1,4 +1,4 @@
-﻿@page "/demo/treeselector"
+@page "/demo/treeselector"
 
 <PageTitle>Tree Selector - CdCSharp.BlazorUI</PageTitle>
 
@@ -206,7 +206,7 @@
                 <BUITreeSelector TItem="object"
                                  SelectedKeys="_selectedSmall"
                                  SelectedKeysChanged="@((keys) => _selectedSmall = keys)"
-                                 Size="SizeEnum.Small">
+                                 Size="BUISize.Small">
                     <BUITreeSelectorItem Text="Item 1" Key="s1" />
                     <BUITreeSelectorItem Text="Item 2" Key="s2" />
                 </BUITreeSelector>
@@ -216,7 +216,7 @@
                 <BUITreeSelector TItem="object"
                                  SelectedKeys="_selectedMedium"
                                  SelectedKeysChanged="@((keys) => _selectedMedium = keys)"
-                                 Size="SizeEnum.Medium">
+                                 Size="BUISize.Medium">
                     <BUITreeSelectorItem Text="Item 1" Key="m1" />
                     <BUITreeSelectorItem Text="Item 2" Key="m2" />
                 </BUITreeSelector>
@@ -226,7 +226,7 @@
                 <BUITreeSelector TItem="object"
                                  SelectedKeys="_selectedLarge"
                                  SelectedKeysChanged="@((keys) => _selectedLarge = keys)"
-                                 Size="SizeEnum.Large">
+                                 Size="BUISize.Large">
                     <BUITreeSelectorItem Text="Item 1" Key="l1" />
                     <BUITreeSelectorItem Text="Item 2" Key="l2" />
                 </BUITreeSelector>

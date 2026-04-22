@@ -29,9 +29,9 @@
     </DocDemo>
 
     <DocDemo Key="Sizes" Title="@Loc["Sizes"]">
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Small" />
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Medium" />
-            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="SizeEnum.Large" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Small" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Medium" />
+            <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_star" Size="BUISize.Large" />
     </DocDemo>
 
     <DocDemo Key="Colors" Title="@Loc["Colors"]">
@@ -45,7 +45,7 @@
     <DocDemo Key="Clickable" Title="@Loc["Clickable"]">
             <BUISvgIcon Icon="@BUIIcons.MaterialIconsSharp.i_thumb_up"
                         Color="@PaletteColor.Primary"
-                        Size="SizeEnum.Large"
+                        Size="BUISize.Large"
                         OnClick="@(() => _clickCount++)" />
             <span>@Loc["Clicked"] @_clickCount @Loc["times"]</span>
     </DocDemo>

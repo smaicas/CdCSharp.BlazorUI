@@ -35,12 +35,12 @@ public class BUILoadingIndicatorStateTests
 
         // Arrange
         IRenderedComponent<BUILoadingIndicator> cut = ctx.Render<BUILoadingIndicator>(p => p
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("small");
 
         // Act
-        cut.Render(p => p.Add(c => c.Size, SizeEnum.Large));
+        cut.Render(p => p.Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

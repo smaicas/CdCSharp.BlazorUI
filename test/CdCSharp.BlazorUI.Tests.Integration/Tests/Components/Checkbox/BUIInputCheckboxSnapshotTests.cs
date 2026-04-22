@@ -41,7 +41,7 @@ public class BUIInputCheckboxSnapshotTests
             new { Name = "Large_Colored", Builder = (Action<ComponentParameterCollectionBuilder<BUIInputCheckbox<bool>>>)(p => p
                 .Add(c => c.Label, "Styled")
                 .Add(c => c.Value, true)
-                .Add(c => c.Size, SizeEnum.Large)
+                .Add(c => c.Size, BUISize.Large)
                 .Add(c => c.Color, "rgba(255,0,0,1)")) }
         };
 

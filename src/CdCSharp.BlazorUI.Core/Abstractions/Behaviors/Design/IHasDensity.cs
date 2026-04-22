@@ -1,6 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Components;
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IHasDensity
 {
-    DensityEnum Density { get; set; }
+    BUIDensity Density { get; set; }
 }

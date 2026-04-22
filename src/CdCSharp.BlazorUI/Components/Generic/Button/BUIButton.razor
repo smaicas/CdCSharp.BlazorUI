@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components
+@namespace CdCSharp.BlazorUI.Components
 @attribute [GenerateComponentInfo]
 
 @inherits BUIVariantComponentBase<BUIButton, BUIButtonVariant>
@@ -32,7 +32,7 @@
     [Parameter] public BUITransitions? Transitions { get; set; }
 
     // IHasSize
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     // IHasFullWidth
     [Parameter] public bool FullWidth { get; set; }
@@ -53,7 +53,7 @@
     [Parameter] public int? RippleDurationMs { get; set; }
 
     // IHasDensity
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     // IHasBackgroundColor
     [Parameter] public string? BackgroundColor { get; set; }

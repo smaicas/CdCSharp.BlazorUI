@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components
+@namespace CdCSharp.BlazorUI.Components
 @attribute [GenerateComponentInfo]
 
 @typeparam TValue
@@ -20,7 +20,7 @@
     [Parameter] public EventCallback<TValue?> ValueChanged { get; set; }
 
     /* ── IHasSize ── */
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     /* ── IHasDisabled ── */
     [Parameter] public bool Disabled { get; set; }

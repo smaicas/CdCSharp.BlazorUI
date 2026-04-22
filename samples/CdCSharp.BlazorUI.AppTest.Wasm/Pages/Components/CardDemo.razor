@@ -1,4 +1,4 @@
-﻿@page "/demo/card"
+@page "/demo/card"
 
 <PageTitle>Card - CdCSharp.BlazorUI</PageTitle>
 
@@ -93,7 +93,7 @@
             <Header>
                 <BUIGrid Direction="GridDirection.Row" AlignItems="GridAlignItems.Center" Gap="0.5rem">
                     <BUIGridItem Auto="true">
-                        <BUISvgIcon Icon="@BUIIcons.UI.AccountCircle" Size="SizeEnum.Large" />
+                        <BUISvgIcon Icon="@BUIIcons.UI.AccountCircle" Size="BUISize.Large" />
                     </BUIGridItem>
                     <BUIGridItem>
                         <strong>John Doe</strong>
@@ -122,7 +122,7 @@
             </Header>
             <Media>
                 <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--palette-primary), var(--palette-secondary)); display: flex; align-items: center; justify-content: center;">
-                    <BUISvgIcon Icon="@BUIIcons.UI.Image" Size="SizeEnum.Large" Color="@Palette.White" />
+                    <BUISvgIcon Icon="@BUIIcons.UI.Image" Size="BUISize.Large" Color="@Palette.White" />
                 </div>
             </Media>
             <ChildContent>
@@ -178,7 +178,7 @@
                         <p>Media before actions.</p>
                     </ChildContent>
                     <Actions>
-                        <BUIButton Text="Action" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action" Size="BUISize.Small" OnClick="@(() => { })" />
                     </Actions>
                 </BUICard>
             </BUIGridItem>
@@ -238,8 +238,8 @@
                         <p>Actions aligned to start.</p>
                     </ChildContent>
                     <Actions>
-                        <BUIButton Text="Action 1" Size="SizeEnum.Small" OnClick="@(() => { })" />
-                        <BUIButton Text="Action 2" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 1" Size="BUISize.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 2" Size="BUISize.Small" OnClick="@(() => { })" />
                     </Actions>
                 </BUICard>
             </BUIGridItem>
@@ -252,8 +252,8 @@
                         <p>Actions aligned to center.</p>
                     </ChildContent>
                     <Actions>
-                        <BUIButton Text="Action 1" Size="SizeEnum.Small" OnClick="@(() => { })" />
-                        <BUIButton Text="Action 2" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 1" Size="BUISize.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 2" Size="BUISize.Small" OnClick="@(() => { })" />
                     </Actions>
                 </BUICard>
             </BUIGridItem>
@@ -266,8 +266,8 @@
                         <p>Actions aligned to end.</p>
                     </ChildContent>
                     <Actions>
-                        <BUIButton Text="Action 1" Size="SizeEnum.Small" OnClick="@(() => { })" />
-                        <BUIButton Text="Action 2" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 1" Size="BUISize.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Action 2" Size="BUISize.Small" OnClick="@(() => { })" />
                     </Actions>
                 </BUICard>
             </BUIGridItem>
@@ -280,8 +280,8 @@
                         <p>Actions with space between.</p>
                     </ChildContent>
                     <Actions>
-                        <BUIButton Text="Cancel" Size="SizeEnum.Small" OnClick="@(() => { })" />
-                        <BUIButton Text="Confirm" Size="SizeEnum.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Cancel" Size="BUISize.Small" OnClick="@(() => { })" />
+                        <BUIButton Text="Confirm" Size="BUISize.Small" OnClick="@(() => { })" />
                     </Actions>
                 </BUICard>
             </BUIGridItem>
@@ -407,7 +407,7 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem Xs="12" Md="4">
-                <BUICard Density="DensityEnum.Compact">
+                <BUICard Density="BUIDensity.Compact">
                     <Header>
                         <h3>Compact</h3>
                     </Header>
@@ -417,7 +417,7 @@
                 </BUICard>
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="4">
-                <BUICard Density="DensityEnum.Standard">
+                <BUICard Density="BUIDensity.Standard">
                     <Header>
                         <h3>Standard</h3>
                     </Header>
@@ -427,7 +427,7 @@
                 </BUICard>
             </BUIGridItem>
             <BUIGridItem Xs="12" Md="4">
-                <BUICard Density="DensityEnum.Comfortable">
+                <BUICard Density="BUIDensity.Comfortable">
                     <Header>
                         <h3>Comfortable</h3>
                     </Header>
@@ -490,7 +490,7 @@
             </Header>
             <Media>
                 <div style="width: 100%; height: 100%; background: linear-gradient(45deg, var(--palette-primary), var(--palette-info)); display: flex; align-items: center; justify-content: center;">
-                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_bag" Size="SizeEnum.Large" Color="@Palette.White" />
+                    <BUISvgIcon Icon="@BUIIcons.MaterialIconsOutlined.i_shopping_bag" Size="BUISize.Large" Color="@Palette.White" />
                 </div>
             </Media>
             <ChildContent>

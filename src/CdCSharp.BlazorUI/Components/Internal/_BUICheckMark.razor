@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Internal
+@namespace CdCSharp.BlazorUI.Components.Internal
 
 <span class="@ComputedClass"
       role="@(Mode == CheckMarkMode.Radio ? "radio" : "checkbox")"
@@ -11,7 +11,7 @@
 @code {
     [Parameter] public bool? Checked { get; set; }
     [Parameter] public CheckMarkMode Mode { get; set; } = CheckMarkMode.Checkbox;
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
     [Parameter] public string? CheckedIcon { get; set; }

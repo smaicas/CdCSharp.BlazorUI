@@ -60,14 +60,14 @@ public class BUICodeBlockStateTests
         // Arrange
         IRenderedComponent<BUICodeBlock> cut = ctx.Render<BUICodeBlock>(p => p
             .Add(c => c.Code, "x")
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("small");
 
         // Act
         cut.Render(p => p
             .Add(c => c.Code, "x")
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

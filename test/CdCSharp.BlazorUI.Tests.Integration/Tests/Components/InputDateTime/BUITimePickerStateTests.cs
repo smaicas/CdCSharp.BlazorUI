@@ -19,7 +19,7 @@ public class BUITimePickerStateTests
 
         // Arrange & Act
         IRenderedComponent<BUITimePicker> cut = ctx.Render<BUITimePicker>(p => p
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");
@@ -33,7 +33,7 @@ public class BUITimePickerStateTests
 
         // Arrange & Act
         IRenderedComponent<BUITimePicker> cut = ctx.Render<BUITimePicker>(p => p
-            .Add(c => c.Density, DensityEnum.Compact));
+            .Add(c => c.Density, BUIDensity.Compact));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-density").Should().Be("compact");

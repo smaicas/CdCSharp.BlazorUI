@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components
+@namespace CdCSharp.BlazorUI.Components
 @attribute [GenerateComponentInfo]
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
@@ -20,7 +20,7 @@
     [Parameter] public bool FullWidth { get; set; }
 
     // IHasSize
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 
     /* ========= Variant ========= */
     public override BUITabsVariant DefaultVariant => BUITabsVariant.Underline;

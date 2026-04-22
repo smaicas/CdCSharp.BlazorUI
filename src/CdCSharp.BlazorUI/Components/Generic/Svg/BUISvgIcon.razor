@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components
+@namespace CdCSharp.BlazorUI.Components
 @attribute [GenerateComponentInfo]
 
 @inherits BUIVariantComponentBase<BUISvgIcon, BUISvgIconVariant>
@@ -12,7 +12,7 @@
 @code {
     [Parameter][EditorRequired] public required string Icon { get; set; }
     [Parameter] public string? Title { get; set; }
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public string? Color { get; set; }
     [Parameter] public string ViewBox { get; set; } = "0 0 24 24";
     [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }

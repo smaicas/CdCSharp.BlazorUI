@@ -1,5 +1,5 @@
 <div class="props">
-    <BUIDataGrid Items="@Properties.ToList()" Density="DensityEnum.Compact">
+    <BUIDataGrid Items="@Properties.ToList()" Density="BUIDensity.Compact">
         <Columns>
             <BUIDataColumn TItem="ComponentParameterInfo" Property="@(p => p.ParameterName)" Header="Property" Width="180px">
                 <Template Context="prop">

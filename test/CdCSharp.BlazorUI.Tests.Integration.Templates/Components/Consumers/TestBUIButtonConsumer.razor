@@ -1,4 +1,4 @@
-﻿@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Components
 
 <div class="test-button-consumer">
     <BUIButton Text="@ButtonText" 
@@ -16,7 +16,7 @@
 @code {
     [Parameter] public string ButtonText { get; set; } = "Test Button";
     [Parameter] public BUIButtonVariant? Variant { get; set; }
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public BUILoadingIndicatorVariant? LoadingVariant { get; set; }

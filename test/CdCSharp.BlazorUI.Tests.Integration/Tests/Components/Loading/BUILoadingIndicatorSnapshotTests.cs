@@ -43,7 +43,7 @@ public class BUILoadingIndicatorSnapshotTests
             {
                 Name = "Spinner_Large_Custom_Label",
                 Html = ctx.Render<BUILoadingIndicator>(p => p
-                    .Add(c => c.Size, SizeEnum.Large)
+                    .Add(c => c.Size, BUISize.Large)
                     .Add(c => c.AriaLabel, "Uploading file")).GetNormalizedMarkup()
             },
         };

@@ -107,8 +107,8 @@ public class BUIInputTextRenderingTests
         Model model = new();
         IRenderedComponent<BUIInputText> cut = ctx.Render<BUIInputText>(p => p
             .Add(c => c.Label, "Styled")
-            .Add(c => c.Size, SizeEnum.Large)
-            .Add(c => c.Density, DensityEnum.Compact)
+            .Add(c => c.Size, BUISize.Large)
+            .Add(c => c.Density, BUIDensity.Compact)
             .Add(c => c.Color, "rgba(10,20,30,1)")
             .Add(c => c.BackgroundColor, "rgba(40,50,60,1)")
             .Add(c => c.Shadow, BUIShadowPresets.Elevation(2))

@@ -1,4 +1,4 @@
-﻿@page "/demo/number"
+@page "/demo/number"
 
 <PageTitle>Number Input - CdCSharp.BlazorUI</PageTitle>
 
@@ -247,13 +247,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputNumber @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+                <BUIInputNumber @bind-Value="_smallValue" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputNumber @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUIInputNumber @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputNumber @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+                <BUIInputNumber @bind-Value="_largeValue" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };

@@ -66,11 +66,11 @@ public class BUIInputLoadingRenderingTests
         // Arrange & Act
         IRenderedComponent<BUIInputLoading> cut = ctx.Render<BUIInputLoading>(p => p
             .Add(c => c.Loading, true)
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         IRenderedComponent<BUILoadingIndicator> indicator = cut.FindComponent<BUILoadingIndicator>();
-        indicator.Instance.Size.Should().Be(SizeEnum.Large);
+        indicator.Instance.Size.Should().Be(BUISize.Large);
     }
 
     [Theory]

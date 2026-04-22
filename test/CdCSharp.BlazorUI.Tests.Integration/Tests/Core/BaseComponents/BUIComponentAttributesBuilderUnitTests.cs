@@ -61,8 +61,8 @@ public class BUIComponentAttributesBuilderUnitTests
         BUIComponentAttributesBuilder builder = new();
         FullFeaturedStub component = new()
         {
-            Size = SizeEnum.Large,
-            Density = DensityEnum.Compact,
+            Size = BUISize.Large,
+            Density = BUIDensity.Compact,
             FullWidth = true,
             Loading = true,
             ErrorFlag = true,
@@ -347,7 +347,7 @@ public class BUIComponentAttributesBuilderUnitTests
         BUIComponentAttributesBuilder builder = new();
         FullFeaturedStub component = new()
         {
-            Size = SizeEnum.Small,
+            Size = BUISize.Small,
             DisabledFlag = false,
             Loading = false,
             ErrorFlag = false,
@@ -573,8 +573,8 @@ public class BUIComponentAttributesBuilderUnitTests
         IHasSize, IHasDensity, IHasFullWidth,
         IHasLoading, IHasError, IHasDisabled, IHasActive, IHasReadOnly, IHasRequired
     {
-        public SizeEnum Size { get; set; } = SizeEnum.Medium;
-        public DensityEnum Density { get; set; } = DensityEnum.Standard;
+        public BUISize Size { get; set; } = BUISize.Medium;
+        public BUIDensity Density { get; set; } = BUIDensity.Standard;
         public bool FullWidth { get; set; }
         public bool Loading { get; set; }
         public bool ErrorFlag { get; set; }

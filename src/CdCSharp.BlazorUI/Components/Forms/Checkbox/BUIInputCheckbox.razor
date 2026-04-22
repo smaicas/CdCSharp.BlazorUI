@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@namespace CdCSharp.BlazorUI.Components.Forms
 @attribute [GenerateComponentInfo]
 @inherits BUIInputComponentBase<TValue, BUIInputCheckbox<TValue>, BUIInputCheckboxVariant>
 @implements IHasSize
@@ -12,14 +12,14 @@
 
 @code {
 
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public string? Color { get; set; }
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? HelperText { get; set; }
     [Parameter] public string? CheckedIcon { get; set; }
     [Parameter] public string? UncheckedIcon { get; set; }
     [Parameter] public string? IndeterminateIcon { get; set; }
-    [Parameter] public DensityEnum Density { get; set; }
+    [Parameter] public BUIDensity Density { get; set; }
 
     private readonly string _inputId = $"bui-checkbox-{Guid.NewGuid():N}";
     private string _helperTextId = $"bui-helper-{Guid.NewGuid():N}";

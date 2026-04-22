@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Forms
+@namespace CdCSharp.BlazorUI.Components.Forms
 
 @if (HasSuffix)
 {
@@ -14,5 +14,5 @@
     private bool HasSuffix => !string.IsNullOrWhiteSpace(SuffixText) || !string.IsNullOrWhiteSpace(SuffixIcon);
     [Parameter] public string? SuffixText { get; set; }
     [Parameter] public string? SuffixIcon { get; set; }
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
 }

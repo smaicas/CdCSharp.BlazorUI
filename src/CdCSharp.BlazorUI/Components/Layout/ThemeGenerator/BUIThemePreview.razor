@@ -1,4 +1,4 @@
-﻿@namespace CdCSharp.BlazorUI.Components.Layout
+@namespace CdCSharp.BlazorUI.Components.Layout
 
 @using CdCSharp.BlazorUI.Components.Forms
 @using CdCSharp.BlazorUI.Components.Layout
@@ -12,8 +12,8 @@
             <BUIButton Text="Default" />
             <BUIButton Text="Disabled" Disabled="true" />
             <BUIButton Text="Loading" Loading="true" />
-            <BUIButton Text="Small" Size="SizeEnum.Small" />
-            <BUIButton Text="Large" Size="SizeEnum.Large" />
+            <BUIButton Text="Small" Size="BUISize.Small" />
+            <BUIButton Text="Large" Size="BUISize.Large" />
         </div>
     </section>
 
@@ -52,7 +52,7 @@
                 <p>This is the card content. Cards use surface colors for background and contrast.</p>
             </ChildContent>
             <Actions>
-                <BUIButton Text="Action" Size="SizeEnum.Small" />
+                <BUIButton Text="Action" Size="BUISize.Small" />
             </Actions>
         </BUICard>
     </section>
@@ -71,7 +71,7 @@
 
     <section class="bui-theme-preview__section">
         <h5>Data Grid</h5>
-        <BUIDataGrid Items="_gridData" Hoverable="true" Density="DensityEnum.Compact">
+        <BUIDataGrid Items="_gridData" Hoverable="true" Density="BUIDensity.Compact">
             <BUIDataColumn TItem="GridItem" Header="Name" Property="x => x.Name" />
             <BUIDataColumn TItem="GridItem" Header="Status" Property="x => x.Status" />
             <BUIDataColumn TItem="GridItem" Header="Value" Property="x => x.Value" />
@@ -104,20 +104,20 @@
     <section class="bui-theme-preview__section">
         <h5>Overlays</h5>
         <div class="bui-theme-preview__row">
-            <BUIButton Text="Show Dialog" Size="SizeEnum.Small" OnClick="() => _dialogOpen = true" />
-            <BUIButton Text="Show Drawer" Size="SizeEnum.Small" OnClick="() => _drawerOpen = true" />
-            <BUIButton Text="Show Toast" Size="SizeEnum.Small" OnClick="ShowToast" />
+            <BUIButton Text="Show Dialog" Size="BUISize.Small" OnClick="() => _dialogOpen = true" />
+            <BUIButton Text="Show Drawer" Size="BUISize.Small" OnClick="() => _drawerOpen = true" />
+            <BUIButton Text="Show Toast" Size="BUISize.Small" OnClick="ShowToast" />
         </div>
     </section>
 
     <section class="bui-theme-preview__section">
         <h5>SVG Icons</h5>
         <div class="bui-theme-preview__row">
-            <BUISvgIcon Icon="@BUIIcons.UI.Home" Size="SizeEnum.Large" />
-            <BUISvgIcon Icon="@BUIIcons.UI.Settings" Size="SizeEnum.Large" />
-            <BUISvgIcon Icon="@BUIIcons.UI.Search" Size="SizeEnum.Large" />
-            <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="SizeEnum.Large" />
-            <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="SizeEnum.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Home" Size="BUISize.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Settings" Size="BUISize.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Search" Size="BUISize.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Check" Size="BUISize.Large" />
+            <BUISvgIcon Icon="@BUIIcons.UI.Close" Size="BUISize.Large" />
         </div>
     </section>
 

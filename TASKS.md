@@ -198,7 +198,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-03` — `CdCSharp.BlazorUI.targets` distribuido vía NuGet usa rutas locales
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `eaffb39`)
 - **Severidad**: Critical
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets`.
@@ -721,6 +721,7 @@ _(ninguno registrado todavía)_
 
 ### `API-04` — `VariantRegistry` concreta es `public sealed class` y `BehaviorConfiguration`/`RippleConfiguration` son DTOs públicos de interop
 
+- **Estado**: ✅ Resuelto (commit `5816ac8`)
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:
@@ -753,6 +754,7 @@ _(ninguno registrado todavía)_
 
 ### `API-06` — 4 `CallbacksRelay` sellados expuestos como API pública: puro pegamento JS-interop
 
+- **Estado**: ✅ Resuelto (commit `9bb15ae`)
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**:
@@ -791,6 +793,7 @@ _(ninguno registrado todavía)_
 
 ### `API-08` — Clases `Variant` mayoritariamente `public class` no selladas: inconsistencia dentro del mismo patrón
 
+- **Estado**: ✅ Resuelto (commit `c3d3303`)
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: 13 archivos `*Variant.cs` bajo `src/CdCSharp.BlazorUI/Components/`.
@@ -2313,6 +2316,7 @@ _(ninguno registrado todavía)_
 
 ### `API-09` — `AutogenerateCssColorsAttribute` no es `sealed` (convención framework: atributos sellados salvo diseño explícito)
 
+- **Estado**: ✅ Resuelto (commit `9ab9270`)
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Css/AutogenerateCssColorsAttribute.cs:4`.
@@ -2338,6 +2342,7 @@ _(ninguno registrado todavía)_
 
 ### `API-11` — Múltiples tipos públicos no-abstract no-sellados sin escenario de herencia documentado
 
+- **Estado**: ✅ Resuelto (commit `fa164ef`)
 - **Severidad**: Minor
 - **Esfuerzo**: M
 - **Alcance** (lista no exhaustiva, a revisar todos):
@@ -2356,6 +2361,7 @@ _(ninguno registrado todavía)_
 
 ### `API-12` — `JSModulesReference`, `VariantBuilder`, `ComponentVariantBuilder<T>`, `IVariantRegistryInitializer`: plumbing DI expuesto como superficie pública
 
+- **Estado**: ✅ Resuelto (commit `22d39b5`)
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**:

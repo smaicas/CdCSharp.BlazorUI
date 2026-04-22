@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+@using System.Globalization
 @namespace CdCSharp.BlazorUI.Components.Forms
 @attribute [GenerateComponentInfo]
 
@@ -43,8 +43,8 @@
 @code {
     [Parameter] public DateOnly? Value { get; set; }
     [Parameter] public EventCallback<DateOnly?> ValueChanged { get; set; }
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
-    [Parameter] public DensityEnum Density { get; set; } = DensityEnum.Standard;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
+    [Parameter] public BUIDensity Density { get; set; } = BUIDensity.Standard;
 
     private DateTime CurrentMonth = DateTime.Today;
     private DateOnly SelectedDate = DateOnly.FromDateTime(DateTime.Today);

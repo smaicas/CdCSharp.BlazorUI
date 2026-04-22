@@ -1,4 +1,4 @@
-﻿@page "/demo/datagrid"
+@page "/demo/datagrid"
 
 @using CdCSharp.BlazorUI.Components
 
@@ -756,7 +756,7 @@
         <BUIGrid Gap="2rem">
             <BUIGridItem Xs="12">
                 <h4>Compact</h4>
-                <BUIDataGrid Items="_compactData" Density="DensityEnum.Compact">
+                <BUIDataGrid Items="_compactData" Density="BUIDensity.Compact">
                     <Columns>
                         <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
                         <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
@@ -766,7 +766,7 @@
             </BUIGridItem>
             <BUIGridItem Xs="12">
                 <h4>Standard</h4>
-                <BUIDataGrid Items="_standardData" Density="DensityEnum.Standard">
+                <BUIDataGrid Items="_standardData" Density="BUIDensity.Standard">
                     <Columns>
                         <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
                         <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />
@@ -776,7 +776,7 @@
             </BUIGridItem>
             <BUIGridItem Xs="12">
                 <h4>Comfortable</h4>
-                <BUIDataGrid Items="_comfortableData" Density="DensityEnum.Comfortable">
+                <BUIDataGrid Items="_comfortableData" Density="BUIDensity.Comfortable">
                     <Columns>
                         <BUIDataColumn TItem="Person" Property="@(p => p.Id)" Header="ID" />
                         <BUIDataColumn TItem="Person" Property="@(p => p.Name)" Header="Name" />

@@ -1,4 +1,4 @@
-﻿@page "/demo/switch"
+@page "/demo/switch"
 
 <PageTitle>Switch - CdCSharp.BlazorUI</PageTitle>
 
@@ -91,13 +91,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputSwitch @bind-Value="_smallValue" Label="Small" Size="SizeEnum.Small" />
+                <BUIInputSwitch @bind-Value="_smallValue" Label="Small" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputSwitch @bind-Value="_mediumValue" Label="Medium (Default)" Size="SizeEnum.Medium" />
+                <BUIInputSwitch @bind-Value="_mediumValue" Label="Medium (Default)" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputSwitch @bind-Value="_largeValue" Label="Large" Size="SizeEnum.Large" />
+                <BUIInputSwitch @bind-Value="_largeValue" Label="Large" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -112,13 +112,13 @@
     {
         <BUIGrid Gap="1rem">
             <BUIGridItem>
-                <BUIInputSwitch @bind-Value="_compactValue" Label="Compact" Density="DensityEnum.Compact" />
+                <BUIInputSwitch @bind-Value="_compactValue" Label="Compact" Density="BUIDensity.Compact" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputSwitch @bind-Value="_standardValue" Label="Standard (Default)" Density="DensityEnum.Standard" />
+                <BUIInputSwitch @bind-Value="_standardValue" Label="Standard (Default)" Density="BUIDensity.Standard" />
             </BUIGridItem>
             <BUIGridItem>
-                <BUIInputSwitch @bind-Value="_comfortableValue" Label="Comfortable" Density="DensityEnum.Comfortable" />
+                <BUIInputSwitch @bind-Value="_comfortableValue" Label="Comfortable" Density="BUIDensity.Comfortable" />
             </BUIGridItem>
         </BUIGrid>
     };

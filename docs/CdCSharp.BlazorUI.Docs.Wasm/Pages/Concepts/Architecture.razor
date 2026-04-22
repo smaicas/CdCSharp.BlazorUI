@@ -102,7 +102,7 @@
     private const string _interfaceSample = @"public partial class MyCustom : BUIComponentBase,
     IHasSize, IHasBorder, IHasLoading
 {
-    [Parameter] public SizeEnum Size { get; set; } = SizeEnum.Medium;
+    [Parameter] public BUISize Size { get; set; } = BUISize.Medium;
     [Parameter] public BorderStyle? Border { get; set; }
     [Parameter] public bool Loading { get; set; }
 }";

@@ -40,14 +40,14 @@ public class BUISvgIconStateTests
         // Arrange
         IRenderedComponent<BUISvgIcon> cut = ctx.Render<BUISvgIcon>(p => p
             .Add(c => c.Icon, IconA)
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("small");
 
         // Act
         cut.Render(p => p
             .Add(c => c.Icon, IconA)
-            .Add(c => c.Size, SizeEnum.Large));
+            .Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find("bui-component").GetAttribute("data-bui-size").Should().Be("large");

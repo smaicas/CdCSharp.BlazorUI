@@ -117,8 +117,8 @@ public class BUIInputCheckboxRenderingTests
         await using BlazorTestContextBase ctx = scenario.CreateContext();
 
         IRenderedComponent<BUIInputCheckbox<bool>> cut = ctx.Render<BUIInputCheckbox<bool>>(p => p
-            .Add(c => c.Size, SizeEnum.Large)
-            .Add(c => c.Density, DensityEnum.Compact));
+            .Add(c => c.Size, BUISize.Large)
+            .Add(c => c.Density, BUIDensity.Compact));
 
         IElement root = cut.Find("bui-component");
         root.GetAttribute("data-bui-size").Should().Be("large");

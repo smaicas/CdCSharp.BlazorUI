@@ -36,13 +36,13 @@ public class BUINotificationBadgeStateTests
 
         // Arrange
         IRenderedComponent<BUINotificationBadge> cut = ctx.Render<BUINotificationBadge>(p => p
-            .Add(c => c.Size, SizeEnum.Small));
+            .Add(c => c.Size, BUISize.Small));
 
         cut.Find(".bui-notification-badge__indicator bui-component")
             .GetAttribute("data-bui-size").Should().Be("small");
 
         // Act
-        cut.Render(p => p.Add(c => c.Size, SizeEnum.Large));
+        cut.Render(p => p.Add(c => c.Size, BUISize.Large));
 
         // Assert
         cut.Find(".bui-notification-badge__indicator bui-component")

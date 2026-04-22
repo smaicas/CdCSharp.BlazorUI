@@ -1,4 +1,4 @@
-﻿@page "/demo/datepicker"
+@page "/demo/datepicker"
 
 <PageTitle>Date Picker - CdCSharp.BlazorUI</PageTitle>
 
@@ -48,15 +48,15 @@
         <BUIGrid Gap="2rem">
             <BUIGridItem>
                 <h4>Small</h4>
-                <BUIDatePicker @bind-Value="_smallValue" Size="SizeEnum.Small" />
+                <BUIDatePicker @bind-Value="_smallValue" Size="BUISize.Small" />
             </BUIGridItem>
             <BUIGridItem>
                 <h4>Medium (Default)</h4>
-                <BUIDatePicker @bind-Value="_mediumValue" Size="SizeEnum.Medium" />
+                <BUIDatePicker @bind-Value="_mediumValue" Size="BUISize.Medium" />
             </BUIGridItem>
             <BUIGridItem>
                 <h4>Large</h4>
-                <BUIDatePicker @bind-Value="_largeValue" Size="SizeEnum.Large" />
+                <BUIDatePicker @bind-Value="_largeValue" Size="BUISize.Large" />
             </BUIGridItem>
         </BUIGrid>
     };
@@ -72,15 +72,15 @@
         <BUIGrid Gap="2rem">
             <BUIGridItem>
                 <h4>Compact</h4>
-                <BUIDatePicker @bind-Value="_compactValue" Density="DensityEnum.Compact" />
+                <BUIDatePicker @bind-Value="_compactValue" Density="BUIDensity.Compact" />
             </BUIGridItem>
             <BUIGridItem>
                 <h4>Standard</h4>
-                <BUIDatePicker @bind-Value="_standardValue" Density="DensityEnum.Standard" />
+                <BUIDatePicker @bind-Value="_standardValue" Density="BUIDensity.Standard" />
             </BUIGridItem>
             <BUIGridItem>
                 <h4>Comfortable</h4>
-                <BUIDatePicker @bind-Value="_comfortableValue" Density="DensityEnum.Comfortable" />
+                <BUIDatePicker @bind-Value="_comfortableValue" Density="BUIDensity.Comfortable" />
             </BUIGridItem>
         </BUIGrid>
     };
