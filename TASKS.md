@@ -182,7 +182,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-02` — `CdCSharp.BlazorUI.SyntaxHighlight` es dependencia pero no se publica como NuGet
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `ea0e552`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**:
@@ -256,6 +256,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-04` — `Localization.Server` y `Localization.Wasm` no se publican
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `.github/workflows/publish.yml`, `src/CdCSharp.BlazorUI.Localization.{Server,Wasm}/*.csproj`.

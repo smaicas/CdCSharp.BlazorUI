@@ -1,25 +1,26 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>true</IsPackable>
+		<PackageId>CdCSharp.BlazorUI.Localization.Wasm</PackageId>
+		<Description>Blazor WebAssembly localization integration for CdCSharp.BlazorUI. Persists the selected culture in `localStorage` via a small JS interop layer, configures supported cultures at startup, and ships the `BUICultureSelector` component. Use instead of `CdCSharp.BlazorUI.Localization.Server` when hosting in a WASM client.</Description>
+		<PackageTags>blazor;blazor-wasm;webassembly;localization;i18n;culture;blazorui</PackageTags>
 	</PropertyGroup>
-
 
 	<ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.6" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.6" />
-    <PackageReference Include="Microsoft.JSInterop" Version="10.0.6" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.6" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.6" />
+		<PackageReference Include="Microsoft.JSInterop" Version="10.0.6" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+	</ItemGroup>
 
 </Project>
