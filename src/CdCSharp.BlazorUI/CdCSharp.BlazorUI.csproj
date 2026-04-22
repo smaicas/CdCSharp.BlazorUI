@@ -6,13 +6,6 @@
 		<Description>A dual-host (Blazor Server and Blazor WebAssembly) component library for .NET 10. Ships styled, themeable, accessible components driven by a reflective `data-bui-*` + CSS-custom-property pipeline, with variants, design tokens, and JS-behavior interop for features like ripples, transitions, and dropdowns.</Description>
 		<PackageTags>blazor;blazor-server;blazor-wasm;components;ui;design-system;material;theming</PackageTags>
 	</PropertyGroup>
-	<ItemGroup>
-	  <Content Include="Types\Debug\DebugPanel.ts">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-	  </Content>
-	</ItemGroup>
-
 	<!--
 		Exclude build-time scaffolding from the generated .nupkg. These files are created
 		by BuildTools at the project root during maintainer build and are only relevant
