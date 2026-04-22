@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.Components;
 
-public sealed class DraggableCallbacksRelay : IDisposable
+internal sealed class DraggableCallbacksRelay : IDisposable
 {
     private readonly IDraggableJsCallback _callback;
 

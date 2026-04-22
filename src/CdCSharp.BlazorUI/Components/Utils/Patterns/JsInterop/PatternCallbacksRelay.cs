@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.Components;
 
-public sealed class PatternCallbacksRelay : IDisposable
+internal sealed class PatternCallbacksRelay : IDisposable
 {
     private readonly IPatternJsCallback _callback;
 

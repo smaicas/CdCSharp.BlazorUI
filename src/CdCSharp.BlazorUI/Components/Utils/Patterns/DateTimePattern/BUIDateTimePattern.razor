@@ -104,7 +104,7 @@
             await Task.Yield();
         }
 
-        await Js.FocusFirstEditableAsync(ComponentId);
+        await FocusAsync();
     }
 
     protected override PatternState CreatePatternState()

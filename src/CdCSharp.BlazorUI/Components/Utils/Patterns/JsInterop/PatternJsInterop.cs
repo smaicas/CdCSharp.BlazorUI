@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components;
 
-public interface IPatternJsInterop
+internal interface IPatternJsInterop
 {
     ValueTask DisposePatternAsync(string componentId);
 

@@ -5,7 +5,7 @@ namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
 public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsyncDisposable
 {
     protected ElementReference _containerBox;
-    protected PatternCallbacksRelay? _jsCallbacksRelay;
+    private PatternCallbacksRelay? _jsCallbacksRelay;
     protected PatternState _patternState = new();
     private bool _isInitialized = false;
     private string? _lastExternalText = null;
@@ -29,7 +29,7 @@ public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsync
     protected string ComponentId { get; } = $"pattern_{Guid.NewGuid():N}";
 
     [Inject]
-    protected IPatternJsInterop Js { get; set; } = default!;
+    private IPatternJsInterop Js { get; set; } = default!;
 
     public async ValueTask DisposeAsync()
     {

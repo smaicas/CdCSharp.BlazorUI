@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components;
 
-public interface IDraggableJsInterop
+internal interface IDraggableJsInterop
 {
     ValueTask StartDragAsync(
         ElementReference element,

@@ -5,7 +5,7 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components.Forms;
 
-public interface IDropdownJsInterop
+internal interface IDropdownJsInterop
 {
     ValueTask DisposeAsync(string componentId);
 

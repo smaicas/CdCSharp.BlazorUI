@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.Components.Forms;
 
-public sealed class DropdownCallbacksRelay : IDisposable
+internal sealed class DropdownCallbacksRelay : IDisposable
 {
     private readonly IDropdownJsCallback _callback;
 

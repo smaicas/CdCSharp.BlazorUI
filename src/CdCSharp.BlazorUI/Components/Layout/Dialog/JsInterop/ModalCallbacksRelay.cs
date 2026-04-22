@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CdCSharp.BlazorUI.Components.Layout;
 
-public sealed class ModalCallbacksRelay : IDisposable
+internal sealed class ModalCallbacksRelay : IDisposable
 {
     private readonly IModalJsCallback _callback;
 
