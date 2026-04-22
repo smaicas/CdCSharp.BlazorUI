@@ -1,10 +1,9 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Core.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.JSInterop;
 using System.Linq.Expressions;
 
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
@@ -19,8 +18,11 @@ public abstract class BUIInputComponentBase<TValue> :
     IHasRequired,
     IHasError
 {
-    private readonly BUIComponentAttributesBuilder _styleBuilder = new();
-    private IJSObjectReference? _behaviorInstance;
+    // Shared style + JS-behavior pipeline. InputBase<TValue> is a mandatory ancestor for
+    // EditContext/ValueExpression participation, so this class cannot inherit BUIComponentBase
+    // directly. Composing the pipeline instead of re-implementing it keeps the two base classes
+    // from drifting apart.
+    private readonly BUIComponentPipeline _pipeline = new();
     private FieldIdentifier _fieldIdentifier;
     private EditContext? _previousEditContext;
 
@@ -40,7 +42,7 @@ public abstract class BUIInputComponentBase<TValue> :
     bool IHasError.Error => IsError;
 
     // This is what components will use with @attributes
-    protected Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
+    protected Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
@@ -72,29 +74,7 @@ public abstract class BUIInputComponentBase<TValue> :
     public virtual void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     { }
 
-    public virtual async ValueTask DisposeAsync()
-    {
-        if (_behaviorInstance != null)
-        {
-            try
-            {
-                await _behaviorInstance.InvokeVoidAsync("dispose");
-                await _behaviorInstance.DisposeAsync();
-            }
-            catch (JSDisconnectedException)
-            {
-                // (Blazor Server) Circuit disconnected, behavior already disposed by browser
-            }
-            catch (ObjectDisposedException)
-            {
-                // Runtime already disposed
-            }
-            catch (TaskCanceledException)
-            {
-                // Disposal raced with in-flight call being cancelled
-            }
-        }
-    }
+    public virtual ValueTask DisposeAsync() => _pipeline.DisposeBehaviorAsync();
 
     protected override void Dispose(bool disposing)
     {
@@ -110,9 +90,7 @@ public abstract class BUIInputComponentBase<TValue> :
     {
         if (firstRender)
         {
-            _behaviorInstance = await BUIComponentJsBehaviorBuilder
-                .For(this, BehaviorJsInterop)
-                .BuildAndAttachAsync();
+            await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -120,7 +98,7 @@ public abstract class BUIInputComponentBase<TValue> :
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        _styleBuilder.PatchVolatileAttributes(this);
+        _pipeline.PatchVolatileAttributes(this);
         base.BuildRenderTree(builder);
     }
 
@@ -138,7 +116,7 @@ public abstract class BUIInputComponentBase<TValue> :
     {
         UpdateErrorState();
 
-        _styleBuilder.BuildStyles(this, AdditionalAttributes);
+        _pipeline.BuildStyles(this, AdditionalAttributes);
 
         // Only re-subscribe if EditContext actually changed
         if (EditContext != null && ValueExpression != null)
@@ -172,7 +150,7 @@ public abstract class BUIInputComponentBase<TValue> :
         {
             // En lugar de llamar a OnParametersSet (que re-suscribe eventos), llamamos directamente
             // a la reconstrucción de estilos y notificamos el cambio.
-            _styleBuilder.BuildStyles(this, AdditionalAttributes);
+            _pipeline.BuildStyles(this, AdditionalAttributes);
             StateHasChanged();
         }
     }

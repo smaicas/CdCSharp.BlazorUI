@@ -1,16 +1,13 @@
-﻿using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Core.Diagnostics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
 
 public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuiltComponent
 {
-    private readonly BUIComponentAttributesBuilder _styleBuilder = new();
-    private IJSObjectReference? _behaviorInstance;
+    private readonly BUIComponentPipeline _pipeline = new();
 
 #if DEBUG
     [Inject] private IBUIPerformanceService? PerformanceService { get; set; }
@@ -26,7 +23,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
     // This is what components will use with @attributes
-    public Dictionary<string, object> ComputedAttributes => _styleBuilder.ComputedAttributes;
+    public Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
@@ -72,7 +69,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
         }
 #endif
         base.OnParametersSet();
-        _styleBuilder.BuildStyles(this, AdditionalAttributes);
+        _pipeline.BuildStyles(this, AdditionalAttributes);
 #if DEBUG
         if (TrackPerformanceEnabled)
         {
@@ -97,9 +94,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
                     _initStopwatch?.Elapsed.TotalMilliseconds ?? 0);
             }
 #endif
-            _behaviorInstance = await BUIComponentJsBehaviorBuilder
-                .For(this, BehaviorJsInterop)
-                .BuildAndAttachAsync();
+            await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -113,7 +108,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
             _stopwatch.Restart();
         }
 #endif
-        _styleBuilder.PatchVolatileAttributes(this);
+        _pipeline.PatchVolatileAttributes(this);
         base.BuildRenderTree(builder);
 #if DEBUG
         if (TrackPerformanceEnabled)
@@ -126,27 +121,5 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 #endif
     }
 
-    public virtual async ValueTask DisposeAsync()
-    {
-        if (_behaviorInstance != null)
-        {
-            try
-            {
-                await _behaviorInstance.InvokeVoidAsync("dispose");
-                await _behaviorInstance.DisposeAsync();
-            }
-            catch (JSDisconnectedException)
-            {
-                // (Blazor Server) Circuit disconnected, behavior already disposed by browser
-            }
-            catch (ObjectDisposedException)
-            {
-                // Runtime already disposed
-            }
-            catch (TaskCanceledException)
-            {
-                // Disposal raced with in-flight call being cancelled
-            }
-        }
-    }
+    public virtual ValueTask DisposeAsync() => _pipeline.DisposeBehaviorAsync();
 }
