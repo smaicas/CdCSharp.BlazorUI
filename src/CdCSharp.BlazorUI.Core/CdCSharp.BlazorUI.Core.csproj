@@ -12,6 +12,7 @@
 		<InternalsVisibleTo Include="CdCSharp.BlazorUI" />
 		<InternalsVisibleTo Include="CdCSharp.BlazorUI.BuildTools" />
 		<InternalsVisibleTo Include="CdCSharp.BlazorUI.Tests.Integration" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 
 	<ItemGroup>

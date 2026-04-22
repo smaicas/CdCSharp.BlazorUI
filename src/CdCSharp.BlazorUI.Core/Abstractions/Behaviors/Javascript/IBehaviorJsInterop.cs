@@ -3,18 +3,18 @@ using Microsoft.JSInterop;
 
 namespace CdCSharp.BlazorUI.Components;
 
-public interface IBehaviorJsInterop
+internal interface IBehaviorJsInterop
 {
     ValueTask<IJSObjectReference> AttachBehaviorsAsync(BehaviorConfiguration configuration);
 }
 
-public class BehaviorConfiguration
+internal sealed class BehaviorConfiguration
 {
     public bool HasAnyBehavior => Ripple != null;
     public RippleConfiguration? Ripple { get; set; }
 }
 
-public class RippleConfiguration
+internal sealed class RippleConfiguration
 {
     public string? Color { get; set; }
     public int? Duration { get; set; }

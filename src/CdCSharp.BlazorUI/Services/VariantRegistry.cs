@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CdCSharp.BlazorUI.Services;
 
-public sealed class VariantRegistry : IVariantRegistry
+internal sealed class VariantRegistry : IVariantRegistry
 {
     private readonly bool _initialized;
     private readonly Dictionary<(Type, Type, string), Delegate> _templates = [];

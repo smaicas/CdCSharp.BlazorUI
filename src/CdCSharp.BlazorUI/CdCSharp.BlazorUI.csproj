@@ -29,6 +29,7 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="CdCSharp.BlazorUI.Tests.Integration" />
+		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
 
 	<ItemGroup>
