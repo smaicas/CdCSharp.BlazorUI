@@ -1,5 +1,4 @@
 @using CdCSharp.BlazorUI.Components
-@using CdCSharp.BlazorUI.Components
 
 @namespace CdCSharp.BlazorUI.Components.Diagnostics
 
@@ -8,11 +7,11 @@
 @inject IBUIPerformanceService PerformanceService
 
 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-    <h3 style="margin: 0;">⚡ BUI Performance Monitor</h3>
-    <BUIButton Text="Reset" Size="BUISize.Small" OnClick="@(() => PerformanceService.Reset())" />
+    <h3 style="margin: 0;">BUI Performance Monitor</h3>
+    <BUIButton TrackPerformanceEnabled="false" Text="Reset" Size="BUISize.Small" OnClick="@(() => PerformanceService.Reset())" />
 </div>
 
-<BUIDataCards Items="_metrics" Sortable="true" TrackPerformanceEnabled="false">
+<BUIDataGrid Items="_metrics" Sortable="true" TrackPerformanceEnabled="false">
     <Columns>
         <BUIDataColumn TItem="BUIComponentMetrics" Property="@(m => m.ComponentType)"
                        Sortable="true">
@@ -105,7 +104,7 @@
         </BUIDataColumn>
 
     </Columns>
-</BUIDataCards>
+</BUIDataGrid>
 
 @code {
     private List<BUIComponentMetrics> _metrics = [];

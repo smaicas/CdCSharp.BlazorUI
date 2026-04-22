@@ -40,9 +40,7 @@
     private bool ShowPerformanceDashboard()
     {
 #if DEBUG
-    var uri = new Uri(Nav.Uri);
-    var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-    return query["perf"] != null || query["performance"] != null;
+    return true;
 #else
         return false;
 #endif
