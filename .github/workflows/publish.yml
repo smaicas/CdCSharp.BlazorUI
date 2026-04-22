@@ -199,14 +199,21 @@ jobs:
             -p:PackageVersion=${{ steps.version.outputs.version }} \
             $SUFFIX_ARG \
             --no-build
-          
+
+          dotnet pack src/CdCSharp.BlazorUI.SyntaxHighlight/CdCSharp.BlazorUI.SyntaxHighlight.csproj \
+            -c ${{ env.CONFIGURATION }} \
+            -o ./artifacts \
+            -p:PackageVersion=${{ steps.version.outputs.version }} \
+            $SUFFIX_ARG \
+            --no-build
+
           dotnet pack src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj \
             -c ${{ env.CONFIGURATION }} \
             -o ./artifacts \
             -p:PackageVersion=${{ steps.version.outputs.version }} \
             $SUFFIX_ARG \
             --no-build
-          
+
           # BuildTools si se publica como tool
           dotnet pack src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj \
             -c ${{ env.CONFIGURATION }} \
@@ -251,6 +258,7 @@ jobs:
             ### 📦 Packages
             - CdCSharp.BlazorUI
             - CdCSharp.BlazorUI.Core
+            - CdCSharp.BlazorUI.SyntaxHighlight
             - CdCSharp.BlazorUI.BuildTools
             
             ### 🔧 Installation

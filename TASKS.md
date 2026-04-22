@@ -169,7 +169,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-01` — Metadatos NuGet ausentes en paquetes publicables
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `6554438`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj`, `src/CdCSharp.BlazorUI.Core/*.csproj`, `src/CdCSharp.BlazorUI.BuildTools/*.csproj`.
@@ -182,6 +182,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-02` — `CdCSharp.BlazorUI.SyntaxHighlight` es dependencia pero no se publica como NuGet
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**:
@@ -487,7 +488,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-05` — Falta `Directory.Build.props` raíz con metadatos compartidos
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `6554438`)
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: raíz de la solución.
@@ -499,7 +500,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-06` — `Version=1.0.0` hardcoded en `CdCSharp.BlazorUI.csproj`
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `6554438`)
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj:10`.
