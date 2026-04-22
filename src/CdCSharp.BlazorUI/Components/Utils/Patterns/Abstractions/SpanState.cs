@@ -1,5 +1,8 @@
-﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
+﻿using System.ComponentModel;
 
+namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
+
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class SpanState
 {
     public string AllowedChars { get; set; } = string.Empty;

@@ -1,5 +1,8 @@
-﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
+﻿using System.ComponentModel;
 
+namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
+
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class PatternState
 {
     public bool IsComplete => Spans

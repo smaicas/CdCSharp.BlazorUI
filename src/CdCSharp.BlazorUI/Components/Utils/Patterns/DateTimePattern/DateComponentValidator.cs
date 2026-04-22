@@ -2,7 +2,7 @@
 
 namespace CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern;
 
-public static class DateComponentValidator
+internal static class DateComponentValidator
 {
     public static bool ValidateComponent(
         DateComponentType type,

@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public interface IPatternJsCallback
+internal interface IPatternJsCallback
 {
     Task OnPaste(string text);
 

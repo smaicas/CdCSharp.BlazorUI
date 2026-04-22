@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern;
 
-public sealed class ParsedDatePattern
+internal sealed class ParsedDatePattern
 {
     public List<DateComponent> Components { get; set; } = [];
     public string OriginalFormat { get; set; } = string.Empty;

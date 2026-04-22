@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern;
 
-public sealed class DateComponent
+internal sealed class DateComponent
 {
     public string DefaultValue { get; set; } = string.Empty;
     public int MaxDigits { get; set; }

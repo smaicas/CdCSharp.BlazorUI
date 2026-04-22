@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.ComponentModel;
+using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsyncDisposable
 {
     protected ElementReference _containerBox;

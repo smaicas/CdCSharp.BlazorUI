@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern;
 
-public enum DateComponentType
+internal enum DateComponentType
 {
     Day,
     Month,

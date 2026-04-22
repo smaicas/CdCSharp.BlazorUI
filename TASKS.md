@@ -2328,6 +2328,7 @@ _(ninguno registrado todavía)_
 
 ### `API-10` — `SizeEnum` y `DensityEnum` violan la guía "no uses el sufijo Enum"
 
+- **Estado**: ✅ Resuelto (commit `4536646`)
 - **Severidad**: Minor
 - **Esfuerzo**: S (breaking rename)
 - **Alcance**:

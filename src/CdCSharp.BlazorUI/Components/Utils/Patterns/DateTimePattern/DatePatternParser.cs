@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern;
 
-public static class DatePatternParser
+internal static class DatePatternParser
 {
     private static readonly Dictionary<string, DateComponentType> ComponentMap = new()
     {

@@ -1,6 +1,7 @@
 ﻿@using CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions
 @using CdCSharp.BlazorUI.Components.Utils.Patterns.DateTimePattern
 
+@using System.ComponentModel
 @using System.Globalization
 @using Microsoft.JSInterop
 @inject IJSRuntime JS
@@ -8,6 +9,7 @@
 @namespace CdCSharp.BlazorUI.Components.Utils
 
 @inherits BUIBasePattern
+@attribute [EditorBrowsable(EditorBrowsableState.Never)]
 
 <div @ref="_containerBox"
      id="@Id"
