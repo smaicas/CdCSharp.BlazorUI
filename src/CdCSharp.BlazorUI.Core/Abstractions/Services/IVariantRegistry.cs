@@ -17,7 +17,7 @@ public interface IVariantRegistry
         where TVariant : Variant;
 }
 
-public interface IVariantRegistryInitializer
+internal interface IVariantRegistryInitializer
 {
     void Initialize(IVariantRegistry registry);
 }

@@ -6,6 +6,7 @@ using CdCSharp.BlazorUI.Core.Abstractions.Services;
 using CdCSharp.BlazorUI.Core.Diagnostics;
 using CdCSharp.BlazorUI.Services;
 using Microsoft.AspNetCore.Components;
+using System.ComponentModel;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -58,6 +59,7 @@ public static class ServiceCollectionExtensions
 /// <summary>
 /// Builder for registering variants for a specific component type
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class ComponentVariantBuilder<TComponent>
     where TComponent : ComponentBase
 {
@@ -85,6 +87,7 @@ public sealed class ComponentVariantBuilder<TComponent>
 /// <summary>
 /// Builder for registering custom component variants
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public sealed class VariantBuilder
 {
     private readonly IVariantRegistry _registry;
