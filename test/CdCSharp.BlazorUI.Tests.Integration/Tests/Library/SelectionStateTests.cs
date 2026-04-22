@@ -1,4 +1,4 @@
-using CdCSharp.BlazorUI.Core.Components.Selection;
+using CdCSharp.BlazorUI.Abstractions;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Library;

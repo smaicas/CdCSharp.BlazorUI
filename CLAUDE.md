@@ -66,7 +66,7 @@ What BuildTools does:
 
 ## Component architecture
 
-- All components derive from `BUIComponentBase` (or `BUIInputComponentBase` / `BUIVariantComponentBase`) in `CdCSharp.BlazorUI.Core.Abstractions.Components`. Do not inherit directly from `ComponentBase` for library components.
+- All components derive from `BUIComponentBase` (or `BUIInputComponentBase` / `BUIVariantComponentBase`) in `CdCSharp.BlazorUI.Abstractions`. Do not inherit directly from `ComponentBase` for library components.
 - `BUIComponentBase` captures unmatched attributes, exposes a computed-attributes dictionary built via `BUIComponentAttributesBuilder`, and wires up a per-component JS behavior via `BUIComponentJsBehaviorBuilder` during `OnAfterRenderAsync(firstRender)`. Override `BuildComponentCssVariables` and `BuildComponentDataAttributes` rather than re-implementing attribute composition.
 - The style+behavior lifecycle is owned by an internal `BUIComponentPipeline` helper composed into both `BUIComponentBase` and `BUIInputComponentBase<TValue>`. `BUIInputComponentBase<TValue>` cannot inherit `BUIComponentBase` directly because it must derive from `InputBase<TValue>` for `EditContext`/`ValueExpression` participation, so the pipeline is shared by composition. When extending the pipeline (e.g. adding a new phase or perf hook), edit `BUIComponentPipeline` — not the two base classes individually.
 - JS interop is split into topic-specific interfaces in `Services/JsInterop/` (`IThemeJsInterop`, `IBehaviorJsInterop`, `IPatternJsInterop`, `IDropdownJsInterop`, `IClipboardJsInterop`, `ITextAreaJsInterop`, `IDraggableJsInterop`, `IColorPickerJsInterop`, `IModalJsInterop`). Corresponding TypeScript lives under `Types/<Feature>/` and is bundled to `wwwroot/js/` by Vite.

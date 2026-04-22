@@ -1,6 +1,6 @@
-﻿using Microsoft.JSInterop;
+using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.JSInterop;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 /// <summary>
 /// Represents a base class for JavaScript interop modules that implement the IAsyncDisposable interface.

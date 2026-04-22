@@ -1,12 +1,12 @@
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Abstractions.Services;
-using CdCSharp.BlazorUI.Core.Components;
+using CdCSharp.BlazorUI.Abstractions;
+using CdCSharp.BlazorUI.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
 using System.Linq.Expressions;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 // Base class without variants
 public abstract class BUIInputComponentBase<TValue> :

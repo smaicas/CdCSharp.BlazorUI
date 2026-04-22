@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Components.Selection;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 public sealed class SelectionState<TValue>
 {

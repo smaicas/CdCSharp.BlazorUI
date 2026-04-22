@@ -2,9 +2,9 @@
 
 @using CdCSharp.BlazorUI.Components.Forms
 @using CdCSharp.BlazorUI.Components.Layout
-@using CdCSharp.BlazorUI.Core.Css
-@using CdCSharp.BlazorUI.Core.Theming.Abstractions
-@using CdCSharp.BlazorUI.Core.Themes
+@using CdCSharp.BlazorUI.Components
+@using CdCSharp.BlazorUI.Themes
+@using CdCSharp.BlazorUI.Themes
 @using System.Text.Json
 @using System.Reflection
 @using CdCSharp.BlazorUI.SyntaxHighlight
@@ -259,8 +259,8 @@
     private string GenerateCSharp()
     {
         System.Text.StringBuilder sb = new();
-        sb.AppendLine("using CdCSharp.BlazorUI.Core.Css;");
-        sb.AppendLine("using CdCSharp.BlazorUI.Core.Theming.Abstractions;");
+        sb.AppendLine("using CdCSharp.BlazorUI.Components;");
+        sb.AppendLine("using CdCSharp.BlazorUI.Themes;");
         sb.AppendLine();
         sb.AppendLine("public class CustomDarkTheme : BUIThemePaletteBase");
         sb.AppendLine("{");

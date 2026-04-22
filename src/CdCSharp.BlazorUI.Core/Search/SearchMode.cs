@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Search;
+namespace CdCSharp.BlazorUI.Components;
 
 public enum SearchMode
 {

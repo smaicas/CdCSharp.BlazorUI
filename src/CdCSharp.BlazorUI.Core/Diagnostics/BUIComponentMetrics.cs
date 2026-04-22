@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Diagnostics;
+namespace CdCSharp.BlazorUI.Components;
 
 public sealed class BUIComponentMetrics
 {

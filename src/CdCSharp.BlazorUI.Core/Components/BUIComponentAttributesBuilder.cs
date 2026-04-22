@@ -1,9 +1,9 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Concurrent;
 using System.Text;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 internal sealed class BUIComponentAttributesBuilder
 {

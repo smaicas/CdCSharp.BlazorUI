@@ -1,6 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Core.Utilities;
+namespace CdCSharp.BlazorUI.Abstractions;
 
-public static class TimingUtilities
+internal static class TimingUtilities
 {
     public static Action<T> Debounce<T>(Action<T> action, TimeSpan interval)
     {

@@ -1,6 +1,6 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 
-namespace CdCSharp.BlazorUI.Core.Diagnostics;
+namespace CdCSharp.BlazorUI.Components;
 
 public interface IBUIPerformanceService
 {

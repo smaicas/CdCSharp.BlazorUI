@@ -1,9 +1,9 @@
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Components;
+using CdCSharp.BlazorUI.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 /// <summary>
 /// Shared pipeline composed by every BUI component base class. Owns the

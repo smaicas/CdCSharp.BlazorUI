@@ -1,4 +1,4 @@
-using CdCSharp.BlazorUI.Core.Search;
+using CdCSharp.BlazorUI.Components;
 using FluentAssertions;
 
 namespace CdCSharp.BlazorUI.Tests.Integration.Tests.Library;

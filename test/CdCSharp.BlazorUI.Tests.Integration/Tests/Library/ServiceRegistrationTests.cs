@@ -1,7 +1,7 @@
-﻿using Bunit;
+using Bunit;
 using CdCSharp.BlazorUI.Components;
 using CdCSharp.BlazorUI.Components.Layout;
-using CdCSharp.BlazorUI.Core.Abstractions.Services;
+using CdCSharp.BlazorUI.Abstractions;
 using CdCSharp.BlazorUI.Localization.Wasm;
 using CdCSharp.BlazorUI.Tests.Integration.Templates.Components;
 using FluentAssertions;

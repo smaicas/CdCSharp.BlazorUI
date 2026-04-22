@@ -1,9 +1,9 @@
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Diagnostics;
+using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Components;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuiltComponent
 {

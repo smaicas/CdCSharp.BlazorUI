@@ -1,8 +1,8 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-namespace CdCSharp.BlazorUI.Core.Components;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 internal sealed class BUIComponentJsBehaviorBuilder
 {

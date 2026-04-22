@@ -1,4 +1,4 @@
-﻿// CdCSharp.BlazorUI.Core\SourceGenerators\ColorClassGenerator.cs
+// CdCSharp.BlazorUI.Core\SourceGenerators\ColorClassGenerator.cs
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -148,7 +148,7 @@ public class ColorClassGenerator : IIncrementalGenerator
 
             CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
                 .AddUsings(
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Core.Css")),
+                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Components")),
                     SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Diagnostics.CodeAnalysis"))
                 ).AddMembers(namespaceDeclaration
                     .AddMembers(classSyntax)

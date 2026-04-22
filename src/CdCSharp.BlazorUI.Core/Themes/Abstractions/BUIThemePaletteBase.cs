@@ -1,7 +1,7 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using System.Reflection;
 
-namespace CdCSharp.BlazorUI.Core.Theming.Abstractions;
+namespace CdCSharp.BlazorUI.Themes;
 
 public abstract class BUIThemePaletteBase
 {

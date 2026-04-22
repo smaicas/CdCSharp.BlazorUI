@@ -1,5 +1,5 @@
-﻿// ==== Colors.g.cs ====
-using CdCSharp.BlazorUI.Core.Css;
+// ==== Colors.g.cs ====
+using CdCSharp.BlazorUI.Components;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TestNs

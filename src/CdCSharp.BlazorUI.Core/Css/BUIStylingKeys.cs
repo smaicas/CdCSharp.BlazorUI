@@ -1,4 +1,4 @@
-namespace CdCSharp.BlazorUI.Core.Css;
+namespace CdCSharp.BlazorUI.Components;
 
 /// <summary>
 /// Public, stable subset of the BlazorUI CSS/DOM contract that consumers can reference

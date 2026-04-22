@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Theming.Abstractions;
+using CdCSharp.BlazorUI.Themes;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +14,7 @@ public class ThemesCssGenerator : IAssetGenerator
     public string Name => "Themes CSS";
 
     public async Task<string> GetContent() => CssThemeGenerator.Generate("dark",
-            [new Core.Themes.DarkTheme(), new Core.Themes.LightTheme()]);
+            [new Themes.DarkTheme(), new Themes.LightTheme()]);
 }
 
 public static class CssThemeGenerator

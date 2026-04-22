@@ -1,5 +1,5 @@
-﻿using CdCSharp.BlazorUI.Components.Forms.Dropdown;
-using CdCSharp.BlazorUI.Core.Components.Selection;
+using CdCSharp.BlazorUI.Components.Forms.Dropdown;
+using CdCSharp.BlazorUI.Abstractions;
 using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Forms;

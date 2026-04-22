@@ -1,6 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Core.Utilities;
+namespace CdCSharp.BlazorUI.Abstractions;
 
-public sealed class DelayedActionHandler : IDisposable
+internal sealed class DelayedActionHandler : IDisposable
 {
     private readonly object _lock = new();
     private CancellationTokenSource? _cts;

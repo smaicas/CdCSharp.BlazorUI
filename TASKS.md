@@ -738,6 +738,7 @@ _(ninguno registrado todavía)_
 
 ### `API-05` — Superficie del módulo `DateTimePattern` expuesta sin historia de usuario estable: 9 tipos públicos de plumbing
 
+- **Estado**: ✅ Resuelto (commit `207f3cf`) — nota: `BUIBasePattern`, `BUIDateTimePattern`, `PatternState`, `SpanState` permanecen `public` por restricción del Razor SDK (genera `public partial class` siempre); marcados con `[EditorBrowsable(Never)]` para ocultar de IntelliSense. El resto (`DateComponent`, `DateComponentType`, `DateComponentValidator`, `DatePatternParser`, `ParsedDatePattern`, `IPatternJsCallback`) son `internal`.
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Utils/Patterns/DateTimePattern/*.cs` y `Abstractions/*.cs`:

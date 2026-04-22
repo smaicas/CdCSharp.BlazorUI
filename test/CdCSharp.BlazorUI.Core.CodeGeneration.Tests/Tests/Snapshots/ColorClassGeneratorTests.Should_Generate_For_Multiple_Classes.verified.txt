@@ -1,5 +1,5 @@
-﻿// ==== PaletteA.g.cs ====
-using CdCSharp.BlazorUI.Core.Css;
+// ==== PaletteA.g.cs ====
+using CdCSharp.BlazorUI.Components;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TestNs.A
@@ -1004,7 +1004,7 @@ namespace TestNs.A
 }
 
 // ==== PaletteB.g.cs ====
-using CdCSharp.BlazorUI.Core.Css;
+using CdCSharp.BlazorUI.Components;
 using System.Diagnostics.CodeAnalysis;
 
 namespace TestNs.B

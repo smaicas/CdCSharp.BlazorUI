@@ -1,5 +1,5 @@
-﻿using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Abstractions.Services;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Abstractions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 

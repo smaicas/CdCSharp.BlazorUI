@@ -1,5 +1,5 @@
 using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Core.Abstractions.Components;
+using CdCSharp.BlazorUI.Abstractions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 

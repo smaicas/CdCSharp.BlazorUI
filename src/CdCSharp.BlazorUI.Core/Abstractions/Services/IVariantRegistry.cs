@@ -1,7 +1,7 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Core.Abstractions.Services;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 public interface IVariantRegistry
 {

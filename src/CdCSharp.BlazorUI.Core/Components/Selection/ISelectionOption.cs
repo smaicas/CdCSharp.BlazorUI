@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 
-namespace CdCSharp.BlazorUI.Core.Components.Selection;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 public interface ISelectionOption
 {

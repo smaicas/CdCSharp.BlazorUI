@@ -1,4 +1,4 @@
-﻿namespace CdCSharp.BlazorUI.Core.Search;
+namespace CdCSharp.BlazorUI.Components;
 
 public readonly record struct SearchResult<T>(T Item, double Score, SearchMatchType MatchType);
 

@@ -1,6 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 
-namespace CdCSharp.BlazorUI.Core.Components.Selection;
+namespace CdCSharp.BlazorUI.Abstractions;
 
 public sealed class SelectionTypeInfo
 {

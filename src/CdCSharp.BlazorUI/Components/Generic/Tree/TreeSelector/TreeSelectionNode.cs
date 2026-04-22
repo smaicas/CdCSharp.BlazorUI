@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Core.Components.Selection;
+using CdCSharp.BlazorUI.Abstractions;
 using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components;
