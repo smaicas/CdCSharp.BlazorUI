@@ -1,7 +1,7 @@
 ﻿namespace CdCSharp.BlazorUI.Core.Css;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class AutogenerateCssColorsAttribute : Attribute
+public sealed class AutogenerateCssColorsAttribute : Attribute
 {
     public AutogenerateCssColorsAttribute(int variantLevels = 5)
     {
