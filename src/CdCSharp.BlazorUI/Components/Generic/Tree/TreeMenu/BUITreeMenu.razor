@@ -247,8 +247,8 @@
              data-bui-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
              data-bui-active="@isActive.ToString().ToLowerInvariant()"
              data-bui-expanded="@isExpanded.ToString().ToLowerInvariant()"
-             @onmouseenter="@(isHoverTrigger && hasChildren ? () => HandleHoverEnter(node.Key) : null)"
-             @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? () => HandleHoverLeave(node.Key) : null)">
+             @onmouseenter="@(isHoverTrigger && hasChildren ? (Action<MouseEventArgs>)(_ => HandleHoverEnter(node.Key)) : null!)"
+             @onmouseleave="@(isHoverTrigger && hasChildren && isFlyout ? (Action<MouseEventArgs>)(_ => HandleHoverLeave(node.Key)) : null!)">
 
             @if (node.Navigation.HasNavigation && !hasChildren)
             {
@@ -280,8 +280,8 @@
             {
                 <div class="bui-tree-menu__submenu @(isFlyout ? "bui-tree-menu__submenu--flyout" : "bui-tree-menu__submenu--inline")"
                      role="menu"
-                     @onmouseenter="@(isHoverTrigger? HandleHoverEnterSubmenu : null)"
-                     @onmouseleave="@(isHoverTrigger && isFlyout ? () => HandleHoverLeave(node.Key) : null)">
+                     @onmouseenter="@(isHoverTrigger ? (Action<MouseEventArgs>)(_ => HandleHoverEnterSubmenu()) : null!)"
+                     @onmouseleave="@(isHoverTrigger && isFlyout ? (Action<MouseEventArgs>)(_ => HandleHoverLeave(node.Key)) : null!)">
                     @foreach (TreeMenuNode<TItem> child in node.ChildrenInternal)
                     {
                         @RenderNode(child)
