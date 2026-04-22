@@ -12,14 +12,14 @@
             <BUIGrid Columns="12" Gap="0.75rem">
                 @foreach (string propName in category.Properties)
                 {
-                    if (_palette.ContainsKey(propName))
+                    if (Palette.ContainsKey(propName))
                     {
                         string key = propName;
                         <BUIGridItem Xs="12" Md="4">
                             <BUIInputColor Label="@key"
-                                           Value="_palette[key]"
+                                           Value="Palette[key]"
                                            ValueChanged="c => HandleColorChanged(key, c)"
-                                           ValueExpression="@(() => _palette[key])"
+                                           ValueExpression="@(() => Palette[key])"
                                            Size="BUISize.Small"
                                            Density="BUIDensity.Compact" />
                         </BUIGridItem>
@@ -31,16 +31,11 @@
 </div>
 
 @code {
-    private Dictionary<string, CssColor> _palette = new();
-
-    [Parameter]
-    public Dictionary<string, CssColor> Palette
-    {
-        get => _palette;
-        set => _palette = value ?? new();
-    }
+    [Parameter] public Dictionary<string, CssColor> Palette { get; set; } = new();
 
     [Parameter] public EventCallback<Dictionary<string, CssColor>> OnPaletteChanged { get; set; }
+
+    protected override void OnParametersSet() => Palette ??= new();
 
     private readonly List<ColorCategory> _categories = new()
     {
@@ -53,8 +48,8 @@
     private async Task HandleColorChanged(string propertyName, CssColor? newColor)
     {
         if (newColor == null) return;
-        _palette[propertyName] = newColor;
-        await OnPaletteChanged.InvokeAsync(_palette);
+        Palette[propertyName] = newColor;
+        await OnPaletteChanged.InvokeAsync(Palette);
     }
 
     private record ColorCategory(string Name, string[] Properties);
