@@ -1,7 +1,10 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Themes;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Text;
 
 namespace CdCSharp.BlazorUI.BuildTools.Generators;
 
@@ -12,71 +15,40 @@ public class CssInitializeThemesGenerator : IAssetGenerator
     public string FileName => "_initialize-themes.css";
     public string Name => "Initialize Themes CSS";
 
-    public async Task<string> GetContent() => $$"""
-        body {
-          font-family: var({{FeatureDefinitions.Typography.FontFamily}});
-          font-size: var({{FeatureDefinitions.Typography.FontSizeBase}});
-          line-height: var({{FeatureDefinitions.Typography.LineHeight}});
-          background-color: var(--palette-background);
-          color: var(--palette-backgroundcontrast);
+    public async Task<string> GetContent()
+    {
+        StringBuilder sb = new();
+        sb.AppendLine("body {");
+        sb.AppendLine($"  font-family: var({FeatureDefinitions.Typography.FontFamily});");
+        sb.AppendLine($"  font-size: var({FeatureDefinitions.Typography.FontSizeBase});");
+        sb.AppendLine($"  line-height: var({FeatureDefinitions.Typography.LineHeight});");
+        sb.AppendLine("  background-color: var(--palette-background);");
+        sb.AppendLine("  color: var(--palette-backgroundcontrast);");
+        sb.AppendLine("}");
+        sb.AppendLine();
+
+        // Emit .bui-color-<key> and .bui-bg-<key> for every palette CssColor property.
+        // Source of truth: the same reflection LightTheme/DarkTheme use for GetThemeVariables().
+        string[] keys = typeof(BUIThemePaletteBase)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(p => p.PropertyType == typeof(CssColor))
+            .Select(p => p.Name.ToLowerInvariant())
+            .OrderBy(k => k, StringComparer.Ordinal)
+            .ToArray();
+
+        foreach (string key in keys)
+        {
+            sb.AppendLine($".bui-color-{key} {{");
+            sb.AppendLine($"  color: var(--palette-{key});");
+            sb.AppendLine("}");
+            sb.AppendLine();
+
+            sb.AppendLine($".bui-bg-{key} {{");
+            sb.AppendLine($"  background-color: var(--palette-{key});");
+            sb.AppendLine("}");
+            sb.AppendLine();
         }
 
-        .bui-color-primary {
-          color: var(--palette-primary);
-        }
-
-        .bui-bg-primary {
-          background-color: var(--palette-primary);
-        }
-
-        .bui-color-secondary {
-          color: var(--palette-secondary);
-        }
-
-        .bui-bg-secondary {
-          background-color: var(--palette-secondary);
-        }
-
-        .bui-color-success {
-          color: var(--palette-success);
-        }
-
-        .bui-bg-success {
-          background-color: var(--palette-success);
-        }
-
-        .bui-color-warning {
-          color: var(--palette-warning);
-        }
-
-        .bui-bg-warning {
-          background-color: var(--palette-warning);
-        }
-
-        .bui-color-error {
-          color: var(--palette-error);
-        }
-
-        .bui-bg-error {
-          background-color: var(--palette-error);
-        }
-
-        .bui-color-info {
-          color: var(--palette-info);
-        }
-
-        .bui-bg-info {
-          background-color: var(--palette-info);
-        }
-
-        .bui-primary {
-          color: var(--palette-primarycontrast);
-          background-color: var(--palette-primary);
-        }
-
-        .bui-secondary {
-          color: var(--palette-secondarycontrast);
-          background-color: var(--palette-secondary);
-        }
-        """;
+        return sb.ToString().TrimEnd();
+    }
 }
