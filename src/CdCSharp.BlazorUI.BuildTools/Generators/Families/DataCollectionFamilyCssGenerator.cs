@@ -3,7 +3,7 @@ using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace CdCSharp.BlazorUI.Core.Assets.Generators;
+namespace CdCSharp.BlazorUI.BuildTools.Generators.Families;
 
 [ExcludeFromCodeCoverage]
 [AssetGenerator]
