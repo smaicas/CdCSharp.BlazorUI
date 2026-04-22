@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class DataGridVariant : Variant
+public sealed class DataGridVariant : Variant
 {
     public static readonly DataGridVariant Default = new("Default");
 

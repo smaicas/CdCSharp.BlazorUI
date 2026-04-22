@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
-public class BUIInputCheckboxVariant : Variant
+public sealed class BUIInputCheckboxVariant : Variant
 {
     public static readonly BUIInputCheckboxVariant Default = new("Default");
 

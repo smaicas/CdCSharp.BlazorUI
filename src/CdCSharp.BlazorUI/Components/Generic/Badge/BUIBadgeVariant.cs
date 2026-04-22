@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class BUIBadgeVariant : Variant
+public sealed class BUIBadgeVariant : Variant
 {
     public static readonly BUIBadgeVariant Default = new("Default");
 

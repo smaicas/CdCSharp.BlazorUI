@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class BUISvgIconVariant : Variant
+public sealed class BUISvgIconVariant : Variant
 {
     public static readonly BUISvgIconVariant Default = new("Default");
 

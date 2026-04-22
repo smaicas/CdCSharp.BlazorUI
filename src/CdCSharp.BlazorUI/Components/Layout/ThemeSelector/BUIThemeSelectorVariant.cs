@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
-public class BUIThemeSelectorVariant : Variant
+public sealed class BUIThemeSelectorVariant : Variant
 {
     public static readonly BUIThemeSelectorVariant Default = new("Default");
 

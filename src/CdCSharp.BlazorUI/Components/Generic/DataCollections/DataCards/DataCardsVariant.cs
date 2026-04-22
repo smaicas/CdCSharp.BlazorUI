@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class DataCardsVariant : Variant
+public sealed class DataCardsVariant : Variant
 {
     public static readonly DataCardsVariant Default = new("Default");
 

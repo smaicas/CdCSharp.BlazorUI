@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
-public class BUIInputRadioVariant : Variant
+public sealed class BUIInputRadioVariant : Variant
 {
     public static readonly BUIInputRadioVariant Default = new("Default");
 

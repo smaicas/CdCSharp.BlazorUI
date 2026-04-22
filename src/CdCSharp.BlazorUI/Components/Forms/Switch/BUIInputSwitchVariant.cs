@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
-public class BUIInputSwitchVariant : Variant
+public sealed class BUIInputSwitchVariant : Variant
 {
     public static readonly BUIInputSwitchVariant Default = new("Default");
 

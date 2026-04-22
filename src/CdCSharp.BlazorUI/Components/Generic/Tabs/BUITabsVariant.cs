@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class BUITabsVariant : Variant
+public sealed class BUITabsVariant : Variant
 {
     public static readonly BUITabsVariant Underline = new("Underline");
     public static readonly BUITabsVariant Pills = new("Pills");

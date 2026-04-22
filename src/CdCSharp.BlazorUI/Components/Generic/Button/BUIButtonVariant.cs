@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class BUIButtonVariant : Variant
+public sealed class BUIButtonVariant : Variant
 {
     public static readonly BUIButtonVariant Default = new("Default");
 

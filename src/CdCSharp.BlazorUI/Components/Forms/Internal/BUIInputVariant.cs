@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Forms;
 
-public class BUIInputVariant : Variant
+public sealed class BUIInputVariant : Variant
 {
     public static readonly BUIInputVariant Filled = new("Filled");
     public static readonly BUIInputVariant Outlined = new("Outlined");

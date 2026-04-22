@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public class BUILoadingIndicatorVariant : Variant
+public sealed class BUILoadingIndicatorVariant : Variant
 {
     public static readonly BUILoadingIndicatorVariant Spinner = new("Spinner");
     public static readonly BUILoadingIndicatorVariant CircularProgress = new("CircularProgress");
