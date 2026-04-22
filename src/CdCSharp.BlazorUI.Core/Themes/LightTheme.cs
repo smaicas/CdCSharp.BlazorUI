@@ -7,7 +7,7 @@ namespace CdCSharp.BlazorUI.Core.Themes;
 /// Light theme — Porcelain / Ink Neutral, editorial y muy profesional, inspirado en diseño impreso
 /// de alta gama.
 /// </summary>
-public class LightTheme : BUIThemePaletteBase
+public sealed class LightTheme : BUIThemePaletteBase
 {
     public LightTheme()
     {

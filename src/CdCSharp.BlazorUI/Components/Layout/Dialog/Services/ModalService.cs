@@ -31,7 +31,7 @@ public interface IModalService
         where TComponent : IModalContent;
 }
 
-public class ModalService : IModalService
+public sealed class ModalService : IModalService
 {
     private readonly List<ModalState> _modals = [];
 

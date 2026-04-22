@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
-public class DialogOptions : ModalOptionsBase
+public sealed class DialogOptions : ModalOptionsBase
 {
     public bool FullScreen { get; set; }
     public string? MaxHeight { get; set; } = "90vh";
@@ -10,7 +10,7 @@ public class DialogOptions : ModalOptionsBase
     public string? Title { get; set; }
 }
 
-public class DrawerOptions : ModalOptionsBase
+public sealed class DrawerOptions : ModalOptionsBase
 {
     public DrawerPosition Position { get; set; } = DrawerPosition.Right;
     public string Size { get; set; } = "300px";

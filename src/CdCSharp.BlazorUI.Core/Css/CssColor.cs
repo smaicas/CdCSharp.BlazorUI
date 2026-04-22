@@ -37,7 +37,7 @@ public enum ColorOutputFormats
 /// <summary>
 /// The Css color representation.
 /// </summary>
-public class CssColor : IEquatable<CssColor>
+public sealed class CssColor : IEquatable<CssColor>
 {
     #region Fields and Properties
 
@@ -601,7 +601,7 @@ public class CssColor : IEquatable<CssColor>
     #endregion operators and object members
 }
 
-public class CssColorVariant
+public sealed class CssColorVariant
 {
     private const double VariantModifier = 0.030; // 5% per alteration step
 

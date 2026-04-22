@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components;
 
-public partial class BUIIcons
+public sealed partial class BUIIcons
 {
     public class Brands
     {

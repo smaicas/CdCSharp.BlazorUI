@@ -6,7 +6,7 @@ public enum ModalType
     Drawer
 }
 
-public class ModalState
+public sealed class ModalState
 {
     public Type ComponentType { get; init; }
     public string Id { get; init; }

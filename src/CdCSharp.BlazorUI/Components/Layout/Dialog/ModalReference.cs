@@ -1,6 +1,6 @@
 ﻿namespace CdCSharp.BlazorUI.Components.Layout;
 
-public class ModalReference
+public sealed class ModalReference
 {
     private readonly Action<ModalReference> _onClose;
     private readonly TaskCompletionSource<object?> _resultSource = new();
