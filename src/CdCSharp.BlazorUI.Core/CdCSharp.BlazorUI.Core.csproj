@@ -1,9 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+		<IsPackable>true</IsPackable>
+		<PackageId>CdCSharp.BlazorUI.Core</PackageId>
+		<Description>Framework-agnostic primitives shared by the CdCSharp.BlazorUI component library. Provides the base component types (`BUIComponentBase`, `BUIInputComponentBase`), the `IHas*` behavior interfaces, theme/palette types (`CssColor`, `PaletteColor`, `LightTheme`, `DarkTheme`), and the JS-interop service contracts.</Description>
+		<PackageTags>blazor;components;core;abstractions;theming;design-system</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

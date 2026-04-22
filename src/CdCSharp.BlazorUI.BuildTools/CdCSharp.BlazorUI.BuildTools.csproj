@@ -1,14 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net10.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
 		<PackAsTool>true</PackAsTool>
 		<ToolCommandName>blazorui-buildtools</ToolCommandName>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<IsPackable>true</IsPackable>
+		<PackageId>CdCSharp.BlazorUI.BuildTools</PackageId>
+		<Description>Build-time tool used by the CdCSharp.BlazorUI `.targets` to generate CSS partials (reset, typography, themes, tokens, base component styles) and the Vite/TypeScript scaffolding into `CssBundle/` and `wwwroot/`. Consumers typically do not install this directly — it is invoked automatically when building a project that references CdCSharp.BlazorUI.</Description>
+		<PackageTags>blazor;blazorui;build-tools;css;generator;tool</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -169,6 +169,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-01` — Metadatos NuGet ausentes en paquetes publicables
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj`, `src/CdCSharp.BlazorUI.Core/*.csproj`, `src/CdCSharp.BlazorUI.BuildTools/*.csproj`.
@@ -362,6 +363,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-01` — `BUIInputComponentBase<TValue>` no hereda de `BUIComponentBase`: pipeline duplicado con riesgo alto de divergencia
 
+- **Estado**: ✅ Resuelto (commit `df1e329`)
 - **Severidad**: Critical
 - **Esfuerzo**: L
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIInputComponentBase.cs:13-191` vs `src/CdCSharp.BlazorUI.Core/Components/BUIComponentBase.cs:10-151`.
@@ -379,7 +381,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-02` — `BuildComponentDataAttributes` se invoca *después* de las data‑attrs del framework: un override puede sobrescribir `data-bui-*` del contrato
 
-- **Estado**: ✅ Resuelto (commit `<pending>`)
+- **Estado**: ✅ Resuelto (commit `3531f66`)
 - **Severidad**: Critical
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:103-217` (`BuildStyles`) y `:242-244` (`PatchVolatileAttributes`).
@@ -485,6 +487,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-05` — Falta `Directory.Build.props` raíz con metadatos compartidos
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: raíz de la solución.
@@ -496,6 +499,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-06` — `Version=1.0.0` hardcoded en `CdCSharp.BlazorUI.csproj`
 
+- **Estado**: ✅ Resuelto (commit `<pending>`)
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj:10`.

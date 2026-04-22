@@ -1,0 +1,51 @@
+<Project>
+
+  <!--
+    Shared metadata and defaults for every project in the repository. Individual projects
+    override values as needed. Per CLAUDE.md, `MAJOR_VERSION` / `MINOR_VERSION` come from the
+    CI workflow, not from csproj files — so `Version` is deliberately not pinned here.
+  -->
+
+  <PropertyGroup>
+    <!-- Language + framework defaults -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- Ownership / legal -->
+    <Authors>Samuel Maícas (CdCSharp)</Authors>
+    <Company>CdCSharp</Company>
+    <Copyright>Copyright © Samuel Maícas</Copyright>
+
+    <!-- Repository / project URLs -->
+    <PackageProjectUrl>https://github.com/smaicas/CdCSharp.BlazorUI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/smaicas/CdCSharp.BlazorUI.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+    <!-- Licensing -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+
+    <!-- Package defaults. Publishable projects must explicitly opt in via <IsPackable>true</IsPackable>. -->
+    <IsPackable>false</IsPackable>
+
+    <!-- Symbol + doc defaults for packable projects -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!--
+      CS1591 is raised for every undocumented public member. We enable XML doc generation at the
+      solution level to ship XML doc alongside the symbols, but we do not want to block on
+      "missing summary" yet — API-03 (PublicApiAnalyzers) is the correct gate for that.
+    -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <!-- README is attached to every packable project from the repo root. -->
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>

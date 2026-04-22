@@ -1,13 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+		<IsPackable>true</IsPackable>
 		<PackageId>CdCSharp.BlazorUI</PackageId>
-		<Authors>Samuel Maícas (CdCSharp)</Authors>
-		<Description>Librería de componentes Blazor</Description>
-		<PackageTags>blazor;components;ui</PackageTags>
-		<Version>1.0.0</Version>
+		<Description>A dual-host (Blazor Server and Blazor WebAssembly) component library for .NET 10. Ships styled, themeable, accessible components driven by a reflective `data-bui-*` + CSS-custom-property pipeline, with variants, design tokens, and JS-behavior interop for features like ripples, transitions, and dropdowns.</Description>
+		<PackageTags>blazor;blazor-server;blazor-wasm;components;ui;design-system;material;theming</PackageTags>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Content Include="Types\Debug\DebugPanel.ts">
@@ -27,18 +24,16 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CdCSharp.BlazorUI.Core\CdCSharp.BlazorUI.Core.csproj" />
 	</ItemGroup>
-	<!--
-	Incluir el archivo de targets en el paquete NuGet -->
+	<!-- Ship the targets file alongside the package so consumers import it automatically. -->
 	<ItemGroup>
 		<None Include="_build\CdCSharp.BlazorUI.targets" Pack="true" PackagePath="build\" />
 	</ItemGroup>
-	
-	<!-- Importar los targets localmente para desarrollo -->
+
+	<!-- Import targets locally for development. -->
 	<Import Project="_build\CdCSharp.BlazorUI.targets" Condition="Exists('_build\CdCSharp.BlazorUI.targets')" />
 
 	<ItemGroup>
-		<!-- Inyecta todos los .razor como AdditionalFiles automáticamente.
-         El generador filtra internamente por @attribute [GenerateComponentInfo]. -->
+		<!-- Feed every .razor to the incremental generator; it filters by [GenerateComponentInfo]. -->
 		<AdditionalFiles Include="$(MSBuildProjectDirectory)\**\*.razor" />
 	</ItemGroup>
 
