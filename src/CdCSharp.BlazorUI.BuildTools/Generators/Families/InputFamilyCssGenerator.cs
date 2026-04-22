@@ -217,6 +217,18 @@ bui-component[{{inputBase}}]:has(.{{addonPrefix}}) {
     --_addon-offset: calc(2.5rem * {{V(sizeMult, "1")}});
 }
 
+/* === ADDON SUFFIX === */
+
+bui-component[{{inputBase}}] .{{addonSuffix}} {
+    order: 1;
+    border-inline-start: 1px solid var(--_input-border-color);
+    border-inline-end: none;
+}
+
+bui-component[{{inputBase}}]:has(.{{addonSuffix}}) {
+    --_addon-offset-end: calc(2.5rem * {{V(sizeMult, "1")}});
+}
+
 /* ========================================
    VARIANT: OUTLINED
    ======================================== */
@@ -267,8 +279,14 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonPrefix}} {
     border-end-start-radius: var(--_input-radius);
 }
 
+bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonSuffix}} {
+    border-radius: 0;
+    border-start-end-radius: var(--_input-radius);
+    border-end-end-radius: var(--_input-radius);
+}
+
 /* ========================================
-   VARIANT: FILLED 
+   VARIANT: FILLED
    ======================================== */
 
 bui-component[{{inputBase}}][{{variant}}="filled"] {
@@ -320,6 +338,11 @@ bui-component[{{inputBase}}][{{variant}}="filled"][{{error}}="true"] .{{outlineT
 bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonPrefix}} {
     border-radius: 0;
     border-start-start-radius: var(--_input-radius);
+}
+
+bui-component[{{inputBase}}][{{variant}}="filled"] .{{addonSuffix}} {
+    border-radius: 0;
+    border-start-end-radius: var(--_input-radius);
 }
 
 /* ========================================
