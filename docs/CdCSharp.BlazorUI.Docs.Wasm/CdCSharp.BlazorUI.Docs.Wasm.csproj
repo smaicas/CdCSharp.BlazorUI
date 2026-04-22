@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
 		<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
+		<RunAOTCompilation>true</RunAOTCompilation>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -25,6 +26,10 @@
 
 	<ItemGroup>
 		<AdditionalFiles Include="Pages\**\*.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="Pages\Utils\ValidationPage.razor" />
 	</ItemGroup>
 
 	<ItemGroup>

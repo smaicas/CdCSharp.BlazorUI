@@ -1,16 +1,10 @@
+@namespace CdCSharp.BlazorUI.Docs.Components
+
 @using CdCSharp.BlazorUI.SyntaxHighlight
 
-<section class="doc-section">
-    @if (!string.IsNullOrEmpty(Title))
-    {
-        <h2 class="doc-section__title">@Title</h2>
-    }
-    @if (!string.IsNullOrEmpty(Description))
-    {
-        <p class="doc-section__description">@((MarkupString)Description)</p>
-    }
+<DocSection Title="@Title" Description="@Description">
     <ComponentDemo Definition="_definition" />
-</section>
+</DocSection>
 
 @code {
     [CascadingParameter] public DocDemoContext? Ctx { get; set; }

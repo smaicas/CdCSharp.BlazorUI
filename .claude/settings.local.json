@@ -76,7 +76,12 @@
       "Bash(unzip -l ./artifacts-verify/CdCSharp.BlazorUI.1.0.0-arch03.nupkg)",
       "Bash(awk '/^### `API-0[1-9]|^### `API-1[0-2]/{id=$2; found_state=0} /^- \\\\*\\\\*Estado\\\\*\\\\*/ && id && !found_state {print id, $0; found_state=1}' TASKS.md)",
       "Bash(awk '/^### `API-\\(0[1-9]|1[0-2]\\)`/ {if \\(id\\) print id, \\(state ? state : \"\\(unresolved\\)\"\\); id=$2; state=\"\"} /^- \\\\*\\\\*Estado\\\\*\\\\*/ && id && !state {state=$0} /^### `[A-Z]/ && !/^### `API-/ {if \\(id\\) {print id, \\(state ? state : \"\\(unresolved\\)\"\\); id=\"\"; state=\"\"}} END {if \\(id\\) print id, \\(state ? state : \"\\(unresolved\\)\"\\)}' TASKS.md)",
-      "PowerShell(Get-Content *)"
+      "PowerShell(Get-Content *)",
+      "Bash(unzip -l CdCSharp.BlazorUI.1.0.0.nupkg)",
+      "Bash(awk -F'[\\(:\\)]' '/Tests.Integration/ {print}')",
+      "Bash(awk '/^### `/{header=$0; status=\"\"; severity=\"\"} /Estado\\\\*\\\\*:/{status=$0} /Severidad\\\\*\\\\*:/{severity=$0; if \\(severity ~ /Critical/ && status !~ /✅/\\) print header \"\\\\n  \" status \"\\\\n  \" severity \"\\\\n\"}' TASKS.md)",
+      "Bash(awk *)",
+      "Bash(python3 *)"
     ]
   },
   "outputStyle": "default"

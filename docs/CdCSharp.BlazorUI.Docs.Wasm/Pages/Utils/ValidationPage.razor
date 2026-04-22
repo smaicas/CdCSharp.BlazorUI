@@ -1,0 +1,89 @@
+﻿@page "/utilities/validation"
+
+@using System.ComponentModel.DataAnnotations
+@using CdCSharp.BlazorUI.Components.Forms
+@using CdCSharp.BlazorUI.Components.Forms.Dropdown
+
+@inject IStringLocalizer<ValidationPage> Loc
+
+<PageTitle>BlazorUI - BUIBadge</PageTitle>
+
+<DocPage Eyebrow="@Loc["Utilities"]" Title="@Loc["Validation"]"
+         Lede="@Loc["Form components inherit from Blazor's native form components, so their validation can be performed in a similar way."]"
+         PageInstance="this">
+
+    <DocSection>
+        <p>@((MarkupString)Loc["BlazorUI form components (e.g. <code>BUIInput</code>, <code>BUISwitch</code>, <code>BUICheckbox</code>) are built on top of Blazor's native form components (<code>InputBase</code>, <code>InputSelect</code>, etc.) and support the same validation patterns."].ToString())</p>
+        <p>@((MarkupString)Loc["To enable validation, wrap your inputs in an<code>EditForm</code> and provide a model with data annotations or custom validation logic. Use the <code>DataAnnotationsValidator</code> <code>ValidationMessage</code> component to display error messages for specific fields."].ToString())</p>
+        <p>@((MarkupString)Loc["Or create a custom validator the same way you would for a native form."].ToString())</p>
+        <p>@((MarkupString)Loc["""Learn more about Blazor EditForm validations in <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/forms/validation?view=aspnetcore-10.0">"""].ToString())</p>
+        <br />
+        <br />
+
+        <EditForm Model="@_model" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <br />
+            <BUIInputText @bind-Value="_model.Name"
+                          Label="@Loc["Nombre"]"
+                          Variant="BUIInputVariant.Outlined" 
+                          ShowValidation="true"/>
+            <ValidationMessage For="@(() => _model.Name)" />
+
+            <BUIInputDropdown @bind-Value="_model.Role"
+                              Label="@Loc["Role"]"
+                              Searchable="true"
+                              Variant="BUIInputVariant.Outlined">
+                <DropdownOption Value="@Role.Admin" Text="@Loc["Admin"]" />
+                <DropdownOption Value="@Role.Editor" Text="@Loc["Editor"]" />
+                <DropdownOption Value="@Role.Viewer" Text="@Loc["Viewer"]" />
+                <DropdownOption Value="@Role.Guest" Text="@Loc["Guest"]" />
+            </BUIInputDropdown>
+            <ValidationMessage For="@(() => _model.Role)" />
+
+            <br />
+            <br />
+            <button type="submit">Enviar</button>
+            <button type="button" @onclick="Resetear">Resetear</button>
+
+        </EditForm>
+
+        @if (_enviado)
+        {
+            <div>
+                <p>@Loc["Name"]: @_model.Name</p>
+                <p>@Loc["Role"]: @_model.Role</p>
+            </div>
+        }
+
+    </DocSection>
+
+</DocPage>
+
+@code {
+    private FormModel _model = new();
+    private bool _enviado;
+    
+    private void HandleValidSubmit()
+    {
+        _enviado = true;
+    }
+
+    private void Resetear()
+    {
+        _model = new();
+        _enviado = false;
+    }
+
+    private class FormModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        [MinLength(2, ErrorMessage = "Name must have 2 at least 2 characters")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "Role is required")]
+        public Role? Role { get; set; }
+    }
+
+    private enum Role { Admin, Editor, Viewer, Guest }
+}
