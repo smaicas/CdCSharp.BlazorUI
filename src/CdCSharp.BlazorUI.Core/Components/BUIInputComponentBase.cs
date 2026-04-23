@@ -44,6 +44,13 @@ public abstract class BUIInputComponentBase<TValue> :
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
+#if DEBUG
+    [Inject] private IBUIPerformanceService? PerformanceService { get; set; }
+
+    [Parameter]
+    public bool TrackPerformanceEnabled { get; set; } = true;
+#endif
+
     public override Task SetParametersAsync(ParameterView parameters)
     {
         bool hasValueExpression = false;
@@ -88,6 +95,9 @@ public abstract class BUIInputComponentBase<TValue> :
     {
         if (firstRender)
         {
+#if DEBUG
+            _pipeline.EndInit(GetType().Name, PerformanceService, TrackPerformanceEnabled);
+#endif
             await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
         }
 
@@ -96,12 +106,17 @@ public abstract class BUIInputComponentBase<TValue> :
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        _pipeline.BeginRenderTree();
         _pipeline.PatchVolatileAttributes(this);
         base.BuildRenderTree(builder);
+#if DEBUG
+        _pipeline.EndRenderTree(GetType().Name, PerformanceService, TrackPerformanceEnabled);
+#endif
     }
 
     protected override void OnInitialized()
     {
+        _pipeline.BeginInit();
         base.OnInitialized();
 
         if (ValueExpression != null)
@@ -112,6 +127,7 @@ public abstract class BUIInputComponentBase<TValue> :
 
     protected override void OnParametersSet()
     {
+        _pipeline.BeginParametersSet();
         _pipeline.BuildStyles(this, AdditionalAttributes);
 
         // Only re-subscribe if EditContext actually changed
@@ -139,6 +155,9 @@ public abstract class BUIInputComponentBase<TValue> :
         }
 
         base.OnParametersSet();
+#if DEBUG
+        _pipeline.EndParametersSet(GetType().Name, PerformanceService, TrackPerformanceEnabled);
+#endif
     }
 
     private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)

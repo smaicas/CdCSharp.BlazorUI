@@ -11,12 +11,9 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 
 #if DEBUG
     [Inject] private IBUIPerformanceService? PerformanceService { get; set; }
-    private readonly System.Diagnostics.Stopwatch _stopwatch = new();
-    private System.Diagnostics.Stopwatch? _initStopwatch;
 
     [Parameter]
     public bool TrackPerformanceEnabled { get; set; } = true;
-
 #endif
 
     [Parameter(CaptureUnmatchedValues = true)]
@@ -54,33 +51,17 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 
     protected override void OnInitialized()
     {
-#if DEBUG
-        if (TrackPerformanceEnabled)
-        {
-            _initStopwatch = System.Diagnostics.Stopwatch.StartNew();
-        }
-#endif
+        _pipeline.BeginInit();
         base.OnInitialized();
     }
 
     protected override void OnParametersSet()
     {
-#if DEBUG
-        if (TrackPerformanceEnabled)
-        {
-            _stopwatch.Restart();
-        }
-#endif
+        _pipeline.BeginParametersSet();
         base.OnParametersSet();
         _pipeline.BuildStyles(this, AdditionalAttributes);
 #if DEBUG
-        if (TrackPerformanceEnabled)
-        {
-            _stopwatch.Stop();
-            PerformanceService?.RecordParametersSet(
-                GetType().Name,
-                _stopwatch.Elapsed.TotalMilliseconds);
-        }
+        _pipeline.EndParametersSet(GetType().Name, PerformanceService, TrackPerformanceEnabled);
 #endif
     }
 
@@ -89,13 +70,7 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
         if (firstRender)
         {
 #if DEBUG
-            if (TrackPerformanceEnabled)
-            {
-                _initStopwatch?.Stop();
-                PerformanceService?.RecordInit(
-                    GetType().Name,
-                    _initStopwatch?.Elapsed.TotalMilliseconds ?? 0);
-            }
+            _pipeline.EndInit(GetType().Name, PerformanceService, TrackPerformanceEnabled);
 #endif
             await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
         }
@@ -105,22 +80,11 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-#if DEBUG
-        if (TrackPerformanceEnabled)
-        {
-            _stopwatch.Restart();
-        }
-#endif
+        _pipeline.BeginRenderTree();
         _pipeline.PatchVolatileAttributes(this);
         base.BuildRenderTree(builder);
 #if DEBUG
-        if (TrackPerformanceEnabled)
-        {
-            _stopwatch.Stop();
-            PerformanceService?.RecordRenderTreeBuild(
-                GetType().Name,
-                _stopwatch.Elapsed.TotalMilliseconds);
-        }
+        _pipeline.EndRenderTree(GetType().Name, PerformanceService, TrackPerformanceEnabled);
 #endif
     }
 
