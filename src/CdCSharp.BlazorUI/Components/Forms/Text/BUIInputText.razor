@@ -88,7 +88,7 @@
 
             <div class="bui-input__wrapper">
 
-                <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_inputId" Required="@IsRequired" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <input type="text"
@@ -102,11 +102,11 @@
                        aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                        aria-describedby="@_helperTextId"
                        aria-invalid="@IsError.ToString().ToLower()"
-                       aria-required="@Required.ToString().ToLower()"
+                       aria-required="@IsRequired.ToString().ToLower()"
                        placeholder="@(IsFloated? Placeholder : null)"
                        disabled="@IsDisabled"
-                       readonly="@ReadOnly"
-                       required="@Required" />
+                       readonly="@IsReadOnly"
+                       required="@IsRequired" />
 
                 <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
                 <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />

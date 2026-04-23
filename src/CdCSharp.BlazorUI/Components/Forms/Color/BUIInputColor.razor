@@ -115,7 +115,7 @@ BUILoadingIndicatorVariant.CircularProgress;
 
             <div class="bui-input__wrapper">
 
-                <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_inputId" Required="@IsRequired" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <input type="text" id="@_inputId" class="bui-input__field" value="@DisplayValue"
@@ -123,7 +123,7 @@ BUILoadingIndicatorVariant.CircularProgress;
                        @onchange="HandleInputChange" @onfocus="HandleFocus" @onblur="HandleBlur"
                        aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)" aria-describedby="@_helperTextId"
                        aria-invalid="@IsError.ToString().ToLowerInvariant()"
-                       aria-required="@Required.ToString().ToLowerInvariant()" />
+                       aria-required="@IsRequired.ToString().ToLowerInvariant()" />
 
                 @if (ShowCopyButton && HasValue)
                 {

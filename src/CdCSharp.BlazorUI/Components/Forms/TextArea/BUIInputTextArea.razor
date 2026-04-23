@@ -115,7 +115,7 @@
 
             <div class="bui-input__wrapper">
 
-                <BUIInputOutline Label="@Label" For="@_textareaId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_textareaId" Required="@IsRequired" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <textarea @ref="_textareaRef"
@@ -126,8 +126,8 @@
                           maxlength="@MaxLength"
                           placeholder="@(IsFloated? Placeholder : null)"
                           disabled="@IsDisabled"
-                          readonly="@ReadOnly"
-                          required="@Required"
+                          readonly="@IsReadOnly"
+                          required="@IsRequired"
                           @onchange="HandleChange"
                           @oninput="HandleInput"
                           @onfocus="HandleFocus"
@@ -135,7 +135,7 @@
                           aria-label="@(string.IsNullOrWhiteSpace(Label) ? Placeholder : null)"
                           aria-describedby="@_helperTextId"
                           aria-invalid="@IsError.ToString().ToLowerInvariant()"
-                          aria-required="@Required.ToString().ToLowerInvariant()"></textarea>
+                          aria-required="@IsRequired.ToString().ToLowerInvariant()"></textarea>
 
                 <BUIInputSuffix SuffixText="@SuffixText" SuffixIcon="@SuffixIcon" Size="@Size" />
                 <BUIInputLoading Loading="@Loading" LoadingIndicatorVariant="@LoadingIndicatorVariant" Size="@Size" />

@@ -103,7 +103,7 @@
 
             <div class="bui-input__wrapper">
 
-                <BUIInputOutline Label="@Label" For="@_inputId" Required="@Required" />
+                <BUIInputOutline Label="@Label" For="@_inputId" Required="@IsRequired" />
                 <BUIInputPrefix PrefixText="@PrefixText" PrefixIcon="@PrefixIcon" Size="@Size" />
 
                 <BUIDateTimePattern @key="@_patternKey"
@@ -113,7 +113,7 @@
                                     ShowPattern="@IsFloated"
                                     @bind-Text="@CurrentValueAsString"
                                     Format="@Format"
-                                    Editable="@(!ReadOnly)"
+                                    Editable="@(!IsReadOnly)"
                                     Disabled="@IsDisabled"
                                     OnFocus="HandleFocus"
                                     OnBlur="HandleBlur"
