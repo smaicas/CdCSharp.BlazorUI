@@ -1270,6 +1270,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-02` — `BUIPerformanceDashboard._debounceCts` nunca es `Dispose()`-ado + race entre `Cancel` y reasignación
 
+- **Estado**: ✅ Resuelto (commit `29a0043`) — `OnMetricsUpdatedSafeAsync` captura el CTS nuevo y dispone el anterior bajo un `lock(_debounceLock)`. Cada reasignación del CTS libera el `WaitHandle` del previo (ya no se acumula presión bajo bursts). `Dispose()` también se protege con el lock + `_disposed` guard, cancela y dispone el CTS final. `catch (ObjectDisposedException)` en los `Cancel()` cubre el caso patológico de cancelación doble.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Diagnostics/BUIPerformanceDashboard.razor:120-141`.
