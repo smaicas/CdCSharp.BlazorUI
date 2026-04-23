@@ -27,7 +27,10 @@ internal sealed class DelayedActionHandler : IDisposable
         }
     }
 
-    public async Task ExecuteWithDelayAsync(Func<Task> action, TimeSpan delay)
+    public Task ExecuteWithDelayAsync(Func<Task> action, TimeSpan delay)
+        => ExecuteWithDelayAsync(_ => action(), delay);
+
+    public async Task ExecuteWithDelayAsync(Func<CancellationToken, Task> action, TimeSpan delay)
     {
         CancellationTokenSource cts;
         lock (_lock)
@@ -50,9 +53,14 @@ internal sealed class DelayedActionHandler : IDisposable
                 if (_disposed) return;
             }
 
-            await action();
+            // Forward the token so long-running actions can propagate cancellation if Dispose/Cancel
+            // fires mid-flight. Dispose cancels the CTS so the token observes the request.
+            await action(cts.Token);
         }
         catch (TaskCanceledException)
+        {
+        }
+        catch (OperationCanceledException)
         {
         }
     }
