@@ -35,7 +35,6 @@ internal sealed class PatternJsInterop
 
     public async ValueTask DisposePatternAsync(string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(
@@ -45,14 +44,12 @@ internal sealed class PatternJsInterop
 
     public async ValueTask FocusFirstEditableAsync(string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
         await module.InvokeVoidAsync("focusFirstEditable", componentId);
     }
 
     public async ValueTask FocusSpanAsync(string componentId, int index)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(
@@ -66,7 +63,6 @@ internal sealed class PatternJsInterop
         DotNetObjectReference<PatternCallbacksRelay> dotnetReference,
         string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(
@@ -78,7 +74,6 @@ internal sealed class PatternJsInterop
 
     public async ValueTask SelectSpanContentAsync(string componentId, int index)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(
@@ -89,7 +84,6 @@ internal sealed class PatternJsInterop
 
     public async ValueTask SetCaretToEndAsync(string componentId, int index)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(
@@ -100,7 +94,6 @@ internal sealed class PatternJsInterop
 
     public async ValueTask UpdateSpanValueAsync(string componentId, int index, string value)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(

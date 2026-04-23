@@ -21,14 +21,12 @@ internal sealed class ColorPickerJsInterop : ModuleJsInteropBase, IColorPickerJs
 
     public async ValueTask<double[]> GetRelativePositionAsync(ElementReference element, double clientX, double clientY)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
         return await module.InvokeAsync<double[]>("getRelativePosition", element, clientX, clientY);
     }
 
     public async ValueTask SetHandlerPositionAsync(ElementReference handler, double x, double y)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
         await module.InvokeVoidAsync("setHandlerPosition", handler, x, y);
     }

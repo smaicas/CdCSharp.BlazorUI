@@ -29,7 +29,6 @@ internal sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsIntero
 
     public async ValueTask DisposeAsync(string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync("dispose", componentId);
@@ -37,7 +36,6 @@ internal sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsIntero
 
     public async ValueTask FocusSearchInputAsync(string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync("focusSearchInput", componentId);
@@ -45,7 +43,6 @@ internal sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsIntero
 
     public async ValueTask<DropdownPosition> GetPositionAsync(string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         return await module.InvokeAsync<DropdownPosition>("getPosition", componentId);
@@ -57,7 +54,6 @@ internal sealed class DropdownJsInterop : ModuleJsInteropBase, IDropdownJsIntero
         DotNetObjectReference<DropdownCallbacksRelay> dotnetReference,
         string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync(

@@ -27,14 +27,12 @@ internal sealed class DraggableJsInterop : ModuleJsInteropBase, IDraggableJsInte
         DotNetObjectReference<DraggableCallbacksRelay> dotnetReference,
         string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
         await module.InvokeVoidAsync("startDrag", element, dotnetReference, componentId);
     }
 
     public async ValueTask StopDragAsync(string componentId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
         await module.InvokeVoidAsync("stopDrag", componentId);
     }

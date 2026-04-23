@@ -21,7 +21,6 @@ internal sealed class TextAreaJsInterop : ModuleJsInteropBase, ITextAreaJsIntero
 
     public async ValueTask DisposeAutoResizeAsync(string textareaId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync("disposeAutoResize", textareaId);
@@ -29,7 +28,6 @@ internal sealed class TextAreaJsInterop : ModuleJsInteropBase, ITextAreaJsIntero
 
     public async ValueTask InitializeAutoResizeAsync(ElementReference textarea, string textareaId)
     {
-        await IsModuleTaskLoaded.Task;
         IJSObjectReference module = await ModuleTask.Value;
 
         await module.InvokeVoidAsync("initializeAutoResize", textarea, textareaId);

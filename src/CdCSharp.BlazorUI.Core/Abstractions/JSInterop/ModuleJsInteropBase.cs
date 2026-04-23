@@ -8,11 +8,6 @@ namespace CdCSharp.BlazorUI.Abstractions;
 public abstract class ModuleJsInteropBase : IAsyncDisposable
 {
     /// <summary>
-    /// A task completion source used to track the loading status of a module.
-    /// </summary>
-    protected readonly TaskCompletionSource<bool> IsModuleTaskLoaded = new(false);
-
-    /// <summary>
     /// Represents an interface for invoking JavaScript code from .NET code.
     /// </summary>
     protected readonly IJSRuntime JsRuntime;
@@ -39,7 +34,6 @@ public abstract class ModuleJsInteropBase : IAsyncDisposable
         JsRuntime = jsRuntime ?? throw new ArgumentNullException(nameof(jsRuntime));
         ModuleTask = new Lazy<Task<IJSObjectReference>>(() => jsRuntime.InvokeAsync<IJSObjectReference>(
             "import", jsModuleContentPath).AsTask());
-        IsModuleTaskLoaded.SetResult(true);
     }
 
     /// <summary>
