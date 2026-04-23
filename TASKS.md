@@ -2668,6 +2668,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-05` — `DarkTheme.Shadow = #777777` más claro que `Background = #121417`: drop‑shadow no simula elevación en modo oscuro
 
+- **Estado**: 🟡 Parcial (commit `4e0c413`) — criterio 4 aplicado: `DarkTheme.Shadow = rgba(0,0,0,0.5)`. Fix mínimo para que el box-shadow simule elevación real en lugar del glow anterior. Los criterios 1-3 (sistema M3 tonal elevation overlay con `IHasElevation` + 5 niveles `--palette-surface-elevation-N`) quedan como follow-up — es cambio de diseño mayor (nueva interfaz `IHas*`, migración de componentes con `IHasShadow`, breaking change 1.0). Se re-abrirá como `THEME-05b` cuando toque.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/DarkTheme.cs:64`. Consumido por `--palette-shadow` en componentes con `IHasShadow`.
