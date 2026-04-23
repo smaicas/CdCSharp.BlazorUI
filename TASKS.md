@@ -843,6 +843,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-04` — `ComputedAttributes` con visibilidades inconsistentes entre bases: `public` en `BUIComponentBase`, `protected` en `BUIInputComponentBase<TValue>`
 
+- **Estado**: ✅ Resuelto (commit `8a7526e`) — ambos base classes exponen `ComputedAttributes` como `public`. Se descartó `protected`: las plantillas de variantes (`Func<TComponent, RenderFragment>`) viven fuera del proyecto del componente y necesitan spread cross-assembly del diccionario para pintar la raíz `<bui-component>` (ver `TestVariantComponent_CustomVariants.razor` como ejemplo canónico). Añadido XML-doc en ambas bases explicando la razón.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentBase.cs:29` (`public`) vs `BUIInputComponentBase.cs:43` (`protected`).
@@ -856,6 +857,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-05` — `IVariantRegistry` inyectado con nullability inconsistente: nullable en `BUIVariantComponentBase`, non-null (`default!`) en `BUIInputComponentBase<TValue, TComponent, TVariant>`
 
+- **Estado**: ✅ Resuelto (commit `8a7526e`) — `BUIInputComponentBase<,,>` pasa a declarar `[Inject] private IVariantRegistry? VariantRegistry { get; set; }` (alineado con `BUIVariantComponentBase`). El criterio 1 aplica: `VariantHelper<,>` ya acepta `IVariantRegistry?`, así que ambas bases delegan tolerancia al helper. Criterio 3 (test DI sin `AddBlazorUI`) queda como follow-up — hoy ninguna base lanza NRE porque el helper tolera null.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIVariantComponentBase.cs:22` (`[Inject] private IVariantRegistry? VariantRegistry { get; set; }`) vs `BUIInputComponentBase.cs:211` (`[Inject] private IVariantRegistry VariantRegistry { get; set; } = default!;`).
