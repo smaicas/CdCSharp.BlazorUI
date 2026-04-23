@@ -2799,6 +2799,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-06` — `ModalReference._resultSource` sin `TaskCreationOptions.RunContinuationsAsynchronously`: continuaciones ejecutan síncronamente en el thread del caller
 
+- **Estado**: ✅ Resuelto (commit `6235fb0`) — `_resultSource` construido con `TaskCreationOptions.RunContinuationsAsynchronously`. Las continuaciones del awaiter de `ShowAndWaitAsync` ya no bloquean al caller de `CloseAsync`/`Cancel`. Criterio 2 (revisar otros TCS) → `ModuleJsInteropBase.IsModuleTaskLoaded` queda fuera de scope porque `JS-04` propone eliminarlo entero; no hay otros TCS en `src/**`.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/Dialog/ModalReference.cs:6`.
