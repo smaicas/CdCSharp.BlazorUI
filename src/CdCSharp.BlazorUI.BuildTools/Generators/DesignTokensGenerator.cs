@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -38,52 +38,52 @@ public class DesignTokensGenerator : IAssetGenerator
     /* ========================================
        OUTLINE HIGHLIGHT
        ======================================== */
-    --bui-highlight-outline: 2px solid var(--palette-highlight);
-    --bui-highlight-outline-offset: 0px;
+    {{FeatureDefinitions.Tokens.Highlight.Outline}}: {{FeatureDefinitions.Tokens.Highlight.OutlineValue}};
+    {{FeatureDefinitions.Tokens.Highlight.OutlineOffset}}: {{FeatureDefinitions.Tokens.Highlight.OutlineOffsetValue}};
 
     /* ========================================
        SIZE MULTIPLIERS
        ======================================== */
-    --bui-size-multiplier: 1; /* Default */
-    --bui-small-multiplier: 0.75;
-    --bui-medium-multiplier: 1;
-    --bui-large-multiplier: 1.25;
+    {{FeatureDefinitions.ComponentVariables.Size.Multiplier}}: {{FeatureDefinitions.Tokens.Size.DefaultMultiplierValue}};
+    {{FeatureDefinitions.Tokens.Size.SmallMultiplier}}: {{FeatureDefinitions.Tokens.Size.SmallMultiplierValue}};
+    {{FeatureDefinitions.Tokens.Size.MediumMultiplier}}: {{FeatureDefinitions.Tokens.Size.MediumMultiplierValue}};
+    {{FeatureDefinitions.Tokens.Size.LargeMultiplier}}: {{FeatureDefinitions.Tokens.Size.LargeMultiplierValue}};
 
     /* ========================================
        DENSITY MULTIPLIERS
        ======================================== */
-    --bui-density-multiplier: 1; /* Default */
-    --bui-compact-multiplier: 0.75;
-    --bui-standard-multiplier: 1;
-    --bui-comfortable-multiplier: 1.25;
+    {{FeatureDefinitions.ComponentVariables.Density.Multiplier}}: {{FeatureDefinitions.Tokens.Density.DefaultMultiplierValue}};
+    {{FeatureDefinitions.Tokens.Density.CompactMultiplier}}: {{FeatureDefinitions.Tokens.Density.CompactMultiplierValue}};
+    {{FeatureDefinitions.Tokens.Density.StandardMultiplier}}: {{FeatureDefinitions.Tokens.Density.StandardMultiplierValue}};
+    {{FeatureDefinitions.Tokens.Density.ComfortableMultiplier}}: {{FeatureDefinitions.Tokens.Density.ComfortableMultiplierValue}};
 
     /* ========================================
        BORDER DEFAULT
        ======================================== */
-    --bui-border-width: 1px;
-    --bui-border-style: solid;
-    --bui-border-radius: 4px;
+    {{FeatureDefinitions.Tokens.Border.Width}}: {{FeatureDefinitions.Tokens.Border.WidthValue}};
+    {{FeatureDefinitions.Tokens.Border.Style}}: {{FeatureDefinitions.Tokens.Border.StyleValue}};
+    {{FeatureDefinitions.Tokens.Border.Radius}}: {{FeatureDefinitions.Tokens.Border.RadiusValue}};
 }
 
 {{GetRippleStyles()}}
 """;
     }
 
-    private static string GetRippleStyles() => """
+    private static string GetRippleStyles() => $$"""
 /* ========================================
    RIPPLE EFFECT
    ======================================== */
 
-.bui-ripple {
+.{{FeatureDefinitions.CssClasses.Ripple}} {
     position: absolute;
     border-radius: 50%;
-    background-color: var(--bui-ripple-color, rgba(255, 255, 255, 0.4));
+    background-color: var({{FeatureDefinitions.Tokens.Ripple.Color}}, {{FeatureDefinitions.Tokens.Ripple.ColorFallbackValue}});
     transform: scale(0);
-    animation: bui-ripple-animation var(--bui-ripple-duration, 600ms) linear;
+    animation: {{FeatureDefinitions.Tokens.Ripple.Animation}} var({{FeatureDefinitions.Tokens.Ripple.Duration}}, {{FeatureDefinitions.Tokens.Ripple.DurationFallbackValue}}) linear;
     pointer-events: none;
 }
 
-@keyframes bui-ripple-animation {
+@keyframes {{FeatureDefinitions.Tokens.Ripple.Animation}} {
     to {
         transform: scale(4);
         opacity: 0;

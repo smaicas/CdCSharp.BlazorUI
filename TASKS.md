@@ -4,6 +4,17 @@ Este archivo se alimenta durante la Fase F1 descrita en `ANALYSIS.md`. Cada entr
 
 Convenciones completas en `ANALYSIS.md §1.2`.
 
+## Flujo de resolución (obligatorio, permanente)
+
+Al cerrar cualquier tarea de este archivo:
+
+1. **Commit siempre** los cambios de código de la tarea. No dejar una tarea "resuelta" sin commit.
+2. **Incluir `TASKS.md`** en el commit del fix con la tarea marcada `- **Estado**: ✅ Resuelto — <nota breve>` (sin hash todavía). No commitear `TASKS.md` por separado en cada edición intermedia; se consolida al cerrar.
+3. **Hash de commit**: tras crear el commit del fix, actualizar la línea a `- **Estado**: ✅ Resuelto (commit `<hash>`) — <nota breve>` con el hash corto (7 chars) y crear un commit de seguimiento `docs(tasks): link <ID> resolution commit hash`. Esto es inevitable porque el propio hash del commit no existe hasta que el commit se crea; el follow-up deja el link trazable sin reescribir historia.
+4. Si una tarea se resuelve en varios commits, citar el último (el que cierra) y opcionalmente listar los previos en la nota.
+
+Este flujo es permanente y aplica a todas las tareas pendientes. Sin excepciones salvo orden explícita contraria.
+
 ---
 
 ## Resumen por área
@@ -603,6 +614,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-06` — `DesignTokensGenerator` emite variables y `.bui-ripple` fuera de `FeatureDefinitions`
 
+- **Estado**: ✅ Resuelto — 5 nuevas sub-clases en `FeatureDefinitions.Tokens` (`Size`, `Density`, `Border`, `Highlight`, `Ripple`) con nombre + valor por defecto + fallback. `DesignTokensGenerator` interpola todas las entradas: z-index, opacity, highlight outline, size/density multipliers, border defaults y el bloque ripple completo (clase `.bui-ripple`, vars `--bui-ripple-color`/`--bui-ripple-duration` con fallbacks, y el `@keyframes` usando `Animation`). Fallback `rgba(255, 255, 255, 0.4)` queda como `Ripple.ColorFallbackValue`. `_tokens.css` regenerado byte-idéntico al baseline. 2546/2546 tests pasan.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/DesignTokensGenerator.cs:41‑65, 77‑91`.

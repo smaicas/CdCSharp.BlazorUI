@@ -418,6 +418,70 @@ internal static class FeatureDefinitions
             public const string TooltipValue = "1400";
 
         }
+
+        /// <summary>
+        /// Size multiplier anchors consumed by [data-bui-size] (see <see cref="ComponentVariables.Size.Multiplier"/>).
+        /// </summary>
+        public static class Size
+        {
+            public const string DefaultMultiplierValue = "1";
+            public const string SmallMultiplier = "--bui-small-multiplier";
+            public const string SmallMultiplierValue = "0.75";
+            public const string MediumMultiplier = "--bui-medium-multiplier";
+            public const string MediumMultiplierValue = "1";
+            public const string LargeMultiplier = "--bui-large-multiplier";
+            public const string LargeMultiplierValue = "1.25";
+        }
+
+        /// <summary>
+        /// Density multiplier anchors consumed by [data-bui-density] (see <see cref="ComponentVariables.Density.Multiplier"/>).
+        /// </summary>
+        public static class Density
+        {
+            public const string DefaultMultiplierValue = "1";
+            public const string CompactMultiplier = "--bui-compact-multiplier";
+            public const string CompactMultiplierValue = "0.75";
+            public const string StandardMultiplier = "--bui-standard-multiplier";
+            public const string StandardMultiplierValue = "1";
+            public const string ComfortableMultiplier = "--bui-comfortable-multiplier";
+            public const string ComfortableMultiplierValue = "1.25";
+        }
+
+        /// <summary>
+        /// Border defaults consumed by components that declare borders via IHasBorder.
+        /// </summary>
+        public static class Border
+        {
+            public const string Width = "--bui-border-width";
+            public const string WidthValue = "1px";
+            public const string Style = "--bui-border-style";
+            public const string StyleValue = "solid";
+            public const string Radius = "--bui-border-radius";
+            public const string RadiusValue = "4px";
+        }
+
+        /// <summary>
+        /// Focus highlight outline (WCAG 2.4.7). Consumed by <c>:focus-visible</c> in the base focus system.
+        /// </summary>
+        public static class Highlight
+        {
+            public const string Outline = "--bui-highlight-outline";
+            public const string OutlineValue = "2px solid var(--palette-highlight)";
+            public const string OutlineOffset = "--bui-highlight-outline-offset";
+            public const string OutlineOffsetValue = "0px";
+        }
+
+        /// <summary>
+        /// Ripple animation vars and keyframes identifier. Class name lives in <see cref="CssClasses.Ripple"/>.
+        /// </summary>
+        public static class Ripple
+        {
+            public const string Color = "--bui-ripple-color";
+            public const string ColorFallbackValue = "rgba(255, 255, 255, 0.4)";
+            public const string Duration = "--bui-ripple-duration";
+            public const string DurationFallbackValue = "600ms";
+            public const string Animation = "bui-ripple-animation";
+        }
     }
 
     public static class Typography
