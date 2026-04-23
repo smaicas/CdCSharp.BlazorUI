@@ -1135,6 +1135,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-02` — `ThemeInterop.initialize(defaultTheme?)` ignora el parámetro; comentario de prioridades miente sobre el fallback real
 
+- **Estado**: ✅ Resuelto (commit `b0210f5`) — cadena de fallback corregida: `savedTheme ?? defaultTheme ?? getSystemPreference() ?? DEFAULT_THEME`. `defaultTheme` pasa a ser respetado (era silenciosamente descartado); `DEFAULT_THEME` queda como último recurso. Comentario re-ordenado: localStorage → defaultTheme → system → constant. `BUIInitializer.razor:13` pasa `DefaultTheme` a `InitializeAsync(DefaultTheme)`; ahora tiene efecto.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Theme/ThemeInterop.ts:10-20`.
