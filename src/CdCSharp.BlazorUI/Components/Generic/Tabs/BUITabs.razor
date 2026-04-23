@@ -37,12 +37,11 @@
     private readonly object _tabsLock = new();
     private readonly Dictionary<string, ElementReference> _tabRefs = new();
     private string? _pendingFocusTabId;
-    private bool _disposed;
 
     /* ========= Internal API for BUITab ========= */
     internal void RegisterTab(BUITab tab)
     {
-        if (_disposed) return;
+        if (IsDisposed) return;
 
         bool added;
         lock (_tabsLock)
@@ -64,7 +63,7 @@
 
     internal void UnregisterTab(BUITab tab)
     {
-        if (_disposed) return;
+        if (IsDisposed) return;
 
         bool removed;
         lock (_tabsLock)
@@ -88,7 +87,7 @@
 
     public override async ValueTask DisposeAsync()
     {
-        _disposed = true;
+        IsDisposed = true;
         lock (_tabsLock)
         {
             _tabs.Clear();

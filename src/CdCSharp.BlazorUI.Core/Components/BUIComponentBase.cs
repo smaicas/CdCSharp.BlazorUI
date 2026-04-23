@@ -25,6 +25,16 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
     // framework contract.
     public Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
 
+    /// <summary>
+    /// `true` after <see cref="DisposeAsync"/> has started. Derived components that subscribe to
+    /// <c>NavigationManager.LocationChanged</c>, register children through cascading parameters,
+    /// or hold a <c>CancellationTokenSource</c> must gate any post-await continuation on this flag
+    /// before touching component state. See CLAUDE.md §"Async / JS interop conventions". Derived
+    /// classes may set it eagerly at the top of their own override of <c>DisposeAsync</c> so that
+    /// the rest of their teardown sees it as disposed.
+    /// </summary>
+    protected bool IsDisposed { get; set; }
+
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
     /// <summary>
@@ -72,7 +82,14 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 #if DEBUG
             _pipeline.EndInit(GetType().Name, PerformanceService, TrackPerformanceEnabled);
 #endif
+            if (IsDisposed) return;
             await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
+            if (IsDisposed)
+            {
+                // Raced with dispose while awaiting JS attach: release what was just created.
+                await _pipeline.DisposeBehaviorAsync();
+                return;
+            }
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -88,5 +105,9 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 #endif
     }
 
-    public virtual ValueTask DisposeAsync() => _pipeline.DisposeBehaviorAsync();
+    public virtual ValueTask DisposeAsync()
+    {
+        IsDisposed = true;
+        return _pipeline.DisposeBehaviorAsync();
+    }
 }

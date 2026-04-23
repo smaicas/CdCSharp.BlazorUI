@@ -47,7 +47,6 @@
     private bool _isDeclarativeMode;
     private bool _structureBuilt;
     private bool _isOpen;
-    private bool _disposed;
     private string _currentUri = string.Empty;
 
     [Parameter] public RenderFragment? ChildContent { get; set; }
@@ -220,7 +219,7 @@
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        if (_disposed) return;
+        if (IsDisposed) return;
 
         _currentUri = e.Location;
 
@@ -454,7 +453,7 @@
         _hoverDelayHandler.Cancel();
         await _hoverDelayHandler.ExecuteWithDelayAsync(async () =>
         {
-            if (_disposed) return;
+            if (IsDisposed) return;
             await HandleExpandAsync(key);
         }, TimeSpan.FromMilliseconds(HoverOpenDelay));
     }
@@ -466,7 +465,7 @@
 
         await _hoverDelayHandler.ExecuteWithDelayAsync(async () =>
         {
-            if (_disposed) return;
+            if (IsDisposed) return;
 
             TreeMenuNode<TItem>? node = _tree.GetNode(key);
             if (node != null)
@@ -536,7 +535,7 @@
 
     public void Dispose()
     {
-        _disposed = true;
+        IsDisposed = true;
         _hoverDelayHandler.Dispose();
         NavigationManager.LocationChanged -= OnLocationChanged;
         _registry.Clear();

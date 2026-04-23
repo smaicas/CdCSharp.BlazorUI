@@ -69,7 +69,6 @@
     private ElementReference _dialogRef;
     private bool _jsInitialized;
     private bool _isClosing;
-    private bool _disposed;
     private const int CloseAnimationFallbackMs = 300;
 
     [Parameter] public bool Open { get; set; }
@@ -160,7 +159,7 @@
         catch (InvalidOperationException) { }
         catch (TaskCanceledException) { }
 
-        if (_disposed) return;
+        if (IsDisposed) return;
 
         _isClosing = false;
         Open = false;
@@ -179,7 +178,7 @@
 
     public override async ValueTask DisposeAsync()
     {
-        _disposed = true;
+        IsDisposed = true;
         await CleanupAsync();
         await base.DisposeAsync();
     }

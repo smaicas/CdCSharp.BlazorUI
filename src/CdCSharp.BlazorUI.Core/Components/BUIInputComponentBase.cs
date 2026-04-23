@@ -42,6 +42,13 @@ public abstract class BUIInputComponentBase<TValue> :
     // cross-assembly and need to spread this dictionary onto the `<bui-component>` root.
     public Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
 
+    /// <summary>
+    /// `true` once <see cref="Dispose(bool)"/> / <see cref="DisposeAsync"/> has started. See
+    /// BUIComponentBase.IsDisposed for the contract — gate post-await continuations in derived
+    /// components on this flag.
+    /// </summary>
+    protected bool IsDisposed { get; set; }
+
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
 #if DEBUG
@@ -79,13 +86,21 @@ public abstract class BUIInputComponentBase<TValue> :
     public virtual void BuildComponentDataAttributes(Dictionary<string, object> dataAttributes)
     { }
 
-    public virtual ValueTask DisposeAsync() => _pipeline.DisposeBehaviorAsync();
+    public virtual ValueTask DisposeAsync()
+    {
+        IsDisposed = true;
+        return _pipeline.DisposeBehaviorAsync();
+    }
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing && EditContext != null)
+        if (disposing)
         {
-            EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+            IsDisposed = true;
+            if (EditContext != null)
+            {
+                EditContext.OnValidationStateChanged -= HandleValidationStateChanged;
+            }
         }
 
         base.Dispose(disposing);
@@ -98,7 +113,13 @@ public abstract class BUIInputComponentBase<TValue> :
 #if DEBUG
             _pipeline.EndInit(GetType().Name, PerformanceService, TrackPerformanceEnabled);
 #endif
+            if (IsDisposed) return;
             await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
+            if (IsDisposed)
+            {
+                await _pipeline.DisposeBehaviorAsync();
+                return;
+            }
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -162,6 +183,7 @@ public abstract class BUIInputComponentBase<TValue> :
 
     private void HandleValidationStateChanged(object? sender, ValidationStateChangedEventArgs e)
     {
+        if (IsDisposed) return;
         bool current = EditContext != null && ValueExpression != null
             && EditContext.GetValidationMessages(_fieldIdentifier).Any();
         if (current != _lastValidationError)
