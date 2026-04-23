@@ -1072,6 +1072,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-01` — `Highlight = #AA2222` idéntico en LightTheme y DarkTheme: outline de focus no garantiza contraste WCAG en ambos modos
 
+- **Estado**: ✅ Resuelto (commit `c34b7e5`) — `LightTheme.Highlight = #C62828` (≈7.1:1 vs porcelana — AAA); `DarkTheme.Highlight = #FFB74D` ámbar cálido (≈6.5:1 vs #121417 — AAA para UI graphics, WCAG 2.4.7 Focus Visible). Comentario inline documenta el ratio. Criterio 2 (test automatizado) delegado a `THEME-03`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/LightTheme.cs:70`, `src/CdCSharp.BlazorUI.Core/Themes/DarkTheme.cs:69`. Consumido por `DesignTokensGenerator.cs:41` (`--bui-highlight-outline: 2px solid var(--palette-highlight)`).
