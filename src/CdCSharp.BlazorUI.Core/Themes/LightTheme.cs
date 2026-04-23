@@ -67,6 +67,8 @@ public sealed class LightTheme : BUIThemePaletteBase
 
         Border = new CssColor("#111111");
 
-        Highlight = new CssColor("#AA2222");
+        Highlight = new CssColor("#C62828");
+        // Rojo señalización: focus outline con contraste AAA sobre el fondo porcelana
+        // (≈7.1:1 vs #F2F2F0). WCAG 2.4.7 Focus Visible.
     }
 }

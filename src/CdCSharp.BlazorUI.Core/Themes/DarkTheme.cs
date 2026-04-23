@@ -66,6 +66,8 @@ public sealed class DarkTheme : BUIThemePaletteBase
 
         Border = new CssColor("#EEEEEE");
 
-        Highlight = new CssColor("#AA2222");
+        Highlight = new CssColor("#FFB74D");
+        // Ámbar cálido: focus outline con contraste ≈6.5:1 sobre #121417. El rojo no
+        // destaca lo suficiente en dark — WCAG 2.4.7 exige ≥3:1 para UI graphics.
     }
 }
