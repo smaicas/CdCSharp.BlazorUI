@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -26,7 +26,7 @@ public class TypographyGenerator : IAssetGenerator
     {{FeatureDefinitions.Typography.FontMono}}: {{FeatureDefinitions.Typography.FontMonoValue}};
 
     /* Fluid typography: scales from 0.875rem (640px) to 1.125rem (1536px) */
-    {{FeatureDefinitions.Typography.FontSizeBase}}: clamp(0.875rem, 0.75rem + 0.25vw, 1.125rem);
+    {{FeatureDefinitions.Typography.FontSizeBase}}: {{FeatureDefinitions.Typography.FontSizeBaseValue}};
 
     {{FeatureDefinitions.Typography.LineHeight}}: {{FeatureDefinitions.Typography.LineHeightValue}};
     {{FeatureDefinitions.Typography.LineHeightHeading}}: {{FeatureDefinitions.Typography.LineHeightHeadingValue}};
@@ -38,28 +38,28 @@ public class TypographyGenerator : IAssetGenerator
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var({{FeatureDefinitions.Typography.FontFamilyHeading}});
-    font-weight: 700;
+    font-weight: {{FeatureDefinitions.Typography.HeadingFontWeight}};
     line-height: var({{FeatureDefinitions.Typography.LineHeightHeading}});
 }
 
-h1 { font-size: 2.441em; }
-h2 { font-size: 1.953em; }
-h3 { font-size: 1.563em; }
-h4 { font-size: 1.25em; }
-h5 { font-size: 1em; }
-h6 { font-size: 0.875em; }
+h1 { font-size: {{FeatureDefinitions.Typography.H1FontSize}}; }
+h2 { font-size: {{FeatureDefinitions.Typography.H2FontSize}}; }
+h3 { font-size: {{FeatureDefinitions.Typography.H3FontSize}}; }
+h4 { font-size: {{FeatureDefinitions.Typography.H4FontSize}}; }
+h5 { font-size: {{FeatureDefinitions.Typography.H5FontSize}}; }
+h6 { font-size: {{FeatureDefinitions.Typography.H6FontSize}}; }
 
 /* ========================================
    Paragraph & Inline Text
    ======================================== */
 
 p { line-height: var({{FeatureDefinitions.Typography.LineHeight}}); }
-small { font-size: 0.875em; }
-strong, b { font-weight: 700; }
+small { font-size: {{FeatureDefinitions.Typography.SmallFontSize}}; }
+strong, b { font-weight: {{FeatureDefinitions.Typography.BoldFontWeight}}; }
 em, i { font-style: italic; }
 
 mark {
-    background-color: var(--palette-highlight, #fef08a);
+    background-color: var(--palette-highlight);
     padding-inline: 0.25em;
     padding-block: 0.125em;
 }
@@ -70,14 +70,14 @@ mark {
 
 a {
     color: var(--palette-primary);
-    transition: color 150ms ease;
+    transition: {{FeatureDefinitions.Typography.LinkTransitionValue}};
 }
 
 a:hover { text-decoration: underline; }
 
 a:focus-visible {
-    outline: 2px solid var(--palette-primary);
-    outline-offset: var(--bui-highlight-outline-offset);
+    outline: var({{FeatureDefinitions.Tokens.Highlight.Outline}});
+    outline-offset: var({{FeatureDefinitions.Tokens.Highlight.OutlineOffset}});
 }
 
 /* ========================================
@@ -86,17 +86,17 @@ a:focus-visible {
 
 code, kbd, samp {
     font-family: var({{FeatureDefinitions.Typography.FontMono}});
-    font-size: calc(0.875em * var(--bui-size-multiplier, 1));
+    font-size: calc({{FeatureDefinitions.Typography.SmallFontSize}} * var({{FeatureDefinitions.ComponentVariables.Size.Multiplier}}, 1));
     padding-inline: 0.375em;
     padding-block: 0.125em;
     background-color: var(--palette-surface);
-    font-weight: 500;
+    font-weight: {{FeatureDefinitions.Typography.CodeFontWeight}};
 }
 
 pre {
     font-family: var({{FeatureDefinitions.Typography.FontMono}});
-    font-size: calc(0.875em * var(--bui-size-multiplier, 1));
-    line-height: 1.6;
+    font-size: calc({{FeatureDefinitions.Typography.SmallFontSize}} * var({{FeatureDefinitions.ComponentVariables.Size.Multiplier}}, 1));
+    line-height: {{FeatureDefinitions.Typography.PreLineHeight}};
     padding: 1em;
     overflow-x: auto;
     white-space: pre;
@@ -120,8 +120,8 @@ blockquote {
 
 hr {
     border: none;
-    border-block-start: 1px solid var(--palette-border, currentColor);
-    opacity: 0.2;
+    border-block-start: var({{FeatureDefinitions.Tokens.Border.Width}}) var({{FeatureDefinitions.Tokens.Border.Style}}) var(--palette-border, currentColor);
+    opacity: {{FeatureDefinitions.Typography.HrOpacity}};
 }
 
 /* ========================================
