@@ -2463,6 +2463,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-10` — `ToKebabCaseComponentName` hace *strip* case‑insensitive del prefijo `BUI`: tipos legítimos que empiezan por `Bui*` (minúsculas) quedan mutilados
 
+- **Estado**: ✅ Resuelto (commit `109a3fc`) — `StringComparison.InvariantCultureIgnoreCase` → `StringComparison.Ordinal`. Ahora sólo se elimina el prefijo canónico `BUI` en mayúsculas. `BuiltInPopup` queda como `built-in-popup` (antes `lt-in-popup`); un consumidor con `BuiCustom` se respeta (`bui-custom`). Comment inline explica la decisión. Todos los tipos actuales del framework siguen usando `BUI` mayúsculas — no hay regresión.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:246-273`.
