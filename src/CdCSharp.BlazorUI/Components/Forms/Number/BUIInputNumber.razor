@@ -392,19 +392,10 @@
 
         _ = IncrementValue();
 
-        if (EnableAcceleration)
-        {
-            _accelerationCts = new CancellationTokenSource();
-            _ = RunAcceleratedAction(IncrementValue, _accelerationCts.Token);
-        }
+        if (EnableAcceleration) BeginAcceleration(IncrementValue);
     }
 
-    private void StopIncrement(MouseEventArgs e)
-    {
-        _accelerationCts?.Cancel();
-        _accelerationCts?.Dispose();
-        _accelerationCts = null;
-    }
+    private void StopIncrement(MouseEventArgs e) => EndAcceleration();
 
     private void StartDecrement(MouseEventArgs e)
     {
@@ -412,19 +403,10 @@
 
         _ = DecrementValue();
 
-        if (EnableAcceleration)
-        {
-            _accelerationCts = new CancellationTokenSource();
-            _ = RunAcceleratedAction(DecrementValue, _accelerationCts.Token);
-        }
+        if (EnableAcceleration) BeginAcceleration(DecrementValue);
     }
 
-    private void StopDecrement(MouseEventArgs e)
-    {
-        _accelerationCts?.Cancel();
-        _accelerationCts?.Dispose();
-        _accelerationCts = null;
-    }
+    private void StopDecrement(MouseEventArgs e) => EndAcceleration();
 
     private void HandleIncrementKeyDown(KeyboardEventArgs e)
     {
@@ -436,20 +418,14 @@
 
         _ = IncrementValue();
 
-        if (EnableAcceleration)
-        {
-            _accelerationCts = new CancellationTokenSource();
-            _ = RunAcceleratedAction(IncrementValue, _accelerationCts.Token);
-        }
+        if (EnableAcceleration) BeginAcceleration(IncrementValue);
     }
 
     private void HandleIncrementKeyUp(KeyboardEventArgs e)
     {
         if (e.Key != " " && e.Key != "Enter") return;
 
-        _accelerationCts?.Cancel();
-        _accelerationCts?.Dispose();
-        _accelerationCts = null;
+        EndAcceleration();
     }
 
     private void HandleDecrementKeyDown(KeyboardEventArgs e)
@@ -462,20 +438,31 @@
 
         _ = DecrementValue();
 
-        if (EnableAcceleration)
-        {
-            _accelerationCts = new CancellationTokenSource();
-            _ = RunAcceleratedAction(DecrementValue, _accelerationCts.Token);
-        }
+        if (EnableAcceleration) BeginAcceleration(DecrementValue);
     }
 
     private void HandleDecrementKeyUp(KeyboardEventArgs e)
     {
         if (e.Key != " " && e.Key != "Enter") return;
 
-        _accelerationCts?.Cancel();
-        _accelerationCts?.Dispose();
+        EndAcceleration();
+    }
+
+    private void BeginAcceleration(Func<Task> action)
+    {
+        EndAcceleration();
+        CancellationTokenSource cts = new();
+        _accelerationCts = cts;
+        _ = RunAcceleratedAction(action, cts.Token);
+    }
+
+    private void EndAcceleration()
+    {
+        CancellationTokenSource? previous = _accelerationCts;
         _accelerationCts = null;
+        if (previous is null) return;
+        try { previous.Cancel(); } catch (ObjectDisposedException) { }
+        previous.Dispose();
     }
 
     private async Task RunAcceleratedAction(Func<Task> action, CancellationToken cancellationToken)
