@@ -1319,6 +1319,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-04` — `BUITooltip` race condition en `_delayTokenSource`: `ObjectDisposedException` posible si re-entrante
 
+- **Estado**: ✅ Resuelto (commit `9d59b74`) — `ShowWithDelay`/`HideWithDelay`/`StartAutoClose` capturan el CTS y su token en variables locales antes del `await Task.Delay`, evitando que `CancelDelay()` re-entrante dispose la referencia compartida mientras la continuación aún la usa. Catches ampliados a `TaskCanceledException` + `ObjectDisposedException`. Añadido guard `if (IsDisposed) return;` tras cada await usando el flag heredado de `BUIComponentBase` (sin re-introducir `_disposed` privado). Criterio 4 (migrar a `DelayedActionHandler`) queda como refactor opcional — el patrón local-CTS elimina la race sin cambiar shape.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Utils/Tooltip/BUITooltip.razor:210-302`.
