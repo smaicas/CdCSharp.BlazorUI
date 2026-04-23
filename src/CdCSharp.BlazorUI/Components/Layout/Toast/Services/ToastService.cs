@@ -26,10 +26,11 @@ public interface IToastService
     void Show<TComponent>(IDictionary<string, object?>? parameters, ToastOptions? options = null) where TComponent : IComponent;
 }
 
-public sealed class ToastService : IToastService
+public sealed class ToastService : IToastService, IDisposable
 {
     private readonly object _lock = new();
     private readonly List<ToastState> _toasts = [];
+    private bool _disposed;
 
     public event Action? OnChange;
 
@@ -210,5 +211,27 @@ public sealed class ToastService : IToastService
             : toast.Options.Duration;
 
         _ = DismissAfterDelayAsync(toast.Id, delay, toast.DismissTokenSource.Token);
+    }
+
+    public void Dispose()
+    {
+        lock (_lock)
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            foreach (ToastState toast in _toasts)
+            {
+                try
+                {
+                    toast.DismissTokenSource?.Cancel();
+                    toast.DismissTokenSource?.Dispose();
+                }
+                catch (ObjectDisposedException) { }
+            }
+            _toasts.Clear();
+        }
+
+        OnChange = null;
     }
 }
