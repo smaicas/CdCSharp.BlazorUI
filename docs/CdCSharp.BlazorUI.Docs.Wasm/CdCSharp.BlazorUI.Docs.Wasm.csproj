@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\CdCSharp.BlazorUI\CdCSharp.BlazorUI.csproj" />
+		<ProjectReference Include="..\..\src\CdCSharp.BlazorUI.FluentValidation\CdCSharp.BlazorUI.FormsFluentValidation.csproj" />
 		<ProjectReference Include="..\..\src\CdCSharp.BlazorUI.Localization.Wasm\CdCSharp.BlazorUI.Localization.Wasm.csproj" />
 		<ProjectReference Include="..\..\docs\CdCSharp.BlazorUI.Docs.Components\CdCSharp.BlazorUI.Docs.Components.csproj" />
 	</ItemGroup>

@@ -1,8 +1,8 @@
 <Solution>
   <Folder Name="/docs/">
-    <Project Path="docs/CdCSharp.BlazorUI.Docs.Wasm/CdCSharp.BlazorUI.Docs.Wasm.csproj" Id="7a2e7f75-7eda-4b3d-8713-23ea7d782850" />
     <Project Path="docs/CdCSharp.BlazorUI.Docs.CodeGeneration/CdCSharp.BlazorUI.Docs.CodeGeneration.csproj" Id="30d05c9e-4dee-4cc0-a7d4-4cd32e938466" />
     <Project Path="docs/CdCSharp.BlazorUI.Docs.Components/CdCSharp.BlazorUI.Docs.Components.csproj" />
+    <Project Path="docs/CdCSharp.BlazorUI.Docs.Wasm/CdCSharp.BlazorUI.Docs.Wasm.csproj" Id="7a2e7f75-7eda-4b3d-8713-23ea7d782850" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />
@@ -29,10 +29,11 @@
     <File Path="README.md" />
     <File Path="TASKS.md" />
   </Folder>
-  <Project Path="src/CdCSharp.BlazorUI.CodeGeneration/CdCSharp.BlazorUI.CodeGeneration.csproj" Id="96bbc2e4-007e-4f7d-973b-8c83686462df" />
   <Project Path="src/CdCSharp.BlazorUI.BuildTools/CdCSharp.BlazorUI.BuildTools.csproj" Id="a67069d5-56c2-49fa-adec-656079117b53" />
+  <Project Path="src/CdCSharp.BlazorUI.CodeGeneration/CdCSharp.BlazorUI.CodeGeneration.csproj" Id="96bbc2e4-007e-4f7d-973b-8c83686462df" />
   <Project Path="src/CdCSharp.BlazorUI.Core.CodeGeneration/CdCSharp.BlazorUI.Core.CodeGeneration.csproj" Id="6ba20f9a-6292-42d8-a0d8-b45440bef1ea" />
   <Project Path="src/CdCSharp.BlazorUI.Core/CdCSharp.BlazorUI.Core.csproj" Id="4d42e187-5c5c-441e-a3bf-59ecb330e6e6" />
+  <Project Path="src/CdCSharp.BlazorUI.FluentValidation/CdCSharp.BlazorUI.FormsFluentValidation.csproj" Id="928cbff9-8c5b-4315-b75f-ee13ea436e6f" />
   <Project Path="src/CdCSharp.BlazorUI.Localization.Server/CdCSharp.BlazorUI.Localization.Server.csproj" Id="cc099920-bfe2-4cbb-ad43-85f57c86d3a4" />
   <Project Path="src/CdCSharp.BlazorUI.Localization.Wasm/CdCSharp.BlazorUI.Localization.Wasm.csproj" Id="7203c218-f90d-4664-8e5f-d21641df712e" />
   <Project Path="src/CdCSharp.BlazorUI.SyntaxHighlight/CdCSharp.BlazorUI.SyntaxHighlight.csproj" Id="93e5c0b8-4936-420e-8549-56b3f8260af0" />

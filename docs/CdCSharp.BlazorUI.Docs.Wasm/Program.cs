@@ -20,6 +20,9 @@ builder.Services.AddBlazorUILocalizationWasm(options =>
     options.DefaultCulture = "en-US";
 });
 
+builder.Services.AddBUIFluentValidation<Program>();
+builder.Services.AddBUIFluentValidation();
+
 WebAssemblyHost host = builder.Build();
 
 await host.UseBlazorUILocalizationWasm();
