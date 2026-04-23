@@ -2820,6 +2820,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-07` — `BUIToast._progressTimer.Elapsed` re-entra en 50ms sin garantía de terminar: races acumulables
 
+- **Estado**: ✅ Resuelto (commit `6c3f9a4`) — `System.Timers.Timer` sustituido por `PeriodicTimer` dentro de `RunProgressLoopAsync(token)` disparado en `OnInitialized` y cancelable por `_disposeCts`. Como `WaitForNextTickAsync` awaita hasta la siguiente cadencia, el loop **no puede re-entrar**: si un `StateHasChanged` tarda > tick, la siguiente tick espera. Pause/Resume ahora usan `_progressPaused` (volatile bool) — el tick sigue corriendo pero skipa la ronda de render. Intervalo subido de 50ms → 100ms (criterio 2 de notas). Catches añadidos: `OperationCanceledException`, `JSDisconnectedException`, `ObjectDisposedException`, `InvalidOperationException`.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/BUIToast.razor:53-55`.
