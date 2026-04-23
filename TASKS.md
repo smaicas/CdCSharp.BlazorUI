@@ -2736,6 +2736,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-07` — `PatternInterop.ts` usa `data-pattern-id` sin prefijo `bui-`: rompe convención de atributos
 
+- **Estado**: ✅ Resuelto (commit `6a21b76`) — los 4 atributos `data-pattern-id`, `data-index`, `data-maxlength`, `data-toggle` pasan a `data-bui-*`. Actualizado: `BUIDateTimePattern.razor` (emisión), `PatternInterop.ts` (selectores + `dataset.bui*` keys), `VerifyConfig.cs` scrubber, tests `BUIInputDateTimeInteractionTests` (2 sitios), snapshots `.verified.txt` (Server/Wasm). 2546/2546 tests pasan. `data-has-value` queda sin prefijo para un micro-fix posterior — fuera del scope declarado de esta tarea.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Pattern/PatternInterop.ts:324-332` (`element.closest('[data-pattern-id]')`), emisión en componentes `BUIBasePattern`/`BUIDateTimePattern`.
