@@ -69,5 +69,9 @@ public sealed class DarkTheme : BUIThemePaletteBase
         Highlight = new CssColor("#FFB74D");
         // Ámbar cálido: focus outline con contraste ≈6.5:1 sobre #121417. El rojo no
         // destaca lo suficiente en dark — WCAG 2.4.7 exige ≥3:1 para UI graphics.
+
+        HoverTint = new CssColor("rgba(255,255,255,0.08)");
+        ActiveTint = new CssColor("rgba(255,255,255,0.12)");
+        // State-layer opacity (Material 3). Tinte claro semi-transparente sobre tema oscuro.
     }
 }

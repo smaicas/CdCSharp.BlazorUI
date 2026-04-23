@@ -70,5 +70,9 @@ public sealed class LightTheme : BUIThemePaletteBase
         Highlight = new CssColor("#C62828");
         // Rojo señalización: focus outline con contraste AAA sobre el fondo porcelana
         // (≈7.1:1 vs #F2F2F0). WCAG 2.4.7 Focus Visible.
+
+        HoverTint = new CssColor("rgba(0,0,0,0.08)");
+        ActiveTint = new CssColor("rgba(0,0,0,0.12)");
+        // State-layer opacity (Material 3). Tinte oscuro semi-transparente sobre tema claro.
     }
 }
