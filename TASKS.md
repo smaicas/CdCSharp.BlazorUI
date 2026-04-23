@@ -4052,6 +4052,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-10` — `DelayedActionHandler.ExecuteWithDelayAsync` no revalida `_disposed` tras el `await Task.Delay`
 
+- **Estado**: ✅ Resuelto (commit `fb34098`) — nuevo overload `ExecuteWithDelayAsync(Func<CancellationToken, Task>, TimeSpan)` que reenvía el token a `action`. El overload original `Func<Task>` delega en el nuevo. `Dispose()` sigue cancelando el CTS → actions largas ahora pueden propagar cancelación (el token cambia a canceled). Catch ampliado a `OperationCanceledException`. Criterio 1 aplicado; criterio 2 innecesario (ya cubierto por el código).
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Utilities/DelayedActionHandler.cs:30-58`.
