@@ -1,4 +1,5 @@
-﻿using CdCSharp.BuildTools;
+using CdCSharp.BlazorUI.Components;
+using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
 
@@ -13,46 +14,67 @@ public class ScrollBarGenerator : IAssetGenerator
 
     public async Task<string> GetContent()
     {
+        // Opt-in scope: the universal `*` selector only applies under [data-bui-scrollbars] or
+        // inside .bui-scrollbars. The library never styles consumer scrollbars by default.
+        string scopeAttr = $"[{FeatureDefinitions.DataAttributes.Scrollbars}]";
+        string scopeClass = $".{FeatureDefinitions.CssClasses.Scrollbars}";
+
         return $$"""
 /* =========================
-   SCROLLBAR GLOBAL
+   SCROLLBAR (opt-in)
+   Activate by adding {{FeatureDefinitions.DataAttributes.Scrollbars}} to <html>
+   or the .{{FeatureDefinitions.CssClasses.Scrollbars}} class to any wrapper.
    ========================= */
 
+:root {
+    {{FeatureDefinitions.Tokens.Scrollbar.Width}}: {{FeatureDefinitions.Tokens.Scrollbar.WidthValue}};
+    {{FeatureDefinitions.Tokens.Scrollbar.ThumbRadius}}: {{FeatureDefinitions.Tokens.Scrollbar.ThumbRadiusValue}};
+    {{FeatureDefinitions.Tokens.Scrollbar.ThumbBorderWidth}}: {{FeatureDefinitions.Tokens.Scrollbar.ThumbBorderWidthValue}};
+}
+
 /* Firefox */
-* {
+{{scopeAttr}},
+{{scopeAttr}} *,
+{{scopeClass}},
+{{scopeClass}} * {
     scrollbar-width: thin;
     scrollbar-color: var(--palette-primary) var(--palette-surface);
 }
 
 /* WebKit (Chrome, Edge, Safari) */
-*::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+{{scopeAttr}} ::-webkit-scrollbar,
+{{scopeClass}} ::-webkit-scrollbar {
+    width: var({{FeatureDefinitions.Tokens.Scrollbar.Width}});
+    height: var({{FeatureDefinitions.Tokens.Scrollbar.Width}});
 }
 
-*::-webkit-scrollbar-track {
+{{scopeAttr}} ::-webkit-scrollbar-track,
+{{scopeClass}} ::-webkit-scrollbar-track {
     background: var(--palette-surface);
-    border-radius: 8px;
+    border-radius: var({{FeatureDefinitions.Tokens.Scrollbar.ThumbRadius}});
 }
 
-*::-webkit-scrollbar-thumb {
+{{scopeAttr}} ::-webkit-scrollbar-thumb,
+{{scopeClass}} ::-webkit-scrollbar-thumb {
     background: var(--palette-primary);
-    border-radius: 8px;
-    border: 2px solid var(--palette-surface);
+    border-radius: var({{FeatureDefinitions.Tokens.Scrollbar.ThumbRadius}});
+    border: var({{FeatureDefinitions.Tokens.Scrollbar.ThumbBorderWidth}}) solid var(--palette-surface);
 }
 
-*::-webkit-scrollbar-thumb:hover {
+{{scopeAttr}} ::-webkit-scrollbar-thumb:hover,
+{{scopeClass}} ::-webkit-scrollbar-thumb:hover {
     background: var(--palette-secondary);
 }
 
-*::-webkit-scrollbar-thumb:active {
+{{scopeAttr}} ::-webkit-scrollbar-thumb:active,
+{{scopeClass}} ::-webkit-scrollbar-thumb:active {
     background: var(--palette-info);
 }
 
-*::-webkit-scrollbar-corner {
+{{scopeAttr}} ::-webkit-scrollbar-corner,
+{{scopeClass}} ::-webkit-scrollbar-corner {
     background: var(--palette-surface);
 }
 """;
     }
 }
-

@@ -48,6 +48,12 @@ internal static class FeatureDefinitions
         public const string SrOnly = "sr-only";
 
         /// <summary>
+        /// Utility class variant of <see cref="DataAttributes.Scrollbars"/> — place on any wrapper to scope
+        /// branded scrollbar styling.
+        /// </summary>
+        public const string Scrollbars = "bui-scrollbars";
+
+        /// <summary>
         /// Input family component class names.
         /// </summary>
         public static class Input
@@ -297,6 +303,13 @@ internal static class FeatureDefinitions
         /// Named animation applied to a toast.
         /// </summary>
         public const string Animation = "data-bui-animation";
+
+        // --- Opt-in styling attributes ---
+        /// <summary>
+        /// Opt-in marker for the BUI global scrollbar styles. Place on <c>&lt;html&gt;</c> (or any ancestor)
+        /// to apply branded scrollbars to the consumer app.
+        /// </summary>
+        public const string Scrollbars = "data-bui-scrollbars";
     }
 
     public static class InlineVariables
@@ -481,6 +494,20 @@ internal static class FeatureDefinitions
             public const string Duration = "--bui-ripple-duration";
             public const string DurationFallbackValue = "600ms";
             public const string Animation = "bui-ripple-animation";
+        }
+
+        /// <summary>
+        /// Scrollbar dimensions. Styles are opt-in via <see cref="DataAttributes.Scrollbars"/> or the
+        /// <see cref="CssClasses.Scrollbars"/> utility class — the library does not touch consumer scrollbars by default.
+        /// </summary>
+        public static class Scrollbar
+        {
+            public const string Width = "--bui-scrollbar-width";
+            public const string WidthValue = "10px";
+            public const string ThumbRadius = "--bui-scrollbar-thumb-radius";
+            public const string ThumbRadiusValue = "8px";
+            public const string ThumbBorderWidth = "--bui-scrollbar-thumb-border-width";
+            public const string ThumbBorderWidthValue = "2px";
         }
     }
 

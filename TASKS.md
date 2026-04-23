@@ -646,6 +646,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-08` — `ScrollBarGenerator` aplica estilos globales (`*`) con colores de marca a scrollbars del consumidor
 
+- **Estado**: ✅ Resuelto — scrollbars pasan a ser **opt-in**: las reglas se scopean bajo `[data-bui-scrollbars]` (para `<html>`) y `.bui-scrollbars` (para wrapper ad-hoc). Nuevas constantes en `FeatureDefinitions.Tokens.Scrollbar` (`Width`, `ThumbRadius`, `ThumbBorderWidth`) + `FeatureDefinitions.DataAttributes.Scrollbars` + `FeatureDefinitions.CssClasses.Scrollbars`. `_scrollbar.css` ahora declara las vars en `:root` (no-op sin activador) y todo selector `*::-webkit-*`/`scrollbar-color` vive tras el scope. Hover/active conservan palette-secondary/info — son overridables ahora que el bundle no los fuerza globalmente. Criterio 3 (documentar política en CLAUDE.md/AGENTS.md) queda como follow-up para consolidar con `CLAUDE-03` (ya referenciado en el criterio original). 2546/2546 tests pasan.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/ScrollBarGenerator.cs` (todo el archivo).
