@@ -2417,6 +2417,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-07` — 4 componentes heredan `ComponentBase` directamente en lugar de `BUIComponentBase` / `BUIInputComponentBase` — mezcla de intencional y omisión
 
+- **Estado**: ✅ Resuelto (commit `2a51895`) — añadido XML-doc a los 4 tipos documentando que la herencia de `ComponentBase` es intencional: `DropdownOption<TOption>` y `RadioOption<TOption>` son registration-only (se registran con el container vía cascading y no emiten DOM); `BUIBasePattern` emite layout custom (container box + span children) en vez del root `<bui-component>`; `BUITreeNodeBase<TRegistration>` es registration-only para tree containers. Criterio 4 (lint check) delegado a `COMP-LINT-01`. Migración estructural descartada — las 4 excepciones tienen razón de diseño.
 - **Severidad**: Minor
 - **Esfuerzo**: M
 - **Alcance**:
