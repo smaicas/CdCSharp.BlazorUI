@@ -36,12 +36,18 @@ export function toggleTheme(themes: string[]): string {
     return next;
 }
 
+// Kept in sync with BUIThemePaletteBase. Canonical source lives in C#; if a property is
+// added/removed there, update this list too (see JS-06 for history and automation plan).
 const PALETTE_VARS = [
+    '--palette-activetint',
     '--palette-background',
     '--palette-backgroundcontrast',
     '--palette-black',
+    '--palette-border',
     '--palette-error',
     '--palette-errorcontrast',
+    '--palette-highlight',
+    '--palette-hovertint',
     '--palette-info',
     '--palette-infocontrast',
     '--palette-primary',
