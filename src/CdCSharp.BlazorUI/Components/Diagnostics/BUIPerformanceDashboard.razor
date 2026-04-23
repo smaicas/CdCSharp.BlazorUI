@@ -117,19 +117,31 @@
         RefreshMetrics();
     }
 
+    private readonly object _debounceLock = new();
     private CancellationTokenSource? _debounceCts;
+    private bool _disposed;
 
     private void OnMetricsUpdated() => _ = OnMetricsUpdatedSafeAsync();
 
     private async Task OnMetricsUpdatedSafeAsync()
     {
-        _debounceCts?.Cancel();
-        _debounceCts = new CancellationTokenSource();
-        CancellationToken token = _debounceCts.Token;
+        CancellationTokenSource cts;
+        lock (_debounceLock)
+        {
+            if (_disposed) return;
+            CancellationTokenSource? previous = _debounceCts;
+            cts = new CancellationTokenSource();
+            _debounceCts = cts;
+            if (previous is not null)
+            {
+                try { previous.Cancel(); } catch (ObjectDisposedException) { }
+                previous.Dispose();
+            }
+        }
 
         try
         {
-            await Task.Delay(DebounceDelayMs, token); // agrupa ráfagas de renders
+            await Task.Delay(DebounceDelayMs, cts.Token); // agrupa ráfagas de renders
             RefreshMetrics();
             await InvokeAsync(StateHasChanged);
         }
@@ -141,7 +153,15 @@
 
     public void Dispose()
     {
-        _debounceCts?.Cancel();
+        lock (_debounceLock)
+        {
+            if (_disposed) return;
+            _disposed = true;
+            try { _debounceCts?.Cancel(); } catch (ObjectDisposedException) { }
+            _debounceCts?.Dispose();
+            _debounceCts = null;
+        }
+
         PerformanceService.MetricsUpdated -= OnMetricsUpdated;
     }
 
