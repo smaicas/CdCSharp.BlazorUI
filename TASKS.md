@@ -1087,6 +1087,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-02` — `HoverTint` y `ActiveTint` con mismo valor base (`#e9e9e9`) en todos los temas: hover/active indistinguibles entre Light y Dark
 
+- **Estado**: ✅ Resuelto (commit `a4734cb`) — override Material 3 state-layer opacity por tema: Light = `rgba(0,0,0,0.08)` / `rgba(0,0,0,0.12)`; Dark = `rgba(255,255,255,0.08)` / `rgba(255,255,255,0.12)`. `CssColor` emite `rgba(...)` cuando A < 255 (verificado en `CssColor.cs:581-583`). Criterio 3 (verificación visual en sample app) queda pendiente del usuario — el cambio es atomic en la paleta y no rompe tests.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/Abstractions/BUIThemePaletteBase.cs:38-39` (defaults); `LightTheme.cs` y `DarkTheme.cs` **no overridean** estas propiedades.
