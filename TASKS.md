@@ -1254,6 +1254,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-01` — `async void HandleThemeChanged` / `OnMetricsUpdated` con catches incompletos respecto al contrato CLAUDE.md
 
+- **Estado**: ✅ Resuelto (commit `329976e`) — `BUIInitializer.HandleThemeChanged` y `BUIPerformanceDashboard.OnMetricsUpdated` migrados al patrón `void Handler() => _ = HandlerSafeAsync();` con el wrapper `async Task` que cubre el cuarteto canónico (JSDisconnectedException, ObjectDisposedException, InvalidOperationException, TaskCanceledException). Elimina la ruta `async void` cruzando a `SynchronizationContext.Current`. Añadido `@using Microsoft.JSInterop` al dashboard. Criterio 4 (test de dispose durante debounce) queda como follow-up — cerrado mecánicamente por el wrapper.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**:
