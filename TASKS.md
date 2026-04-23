@@ -2654,6 +2654,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-04` — `Surface = new CssColor("#FFFFFFF0".Substring(0, 7))` en LightTheme: hack que produce `#FFFFFF` por substring
 
+- **Estado**: ✅ Resuelto (commit `1f66f62`) — `Surface = new CssColor("#FFFFFF")`. El `.Substring(0,7)` devolvía el mismo valor; se retira el hack. Si en futuro se quiere alpha sobre Surface, reescribir como `rgba(...)` directo.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/LightTheme.cs:23`.
