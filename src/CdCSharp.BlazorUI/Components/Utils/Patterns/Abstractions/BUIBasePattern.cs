@@ -3,6 +3,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions;
 
+/// <summary>
+/// Base class for pattern components (date-time, masked input, etc.). Intentionally inherits
+/// <see cref="ComponentBase"/> (not <c>BUIComponentBase</c>) because patterns emit their own
+/// custom DOM layout (a container box with span children) rather than the <c>&lt;bui-component&gt;</c>
+/// root contract. Hidden from IntelliSense via <see cref="EditorBrowsableAttribute"/>.
+/// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 public abstract class BUIBasePattern : ComponentBase, IPatternJsCallback, IAsyncDisposable
 {

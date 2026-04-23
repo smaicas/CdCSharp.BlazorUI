@@ -3,6 +3,13 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace CdCSharp.BlazorUI.Components;
 
+/// <summary>
+/// Registration-only base for tree nodes (<c>BUITreeMenuItem</c>, <c>BUITreeSelectorItem</c>).
+/// Intentionally inherits <see cref="ComponentBase"/> (not <c>BUIComponentBase</c>) because the
+/// node registers itself with the enclosing tree container via cascading parameters and the
+/// container renders the flattened structure. The node does not emit its own
+/// <c>&lt;bui-component&gt;</c> root.
+/// </summary>
 public abstract class BUITreeNodeBase<TRegistration> : ComponentBase
     where TRegistration : TreeNodeRegistration
 {

@@ -4,6 +4,11 @@ using Microsoft.AspNetCore.Components;
 
 namespace CdCSharp.BlazorUI.Components.Forms;
 
+/// <summary>
+/// Registration-only descriptor for a <c>BUIInputDropdown</c> option. Intentionally inherits
+/// <see cref="ComponentBase"/> (not <c>BUIComponentBase</c>) because it emits no DOM of its own —
+/// the parent dropdown container consumes the registered option and renders the menu items.
+/// </summary>
 public class DropdownOption<TOption> : ComponentBase, ISelectionOption, IDisposable
 {
     [Parameter] public RenderFragment? ChildContent { get; set; }

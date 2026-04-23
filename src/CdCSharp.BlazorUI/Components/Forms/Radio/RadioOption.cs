@@ -2,6 +2,11 @@
 
 namespace CdCSharp.BlazorUI.Components.Forms;
 
+/// <summary>
+/// Registration-only descriptor for a <c>BUIInputRadio</c> option. Intentionally inherits
+/// <see cref="ComponentBase"/> (not <c>BUIComponentBase</c>) because it emits no DOM of its own —
+/// the parent radio container renders the options from the registered list.
+/// </summary>
 public class RadioOption<TOption> : ComponentBase, IRadioOption, IDisposable
 {
     [Parameter] public RenderFragment? ChildContent { get; set; }
