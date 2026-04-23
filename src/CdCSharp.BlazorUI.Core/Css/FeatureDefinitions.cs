@@ -509,6 +509,40 @@ internal static class FeatureDefinitions
             public const string ThumbBorderWidth = "--bui-scrollbar-thumb-border-width";
             public const string ThumbBorderWidthValue = "2px";
         }
+
+        /// <summary>
+        /// Transition system (consumed by <see cref="DataAttributes.Transitions"/>).
+        /// Variables follow <c>--bui-t-{trigger}-{property}</c>; <see cref="VariableFor"/> builds them.
+        /// Vars are intentionally emitted without a default — transitions are opt-in per component and
+        /// undefined <c>var()</c> resolves to "unset", so the CSS declaration silently no-ops.
+        /// </summary>
+        public static class Transitions
+        {
+            public const string TargetClass = "transition-target";
+            public const string Shorthand = "--bui-t-transition";
+            public const string VariablePrefix = "--bui-t-";
+
+            public static readonly string[] Triggers =
+            [
+                "hover",
+                "focus",
+                "active"
+            ];
+
+            public static readonly string[] Props =
+            [
+                "scale", "rotate", "translate",
+                "opacity",
+                "filter", "backdrop-filter",
+                "box-shadow", "text-shadow",
+                "color", "background-color", "border-color", "outline-color",
+                "background",
+                "border-radius", "outline", "outline-offset",
+                "padding", "gap"
+            ];
+
+            public static string VariableFor(string trigger, string property) => $"{VariablePrefix}{trigger}-{property}";
+        }
     }
 
     public static class Typography

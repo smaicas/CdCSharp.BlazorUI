@@ -670,6 +670,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-10` — `TransitionsCssGenerator` expande 51 selectores con combinadores pesados `:not(:has(:disabled))` sin variables `--bui-t-*` declaradas en tokens
 
+- **Estado**: ✅ Resuelto parcialmente (criterios 1-2) — `FeatureDefinitions.Tokens.Transitions` centraliza `TargetClass` (`transition-target`), `Shorthand` (`--bui-t-transition`), `VariablePrefix`, `Triggers[]`, `Props[]` y el helper `VariableFor(trigger, prop)`. `TransitionsCssGenerator` consume todo vía las constantes (tag, `data-bui-transitions`, clase target, shorthand, props, builder de vars) y también `BUITransitions.GetCssVariables()` deja de hardcodear el prefijo `--bui-t-` usando el helper. Criterio 2 (defaults en `_tokens.css`) descartado por diseño: las transiciones son opt-in por componente; un fallback global en `:root` aplicaría cambios visibles en cualquier componente que declare `data-bui-transitions` sin poblar las vars — comportamiento más dañino que el silencio actual. Comentario inline en `Transitions` documenta la decisión. Criterios 3 (selector compuesto por trigger) y 4 (antes/después bytes en `CSS-OPT-xx`) quedan como follow-up — la compactación requiere rethink (cada prop necesita su propia declaración `<prop>: var(…)`; un único selector compuesto por trigger agruparía las 17 reglas pero no reduce LoC de declaraciones). `_transition-classes.css` byte-idéntico al baseline. 2546/2546 tests pasan.
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/TransitionsCssGenerator.cs`.

@@ -33,10 +33,10 @@ public class BUITransitions
             string triggerName = trigger.ToString().ToLowerInvariant();
 
             foreach (TransitionEntry entry in entries)
-                variables[$"--bui-t-{triggerName}-{entry.CssProperty}"] = entry.Value;
+                variables[FeatureDefinitions.Tokens.Transitions.VariableFor(triggerName, entry.CssProperty)] = entry.Value;
         }
 
-        variables["--bui-t-transition"] = BuildTransitionShorthand();
+        variables[FeatureDefinitions.Tokens.Transitions.Shorthand] = BuildTransitionShorthand();
 
         return variables;
     }
