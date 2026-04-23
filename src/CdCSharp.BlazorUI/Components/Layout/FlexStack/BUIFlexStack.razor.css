@@ -1,0 +1,116 @@
+bui-component[data-bui-component="flex-stack"] {
+    --_flex-stack-background: var(--bui-inline-background, transparent);
+    --_flex-stack-color: var(--bui-inline-color, inherit);
+    --_flex-stack-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
+    --_flex-stack-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
+    --_flex-stack-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_flex-stack-border-right: var(--bui-inline-border-right, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_flex-stack-border-bottom: var(--bui-inline-border-bottom, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --_flex-stack-border-left: var(--bui-inline-border-left, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
+    --gap: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: stretch;
+    row-gap: var(--row-gap, var(--gap));
+    column-gap: var(--col-gap, var(--gap));
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--_flex-stack-background);
+    color: var(--_flex-stack-color);
+    border-radius: var(--_flex-stack-border-radius);
+    border: var(--_flex-stack-border);
+    border-top: var(--_flex-stack-border-top);
+    border-right: var(--_flex-stack-border-right);
+    border-bottom: var(--_flex-stack-border-bottom);
+    border-left: var(--_flex-stack-border-left);
+    padding: var(--p, var(--pt, 0) var(--pr, 0) var(--pb, 0) var(--pl, 0));
+    margin: var(--m, var(--mt, 0) var(--mr, 0) var(--mb, 0) var(--ml, 0));
+}
+
+    /* Direction */
+    bui-component[data-bui-component="flex-stack"][data-dir="row-reverse"] {
+        flex-direction: row-reverse;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-dir="column"] {
+        flex-direction: column;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-dir="column-reverse"] {
+        flex-direction: column-reverse;
+    }
+
+    /* Wrap */
+    bui-component[data-bui-component="flex-stack"][data-wrap="no-wrap"] {
+        flex-wrap: nowrap;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-wrap="wrap-reverse"] {
+        flex-wrap: wrap-reverse;
+    }
+
+    /* Justify Content */
+    bui-component[data-bui-component="flex-stack"][data-justify="end"] {
+        justify-content: flex-end;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-justify="center"] {
+        justify-content: center;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-justify="space-between"] {
+        justify-content: space-between;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-justify="space-around"] {
+        justify-content: space-around;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-justify="space-evenly"] {
+        justify-content: space-evenly;
+    }
+
+    /* Align Items */
+    bui-component[data-bui-component="flex-stack"][data-align="start"] {
+        align-items: flex-start;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align="end"] {
+        align-items: flex-end;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align="center"] {
+        align-items: center;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align="baseline"] {
+        align-items: baseline;
+    }
+
+    /* Align Content */
+    bui-component[data-bui-component="flex-stack"][data-align-content="start"] {
+        align-content: flex-start;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align-content="end"] {
+        align-content: flex-end;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align-content="center"] {
+        align-content: center;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align-content="space-between"] {
+        align-content: space-between;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align-content="space-around"] {
+        align-content: space-around;
+    }
+
+    bui-component[data-bui-component="flex-stack"][data-align-content="space-evenly"] {
+        align-content: space-evenly;
+    }
