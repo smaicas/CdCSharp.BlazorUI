@@ -872,6 +872,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-06` — Ninguna base class usa el patrón `_disposed` para *gate* de continuaciones post‑await: viola `CLAUDE.md` "Disposable components"
 
+- **Estado**: ✅ Resuelto (commit `3f34643`) — `BUIComponentBase` y `BUIInputComponentBase<TValue>` exponen `protected bool IsDisposed { get; set; }`. Las bases lo marcan en su propio `DisposeAsync`/`Dispose(true)` y gatean `OnAfterRenderAsync(firstRender)` antes del `await _pipeline.AttachBehaviorAsync(...)`; si llegó dispose durante el attach, el behavior recién creado se libera inmediatamente. `BUIInputComponentBase.HandleValidationStateChanged` también gatea en `IsDisposed`. Patrón documentado en `CLAUDE.md §"Async / JS interop conventions"` → "Disposable components". Migrados 5 componentes que tenían `_disposed` privado duplicado: `BUITabs`, `BUIToastHost`, `BUIDialog`, `BUIDrawer`, `BUITreeMenu`. Criterio 4 cubierto. 2546/2546 tests pasan.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `BUIComponentBase.DisposeAsync` (`:129-151`), `BUIInputComponentBase.DisposeAsync` (`:75-97`) + `Dispose(bool)` (`:99-107`).
