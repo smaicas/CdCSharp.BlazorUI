@@ -20,7 +20,7 @@ public sealed class LightTheme : BUIThemePaletteBase
         BackgroundContrast = new CssColor("#1F2328");
         // Tinta casi negra: máxima legibilidad sin usar negro absoluto.
 
-        Surface = new CssColor("#FFFFFFF0".Substring(0, 7));
+        Surface = new CssColor("#FFFFFF");
         // Blanco suavizado: crea una capa claramente elevada respecto al fondo.
 
         SurfaceContrast = new CssColor("#1F2328");
