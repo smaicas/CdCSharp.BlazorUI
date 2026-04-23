@@ -1186,6 +1186,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-04` — `ModuleJsInteropBase.IsModuleTaskLoaded` (`TaskCompletionSource`) es ceremonia muerta: se marca completo en el constructor y nadie espera en algo real
 
+- **Estado**: ✅ Resuelto (commit `4f7ca94`) — eliminada la TCS `IsModuleTaskLoaded` del base y el `SetResult(true)` del ctor. Strip automático en los 7 interops consumers (Pattern, Draggable, Clipboard, TextArea, Dropdown, Modal, ColorPicker, Theme/Behavior ya lo hacían) elimina todos los `await IsModuleTaskLoaded.Task;` no-op. `ModuleTask.Value` (el `Lazy<Task<IJSObjectReference>>`) sigue siendo el único punto real donde se espera a la carga del módulo JS.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Abstractions/JSInterop/ModuleJsInteropBase.cs:13,42`; 9 consumers (`DropdownJsInterop.cs`, `ModalJsInterop.cs`, ...).
