@@ -65,7 +65,7 @@
             <BUIFlexStack Gap="0.5rem"
                           P="1rem"
                           BackgroundColor="var(--palette-surface)"
-                          Border="BorderStyle.Create().All("1px", BorderStyleType.Solid, "var(--palette-border)").Radius(8)">
+                          Border="@(BorderStyle.Create().All("1px", BorderStyleType.Solid, "var(--palette-border)").Radius(8))">
                 <BUIButton Text="@Loc["Rounded"]" />
                 <BUIButton Text="@Loc["Border"]" />
             </BUIFlexStack>
@@ -73,7 +73,7 @@
             <BUIFlexStack Gap="0.5rem"
                           P="1rem"
                           BackgroundColor="var(--palette-surface)"
-                          Border="BorderStyle.Create().Top("3px", BorderStyleType.Solid, "var(--palette-primary)").Radius(4)">
+                          Border="@(BorderStyle.Create().Top("3px", BorderStyleType.Solid, "var(--palette-primary)").Radius(4))">
                 <BUIButton Text="@Loc["Top accent"]" />
                 <BUIButton Text="@Loc["Border"]" />
             </BUIFlexStack>
@@ -85,8 +85,8 @@
             <BUIFlexStack Gap="0.5rem"
                           P="1rem"
                           BackgroundColor="var(--palette-surface)"
-                          Border="BorderStyle.Create().All("1px", BorderStyleType.Solid, "var(--palette-border)").Radius(8)"
-                          Shadow="ShadowStyle.Create(2, 4)">
+                          Border="@(BorderStyle.Create().All("1px", BorderStyleType.Solid, "var(--palette-border)").Radius(8))"
+                          Shadow="@(ShadowStyle.Create(2, 4))">
                 <BUIButton Text="@Loc["Elevation 1"]" />
                 <BUIButton Text="@Loc["Stack"]" />
             </BUIFlexStack>
@@ -94,8 +94,8 @@
             <BUIFlexStack Gap="0.5rem"
                           P="1rem"
                           BackgroundColor="var(--palette-surface)"
-                          Border="BorderStyle.Create().All("1px", BorderStyleType.Solid, "var(--palette-border)").Radius(8)"
-                          Shadow="ShadowStyle.Create(6, 12)">
+                          Border="@(BorderStyle.Create().All("1px", BorderStyleType.Solid, "var(--palette-border)").Radius(8))"
+                          Shadow="@(ShadowStyle.Create(6, 12))">
                 <BUIButton Text="@Loc["Elevation 2"]" />
                 <BUIButton Text="@Loc["Stack"]" />
             </BUIFlexStack>
