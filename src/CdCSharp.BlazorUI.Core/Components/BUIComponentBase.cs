@@ -22,7 +22,10 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
 
-    // This is what components will use with @attributes
+    // Exposed as `public`: variant templates are `RenderFragment`s authored *outside* the
+    // component's own .razor, so they need cross-assembly access to spread `@attributes` onto the
+    // `<bui-component>` root. Protected would block the custom-variant pattern that is part of the
+    // framework contract.
     public Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;

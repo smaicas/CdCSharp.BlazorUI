@@ -38,8 +38,9 @@ public abstract class BUIInputComponentBase<TValue> :
     public bool IsReadOnly => ReadOnly;
     public bool IsRequired => Required;
 
-    // This is what components will use with @attributes
-    protected Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
+    // See BUIComponentBase.ComputedAttributes for why this is `public`: variant templates live
+    // cross-assembly and need to spread this dictionary onto the `<bui-component>` root.
+    public Dictionary<string, object> ComputedAttributes => _pipeline.ComputedAttributes;
 
     [Inject] private IBehaviorJsInterop BehaviorJsInterop { get; set; } = default!;
 
@@ -175,7 +176,7 @@ public abstract class BUIInputComponentBase<TValue, TComponent, TVariant>
 
     Type IVariantComponent.VariantType => typeof(TVariant);
     protected abstract IReadOnlyDictionary<TVariant, Func<TComponent, RenderFragment>> BuiltInTemplates { get; }
-    [Inject] private IVariantRegistry VariantRegistry { get; set; } = default!;
+    [Inject] private IVariantRegistry? VariantRegistry { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
