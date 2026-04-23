@@ -614,7 +614,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-06` — `DesignTokensGenerator` emite variables y `.bui-ripple` fuera de `FeatureDefinitions`
 
-- **Estado**: ✅ Resuelto — 5 nuevas sub-clases en `FeatureDefinitions.Tokens` (`Size`, `Density`, `Border`, `Highlight`, `Ripple`) con nombre + valor por defecto + fallback. `DesignTokensGenerator` interpola todas las entradas: z-index, opacity, highlight outline, size/density multipliers, border defaults y el bloque ripple completo (clase `.bui-ripple`, vars `--bui-ripple-color`/`--bui-ripple-duration` con fallbacks, y el `@keyframes` usando `Animation`). Fallback `rgba(255, 255, 255, 0.4)` queda como `Ripple.ColorFallbackValue`. `_tokens.css` regenerado byte-idéntico al baseline. 2546/2546 tests pasan.
+- **Estado**: ✅ Resuelto (commit `63cd425`) — 5 nuevas sub-clases en `FeatureDefinitions.Tokens` (`Size`, `Density`, `Border`, `Highlight`, `Ripple`) con nombre + valor por defecto + fallback. `DesignTokensGenerator` interpola todas las entradas: z-index, opacity, highlight outline, size/density multipliers, border defaults y el bloque ripple completo (clase `.bui-ripple`, vars `--bui-ripple-color`/`--bui-ripple-duration` con fallbacks, y el `@keyframes` usando `Animation`). Fallback `rgba(255, 255, 255, 0.4)` queda como `Ripple.ColorFallbackValue`. `_tokens.css` regenerado byte-idéntico al baseline. 2546/2546 tests pasan.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/DesignTokensGenerator.cs:41‑65, 77‑91`.
