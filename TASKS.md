@@ -1232,6 +1232,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-06` — `ThemeInterop.PALETTE_VARS` es lista hardcoded e incompleta: faltan `highlight`, `hovertint`, `activetint`, `border`
 
+- **Estado**: ✅ Resuelto (commit `e08439b`) — añadidos los 4 faltantes: `--palette-activetint`, `--palette-border`, `--palette-highlight`, `--palette-hovertint`. La lista completa (23 vars) ahora corresponde 1:1 con las propiedades `CssColor` de `BUIThemePaletteBase`. Comentario inline documenta la convención de mantener la lista sincronizada con el C# canónico. Criterio 1 (generar la lista desde C# via `IThemeJsInterop.GetPaletteVariablesAsync`) queda como follow-up mayor. Criterio 2 aplicado.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Theme/ThemeInterop.ts:39-59`.
