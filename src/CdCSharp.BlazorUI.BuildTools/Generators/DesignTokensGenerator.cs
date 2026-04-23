@@ -63,6 +63,21 @@ public class DesignTokensGenerator : IAssetGenerator
     {{FeatureDefinitions.Tokens.Border.Width}}: {{FeatureDefinitions.Tokens.Border.WidthValue}};
     {{FeatureDefinitions.Tokens.Border.Style}}: {{FeatureDefinitions.Tokens.Border.StyleValue}};
     {{FeatureDefinitions.Tokens.Border.Radius}}: {{FeatureDefinitions.Tokens.Border.RadiusValue}};
+
+    /* ========================================
+       INPUT FAMILY
+       ======================================== */
+    {{FeatureDefinitions.Tokens.Input.Radius}}: {{FeatureDefinitions.Tokens.Input.RadiusValue}};
+    {{FeatureDefinitions.Tokens.Input.TransitionDuration}}: {{FeatureDefinitions.Tokens.Input.TransitionDurationValue}};
+    {{FeatureDefinitions.Tokens.Input.TransitionEasing}}: {{FeatureDefinitions.Tokens.Input.TransitionEasingValue}};
+    {{FeatureDefinitions.Tokens.Input.FloatedScale}}: {{FeatureDefinitions.Tokens.Input.FloatedScaleValue}};
+
+    /* ========================================
+       PICKER FAMILY
+       ======================================== */
+    {{FeatureDefinitions.Tokens.Picker.Radius}}: {{FeatureDefinitions.Tokens.Picker.RadiusValue}};
+    {{FeatureDefinitions.Tokens.Picker.CellSize}}: {{FeatureDefinitions.Tokens.Picker.CellSizeValue}};
+    {{FeatureDefinitions.Tokens.Picker.Padding}}: {{FeatureDefinitions.Tokens.Picker.PaddingValue}};
 }
 
 {{GetRippleStyles()}}

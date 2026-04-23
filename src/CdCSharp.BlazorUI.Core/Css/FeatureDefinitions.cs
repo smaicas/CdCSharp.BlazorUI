@@ -511,6 +511,34 @@ internal static class FeatureDefinitions
         }
 
         /// <summary>
+        /// Input family defaults. Consumed by the input CSS generator and overridable by consumers at <c>:root</c>.
+        /// </summary>
+        public static class Input
+        {
+            public const string Radius = "--bui-input-radius";
+            public const string RadiusValue = "4px";
+            public const string TransitionDuration = "--bui-input-transition-duration";
+            public const string TransitionDurationValue = "150ms";
+            public const string TransitionEasing = "--bui-input-transition-easing";
+            public const string TransitionEasingValue = "cubic-bezier(0.4, 0, 0.2, 1)";
+            public const string FloatedScale = "--bui-input-floated-scale";
+            public const string FloatedScaleValue = "0.75";
+        }
+
+        /// <summary>
+        /// Picker family defaults. Consumed by the picker CSS generator and overridable by consumers at <c>:root</c>.
+        /// </summary>
+        public static class Picker
+        {
+            public const string Radius = "--bui-picker-radius";
+            public const string RadiusValue = "8px";
+            public const string CellSize = "--bui-picker-cell-size";
+            public const string CellSizeValue = "36px";
+            public const string Padding = "--bui-picker-padding";
+            public const string PaddingValue = "0.75rem";
+        }
+
+        /// <summary>
         /// Transition system (consumed by <see cref="DataAttributes.Transitions"/>).
         /// Variables follow <c>--bui-t-{trigger}-{property}</c>; <see cref="VariableFor"/> builds them.
         /// Vars are intentionally emitted without a default — transitions are opt-in per component and

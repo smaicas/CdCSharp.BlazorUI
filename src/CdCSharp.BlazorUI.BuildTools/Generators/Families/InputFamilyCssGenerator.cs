@@ -62,9 +62,9 @@ bui-component[{{inputBase}}] {
     --_input-h: calc(3.5rem * {{V(sizeMult, "1")}});
     --_input-px: 1rem;
     --_input-py: 0.75rem;
-    --_input-radius: 4px;
-    --_input-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    --_input-scale: 0.75;
+    --_input-radius: {{V(FeatureDefinitions.Tokens.Input.Radius)}};
+    --_input-transition: {{V(FeatureDefinitions.Tokens.Input.TransitionDuration)}} {{V(FeatureDefinitions.Tokens.Input.TransitionEasing)}};
+    --_input-scale: {{V(FeatureDefinitions.Tokens.Input.FloatedScale)}};
     --_input-floated-size: calc(1rem * var(--_input-scale) * {{V(sizeMult, "1")}});
 
     --_input-label-color: var(--palette-surfacecontrast);

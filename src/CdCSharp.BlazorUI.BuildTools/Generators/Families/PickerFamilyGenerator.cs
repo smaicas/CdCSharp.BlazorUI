@@ -12,6 +12,7 @@ public class PickerFamilyCssGenerator : IAssetGenerator
     public string FileName => "_picker-family.css";
     public string Name => "Picker Family";
 
+    private static string V(string variable) => $"var({variable})";
     private static string V(string variable, string fallback) => $"var({variable}, {fallback})";
 
     public async Task<string> GetContent()
@@ -39,12 +40,12 @@ bui-component[{{picker}}] {
     display: flex;
     flex-direction: column;
     gap: calc(0.5rem * var(--bui-density-multiplier));
-    padding: calc(0.75rem * {{V(sizeMult, "1")}});
+    padding: calc({{V(FeatureDefinitions.Tokens.Picker.Padding)}} * {{V(sizeMult, "1")}});
     background: var(--palette-surface);
     border: 1px solid var(--palette-border);
-    border-radius: 8px;
+    border-radius: {{V(FeatureDefinitions.Tokens.Picker.Radius)}};
     user-select: none;
-    --_cell: calc(36px * {{V(sizeMult, "1")}});
+    --_cell: calc({{V(FeatureDefinitions.Tokens.Picker.CellSize)}} * {{V(sizeMult, "1")}});
     --_btn: calc(32px * {{V(sizeMult, "1")}});
 }
 

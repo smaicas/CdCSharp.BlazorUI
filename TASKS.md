@@ -699,6 +699,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-12` — `InputFamilyCssGenerator` y `PickerFamilyGenerator` usan literales en vez de tokens para timings, radios y tamaños base
 
+- **Estado**: ✅ Resuelto — `FeatureDefinitions.Tokens.{Input,Picker}` añaden 7 tokens nuevos: Input `Radius` (4px), `TransitionDuration`/`TransitionEasing` (split para poder overridearlos por separado), `FloatedScale` (0.75); Picker `Radius` (8px), `CellSize` (36px), `Padding` (0.75rem). `DesignTokensGenerator` emite las 7 vars en `:root` dentro de `_tokens.css` → consumidor puede sobreescribir cualquiera globalmente sin tocar CSS scoped. `InputFamilyCssGenerator` reescribe `--_input-radius`/`--_input-transition`/`--_input-scale` para resolver de los tokens globales; `PickerFamilyGenerator` idem con padding/radius/cell-size. Criterio 3 cumple por diseño: el `.razor.css` no se tocó, la cascada ahora va `--bui-* token → --_family-* privado → CSS consumer`. Literales restantes (32px button, 3.5rem input height, 14px slider, rgba slider shadow) quedan fuera de scope — eran no mencionados en la evidencia y tokenizarlos inflaría la superficie pública. 2546/2546 tests pasan.
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**:
