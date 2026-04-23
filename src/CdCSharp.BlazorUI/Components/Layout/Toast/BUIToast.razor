@@ -13,6 +13,7 @@
 
 @code {
     private System.Timers.Timer? _progressTimer;
+    private readonly CancellationTokenSource _disposeCts = new();
 
     [Parameter, EditorRequired]
     public ToastState State { get; set; } = default!;
@@ -63,7 +64,14 @@
         if (State.IsClosing)
         {
             _progressTimer?.Stop();
-            await Task.Delay((int)State.Options.Animation.Duration.TotalMilliseconds);
+            try
+            {
+                await Task.Delay((int)State.Options.Animation.Duration.TotalMilliseconds, _disposeCts.Token);
+            }
+            catch (TaskCanceledException) { return; }
+            catch (ObjectDisposedException) { return; }
+
+            if (_disposeCts.IsCancellationRequested) return;
             await OnCloseAnimationComplete.InvokeAsync(State.Id);
         }
     }
@@ -153,6 +161,8 @@
 
     public void Dispose()
     {
+        try { _disposeCts.Cancel(); } catch (ObjectDisposedException) { }
+        _disposeCts.Dispose();
         _progressTimer?.Stop();
         _progressTimer?.Dispose();
     }
