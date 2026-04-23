@@ -2838,6 +2838,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-08` — `BUIToast.OnParametersSetAsync` ejecuta `Task.Delay` sin `CancellationToken` y continúa sobre componente potencialmente disposed
 
+- **Estado**: ✅ Resuelto (commit `2959009`) — añadido `_disposeCts` al componente, cancelado + disposed en `Dispose()`. `Task.Delay` de la animación de cierre recibe `_disposeCts.Token`; el try/catch cubre `TaskCanceledException` y `ObjectDisposedException`. Guard post-await `if (_disposeCts.IsCancellationRequested) return;` antes de `OnCloseAnimationComplete.InvokeAsync`.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/BUIToast.razor:63-68`.
