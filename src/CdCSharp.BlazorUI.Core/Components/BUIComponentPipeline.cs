@@ -60,6 +60,10 @@ internal sealed class BUIComponentPipeline
         {
             // Runtime already disposed.
         }
+        catch (InvalidOperationException)
+        {
+            // No active JS runtime (prerender / server shutdown).
+        }
         catch (TaskCanceledException)
         {
             // Disposal raced with an in-flight call.

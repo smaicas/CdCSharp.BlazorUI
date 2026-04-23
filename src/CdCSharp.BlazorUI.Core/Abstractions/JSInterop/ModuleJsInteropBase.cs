@@ -44,6 +44,9 @@ public abstract class ModuleJsInteropBase : IAsyncDisposable
 
     /// <summary>
     /// Asynchronously disposes of the resources used by the module.
+    /// The following exceptions are swallowed intentionally — all four are raised on non-actionable
+    /// teardown paths (prerender without a circuit, circuit shutdown, runtime disposal, or cancellation
+    /// during the awaited module dispose). See CLAUDE.md §"Async / JS interop conventions".
     /// </summary>
     /// <returns>
     /// A <see cref="ValueTask" /> representing the asynchronous operation.
@@ -59,11 +62,19 @@ public abstract class ModuleJsInteropBase : IAsyncDisposable
         }
         catch (JSDisconnectedException)
         {
-            // (Blazor Server) Circuit disconnected, module already disposed by browser
+            // (Blazor Server) Circuit disconnected, module already disposed by browser.
         }
         catch (ObjectDisposedException)
         {
-            // Runtime already disposed
+            // Runtime already disposed.
+        }
+        catch (InvalidOperationException)
+        {
+            // No active JS runtime (prerender / server shutdown).
+        }
+        catch (TaskCanceledException)
+        {
+            // Disposal raced with an in-flight invoke.
         }
     }
 }
