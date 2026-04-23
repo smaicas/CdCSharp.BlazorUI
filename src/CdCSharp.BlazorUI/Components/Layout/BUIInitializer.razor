@@ -43,15 +43,19 @@
         StateHasChanged();
     }
 
-    private async void HandleThemeChanged(string theme)
+    private void HandleThemeChanged(string theme) => _ = HandleThemeChangedSafeAsync();
+
+    private async Task HandleThemeChangedSafeAsync()
     {
         try
         {
             await LoadPaletteAsync();
             await InvokeAsync(StateHasChanged);
         }
-        catch (ObjectDisposedException) { }
         catch (JSDisconnectedException) { }
+        catch (ObjectDisposedException) { }
+        catch (InvalidOperationException) { }
+        catch (TaskCanceledException) { }
     }
 
     private async Task LoadPaletteAsync()
