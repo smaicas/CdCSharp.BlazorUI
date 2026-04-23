@@ -10,11 +10,11 @@ function getSystemPreference(): string {
 export function initialize(defaultTheme?: string): void {
     // Priority order:
     // 1. localStorage (user's manual selection)
-    // 2. System preference
-    // 3. defaultTheme parameter (if provided)
+    // 2. defaultTheme parameter (if provided by the consumer)
+    // 3. System preference (prefers-color-scheme)
     // 4. DEFAULT_THEME constant ('dark')
     const savedTheme = localStorage.getItem(THEME_KEY);
-    const theme = savedTheme ?? getSystemPreference();
+    const theme = savedTheme ?? defaultTheme ?? getSystemPreference() ?? DEFAULT_THEME;
 
     document.documentElement.setAttribute('data-theme', theme);
 }
