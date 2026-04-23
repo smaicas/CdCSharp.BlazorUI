@@ -3,7 +3,11 @@
 public sealed class ModalReference
 {
     private readonly Action<ModalReference> _onClose;
-    private readonly TaskCompletionSource<object?> _resultSource = new();
+    // RunContinuationsAsynchronously: prevent awaiter continuations from running inline on the
+    // CloseAsync caller thread. Otherwise a costly awaiter of Result would block whoever closed
+    // the modal.
+    private readonly TaskCompletionSource<object?> _resultSource =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     internal ModalReference(string id, Action<ModalReference> onClose)
     {
