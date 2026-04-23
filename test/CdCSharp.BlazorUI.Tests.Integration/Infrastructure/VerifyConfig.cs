@@ -19,7 +19,7 @@ public static class VerifyConfig
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex PatternIdRegex =
-        new(@"data-pattern-id=""pattern_[a-f0-9]{32}""",
+        new(@"data-bui-pattern-id=""pattern_[a-f0-9]{32}""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static readonly Regex DropdownIdRegex =
@@ -60,7 +60,7 @@ public static class VerifyConfig
 
             text = PatternIdRegex.Replace(
                 text,
-                @"data-pattern-id=""<PATTERN_ID>""");
+                @"data-bui-pattern-id=""<PATTERN_ID>""");
 
             text = DropdownIdRegex.Replace(
                 text,

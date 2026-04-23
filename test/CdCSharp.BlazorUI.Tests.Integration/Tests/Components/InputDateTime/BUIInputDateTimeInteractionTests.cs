@@ -1051,7 +1051,7 @@ public class BUIInputDateTimeInteractionTests
         cut.Render();
 
         IElement patternBefore = cut.Find(".bui-pattern");
-        string keyBefore = patternBefore.GetAttribute("data-pattern-id");
+        string keyBefore = patternBefore.GetAttribute("data-bui-pattern-id");
 
         IElement clearButton = cut.Find("button[aria-label='Clear']");
 
@@ -1060,7 +1060,7 @@ public class BUIInputDateTimeInteractionTests
 
         // Assert
         IElement patternAfter = cut.Find(".bui-pattern");
-        string keyAfter = patternAfter.GetAttribute("data-pattern-id");
+        string keyAfter = patternAfter.GetAttribute("data-bui-pattern-id");
 
         // Pattern should have a different key after clear (forcing recreation)
         keyAfter.Should().NotBe(keyBefore);

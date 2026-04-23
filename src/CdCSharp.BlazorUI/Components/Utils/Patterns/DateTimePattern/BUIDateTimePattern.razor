@@ -14,7 +14,7 @@
 <div @ref="_containerBox"
      id="@Id"
      class="bui-pattern @ContainerClass"
-     data-pattern-id="@ComponentId"
+     data-bui-pattern-id="@ComponentId"
      data-has-value="@HasValue.ToString().ToLowerInvariant()"
      tabindex="@(Disabled ? "-1" : "0")"
      @onfocus="HandleContainerFocus"
@@ -28,8 +28,8 @@
             {
                 <span @key="@($"span_{ComponentId}_{span.Index}")"
                       class="bui-pattern__toggle"
-                      data-index="@span.Index"
-                      data-toggle="true"
+                      data-bui-index="@span.Index"
+                      data-bui-toggle="true"
                       tabindex="-1">@span.DisplayValue</span>
             }
             else if (span.IsEditable)
@@ -38,15 +38,15 @@
                       class="bui-pattern__editable"
                       contenteditable="@(Editable ? "true" : "false")"
                       spellcheck="false"
-                      data-index="@span.Index"
-                      data-maxlength="@span.MaxLength"
+                      data-bui-index="@span.Index"
+                      data-bui-maxlength="@span.MaxLength"
                       tabindex="-1">@span.DisplayValue</span>
             }
             else
             {
                 <span @key="@($"span_{ComponentId}_{span.Index}")"
                       class="bui-pattern__separator"
-                      data-index="@span.Index">@span.DisplayValue</span>
+                      data-bui-index="@span.Index">@span.DisplayValue</span>
             }
         }
     }
@@ -85,7 +85,7 @@
 
         bool stillInside = await JS.InvokeAsync<bool>(
             "eval",
-            $"document.activeElement?.closest('[data-pattern-id=\"{ComponentId}\"]') !== null");
+            $"document.activeElement?.closest('[data-bui-pattern-id=\"{ComponentId}\"]') !== null");
 
         if (_hasFocus && !stillInside)
         {

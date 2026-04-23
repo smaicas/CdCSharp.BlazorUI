@@ -42,7 +42,7 @@ async function handleInput(e: Event): Promise<void> {
 
     const index = getSpanIndex(target);
     const value = target.textContent || '';
-    const maxLength = parseInt(target.dataset.maxlength || '0');
+    const maxLength = parseInt(target.dataset.buiMaxlength || '0');
 
     try {
         await instance.dotnetRef.invokeMethodAsync('OnSpanInput', index, value);
@@ -136,7 +136,7 @@ async function handleKeyDown(e: KeyboardEvent): Promise<void> {
 
     if (e.key === 'Tab') {
         const spans = Array.from(
-            instance.container.querySelectorAll('[contenteditable="true"], [data-toggle="true"]')
+            instance.container.querySelectorAll('[contenteditable="true"], [data-bui-toggle="true"]')
         ) as HTMLElement[];
 
         const currentIdx = spans.findIndex(s => s === target);
@@ -215,7 +215,7 @@ export function updateSpanValue(componentId: string, index: number, value: strin
     if (!instance) return;
 
     const span = instance.container.querySelector(
-        `[data-index="${index}"]`
+        `[data-bui-index="${index}"]`
     ) as HTMLElement;
 
     if (span && span.textContent !== value) {
@@ -234,7 +234,7 @@ export function selectSpanContent(componentId: string, index: number): void {
     if (!instance) return;
 
     const span = instance.container.querySelector(
-        `[data-index="${index}"]`
+        `[data-bui-index="${index}"]`
     ) as HTMLElement;
 
     if (span) {
@@ -247,7 +247,7 @@ export function setCaretToEnd(componentId: string, index: number): void {
     if (!instance) return;
 
     const span = instance.container.querySelector(
-        `[data-index="${index}"]`
+        `[data-bui-index="${index}"]`
     ) as HTMLElement;
 
     if (span && document.activeElement === span) {
@@ -272,7 +272,7 @@ export function focusSpan(componentId: string, index: number): void {
     if (!instance) return;
 
     const span = instance.container.querySelector(
-        `[data-index="${index}"][contenteditable="true"]`
+        `[data-bui-index="${index}"][contenteditable="true"]`
     ) as HTMLElement;
 
     if (span) {
@@ -314,18 +314,18 @@ function isEditableSpan(element: HTMLElement): boolean {
 }
 
 function isToggleSpan(element: HTMLElement): boolean {
-    return element.tagName === 'SPAN' && element.dataset.toggle === 'true';
+    return element.tagName === 'SPAN' && element.dataset.buiToggle === 'true';
 }
 
 function getSpanIndex(span: HTMLElement): number {
-    return parseInt(span.dataset.index || '-1');
+    return parseInt(span.dataset.buiIndex || '-1');
 }
 
 function getInstanceFromElement(element: HTMLElement): PatternInstance | null {
-    const container = element.closest('[data-pattern-id]') as HTMLElement;
+    const container = element.closest('[data-bui-pattern-id]') as HTMLElement;
     if (!container) return null;
 
-    const componentId = container.dataset.patternId;
+    const componentId = container.dataset.buiPatternId;
     if (!componentId) return null;
 
     return patternInstances.get(componentId) || null;
