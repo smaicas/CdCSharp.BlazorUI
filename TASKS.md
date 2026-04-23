@@ -2859,6 +2859,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-09` — `BUIInputNumber._accelerationCts` re-asignado sin `Dispose()` del anterior cuando hay re-entrada en `Start*`
 
+- **Estado**: ✅ Resuelto (commit `72b0f17`) — los 4 call sites (`StartIncrement`, `StartDecrement`, `HandleIncrementKeyDown`, `HandleDecrementKeyDown`) delegan en `BeginAcceleration(action)`, que primero llama a `EndAcceleration()` (cancel + dispose del CTS previo) antes de crear el nuevo. Los 4 sitios `Stop*`/`*KeyUp` también consolidados en `EndAcceleration()`. Elimina la race donde un `Start` consecutivo dejaba la acelaración anterior viva en paralelo (double-step).
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Forms/Number/BUIInputNumber.razor:399,421,453,485`.
