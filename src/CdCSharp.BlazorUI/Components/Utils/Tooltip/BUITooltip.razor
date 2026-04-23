@@ -218,16 +218,18 @@
             return;
         }
 
-        _delayTokenSource = new CancellationTokenSource();
+        CancellationTokenSource cts = new();
+        _delayTokenSource = cts;
+        CancellationToken token = cts.Token;
 
         try
         {
-            await Task.Delay(delay, _delayTokenSource.Token);
+            await Task.Delay(delay, token);
+            if (IsDisposed) return;
             await Show();
         }
-        catch (TaskCanceledException)
-        {
-        }
+        catch (TaskCanceledException) { }
+        catch (ObjectDisposedException) { }
     }
 
     private async Task HideWithDelay()
@@ -244,20 +246,22 @@
             return;
         }
 
-        _delayTokenSource = new CancellationTokenSource();
+        CancellationTokenSource cts = new();
+        _delayTokenSource = cts;
+        CancellationToken token = cts.Token;
 
         try
         {
-            await Task.Delay(delay, _delayTokenSource.Token);
+            await Task.Delay(delay, token);
+            if (IsDisposed) return;
             if (!_isTooltipHovered)
             {
                 Hide();
                 await InvokeAsync(StateHasChanged);
             }
         }
-        catch (TaskCanceledException)
-        {
-        }
+        catch (TaskCanceledException) { }
+        catch (ObjectDisposedException) { }
     }
 
     private void StartAutoClose()
@@ -266,9 +270,10 @@
             return;
 
         CancelAutoClose();
-        _autoCloseTokenSource = new CancellationTokenSource();
+        CancellationTokenSource cts = new();
+        _autoCloseTokenSource = cts;
 
-        _ = AutoCloseAsync(_autoCloseTokenSource.Token);
+        _ = AutoCloseAsync(cts.Token);
     }
 
     private async Task AutoCloseAsync(CancellationToken token)
@@ -276,15 +281,15 @@
         try
         {
             await Task.Delay(AutoCloseAfterMs!.Value, token);
+            if (IsDisposed) return;
             if (!_isTooltipHovered)
             {
                 Hide();
                 await InvokeAsync(StateHasChanged);
             }
         }
-        catch (TaskCanceledException)
-        {
-        }
+        catch (TaskCanceledException) { }
+        catch (ObjectDisposedException) { }
     }
 
     private void CancelDelay()
