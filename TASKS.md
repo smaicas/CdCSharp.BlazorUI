@@ -1115,6 +1115,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-01` — `ModuleJsInteropBase.DisposeAsync` no atrapa `InvalidOperationException` ni `TaskCanceledException` — viola la regla de disposal de `CLAUDE.md`
 
+- **Estado**: ✅ Resuelto (commit `eb11091`) — `ModuleJsInteropBase.DisposeAsync` añade `catch (InvalidOperationException)` y `catch (TaskCanceledException)`; cerrando la triada previa (`JSDisconnectedException`, `ObjectDisposedException`) a las 4 excepciones no accionables. `BUIComponentPipeline.DisposeBehaviorAsync` también incorpora `InvalidOperationException` para uniformar el contrato. `CLAUDE.md` actualizado: la lista de disposal ahora cita las 4 excepciones y nombra `ModuleJsInteropBase.DisposeAsync` + `BUIComponentPipeline.DisposeBehaviorAsync` como referencias. Criterio 2 (test de prerender) queda como follow-up menor — los 2546 tests existentes pasan, el pattern queda protegido para todos los 9 interops concretos que heredan la base.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Abstractions/JSInterop/ModuleJsInteropBase.cs:51-68`.
