@@ -1,5 +1,6 @@
 @using CdCSharp.BlazorUI.Components.Layout.Services
 @using CdCSharp.BlazorUI.Abstractions
+@using Microsoft.JSInterop
 
 @namespace CdCSharp.BlazorUI.Components.Layout
 @attribute [GenerateComponentInfo]
@@ -12,8 +13,9 @@
 }
 
 @code {
-    private System.Timers.Timer? _progressTimer;
+    private const int ProgressTickMs = 100;
     private readonly CancellationTokenSource _disposeCts = new();
+    private volatile bool _progressPaused;
 
     [Parameter, EditorRequired]
     public ToastState State { get; set; } = default!;
@@ -51,10 +53,25 @@
 
         if (State.Options.AutoDismiss)
         {
-            _progressTimer = new System.Timers.Timer(50);
-            _progressTimer.Elapsed += (_, _) => InvokeAsync(StateHasChanged);
-            _progressTimer.Start();
+            _ = RunProgressLoopAsync(_disposeCts.Token);
         }
+    }
+
+    private async Task RunProgressLoopAsync(CancellationToken token)
+    {
+        using PeriodicTimer timer = new(TimeSpan.FromMilliseconds(ProgressTickMs));
+        try
+        {
+            while (await timer.WaitForNextTickAsync(token))
+            {
+                if (_progressPaused) continue;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (OperationCanceledException) { }
+        catch (JSDisconnectedException) { }
+        catch (ObjectDisposedException) { }
+        catch (InvalidOperationException) { }
     }
 
     protected override async Task OnParametersSetAsync()
@@ -63,7 +80,7 @@
 
         if (State.IsClosing)
         {
-            _progressTimer?.Stop();
+            _progressPaused = true;
             try
             {
                 await Task.Delay((int)State.Options.Animation.Duration.TotalMilliseconds, _disposeCts.Token);
@@ -136,7 +153,7 @@
         if (State.Options.AutoDismiss && !State.IsClosing)
         {
             ToastService?.Pause(State.Id);
-            _progressTimer?.Stop();
+            _progressPaused = true;
         }
     }
 
@@ -145,7 +162,7 @@
         if (State.Options.AutoDismiss && !State.IsClosing)
         {
             ToastService?.Resume(State.Id);
-            _progressTimer?.Start();
+            _progressPaused = false;
         }
     }
 
@@ -163,7 +180,5 @@
     {
         try { _disposeCts.Cancel(); } catch (ObjectDisposedException) { }
         _disposeCts.Dispose();
-        _progressTimer?.Stop();
-        _progressTimer?.Dispose();
     }
 }
