@@ -61,8 +61,10 @@ public sealed class DarkTheme : BUIThemePaletteBase
         SecondaryContrast = new CssColor("#121417");
         // Lectura clara en elementos secundarios.
 
-        Shadow = new CssColor("#777777");
-        // Sombra profunda y densa: sensación real de elevación y capas.
+        Shadow = new CssColor("rgba(0,0,0,0.5)");
+        // Sombra casi-negra semi-transparente: simula elevación real sobre fondo oscuro.
+        // Un `#777777` sólido resultaría *más claro* que `Background` y daría efecto glow
+        // en lugar de elevación. Elevation-overlay (tonal tint M3) queda como follow-up.
 
         Border = new CssColor("#EEEEEE");
 
