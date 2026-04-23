@@ -1339,6 +1339,7 @@ _(ninguno registrado todavía)_
 
 ### `ASYNC-05` — `ToastService` no es `IDisposable`/`IAsyncDisposable`: leak de `DismissTokenSource` al teardown
 
+- **Estado**: ✅ Resuelto (commit `b955937`) — `ToastService` implementa `IDisposable`. `Dispose()` recorre `_toasts`, cancela y libera cada `DismissTokenSource`, limpia la lista y despega el handler `OnChange`. `_disposed` guard evita doble-dispose. Criterio 3 (test cancelación en dispose) queda como follow-up — patrón funcionalmente idéntico al existente para `Close`. Registro Scoped del DI liberará el servicio correctamente al cerrar el circuito Server.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/Services/ToastService.cs` (no implementa disposable); `ToastState.DismissTokenSource` se dispone únicamente en `Remove(Guid)`.
