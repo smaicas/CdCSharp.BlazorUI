@@ -255,7 +255,10 @@ internal sealed class BUIComponentAttributesBuilder
             value = value[..tickIndex];
         }
 
-        if (value.StartsWith("BUI", StringComparison.InvariantCultureIgnoreCase))
+        // Ordinal (case-sensitive): only strip the canonical "BUI" prefix in uppercase. A type
+        // like `BuiltInPopup` is not a framework component and must not be mutilated to
+        // `lt-in-popup`; a consumer-defined `BuiCustom` is left alone to avoid namespace collision.
+        if (value.StartsWith("BUI", StringComparison.Ordinal))
         {
             value = value[3..];
         }
