@@ -830,6 +830,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-03` — Instrumentación `#if DEBUG` (perf tracking) presente solo en `BUIComponentBase`: inputs quedan fuera de telemetría
 
+- **Estado**: ✅ Resuelto (commit `6793941`) — perf tracking movido a `BUIComponentPipeline` con hooks `BeginInit`/`EndInit`, `BeginParametersSet`/`EndParametersSet`, `BeginRenderTree`/`EndRenderTree`. Los métodos `Begin*` llevan `[Conditional("DEBUG")]` y los `End*` también; en Release las llamadas se eliden y los campos `Stopwatch` viven tras `#if DEBUG`, de modo que el coste en producción es 0. Ambos base classes (`BUIComponentBase` y `BUIInputComponentBase<TValue>`) delegan al pipeline. Los 14+ componentes de formulario pasan a reportar `RecordInit`/`RecordParametersSet`/`RecordRenderTreeBuild` al `IBUIPerformanceService` bajo DEBUG. Criterio 2 (test que verifique el mock de `IBUIPerformanceService` en ambos bases) queda como follow-up — cierra en conjunto con `COMP-LINT-01`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentBase.cs:15-23,55-127` vs `BUIInputComponentBase.cs` (sin equivalente).
