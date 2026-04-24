@@ -75,6 +75,7 @@ internal sealed class BUIComponentAttributesBuilder
     private static string BoolToAttr(bool value) => value ? "true" : "false";
 
     private string? _originalUserStyles;
+    private string? _lastStyleString;
     private readonly Dictionary<string, string> _cssVariables = [];
     private readonly StringBuilder _styleBuilder = new();
     public Dictionary<string, object> ComputedAttributes { get; } = [];
@@ -299,9 +300,26 @@ internal sealed class BUIComponentAttributesBuilder
         }
 
         if (_styleBuilder.Length > 0)
-            ComputedAttributes["style"] = _styleBuilder.ToString();
+        {
+            if (!StyleBuilderMatchesCached())
+                _lastStyleString = _styleBuilder.ToString();
+            ComputedAttributes["style"] = _lastStyleString!;
+        }
         else
+        {
+            _lastStyleString = null;
             ComputedAttributes.Remove("style");
+        }
     }
 
+    private bool StyleBuilderMatchesCached()
+    {
+        if (_lastStyleString is null || _lastStyleString.Length != _styleBuilder.Length)
+            return false;
+        for (int i = 0; i < _styleBuilder.Length; i++)
+        {
+            if (_styleBuilder[i] != _lastStyleString[i]) return false;
+        }
+        return true;
+    }
 }
