@@ -46,8 +46,8 @@ public class BuildTemplates
   "name": "cdcsharp-blazorui",
   "version": "1.0.0",
   "description": "BlazorUI Component Library",
+  "private": true,
   "type": "module",
-  "public static": true,
   "scripts": {
     "build": "echo 'Use MSBuild to build BlazorUI'"
   },
