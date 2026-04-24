@@ -3412,6 +3412,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-06` — `dotnet nuget push --no-symbols` bloquea distribución de `.snupkg`: consumers no pueden debuggear hacia dentro del paquete
 
+- **Estado**: ✅ Resuelto (colateralmente por `ARCH-08`, commit `6f2dba4`) — `--no-symbols` ya fue eliminado del `dotnet nuget push` en la resolución de ARCH-08 (`ci(release): drop --no-symbols from nuget push to publish snupkg symbols`). `Directory.Build.props` declara `IncludeSymbols=true` + `SymbolPackageFormat=snupkg`, con lo que `dotnet pack` produce el `.snupkg` junto al `.nupkg` y NuGet los empareja al push. Verificado empíricamente en el pack de PKG-06: `CdCSharp.BlazorUI.1.0.0.snupkg` contiene `lib/net10.0/CdCSharp.BlazorUI.pdb`. Criterio 3 (step-into VS/Rider) queda como validación operacional del release.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml:230-234`.
