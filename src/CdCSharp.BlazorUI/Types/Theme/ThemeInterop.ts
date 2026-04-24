@@ -1,6 +1,18 @@
 ﻿const THEME_KEY = 'blazorui-theme';
 const DEFAULT_THEME = 'dark';
 
+// Theme IDs land in `document.documentElement[data-theme="..."]`, which becomes a
+// selector target in CSS. An attacker with write access to localStorage (XSS in
+// the consumer app, extension, same-origin script) could inject a value that
+// doubles as a CSS attribute selector (`x"] { ... } [data-secret="y`) — even if
+// the immediate impact is limited to CSS, storage-sourced strings must never
+// reach the DOM unvalidated.
+const THEME_ID_PATTERN = /^[a-zA-Z0-9_-]{1,32}$/;
+
+function isSafeThemeId(value: string | null | undefined): value is string {
+    return typeof value === 'string' && THEME_ID_PATTERN.test(value);
+}
+
 function getSystemPreference(): string {
     return window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
@@ -9,12 +21,14 @@ function getSystemPreference(): string {
 
 export function initialize(defaultTheme?: string): void {
     // Priority order:
-    // 1. localStorage (user's manual selection)
+    // 1. localStorage (user's manual selection) — only if it passes sanitation
     // 2. defaultTheme parameter (if provided by the consumer)
     // 3. System preference (prefers-color-scheme)
     // 4. DEFAULT_THEME constant ('dark')
     const savedTheme = localStorage.getItem(THEME_KEY);
-    const theme = savedTheme ?? defaultTheme ?? getSystemPreference() ?? DEFAULT_THEME;
+    const safeSaved = isSafeThemeId(savedTheme) ? savedTheme : null;
+    const safeDefault = isSafeThemeId(defaultTheme) ? defaultTheme : null;
+    const theme = safeSaved ?? safeDefault ?? getSystemPreference() ?? DEFAULT_THEME;
 
     document.documentElement.setAttribute('data-theme', theme);
 }
@@ -24,6 +38,7 @@ export function getTheme(): string {
 }
 
 export function setTheme(theme: string): void {
+    if (!isSafeThemeId(theme)) return;
     localStorage.setItem(THEME_KEY, theme);
     document.documentElement.setAttribute('data-theme', theme);
 }

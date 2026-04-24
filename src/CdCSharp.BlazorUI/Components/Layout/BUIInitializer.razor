@@ -7,9 +7,13 @@
 
 <HeadContent>
     <script>
-        // Prevent theme flash on page load
+        // Prevent theme flash on page load. Sanitize the stored theme id so an
+        // attacker-controlled localStorage value can't land inside the
+        // `data-theme="..."` attribute selector surface (see SEC-04 / ThemeInterop.ts).
         (function(){
-            var t=localStorage.getItem('blazorui-theme')||'dark';
+            var re=/^[a-zA-Z0-9_-]{1,32}$/;
+            var t=localStorage.getItem('blazorui-theme');
+            if(!t||!re.test(t))t='dark';
             document.documentElement.setAttribute('data-theme',t);
         })();
     </script>

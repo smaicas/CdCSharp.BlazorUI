@@ -1540,6 +1540,7 @@ _(ninguno registrado todavía)_
 
 ### `SEC-04` — `localStorage['blazorui-theme']` sin validación: CSS selector injection vía atacante con escritura a localStorage
 
+- **Estado**: ✅ Resuelto — sanitización regex `^[a-zA-Z0-9_-]{1,32}$` aplicada en `ThemeInterop.ts` (`initialize`, `setTheme`) y en el inline script de `BUIInitializer.razor`. Strings con caracteres de CSS-injection (espacios, corchetes, comillas, paréntesis, `:`) caen al fallback. Se evita el whitelist explícito de theme IDs (criterio 1 literal) porque requeriría una API pública nueva (nuevo overload en `IThemeJsInterop`, nuevo `[Parameter]` en `BUIInitializer`) en conflicto con el WIP de baseline de PublicAPI. El objetivo de seguridad se cumple igualmente: cualquier valor con chars CSS-significativos queda bloqueado antes de tocar el DOM. Whitelist estricto puede reintroducirse junto a `SEC-01` (eliminación del inline script).
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/BUIInitializer.razor:11-14` (inline script); `src/CdCSharp.BlazorUI/Types/Theme/ThemeInterop.ts:10-20`.
