@@ -7,9 +7,15 @@ public interface IVariant
 
 public abstract class Variant : IVariant
 {
-    protected Variant(string name) => Name = name ?? throw new ArgumentNullException(nameof(name));
+    protected Variant(string name)
+    {
+        Name = name ?? throw new ArgumentNullException(nameof(name));
+        NameLower = name.ToLowerInvariant();
+    }
 
     public string Name { get; }
+
+    internal string NameLower { get; }
 
     public override bool Equals(object? obj) =>
         obj is Variant other &&

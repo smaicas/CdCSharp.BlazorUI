@@ -3024,6 +3024,7 @@ _(ninguno registrado todavía)_
 
 ### `PERF-06` — `Variant.Name.ToLowerInvariant()` por render en `BuildStyles`: lowercasear strings de variantes que son conocidos en build-time
 
+- **Estado**: ✅ Resuelto — `Variant` base cachea `internal string NameLower { get; }` en el constructor (una vez por instancia, que son singletons `static readonly`). `BUIComponentAttributesBuilder` consume `NameLower`. `internal` evita ampliar superficie pública. Contrato de `Name` case-preserving intacto.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:108`; `src/CdCSharp.BlazorUI.Core/Components/Variants/` (`IVariantRegistry` y variant structs).

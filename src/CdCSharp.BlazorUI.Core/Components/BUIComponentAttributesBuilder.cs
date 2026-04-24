@@ -120,7 +120,7 @@ internal sealed class BUIComponentAttributesBuilder
         if ((flags & ComponentFeatures.Variant) != 0)
         {
             IVariantComponent variantComponent = (IVariantComponent)component;
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Variant] = variantComponent.CurrentVariant.Name.ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Variant] = variantComponent.CurrentVariant.NameLower;
         }
 
         if ((flags & ComponentFeatures.InputFamily) != 0)
