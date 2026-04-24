@@ -17,8 +17,6 @@
 mono_crash.*
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
 x64/
@@ -372,11 +370,10 @@ obj/
 .theon/
 
 # Build outputs
-*.min.js
-*.min.js.map
-wwwroot/css/main.css
-wwwroot/js/**/*.js
-wwwroot/js/**/*.js.map
+# D-05: wwwroot/{css,js} is regenerated on every build from CssBundle/ + Vite.
+# BLD-PIPE-14 decision B: fully gitignore both; CI materializes them before `dotnet pack`.
+/src/CdCSharp.BlazorUI/wwwroot/css/
+/src/CdCSharp.BlazorUI/wwwroot/js/
 /src/CdCSharp.BlazorUI/package.json
 /src/CdCSharp.BlazorUI/package-lock.json
 /src/CdCSharp.BlazorUI/.npmrc
