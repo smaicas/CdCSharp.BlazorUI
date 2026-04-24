@@ -1525,7 +1525,7 @@ _(ninguno registrado todavía)_
 
 ### `SEC-03` — `BUITreeMenu` renderiza `href="@node.Navigation.Href"` sin validar scheme: `javascript:` URIs posibles
 
-- **Estado**: ✅ Resuelto — `NavigationInfo.HasNavigation` ahora delega en `IsSafeHref(Href)`: whitelist `http`/`https`/`mailto`/`tel` + relativos (`/`, `./`, `../`, `#`, `?`, sin scheme). `javascript:`, `vbscript:`, `data:`, `file:`, `ftp:` caen al fallback silencioso (el razor renderiza el branch `<button>` sin link). 21 tests en `NavigationInfoTests.cs`. Criterio 4 (audit): grep `href="@` en `src/**/*.razor` → sólo `BUITreeMenu.razor:255`, ningún otro componente emite href dinámico.
+- **Estado**: ✅ Resuelto (commit `6afdfa8`) — `NavigationInfo.HasNavigation` ahora delega en `IsSafeHref(Href)`: whitelist `http`/`https`/`mailto`/`tel` + relativos (`/`, `./`, `../`, `#`, `?`, sin scheme). `javascript:`, `vbscript:`, `data:`, `file:`, `ftp:` caen al fallback silencioso (el razor renderiza el branch `<button>` sin link). 21 tests en `NavigationInfoTests.cs`. Criterio 4 (audit): grep `href="@` en `src/**/*.razor` → sólo `BUITreeMenu.razor:255`, ningún otro componente emite href dinámico.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Generic/Tree/TreeMenu/BUITreeMenu.razor:256`.
