@@ -17,7 +17,22 @@ public class ColorClassGenerator : IIncrementalGenerator
     public const string AttributeShortName = "AutogenerateCssColors";
     public const string AttributeShortNameSuffix = "AutogenerateCssColorsAttribute";
 
+    internal static readonly DiagnosticDescriptor MustBePartialStaticRule = new(
+        id: "BUIGEN010",
+        title: "AutogenerateCssColorsAttribute requires a partial static class",
+        messageFormat: "Class '{0}' is decorated with [AutogenerateCssColors] but is not declared as 'public static partial'. Add the missing modifier(s).",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        description: "The ColorClassGenerator emits per-color nested classes as a partial extension of the target type; the target must therefore be declared 'static partial' so the generated file can merge with the user-authored source.");
+
     private readonly record struct NamedColor(string Name, byte R, byte G, byte B, byte A);
+
+    /// <summary>Stable, cache-friendly carrier for a <see cref="Location"/>.</summary>
+    internal readonly record struct LocationInfo(string FilePath, TextSpan TextSpan, LinePositionSpan LineSpan)
+    {
+        public Location ToLocation() => Location.Create(FilePath, TextSpan, LineSpan);
+    }
 
     private static readonly NamedColor[] _colors = typeof(Color)
         .GetProperties(BindingFlags.Public | BindingFlags.Static)
@@ -41,7 +56,13 @@ public class ColorClassGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(classDeclarations.Collect(), static (spc, source) => Execute(source, spc));
     }
 
-    private readonly record struct ClassToGenerate(string NamespaceName, string ClassName, int VariantLevels);
+    private readonly record struct ClassToGenerate(
+        string NamespaceName,
+        string ClassName,
+        int VariantLevels,
+        bool IsStatic,
+        bool IsPartial,
+        LocationInfo Location);
 
     private static ClassToGenerate? GetSemanticTarget(GeneratorSyntaxContext context)
     {
@@ -66,10 +87,23 @@ public class ColorClassGenerator : IIncrementalGenerator
                     variantLevels = levels;
                 }
 
+                bool isStatic = classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword);
+                bool isPartial = classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
+
+                SyntaxTree tree = classDeclaration.SyntaxTree;
+                TextSpan span = classDeclaration.Identifier.Span;
+                LocationInfo location = new(
+                    tree.FilePath,
+                    span,
+                    tree.GetLineSpan(span).Span);
+
                 return new ClassToGenerate(
                     classSymbol.ContainingNamespace.ToDisplayString(),
                     classSymbol.Name,
-                    variantLevels);
+                    variantLevels,
+                    isStatic,
+                    isPartial,
+                    location);
             }
         }
 
@@ -105,6 +139,15 @@ public class ColorClassGenerator : IIncrementalGenerator
 
         foreach (ClassToGenerate classToGenerate in classes.Distinct())
         {
+            if (!classToGenerate.IsStatic || !classToGenerate.IsPartial)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    MustBePartialStaticRule,
+                    classToGenerate.Location.ToLocation(),
+                    classToGenerate.ClassName));
+                continue;
+            }
+
             int variantLevels = classToGenerate.VariantLevels;
             string namespaceName = classToGenerate.NamespaceName;
             string className = classToGenerate.ClassName;

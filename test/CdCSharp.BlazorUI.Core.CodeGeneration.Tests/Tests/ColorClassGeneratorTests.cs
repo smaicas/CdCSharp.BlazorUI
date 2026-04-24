@@ -156,6 +156,68 @@ public class ColorClassGeneratorTests
 #pragma warning restore xUnit1051
 
     [Fact]
+    public void Should_Report_BUIGEN010_When_Target_Is_Not_Partial()
+    {
+        const string source = """
+            using CdCSharp.BlazorUI.Core;
+
+            namespace TestNs;
+
+            [AutogenerateCssColors]
+            public static class NonPartialColors { }
+            """;
+
+        string output = GeneratorTestHarness.Run(
+            new ColorClassGenerator(),
+            sources: [AttributeSource, source]);
+
+        output.Should().Contain("// Diagnostic: BUIGEN010");
+        output.Should().Contain("NonPartialColors");
+        output.Should().NotContain("// ==== NonPartialColors.g.cs ====");
+    }
+
+    [Fact]
+    public void Should_Report_BUIGEN010_When_Target_Is_Not_Static()
+    {
+        const string source = """
+            using CdCSharp.BlazorUI.Core;
+
+            namespace TestNs;
+
+            [AutogenerateCssColors]
+            public partial class NonStaticColors { }
+            """;
+
+        string output = GeneratorTestHarness.Run(
+            new ColorClassGenerator(),
+            sources: [AttributeSource, source]);
+
+        output.Should().Contain("// Diagnostic: BUIGEN010");
+        output.Should().Contain("NonStaticColors");
+        output.Should().NotContain("// ==== NonStaticColors.g.cs ====");
+    }
+
+    [Fact]
+    public void Should_Report_BUIGEN010_When_Target_Misses_Both_Modifiers()
+    {
+        const string source = """
+            using CdCSharp.BlazorUI.Core;
+
+            namespace TestNs;
+
+            [AutogenerateCssColors]
+            public class BareColors { }
+            """;
+
+        string output = GeneratorTestHarness.Run(
+            new ColorClassGenerator(),
+            sources: [AttributeSource, source]);
+
+        output.Should().Contain("// Diagnostic: BUIGEN010");
+        output.Should().Contain("BareColors");
+    }
+
+    [Fact]
     public async Task Should_Generate_For_Multiple_Classes()
     {
         const string source = """
