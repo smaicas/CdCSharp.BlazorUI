@@ -91,7 +91,6 @@
 			<_ExpectedJsModule Include="Draggable\DraggableInterop.min.js" />
 			<_ExpectedJsModule Include="Dropdown\DropdownInterop.min.js" />
 			<_ExpectedJsModule Include="Modal\ModalInterop.min.js" />
-			<_ExpectedJsModule Include="NavigationLoading\NavigationLoadingInterop.min.js" />
 			<_ExpectedJsModule Include="Pattern\PatternInterop.min.js" />
 			<_ExpectedJsModule Include="Storage\LocalStorageInterop.min.js" />
 			<_ExpectedJsModule Include="TextArea\TextAreaInterop.min.js" />
@@ -118,10 +117,20 @@
 				 Targets="Build"
 				 Properties="Configuration=$(Configuration)" />
 	</Target>
-	<!-- Clean target -->
+	<!--
+		Clean target.
+
+		On Windows, RemoveDir over CssBundle/ and node_modules/ can race against FileSystemWatchers
+		(vite / editor indexers) and fail with MSB3231 "The process cannot access the file". The
+		degraded mode — leaving a stale directory — is harmless: BuildBlazorUIAssets always
+		regenerates CssBundle contents and `npm install` is idempotent over node_modules. Mark both
+		RemoveDir calls as WarnAndContinue so a transient lock produces a warning instead of breaking
+		`dotnet clean && dotnet build` loops. Linux CI never hits the race; behavior there is
+		unchanged because no locks exist to warn about.
+	-->
 	<Target Name="CleanBlazorUIAssets" BeforeTargets="Clean">
-		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" />
-		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" />
+		<RemoveDir Directories="$(BlazorUIProjectPath)\CssBundle" ContinueOnError="WarnAndContinue" />
+		<RemoveDir Directories="$(BlazorUIProjectPath)\node_modules" ContinueOnError="WarnAndContinue" />
 		<!-- Clean output -->
 		<ItemGroup>
 			<BlazorUICssFiles Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
@@ -129,9 +138,9 @@
 			<BlazorUIJsMapFiles Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
 		</ItemGroup>
 
-		<Delete Files="@(BlazorUICssFiles)" />
-		<Delete Files="@(BlazorUIJsFiles)" />
-		<Delete Files="@(BlazorUIJsMapFiles)" />
+		<Delete Files="@(BlazorUICssFiles)" TreatErrorsAsWarnings="true" />
+		<Delete Files="@(BlazorUIJsFiles)" TreatErrorsAsWarnings="true" />
+		<Delete Files="@(BlazorUIJsMapFiles)" TreatErrorsAsWarnings="true" />
 
 		<!-- Clean configuration files -->
 		<Delete Files="$(BlazorUIProjectPath)\package.json" TreatErrorsAsWarnings="true" />

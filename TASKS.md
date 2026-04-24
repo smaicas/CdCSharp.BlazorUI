@@ -2177,6 +2177,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-12` — `dotnet clean` falla con MSB3231 sobre `CssBundle/` por bloqueo de handle (Windows)
 
+- **Estado**: ✅ Resuelto — `CleanBlazorUIAssets` marca los dos `RemoveDir` (`CssBundle/`, `node_modules/`) con `ContinueOnError="WarnAndContinue"` y los tres `Delete` de outputs (`wwwroot/css`, `wwwroot/js`, `wwwroot/js/.map`) con `TreatErrorsAsWarnings="true"`. Degrada el MSB3231 transitorio a warning sin dejar el estado inconsistente: `BuildBlazorUIAssets` siempre regenera el bundle y `npm install` es idempotente sobre `node_modules/`. Criterio 2 verificado en Windows con `dotnet clean && dotnet build && dotnet clean && dotnet build` — 0 errores en el loop; los builds producen 0 error / build (cancela el `VerifyBlazorUIAssets` introducido en BLD-PIPE-16 sin regresión). De paso, el pase detectó `NavigationLoading/NavigationLoadingInterop.min.js` como entrada fantasma en la lista de verificación (no existe `.ts` source); eliminada. Linux CI ya era inmune — sin cambios de comportamiento allí. 2542/2542 tests pasan.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets:50` (target `CleanBlazorUIAssets`).
