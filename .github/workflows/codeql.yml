@@ -39,6 +39,14 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Restore workloads
+        if: matrix.language == 'csharp'
+        run: dotnet workload restore
+
+      - name: Restore NuGet packages
+        if: matrix.language == 'csharp'
+        run: dotnet restore
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:

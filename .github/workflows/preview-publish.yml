@@ -51,8 +51,12 @@ jobs:
           # Increment minor for preview
           NEXT_MINOR=$((MINOR + 1))
           
-          # Count commits since last tag
-          COMMITS=$(git rev-list --count $LAST_TAG..HEAD)
+          # Count commits since last tag (handle when tag doesn't exist)
+          if git rev-parse "$LAST_TAG" >/dev/null 2>&1; then
+            COMMITS=$(git rev-list --count "$LAST_TAG"..HEAD)
+          else
+            COMMITS=$(git rev-list --count HEAD)
+          fi
           
           # Build version
           VERSION="${MAJOR}.${NEXT_MINOR}.0-preview.${COMMITS}"
