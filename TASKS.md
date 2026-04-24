@@ -1118,6 +1118,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-03` — Sin test automatizado de WCAG 2.2 AA contrast para los pares palette/palette-contrast
 
+- **Estado**: ✅ Resuelto — `ThemeContrastTests.cs` parametriza por `(theme, pair, foreground, background)` con la fórmula WCAG 2.1 `(L1+0.05)/(L2+0.05)`. 16 pares texto normal ≥4.5:1 (8 por tema) + 4 pares UI graphics (Border/Background, Highlight/Background por tema) ≥3:1. **Todos pasan**: no hay sub-tasks `THEME-03-<pair>` que abrir; el baseline ya está limpio. Criterio 4 (gate CI) efectivo de facto — el test corre en `dotnet test`.
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: nuevo test bajo `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Library/ThemeContrastTests.cs`.
