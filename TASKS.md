@@ -1461,7 +1461,7 @@ _(ninguno registrado todavía)_
 
 ### `PERF-03` — `BuildInlineStyles` siempre asigna `ComputedAttributes["style"]` sin comparar con el valor anterior
 
-- **Estado**: ✅ Resuelto — `_lastStyleString` cacheado en el builder; `StyleBuilderMatchesCached()` compara char-a-char contra el `StringBuilder` antes de materializar. Si coinciden, reusa la misma string instance → 0 allocations en el path change-nothing-render. 2561 tests verdes.
+- **Estado**: ✅ Resuelto (commit `9463cdd`) — `_lastStyleString` cacheado en el builder; `StyleBuilderMatchesCached()` compara char-a-char contra el `StringBuilder` antes de materializar. Si coinciden, reusa la misma string instance → 0 allocations en el path change-nothing-render. 2561 tests verdes.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:275-298`.
