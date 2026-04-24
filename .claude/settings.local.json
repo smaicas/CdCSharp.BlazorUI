@@ -81,7 +81,10 @@
       "Bash(awk -F'[\\(:\\)]' '/Tests.Integration/ {print}')",
       "Bash(awk '/^### `/{header=$0; status=\"\"; severity=\"\"} /Estado\\\\*\\\\*:/{status=$0} /Severidad\\\\*\\\\*:/{severity=$0; if \\(severity ~ /Critical/ && status !~ /✅/\\) print header \"\\\\n  \" status \"\\\\n  \" severity \"\\\\n\"}' TASKS.md)",
       "Bash(awk *)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(sed -n '40,50p' src/CdCSharp.BlazorUI/CssBundle/_picker-family.css)",
+      "Bash(sed -n '55,75p' src/CdCSharp.BlazorUI/CssBundle/_input-family.css)",
+      "Bash(unzip -l /tmp/nupkg-verify/*.nupkg)"
     ]
   },
   "outputStyle": "default"

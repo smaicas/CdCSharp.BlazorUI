@@ -1,45 +1,80 @@
 # Configuración de GitHub Repository
 
-Este documento describe la configuración necesaria en GitHub para el flujo de trabajo CdCSharp.BlazorUI.
+Guía para configurar el repositorio CdCSharp.BlazorUI (o cualquier otro con la misma estructura).
 
-## Configuración Automática (Recomendado)
+## Opción 1: Script PowerShell (Recomendado)
 
-### 1. Crear Labels de Severity
+### 1. Crear GitHub Personal Access Token
 
-Ve a **Actions > Setup Repository > Run workflow** y selecciona:
-- ✅ Setup labels: `true`
-- ⬜ Setup branch protection: `false` (por ahora)
+1. Ve a https://github.com/settings/tokens
+2. Click **Generate new token (classic)**
+3. Selecciona scopes: `repo` (full control)
+4. Copia el token (se muestra solo una vez)
 
-Esto creará automáticamente los labels:
+### 2. Ejecutar el script
 
-| Label | Color | Descripción |
-|-------|-------|-------------|
-| `severity:blocker` | 🔴 #d9534f | Bloquea el release - debe resolverse antes de publicar |
-| `severity:critical` | 🔴 #e74c3c | Problema crítico - alta prioridad |
-| `severity:major` | 🟠 #f39c12 | Problema importante - afecta funcionalidad |
-| `severity:minor` | 🟡 #f1c40f | Problema menor - mejora deseable |
-| `severity:polish` | 🟢 #2ecc71 | Refinamiento - calidad de vida |
+```powershell
+# Desde la raíz del repositorio
+./scripts/github-setup.ps1 `
+    -Owner smaicas `
+    -Repo CdCSharp.BlazorUI `
+    -Token ghp_tu_token_aqui `
+    -SetupLabels `
+    -SetupBranchProtection
+```
 
-### 2. Configurar Branch Protection
+O solo labels (si no tienes permisos de admin):
 
-**Nota:** El workflow de branch protection requiere un token con permisos de administrador. Si falla, configura manualmente siguiendo las instrucciones abajo.
+```powershell
+./scripts/github-setup.ps1 `
+    -Owner smaicas `
+    -Repo CdCSharp.BlazorUI `
+    -Token ghp_tu_token_aqui `
+    -SetupLabels
+```
 
-Para ejecutar:
-- Ve a **Actions > Setup Repository > Run workflow**
-- ✅ Setup labels: `false` (ya están creados)
-- ✅ Setup branch protection: `true`
+### 3. Configurar secret NUGET_API_KEY
+
+```powershell
+# Usando GitHub CLI (opcional)
+gh secret set NUGET_API_KEY --body "tu-api-key-aqui"
+```
+
+O manualmente en: **Settings > Secrets and variables > Actions > New repository secret**
 
 ---
 
-## Configuración Manual (Alternativa)
+## Opción 2: Configuración Manual
 
-Si el workflow automático no funciona, configura manualmente:
+### Paso 1: Crear Labels
 
-### Branch Protection para `main`
+Ve a **Issues > Labels > New label** y crea:
+
+| Name | Color | Description |
+|------|-------|-------------|
+| `severity:blocker` | `#d9534f` | Bloquea el release - debe resolverse antes de publicar |
+| `severity:critical` | `#e74c3c` | Problema crítico - alta prioridad |
+| `severity:major` | `#f39c12` | Problema importante - afecta funcionalidad |
+| `severity:minor` | `#f1c40f` | Problema menor - mejora deseable |
+| `severity:polish` | `#2ecc71` | Refinamiento - calidad de vida |
+
+### Paso 2: Crear rama `develop` (si no existe)
+
+```bash
+# Desde tu repo local
+git checkout master
+git pull origin master
+git checkout -b develop
+git push -u origin develop
+```
+
+O el script lo hará automáticamente.
+
+### Paso 3: Branch Protection para `master`
 
 Ve a **Settings > Branches > Add rule**
 
-**Branch name pattern:** `main`
+**Branch name pattern:** `master`
 
 #### Protect matching branches
 
@@ -47,26 +82,19 @@ Ve a **Settings > Branches > Add rule**
   - ✅ Require approvals: `1`
   - ✅ Dismiss stale PR approvals when new commits are pushed
   - ⬜ Require review from Code Owners
-  - ⬜ Restrict who can dismiss pull request reviews
 
 - ✅ **Require status checks to pass before merging**
   - ✅ Require branches to be up to date before merging
   - Status checks that are required:
-    - `build-and-test`
-    - `coverage-check`
+    - `Release Gate / Build Check`
+    - `Release Gate / Check Blocking Issues`
+    - `Release Gate / Check Public API`
 
 - ⬜ Require conversation resolution before merging
-
 - ⬜ Require signed commits
-
-- ⬜ Require linear history ✅ **IMPORTANTE: Activar esto**
-
+- ✅ **Require linear history** ← IMPORTANTE
 - ⬜ Require deployments to succeed before merging
-
-- ⬜ Require merge queue
-
 - ⬜ Lock branch
-
 - ⬜ Do not allow bypassing the above settings
 
 #### Rules applied to everyone including administrators
@@ -74,9 +102,7 @@ Ve a **Settings > Branches > Add rule**
 - ⬜ Allow force pushes
 - ⬜ Allow deletions
 
----
-
-### Branch Protection para `develop`
+### Paso 4: Branch Protection para `develop`
 
 Ve a **Settings > Branches > Add rule**
 
@@ -87,26 +113,19 @@ Ve a **Settings > Branches > Add rule**
 - ✅ **Require a pull request before merging**
   - ✅ Require approvals: `1`
   - ✅ Dismiss stale PR approvals when new commits are pushed
-  - ⬜ Require review from Code Owners
-  - ⬜ Restrict who can dismiss pull request reviews
 
 - ✅ **Require status checks to pass before merging**
   - ✅ Require branches to be up to date before merging
   - Status checks that are required:
-    - `build-and-test`
+    - `Preview Gate / Build & Test`
+    - `Preview Gate / Code Coverage`
+    - `Preview Gate / Check Public API`
 
 - ⬜ Require conversation resolution before merging
-
 - ⬜ Require signed commits
-
-- ⬜ Require linear history ✅ **IMPORTANTE: Activar esto**
-
+- ✅ **Require linear history** ← IMPORTANTE
 - ⬜ Require deployments to succeed before merging
-
-- ⬜ Require merge queue
-
 - ⬜ Lock branch
-
 - ⬜ Do not allow bypassing the above settings
 
 #### Rules applied to everyone including administrators
@@ -114,11 +133,18 @@ Ve a **Settings > Branches > Add rule**
 - ⬜ Allow force pushes
 - ⬜ Allow deletions
 
----
+### Paso 5: Configurar Merge
 
-## Configuración de Secrets
+Ve a **Settings > General > Pull Requests**
 
-### NUGET_API_KEY
+#### Merge Button
+
+- ⬜ Allow merge commits ❌ **Desactivar**
+- ✅ **Allow squash merging** ✅ **Activar (default)**
+  - Default commit message: `Default message`
+- ⬜ Allow rebase merging ❌ **Desactivar**
+
+### Paso 6: Configurar Secret NUGET_API_KEY
 
 Ve a **Settings > Secrets and variables > Actions > New repository secret**
 
@@ -131,24 +157,7 @@ Para obtener la API key:
 3. Create new key
 4. Selecciona scope: Push
 5. Selecciona el package CdCSharp.BlazorUI
-6. Copia la key y guárdala en el secret
-
----
-
-## Configuración de Merge
-
-Ve a **Settings > General > Pull Requests**
-
-### Merge Button
-
-- ⬜ Allow merge commits ❌ **Desactivar**
-- ✅ **Allow squash merging** ✅ **Activar (default)**
-  - Default commit message: `Default message`
-- ⬜ Allow rebase merging ❌ **Desactivar**
-
-### Merge Queue
-
-- ⬜ Allow merge queue (opcional, para repos con mucho tráfico)
+6. Copia la key
 
 ---
 
@@ -156,23 +165,19 @@ Ve a **Settings > General > Pull Requests**
 
 Después de configurar, verifica:
 
-1. **Labels:** Settings > Labels - Deben aparecer los 5 labels de severity
-2. **Branch protection:** Settings > Branches - Deben aparecer 2 reglas (main, develop)
-3. **Secrets:** Settings > Secrets - Debe existir `NUGET_API_KEY`
-4. **Merge settings:** Settings > General - Solo squash merge habilitado
+1. **Labels:** https://github.com/OWNER/REPO/labels (deben aparecer 5 labels de severity)
+2. **Branch protection:** Settings > Branches (deben aparecer 2 reglas)
+3. **Secrets:** Settings > Secrets (debe existir `NUGET_API_KEY`)
+4. **Merge settings:** Solo squash merge habilitado
 
 ---
 
-## Flujo de Trabajo Esperado
+## Uso en otros repositorios
 
-Con esta configuración:
+El script `github-setup.ps1` es reutilizable. Solo cambia los parámetros:
 
-1. **Developer** crea feature branch desde develop
-2. **Developer** trabaja y hace commits frecuentes
-3. **Developer** ejecuta `./scripts/dev-tools.ps1 ready` (squash + rebase)
-4. **Developer** crea PR → GitHub verifica: 1 commit, rebase hecho, CI verde
-5. **Maintainer** revisa y hace squash merge
-6. **GitHub** publica automáticamente preview en cada push a develop
-7. **Maintainer** ejecuta `./scripts/admin-tools.ps1 release X.Y.Z` para estable
+```powershell
+./scripts/github-setup.ps1 -Owner mi-org -Repo mi-repo -Token ghp_xxx -SetupLabels -SetupBranchProtection
+```
 
-El historial será lineal sin "metro lines".
+**Nota:** Los nombres de los status checks (`Release Gate / Build Check`, etc.) deben coincidir con los workflows del repositorio. Si usas otros nombres, modifica el script o configura manualmente.

@@ -1,0 +1,204 @@
+# .github/workflows/release-gate.yml
+# Quality gates para releases - ejecutado en PRs a main
+# Verifica issues bloqueantes, PublicAPI, y requiere aprobaciones
+
+name: Release Gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  
+  workflow_dispatch:
+    inputs:
+      check_only:
+        description: 'Solo verificar, no bloquear'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: release-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Verificar que el build pasa (reutiliza el mismo setup)
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Restore dependencies
+        run: dotnet restore CdCSharp.BlazorUI.slnx
+
+      - name: Build (Release)
+        run: dotnet build CdCSharp.BlazorUI.slnx -c Release --no-restore -p:TreatWarningsAsErrors=true
+
+      - name: Test
+        run: dotnet test CdCSharp.BlazorUI.slnx -c Release --no-build --verbosity normal
+
+  # Verificar issues bloqueantes
+  severity-check:
+    name: Check Blocking Issues
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check for blocking issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const severityLabels = [
+              'severity:blocker',
+              'severity:critical', 
+              'severity:major',
+              'severity:minor',
+              'severity:polish'
+            ];
+            
+            // Buscar issues abiertos con labels de severity
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: severityLabels.join(',')
+            });
+            
+            const blockingIssues = issues.data.filter(issue => 
+              issue.labels.some(label => 
+                label.name === 'severity:blocker' || label.name === 'severity:critical'
+              )
+            );
+            
+            const majorIssues = issues.data.filter(issue => 
+              issue.labels.some(label => label.name === 'severity:major')
+            );
+            
+            console.log('=== Issues con severity encontrados ===');
+            console.log(`Total: ${issues.data.length}`);
+            console.log(`Blocker/Critical: ${blockingIssues.length}`);
+            console.log(`Major: ${majorIssues.length}`);
+            
+            if (blockingIssues.length > 0) {
+              console.log('\n❌ ISSUES BLOQUEANTES:');
+              blockingIssues.forEach(issue => {
+                console.log(`  - #${issue.number}: ${issue.title}`);
+              });
+              
+              if ('${{ inputs.check_only }}' !== 'true') {
+                core.setFailed(`Hay ${blockingIssues.length} issues bloqueantes que deben resolverse antes del release`);
+              }
+            } else {
+              console.log('\n✅ No hay issues bloqueantes');
+            }
+            
+            if (majorIssues.length > 0) {
+              console.log('\n⚠️  Issues major pendientes:');
+              majorIssues.forEach(issue => {
+                console.log(`  - #${issue.number}: ${issue.title}`);
+              });
+            }
+
+  # Verificar cambios en PublicAPI
+  public-api-check:
+    name: Check Public API
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore dependencies
+        run: dotnet restore CdCSharp.BlazorUI.slnx
+
+      - name: Check PublicAPI changes
+        run: |
+          echo "=== Verificando cambios en PublicAPI ==="
+          
+          # Verificar que no haya cambios en PublicAPI.Shipped.txt
+          SHIPPED_CHANGES=$(git diff --name-only origin/main...HEAD | grep -i "PublicAPI.Shipped.txt" || true)
+          
+          if [ -n "$SHIPPED_CHANGES" ]; then
+            echo "❌ ERROR: Se detectaron cambios en PublicAPI.Shipped.txt"
+            echo "Los cambios en Shipped.txt solo deben hacerse durante el release"
+            echo "Archivos modificados:"
+            echo "$SHIPPED_CHANGES"
+            exit 1
+          else
+            echo "✅ No hay cambios en PublicAPI.Shipped.txt"
+          fi
+
+      - name: Build para verificar API
+        run: dotnet build CdCSharp.BlazorUI.slnx -c Release --no-restore
+
+  # Resumen final
+  summary:
+    name: Release Gate Summary
+    runs-on: ubuntu-latest
+    needs: [build-check, severity-check, public-api-check]
+    if: always()
+    
+    steps:
+      - name: Generate summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const jobs = {
+              build: '${{ needs.build-check.result }}',
+              severity: '${{ needs.severity-check.result }}',
+              publicApi: '${{ needs.public-api-check.result }}'
+            };
+            
+            let allPassed = true;
+            let report = '## Release Gate Check\n\n';
+            
+            for (const [name, result] of Object.entries(jobs)) {
+              const icon = result === 'success' ? '✅' : result === 'skipped' ? '⏭️' : '❌';
+              report += `- ${icon} **${name}**: ${result}\n`;
+              if (result !== 'success' && result !== 'skipped') {
+                allPassed = false;
+              }
+            }
+            
+            report += '\n';
+            
+            if (allPassed) {
+              report += '### ✅ Release Gate PASSED\n\n';
+              report += 'El código cumple con todos los requisitos para release.';
+            } else {
+              report += '### ❌ Release Gate FAILED\n\n';
+              report += 'Hay problemas que deben resolverse antes del release.';
+            }
+            
+            core.summary.addRaw(report).write();
+            
+            if (!allPassed) {
+              core.setFailed('Release gate failed');
+            }
