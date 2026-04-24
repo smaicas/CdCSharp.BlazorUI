@@ -32,10 +32,23 @@ env:
   MAJOR_VERSION: 1
   MINOR_VERSION: 0
 
+# ARCH-16: restrict the default GITHUB_TOKEN to the minimum scopes this workflow needs.
+# contents: write is required by softprops/action-gh-release to create the GitHub release.
+# Everything else drops to read (checkout) or none.
+permissions:
+  contents: write
+
+# ARCH-13: collapse overlapping runs for the same ref. A fast second push to `develop` supersedes
+# the previous run so concurrent dotnet nuget push calls never race against each other.
+# Tag publishes are never cancelled — they produce immutable release artifacts.
+concurrency:
+  group: publish-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,6 +59,17 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          # ARCH-14: cache the NuGet global packages folder keyed on all *.csproj hashes.
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Setup Node
+        # BuildTools shells out to npm + vite. Pin Node LTS so CI doesn't drift with
+        # ubuntu-latest's default. Closes the CI-09 prerequisite for BLD-PIPE-14.
+        # No npm cache: package-lock.json is gitignored and regenerated on every build.
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
       # Determinar tipo de build y versión
       - name: Determine Version
