@@ -22,7 +22,7 @@ Write-Host "=== Verificando encoding de archivos .razor ===" -ForegroundColor Cy
 $files = Get-ChildItem -Path $Path -Recurse -Filter "*.razor" | 
     Where-Object { $_.FullName -notmatch "\\obj\\" -and $_.FullName -notmatch "\\bin\\" }
 $fixedCount = 0
-$utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+$utf8WithBom = [System.Text.UTF8Encoding]::new($true)
 
 foreach ($file in $files) {
     # Leer el archivo como bytes para detectar el encoding
@@ -59,8 +59,8 @@ foreach ($file in $files) {
         }
     }
     
-    # Si no es UTF-8 sin BOM, convertirlo
-    if ($encoding -ne "UTF-8 without BOM") {
+    # Si no es UTF-8 con BOM, convertirlo
+    if ($encoding -ne "UTF-8 with BOM") {
         Write-Host "Procesando: $($file.FullName)" -ForegroundColor Yellow
         Write-Host "  Encoding detectado: $encoding"
         
@@ -86,16 +86,16 @@ foreach ($file in $files) {
             }
         }
         
-        # Guardar como UTF-8 sin BOM
-        [System.IO.File]::WriteAllText($file.FullName, $content, $utf8NoBom)
-        Write-Host "  -> Convertido a UTF-8 sin BOM" -ForegroundColor Green
+        # Guardar como UTF-8 con BOM
+        [System.IO.File]::WriteAllText($file.FullName, $content, $utf8WithBom)
+        Write-Host "  -> Convertido a UTF-8 con BOM" -ForegroundColor Green
         $fixedCount++
     }
 }
 
 Write-Host "`n=== Resumen ===" -ForegroundColor Cyan
 if ($fixedCount -eq 0) {
-    Write-Host "Todos los archivos ya están en UTF-8 sin BOM" -ForegroundColor Green
+    Write-Host "Todos los archivos ya están en UTF-8 con BOM" -ForegroundColor Green
 }
 else {
     Write-Host "$fixedCount archivos corregidos" -ForegroundColor Green
