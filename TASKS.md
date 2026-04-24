@@ -2189,6 +2189,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-13` — Variable sin uso `addonSuffix` en `InputFamilyCssGenerator` (CS0219)
 
+- **Estado**: ✅ Resuelto (cerrado colateralmente por `BLD-PIPE-11`, commit `4270242`) — tras añadir las reglas simétricas para `addonSuffix` en `InputFamilyCssGenerator`, la variable pasa a consumirse en 4 selectores (`.{{addonSuffix}}`, `:has(.{{addonSuffix}})`, variantes outlined + filled). CS0219 deja de emitirse. No hay trabajo remanente específico de BLD-13.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/Families/InputFamilyCssGenerator.cs:38`.
