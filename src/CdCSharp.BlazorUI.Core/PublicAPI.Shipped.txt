@@ -1,1 +1,1 @@
-#nullable enable
+﻿# Public API - To be populated using Visual Studio quick fixes or manually

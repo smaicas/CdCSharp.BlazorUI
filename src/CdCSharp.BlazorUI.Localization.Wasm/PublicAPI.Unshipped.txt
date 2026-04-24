@@ -1,14 +1,1 @@
-﻿CdCSharp.BlazorUI.Localization.Wasm.Components._Imports
-CdCSharp.BlazorUI.Localization.Wasm.Components._Imports._Imports() -> void
-CdCSharp.BlazorUI.Localization.Wasm.Components._Imports.Execute() -> void
-CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence
-CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence.GetStoredCultureAsync() -> System.Threading.Tasks.Task<string?>!
-CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence.SetStoredCultureAsync(string! culture) -> System.Threading.Tasks.Task!
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.DefaultCulture.get -> string!
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.DefaultCulture.set -> void
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.LocalizationSettings() -> void
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.ResourcesPath.get -> string!
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.ResourcesPath.set -> void
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.SupportedCultures.get -> System.Collections.Generic.List<System.Globalization.CultureInfo!>!
-CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.SupportedCultures.set -> void
+﻿# Public API - To be populated using Visual Studio quick fixes or manually
