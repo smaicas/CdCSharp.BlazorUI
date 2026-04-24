@@ -1,3 +1,7 @@
+interface DragCallbacksRelay {
+    invokeMethodAsync(methodName: string, ...args: unknown[]): Promise<unknown>;
+}
+
 interface DragInstance {
     mouseMove: (e: MouseEvent) => void;
     mouseUp: (e: MouseEvent) => void;
@@ -7,7 +11,7 @@ const instances = new Map<string, DragInstance>();
 
 export function startDrag(
     element: HTMLElement,
-    dotNetRef: any,
+    dotNetRef: DragCallbacksRelay,
     componentId: string
 ): void {
     if (instances.has(componentId)) return;

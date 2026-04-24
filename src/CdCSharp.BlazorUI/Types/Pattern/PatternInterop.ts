@@ -1,5 +1,5 @@
 interface PatternCallbacksRelay {
-    invokeMethodAsync(methodName: string, ...args: any[]): Promise<any>;
+    invokeMethodAsync(methodName: string, ...args: unknown[]): Promise<unknown>;
 }
 
 interface PatternInstance {

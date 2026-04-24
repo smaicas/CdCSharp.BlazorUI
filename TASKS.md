@@ -1225,6 +1225,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-05` — `PatternInterop.ts` y `DraggableInterop.ts` usan `any` en callbacks/dotnetRef: `strict: true` mentiroso
 
+- **Estado**: ✅ Resuelto — `PatternInterop.PatternCallbacksRelay.invokeMethodAsync` firma `(methodName: string, ...args: unknown[]): Promise<unknown>`. `DraggableInterop`: nueva interfaz `DragCallbacksRelay` con misma firma, reemplaza `dotNetRef: any`. Alinea con patrón ya existente en `DropdownInterop`. Vite bundle verde, 2561 tests verdes.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Pattern/PatternInterop.ts:2`, `src/CdCSharp.BlazorUI/Types/Draggable/DraggableInterop.ts:10`.
