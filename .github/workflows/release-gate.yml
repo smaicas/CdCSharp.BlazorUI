@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install WASM workload
+        run: dotnet workload install wasm-tools
+
       - name: Restore dependencies
         run: dotnet restore CdCSharp.BlazorUI.slnx
 
