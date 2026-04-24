@@ -2519,6 +2519,7 @@ _(ninguno registrado todavía)_
 
 ### `COMP-INPUTDROPDOWN-02` — `BUIInputDropdown.OnParametersSet` no invoca `base.OnParametersSet()`: pipeline roto
 
+- **Estado**: ✅ Resuelto — `base.OnParametersSet();` añadido al principio del override. 110 tests de Dropdown verdes.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Forms/Dropdown/BUIInputDropdown.razor:191-194`.
