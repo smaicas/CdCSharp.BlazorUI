@@ -2269,7 +2269,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-15` — `CleanBlazorUIAssets` no borra `package-lock.json` consistentemente cuando existe; `package.json` template usa clave inválida `"public static"`
 
-- **Estado**: ✅ Resuelto (criterio 1 aplicado) — `BuildTemplates.GetPackageJsonTemplate` sustituye la clave inválida `"public static": true` por la npm key canónica `"private": true` (intención original: evitar publicación accidental a npm registry). El template sigue emitiendo `"type": "module"` arriba. `package.json` regenerado valida con `npm pkg get`. Criterio 2 (documentar política de `package-lock.json`) delegado a `CLAUDE-04` — el target de clean ya borra el lock correctamente; la mejora es de documentación solamente. 2546/2546 tests pasan.
+- **Estado**: ✅ Resuelto (commit `8ca0e46`, criterio 1 aplicado) — `BuildTemplates.GetPackageJsonTemplate` sustituye la clave inválida `"public static": true` por la npm key canónica `"private": true` (intención original: evitar publicación accidental a npm registry). El template sigue emitiendo `"type": "module"` arriba. `package.json` regenerado valida con `npm pkg get`. Criterio 2 (documentar política de `package-lock.json`) delegado a `CLAUDE-04` — el target de clean ya borra el lock correctamente; la mejora es de documentación solamente. 2546/2546 tests pasan.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**:
