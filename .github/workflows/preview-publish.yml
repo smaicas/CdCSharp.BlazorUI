@@ -41,7 +41,14 @@ jobs:
         id: calc
         run: |
           # Get last tag on master (format vX.Y.Z)
-          LAST_TAG=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]" origin/master 2>/dev/null || echo "v0.0.0")
+          LAST_TAG=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]" origin/master 2>/dev/null || echo "")
+          
+          if [ -z "$LAST_TAG" ]; then
+            echo "::warning::No release tag found on master. Using v0.0.0 as base."
+            echo "::warning::Create an initial tag (e.g., git tag v0.0.0) to establish versioning."
+            LAST_TAG="v0.0.0"
+          fi
+          
           echo "Last tag on master: $LAST_TAG"
           
           # Parse version
