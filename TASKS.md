@@ -3392,6 +3392,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-05` — Sin caché de NuGet ni de `node_modules` en el pipeline: cada run descarga desde cero
 
+- **Estado**: ✅ Resuelto (colateralmente por `ARCH-14`, commit `39b839a`) — `setup-dotnet@v4` recibe `cache: true` + `cache-dependency-path: '**/*.csproj'`; cubre criterio 1. Criterio 2 (`node_modules` cache) se descarta con justificación: `package-lock.json` es gitignored (BLD-PIPE-14 política B) y se regenera en cada build, un cache con dependency-path al lock siempre haría miss. Criterio 3 (medición antes/después) queda como follow-up operacional. Tarea duplicada con `ARCH-14` — el análisis las originó desde ángulos distintos (build pipeline vs. CI), el fix converge.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml:45-49` (`setup-dotnet`), `142-143` (`Restore dependencies`).
