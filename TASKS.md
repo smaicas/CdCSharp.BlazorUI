@@ -2205,7 +2205,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-13` — CI sin `concurrency:` group
 
-- **Estado**: ✅ Resuelto — `publish.yml` declara a nivel de workflow `concurrency: { group: publish-${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }} }`. Push rápido a `develop` cancela la ejecución anterior → desaparece la race de `dotnet nuget push` concurrente que podía producir `409 Conflict` / duplicados silenciosos. Tag pushes (`refs/tags/v*`) quedan exentos — producen release immutable y nunca se cancelan entre sí.
+- **Estado**: ✅ Resuelto (commit `39b839a`) — `publish.yml` declara a nivel de workflow `concurrency: { group: publish-${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }} }`. Push rápido a `develop` cancela la ejecución anterior → desaparece la race de `dotnet nuget push` concurrente que podía producir `409 Conflict` / duplicados silenciosos. Tag pushes (`refs/tags/v*`) quedan exentos — producen release immutable y nunca se cancelan entre sí.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml`.
@@ -2214,7 +2214,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-14` — CI no cachea `~/.nuget/packages` ni `node_modules`
 
-- **Estado**: ✅ Resuelto parcialmente — `actions/setup-dotnet@v4` ahora activa `cache: true` + `cache-dependency-path: '**/*.csproj'` → cachea `~/.nuget/packages` keyed a los hashes de todos los csproj del repo. Solución idiomática preferida a `actions/cache@v4` manual. El `node_modules` cache se omite deliberadamente: `package-lock.json` es gitignored (ver BLD-PIPE-14) y se regenera cada build, con lo que una cache con dependency-path al lockfile siempre miss-earía; un cache por hash del template podría quedarse stale. Trade-off aceptado: `npm install` en CI tarda ~15s, sin compensación cache fiable.
+- **Estado**: ✅ Resuelto parcialmente (commit `39b839a`) — `actions/setup-dotnet@v4` ahora activa `cache: true` + `cache-dependency-path: '**/*.csproj'` → cachea `~/.nuget/packages` keyed a los hashes de todos los csproj del repo. Solución idiomática preferida a `actions/cache@v4` manual. El `node_modules` cache se omite deliberadamente: `package-lock.json` es gitignored (ver BLD-PIPE-14) y se regenera cada build, con lo que una cache con dependency-path al lockfile siempre miss-earía; un cache por hash del template podría quedarse stale. Trade-off aceptado: `npm install` en CI tarda ~15s, sin compensación cache fiable.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml`.
@@ -2229,7 +2229,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-16` — CI sin bloque `permissions:` explícito
 
-- **Estado**: ✅ Resuelto — `publish.yml` añade `permissions: { contents: write }` a nivel de workflow. `contents: write` es el mínimo necesario para `softprops/action-gh-release@v2` que crea la release; todos los demás scopes (issues, PRs, metadata) quedan en `read`/`none` por el comportamiento por defecto de GitHub Actions cuando se declara un bloque `permissions`. Supply-chain posture: un fork malicioso/PR no puede escalar al crear PRs desde esta workflow.
+- **Estado**: ✅ Resuelto (commit `39b839a`) — `publish.yml` añade `permissions: { contents: write }` a nivel de workflow. `contents: write` es el mínimo necesario para `softprops/action-gh-release@v2` que crea la release; todos los demás scopes (issues, PRs, metadata) quedan en `read`/`none` por el comportamiento por defecto de GitHub Actions cuando se declara un bloque `permissions`. Supply-chain posture: un fork malicioso/PR no puede escalar al crear PRs desde esta workflow.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml`.
@@ -3468,7 +3468,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-09` — Sin `actions/setup-node@v4`: la versión de Node.js que ejecuta Vite/npm depende de la que traiga el runner por defecto
 
-- **Estado**: ✅ Resuelto — `publish.yml` declara `actions/setup-node@v4` con `node-version: '20'` tras el `setup-dotnet`, antes de los targets que invocan BuildTools. Node 20 LTS pinned; upgrades del runner `ubuntu-latest` dejan de poder romper Vite por cambio silencioso de Node. Criterio 2 (cache npm): se omite deliberadamente — `package-lock.json` es gitignored (ver BLD-PIPE-14) y se regenera en cada build; un cache con dependency-path al lock siempre haría miss. Trade-off documentado en ARCH-14.
+- **Estado**: ✅ Resuelto (commit `39b839a`) — `publish.yml` declara `actions/setup-node@v4` con `node-version: '20'` tras el `setup-dotnet`, antes de los targets que invocan BuildTools. Node 20 LTS pinned; upgrades del runner `ubuntu-latest` dejan de poder romper Vite por cambio silencioso de Node. Criterio 2 (cache npm): se omite deliberadamente — `package-lock.json` es gitignored (ver BLD-PIPE-14) y se regenera en cada build; un cache con dependency-path al lock siempre haría miss. Trade-off documentado en ARCH-14.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml` (step ausente antes de `Build Projects`).
