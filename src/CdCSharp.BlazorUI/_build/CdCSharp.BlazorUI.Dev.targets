@@ -52,6 +52,8 @@
 		<Error Text="BlazorUI BuildTools did not produce '$(BlazorUIProjectPath)\wwwroot\css\blazorui.css'. Vite bundle step failed silently."
 			   Condition="!Exists('$(BlazorUIProjectPath)\wwwroot\css\blazorui.css')" />
 
+		<CallTarget Targets="VerifyBlazorUIAssets" />
+
 		<!-- Include generated files only after all gates passed -->
 		<ItemGroup Condition="'$(_BuildToolsExit)' == '0'">
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
@@ -59,6 +61,51 @@
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
 		</ItemGroup>
 
+	</Target>
+
+	<!--
+		Verify that every expected artifact exists after BuildTools ran.
+		A generator that silently skips its file would otherwise slip through because
+		the consumer-facing Content globs in BuildBlazorUIAssets only include what's on disk.
+	-->
+	<Target Name="VerifyBlazorUIAssets">
+		<ItemGroup>
+			<_ExpectedCssBundleFile Include="_reset.css" />
+			<_ExpectedCssBundleFile Include="_typography.css" />
+			<_ExpectedCssBundleFile Include="_themes.css" />
+			<_ExpectedCssBundleFile Include="_initialize-themes.css" />
+			<_ExpectedCssBundleFile Include="_tokens.css" />
+			<_ExpectedCssBundleFile Include="_base.css" />
+			<_ExpectedCssBundleFile Include="_scrollbar.css" />
+			<_ExpectedCssBundleFile Include="_transition-classes.css" />
+			<_ExpectedCssBundleFile Include="_input-family.css" />
+			<_ExpectedCssBundleFile Include="_picker-family.css" />
+			<_ExpectedCssBundleFile Include="_data-collection-family.css" />
+			<_ExpectedCssBundleFile Include="main.css" />
+
+			<_ExpectedBundleFile Include="$(BlazorUIProjectPath)\wwwroot\css\blazorui.css" />
+
+			<_ExpectedJsModule Include="Behaviors\BehaviorInterop.min.js" />
+			<_ExpectedJsModule Include="Clipboard\ClipboardInterop.min.js" />
+			<_ExpectedJsModule Include="ColorPicker\ColorPickerInterop.min.js" />
+			<_ExpectedJsModule Include="Draggable\DraggableInterop.min.js" />
+			<_ExpectedJsModule Include="Dropdown\DropdownInterop.min.js" />
+			<_ExpectedJsModule Include="Modal\ModalInterop.min.js" />
+			<_ExpectedJsModule Include="NavigationLoading\NavigationLoadingInterop.min.js" />
+			<_ExpectedJsModule Include="Pattern\PatternInterop.min.js" />
+			<_ExpectedJsModule Include="Storage\LocalStorageInterop.min.js" />
+			<_ExpectedJsModule Include="TextArea\TextAreaInterop.min.js" />
+			<_ExpectedJsModule Include="Theme\ThemeInterop.min.js" />
+		</ItemGroup>
+
+		<Error Text="BlazorUI asset verification: missing CssBundle partial '$(BlazorUIProjectPath)\CssBundle\%(_ExpectedCssBundleFile.Identity)'."
+			   Condition="!Exists('$(BlazorUIProjectPath)\CssBundle\%(_ExpectedCssBundleFile.Identity)')" />
+		<Error Text="BlazorUI asset verification: missing bundled file '%(_ExpectedBundleFile.Identity)'."
+			   Condition="!Exists('%(_ExpectedBundleFile.Identity)')" />
+		<Error Text="BlazorUI asset verification: missing JS interop module '$(BlazorUIProjectPath)\wwwroot\js\Types\%(_ExpectedJsModule.Identity)'."
+			   Condition="!Exists('$(BlazorUIProjectPath)\wwwroot\js\Types\%(_ExpectedJsModule.Identity)')" />
+
+		<Message Text="BlazorUI asset verification passed." Importance="normal" />
 	</Target>
 
 	<!-- Ensure BuildTools is compiled -->

@@ -2284,6 +2284,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-16` — Pipeline no valida que `CssBundle/` y `wwwroot/{css,js}` estén al día tras la ejecución del tool
 
+- **Estado**: ✅ Resuelto (criterios 1-2) — `CdCSharp.BlazorUI.Dev.targets` añade el target `VerifyBlazorUIAssets` invocado tras `BuildBlazorUIAssets`. Enumera los 12 archivos `CssBundle/*.css` (`_reset`, `_typography`, `_themes`, `_initialize-themes`, `_tokens`, `_base`, `_scrollbar`, `_transition-classes`, `_input-family`, `_picker-family`, `_data-collection-family`, `main`), el bundle final `wwwroot/css/blazorui.css`, y los 11 módulos JS `.min.js` (Behaviors, Clipboard, ColorPicker, Draggable, Dropdown, Modal, NavigationLoading, Pattern, Storage, TextArea, Theme). Cada entrada dispara `<Error>` individual con el path concreto faltante. MSBuild aborta el build si cualquiera no existe, cerrando la puerta al empaquetado parcial. Criterio 3 (hash/md5 check) declinado — el escenario de "corrupción parcial silenciosa" que cubriría es extremadamente raro en un pipeline que ya ejecuta Vite como single process y falla con exit code; la señal coste/beneficio es desfavorable. 2546/2546 tests pasan y el log de build contiene "BlazorUI asset verification passed.".
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets`.
