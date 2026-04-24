@@ -1858,6 +1858,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-02` — `actions/create-release@v1` archivado (no mantenido desde 2021): riesgo funcional + supply chain
 
+- **Estado**: ✅ Resuelto (colateralmente por `ARCH-07`, commit `2341f61`) — `publish.yml` usa `softprops/action-gh-release@v2` (mantenida activamente, 9k+ stars, OIDC-capable). `actions/create-release@v1` (archivada 2021) ya no aparece en el workflow. Tarea duplicada con ARCH-07.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml:240-259`.
