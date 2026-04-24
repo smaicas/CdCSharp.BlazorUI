@@ -59,6 +59,8 @@ What BuildTools does:
 - `src/CdCSharp.BlazorUI.SyntaxHighlight` — standalone package used by the `CodeBlock` component.
 - `src/CdCSharp.BlazorUI.Localization.Server` / `.Wasm` — localization integrations for the two hosting models.
 - `docs/CdCSharp.BlazorUI.Docs.Wasm` — public documentation site (Blazor WASM).
+- `docs/CdCSharp.BlazorUI.Docs.Components` — Razor class library shared by the docs site: `DocDemo` / `DocSection` / `ComponentDemo` / `PropertyTable`. Not shipped as a NuGet package (`IsPackable=false`); references the main `CdCSharp.BlazorUI` project.
+- `docs/CdCSharp.BlazorUI.Docs.CodeGeneration` — Roslyn incremental generator (`DocDemoGenerator`) that scans `.razor` additional texts for `<DocDemo>` tags and emits per-demo helper types consumed by `Docs.Components`. Analyzer-project convention (`netstandard2.0`, `EnforceExtendedAnalyzerRules=true`); used build-time only by the docs site, not shipped.
 - `samples/` — Server and WASM sample/test harnesses.
 - `test/CdCSharp.BlazorUI.Tests.Integration` — bUnit + Verify snapshot tests, xUnit.
 - `test/CdCSharp.BlazorUI.Tests.Integration.Templates` — razor templates used as snapshot subjects.

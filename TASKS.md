@@ -2197,6 +2197,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-12` — Proyectos `docs/Docs.Components` y `docs/Docs.CodeGeneration` sin documentar en `CLAUDE.md`
 
+- **Estado**: ✅ Resuelto — `AGENTS.md §Project layout` añade dos bullets: `docs/CdCSharp.BlazorUI.Docs.Components` (Razor class library de primitivas shared — `DocDemo`/`DocSection`/`ComponentDemo`/`PropertyTable` — con `IsPackable=false`, referencia al proyecto principal) y `docs/CdCSharp.BlazorUI.Docs.CodeGeneration` (incremental generator `DocDemoGenerator` que scanea `<DocDemo>` en razor additional-texts y emite helpers para `Docs.Components`). CLAUDE.md (symlink al AGENTS.md canonical) resuelve transparentemente. Contribuye al índice tracked en `CLAUDE-05`.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `CLAUDE.md` §Project layout; `docs/CdCSharp.BlazorUI.Docs.Components/`, `docs/CdCSharp.BlazorUI.Docs.CodeGeneration/`.
