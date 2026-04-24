@@ -115,7 +115,7 @@ function Wait-ForWorkflowRun {
     Write-Info "Waiting for workflow: $WorkflowName on branch $Branch"
     $startTime = Get-Date
     
-    while ((Get-Date) - $startTime).TotalMinutes -lt $TimeoutMinutes {
+    while (((Get-Date) - $startTime).TotalMinutes -lt $TimeoutMinutes) {
         $runs = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/actions/runs?branch=$Branch&per_page=5"
         $run = $runs.workflow_runs | Where-Object { $_.name -eq $WorkflowName } | Select-Object -First 1
         
@@ -273,9 +273,10 @@ $squashCommitBody = @{
 $squashCommit = Invoke-GitHubApi -Method "POST" -Endpoint "/repos/$Owner/$Repo/git/commits" -Body $squashCommitBody
 Write-Success "Squash commit created: $($squashCommit.sha.Substring(0,7))"
 
-Invoke-GitHubApi -Method "PATCH" -Endpoint "/repos/$Owner/$Repo/git/refs/heads/$BranchName" -Body @{
-    sha = $squashCommit.sha
-}
+# Force update branch (squash changes history, not fast-forward)
+$updateUri = "$($Config.ApiBase)/repos/$Owner/$Repo/git/refs/heads/$BranchName"
+$updateBody = @{ sha = $squashCommit.sha; force = $true } | ConvertTo-Json
+Invoke-RestMethod -Uri $updateUri -Method "PATCH" -Headers $Config.Headers -Body $updateBody -ContentType "application/json"
 Write-Success "Branch now has 1 commit (squashed)"
 
 # Step 7: Create PR

@@ -138,7 +138,7 @@ $expectedLabels = @(
     "severity/polish"
 )
 
-$labels = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/labels?per_page=100"
+$labels = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/labels?per_page=100&page=1"
 
 foreach ($labelName in $expectedLabels) {
     $found = $labels | Where-Object { $_.name -eq $labelName }
