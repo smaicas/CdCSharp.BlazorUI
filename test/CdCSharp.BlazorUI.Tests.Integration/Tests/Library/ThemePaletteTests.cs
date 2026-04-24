@@ -81,17 +81,6 @@ public class ThemePaletteTests
 
     [Theory]
     [MemberData(nameof(AllThemes))]
-    public void GetPaletteMapping_Should_Emit_Palette_Vars_For_All_Colors(BUIThemePaletteBase theme)
-    {
-        Dictionary<string, string> mapping = theme.GetPaletteMapping();
-
-        mapping.Should().NotBeEmpty();
-        mapping.Keys.Should().OnlyContain(k => k.StartsWith("--palette-"));
-        mapping.Values.Should().OnlyContain(v => v.StartsWith($"var(--{theme.Id}-"));
-    }
-
-    [Theory]
-    [MemberData(nameof(AllThemes))]
     public void GetThemeVariables_Should_Emit_Resolved_Color_Values(BUIThemePaletteBase theme)
     {
         Dictionary<string, string> vars = theme.GetThemeVariables();
@@ -99,16 +88,6 @@ public class ThemePaletteTests
         vars.Should().NotBeEmpty();
         vars.Keys.Should().OnlyContain(k => k.StartsWith($"--{theme.Id}-"));
         vars.Values.Should().OnlyContain(v => !string.IsNullOrWhiteSpace(v));
-    }
-
-    [Theory]
-    [MemberData(nameof(AllThemes))]
-    public void Palette_Mapping_And_Theme_Variables_Should_Cover_Same_Properties(BUIThemePaletteBase theme)
-    {
-        Dictionary<string, string> mapping = theme.GetPaletteMapping();
-        Dictionary<string, string> vars = theme.GetThemeVariables();
-
-        mapping.Count.Should().Be(vars.Count);
     }
 
     // ─────────── Contrast pairs (WCAG) ───────────

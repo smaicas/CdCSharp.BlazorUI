@@ -39,26 +39,6 @@ public abstract class BUIThemePaletteBase
     public CssColor ActiveTint { get; set; } = new("#e9e9e9");
 
     /// <summary>
-    /// Gets palette mapping variables (e.g., --palette-background: var(--dark-background))
-    /// </summary>
-    public Dictionary<string, string> GetPaletteMapping()
-    {
-        Dictionary<string, string> variables = [];
-        PropertyInfo[] properties = GetType()
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(p => p.PropertyType == typeof(CssColor))
-            .ToArray();
-
-        foreach (PropertyInfo property in properties)
-        {
-            string cssName = ToCssVariableName(property.Name);
-            variables[$"--palette-{cssName}"] = $"var(--{Id}-{cssName})";
-        }
-
-        return variables;
-    }
-
-    /// <summary>
     /// Gets theme-specific CSS variables (e.g., --dark-background, --light-background)
     /// </summary>
     public Dictionary<string, string> GetThemeVariables()
