@@ -28,6 +28,38 @@ dotnet run --project samples/CdCSharp.BlazorUI.AppTest.Server
 dotnet run --project samples/CdCSharp.BlazorUI.AppTest.Wasm
 ```
 
+### Scripts de desarrollo (PowerShell)
+
+Para facilitar el flujo de trabajo, usa los scripts en `scripts/`.
+
+**Estrategia: Cada PR = 1 commit (squash) + rebase sobre develop**
+
+```powershell
+# Para colaboradores (desarrolladores)
+./scripts/dev-tools.ps1 sync                    # Actualiza develop
+./scripts/dev-tools.ps1 feature nombre-feature  # Crea feature branch
+./scripts/dev-tools.ps1 fix nombre-fix          # Crea fix branch
+./scripts/dev-tools.ps1 commit "mensaje"        # Commit con conventional commits
+./scripts/dev-tools.ps1 squash                  # Colapsa todos los commits en 1
+./scripts/dev-tools.ps1 ready                   # Prepara PR: squash + rebase + push
+./scripts/dev-tools.ps1 fix-conflict            # Después de resolver conflictos
+./scripts/dev-tools.ps1 push                    # Push seguro (force-with-lease)
+./scripts/dev-tools.ps1 pr "Título" "Desc"      # Abre página de PR en GitHub
+./scripts/dev-tools.ps1 cleanup                 # Limpia ramas mergeadas
+./scripts/dev-tools.ps1 status                  # Muestra estado del repo
+
+# Para administradores (maintainers)
+./scripts/admin-tools.ps1 status                # Estado de ramas
+./scripts/admin-tools.ps1 check-pr feature/xxx  # Verifica PR lista para merge
+./scripts/admin-tools.ps1 rc 1.0.0              # Crea release candidate
+./scripts/admin-tools.ps1 release 1.0.0         # Publica release estable
+./scripts/admin-tools.ps1 hotfix 1.0.1          # Crea hotfix
+./scripts/admin-tools.ps1 changelog             # Muestra changelog pendiente
+./scripts/admin-tools.ps1 cleanup               # Limpia ramas mergeadas
+```
+
+Ver `VERSIONING.md` para la estrategia completa de versionado.
+
 CI (`.github/workflows/publish.yml`) builds projects in a specific order: CodeGeneration → Core → Main → BuildTools. If you do manual incremental builds and see analyzer/generator weirdness, build in this same order.
 
 ## Build pipeline (non-standard — read before touching the build)
@@ -318,11 +350,71 @@ Rules:
 
 ## Release / versioning
 
-Versioning is driven by `.github/workflows/publish.yml`:
+La estrategia de versionado está documentada en **`VERSIONING.md`**. Resumen:
 
-- Push to `develop` → auto-publishes `1.0.{run}-preview.{run}` to NuGet.
-- Tag `vX.Y.Z` → publishes `X.Y.Z` and creates a GitHub release.
-- Push to `main` → builds only, does not publish.
-- Manual `workflow_dispatch` with `publish=true` required for ad-hoc publishes.
+### Flujo de ramas (historial lineal)
 
-`MAJOR_VERSION` / `MINOR_VERSION` are env vars in the workflow, not in `csproj` files.
+```
+main     ●────●────●────●────●────●────►  (releases taggeadas)
+develop  ●────┬────┬────┬────┬────┬────►  (integración continua)
+             │    │    │    │    │
+            PR   PR   PR   PR   PR      (cortas, squash merge)
+```
+
+- `main`: releases estables, protegida (PR + 1 approval + CI verde)
+- `develop`: integración continua, previews automáticas
+- Feature branches: máximo 1-3 días de vida
+
+### Versionado (SemVer)
+
+| Patrón | Significado | Ejemplo |
+|--------|-------------|---------|
+| `X.Y.Z-preview.N` | Desarrollo activo | `1.0.0-preview.42` |
+| `X.Y.Z-rc.N` | Release candidate | `1.0.0-rc.2` |
+| `X.Y.Z` | Release estable | `1.0.0` |
+
+### Scripts de automatización
+
+**Estrategia: Cada PR = 1 commit (squash) + rebase sobre develop**
+
+```powershell
+# Para colaboradores
+./scripts/dev-tools.ps1 sync                    # Actualiza develop
+./scripts/dev-tools.ps1 feature nombre-feature  # Crea feature branch
+./scripts/dev-tools.ps1 squash                  # Colapsa todos los commits en 1
+./scripts/dev-tools.ps1 ready                   # Prepara PR: squash + rebase + push
+./scripts/dev-tools.ps1 fix-conflict            # Después de resolver conflictos
+./scripts/dev-tools.ps1 pr "Título" "Desc"      # Abre página de PR
+
+# Para administradores
+./scripts/admin-tools.ps1 status                # Estado de ramas
+./scripts/admin-tools.ps1 check-pr feature/xxx  # Verifica PR lista para merge
+./scripts/admin-tools.ps1 rc 1.0.0              # Crea release candidate
+./scripts/admin-tools.ps1 release 1.0.0         # Publica release estable
+./scripts/admin-tools.ps1 hotfix 1.0.1          # Crea hotfix
+```
+
+### Workflows de CI
+
+- **`.github/workflows/preview.yml`**: Cada push a `develop` publica automáticamente una preview (`X.Y+1.0-preview.N`)
+- **`.github/workflows/release.yml`**: Cada tag `vX.Y.Z` publica la release estable
+
+### Convención de commits
+
+```
+<tipo>(<scope>): <descripción>
+
+Fixes #<issue-number>
+```
+
+Tipos: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `breaking`
+
+Ejemplo:
+```
+feat(css): add scrollbar tokens to FeatureDefinitions
+
+- Add ScrollbarCssGenerator with FeatureDefinitions integration
+- Scope scrollbar styles under [data-bui-scrollbars]
+
+Fixes #42
+```

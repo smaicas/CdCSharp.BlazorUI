@@ -1,8 +1,8 @@
-# .github/workflows/preview.yml
+# .github/workflows/preview-publish.yml
 # Publica versiones preview automáticamente en cada push a develop
 # Versión calculada: X.Y+1.0-preview.N (N = commits desde último tag en main)
 
-name: Publish Preview
+name: Preview Publish
 
 on:
   push:
@@ -12,13 +12,16 @@ on:
       - 'docs/**'
       - '.github/ISSUE_TEMPLATE/**'
 
-concurrency:
-  group: preview-${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   DOTNET_VERSION: '10.0.100'
   NUGET_SOURCE: 'https://api.nuget.org/v3/index.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: preview-publish
+  cancel-in-progress: false
 
 jobs:
   version:
@@ -44,7 +47,6 @@ jobs:
           # Parsear versión
           MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
           MINOR=$(echo $LAST_TAG | cut -d. -f2)
-          PATCH=$(echo $LAST_TAG | cut -d. -f3)
           
           # Incrementar minor para preview
           NEXT_MINOR=$((MINOR + 1))
@@ -60,9 +62,8 @@ jobs:
           echo "full_version=$FULL_VERSION" >> $GITHUB_OUTPUT
           
           echo "Calculated version: $VERSION"
-          echo "Full version: $FULL_VERSION"
 
-  build:
+  build-and-test:
     name: Build & Test
     runs-on: ubuntu-latest
     needs: version
@@ -74,14 +75,14 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+          node-version: '20'
 
       - name: Restore dependencies
         run: dotnet restore CdCSharp.BlazorUI.slnx
@@ -92,19 +93,10 @@ jobs:
       - name: Test
         run: dotnet test CdCSharp.BlazorUI.slnx -c Release --no-build --verbosity normal
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ needs.version.outputs.version }}
-          path: |
-            src/**/bin/Release/
-            !src/**/bin/**/*.symbols.nupkg
-          retention-days: 1
-
   pack:
     name: Pack NuGet Packages
     runs-on: ubuntu-latest
-    needs: [version, build]
+    needs: [version, build-and-test]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -128,17 +120,6 @@ jobs:
             -p:InformationalVersion=${{ needs.version.outputs.full_version }} \
             -p:ContinuousIntegrationBuild=true \
             -o ./artifacts
-
-      - name: Verify packages
-        run: |
-          echo "=== Generated Packages ==="
-          ls -la ./artifacts/*.nupkg
-          
-          echo "=== Package Contents ==="
-          for pkg in ./artifacts/*.nupkg; do
-            echo "--- $pkg ---"
-            unzip -l "$pkg" | head -20
-          done
 
       - name: Upload packages
         uses: actions/upload-artifact@v4
@@ -179,39 +160,14 @@ jobs:
           body: |
             ## Preview Release ${{ needs.version.outputs.version }}
             
-            Esta es una versión de desarrollo automática generada desde la rama `develop`.
+            Versión de desarrollo automática desde `develop`.
             
-            ### Instalación
             ```bash
             dotnet add package CdCSharp.BlazorUI --version ${{ needs.version.outputs.version }}
             ```
             
-            ### Notas
-            - Versión calculada automáticamente
-            - Commits desde último release: ${{ github.event.commits[0].message }}
-            - SHA: ${{ github.sha }}
-            
-            ⚠️ **Esta versión es inestable y no debe usarse en producción.**
+            ⚠️ **Inestable - no usar en producción**
           prerelease: true
           files: ./artifacts/*.nupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  notify:
-    name: Notify
-    runs-on: ubuntu-latest
-    needs: [version, publish]
-    if: always()
-    steps:
-      - name: Success notification
-        if: needs.publish.result == 'success'
-        run: |
-          echo "✅ Preview ${{ needs.version.outputs.version }} publicada exitosamente"
-          echo "📦 NuGet: https://www.nuget.org/packages/CdCSharp.BlazorUI/${{ needs.version.outputs.version }}"
-          echo "🏷️ Release: https://github.com/${{ github.repository }}/releases/tag/v${{ needs.version.outputs.version }}"
-
-      - name: Failure notification
-        if: needs.publish.result == 'failure'
-        run: |
-          echo "❌ Falló la publicación de la preview"
-          echo "Revisa los logs del workflow para más detalles"
