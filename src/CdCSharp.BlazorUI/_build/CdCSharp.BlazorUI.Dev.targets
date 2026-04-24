@@ -58,9 +58,25 @@
 		<ItemGroup Condition="'$(_BuildToolsExit)' == '0'">
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\css\*.css" />
 			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js" />
-			<Content Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
 		</ItemGroup>
 
+	</Target>
+
+	<!--
+		PKG-06: strip Vite source maps before the Razor SDK promotes wwwroot/** to
+		StaticWebAssets. Keeping them on disk in Debug is still useful for local `dotnet watch`,
+		but shipping them in Release nupkgs doubles the JS payload every consumer's `dotnet
+		publish` has to carry. Deleting from disk is the cleanest override of the auto-manifest.
+	-->
+	<Target Name="StripJsMapsForRelease"
+			AfterTargets="BuildBlazorUIAssets"
+			BeforeTargets="GetStaticWebAssetsBuildInputs;GenerateStaticWebAssetsManifest"
+			Condition="'$(Configuration)' == 'Release' AND Exists('$(BlazorUIProjectPath)\wwwroot\js')">
+		<ItemGroup>
+			<_BlazorUIJsMapFiles Include="$(BlazorUIProjectPath)\wwwroot\js\**\*.js.map" />
+		</ItemGroup>
+		<Delete Files="@(_BlazorUIJsMapFiles)" />
+		<Message Text="Stripped @(_BlazorUIJsMapFiles->Count()) source map(s) from the Release package." Importance="normal" />
 	</Target>
 
 	<!--

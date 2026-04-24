@@ -3268,6 +3268,7 @@ _(ninguno registrado todavía)_
 
 ### `PKG-06` — `*.js.map` source maps empaquetados en `wwwroot/js/**`: duplican tamaño del paquete
 
+- **Estado**: ✅ Resuelto (criterio 2 aplicado) — nuevo target `StripJsMapsForRelease` en `Dev.targets`, condicionado a `$(Configuration) == 'Release'`, que borra de disco `wwwroot/js/**/*.js.map` **antes** de que el Razor SDK ejecute `GetStaticWebAssetsBuildInputs`/`GenerateStaticWebAssetsManifest`. En Debug los maps se conservan para `dotnet watch` / step-into local. `dotnet pack -c Release` verificado: el `.nupkg` resultante contiene los 10 `.min.js` sin ningún `.js.map` (antes: 10 + 10 = 20 artefactos; ahora: 10). Criterio 1 (empaquetar maps en `.snupkg`) descartado por diseño — el `.snupkg` de NuGet es para debug symbols .NET (PDB), no un transportador general; la convención idiomática para TS source-maps es side-by-side con el bundle o regenerar localmente. Criterio 3 (doc CLAUDE.md) queda como follow-up con JS-11 (toggle Debug/Release global).
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/_build/CdCSharp.BlazorUI.targets:33`.
