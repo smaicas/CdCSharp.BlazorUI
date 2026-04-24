@@ -14,9 +14,6 @@ namespace CdCSharp.BlazorUI.Core.CodeGeneration;
 [Generator]
 public class ColorClassGenerator : IIncrementalGenerator
 {
-    public const string AttributeShortName = "AutogenerateCssColors";
-    public const string AttributeShortNameSuffix = "AutogenerateCssColorsAttribute";
-
     internal static readonly DiagnosticDescriptor MustBePartialStaticRule = new(
         id: "BUIGEN010",
         title: "AutogenerateCssColorsAttribute requires a partial static class",
@@ -44,12 +41,15 @@ public class ColorClassGenerator : IIncrementalGenerator
         })
         .ToArray();
 
+    public const string AttributeMetadataName = "CdCSharp.BlazorUI.Components.AutogenerateCssColorsAttribute";
+
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         IncrementalValuesProvider<ClassToGenerate> classDeclarations = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                predicate: static (s, _) => IsClassWithAutogenerateCssColorsAttribute(s),
-                transform: static (ctx, _) => GetSemanticTarget(ctx))
+            .ForAttributeWithMetadataName(
+                AttributeMetadataName,
+                predicate: static (node, _) => node is ClassDeclarationSyntax,
+                transform: static (ctx, ct) => GetSemanticTargetFromAttribute(ctx, ct))
             .Where(static m => m is not null)
             .Select(static (m, _) => m!.Value);
 
@@ -64,72 +64,46 @@ public class ColorClassGenerator : IIncrementalGenerator
         bool IsPartial,
         LocationInfo Location);
 
-    private static ClassToGenerate? GetSemanticTarget(GeneratorSyntaxContext context)
+    private static ClassToGenerate? GetSemanticTargetFromAttribute(
+        GeneratorAttributeSyntaxContext context,
+        CancellationToken cancellationToken)
     {
-        if (context.Node is not ClassDeclarationSyntax classDeclaration)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (context.TargetNode is not ClassDeclarationSyntax classDeclaration)
             return null;
 
-        SemanticModel model = context.SemanticModel;
-
-        if (model.GetDeclaredSymbol(classDeclaration) is not INamedTypeSymbol classSymbol)
+        if (context.TargetSymbol is not INamedTypeSymbol classSymbol)
             return null;
 
-        foreach (AttributeData attribute in classSymbol.GetAttributes())
+        // ForAttributeWithMetadataName guarantees Attributes contains at least one match.
+        AttributeData attribute = context.Attributes[0];
+
+        int variantLevels = 5;
+        if (attribute.ConstructorArguments.Length > 0 &&
+            attribute.ConstructorArguments[0].Value is int levels &&
+            levels > 0)
         {
-            if (attribute.AttributeClass?.Name == AttributeShortNameSuffix)
-            {
-                int variantLevels = 5;
-
-                if (attribute.ConstructorArguments.Length > 0 &&
-                    attribute.ConstructorArguments[0].Value is int levels &&
-                    levels > 0)
-                {
-                    variantLevels = levels;
-                }
-
-                bool isStatic = classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword);
-                bool isPartial = classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
-
-                SyntaxTree tree = classDeclaration.SyntaxTree;
-                TextSpan span = classDeclaration.Identifier.Span;
-                LocationInfo location = new(
-                    tree.FilePath,
-                    span,
-                    tree.GetLineSpan(span).Span);
-
-                return new ClassToGenerate(
-                    classSymbol.ContainingNamespace.ToDisplayString(),
-                    classSymbol.Name,
-                    variantLevels,
-                    isStatic,
-                    isPartial,
-                    location);
-            }
+            variantLevels = levels;
         }
 
-        return null;
-    }
+        bool isStatic = classDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword);
+        bool isPartial = classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
 
-    private static bool IsClassWithAutogenerateCssColorsAttribute(SyntaxNode syntaxNode)
-    {
-        if (syntaxNode is not ClassDeclarationSyntax classDecl)
-            return false;
+        SyntaxTree tree = classDeclaration.SyntaxTree;
+        TextSpan span = classDeclaration.Identifier.Span;
+        LocationInfo location = new(
+            tree.FilePath,
+            span,
+            tree.GetLineSpan(span).Span);
 
-        foreach (AttributeListSyntax attributeList in classDecl.AttributeLists)
-        {
-            foreach (AttributeSyntax attribute in attributeList.Attributes)
-            {
-                string name = attribute.Name.ToString();
-                int lastDot = name.LastIndexOf('.');
-                if (lastDot >= 0)
-                    name = name.Substring(lastDot + 1);
-
-                if (name == AttributeShortName || name == AttributeShortNameSuffix)
-                    return true;
-            }
-        }
-
-        return false;
+        return new ClassToGenerate(
+            classSymbol.ContainingNamespace.ToDisplayString(),
+            classSymbol.Name,
+            variantLevels,
+            isStatic,
+            isPartial,
+            location);
     }
 
     private static void Execute(ImmutableArray<ClassToGenerate> classes, SourceProductionContext context)
@@ -137,8 +111,12 @@ public class ColorClassGenerator : IIncrementalGenerator
         if (classes.IsDefaultOrEmpty)
             return;
 
+        CancellationToken ct = context.CancellationToken;
+
         foreach (ClassToGenerate classToGenerate in classes.Distinct())
         {
+            ct.ThrowIfCancellationRequested();
+
             if (!classToGenerate.IsStatic || !classToGenerate.IsPartial)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
@@ -156,6 +134,8 @@ public class ColorClassGenerator : IIncrementalGenerator
 
             foreach (NamedColor color in _colors)
             {
+                ct.ThrowIfCancellationRequested();
+
                 ClassDeclarationSyntax innerClassDeclaration = GenerateInnerClassDeclaration(color.Name);
 
                 string defaultCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A})";

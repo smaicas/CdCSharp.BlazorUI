@@ -11,7 +11,7 @@ public class ColorClassGeneratorTests
     private const string AttributeSource = """
         using System;
 
-        namespace CdCSharp.BlazorUI.Core;
+        namespace CdCSharp.BlazorUI.Components;
 
         [AttributeUsage(AttributeTargets.Class)]
         public sealed class AutogenerateCssColorsAttribute : Attribute
@@ -41,7 +41,7 @@ public class ColorClassGeneratorTests
     public async Task Should_Generate_With_Default_Variant_Levels()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs;
 
@@ -60,7 +60,7 @@ public class ColorClassGeneratorTests
     public async Task Should_Generate_With_Custom_Variant_Levels()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs;
 
@@ -106,7 +106,7 @@ public class ColorClassGeneratorTests
     public void Should_Reuse_Incremental_Cache_When_Source_Unchanged()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs;
 
@@ -159,7 +159,7 @@ public class ColorClassGeneratorTests
     public void Should_Report_BUIGEN010_When_Target_Is_Not_Partial()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs;
 
@@ -180,7 +180,7 @@ public class ColorClassGeneratorTests
     public void Should_Report_BUIGEN010_When_Target_Is_Not_Static()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs;
 
@@ -201,7 +201,7 @@ public class ColorClassGeneratorTests
     public void Should_Report_BUIGEN010_When_Target_Misses_Both_Modifiers()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs;
 
@@ -221,7 +221,7 @@ public class ColorClassGeneratorTests
     public async Task Should_Generate_For_Multiple_Classes()
     {
         const string source = """
-            using CdCSharp.BlazorUI.Core;
+            using CdCSharp.BlazorUI.Components;
 
             namespace TestNs.A
             {

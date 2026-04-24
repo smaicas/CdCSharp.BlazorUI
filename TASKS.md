@@ -2310,6 +2310,7 @@ _(ninguno registrado todavía)_
 
 ### `GEN-07` — `ColorClassGenerator` no usa `ForAttributeWithMetadataName` ni propaga `CancellationToken` durante la emisión
 
+- **Estado**: ✅ Resuelto — pipeline migrado a `context.SyntaxProvider.ForAttributeWithMetadataName("CdCSharp.BlazorUI.Components.AutogenerateCssColorsAttribute", predicate, transform)` (FQN real — el task asumía `CdCSharp.BlazorUI.Core.Css.*` pero la attribute vive en `Components`). `GetSemanticTargetFromAttribute` recibe `GeneratorAttributeSyntaxContext` + `CancellationToken`, lanza `ThrowIfCancellationRequested` al inicio y lee `ctx.Attributes[0]` directamente (el API garantiza que hay al menos una match). `Execute` captura `context.CancellationToken` y ejecuta `ThrowIfCancellationRequested` en el outer y inner loop. Constantes legacy `AttributeShortName`/`AttributeShortNameSuffix` y el helper `IsClassWithAutogenerateCssColorsAttribute` eliminados — el predicate sintáctico ahora es `node is ClassDeclarationSyntax` porque el attribute-match lo hace Roslyn. El test harness actualiza el namespace de `AutogenerateCssColorsAttribute` de `CdCSharp.BlazorUI.Core` a `CdCSharp.BlazorUI.Components` para alinear con el FQN esperado. 9/9 generator tests + 2546/2546 integration tests pasan.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/ColorClassGenerator.cs:33-44,86-148`.
