@@ -4342,6 +4342,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-10` — Ausencia de `.github/dependabot.yml`: actualizaciones de NuGet + actions + npm son manuales
 
+- **Estado**: ✅ Resuelto (criterios 1-2) — `.github/dependabot.yml` nuevo declara dos ecosystems con schedule semanal: **nuget** (limit 5 PRs, groups `microsoft-aspnet` ASP.NET/Extensions, `microsoft-codeanalysis`, `test-stack` xunit+bUnit+Verify+FluentAssertions+NSubstitute) y **github-actions** (limit 3, grupo `actions: *`). Labels `dependencies` + `nuget`/`ci` en cada ecosystem para filtrar en backlog. **npm** descartado por diseño: `package-lock.json` es gitignored (BLD-PIPE-14) y Dependabot lo requiere para detectar drift; habilitarlo sin lock trackeado produciría PRs espurios. Criterio 3 (auto-merge reviewers) queda como decisión operacional — el fichero se puede actualizar fácilmente una vez el mantenedor defina política.
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `.github/dependabot.yml` (nuevo).
@@ -4370,6 +4371,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-11` — Falta workflow CodeQL + secret-scanning no habilitado: cero gating estático de seguridad en PRs
 
+- **Estado**: ✅ Resuelto (criterio 1) — `.github/workflows/codeql.yml` nuevo ejecuta CodeQL con matrix `csharp` + `javascript-typescript` en push a `main`/`develop`, en PRs a esas ramas y schedule semanal (lunes 06:00 UTC). Configuración mínima segura: `queries: security-extended` (amplía sobre `security-and-quality` por defecto), `permissions` scoped al mínimo (`actions: read, contents: read, security-events: write`), `concurrency` cancel-in-progress para no-tags, y pin de SDK vía `global.json` (alineado con CI-07). `setup-dotnet` sólo en matrix csharp. Secret-scanning (criterio 2) es settings de repo no config-as-code — decisión del mantenedor al activar "Secret scanning" + "Push protection" en Settings → Security. `codeql.yml` cubre el gate estático que CI-11 pide; la activación server-side de secret scanning queda documentada como follow-up operacional en el propio CI-11.
 - **Severidad**: Polish
 - **Esfuerzo**: S
 - **Alcance**: `.github/workflows/codeql.yml` (nuevo); settings del repo (secret scanning, push protection).
