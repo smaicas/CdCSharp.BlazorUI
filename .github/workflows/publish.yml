@@ -204,7 +204,21 @@ jobs:
         run: |
           dotnet test \
             -c ${{ env.CONFIGURATION }} \
-            --verbosity normal
+            --verbosity normal \
+            --logger "trx;LogFileName=test-results.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./test-results
+
+      # CI-08: surface TRX + coverage so a failing PR run is inspectable without opening the
+      # Actions UI logs. `if: always()` keeps the upload on test failure too.
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ steps.version.outputs.version }}
+          path: ./test-results/**
+          retention-days: 14
+          if-no-files-found: warn
 
       # CI-04: pack always, push conditionally. This makes `dotnet pack` a PR gate so breaking
       # changes to PackageId/TargetFramework/IsPackable/deps/baseline validation are caught before
