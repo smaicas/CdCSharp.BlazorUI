@@ -1,0 +1,166 @@
+#!/usr/bin/env pwsh
+# Workflow para configurar el repositorio (labels, branch protection)
+# Ejecutar manualmente desde GitHub Actions cuando se necesite
+name: Setup Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      setup_labels:
+        description: 'Crear labels de severity'
+        type: boolean
+        default: true
+      setup_branch_protection:
+        description: 'Configurar branch protection (requiere token con permisos admin)'
+        type: boolean
+        default: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Labels
+        if: inputs.setup_labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          #!/bin/bash
+          
+          echo "=== Creando labels de severity ==="
+          
+          # Labels de severity para release-gate.yml
+          declare -a labels=(
+            "severity:blocker:d9534f:Bloquea el release - debe resolverse antes de publicar"
+            "severity:critical:e74c3c:Problema crítico - alta prioridad"
+            "severity:major:f39c12:Problema importante - afecta funcionalidad"
+            "severity:minor:f1c40f:Problema menor - mejora deseable"
+            "severity:polish:2ecc71:Refinamiento - calidad de vida"
+          )
+          
+          for label_info in "${labels[@]}"; do
+            IFS=':' read -r name color description <<< "$label_info"
+            
+            # Verificar si existe
+            existing=$(gh label list --json name --jq ".[] | select(.name==\"$name\")" 2>/dev/null || echo "")
+            
+            if [ -z "$existing" ]; then
+              echo "Creando label: $name"
+              gh label create "$name" --color "$color" --description "$description" || true
+            else
+              echo "Label ya existe: $name"
+              gh label edit "$name" --color "$color" --description "$description" || true
+            fi
+          done
+          
+          echo ""
+          echo "=== Labels configurados ==="
+          gh label list --search "severity:"
+          
+      - name: Setup Branch Protection
+        if: inputs.setup_branch_protection
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          #!/bin/bash
+          
+          echo "=== Configurando branch protection ==="
+          
+          REPO="${{ github.repository }}"
+          
+          # Para main
+          echo "Configurando protection para main..."
+          gh api repos/$REPO/branches/main/protection \
+            --method PUT \
+            --input - << EOF
+          {
+            "required_status_checks": {
+              "strict": true,
+              "contexts": [
+                "build-and-test",
+                "coverage-check"
+              ]
+            },
+            "enforce_admins": false,
+            "required_pull_request_reviews": {
+              "required_approving_review_count": 1,
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": false
+            },
+            "restrictions": null,
+            "allow_force_pushes": false,
+            "allow_deletions": false,
+            "required_linear_history": true,
+            "allow_merge_commit": false,
+            "allow_squash_merge": true,
+            "allow_rebase_merge": false
+          }
+EOF
+          
+          # Para develop
+          echo "Configurando protection para develop..."
+          gh api repos/$REPO/branches/develop/protection \
+            --method PUT \
+            --input - << EOF
+          {
+            "required_status_checks": {
+              "strict": true,
+              "contexts": [
+                "build-and-test"
+              ]
+            },
+            "enforce_admins": false,
+            "required_pull_request_reviews": {
+              "required_approving_review_count": 1,
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": false
+            },
+            "restrictions": null,
+            "allow_force_pushes": false,
+            "allow_deletions": false,
+            "required_linear_history": true,
+            "allow_merge_commit": false,
+            "allow_squash_merge": true,
+            "allow_rebase_merge": false
+          }
+EOF
+          
+          echo ""
+          echo "=== Branch protection configurado ==="
+          echo "- main: requiere PR + 1 approval + CI verde + squash merge only"
+          echo "- develop: requiere PR + 1 approval + CI verde + squash merge only"
+          echo "- Historial lineal obligatorio en ambas"
+          
+      - name: Summary
+        run: |
+          echo "## Configuración completada ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ inputs.setup_labels }}" == "true" ]; then
+            echo "### Labels creados:" >> $GITHUB_STEP_SUMMARY
+            echo "- \`severity:blocker\` - Bloquea el release" >> $GITHUB_STEP_SUMMARY
+            echo "- \`severity:critical\` - Problema crítico" >> $GITHUB_STEP_SUMMARY
+            echo "- \`severity:major\` - Problema importante" >> $GITHUB_STEP_SUMMARY
+            echo "- \`severity:minor\` - Problema menor" >> $GITHUB_STEP_SUMMARY
+            echo "- \`severity:polish\` - Refinamiento" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ inputs.setup_branch_protection }}" == "true" ]; then
+            echo "### Branch protection configurado:" >> $GITHUB_STEP_SUMMARY
+            echo "- \`main\`: PR + 1 approval + CI verde + squash merge" >> $GITHUB_STEP_SUMMARY
+            echo "- \`develop\`: PR + 1 approval + CI verde + squash merge" >> $GITHUB_STEP_SUMMARY
+            echo "- Historial lineal obligatorio" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "### Próximos pasos:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Verificar configuración en Settings > Branches" >> $GITHUB_STEP_SUMMARY
+          echo "2. Configurar \`NUGET_API_KEY\` en Settings > Secrets" >> $GITHUB_STEP_SUMMARY
