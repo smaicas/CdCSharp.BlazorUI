@@ -1884,6 +1884,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-03` — Falta `concurrency` group: push rápido a `develop` dispara ejecuciones concurrentes que compiten al publicar a NuGet
 
+- **Estado**: ✅ Resuelto (colateralmente por `ARCH-13`, commit `39b839a`) — el `concurrency:` block ya declarado en `publish.yml` cumple criterios 1-2: `group: publish-${{ github.workflow }}-${{ github.ref }}`, `cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}`. Tags nunca se cancelan (releases immutable); ramas `develop`/PR sí. Tarea duplicada con `ARCH-13`. Criterio 3 (split ci.yml/publish.yml) queda como follow-up sin valor inmediato.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml:1-9` (top-level).
@@ -1903,6 +1904,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-04` — `dotnet pack` sólo corre en rama `develop`/tags/dispatch manual: pull requests no validan que el packaging funcione
 
+- **Estado**: ✅ Resuelto (criterios 1-3 aplicados) — `publish.yml` quita el `if: should_publish == 'true'` del step **Pack NuGet Packages** → corre siempre, PRs incluidos. Añade step **Upload Package Artifacts** (`actions/upload-artifact@v4`, retención 14 días, key `nupkgs-${version}`, fallo si no hay artefactos) para que los revisores puedan descargar y test-install desde el PR. `Publish to NuGet` sigue siendo el único gateado por `should_publish`. Criterio 4 (`EnablePackageValidation` como gate efectivo del PR) queda automático: cuando `PKG-10` encienda validation, cualquier breaking change activa ahora desde el PR en lugar del push-post-merge.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `.github/workflows/publish.yml:183-184` (`if: steps.version.outputs.should_publish == 'true'`).

@@ -203,9 +203,10 @@ jobs:
             -c ${{ env.CONFIGURATION }} \
             --verbosity normal
 
-      # Pack solo si vamos a publicar
+      # CI-04: pack always, push conditionally. This makes `dotnet pack` a PR gate so breaking
+      # changes to PackageId/TargetFramework/IsPackable/deps/baseline validation are caught before
+      # merge instead of surfacing on the next push to develop.
       - name: Pack NuGet Packages
-        if: steps.version.outputs.should_publish == 'true'
         run: |
           echo "📦 Packing NuGet packages..."
           
@@ -262,6 +263,16 @@ jobs:
           
           echo "📋 Generated packages:"
           ls -la ./artifacts/
+
+      # CI-04: surface the packed .nupkg/.snupkg on every run so reviewers can download and
+      # test-install from a PR before merge.
+      - name: Upload Package Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkgs-${{ steps.version.outputs.version }}
+          path: ./artifacts/*.*nupkg
+          if-no-files-found: error
+          retention-days: 14
 
       # Publicar a NuGet solo si should_publish es true
       - name: Publish to NuGet
