@@ -493,6 +493,16 @@ function Show-Changelog {
     $lastTag = Get-LastTag
     Write-Info "Last tag: $lastTag"
     
+    # Show API changes first
+    Write-Host "`n### Public API Changes" -ForegroundColor $Colors.Emphasis
+    $apiScript = Join-Path $PSScriptRoot "api-report.ps1"
+    if (Test-Path $apiScript) {
+        & $apiScript -Tag $lastTag -OutputFormat console
+    }
+    else {
+        Write-Info "api-report.ps1 not found. Run from scripts directory."
+    }
+    
     $commits = git log "$lastTag..$($Config.Remote)/$($Config.DevelopBranch)" --pretty=format:"%h %s" --no-merges 2>$null
     
     if (-not $commits) {
@@ -500,7 +510,7 @@ function Show-Changelog {
         return
     }
     
-    Write-Host "`nCommits since $lastTag`:" -ForegroundColor $Colors.Emphasis
+    Write-Host "`n### Commits since $lastTag`:" -ForegroundColor $Colors.Emphasis
     
     # Group by type
     $types = @{
@@ -540,7 +550,7 @@ function Show-Changelog {
     
     foreach ($type in $types.Keys) {
         if ($types[$type].Count -gt 0) {
-            Write-Host "`n### $($labels[$type])" -ForegroundColor $Colors.Emphasis
+            Write-Host "`n$($labels[$type])" -ForegroundColor $Colors.Emphasis
             $types[$type] | ForEach-Object { Write-Host "  - $_" }
         }
     }

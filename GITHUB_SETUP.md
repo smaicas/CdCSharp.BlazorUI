@@ -177,10 +177,30 @@ To get the API key:
 
 After configuration, verify:
 
-1. **Labels:** https://github.com/OWNER/REPO/labels (should show 5 severity labels)
+1. **Labels:** https://github.com/OWNER/REPO/labels (should show 6 labels: 5 severity + changes/public-api)
 2. **Branch protection:** Settings > Branches (should show 2 rules)
 3. **Secrets:** Settings > Secrets (should have `NUGET_API_KEY`)
 4. **Merge settings:** Squash merge only enabled
+5. **Workflows:** Actions tab shows all workflows enabled
+
+## Public API Tracking
+
+The repository automatically tracks public API changes:
+
+1. **On PR to develop**: Detects changes to `PublicAPI.Unshipped.txt`
+2. **Adds label**: Automatically adds `changes/public-api` label
+3. **PR comment**: Posts a report of added/removed APIs
+4. **On release**: Generates comprehensive API changelog
+
+### Generate API Report Manually
+
+```powershell
+# From scripts directory
+./api-report.ps1 -Tag v1.0.0 -OutputFormat markdown -OutputPath ./api-changes.md
+
+# Or for console output
+./api-report.ps1 -OutputFormat console
+```
 
 ---
 
