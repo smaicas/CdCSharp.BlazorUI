@@ -12,14 +12,14 @@ public class ScrollBarGenerator : IAssetGenerator
     public string FileName => "_scrollbar.css";
     public string Name => "ScrollBar";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         // Opt-in scope: the universal `*` selector only applies under [data-bui-scrollbars] or
         // inside .bui-scrollbars. The library never styles consumer scrollbars by default.
         string scopeAttr = $"[{FeatureDefinitions.DataAttributes.Scrollbars}]";
         string scopeClass = $".{FeatureDefinitions.CssClasses.Scrollbars}";
 
-        return $$"""
+        return Task.FromResult($$"""
 /* =========================
    SCROLLBAR (opt-in)
    Activate by adding {{FeatureDefinitions.DataAttributes.Scrollbars}} to <html>
@@ -75,6 +75,6 @@ public class ScrollBarGenerator : IAssetGenerator
 {{scopeClass}} ::-webkit-scrollbar-corner {
     background: var(--palette-surface);
 }
-""";
+""");
     }
 }

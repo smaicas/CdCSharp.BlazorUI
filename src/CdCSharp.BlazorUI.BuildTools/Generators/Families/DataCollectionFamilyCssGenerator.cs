@@ -12,7 +12,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     public string FileName => "_data-collection-family.css";
     public string Name => "Data Collection Family";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         string root = FeatureDefinitions.Tags.Component;
         string dc = FeatureDefinitions.DataAttributes.DataCollectionBase;
@@ -32,7 +32,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
         string emptyText = FeatureDefinitions.CssClasses.DataCollection.EmptyText;
         string loading = FeatureDefinitions.CssClasses.DataCollection.Loading;
 
-        return $$"""
+        return Task.FromResult($$"""
 /* ========================================
    Data Collection Family Styles
    Auto-generated - Do not edit manually
@@ -174,6 +174,6 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     --_dc-padding-x: 1.5rem;
     --_dc-padding-y: 1rem;
 }
-""";
+""");
     }
 }

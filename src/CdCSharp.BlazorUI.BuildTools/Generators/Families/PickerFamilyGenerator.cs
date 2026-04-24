@@ -15,7 +15,7 @@ public class PickerFamilyCssGenerator : IAssetGenerator
     private static string V(string variable) => $"var({variable})";
     private static string V(string variable, string fallback) => $"var({variable}, {fallback})";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         string picker = FeatureDefinitions.DataAttributes.PickerBase;
         string sizeMult = FeatureDefinitions.ComponentVariables.Size.Multiplier;
@@ -30,7 +30,7 @@ public class PickerFamilyCssGenerator : IAssetGenerator
         string slider = FeatureDefinitions.CssClasses.Picker.Slider;
         string preview = FeatureDefinitions.CssClasses.Picker.Preview;
 
-        return $$"""
+        return Task.FromResult($$"""
 /* ========================================
    Picker Family Styles
    Auto-generated - Do not edit manually
@@ -199,6 +199,6 @@ bui-component[{{picker}}] .{{input}}:focus-visible {
 bui-component[{{picker}}] .{{slider}}:focus-within {
     box-shadow: 0 0 0 2px var(--palette-surface), 0 0 0 4px var(--palette-highlight);
 }
-""";
+""");
     }
 }

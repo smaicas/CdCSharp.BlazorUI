@@ -20,7 +20,7 @@ public class TransitionsCssGenerator : IAssetGenerator
     public string FileName => "_transition-classes.css";
     public string Name => "Transitions CSS";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         string tag = FeatureDefinitions.Tags.Component;
         string attr = FeatureDefinitions.DataAttributes.Transitions;
@@ -63,6 +63,6 @@ $$"""
             }
         }
 
-        return sb.ToString();
+        return Task.FromResult(sb.ToString());
     }
 }

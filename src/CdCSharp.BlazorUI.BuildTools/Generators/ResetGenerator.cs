@@ -14,11 +14,7 @@ public class ResetGenerator : IAssetGenerator
     public string FileName => "_reset.css";
     public string Name => "CSS Reset";
 
-    public async Task<string> GetContent()
-    {
-        // Solo el contenido del return, el resto del archivo queda igual:
-
-        return $$"""
+    public Task<string> GetContent() => Task.FromResult($$"""
 /* ========================================
    Minimal CSS Reset
    Auto-generated - Do not edit manually
@@ -53,6 +49,5 @@ a { color: inherit; text-decoration: none; }
 img, svg, video { display: block; max-inline-size: 100%; }
 ul, ol { list-style: none; }
 [hidden] { display: none !important; }
-""";
-    }
+""");
 }

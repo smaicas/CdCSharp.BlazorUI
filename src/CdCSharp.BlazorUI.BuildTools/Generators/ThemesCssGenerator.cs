@@ -13,8 +13,8 @@ public class ThemesCssGenerator : IAssetGenerator
     public string FileName => "_themes.css";
     public string Name => "Themes CSS";
 
-    public async Task<string> GetContent() => CssThemeGenerator.Generate("dark",
-            [new Themes.DarkTheme(), new Themes.LightTheme()]);
+    public Task<string> GetContent() => Task.FromResult(CssThemeGenerator.Generate("dark",
+            [new Themes.DarkTheme(), new Themes.LightTheme()]));
 }
 
 public static class CssThemeGenerator

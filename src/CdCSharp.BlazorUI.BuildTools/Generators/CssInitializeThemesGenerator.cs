@@ -15,7 +15,7 @@ public class CssInitializeThemesGenerator : IAssetGenerator
     public string FileName => "_initialize-themes.css";
     public string Name => "Initialize Themes CSS";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         StringBuilder sb = new();
         sb.AppendLine("body {");
@@ -49,6 +49,6 @@ public class CssInitializeThemesGenerator : IAssetGenerator
             sb.AppendLine();
         }
 
-        return sb.ToString().TrimEnd();
+        return Task.FromResult(sb.ToString().TrimEnd());
     }
 }

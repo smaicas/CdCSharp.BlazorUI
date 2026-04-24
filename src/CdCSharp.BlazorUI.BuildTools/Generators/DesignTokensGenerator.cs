@@ -16,9 +16,7 @@ public class DesignTokensGenerator : IAssetGenerator
     public string FileName => "_tokens.css";
     public string Name => "Design Tokens";
 
-    public async Task<string> GetContent()
-    {
-        return $$"""
+    public Task<string> GetContent() => Task.FromResult($$"""
 :root {
     /* ========================================
        Z-INDEX SCALE
@@ -81,8 +79,7 @@ public class DesignTokensGenerator : IAssetGenerator
 }
 
 {{GetRippleStyles()}}
-""";
-    }
+""");
 
     private static string GetRippleStyles() => $$"""
 /* ========================================

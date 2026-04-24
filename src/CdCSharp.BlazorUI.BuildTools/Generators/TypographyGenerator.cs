@@ -12,9 +12,7 @@ public class TypographyGenerator : IAssetGenerator
     public string FileName => "_typography.css";
     public string Name => "Typography";
 
-    public async Task<string> GetContent()
-    {
-        return $$"""
+    public Task<string> GetContent() => Task.FromResult($$"""
 /* ========================================
    Typography System
    Auto-generated - Do not edit manually
@@ -132,6 +130,5 @@ hr {
     background-color: var(--palette-primary);
     color: var(--palette-primarycontrast);
 }
-""";
-    }
+""");
 }

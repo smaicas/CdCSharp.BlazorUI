@@ -13,7 +13,7 @@ public class BaseComponentGenerator : IAssetGenerator
     public string FileName => "_base.css";
     public string Name => "Base Component";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         StringBuilder sb = new();
         sb.AppendLine(GetBaseStyles());
@@ -29,7 +29,7 @@ public class BaseComponentGenerator : IAssetGenerator
         sb.AppendLine(GetShadowSystem());
         sb.AppendLine();
         sb.AppendLine(GetUtilities());
-        return sb.ToString();
+        return Task.FromResult(sb.ToString());
     }
 
     private static string GetBaseStyles() => $$"""

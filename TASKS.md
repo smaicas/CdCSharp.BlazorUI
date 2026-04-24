@@ -2240,6 +2240,7 @@ _(ninguno registrado todavía)_
 
 ### `BLD-PIPE-13` — Todos los `IAssetGenerator.GetContent` son `async Task<string>` sin `await` (CS1998 enmascarado)
 
+- **Estado**: ✅ Resuelto — 11 generators adoptan la opción (1) de los criterios: firma queda `Task<string>` (preservada por contrato de `IAssetGenerator`), el body elimina `async` y envuelve el return con `Task.FromResult(...)`. 7 generators pasan a expression-bodied (`public Task<string> GetContent() => Task.FromResult(...)`); los 4 que construyen `StringBuilder`/`$$"""` con pre-cálculo mantienen bloque `{ ... return Task.FromResult(...); }`. CS1998 deja de emitirse en BuildTools; 2546/2546 tests pasan.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: los 11 generators (`BaseComponentGenerator`, `CssInitializeThemesGenerator`, `DesignTokensGenerator`, `ResetGenerator`, `ScrollBarGenerator`, `ThemesCssGenerator`, `TransitionsCssGenerator`, `TypographyGenerator`, `InputFamilyCssGenerator`, `PickerFamilyCssGenerator`, `DataCollectionFamilyCssGenerator`).

@@ -15,7 +15,7 @@ public class InputFamilyGenerator : IAssetGenerator
     private static string V(string variable) => $"var({variable})";
     private static string V(string variable, string fallback) => $"var({variable}, {fallback})";
 
-    public async Task<string> GetContent()
+    public Task<string> GetContent()
     {
         string inputBase = FeatureDefinitions.DataAttributes.InputBase;
         string variant = FeatureDefinitions.DataAttributes.Variant;
@@ -42,7 +42,7 @@ public class InputFamilyGenerator : IAssetGenerator
         string outlineNotch = FeatureDefinitions.CssClasses.Input.OutlineNotch;
         string outlineTrailing = FeatureDefinitions.CssClasses.Input.OutlineTrailing;
 
-        return $$"""
+        return Task.FromResult($$"""
 /* ========================================
    Input Family Styles
    Auto-generated - Do not edit manually
@@ -462,6 +462,6 @@ bui-component[{{inputBase}}][{{variant}}="flat"] .{{validation}} {
     padding-inline-start: 0;
 }
 
-""";
+""");
     }
 }
