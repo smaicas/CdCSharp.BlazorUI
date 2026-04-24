@@ -2081,7 +2081,7 @@ _(ninguno registrado todavía)_
 
 ### `REL-01` — `LICENSE.txt` tiene placeholders sin sustituir `[year]` y `[fullname]`: licencia técnicamente inválida ante disputa
 
-- **Estado**: ✅ Resuelto — `LICENSE.txt` sustituye `[year] [fullname]` por `2026 Samuel Maícas (@cdcsharp)`, alineado con D-01 y con el copyright declarado en `Directory.Build.props`.
+- **Estado**: ✅ Resuelto (commit `31b275d`) — `LICENSE.txt` sustituye `[year] [fullname]` por `2026 Samuel Maícas (@cdcsharp)`, alineado con D-01 y con el copyright declarado en `Directory.Build.props`.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `LICENSE.txt` (raíz del repo).
@@ -3737,7 +3737,7 @@ _(ninguno registrado todavía)_
 
 ### `REL-06` — Sin `SECURITY.md`: consumers no saben cómo reportar vulnerabilidades de forma responsable
 
-- **Estado**: ✅ Resuelto — `SECURITY.md` nuevo en raíz: tabla de versiones soportadas (1.x ✅, 0.x ❌), canal de reporte (email `samuel.maicas.development@gmail.com` + GitHub Security Advisories), formulario mínimo del reporte (paquete+versión, reproducer, impacto, host-specific), timeline de respuesta (ack 3d / triage 7d / fix crítico 14d), scope in/out (XSS/JS interop/CORS dentro; dependencias upstream y DoS pathológico fuera). Alineado con D-01 y con el README que ya apunta a Issues para bugs no-sec.
+- **Estado**: ✅ Resuelto (commit `31b275d`) — `SECURITY.md` nuevo en raíz: tabla de versiones soportadas (1.x ✅, 0.x ❌), canal de reporte (email `samuel.maicas.development@gmail.com` + GitHub Security Advisories), formulario mínimo del reporte (paquete+versión, reproducer, impacto, host-specific), timeline de respuesta (ack 3d / triage 7d / fix crítico 14d), scope in/out (XSS/JS interop/CORS dentro; dependencias upstream y DoS pathológico fuera). Alineado con D-01 y con el README que ya apunta a Issues para bugs no-sec.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `SECURITY.md` (raíz); `.github/SECURITY.md` (opcional); settings del repo.
@@ -3766,7 +3766,7 @@ _(ninguno registrado todavía)_
 
 ### `REL-07` — Sin `CODE_OF_CONDUCT.md`: baja puntuación en community health score
 
-- **Estado**: ✅ Resuelto — `CODE_OF_CONDUCT.md` nuevo en raíz adopta Contributor Covenant 2.1 por referencia (link externo a `contributor-covenant.org/version/2/1`). Canal de enforcement: `samuel.maicas.development@gmail.com`. Scope aplica a issues/PRs/discussions/repo spaces. GitHub community health check sube a score completo; contributors tienen reglas claras sin reproducir el texto completo del Covenant en el repo.
+- **Estado**: ✅ Resuelto (commit `31b275d`) — `CODE_OF_CONDUCT.md` nuevo en raíz adopta Contributor Covenant 2.1 por referencia (link externo a `contributor-covenant.org/version/2/1`). Canal de enforcement: `samuel.maicas.development@gmail.com`. Scope aplica a issues/PRs/discussions/repo spaces. GitHub community health check sube a score completo; contributors tienen reglas claras sin reproducir el texto completo del Covenant en el repo.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `CODE_OF_CONDUCT.md` (raíz o `.github/`).
