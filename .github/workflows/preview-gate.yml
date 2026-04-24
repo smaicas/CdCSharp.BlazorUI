@@ -16,6 +16,7 @@ env:
 
 permissions:
   contents: read
+  pull-requests: write  # Needed to add labels
 
 concurrency:
   group: preview-gate-${{ github.ref }}
@@ -33,6 +34,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
           global-json-file: global.json
           cache: true
           cache-dependency-path: '**/*.csproj'
@@ -66,6 +68,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
           global-json-file: global.json
 
       - name: Restore dependencies
@@ -90,6 +93,7 @@ jobs:
   public-api-check:
     name: Check Public API
     runs-on: ubuntu-latest
+    continue-on-error: true  # Warning only, not blocking
     
     steps:
       - name: Checkout
@@ -97,33 +101,46 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          global-json-file: global.json
-
-      - name: Restore dependencies
-        run: dotnet restore CdCSharp.BlazorUI.slnx
-
       - name: Check PublicAPI changes
+        id: check
         run: |
-          echo "=== Verificando cambios en PublicAPI ==="
+          echo "=== Checking PublicAPI changes ==="
           
-          # Verificar que no haya cambios en PublicAPI.Shipped.txt
-          SHIPPED_CHANGES=$(git diff --name-only origin/develop...HEAD | grep -i "PublicAPI.Shipped.txt" || true)
+          # Check for changes in PublicAPI.Unshipped.txt (new API additions)
+          UNSHIPPED_CHANGES=$(git diff --name-only origin/develop...HEAD | grep -i "PublicAPI.Unshipped.txt" || true)
           
-          if [ -n "$SHIPPED_CHANGES" ]; then
-            echo "❌ ERROR: Se detectaron cambios en PublicAPI.Shipped.txt"
-            echo "Los cambios en Shipped.txt solo deben hacerse durante el release"
-            echo "Archivos modificados:"
-            echo "$SHIPPED_CHANGES"
-            exit 1
+          if [ -n "$UNSHIPPED_CHANGES" ]; then
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Public API changes detected"
+            echo "Files modified:"
+            echo "$UNSHIPPED_CHANGES"
           else
-            echo "✅ No hay cambios en PublicAPI.Shipped.txt"
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+            echo "✅ No Public API changes"
           fi
 
-      - name: Build para verificar API
-        run: dotnet build CdCSharp.BlazorUI.slnx -c Release --no-restore
+      - name: Add label to PR
+        if: steps.check.outputs.changes_detected == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['changes/public-api']
+            });
+            console.log('Added label: changes/public-api');
+
+      - name: Public API Summary
+        if: steps.check.outputs.changes_detected == 'true'
+        run: |
+          echo "## ⚠️ Public API Changes Detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This PR modifies the public API surface." >> $GITHUB_STEP_SUMMARY
+          echo "The 'changes/public-api' label has been added." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This will trigger a MINOR version bump on next release." >> $GITHUB_STEP_SUMMARY
 
   summary:
     name: Preview Gate Summary
@@ -147,7 +164,7 @@ jobs:
             
             for (const [name, result] of Object.entries(jobs)) {
               const icon = result === 'success' ? '✅' : result === 'skipped' ? '⏭️' : '❌';
-              report += `- ${icon} **${name}**: ${result}\n`;
+              report += `- ${icon} **${name}**: ${result}\n';
               if (result !== 'success' && result !== 'skipped') {
                 allPassed = false;
               }

@@ -138,12 +138,61 @@ function Invoke-GitCommand {
     }
 }
 
+function Get-NextVersion {
+    param([string]$LastTag)
+    
+    # Parse current version
+    $version = $LastTag -replace 'v', ''
+    $parts = $version -split '\.'
+    $major = [int]$parts[0]
+    $minor = [int]$parts[1]
+    $patch = [int]$parts[2]
+    
+    # Check for public API changes in commits since last tag
+    $commits = git log "$LastTag..$($Config.Remote)/$($Config.DevelopBranch)" --format="%H" 2>$null
+    $hasPublicApiChanges = $false
+    
+    foreach ($commit in $commits) {
+        # Check if commit has changes/public-api label
+        # This would need GitHub API call to check PR labels
+        # For now, check commit message for indication
+        $message = git log -1 --format="%B" $commit 2>$null
+        if ($message -match "public.api|PublicAPI|breaking.change") {
+            $hasPublicApiChanges = $true
+            break
+        }
+    }
+    
+    # Version bump logic
+    if ($hasPublicApiChanges) {
+        $minor++
+        $patch = 0
+        $bumpType = "MINOR"
+    }
+    else {
+        $patch++
+        $bumpType = "PATCH"
+    }
+    
+    return @{
+        Version = "$major.$minor.$patch"
+        BumpType = $bumpType
+        HasPublicApiChanges = $hasPublicApiChanges
+    }
+}
+
 function Show-Status {
     Write-Header "Repository Status"
     
     # Version info
     $lastTag = Get-LastTag
     Write-Info "Last tag on master: $lastTag"
+    
+    $nextVersion = Get-NextVersion -LastTag $lastTag
+    Write-Info "Next version: $($nextVersion.Version) ($($nextVersion.BumpType) bump)"
+    if ($nextVersion.HasPublicApiChanges) {
+        Write-Warning "Public API changes detected - will trigger MINOR bump"
+    }
     
     $commitsSince = Get-CommitsSinceTag -Tag $lastTag
     Write-Info "Commits since $lastTag`: $commitsSince"

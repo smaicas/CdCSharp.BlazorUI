@@ -230,6 +230,7 @@ function Initialize-Labels {
         @{ Name = "severity/major"; Color = "f39c12"; Description = "Major issue - affects functionality" }
         @{ Name = "severity/minor"; Color = "f1c40f"; Description = "Minor issue - nice to have improvement" }
         @{ Name = "severity/polish"; Color = "2ecc71"; Description = "Polish - quality of life improvement" }
+        @{ Name = "changes/public-api"; Color = "5319e7"; Description = "Changes to public API - triggers MINOR version bump on release" }
     )
     
     foreach ($label in $labels) {

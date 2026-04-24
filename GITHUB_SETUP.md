@@ -68,6 +68,7 @@ Go to **Issues > Labels > New label** and create:
 | `severity/major` | `#f39c12` | Major issue - affects functionality |
 | `severity/minor` | `#f1c40f` | Minor issue - nice to have improvement |
 | `severity/polish` | `#2ecc71` | Polish - quality of life improvement |
+| `changes/public-api` | `#5319e7` | Changes to public API - triggers MINOR version bump on release |
 
 ### Step 2: Create `develop` Branch (if it doesn't exist)
 
