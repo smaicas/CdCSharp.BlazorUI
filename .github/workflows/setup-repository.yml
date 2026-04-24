@@ -84,8 +84,9 @@ jobs:
             "required_status_checks": {
               "strict": true,
               "contexts": [
-                "build-and-test",
-                "coverage-check"
+                "Release Gate / Build Check",
+                "Release Gate / Check Blocking Issues",
+                "Release Gate / Check Public API"
               ]
             },
             "enforce_admins": false,
@@ -113,7 +114,9 @@ EOF
             "required_status_checks": {
               "strict": true,
               "contexts": [
-                "build-and-test"
+                "Preview Gate / Build & Test",
+                "Preview Gate / Code Coverage",
+                "Preview Gate / Check Public API"
               ]
             },
             "enforce_admins": false,
