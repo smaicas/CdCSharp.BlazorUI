@@ -4020,6 +4020,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-09` — `CssColor.SetContrastBlack/White` static setters sin getters correspondientes: fields dead
 
+- **Estado**: ✅ Resuelto (criterio 1 aplicado) — eliminados los dos `static CssColor? _contrastBlack`/`_contrastWhite` y sus setters `SetContrastBlack`/`SetContrastWhite`. Grep confirmó que ningún consumidor invoca los setters; `GetBestContrast(black, white)` ya recibe los colores por parámetro. Criterio 2 (convertirlos en uso real) descartado — preferencia documentada en notas: static mutable state es antipatrón en librería reusable. Superficie pública se limpia de 2 métodos. 2542/2542 tests pasan.
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Css/CssColor.cs:423-434`.

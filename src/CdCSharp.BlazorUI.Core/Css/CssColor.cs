@@ -420,19 +420,6 @@ public sealed class CssColor : IEquatable<CssColor>
 
     #region Contrast Helpers
 
-    private static CssColor? _contrastBlack;
-    private static CssColor? _contrastWhite;
-
-    /// <summary>
-    /// Allows setting a custom "black" for contrast calculations (optional).
-    /// </summary>
-    public static void SetContrastBlack(CssColor black) => _contrastBlack = black;
-
-    /// <summary>
-    /// Allows setting a custom "white" for contrast calculations (optional).
-    /// </summary>
-    public static void SetContrastWhite(CssColor white) => _contrastWhite = white;
-
     /// <summary>
     /// Returns the best contrast color (black or white) for this color. Uses CSS variables with
     /// fallback if no custom values are set.
