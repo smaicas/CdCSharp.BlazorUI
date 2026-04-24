@@ -1904,7 +1904,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-04` — `dotnet pack` sólo corre en rama `develop`/tags/dispatch manual: pull requests no validan que el packaging funcione
 
-- **Estado**: ✅ Resuelto (criterios 1-3 aplicados) — `publish.yml` quita el `if: should_publish == 'true'` del step **Pack NuGet Packages** → corre siempre, PRs incluidos. Añade step **Upload Package Artifacts** (`actions/upload-artifact@v4`, retención 14 días, key `nupkgs-${version}`, fallo si no hay artefactos) para que los revisores puedan descargar y test-install desde el PR. `Publish to NuGet` sigue siendo el único gateado por `should_publish`. Criterio 4 (`EnablePackageValidation` como gate efectivo del PR) queda automático: cuando `PKG-10` encienda validation, cualquier breaking change activa ahora desde el PR en lugar del push-post-merge.
+- **Estado**: ✅ Resuelto (commit `8b24083`, criterios 1-3 aplicados) — `publish.yml` quita el `if: should_publish == 'true'` del step **Pack NuGet Packages** → corre siempre, PRs incluidos. Añade step **Upload Package Artifacts** (`actions/upload-artifact@v4`, retención 14 días, key `nupkgs-${version}`, fallo si no hay artefactos) para que los revisores puedan descargar y test-install desde el PR. `Publish to NuGet` sigue siendo el único gateado por `should_publish`. Criterio 4 (`EnablePackageValidation` como gate efectivo del PR) queda automático: cuando `PKG-10` encienda validation, cualquier breaking change activa ahora desde el PR en lugar del push-post-merge.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `.github/workflows/publish.yml:183-184` (`if: steps.version.outputs.should_publish == 'true'`).
