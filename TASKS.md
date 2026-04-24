@@ -2820,6 +2820,7 @@ _(ninguno registrado todavía)_
 
 ### `JS-09` — `ModalInterop.FOCUSABLE_SELECTORS` omite `[contenteditable]` y `audio/video[controls]`
 
+- **Estado**: ✅ Resuelto — `FOCUSABLE_SELECTORS` extendido con `[contenteditable=""]`, `[contenteditable="true"]`, `audio[controls]`, `video[controls]`, `iframe`, `embed`, `object`. Alineado con `focus-trap`/`ariakit`. Criterio 2 (test runtime del trap con `<div contenteditable>`) requiere ejecución JS real — bUnit no corre los listeners; se validará en el pase E2E/`A11Y-10` (axe + Playwright).
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Modal/ModalInterop.ts:20-27`.

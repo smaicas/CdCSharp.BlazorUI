@@ -17,13 +17,22 @@ let focusTrapState: FocusTrapState = {
     tabHandler: null
 };
 
+// Aligned with focus-trap / ariakit: include rich-editor targets and media elements
+// so a modal containing a <div contenteditable> or <video controls> traps Tab correctly.
 const FOCUSABLE_SELECTORS = [
     'button:not([disabled])',
     '[href]',
     'input:not([disabled])',
     'select:not([disabled])',
     'textarea:not([disabled])',
-    '[tabindex]:not([tabindex="-1"])'
+    '[tabindex]:not([tabindex="-1"])',
+    '[contenteditable=""]',
+    '[contenteditable="true"]',
+    'audio[controls]',
+    'video[controls]',
+    'iframe',
+    'embed',
+    'object'
 ].join(', ');
 
 export function lockScroll(): void {
