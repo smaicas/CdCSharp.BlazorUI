@@ -3433,6 +3433,7 @@ _(ninguno registrado todavía)_
 
 ### `CI-07` — `DOTNET_VERSION: '10.0.x'` es una versión flotante + ausencia de `global.json`: builds no reproducibles
 
+- **Estado**: ✅ Resuelto (criterios 1-2) — `global.json` en raíz declara `{"sdk":{"version":"10.0.203","rollForward":"latestFeature"}}`. `publish.yml` elimina `DOTNET_VERSION` y pasa `global-json-file: global.json` a `actions/setup-dotnet@v4`, de modo que el SDK de CI se ancla exactamente al que usan los contributors locales. `rollForward: latestFeature` permite bumps compatibles (10.0.203 → 10.0.2xx) sin saltar a 10.1. `dotnet --version` confirma 10.0.203 activo tras el cambio. Criterio 3 (Dependabot auto-bump de `global.json`) queda como follow-up — Dependabot no soporta `global.json` nativamente; requiere scripting custom o Renovate, fuera de scope aquí.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `.github/workflows/publish.yml:29`; raíz del repo (`global.json` ausente).

@@ -26,7 +26,8 @@ on:
           - 'false'
 
 env:
-  DOTNET_VERSION: '10.0.x'
+  # Source of truth: global.json. CI-07 pins the SDK to a concrete minor to keep
+  # builds reproducible across runs; local dev and CI converge on the same version.
   CONFIGURATION: 'Release'
   # Versionado base - modificar según tu proyecto
   MAJOR_VERSION: 1
@@ -58,7 +59,9 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          # CI-07: drive the SDK version from global.json so the workflow cannot float ahead of
+          # what local dev uses (and vice versa).
+          global-json-file: global.json
           # ARCH-14: cache the NuGet global packages folder keyed on all *.csproj hashes.
           cache: true
           cache-dependency-path: '**/*.csproj'
