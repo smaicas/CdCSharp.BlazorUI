@@ -3008,6 +3008,7 @@ _(ninguno registrado todavía)_
 
 ### `PERF-05` — `BUIToastHost` itera `Enum.GetValues<ToastPosition>()` en cada render: array allocation repetida
 
+- **Estado**: ✅ Resuelto — `private static readonly ToastPosition[] _allPositions = Enum.GetValues<ToastPosition>();` en `BUIToastHost.razor`; el `@foreach` usa `_allPositions`. Allocation-per-render → 0.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/Toast/BUIToastHost.razor:13`.
@@ -3039,6 +3040,7 @@ _(ninguno registrado todavía)_
 
 ### `PERF-07` — `PatchVolatileAttributes` ejecuta chequeos aunque el componente no implemente ningún feature volátil
 
+- **Estado**: ✅ Resuelto — nueva flag `ComponentFeatures.VolatileMask = Active | Disabled | Loading | Error | ReadOnly | Required | FullWidth`. `PatchVolatileAttributes` devuelve temprano cuando `(flags & (VolatileMask | BuiltComponent)) == 0` → componentes puros como `BUIGrid`/`BUICard` no pagan 7 branches por render.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:221-244`.

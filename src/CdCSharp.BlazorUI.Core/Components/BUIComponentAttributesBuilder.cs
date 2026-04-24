@@ -33,6 +33,9 @@ internal sealed class BUIComponentAttributesBuilder
         PickerFamily = 1u << 19,
         DataCollectionFamily = 1u << 20,
         BuiltComponent = 1u << 21,
+
+        VolatileMask =
+            Active | Disabled | Loading | Error | ReadOnly | Required | FullWidth,
     }
 
     private readonly record struct TypeInfo(string ComponentName, ComponentFeatures Features);
@@ -226,6 +229,9 @@ internal sealed class BUIComponentAttributesBuilder
     public void PatchVolatileAttributes(ComponentBase component)
     {
         ComponentFeatures flags = GetTypeInfo(component.GetType()).Features;
+
+        if ((flags & (ComponentFeatures.VolatileMask | ComponentFeatures.BuiltComponent)) == 0)
+            return;
 
         // Component-supplied data attributes first so that volatile framework state (below)
         // wins on any key collision. See IBuiltComponent XML doc for the ordering contract.

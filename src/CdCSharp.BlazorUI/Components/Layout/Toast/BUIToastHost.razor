@@ -11,7 +11,7 @@
 
 <CascadingValue Value="_toastService" IsFixed="true">
     <bui-component @attributes="ComputedAttributes">
-        @foreach (ToastPosition position in Enum.GetValues<ToastPosition>())
+        @foreach (ToastPosition position in _allPositions)
         {
             IEnumerable<ToastState> toastsInPosition = GetToastsForPosition(position);
             @if (toastsInPosition.Any())
@@ -31,6 +31,7 @@
 </CascadingValue>
 
 @code {
+    private static readonly ToastPosition[] _allPositions = Enum.GetValues<ToastPosition>();
     private ToastService? _toastService;
     private List<ToastState> _allToasts = [];
 
