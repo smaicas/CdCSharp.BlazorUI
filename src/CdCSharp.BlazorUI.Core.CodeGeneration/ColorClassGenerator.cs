@@ -126,94 +126,60 @@ public class ColorClassGenerator : IIncrementalGenerator
                 continue;
             }
 
-            int variantLevels = classToGenerate.VariantLevels;
-            string namespaceName = classToGenerate.NamespaceName;
-            string className = classToGenerate.ClassName;
-
-            ClassDeclarationSyntax classSyntax = GenerateClassDeclaration(className);
-
-            foreach (NamedColor color in _colors)
-            {
-                ct.ThrowIfCancellationRequested();
-
-                ClassDeclarationSyntax innerClassDeclaration = GenerateInnerClassDeclaration(color.Name);
-
-                string defaultCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A})";
-                innerClassDeclaration = innerClassDeclaration.AddMembers(
-                    GenerateProperty("Default", defaultCssColor));
-
-                for (int i = 1; i <= variantLevels; i++)
-                {
-                    string darkenCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A}, CssColorVariant.Darken({i}))";
-                    innerClassDeclaration = innerClassDeclaration.AddMembers(
-                        GenerateProperty($"Darken{i}", darkenCssColor));
-                }
-
-                for (int i = 1; i <= variantLevels; i++)
-                {
-                    string lightenCssColor = $"new CssColor({color.R}, {color.G}, {color.B}, {color.A}, CssColorVariant.Lighten({i}))";
-                    innerClassDeclaration = innerClassDeclaration.AddMembers(
-                        GenerateProperty($"Lighten{i}", lightenCssColor));
-                }
-
-                classSyntax = classSyntax.AddMembers(innerClassDeclaration);
-            }
-
-            NamespaceDeclarationSyntax namespaceDeclaration =
-                SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(namespaceName))
-                    .WithNamespaceKeyword(
-                        SyntaxFactory.Token(
-                            SyntaxFactory.TriviaList(),
-                            SyntaxKind.NamespaceKeyword,
-                            "namespace",
-                            "namespace",
-                            SyntaxFactory.TriviaList(SyntaxFactory.Space)));
-
-            CompilationUnitSyntax compilationUnit = SyntaxFactory.CompilationUnit()
-                .AddUsings(
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("CdCSharp.BlazorUI.Components")),
-                    SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Diagnostics.CodeAnalysis"))
-                ).AddMembers(namespaceDeclaration
-                    .AddMembers(classSyntax)
-                );
-
-            string sourceCode = compilationUnit.NormalizeWhitespace().ToFullString();
-
-            context.AddSource($"{className}.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
+            string sourceCode = BuildSource(classToGenerate, ct);
+            context.AddSource($"{classToGenerate.ClassName}.g.cs", SourceText.From(sourceCode, Encoding.UTF8));
         }
     }
 
-    private static ClassDeclarationSyntax GenerateClassDeclaration(string className) =>
-        SyntaxFactory.ClassDeclaration(className)
-            .AddAttributeLists(
-                SyntaxFactory.AttributeList(
-                    SyntaxFactory.SingletonSeparatedList(
-                        SyntaxFactory.Attribute(SyntaxFactory.ParseName("ExcludeFromCodeCoverage"))
-                    )
-                )
-            )
-            .AddModifiers(
-                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                SyntaxFactory.Token(SyntaxKind.PartialKeyword));
-
-    private static ClassDeclarationSyntax GenerateInnerClassDeclaration(string name) =>
-        SyntaxFactory.ClassDeclaration(name)
-            .AddModifiers(
-                SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                SyntaxFactory.Token(SyntaxKind.StaticKeyword));
-
-    private static PropertyDeclarationSyntax GenerateProperty(string name, string initializer)
+    private static string BuildSource(ClassToGenerate classToGenerate, CancellationToken ct)
     {
-        return SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName("CssColor"), name)
-            .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                          SyntaxFactory.Token(SyntaxKind.StaticKeyword))
-            .WithAccessorList(
-                SyntaxFactory.AccessorList(
-                    SyntaxFactory.SingletonList(
-                        SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration)
-                            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
-            .WithInitializer(SyntaxFactory.EqualsValueClause(SyntaxFactory.ParseExpression(initializer)))
-            .WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken));
+        int variantLevels = classToGenerate.VariantLevels;
+        string namespaceName = classToGenerate.NamespaceName;
+        string className = classToGenerate.ClassName;
+
+        StringBuilder sb = new(capacity: 64 * 1024);
+        sb.Append("using CdCSharp.BlazorUI.Components;\r\n");
+        sb.Append("using System.Diagnostics.CodeAnalysis;\r\n");
+        sb.Append("\r\n");
+        sb.Append("namespace ").Append(namespaceName).Append("\r\n");
+        sb.Append("{\r\n");
+        sb.Append("    [ExcludeFromCodeCoverage]\r\n");
+        sb.Append("    public static partial class ").Append(className).Append("\r\n");
+        sb.Append("    {\r\n");
+
+        bool first = true;
+        foreach (NamedColor color in _colors)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (!first)
+                sb.Append("\r\n");
+            first = false;
+
+            sb.Append("        public static class ").Append(color.Name).Append("\r\n");
+            sb.Append("        {\r\n");
+            AppendProperty(sb, "Default", color, variant: null);
+            for (int i = 1; i <= variantLevels; i++)
+                AppendProperty(sb, $"Darken{i}", color, variant: $"CssColorVariant.Darken({i})");
+            for (int i = 1; i <= variantLevels; i++)
+                AppendProperty(sb, $"Lighten{i}", color, variant: $"CssColorVariant.Lighten({i})");
+            sb.Append("        }\r\n");
+        }
+
+        sb.Append("    }\r\n");
+        sb.Append("}");
+        return sb.ToString();
+    }
+
+    private static void AppendProperty(StringBuilder sb, string name, NamedColor color, string? variant)
+    {
+        sb.Append("            public static CssColor ").Append(name).Append(" { get; } = new CssColor(")
+            .Append(color.R).Append(", ")
+            .Append(color.G).Append(", ")
+            .Append(color.B).Append(", ")
+            .Append(color.A);
+        if (variant != null)
+            sb.Append(", ").Append(variant);
+        sb.Append(");\r\n");
     }
 }

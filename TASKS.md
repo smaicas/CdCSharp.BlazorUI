@@ -3831,6 +3831,7 @@ _(ninguno registrado todavía)_
 
 ### `GEN-12` — `ColorClassGenerator.NormalizeWhitespace()` por clase; reemplazar por `StringBuilder` directo
 
+- **Estado**: ✅ Resuelto (criterios 1-2) — `ColorClassGenerator.Execute` pasa de construir un árbol sintáctico completo (AttributeList + ClassDeclaration + NamespaceDeclaration + CompilationUnit + `NormalizeWhitespace()`) a un emisor `StringBuilder`-based (nuevo método `BuildSource` + helper `AppendProperty`). Se eliminan `GenerateClassDeclaration`, `GenerateInnerClassDeclaration`, `GenerateProperty` (dead code). Capacidad inicial 64 KB para evitar reallocations en el caso típico (141 colores × 11 props = 1 551 propiedades). 9/9 snapshot tests siguen pasando → output **byte-idéntico** al previo, criterio 2 cumplido. Criterio 3 (benchmark) queda como follow-up — el `NormalizeWhitespace()` de Roslyn es el caso patológico conocido (documentado por el equipo de Roslyn); la migración se justifica por allocations reducidas incluso sin número.
 - **Severidad**: Polish
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/ColorClassGenerator.cs:144`.
