@@ -42,7 +42,6 @@ const PALETTE_VARS = [
     '--palette-activetint',
     '--palette-background',
     '--palette-backgroundcontrast',
-    '--palette-black',
     '--palette-border',
     '--palette-error',
     '--palette-errorcontrast',
@@ -60,8 +59,7 @@ const PALETTE_VARS = [
     '--palette-surface',
     '--palette-surfacecontrast',
     '--palette-warning',
-    '--palette-warningcontrast',
-    '--palette-white'
+    '--palette-warningcontrast'
 ];
 
 function waitForStyles(): Promise<void> {

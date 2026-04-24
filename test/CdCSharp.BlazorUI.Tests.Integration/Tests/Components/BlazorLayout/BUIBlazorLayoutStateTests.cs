@@ -17,7 +17,6 @@ public class BUIBlazorLayoutStateTests
     {
         ["--palette-background"] = "#FFFFFF",
         ["--palette-backgroundcontrast"] = "#000000",
-        ["--palette-black"] = "#000000",
         ["--palette-error"] = "#B00020",
         ["--palette-errorcontrast"] = "#FFFFFF",
         ["--palette-info"] = "#1976D2",
@@ -33,7 +32,6 @@ public class BUIBlazorLayoutStateTests
         ["--palette-surfacecontrast"] = "#000000",
         ["--palette-warning"] = "#FB8C00",
         ["--palette-warningcontrast"] = "#000000",
-        ["--palette-white"] = "#FFFFFF",
     };
 
     private static IThemeJsInterop RegisterFakeTheme(

@@ -9,8 +9,6 @@ public abstract class BUIThemePaletteBase
 
     public CssColor BackgroundContrast { get; set; } = new("#F1F5F9");
 
-    public CssColor Black { get; set; } = new("#010101");
-
     public CssColor Border { get; set; } = BUIColor.White.Default;
 
     public CssColor Error { get; set; } = new("#EF4444");
@@ -34,7 +32,6 @@ public abstract class BUIThemePaletteBase
     public CssColor SurfaceContrast { get; set; } = new("#F1F5F9");
     public CssColor Warning { get; set; } = new("#F59E0B");
     public CssColor WarningContrast { get; set; } = new("#0F172A");
-    public CssColor White { get; set; } = new("#e9e9e9");
     public CssColor HoverTint { get; set; } = new("#e9e9e9");
     public CssColor ActiveTint { get; set; } = new("#e9e9e9");
 

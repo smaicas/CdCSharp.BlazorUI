@@ -152,7 +152,7 @@ bui-component[{{picker}}] .{{slider}}::after {
     left: var(--value, 0%);
     width: 6px;
     height: calc(18px * {{V(sizeMult, "1")}});
-    background: var(--palette-white);
+    background: #fff;
     border: 1px solid var(--palette-border);
     border-radius: 3px;
     transform: translate(-50%, -50%);

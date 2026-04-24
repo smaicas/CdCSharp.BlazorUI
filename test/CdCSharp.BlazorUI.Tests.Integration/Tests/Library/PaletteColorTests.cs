@@ -27,11 +27,9 @@ public class PaletteColorTests
     [InlineData("SurfaceContrast", "--palette-surfacecontrast")]
     [InlineData("Warning", "--palette-warning")]
     [InlineData("WarningContrast", "--palette-warningcontrast")]
-    [InlineData("Black", "--palette-black")]
     [InlineData("Border", "--palette-border")]
     [InlineData("Highlight", "--palette-highlight")]
     [InlineData("Shadow", "--palette-shadow")]
-    [InlineData("White", "--palette-white")]
     public void PaletteColor_ImplicitString_Should_Produce_Var_Reference(
         string propertyName, string expectedVariable)
     {

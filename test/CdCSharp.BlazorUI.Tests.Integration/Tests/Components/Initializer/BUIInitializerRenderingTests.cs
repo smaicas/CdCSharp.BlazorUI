@@ -15,7 +15,6 @@ public class BUIInitializerRenderingTests
     {
         ["--palette-background"] = "#121212",
         ["--palette-backgroundcontrast"] = "#FFFFFF",
-        ["--palette-black"] = "#000000",
         ["--palette-error"] = "#CF6679",
         ["--palette-errorcontrast"] = "#000000",
         ["--palette-info"] = "#64B5F6",
@@ -31,7 +30,6 @@ public class BUIInitializerRenderingTests
         ["--palette-surfacecontrast"] = "#FFFFFF",
         ["--palette-warning"] = "#FFD54F",
         ["--palette-warningcontrast"] = "#000000",
-        ["--palette-white"] = "#FFFFFF",
     };
 
     internal static IThemeJsInterop RegisterFakeTheme(BlazorTestContextBase ctx)

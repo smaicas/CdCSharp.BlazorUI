@@ -22,11 +22,9 @@ public sealed class PaletteColor
     public static PaletteColor SurfaceContrast => new("--palette-surfacecontrast");
     public static PaletteColor Warning => new("--palette-warning");
     public static PaletteColor WarningContrast => new("--palette-warningcontrast");
-    public static PaletteColor Black => new("--palette-black");
     public static PaletteColor Border => new("--palette-border");
     public static PaletteColor Highlight => new("--palette-highlight");
     public static PaletteColor Shadow => new("--palette-shadow");
-    public static PaletteColor White => new("--palette-white");
 
     public static implicit operator string(PaletteColor p)
     {

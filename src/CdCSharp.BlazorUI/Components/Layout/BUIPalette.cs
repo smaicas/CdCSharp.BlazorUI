@@ -4,7 +4,6 @@ public sealed class BUIPalette
 {
     public CssColor Background { get; }
     public CssColor BackgroundContrast { get; }
-    public CssColor Black { get; }
     public CssColor Error { get; }
     public CssColor ErrorContrast { get; }
     public CssColor Info { get; }
@@ -20,7 +19,6 @@ public sealed class BUIPalette
     public CssColor SurfaceContrast { get; }
     public CssColor Warning { get; }
     public CssColor WarningContrast { get; }
-    public CssColor White { get; }
 
     public BUIPalette(IReadOnlyDictionary<string, string> palette)
     {
@@ -31,7 +29,6 @@ public sealed class BUIPalette
 
         Background = C("--palette-background");
         BackgroundContrast = C("--palette-backgroundcontrast");
-        Black = C("--palette-black");
         Error = C("--palette-error");
         ErrorContrast = C("--palette-errorcontrast");
         Info = C("--palette-info");
@@ -47,6 +44,5 @@ public sealed class BUIPalette
         SurfaceContrast = C("--palette-surfacecontrast");
         Warning = C("--palette-warning");
         WarningContrast = C("--palette-warningcontrast");
-        White = C("--palette-white");
     }
 }

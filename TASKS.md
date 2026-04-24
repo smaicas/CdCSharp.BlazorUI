@@ -2731,6 +2731,7 @@ _(ninguno registrado todavía)_
 
 ### `THEME-07` — `BUIThemePaletteBase.Black` y `White` expuestas como propiedades de paleta: emiten `--palette-black` / `--palette-white` que no son colores del tema
 
+- **Estado**: ✅ Resuelto — eliminadas de `BUIThemePaletteBase` (criterio 1) y también del espejo público `BUIPalette` (Server/Wasm initializer) y del catálogo `PaletteColor`. Consumidores CSS migran a literales `#fff` / `#000` (criterio 3): `BUIColorPicker.razor.css` (handler border + shadow) y `PickerFamilyGenerator.cs` (slider::after background). `ThemeInterop.ts PALETTE_VARS` se reduce de 23 a 21 entradas. Tests que hardcodeaban `--palette-black`/`--palette-white` en paletas fake (`BUIInitializerRenderingTests`, `BUIBlazorLayoterStateTests`, `PaletteColorTests`) migran a la lista reducida — las entradas Black/White de `PaletteColor_ImplicitString_Should_Produce_Var_Reference` desaparecen. Light/Dark themes no sobreescribían Black/White (ningún override perdido). 2540/2540 tests pasan (2 InlineData eliminadas). Las constantes `BUIColor.Black.Default`/`White.Default` siguen disponibles para quien necesite el color "absoluto" en C# — la paleta tema ya no las expone.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/Abstractions/BUIThemePaletteBase.cs:12,37`.
