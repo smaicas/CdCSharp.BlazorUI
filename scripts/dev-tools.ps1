@@ -2,36 +2,36 @@
 #requires -Version 7.0
 <#
 .SYNOPSIS
-    Herramientas de desarrollo para colaboradores de CdCSharp.BlazorUI
-    ESTRATEGIA: Cada PR = 1 commit (squash) + rebase antes de mergear
+    Development tools for CdCSharp.BlazorUI contributors
+    STRATEGY: Each PR = 1 commit (squash) + rebase before merging
 
 .DESCRIPTION
-    Script para desarrolladores colaboradores.
-    Facilita el flujo: feature → squash a 1 commit → rebase → PR
+    Script for contributor developers.
+    Facilitates the flow: feature → squash to 1 commit → rebase → PR
 
 .EXAMPLE
     ./dev-tools.ps1 feature css-tokens
-    Crea una nueva feature branch desde develop
+    Creates a new feature branch from develop
 
 .EXAMPLE
     ./dev-tools.ps1 commit "feat(css): add scrollbar tokens"
-    Commit con convención + referencia a issue
+    Commit with convention + issue reference
 
 .EXAMPLE
     ./dev-tools.ps1 squash
-    Colapsa todos los commits de la feature en 1
+    Squashes all feature commits into 1
 
 .EXAMPLE
     ./dev-tools.ps1 ready
-    Prepara para PR: rebase + verificación de 1 commit
+    Prepares for PR: rebase + 1 commit verification
 
 .EXAMPLE
     ./dev-tools.ps1 fix-conflict
-    Después de resolver conflictos, squash de los fixups
+    After resolving conflicts, squash fixups
 
 .NOTES
-    Autor: Samuel Maícas (@cdcsharp)
-    Versión: 2.0.0 - Estrategia Squash+Rebase
+    Author: Samuel Maícas (@cdcsharp)
+    Version: 2.0.0 - Squash+Rebase Strategy
 #>
 
 [CmdletBinding()]
@@ -50,16 +50,16 @@ param(
     [switch]$Force
 )
 
-# Configuración
+# Configuration
 $Config = @{
     DevelopBranch = "develop"
-    MainBranch = "main"
+    MainBranch = "master"
     Remote = "origin"
     FeaturePrefix = "feature"
     FixPrefix = "fix"
 }
 
-# Colores
+# Colors
 $Colors = @{
     Success = "Green"
     Warning = "Yellow"
@@ -68,7 +68,7 @@ $Colors = @{
     Emphasis = "Magenta"
 }
 
-#region Funciones Auxiliares
+#region Helper Functions
 
 function Write-Header {
     param([string]$Message)
@@ -151,48 +151,48 @@ function Invoke-GitCommand {
 }
 
 function Show-Status {
-    Write-Header "Estado del Repositorio"
+    Write-Header "Repository Status"
     
     $currentBranch = Get-CurrentBranch
-    Write-Info "Rama actual: $currentBranch"
+    Write-Info "Current branch: $currentBranch"
     
-    # Contar commits en esta rama vs develop
+    # Count commits in this branch vs develop
     $commitCount = Get-CommitCount
     if ($commitCount -gt 0) {
         if ($commitCount -eq 1) {
-            Write-Success "✓ Rama lista: 1 commit (squash hecho)"
+            Write-Success "✓ Branch ready: 1 commit (squash done)"
         }
         else {
-            Write-Warning "⚠ Rama tiene $commitCount commits. Usa: ./dev-tools.ps1 squash"
+            Write-Warning "⚠ Branch has $commitCount commits. Run: ./dev-tools.ps1 squash"
         }
     }
     
-    # Estado del working directory
+    # Working directory status
     $clean = Test-WorkingDirectoryClean
     if ($clean) {
-        Write-Info "Working directory limpio"
+        Write-Info "Working directory clean"
     }
     else {
-        Write-Warning "Hay cambios sin commitear:"
+        Write-Warning "Uncommitted changes:"
         git status --short
     }
     
-    # Verificar si está up-to-date con develop
+    # Check if up-to-date with develop
     $behind = git rev-list --count "HEAD..$($Config.Remote)/$($Config.DevelopBranch)" 2>$null
     if ($behind -and [int]$behind -gt 0) {
-        Write-Warning "$behind commits nuevos en develop. Usa: ./dev-tools.ps1 ready"
+        Write-Warning "$behind new commits on develop. Run: ./dev-tools.ps1 ready"
     }
 }
 
 function Sync-Develop {
-    Write-Header "Sincronizando $($Config.DevelopBranch)"
+    Write-Header "Syncing $($Config.DevelopBranch)"
     
     $currentBranch = Get-CurrentBranch
     
-    # Stash si hay cambios
+    # Stash if there are changes
     $hadChanges = $false
     if (-not (Test-WorkingDirectoryClean)) {
-        Write-Warning "Hay cambios sin commitear. Haciendo stash..."
+        Write-Warning "Uncommitted changes. Stashing..."
         $result = Invoke-GitCommand -Command "stash" -Arguments "push -m \"Auto-stash by dev-tools\""
         if (-not $result) { exit 1 }
         $hadChanges = $true
@@ -203,18 +203,18 @@ function Sync-Develop {
     if (-not $result) { exit 1 }
     
     # Pull
-    Write-Info "Pull desde $($Config.Remote)/$($Config.DevelopBranch)..."
+    Write-Info "Pull from $($Config.Remote)/$($Config.DevelopBranch)..."
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $($Config.DevelopBranch)"
     if (-not $result) { exit 1 }
     
     # Restore stash
     if ($hadChanges) {
-        Write-Info "Restaurando cambios..."
+        Write-Info "Restoring changes..."
         $result = Invoke-GitCommand -Command "stash" -Arguments "pop"
         if (-not $result) { exit 1 }
     }
     
-    Write-Success "$($Config.DevelopBranch) actualizada"
+    Write-Success "$($Config.DevelopBranch) updated"
 }
 
 function New-FeatureBranch {
@@ -223,58 +223,58 @@ function New-FeatureBranch {
         [string]$Prefix
     )
     
-    Write-Header "Creando rama $Prefix/$BranchName"
+    Write-Header "Creating branch $Prefix/$BranchName"
     
-    # Validar nombre
+    # Validate name
     if ($BranchName -match '[\s\\/:*?"<>|]') {
-        Write-Error "Nombre de rama inválido. No use espacios ni caracteres especiales."
+        Write-Error "Invalid branch name. No spaces or special characters."
         exit 1
     }
     
-    # Verificar working directory
+    # Check working directory
     if (-not (Test-WorkingDirectoryClean)) {
-        Write-Warning "Hay cambios sin commitear. Se hará stash automático."
+        Write-Warning "Uncommitted changes. Will auto-stash."
         $result = Invoke-GitCommand -Command "stash" -Arguments "push"
         if (-not $result) { exit 1 }
     }
     
-    # Sync develop primero
+    # Sync develop first
     Sync-Develop
     
-    # Crear rama
+    # Create branch
     $fullBranchName = "$Prefix/$BranchName"
-    Write-Info "Creando rama $fullBranchName..."
+    Write-Info "Creating branch $fullBranchName..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments "-b $fullBranchName"
     if (-not $result) { exit 1 }
     
-    # Push con tracking
-    Write-Info "Push a $($Config.Remote)..."
+    # Push with tracking
+    Write-Info "Pushing to $($Config.Remote)..."
     $result = Invoke-GitCommand -Command "push" -Arguments "-u $($Config.Remote) $fullBranchName"
     if (-not $result) { exit 1 }
     
-    Write-Success "Rama $fullBranchName creada y pushada"
-    Write-Info "Trabaja en tus cambios y haz commits frecuentes."
-    Write-Info "Cuando termines: ./dev-tools.ps1 squash"
+    Write-Success "Branch $fullBranchName created and pushed"
+    Write-Info "Work on your changes and commit frequently."
+    Write-Info "When done: ./dev-tools.ps1 squash"
 }
 
 function New-Commit {
     param([string]$Message)
     
     if (-not $Message) {
-        Write-Error "Mensaje requerido. Uso: ./dev-tools.ps1 commit \"tipo(scope): descripción\""
-        Write-Info "Formato: <tipo>(<scope>): <descripción>"
-        Write-Info "Tipos: feat, fix, docs, test, refactor, chore, breaking"
-        Write-Info "Ejemplo: feat(css): add scrollbar tokens to FeatureDefinitions"
+        Write-Error "Message required. Usage: ./dev-tools.ps1 commit \"type(scope): description\""
+        Write-Info "Format: <type>(<scope>): <description>"
+        Write-Info "Types: feat, fix, docs, test, refactor, chore, breaking"
+        Write-Info "Example: feat(css): add scrollbar tokens to FeatureDefinitions"
         exit 1
     }
     
-    # Verificar formato convencional
+    # Check conventional commit format
     if ($Message -notmatch '^(feat|fix|docs|test|refactor|chore|breaking)(\([^)]+\))?:\s.+') {
-        Write-Warning "El mensaje no sigue conventional commits"
-        Write-Info "Formato esperado: tipo(scope): descripción"
+        Write-Warning "Message doesn't follow conventional commits"
+        Write-Info "Expected format: type(scope): description"
     }
     
-    # Añadir issue si se proporciona
+    # Add issue if provided
     if ($Description -match '#\d+') {
         $Message = "$Message`n`nFixes $Description"
     }
@@ -282,41 +282,41 @@ function New-Commit {
     $result = Invoke-GitCommand -Command "commit" -Arguments "-am \"$Message\""
     if (-not $result) { exit 1 }
     
-    Write-Success "Commit creado"
+    Write-Success "Commit created"
     
-    # Mostrar conteo
+    # Show count
     $count = Get-CommitCount
-    Write-Info "Commits en esta rama: $count"
+    Write-Info "Commits in this branch: $count"
     if ($count -gt 1) {
-        Write-Info "Recuerda: antes del PR usa ./dev-tools.ps1 squash"
+        Write-Info "Remember: before PR run ./dev-tools.ps1 squash"
     }
 }
 
 function Invoke-Squash {
-    Write-Header "Colapsando commits en 1"
+    Write-Header "Squashing commits into 1"
     
     $commitCount = Get-CommitCount
     
     if ($commitCount -le 1) {
-        Write-Success "Ya solo hay 1 commit. No se necesita squash."
+        Write-Success "Already only 1 commit. No squash needed."
         return
     }
     
-    Write-Info "Commits a combinar: $commitCount"
-    Write-Info "Últimos commits:"
+    Write-Info "Commits to combine: $commitCount"
+    Write-Info "Recent commits:"
     git log --oneline -$commitCount
     
-    # Pedir mensaje del commit final
-    Write-Host "`nEscribe el mensaje para el commit final (tipo(scope): descripción):" -ForegroundColor $Colors.Emphasis
+    # Ask for final commit message
+    Write-Host "`nEnter message for final commit (type(scope): description):" -ForegroundColor $Colors.Emphasis
     $defaultMsg = git log -1 --pretty=%B
-    $finalMessage = Read-Host "Mensaje [$defaultMsg]"
+    $finalMessage = Read-Host "Message [$defaultMsg]"
     
     if (-not $finalMessage) {
         $finalMessage = $defaultMsg
     }
     
-    # Hacer squash
-    Write-Info "Haciendo squash..."
+    # Squash
+    Write-Info "Squashing..."
     $base = git merge-base HEAD "$($Config.Remote)/$($Config.DevelopBranch)"
     
     $result = Invoke-GitCommand -Command "reset" -Arguments "--soft $base"
@@ -325,141 +325,141 @@ function Invoke-Squash {
     $result = Invoke-GitCommand -Command "commit" -Arguments "-m \"$finalMessage\""
     if (-not $result) { exit 1 }
     
-    Write-Success "Squash completado. Ahora hay 1 commit."
-    Write-Info "Usa ./dev-tools.ps1 ready para preparar el PR"
+    Write-Success "Squash completed. Now 1 commit."
+    Write-Info "Run ./dev-tools.ps1 ready to prepare PR"
 }
 
 function Ready-ForPR {
-    Write-Header "Preparando para PR (Squash + Rebase)"
+    Write-Header "Preparing for PR (Squash + Rebase)"
     
     $currentBranch = Get-CurrentBranch
     
     if ($currentBranch -eq $Config.DevelopBranch) {
-        Write-Error "Estás en $($Config.DevelopBranch). Crea una feature branch primero."
+        Write-Error "You're on $($Config.DevelopBranch). Create a feature branch first."
         exit 1
     }
     
-    # Verificar cambios
+    # Check for changes
     if (-not (Test-WorkingDirectoryClean)) {
-        Write-Error "Hay cambios sin commitear. Commit o stash primero."
+        Write-Error "Uncommitted changes. Commit or stash first."
         exit 1
     }
     
-    # Paso 1: Verificar squash
+    # Step 1: Check squash
     $commitCount = Get-CommitCount
     if ($commitCount -gt 1) {
-        Write-Warning "Hay $commitCount commits. Haciendo squash automático..."
+        Write-Warning "Has $commitCount commits. Auto-squashing..."
         Invoke-Squash
     }
     
-    # Paso 2: Fetch
-    Write-Info "Fetch de $($Config.Remote)..."
+    # Step 2: Fetch
+    Write-Info "Fetching $($Config.Remote)..."
     $result = Invoke-GitCommand -Command "fetch" -Arguments $Config.Remote
     if (-not $result) { exit 1 }
     
-    # Paso 3: Rebase
-    Write-Info "Rebase sobre $($Config.Remote)/$($Config.DevelopBranch)..."
+    # Step 3: Rebase
+    Write-Info "Rebasing onto $($Config.Remote)/$($Config.DevelopBranch)..."
     $result = Invoke-GitCommand -Command "rebase" -Arguments "$($Config.Remote)/$($Config.DevelopBranch)"
     
     if (-not $result) {
-        Write-Error "`n❌ REBASE FALLÓ - HAY CONFLICTOS"
-        Write-Info "Resuelve los conflictos manualmente:"
-        Write-Host "  1. Edita los archivos con conflictos (busca <<<<<<<)"
-        Write-Host "  2. git add <archivos>"
+        Write-Error "`n❌ REBASE FAILED - CONFLICTS"
+        Write-Info "Resolve conflicts manually:"
+        Write-Host "  1. Edit conflicted files (look for <<<<<<<)"
+        Write-Host "  2. git add <files>"
         Write-Host "  3. git rebase --continue"
         Write-Host "  4. ./dev-tools.ps1 fix-conflict"
-        Write-Host "`nPara abortar: git rebase --abort"
+        Write-Host "`nTo abort: git rebase --abort"
         exit 1
     }
     
-    # Paso 4: Verificar que sigue siendo 1 commit
+    # Step 4: Verify still 1 commit
     $commitCount = Get-CommitCount
     if ($commitCount -gt 1) {
-        Write-Warning "El rebase creó $commitCount commits. Haciendo squash..."
+        Write-Warning "Rebase created $commitCount commits. Squashing..."
         Invoke-Squash
     }
     
-    # Paso 5: Push force-with-lease
-    Write-Info "Push con force-with-lease..."
+    # Step 5: Push force-with-lease
+    Write-Info "Pushing with force-with-lease..."
     $result = Invoke-GitCommand -Command "push" -Arguments "--force-with-lease"
     if (-not $result) { exit 1 }
     
-    Write-Success "¡Rama lista para PR!"
-    Write-Info "Verificación:"
+    Write-Success "Branch ready for PR!"
+    Write-Info "Verification:"
     Write-Host "  ✓ 1 commit (squash)"
-    Write-Host "  ✓ Rebase sobre develop actualizado"
-    Write-Host "  ✓ Sin conflictos"
-    Write-Host "`nCrea el PR en GitHub o usa: ./dev-tools.ps1 pr \"Título\" \"Descripción\""
+    Write-Host "  ✓ Rebased onto current develop"
+    Write-Host "  ✓ No conflicts"
+    Write-Host "`nCreate PR on GitHub or run: ./dev-tools.ps1 pr \"Title\" \"Description\""
 }
 
 function Fix-Conflict {
-    Write-Header "Finalizando resolución de conflictos"
+    Write-Header "Finishing conflict resolution"
     
-    # Verificar que no hay conflictos pendientes
+    # Check for pending conflicts
     $status = git status --porcelain 2>$null
     if ($status -match "^(UU|AA|DD|AU|UA|DU|UD)") {
-        Write-Error "Aún hay conflictos sin resolver. Edita los archivos y haz git add."
+        Write-Error "Still unresolved conflicts. Edit files and git add."
         git status --short
         exit 1
     }
     
-    # Verificar si estamos en medio de un rebase
+    # Check if in middle of rebase
     $rebaseDir = git rev-parse --git-path rebase-merge 2>$null
     $rebaseApplyDir = git rev-parse --git-path rebase-apply 2>$null
     
     if ((Test-Path $rebaseDir) -or (Test-Path $rebaseApplyDir)) {
-        Write-Info "Continuando rebase..."
+        Write-Info "Continuing rebase..."
         $result = Invoke-GitCommand -Command "rebase" -Arguments "--continue"
         if (-not $result) {
-            Write-Error "Rebase sigue fallando. Revisa los conflictos."
+            Write-Error "Rebase still failing. Check conflicts."
             exit 1
         }
     }
     
-    # Verificar cuántos commits tenemos ahora
+    # Check how many commits we have now
     $commitCount = Get-CommitCount
-    Write-Info "Commits después de resolver conflictos: $commitCount"
+    Write-Info "Commits after resolving conflicts: $commitCount"
     
     if ($commitCount -gt 1) {
-        Write-Warning "Hay $commitCount commits (incluyendo fixups de conflictos)"
-        Write-Info "Haciendo squash final..."
+        Write-Warning "Has $commitCount commits (including conflict fixups)"
+        Write-Info "Final squash..."
         Invoke-Squash
     }
     
     # Push
-    Write-Info "Push con force-with-lease..."
+    Write-Info "Pushing with force-with-lease..."
     $result = Invoke-GitCommand -Command "push" -Arguments "--force-with-lease"
     if (-not $result) { exit 1 }
     
-    Write-Success "Conflictos resueltos y código actualizado"
-    Write-Info "El PR debería poder mergearse ahora"
+    Write-Success "Conflicts resolved and code updated"
+    Write-Info "PR should be mergeable now"
 }
 
 function Push-Changes {
-    Write-Header "Push de cambios"
+    Write-Header "Pushing changes"
     
     $currentBranch = Get-CurrentBranch
     
-    # Verificar cambios
+    # Check for changes
     if (-not (Test-WorkingDirectoryClean)) {
-        Write-Error "Hay cambios sin commitear. Commit primero."
+        Write-Error "Uncommitted changes. Commit first."
         exit 1
     }
     
-    # Verificar squash si es feature branch
+    # Check squash if feature branch
     if ($currentBranch -ne $Config.DevelopBranch) {
         $commitCount = Get-CommitCount
         if ($commitCount -gt 1) {
-            Write-Warning "⚠️  Tienes $commitCount commits. Recuerda hacer squash antes del PR."
+            Write-Warning "⚠️  You have $commitCount commits. Remember to squash before PR."
         }
     }
     
     # Push
-    Write-Info "Push..."
+    Write-Info "Pushing..."
     $result = Invoke-GitCommand -Command "push" -Arguments "--force-with-lease"
     if (-not $result) { exit 1 }
     
-    Write-Success "Push completado"
+    Write-Success "Push completed"
 }
 
 function New-PullRequest {
@@ -468,29 +468,29 @@ function New-PullRequest {
         [string]$Body
     )
     
-    Write-Header "Creando Pull Request"
+    Write-Header "Creating Pull Request"
     
     $currentBranch = Get-CurrentBranch
     
     if ($currentBranch -eq $Config.DevelopBranch) {
-        Write-Error "No se puede crear PR desde $($Config.DevelopBranch)"
+        Write-Error "Cannot create PR from $($Config.DevelopBranch)"
         exit 1
     }
     
-    # Verificaciones
+    # Verifications
     $commitCount = Get-CommitCount
     if ($commitCount -gt 1) {
-        Write-Error "Hay $commitCount commits. Debes hacer squash primero: ./dev-tools.ps1 squash"
+        Write-Error "Has $commitCount commits. Must squash first: ./dev-tools.ps1 squash"
         exit 1
     }
     
     $behind = git rev-list --count "HEAD..$($Config.Remote)/$($Config.DevelopBranch)" 2>$null
     if ($behind -gt 0) {
-        Write-Error "Estás $behind commits detrás de develop. Actualiza primero: ./dev-tools.ps1 ready"
+        Write-Error "$behind commits behind develop. Update first: ./dev-tools.ps1 ready"
         exit 1
     }
     
-    # Abrir URL de creación de PR
+    # Open PR creation URL
     $repoUrl = git remote get-url $Config.Remote 2>$null
     if ($repoUrl -match "github.com[:/](.+)/(.+?)(\.git)?$") {
         $owner = $matches[1]
@@ -505,22 +505,22 @@ function New-PullRequest {
             $prUrl += "&body=$([Uri]::EscapeDataString($Body))"
         }
         
-        Write-Info "Abriendo navegador para crear PR..."
+        Write-Info "Opening browser to create PR..."
         Start-Process $prUrl
     }
     else {
-        Write-Warning "No se pudo detectar URL del repo. Crea el PR manualmente."
+        Write-Warning "Could not detect repo URL. Create PR manually."
     }
     
-    Write-Success "PR listo para crear"
+    Write-Success "PR ready to create"
 }
 
 function Invoke-Cleanup {
-    Write-Header "Limpiando Ramas Locales"
+    Write-Header "Cleaning Local Branches"
     
     $currentBranch = Get-CurrentBranch
     
-    # Volver a develop
+    # Go back to develop
     if ($currentBranch -ne $Config.DevelopBranch) {
         $result = Invoke-GitCommand -Command "checkout" -Arguments $Config.DevelopBranch
         if (-not $result) { exit 1 }
@@ -530,14 +530,14 @@ function Invoke-Cleanup {
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $($Config.DevelopBranch)"
     if (-not $result) { exit 1 }
     
-    # Eliminar ramas mergeadas
+    # Delete merged branches
     $merged = git branch --merged $Config.DevelopBranch --format="%(refname:short)" | Where-Object { 
         $_ -notin @($Config.MainBranch, $Config.DevelopBranch) -and 
         $_ -notmatch "^\*" 
     }
     
     if ($merged) {
-        Write-Info "Eliminando ramas mergeadas:"
+        Write-Info "Deleting merged branches:"
         $merged | ForEach-Object {
             Write-Host "  - $_"
             Invoke-GitCommand -Command "branch" -Arguments "-d $_" -IgnoreError | Out-Null
@@ -547,33 +547,33 @@ function Invoke-Cleanup {
     # Prune
     Invoke-GitCommand -Command "remote" -Arguments "prune $($Config.Remote)" -IgnoreError | Out-Null
     
-    Write-Success "Limpieza completada"
+    Write-Success "Cleanup completed"
 }
 
 #endregion
 
 #region Main
 
-# Verificar que estamos en un repo git
+# Verify we're in a git repo
 if (-not (Test-GitRepository)) {
-    Write-Error "No estás en un repositorio Git"
+    Write-Error "Not in a Git repository"
     exit 1
 }
 
-# Ejecutar comando
+# Execute command
 switch ($Command) {
     "status" { Show-Status }
     "sync" { Sync-Develop }
     "feature" {
         if (-not $Name) {
-            Write-Error "Se requiere nombre. Uso: ./dev-tools.ps1 feature nombre-de-la-feature"
+            Write-Error "Name required. Usage: ./dev-tools.ps1 feature feature-name"
             exit 1
         }
         New-FeatureBranch -BranchName $Name -Prefix $Config.FeaturePrefix
     }
     "fix" {
         if (-not $Name) {
-            Write-Error "Se requiere nombre. Uso: ./dev-tools.ps1 fix nombre-del-fix"
+            Write-Error "Name required. Usage: ./dev-tools.ps1 fix fix-name"
             exit 1
         }
         New-FeatureBranch -BranchName $Name -Prefix $Config.FixPrefix

@@ -2,28 +2,32 @@
 #requires -Version 7.0
 <#
 .SYNOPSIS
-    Configura un repositorio GitHub con labels y branch protection
+    Configures a GitHub repository with labels and branch protection
 
 .DESCRIPTION
-    Script reutilizable para configurar:
-    - Labels de severity (blocker, critical, major, minor, polish)
-    - Branch protection para main y develop
-    - Squash merge only, historial lineal
+    Reusable script to configure:
+    - Severity labels (blocker, critical, major, minor, polish)
+    - Branch protection for master and develop
+    - Squash merge only, linear history
 
 .PARAMETER Owner
-    Owner del repositorio (ej: smaicas)
+    Repository owner (e.g.: smaicas)
 
 .PARAMETER Repo
-    Nombre del repositorio (ej: CdCSharp.BlazorUI)
+    Repository name (e.g.: CdCSharp.BlazorUI)
 
 .PARAMETER Token
-    GitHub Personal Access Token con permisos: repo, workflow
+    GitHub Personal Access Token with permissions: repo, workflow
 
 .PARAMETER SetupLabels
-    Crear labels de severity
+    Create severity labels
 
 .PARAMETER SetupBranchProtection
-    Configurar branch protection
+    Configure branch protection
+
+.PARAMETER KeepDefaultLabels
+    Keep default GitHub labels (bug, enhancement, etc.)
+    By default, these are removed and replaced with severity labels
 
 .EXAMPLE
     ./github-setup.ps1 -Owner smaicas -Repo CdCSharp.BlazorUI -Token ghp_xxx -SetupLabels -SetupBranchProtection
@@ -31,9 +35,12 @@
 .EXAMPLE
     ./github-setup.ps1 -Owner smaicas -Repo CdCSharp.BlazorUI -Token $env:GITHUB_TOKEN -SetupLabels
 
+.EXAMPLE
+    ./github-setup.ps1 -Owner smaicas -Repo CdCSharp.BlazorUI -Token ghp_xxx -SetupLabels -KeepDefaultLabels
+
 .NOTES
-    El token necesita permisos de admin para branch protection.
-    Si no tienes permisos de admin, usa -SetupLabels solo.
+    The token needs admin permissions for branch protection.
+    If you don't have admin permissions, use -SetupLabels only.
 #>
 
 [CmdletBinding()]
@@ -51,10 +58,13 @@ param(
     [switch]$SetupLabels,
     
     [Parameter()]
-    [switch]$SetupBranchProtection
+    [switch]$SetupBranchProtection,
+    
+    [Parameter()]
+    [switch]$KeepDefaultLabels
 )
 
-# Configuración
+# Configuration
 $Config = @{
     ApiBase = "https://api.github.com"
     Headers = @{
@@ -62,10 +72,10 @@ $Config = @{
         Accept = "application/vnd.github+json"
         "X-GitHub-Api-Version" = "2022-11-28"
     }
-    DefaultBranch = $null  # Se detecta automáticamente
+    DefaultBranch = $null  # Auto-detected
 }
 
-# Colores para output
+# Colors for output
 $Colors = @{
     Success = "Green"
     Warning = "Yellow"
@@ -121,7 +131,7 @@ function Invoke-GitHubApi {
         $errorMessage = $_.ErrorDetails.Message | ConvertFrom-Json -ErrorAction SilentlyContinue
         
         if ($statusCode -eq 404) {
-            return $null  # Recurso no existe
+            return $null  # Resource does not exist
         }
         
         Write-Error "API Error ${statusCode}: $($errorMessage.message)"
@@ -130,49 +140,49 @@ function Invoke-GitHubApi {
 }
 
 function Test-RepositoryAccess {
-    Write-Step "Verificando acceso al repositorio $Owner/$Repo"
+    Write-Step "Verifying access to repository $Owner/$Repo"
     
     $repo = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo"
     
     if (-not $repo) {
-        Write-Error "No se puede acceder al repositorio. Verifica:"
-        Write-Host "  - El owner y nombre del repo son correctos"
-        Write-Host "  - El token tiene permisos 'repo'"
+        Write-Error "Cannot access repository. Verify:"
+        Write-Host "  - Owner and repository name are correct"
+        Write-Host "  - Token has 'repo' permissions"
         exit 1
     }
     
-    # Guardar rama principal
+    # Store default branch
     $Config.DefaultBranch = $repo.default_branch
     
-    Write-Success "Acceso verificado: $($repo.full_name)"
-    Write-Host "  Privado: $($repo.private)"
+    Write-Success "Access verified: $($repo.full_name)"
+    Write-Host "  Private: $($repo.private)"
     Write-Host "  Default branch: $($Config.DefaultBranch)"
 }
 
 function Initialize-DevelopBranch {
-    Write-Step "Verificando rama develop"
+    Write-Step "Verifying develop branch"
     
-    # Verificar si develop existe
+    # Check if develop exists
     $develop = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/branches/develop"
     
     if ($develop) {
-        Write-Success "Rama develop ya existe"
+        Write-Success "Develop branch already exists"
         return $true
     }
     
-    Write-Warning "La rama develop no existe. Creándola desde $($Config.DefaultBranch)..."
+    Write-Warning "Develop branch does not exist. Creating from $($Config.DefaultBranch)..."
     
-    # Obtener el SHA del último commit de la rama principal
+    # Get SHA of latest commit on default branch
     $defaultBranchRef = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/git/refs/heads/$($Config.DefaultBranch)"
     
     if (-not $defaultBranchRef) {
-        Write-Error "No se pudo obtener la referencia de $($Config.DefaultBranch)"
+        Write-Error "Could not get reference for $($Config.DefaultBranch)"
         return $false
     }
     
     $sha = $defaultBranchRef.object.sha
     
-    # Crear rama develop
+    # Create develop branch
     $body = @{
         ref = "refs/heads/develop"
         sha = $sha
@@ -181,28 +191,50 @@ function Initialize-DevelopBranch {
     $result = Invoke-GitHubApi -Method "POST" -Endpoint "/repos/$Owner/$Repo/git/refs" -Body $body
     
     if ($result -eq $false) {
-        Write-Error "No se pudo crear la rama develop"
+        Write-Error "Could not create develop branch"
         return $false
     }
     
-    Write-Success "Rama develop creada desde $($Config.DefaultBranch)"
+    Write-Success "Develop branch created from $($Config.DefaultBranch)"
     return $true
 }
 
+function Remove-BugLabel {
+    param([switch]$KeepBugLabel)
+    
+    if ($KeepBugLabel) {
+        return
+    }
+    
+    $encodedName = [Uri]::EscapeDataString("bug")
+    $existing = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/labels/$encodedName"
+    
+    if ($existing) {
+        Write-Host "Removing default 'bug' label"
+        $result = Invoke-GitHubApi -Method "DELETE" -Endpoint "/repos/$Owner/$Repo/labels/$encodedName"
+        if ($result -eq $false) {
+            Write-Warning "Could not remove 'bug' label"
+        }
+    }
+}
+
 function Initialize-Labels {
-    Write-Step "Configurando Labels"
+    Write-Step "Configuring Labels"
+    
+    # Remove default 'bug' label (unless -KeepDefaultLabels specified)
+    Remove-BugLabel -KeepBugLabel:$KeepDefaultLabels
     
     $labels = @(
-        @{ Name = "severity:blocker"; Color = "d9534f"; Description = "Bloquea el release - debe resolverse antes de publicar" }
-        @{ Name = "severity:critical"; Color = "e74c3c"; Description = "Problema crítico - alta prioridad" }
-        @{ Name = "severity:major"; Color = "f39c12"; Description = "Problema importante - afecta funcionalidad" }
-        @{ Name = "severity:minor"; Color = "f1c40f"; Description = "Problema menor - mejora deseable" }
-        @{ Name = "severity:polish"; Color = "2ecc71"; Description = "Refinamiento - calidad de vida" }
+        @{ Name = "severity/blocker"; Color = "d9534f"; Description = "Blocks release - must be resolved before publishing" }
+        @{ Name = "severity/critical"; Color = "e74c3c"; Description = "Critical issue - high priority" }
+        @{ Name = "severity/major"; Color = "f39c12"; Description = "Major issue - affects functionality" }
+        @{ Name = "severity/minor"; Color = "f1c40f"; Description = "Minor issue - nice to have improvement" }
+        @{ Name = "severity/polish"; Color = "2ecc71"; Description = "Polish - quality of life improvement" }
     )
     
     foreach ($label in $labels) {
-        # Verificar si existe
-        $existing = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/labels/$($label.Name -replace ':', '%3A')"
+        # Check if exists
+        $existing = Invoke-GitHubApi -Endpoint "/repos/$Owner/$Repo/labels/$($label.Name -replace '/', '%2F')"
         
         $body = @{
             name = $label.Name
@@ -211,20 +243,20 @@ function Initialize-Labels {
         }
         
         if ($existing) {
-            Write-Host "Actualizando label: $($label.Name)"
-            $result = Invoke-GitHubApi -Method "PATCH" -Endpoint "/repos/$Owner/$Repo/labels/$($label.Name -replace ':', '%3A')" -Body $body
+            Write-Host "Updating label: $($label.Name)"
+            $result = Invoke-GitHubApi -Method "PATCH" -Endpoint "/repos/$Owner/$Repo/labels/$($label.Name -replace '/', '%2F')" -Body $body
         }
         else {
-            Write-Host "Creando label: $($label.Name)"
+            Write-Host "Creating label: $($label.Name)"
             $result = Invoke-GitHubApi -Method "POST" -Endpoint "/repos/$Owner/$Repo/labels" -Body $body
         }
         
         if ($result -eq $false) {
-            Write-Warning "No se pudo configurar label: $($label.Name)"
+            Write-Warning "Could not configure label: $($label.Name)"
         }
     }
     
-    Write-Success "Labels configurados"
+    Write-Success "Labels configured"
 }
 
 function Initialize-BranchProtection {
@@ -233,7 +265,7 @@ function Initialize-BranchProtection {
         [string[]]$RequiredContexts
     )
     
-    Write-Step "Configurando branch protection para: $Branch"
+    Write-Step "Configuring branch protection for: $Branch"
     
     $body = @{
         required_status_checks = @{
@@ -258,77 +290,81 @@ function Initialize-BranchProtection {
     $result = Invoke-GitHubApi -Method "PUT" -Endpoint "/repos/$Owner/$Repo/branches/$Branch/protection" -Body $body
     
     if ($result -eq $false) {
-        Write-Error "No se pudo configurar branch protection para $Branch"
-        Write-Host "Posibles causas:"
-        Write-Host "  - No tienes permisos de administrador"
-        Write-Host "  - El token no tiene scope 'repo'"
-        Write-Host "  - La rama $Branch no existe"
+        Write-Error "Could not configure branch protection for $Branch"
+        Write-Host "Possible causes:"
+        Write-Host "  - You don't have admin permissions"
+        Write-Host "  - Token doesn't have 'repo' scope"
+        Write-Host "  - Branch $Branch doesn't exist"
         return $false
     }
     
-    Write-Success "Branch protection configurado para $Branch"
+    Write-Success "Branch protection configured for $Branch"
     return $true
 }
 
 function Show-Summary {
-    Write-Step "Resumen de configuración"
+    Write-Step "Configuration Summary"
     
-    Write-Host "Repositorio: $Owner/$Repo" -ForegroundColor $Colors.Info
+    Write-Host "Repository: $Owner/$Repo" -ForegroundColor $Colors.Info
     Write-Host ""
     
     if ($SetupLabels) {
-        Write-Host "Labels configurados:" -ForegroundColor $Colors.Success
-        Write-Host "  - severity:blocker (🔴 Bloquea release)"
-        Write-Host "  - severity:critical (🔴 Crítico)"
-        Write-Host "  - severity:major (🟠 Importante)"
-        Write-Host "  - severity:minor (🟡 Menor)"
-        Write-Host "  - severity:polish (🟢 Refinamiento)"
+        Write-Host "Labels configured:" -ForegroundColor $Colors.Success
+        Write-Host "  - severity/blocker (🔴 Blocks release)"
+        Write-Host "  - severity/critical (🔴 Critical)"
+        Write-Host "  - severity/major (🟠 Major)"
+        Write-Host "  - severity/minor (🟡 Minor)"
+        Write-Host "  - severity/polish (🟢 Polish)"
         Write-Host ""
     }
     
     if ($SetupBranchProtection) {
         Write-Host "Branch protection:" -ForegroundColor $Colors.Success
         Write-Host "  $($Config.DefaultBranch):" -ForegroundColor $Colors.Info
-        Write-Host "    - Requiere PR + 1 approval"
-        Write-Host "    - Requiere: Release Gate / Build Check"
-        Write-Host "    - Requiere: Release Gate / Check Blocking Issues"
-        Write-Host "    - Requiere: Release Gate / Check Public API"
-        Write-Host "    - Squash merge only + historial lineal"
+        Write-Host "    - Requires PR + 1 approval"
+        Write-Host "    - Requires: Release Gate / Build Check"
+        Write-Host "    - Requires: Release Gate / Check Blocking Issues"
+        Write-Host "    - Requires: Release Gate / Check Public API"
+        Write-Host "    - Squash merge only + linear history"
         Write-Host ""
         Write-Host "  develop:" -ForegroundColor $Colors.Info
-        Write-Host "    - Requiere PR + 1 approval"
-        Write-Host "    - Requiere: Preview Gate / Build & Test"
-        Write-Host "    - Requiere: Preview Gate / Code Coverage"
-        Write-Host "    - Requiere: Preview Gate / Check Public API"
-        Write-Host "    - Squash merge only + historial lineal"
+        Write-Host "    - Requires PR + 1 approval"
+        Write-Host "    - Requires: Preview Gate / Build and Test"
+        Write-Host "    - Requires: Preview Gate / Code Coverage"
+        Write-Host "    - Requires: Preview Gate / Check Public API"
+        Write-Host "    - Squash merge only + linear history"
     }
     
     Write-Host ""
-    Write-Host "Próximos pasos:" -ForegroundColor $Colors.Warning
-    Write-Host "  1. Configurar NUGET_API_KEY en Settings > Secrets"
-    Write-Host "  2. Verificar workflows en Actions"
-    Write-Host "  3. Probar con una PR de prueba"
+    Write-Host "Next steps:" -ForegroundColor $Colors.Warning
+    Write-Host "  1. Configure NUGET_API_KEY in Settings > Secrets"
+    Write-Host "  2. Verify workflows in Actions"
+    Write-Host "  3. Test with a sample PR"
 }
 
 # ============ MAIN ============
 
-# Validar parámetros
+# Validate parameters
 if (-not $SetupLabels -and -not $SetupBranchProtection) {
-    Write-Error "Debes especificar al menos una opción: -SetupLabels o -SetupBranchProtection"
-    Write-Host "Uso: ./github-setup.ps1 -Owner <owner> -Repo <repo> -Token <token> -SetupLabels -SetupBranchProtection"
+    Write-Error "You must specify at least one option: -SetupLabels or -SetupBranchProtection"
+    Write-Host "Usage: ./github-setup.ps1 -Owner <owner> -Repo <repo> -Token <token> -SetupLabels -SetupBranchProtection"
     exit 1
 }
 
-# Verificar acceso
+# Verify access
 Test-RepositoryAccess
 
-# Configurar labels
+# Configure labels
 if ($SetupLabels) {
     Initialize-Labels
 }
 
-# Configurar branch protection
+# Configure branch protection
 if ($SetupBranchProtection) {
+    # Create develop if it doesn't exist
+    $developCreated = Initialize-DevelopBranch
+    
+    # Configure branch protection for default branch (master/main)
     $mainContexts = @(
         "Release Gate / Build Check"
         "Release Gate / Check Blocking Issues"
@@ -336,25 +372,21 @@ if ($SetupBranchProtection) {
     )
     
     $developContexts = @(
-        "Preview Gate / Build & Test"
+        "Preview Gate / Build and Test"
         "Preview Gate / Code Coverage"
         "Preview Gate / Check Public API"
     )
     
-    # Crear develop si no existe
-    $developCreated = Initialize-DevelopBranch
-    
-    # Configurar branch protection para la rama principal (master/main)
     $mainOk = Initialize-BranchProtection -Branch $Config.DefaultBranch -RequiredContexts $mainContexts
     $developOk = Initialize-BranchProtection -Branch "develop" -RequiredContexts $developContexts
     
     if (-not $mainOk -or -not $developOk) {
-        Write-Warning "Algunas configuraciones de branch protection fallaron."
-        Write-Host "Configura manualmente en: https://github.com/$Owner/$Repo/settings/branches"
+        Write-Warning "Some branch protection configurations failed."
+        Write-Host "Configure manually at: https://github.com/$Owner/$Repo/settings/branches"
     }
 }
 
-# Mostrar resumen
+# Show summary
 Show-Summary
 
 Write-Host "`nDone!" -ForegroundColor $Colors.Success

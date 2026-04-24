@@ -1,6 +1,6 @@
 # .github/workflows/preview-gate.yml
-# Quality gates para previews - ejecutado en PRs a develop
-# Verifica build, test y coverage antes de mergear a develop
+# Quality gates for previews - runs on PRs to develop
+# Verifies build, test and coverage before merging to develop
 
 name: Preview Gate
 
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   build-and-test:
-    name: Build & Test
+    name: Build and Test
     runs-on: ubuntu-latest
     
     steps:
@@ -140,7 +140,7 @@ jobs:
             };
             
             let allPassed = true;
-            let report = '## Preview Gate Check\n\n';
+            let report = '## Preview Gate Results\n\n';
             
             for (const [name, result] of Object.entries(jobs)) {
               const icon = result === 'success' ? '✅' : result === 'skipped' ? '⏭️' : '❌';
@@ -153,11 +153,11 @@ jobs:
             report += '\n';
             
             if (allPassed) {
-              report += '### ✅ Preview Gate PASSED\n\n';
-              report += 'Listo para mergear a develop.';
+              report += '### ✅ Preview Gate Passed\n\n';
+              report += 'Ready to merge into develop.';
             } else {
-              report += '### ❌ Preview Gate FAILED\n\n';
-              report += 'Hay problemas que deben resolverse.';
+              report += '### ❌ Preview Gate Failed\n\n';
+              report += 'There are issues that need to be resolved.';
             }
             
             core.summary.addRaw(report).write();

@@ -1,6 +1,6 @@
 # .github/workflows/preview-publish.yml
-# Publica versiones preview automáticamente en cada push a develop
-# Versión calculada: X.Y+1.0-preview.N (N = commits desde último tag en main)
+# Publishes preview versions automatically on each push to develop
+# Version calculated: X.Y+1.0-preview.N (N = commits since last tag on master)
 
 name: Preview Publish
 
@@ -40,21 +40,21 @@ jobs:
       - name: Calculate preview version
         id: calc
         run: |
-          # Obtener último tag en main (formato vX.Y.Z)
-          LAST_TAG=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]" origin/main 2>/dev/null || echo "v0.0.0")
-          echo "Last tag on main: $LAST_TAG"
+          # Get last tag on master (format vX.Y.Z)
+          LAST_TAG=$(git describe --tags --abbrev=0 --match "v[0-9]*.[0-9]*.[0-9]" origin/master 2>/dev/null || echo "v0.0.0")
+          echo "Last tag on master: $LAST_TAG"
           
-          # Parsear versión
+          # Parse version
           MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
           MINOR=$(echo $LAST_TAG | cut -d. -f2)
           
-          # Incrementar minor para preview
+          # Increment minor for preview
           NEXT_MINOR=$((MINOR + 1))
           
-          # Contar commits desde último tag
+          # Count commits since last tag
           COMMITS=$(git rev-list --count $LAST_TAG..HEAD)
           
-          # Construir versión
+          # Build version
           VERSION="${MAJOR}.${NEXT_MINOR}.0-preview.${COMMITS}"
           FULL_VERSION="${MAJOR}.${NEXT_MINOR}.0-preview.${COMMITS}+${GITHUB_SHA:0:7}"
           
@@ -64,7 +64,7 @@ jobs:
           echo "Calculated version: $VERSION"
 
   build-and-test:
-    name: Build & Test
+    name: Build and Test
     runs-on: ubuntu-latest
     needs: version
     steps:
@@ -160,13 +160,13 @@ jobs:
           body: |
             ## Preview Release ${{ needs.version.outputs.version }}
             
-            Versión de desarrollo automática desde `develop`.
+            Development version automatically built from `develop`.
             
             ```bash
             dotnet add package CdCSharp.BlazorUI --version ${{ needs.version.outputs.version }}
             ```
             
-            ⚠️ **Inestable - no usar en producción**
+            ⚠️ **Unstable - do not use in production**
           prerelease: true
           files: ./artifacts/*.nupkg
         env:

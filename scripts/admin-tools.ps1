@@ -2,32 +2,32 @@
 #requires -Version 7.0
 <#
 .SYNOPSIS
-    Herramientas de administración para releases de CdCSharp.BlazorUI
-    ESTRATEGIA: Squash + Rebase, historial lineal
+    Administration tools for CdCSharp.BlazorUI releases
+    STRATEGY: Squash + Rebase, linear history
 
 .DESCRIPTION
-    Script para mantenedores/administradores.
-    Gestiona releases, verifica calidad de PRs, y mantiene el flujo lineal.
+    Script for project administrators/maintainers.
+    Manages releases, verifies PR quality, and maintains linear flow.
 
 .EXAMPLE
     ./admin-tools.ps1 status
-    Muestra estado de ramas, PRs pendientes, versiones
+    Shows branch status, pending commits, versions
 
 .EXAMPLE
-    ./admin-tools.ps1 check-pr <branch-name>
-    Verifica si una PR cumple los requisitos (1 commit, rebase hecho)
+    ./admin-tools.ps1 check-pr branch-name
+    Verifies if PR meets requirements (1 commit, rebase done)
 
 .EXAMPLE
     ./admin-tools.ps1 rc 1.0.0
-    Crea una release candidate
+    Creates release candidate branch
 
 .EXAMPLE
     ./admin-tools.ps1 release 1.0.0
-    Publica release estable (merge a main + tag)
+    Publishes stable release (merge to master + tag)
 
 .NOTES
-    Autor: Samuel Maícas (@cdcsharp)
-    Versión: 2.0.0 - Estrategia Squash+Rebase
+    Author: Samuel Maícas (@cdcsharp)
+    Version: 2.0.0 - Squash+Rebase Strategy
 #>
 
 [CmdletBinding()]
@@ -46,14 +46,14 @@ param(
     [switch]$DryRun
 )
 
-# Configuración
+# Configuration
 $Config = @{
-    MainBranch = "main"
-    DevelopBranch = "develop"
     Remote = "origin"
+    DevelopBranch = "develop"
+    MainBranch = "master"
 }
 
-# Colores
+# Colors
 $Colors = @{
     Success = "Green"
     Warning = "Yellow"
@@ -62,7 +62,7 @@ $Colors = @{
     Emphasis = "Magenta"
 }
 
-#region Funciones Auxiliares
+#region Helper Functions
 
 function Write-Header {
     param([string]$Message)
@@ -139,17 +139,17 @@ function Invoke-GitCommand {
 }
 
 function Show-Status {
-    Write-Header "Estado del Repositorio"
+    Write-Header "Repository Status"
     
-    # Información de versión
+    # Version info
     $lastTag = Get-LastTag
-    Write-Info "Último tag en main: $lastTag"
+    Write-Info "Last tag on master: $lastTag"
     
     $commitsSince = Get-CommitsSinceTag -Tag $lastTag
-    Write-Info "Commits desde $lastTag`: $commitsSince"
+    Write-Info "Commits since $lastTag`: $commitsSince"
     
-    # Estado de ramas
-    Write-Host "`n--- Ramas Principales ---" -ForegroundColor $Colors.Emphasis
+    # Branch status
+    Write-Host "`n--- Main Branches ---" -ForegroundColor $Colors.Emphasis
     
     foreach ($branch in @($Config.MainBranch, $Config.DevelopBranch)) {
         $exists = git ls-remote --heads $Config.Remote $branch 2>$null
@@ -167,8 +167,8 @@ function Show-Status {
         }
     }
     
-    # Ramas de feature/release/hotfix
-    Write-Host "`n--- Ramas Activas ---" -ForegroundColor $Colors.Emphasis
+    # Feature/release/hotfix branches
+    Write-Host "`n--- Active Branches ---" -ForegroundColor $Colors.Emphasis
     $featureBranches = git branch -r --list "$($Config.Remote)/feature/*" "$($Config.Remote)/fix/*" 2>$null
     $releaseBranches = git branch -r --list "$($Config.Remote)/release/*" "$($Config.Remote)/hotfix/*" 2>$null
     
@@ -183,163 +183,162 @@ function Show-Status {
     }
     
     if (-not $featureBranches -and -not $releaseBranches) {
-        Write-Info "No hay ramas activas"
+        Write-Info "No active branches"
     }
     
-    # Verificar PRs listos para merge
-    Write-Host "`n--- PRs Listos para Merge ---" -ForegroundColor $Colors.Emphasis
-    # Esto requeriría GitHub CLI, mostramos instrucciones
-    Write-Info "Usa GitHub para ver PRs: https://github.com/$($Config.Remote)/pulls"
+    # Check PRs ready to merge
+    Write-Host "`n--- PRs Ready to Merge ---" -ForegroundColor $Colors.Emphasis
+    Write-Info "Use GitHub to view PRs: https://github.com/$($Config.Remote)/pulls"
 }
 
 function Check-PR {
     param([string]$BranchName)
     
     if (-not $BranchName) {
-        Write-Error "Nombre de rama requerido. Uso: ./admin-tools.ps1 check-pr feature/nombre"
+        Write-Error "Branch name required. Usage: ./admin-tools.ps1 check-pr feature/name"
         exit 1
     }
     
-    Write-Header "Verificando PR: $BranchName"
+    Write-Header "Checking PR: $BranchName"
     
     # Fetch
     Invoke-GitCommand -Command "fetch" -Arguments $Config.Remote | Out-Null
     
-    # Verificar que existe
+    # Check if exists
     $exists = git ls-remote --heads $Config.Remote $BranchName 2>$null
     if (-not $exists) {
-        Write-Error "La rama $BranchName no existe en $($Config.Remote)"
+        Write-Error "Branch $BranchName does not exist in $($Config.Remote)"
         exit 1
     }
     
-    # Contar commits
+    # Count commits
     $base = git merge-base "$Config.Remote/$BranchName" "$Config.Remote/$($Config.DevelopBranch)" 2>$null
     $commitCount = git rev-list --count "$base..$Config.Remote/$BranchName" 2>$null
     
-    Write-Info "Commits en la rama: $commitCount"
+    Write-Info "Commits in branch: $commitCount"
     
     if ($commitCount -eq 1) {
-        Write-Success "✓ Solo 1 commit (squash correcto)"
+        Write-Success "✓ Only 1 commit (correct squash)"
     }
     else {
-        Write-Error "✗ Hay $commitCount commits. Debe hacerse squash a 1."
-        Write-Info "Instrucciones para el desarrollador:"
+        Write-Error "✗ Has $commitCount commits. Must squash to 1."
+        Write-Info "Instructions for developer:"
         Write-Host "  ./dev-tools.ps1 squash"
         return
     }
     
-    # Verificar si está up-to-date
+    # Check if up-to-date
     $behind = git rev-list --count "$Config.Remote/$BranchName..$Config.Remote/$($Config.DevelopBranch)" 2>$null
     
     if ($behind -eq 0) {
-        Write-Success "✓ Rama up-to-date con develop"
+        Write-Success "✓ Branch up-to-date with develop"
     }
     else {
-        Write-Error "✗ Rama está $behind commits detrás de develop"
-        Write-Info "El desarrollador debe ejecutar:"
+        Write-Error "✗ Branch is $behind commits behind develop"
+        Write-Info "Developer must run:"
         Write-Host "  ./dev-tools.ps1 ready"
         return
     }
     
-    # Verificar mensaje de commit
+    # Check commit message
     $commitMsg = git log -1 --pretty=%B "$Config.Remote/$BranchName" 2>$null
-    Write-Host "`nMensaje del commit:" -ForegroundColor $Colors.Info
+    Write-Host "`nCommit message:" -ForegroundColor $Colors.Info
     Write-Host $commitMsg
     
     if ($commitMsg -match '^(feat|fix|docs|test|refactor|chore|breaking)(\([^)]+\))?:\s.+') {
-        Write-Success "✓ Mensaje sigue conventional commits"
+        Write-Success "✓ Message follows conventional commits"
     }
     else {
-        Write-Warning "⚠ Mensaje no sigue conventional commits"
+        Write-Warning "⚠ Message doesn't follow conventional commits"
     }
     
     if ($commitMsg -match 'Fixes\s+#\d+') {
-        Write-Success "✓ Referencia a issue encontrada"
+        Write-Success "✓ Issue reference found"
     }
     else {
-        Write-Warning "⚠ No hay referencia a issue (Fixes #XXX)"
+        Write-Warning "⚠ No issue reference (Fixes #XXX)"
     }
     
-    Write-Host "`n--- Resumen ---" -ForegroundColor $Colors.Emphasis
-    Write-Success "La PR está lista para mergear"
-    Write-Info "En GitHub: Selecciona 'Squash and merge' (aunque ya sea 1 commit, para mantener consistencia)"
+    Write-Host "`n--- Summary ---" -ForegroundColor $Colors.Emphasis
+    Write-Success "PR is ready to merge"
+    Write-Info "On GitHub: Select 'Squash and merge' (even if already 1 commit, for consistency)"
 }
 
 function New-ReleaseCandidate {
     param([string]$Version)
     
-    Write-Header "Creando Release Candidate $Version"
+    Write-Header "Creating Release Candidate $Version"
     
-    # Validar formato
+    # Validate format
     if ($Version -notmatch '^\d+\.\d+\.\d+$') {
-        Write-Error "Formato inválido. Use: X.Y.Z (ej: 1.0.0)"
+        Write-Error "Invalid format. Use: X.Y.Z (e.g.: 1.0.0)"
         exit 1
     }
     
-    # Verificar working directory
+    # Check working directory
     $status = git status --porcelain 2>$null
     if ($status) {
-        Write-Error "Working directory no está limpio"
+        Write-Error "Working directory not clean"
         exit 1
     }
     
     $releaseBranch = "release/$Version"
     
     # Checkout develop
-    Write-Info "Actualizando $($Config.DevelopBranch)..."
+    Write-Info "Updating $($Config.DevelopBranch)..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments $Config.DevelopBranch
     if (-not $result) { exit 1 }
     
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $($Config.DevelopBranch)"
     if (-not $result) { exit 1 }
     
-    # Crear rama release
-    Write-Info "Creando rama $releaseBranch..."
+    # Create release branch
+    Write-Info "Creating branch $releaseBranch..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments "-b $releaseBranch"
     if (-not $result) { exit 1 }
     
     # Push
-    Write-Info "Push a $($Config.Remote)..."
+    Write-Info "Pushing to $($Config.Remote)..."
     $result = Invoke-GitCommand -Command "push" -Arguments "-u $($Config.Remote) $releaseBranch"
     if (-not $result) { exit 1 }
     
-    Write-Success "Release branch $releaseBranch creada"
-    Write-Info "Ahora puedes:"
-    Write-Host "  1. Hacer bugfixes en esta rama (solo fixes, no features)"
-    Write-Host "  2. Publicar RC: git tag v$Version-rc.1 && git push origin v$Version-rc.1"
-    Write-Host "  3. Cuando esté lista: ./admin-tools.ps1 release $Version"
+    Write-Success "Release branch $releaseBranch created"
+    Write-Info "Now you can:"
+    Write-Host "  1. Make bugfixes on this branch (fixes only, no features)"
+    Write-Host "  2. Publish RC: git tag v$Version-rc.1 && git push origin v$Version-rc.1"
+    Write-Host "  3. When ready: ./admin-tools.ps1 release $Version"
 }
 
 function Publish-Release {
     param([string]$Version)
     
-    Write-Header "Publicando Release $Version"
+    Write-Header "Publishing Release $Version"
     
     if ($Version -notmatch '^\d+\.\d+\.\d+$') {
-        Write-Error "Formato inválido. Use: X.Y.Z"
+        Write-Error "Invalid format. Use: X.Y.Z"
         exit 1
     }
     
     $releaseBranch = "release/$Version"
     $tag = "v$Version"
     
-    # Verificar que existe release branch
+    # Check if release branch exists
     $exists = git branch --list $releaseBranch 2>$null
     if (-not $exists) {
-        Write-Error "La rama $releaseBranch no existe. Crea la RC primero."
+        Write-Error "Branch $releaseBranch doesn't exist. Create RC first."
         exit 1
     }
     
-    # Confirmación
+    # Confirmation
     if (-not $Force) {
-        Write-Warning "Esto va a:"
-        Write-Host "  1. Mergear $releaseBranch a $($Config.MainBranch) (squash)"
-        Write-Host "  2. Crear tag $tag"
-        Write-Host "  3. Push a $($Config.Remote)"
-        Write-Host "  4. Merge back a $($Config.DevelopBranch)"
-        $confirm = Read-Host "`n¿Continuar? (escribe 'yes' para confirmar)"
+        Write-Warning "This will:"
+        Write-Host "  1. Merge $releaseBranch to $($Config.MainBranch) (squash)"
+        Write-Host "  2. Create tag $tag"
+        Write-Host "  3. Push to $($Config.Remote)"
+        Write-Host "  4. Merge back to $($Config.DevelopBranch)"
+        $confirm = Read-Host "`nContinue? (type 'yes' to confirm)"
         if ($confirm -ne "yes") {
-            Write-Info "Cancelado"
+            Write-Info "Cancelled"
             exit 0
         }
     }
@@ -352,7 +351,7 @@ function Publish-Release {
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $releaseBranch"
     if (-not $result) { exit 1 }
     
-    # Checkout main
+    # Checkout master
     Write-Info "Checkout $($Config.MainBranch)..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments $Config.MainBranch
     if (-not $result) { exit 1 }
@@ -360,8 +359,8 @@ function Publish-Release {
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $Config.MainBranch"
     if (-not $result) { exit 1 }
     
-    # Merge squash de release
-    Write-Info "Merge squash de $releaseBranch..."
+    # Squash merge from release
+    Write-Info "Squash merge from $releaseBranch..."
     $result = Invoke-GitCommand -Command "merge" -Arguments "--squash $releaseBranch"
     if (-not $result) { exit 1 }
     
@@ -370,20 +369,20 @@ function Publish-Release {
     if (-not $result) { exit 1 }
     
     # Tag
-    Write-Info "Creando tag $tag..."
+    Write-Info "Creating tag $tag..."
     $result = Invoke-GitCommand -Command "tag" -Arguments "-a $tag -m \"Release $Version\""
     if (-not $result) { exit 1 }
     
     # Push
-    Write-Info "Push $($Config.MainBranch) y tag..."
+    Write-Info "Pushing $($Config.MainBranch) and tag..."
     $result = Invoke-GitCommand -Command "push" -Arguments "$($Config.Remote) $Config.MainBranch"
     if (-not $result) { exit 1 }
     
     $result = Invoke-GitCommand -Command "push" -Arguments "$($Config.Remote) $tag"
     if (-not $result) { exit 1 }
     
-    # Merge back a develop
-    Write-Info "Merge back a $($Config.DevelopBranch)..."
+    # Merge back to develop
+    Write-Info "Merging back to $($Config.DevelopBranch)..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments $Config.DevelopBranch
     if (-not $result) { exit 1 }
     
@@ -397,64 +396,64 @@ function Publish-Release {
     if (-not $result) { exit 1 }
     
     # Cleanup
-    Write-Info "Limpiando..."
+    Write-Info "Cleaning up..."
     Invoke-GitCommand -Command "branch" -Arguments "-d $releaseBranch" -IgnoreError | Out-Null
     Invoke-GitCommand -Command "push" -Arguments "$($Config.Remote) --delete $releaseBranch" -IgnoreError | Out-Null
     
-    Write-Success "Release $Version publicada"
-    Write-Info "El CI debería publicar el paquete a NuGet"
+    Write-Success "Release $Version published"
+    Write-Info "CI should publish package to NuGet"
 }
 
 function New-Hotfix {
     param([string]$Version)
     
-    Write-Header "Creando Hotfix $Version"
+    Write-Header "Creating Hotfix $Version"
     
     if ($Version -notmatch '^\d+\.\d+\.\d+$') {
-        Write-Error "Formato inválido. Use: X.Y.Z"
+        Write-Error "Invalid format. Use: X.Y.Z"
         exit 1
     }
     
     $hotfixBranch = "hotfix/$Version"
     
-    # Checkout main
-    Write-Info "Actualizando $($Config.MainBranch)..."
+    # Checkout master
+    Write-Info "Updating $($Config.MainBranch)..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments $Config.MainBranch
     if (-not $result) { exit 1 }
     
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $Config.MainBranch"
     if (-not $result) { exit 1 }
     
-    # Crear rama
-    Write-Info "Creando rama $hotfixBranch..."
+    # Create branch
+    Write-Info "Creating branch $hotfixBranch..."
     $result = Invoke-GitCommand -Command "checkout" -Arguments "-b $hotfixBranch"
     if (-not $result) { exit 1 }
     
     # Push
-    Write-Info "Push a $($Config.Remote)..."
+    Write-Info "Pushing to $($Config.Remote)..."
     $result = Invoke-GitCommand -Command "push" -Arguments "-u $($Config.Remote) $hotfixBranch"
     if (-not $result) { exit 1 }
     
-    Write-Success "Hotfix branch $hotfixBranch creada"
-    Write-Info "Haz el fix, commit, y luego: git tag v$Version && git push origin v$Version"
+    Write-Success "Hotfix branch $hotfixBranch created"
+    Write-Info "Make the fix, commit, and then: git tag v$Version && git push origin v$Version"
 }
 
 function Show-Changelog {
-    Write-Header "Changelog Pendiente"
+    Write-Header "Pending Changelog"
     
     $lastTag = Get-LastTag
-    Write-Info "Último tag: $lastTag"
+    Write-Info "Last tag: $lastTag"
     
     $commits = git log "$lastTag..$($Config.Remote)/$($Config.DevelopBranch)" --pretty=format:"%h %s" --no-merges 2>$null
     
     if (-not $commits) {
-        Write-Info "No hay commits nuevos en develop"
+        Write-Info "No new commits on develop"
         return
     }
     
-    Write-Host "`nCommits desde $lastTag`:" -ForegroundColor $Colors.Emphasis
+    Write-Host "`nCommits since $lastTag`:" -ForegroundColor $Colors.Emphasis
     
-    # Agrupar por tipo
+    # Group by type
     $types = @{
         'feat' = @()
         'fix' = @()
@@ -499,7 +498,7 @@ function Show-Changelog {
 }
 
 function Invoke-Cleanup {
-    Write-Header "Limpiando Ramas"
+    Write-Header "Cleaning Branches"
     
     # Checkout develop
     $result = Invoke-GitCommand -Command "checkout" -Arguments $Config.DevelopBranch
@@ -508,13 +507,13 @@ function Invoke-Cleanup {
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $Config.DevelopBranch"
     if (-not $result) { exit 1 }
     
-    # Eliminar ramas mergeadas
+    # Delete merged branches
     $merged = git branch --merged $Config.DevelopBranch --format="%(refname:short)" | Where-Object { 
         $_ -notin @($Config.MainBranch, $Config.DevelopBranch) -and $_ -notmatch "^\*"
     }
     
     if ($merged) {
-        Write-Info "Eliminando ramas mergeadas:"
+        Write-Info "Deleting merged branches:"
         $merged | ForEach-Object {
             Write-Host "  - $_"
             Invoke-GitCommand -Command "branch" -Arguments "-d $_" -IgnoreError | Out-Null
@@ -524,7 +523,7 @@ function Invoke-Cleanup {
     # Prune
     Invoke-GitCommand -Command "remote" -Arguments "prune $($Config.Remote)" -IgnoreError | Out-Null
     
-    Write-Success "Limpieza completada"
+    Write-Success "Cleanup completed"
 }
 
 #endregion
@@ -532,7 +531,7 @@ function Invoke-Cleanup {
 #region Main
 
 if (-not (Test-GitRepository)) {
-    Write-Error "No estás en un repositorio Git"
+    Write-Error "Not in a Git repository"
     exit 1
 }
 
@@ -540,28 +539,28 @@ switch ($Command) {
     "status" { Show-Status }
     "check-pr" {
         if (-not $Name) {
-            Write-Error "Nombre de rama requerido. Uso: ./admin-tools.ps1 check-pr feature/nombre"
+            Write-Error "Branch name required. Usage: ./admin-tools.ps1 check-pr feature/name"
             exit 1
         }
         Check-PR -BranchName $Name
     }
     "rc" {
         if (-not $Name) {
-            Write-Error "Versión requerida. Uso: ./admin-tools.ps1 rc 1.0.0"
+            Write-Error "Version required. Usage: ./admin-tools.ps1 rc 1.0.0"
             exit 1
         }
         New-ReleaseCandidate -Version $Name
     }
     "release" {
         if (-not $Name) {
-            Write-Error "Versión requerida. Uso: ./admin-tools.ps1 release 1.0.0"
+            Write-Error "Version required. Usage: ./admin-tools.ps1 release 1.0.0"
             exit 1
         }
         Publish-Release -Version $Name
     }
     "hotfix" {
         if (-not $Name) {
-            Write-Error "Versión requerida. Uso: ./admin-tools.ps1 hotfix 1.0.1"
+            Write-Error "Version required. Usage: ./admin-tools.ps1 hotfix 1.0.1"
             exit 1
         }
         New-Hotfix -Version $Name

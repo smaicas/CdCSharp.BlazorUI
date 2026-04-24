@@ -28,34 +28,34 @@ dotnet run --project samples/CdCSharp.BlazorUI.AppTest.Server
 dotnet run --project samples/CdCSharp.BlazorUI.AppTest.Wasm
 ```
 
-### Scripts de desarrollo (PowerShell)
+### Development Scripts (PowerShell)
 
-Para facilitar el flujo de trabajo, usa los scripts en `scripts/`.
+To facilitate the workflow, use the scripts in `scripts/`.
 
-**Estrategia: Cada PR = 1 commit (squash) + rebase sobre develop**
+**Strategy: Each PR = 1 commit (squash) + rebase onto develop**
 
 ```powershell
-# Para colaboradores (desarrolladores)
-./scripts/dev-tools.ps1 sync                    # Actualiza develop
-./scripts/dev-tools.ps1 feature nombre-feature  # Crea feature branch
-./scripts/dev-tools.ps1 fix nombre-fix          # Crea fix branch
-./scripts/dev-tools.ps1 commit "mensaje"        # Commit con conventional commits
-./scripts/dev-tools.ps1 squash                  # Colapsa todos los commits en 1
-./scripts/dev-tools.ps1 ready                   # Prepara PR: squash + rebase + push
-./scripts/dev-tools.ps1 fix-conflict            # Después de resolver conflictos
-./scripts/dev-tools.ps1 push                    # Push seguro (force-with-lease)
-./scripts/dev-tools.ps1 pr "Título" "Desc"      # Abre página de PR en GitHub
-./scripts/dev-tools.ps1 cleanup                 # Limpia ramas mergeadas
-./scripts/dev-tools.ps1 status                  # Muestra estado del repo
+# For contributors (developers)
+./scripts/dev-tools.ps1 sync                    # Update develop
+./scripts/dev-tools.ps1 feature feature-name    # Create feature branch
+./scripts/dev-tools.ps1 fix fix-name            # Create fix branch
+./scripts/dev-tools.ps1 commit "message"        # Commit with conventional commits
+./scripts/dev-tools.ps1 squash                  # Squash all commits into 1
+./scripts/dev-tools.ps1 ready                   # Prepare PR: squash + rebase + push
+./scripts/dev-tools.ps1 fix-conflict            # After resolving conflicts
+./scripts/dev-tools.ps1 push                    # Safe push (force-with-lease)
+./scripts/dev-tools.ps1 pr "Title" "Desc"       # Open PR page on GitHub
+./scripts/dev-tools.ps1 cleanup                 # Clean merged branches
+./scripts/dev-tools.ps1 status                  # Show repository status
 
-# Para administradores (maintainers)
-./scripts/admin-tools.ps1 status                # Estado de ramas
-./scripts/admin-tools.ps1 check-pr feature/xxx  # Verifica PR lista para merge
-./scripts/admin-tools.ps1 rc 1.0.0              # Crea release candidate
-./scripts/admin-tools.ps1 release 1.0.0         # Publica release estable
-./scripts/admin-tools.ps1 hotfix 1.0.1          # Crea hotfix
-./scripts/admin-tools.ps1 changelog             # Muestra changelog pendiente
-./scripts/admin-tools.ps1 cleanup               # Limpia ramas mergeadas
+# For administrators (maintainers)
+./scripts/admin-tools.ps1 status                # Show branch status
+./scripts/admin-tools.ps1 check-pr feature/xxx  # Verify PR ready to merge
+./scripts/admin-tools.ps1 rc 1.0.0              # Create release candidate
+./scripts/admin-tools.ps1 release 1.0.0         # Publish stable release
+./scripts/admin-tools.ps1 hotfix 1.0.1          # Create hotfix
+./scripts/admin-tools.ps1 changelog             # Show pending changelog
+./scripts/admin-tools.ps1 cleanup               # Clean merged branches
 ```
 
 Ver `VERSIONING.md` para la estrategia completa de versionado.
@@ -378,38 +378,40 @@ develop  ●────┬────┬────┬────┬──�
 **Estrategia: Cada PR = 1 commit (squash) + rebase sobre develop**
 
 ```powershell
-# Para colaboradores
-./scripts/dev-tools.ps1 sync                    # Actualiza develop
-./scripts/dev-tools.ps1 feature nombre-feature  # Crea feature branch
-./scripts/dev-tools.ps1 squash                  # Colapsa todos los commits en 1
-./scripts/dev-tools.ps1 ready                   # Prepara PR: squash + rebase + push
-./scripts/dev-tools.ps1 fix-conflict            # Después de resolver conflictos
-./scripts/dev-tools.ps1 pr "Título" "Desc"      # Abre página de PR
+# For contributors
+./scripts/dev-tools.ps1 sync                    # Update develop
+./scripts/dev-tools.ps1 feature feature-name    # Create feature branch
+./scripts/dev-tools.ps1 squash                  # Squash all commits into 1
+./scripts/dev-tools.ps1 ready                   # Prepare PR: squash + rebase + push
+./scripts/dev-tools.ps1 fix-conflict            # After resolving conflicts
+./scripts/dev-tools.ps1 pr "Title" "Desc"       # Open PR page
 
-# Para administradores
-./scripts/admin-tools.ps1 status                # Estado de ramas
-./scripts/admin-tools.ps1 check-pr feature/xxx  # Verifica PR lista para merge
-./scripts/admin-tools.ps1 rc 1.0.0              # Crea release candidate
-./scripts/admin-tools.ps1 release 1.0.0         # Publica release estable
-./scripts/admin-tools.ps1 hotfix 1.0.1          # Crea hotfix
+# For administrators
+./scripts/admin-tools.ps1 status                # Show branch status
+./scripts/admin-tools.ps1 check-pr feature/xxx  # Verify PR ready to merge
+./scripts/admin-tools.ps1 rc 1.0.0              # Create release candidate
+./scripts/admin-tools.ps1 release 1.0.0         # Publish stable release
+./scripts/admin-tools.ps1 hotfix 1.0.1          # Create hotfix
 ```
 
-### Workflows de CI
+### CI Workflows
 
-- **`.github/workflows/preview.yml`**: Cada push a `develop` publica automáticamente una preview (`X.Y+1.0-preview.N`)
-- **`.github/workflows/release.yml`**: Cada tag `vX.Y.Z` publica la release estable
+- **`.github/workflows/preview-gate.yml`**: Runs on PRs to `develop` (build, test, coverage)
+- **`.github/workflows/preview-publish.yml`**: Runs on push to `develop` (auto-publishes preview)
+- **`.github/workflows/release-gate.yml`**: Runs on PRs to `master` (blocking issues, public API)
+- **`.github/workflows/release-publish.yml`**: Runs on tags `v*` (publishes stable release)
 
-### Convención de commits
+### Commit Convention
 
 ```
-<tipo>(<scope>): <descripción>
+<type>(<scope>): <description>
 
 Fixes #<issue-number>
 ```
 
-Tipos: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `breaking`
+Types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `breaking`
 
-Ejemplo:
+Example:
 ```
 feat(css): add scrollbar tokens to FeatureDefinitions
 

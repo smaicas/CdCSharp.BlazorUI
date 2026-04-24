@@ -1,6 +1,6 @@
 # .github/workflows/release-gate.yml
-# Quality gates para releases - ejecutado en PRs a main
-# Verifica issues bloqueantes, PublicAPI, y requiere aprobaciones
+# Quality gates for releases - runs on PRs to master
+# Verifies blocking issues, Public API, and requires approvals
 
 name: Release Gate
 
@@ -69,11 +69,11 @@ jobs:
         with:
           script: |
             const severityLabels = [
-              'severity:blocker',
-              'severity:critical', 
-              'severity:major',
-              'severity:minor',
-              'severity:polish'
+              'severity/blocker',
+              'severity/critical', 
+              'severity/major',
+              'severity/minor',
+              'severity/polish'
             ];
             
             // Buscar issues abiertos con labels de severity
@@ -86,34 +86,34 @@ jobs:
             
             const blockingIssues = issues.data.filter(issue => 
               issue.labels.some(label => 
-                label.name === 'severity:blocker' || label.name === 'severity:critical'
+                label.name === 'severity/blocker' || label.name === 'severity/critical'
               )
             );
             
             const majorIssues = issues.data.filter(issue => 
-              issue.labels.some(label => label.name === 'severity:major')
+              issue.labels.some(label => label.name === 'severity/major')
             );
             
-            console.log('=== Issues con severity encontrados ===');
+            console.log('=== Issues with severity found ===');
             console.log(`Total: ${issues.data.length}`);
             console.log(`Blocker/Critical: ${blockingIssues.length}`);
             console.log(`Major: ${majorIssues.length}`);
             
             if (blockingIssues.length > 0) {
-              console.log('\n❌ ISSUES BLOQUEANTES:');
+              console.log('\n❌ BLOCKING ISSUES:');
               blockingIssues.forEach(issue => {
                 console.log(`  - #${issue.number}: ${issue.title}`);
               });
               
               if ('${{ inputs.check_only }}' !== 'true') {
-                core.setFailed(`Hay ${blockingIssues.length} issues bloqueantes que deben resolverse antes del release`);
+                core.setFailed(`There are ${blockingIssues.length} blocking issues that must be resolved before release`);
               }
             } else {
-              console.log('\n✅ No hay issues bloqueantes');
+              console.log('\n✅ No blocking issues');
             }
             
             if (majorIssues.length > 0) {
-              console.log('\n⚠️  Issues major pendientes:');
+              console.log('\n⚠️  Pending major issues:');
               majorIssues.forEach(issue => {
                 console.log(`  - #${issue.number}: ${issue.title}`);
               });
@@ -177,7 +177,7 @@ jobs:
             };
             
             let allPassed = true;
-            let report = '## Release Gate Check\n\n';
+            let report = '## Release Gate Results\n\n';
             
             for (const [name, result] of Object.entries(jobs)) {
               const icon = result === 'success' ? '✅' : result === 'skipped' ? '⏭️' : '❌';
@@ -190,11 +190,11 @@ jobs:
             report += '\n';
             
             if (allPassed) {
-              report += '### ✅ Release Gate PASSED\n\n';
-              report += 'El código cumple con todos los requisitos para release.';
+              report += '### ✅ Release Gate Passed\n\n';
+              report += 'Code meets all requirements for release.';
             } else {
-              report += '### ❌ Release Gate FAILED\n\n';
-              report += 'Hay problemas que deben resolverse antes del release.';
+              report += '### ❌ Release Gate Failed\n\n';
+              report += 'There are issues that must be resolved before release.';
             }
             
             core.summary.addRaw(report).write();
