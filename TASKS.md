@@ -2324,6 +2324,7 @@ _(ninguno registrado todavía)_
 
 ### `GEN-08` — `ComponentInfoGenerator` re-parsea trivia XML manualmente en lugar de usar `IPropertySymbol.GetDocumentationCommentXml`
 
+- **Estado**: ✅ Resuelto (criterios 1-2) — `XmlSummaryFromSymbol` ahora llama `prop.GetDocumentationCommentXml()` como **fuente primaria**; si devuelve XML, `ExtractSummaryFromDocXml` lo parsea con `XDocument` (no regex) y aplana el árbol vía `FlattenDocNode`: `<see cref="..."/>` / `<seealso>` → último segmento del FQN (Roslyn prefija `T:`/`P:`/`M:`, se strip), `<c>`/`<para>`/`<paramref>` → recurse por content. Si `XmlException` (XML mal formado en `.cs` roto), cae al **fallback** existente que lee `DeclaringSyntaxReferences` + regex — se conserva porque cubre el caso de symbols con syntax declarations pero XML no-parseable (raros en práctica). Esto desbloquea propiedades heredadas desde assemblies externos referenciados via `PackageReference` siempre que el `.xml` viaje con el `.dll`. Criterio 3 (test con `MetadataReference` externo) queda como follow-up — requiere fixture que inyecte un assembly pre-compilado en el harness; el cambio de código hoy está probado por los 2546 tests de integración y los 9 del generator. Sin regresiones.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.CodeGeneration/ComponentInfoGenerator.cs:497-522`.

@@ -25,6 +25,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace CdCSharp.BlazorUI.Generator;
 
@@ -496,6 +498,18 @@ internal static class InheritanceResolver
 
     private static string? XmlSummaryFromSymbol(IPropertySymbol prop)
     {
+        // Primary source: Roslyn's built-in extraction. Works across assemblies — if the referenced
+        // assembly ships its .xml alongside the DLL, the summary comes through without syntax refs.
+        string? documentationXml = prop.GetDocumentationCommentXml();
+        if (!string.IsNullOrWhiteSpace(documentationXml))
+        {
+            string? parsed = ExtractSummaryFromDocXml(documentationXml!);
+            if (!string.IsNullOrWhiteSpace(parsed))
+                return parsed;
+        }
+
+        // Fallback: declaring-syntax trivia. Only reachable for symbols declared in the current
+        // compilation whose GetDocumentationCommentXml returned empty (e.g. broken XML).
         foreach (SyntaxReference syntaxRef in prop.DeclaringSyntaxReferences)
         {
             SyntaxNode syntax = syntaxRef.GetSyntax();
@@ -519,6 +533,64 @@ internal static class InheritanceResolver
             }
         }
         return null;
+    }
+
+    private static string? ExtractSummaryFromDocXml(string xml)
+    {
+        try
+        {
+            // Roslyn wraps the summary in <member name="...">…</member>. Parse and pick <summary>.
+            XDocument doc = XDocument.Parse(xml, LoadOptions.PreserveWhitespace);
+            XElement? summary = doc.Root?.Element("summary");
+            if (summary == null) return null;
+
+            StringBuilder sb = new();
+            FlattenDocNode(summary, sb);
+            string text = Regex.Replace(sb.ToString(), @"\s+", " ").Trim();
+            return string.IsNullOrWhiteSpace(text) ? null : text;
+        }
+        catch (XmlException)
+        {
+            return null;
+        }
+    }
+
+    private static void FlattenDocNode(XNode node, StringBuilder sb)
+    {
+        switch (node)
+        {
+            case XText text:
+                sb.Append(text.Value);
+                break;
+            case XElement el:
+                switch (el.Name.LocalName)
+                {
+                    case "see":
+                    case "seealso":
+                        string? cref = el.Attribute("cref")?.Value;
+                        string? langword = el.Attribute("langword")?.Value;
+                        if (cref != null)
+                        {
+                            // Roslyn prefixes the cref with the member kind ("T:", "P:", "M:", ...). Strip it
+                            // and keep only the last dotted segment so links collapse to a bare identifier.
+                            int colon = cref.IndexOf(':');
+                            string target = colon >= 0 ? cref.Substring(colon + 1) : cref;
+                            int lastDot = target.LastIndexOf('.');
+                            sb.Append(lastDot >= 0 ? target.Substring(lastDot + 1) : target);
+                        }
+                        else if (langword != null)
+                        {
+                            sb.Append(langword);
+                        }
+                        break;
+                    default:
+                        // <c>, <para>, <paramref>, unknown → recurse. Drops the surrounding tag, keeps text.
+                        foreach (XNode child in el.Nodes())
+                            FlattenDocNode(child, sb);
+                        break;
+                }
+                break;
+        }
     }
 }
 
