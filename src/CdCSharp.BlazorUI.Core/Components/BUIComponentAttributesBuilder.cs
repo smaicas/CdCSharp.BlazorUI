@@ -72,6 +72,8 @@ internal sealed class BUIComponentAttributesBuilder
         return new TypeInfo(ToKebabCaseComponentName(type.Name), flags);
     }
 
+    private static string BoolToAttr(bool value) => value ? "true" : "false";
+
     private string? _originalUserStyles;
     private readonly Dictionary<string, string> _cssVariables = [];
     private readonly StringBuilder _styleBuilder = new();
@@ -129,19 +131,19 @@ internal sealed class BUIComponentAttributesBuilder
         if ((flags & ComponentFeatures.Density) != 0)
             ComputedAttributes[FeatureDefinitions.DataAttributes.Density] = ((IHasDensity)component).Density.ToString().ToLowerInvariant();
         if ((flags & ComponentFeatures.FullWidth) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = ((IHasFullWidth)component).FullWidth.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = BoolToAttr(((IHasFullWidth)component).FullWidth);
         if ((flags & ComponentFeatures.Loading) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = ((IHasLoading)component).Loading.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = BoolToAttr(((IHasLoading)component).Loading);
         if ((flags & ComponentFeatures.Error) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = ((IHasError)component).IsError.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = BoolToAttr(((IHasError)component).IsError);
         if ((flags & ComponentFeatures.Disabled) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = ((IHasDisabled)component).IsDisabled.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = BoolToAttr(((IHasDisabled)component).IsDisabled);
         if ((flags & ComponentFeatures.Active) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = ((IHasActive)component).IsActive.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = BoolToAttr(((IHasActive)component).IsActive);
         if ((flags & ComponentFeatures.ReadOnly) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = ((IHasReadOnly)component).IsReadOnly.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = BoolToAttr(((IHasReadOnly)component).IsReadOnly);
         if ((flags & ComponentFeatures.Required) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).IsRequired.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = BoolToAttr(((IHasRequired)component).IsRequired);
 
         if ((flags & ComponentFeatures.Prefix) != 0)
         {
@@ -171,7 +173,7 @@ internal sealed class BUIComponentAttributesBuilder
         if ((flags & ComponentFeatures.Ripple) != 0)
         {
             IHasRipple ripple = (IHasRipple)component;
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Ripple] = (!ripple.DisableRipple).ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Ripple] = BoolToAttr(!ripple.DisableRipple);
             if (!ripple.DisableRipple)
             {
                 if (ripple.RippleColor != null)
@@ -230,19 +232,19 @@ internal sealed class BUIComponentAttributesBuilder
             ((IBuiltComponent)component).BuildComponentDataAttributes(ComputedAttributes);
 
         if ((flags & ComponentFeatures.Active) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = ((IHasActive)component).IsActive.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Active] = BoolToAttr(((IHasActive)component).IsActive);
         if ((flags & ComponentFeatures.Disabled) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = ((IHasDisabled)component).IsDisabled.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Disabled] = BoolToAttr(((IHasDisabled)component).IsDisabled);
         if ((flags & ComponentFeatures.Loading) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = ((IHasLoading)component).Loading.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Loading] = BoolToAttr(((IHasLoading)component).Loading);
         if ((flags & ComponentFeatures.Error) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = ((IHasError)component).IsError.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Error] = BoolToAttr(((IHasError)component).IsError);
         if ((flags & ComponentFeatures.ReadOnly) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = ((IHasReadOnly)component).IsReadOnly.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.ReadOnly] = BoolToAttr(((IHasReadOnly)component).IsReadOnly);
         if ((flags & ComponentFeatures.Required) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = ((IHasRequired)component).IsRequired.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.Required] = BoolToAttr(((IHasRequired)component).IsRequired);
         if ((flags & ComponentFeatures.FullWidth) != 0)
-            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = ((IHasFullWidth)component).FullWidth.ToString().ToLowerInvariant();
+            ComputedAttributes[FeatureDefinitions.DataAttributes.FullWidth] = BoolToAttr(((IHasFullWidth)component).FullWidth);
     }
 
     private static string ToKebabCaseComponentName(string value)

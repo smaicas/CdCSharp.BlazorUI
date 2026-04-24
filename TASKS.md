@@ -1430,6 +1430,7 @@ _(ninguno registrado todavía)_
 
 ### `PERF-01` — `bool.ToString().ToLowerInvariant()` × 7+ call sites en `BuildStyles` / `PatchVolatileAttributes`: allocation de strings por render
 
+- **Estado**: ✅ Resuelto — helper `BoolToAttr(bool) => v ? "true" : "false"` en `BUIComponentAttributesBuilder`; 15 call sites sustituidos (14 en `BuildStyles`/`PatchVolatileAttributes` + 1 en Ripple). Criterio 3 queda para `PERF-06` (enum caching de `Size`/`Density`/`Variant.Name`). Criterio 4 (benchmark) opcional; impacto verificado conceptualmente: 2 allocations por estado por render → 0.
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:123,125,127,129,131,133,135,165,226-238` (estados volátiles FullWidth/Loading/Error/Disabled/Active/ReadOnly/Required/Ripple).
