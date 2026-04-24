@@ -358,6 +358,49 @@ function New-ReleaseCandidate {
     Write-Host "  3. When ready: ./admin-tools.ps1 release $Version"
 }
 
+function Move-PublicApiToShipped {
+    Write-Step "Moving Public API from Unshipped to Shipped"
+    
+    # Find all projects with PublicAPI files
+    $projects = Get-ChildItem -Path "src" -Recurse -Filter "PublicAPI.Unshipped.txt"
+    
+    $movedCount = 0
+    foreach ($unshippedFile in $projects) {
+        $projectDir = $unshippedFile.DirectoryName
+        $shippedPath = Join-Path $projectDir "PublicAPI.Shipped.txt"
+        $unshippedPath = $unshippedFile.FullName
+        
+        $unshippedContent = Get-Content $unshippedPath -Raw -ErrorAction SilentlyContinue
+        
+        if ($unshippedContent -and $unshippedContent.Trim()) {
+            # Append to Shipped
+            if (Test-Path $shippedPath) {
+                Add-Content -Path $shippedPath -Value $unshippedContent -Encoding UTF8 -NoNewline
+            }
+            else {
+                $unshippedContent | Set-Content -Path $shippedPath -Encoding UTF8 -NoNewline
+            }
+            
+            # Clear Unshipped
+            "" | Set-Content -Path $unshippedPath -Encoding UTF8
+            
+            Write-Info "Moved API: $($unshippedFile.Directory.Name)"
+            $movedCount++
+        }
+    }
+    
+    if ($movedCount -gt 0) {
+        # Stage the changes
+        git add "src/**/PublicAPI.Shipped.txt" "src/**/PublicAPI.Unshipped.txt" 2>$null
+        Write-Success "Moved Public API for $movedCount project(s)"
+        return $true
+    }
+    else {
+        Write-Info "No Public API changes to move"
+        return $false
+    }
+}
+
 function Publish-Release {
     param([string]$Version)
     
@@ -381,10 +424,11 @@ function Publish-Release {
     # Confirmation
     if (-not $Force) {
         Write-Warning "This will:"
-        Write-Host "  1. Merge $releaseBranch to $($Config.MainBranch) (squash)"
-        Write-Host "  2. Create tag $tag"
-        Write-Host "  3. Push to $($Config.Remote)"
-        Write-Host "  4. Merge back to $($Config.DevelopBranch)"
+        Write-Host "  1. Move Public API Unshipped → Shipped"
+        Write-Host "  2. Merge $releaseBranch to $($Config.MainBranch) (squash)"
+        Write-Host "  3. Create tag $tag"
+        Write-Host "  4. Push to $($Config.Remote)"
+        Write-Host "  5. Merge back to $($Config.DevelopBranch)"
         $confirm = Read-Host "`nContinue? (type 'yes' to confirm)"
         if ($confirm -ne "yes") {
             Write-Info "Cancelled"
@@ -399,6 +443,24 @@ function Publish-Release {
     
     $result = Invoke-GitCommand -Command "pull" -Arguments "$($Config.Remote) $releaseBranch"
     if (-not $result) { exit 1 }
+    
+    # Move Public API to Shipped
+    $apiMoved = Move-PublicApiToShipped
+    
+    if ($apiMoved) {
+        # Commit the API move
+        $result = Invoke-GitCommand -Command "commit" -Arguments "-m \"chore: ship public API for release $Version\""
+        if (-not $result) { 
+            Write-Warning "Could not commit API changes, continuing..."
+        }
+        else {
+            # Push API changes to release branch
+            $result = Invoke-GitCommand -Command "push" -Arguments "$($Config.Remote) $releaseBranch"
+            if (-not $result) {
+                Write-Warning "Could not push API changes, continuing..."
+            }
+        }
+    }
     
     # Checkout master
     Write-Info "Checkout $($Config.MainBranch)..."
