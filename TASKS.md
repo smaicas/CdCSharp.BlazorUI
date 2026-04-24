@@ -2234,7 +2234,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-17` — slnx con `Id` ausentes en algunos proyectos
 
-- **Estado**: ✅ Resuelto — los 2 proyectos que faltaban ahora llevan `Id` (GUID estable): `docs/CdCSharp.BlazorUI.Docs.Components` → `218fa721-c163-4f2f-b1c7-4571dd7f742a` y `src/CdCSharp.BlazorUI` (raíz) → `0d8c8742-e505-402a-b5b9-362440826191`. Convención "todos o ninguno" cumplida: los 13 proyectos del slnx tienen Id. `dotnet build CdCSharp.BlazorUI.slnx` sin errores.
+- **Estado**: ✅ Resuelto (commit `1905ae2`) — los 2 proyectos que faltaban ahora llevan `Id` (GUID estable): `docs/CdCSharp.BlazorUI.Docs.Components` → `218fa721-c163-4f2f-b1c7-4571dd7f742a` y `src/CdCSharp.BlazorUI` (raíz) → `0d8c8742-e505-402a-b5b9-362440826191`. Convención "todos o ninguno" cumplida: los 13 proyectos del slnx tienen Id. `dotnet build CdCSharp.BlazorUI.slnx` sin errores.
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `CdCSharp.BlazorUI.slnx:5, 39`.
