@@ -29,9 +29,6 @@
 		<AdditionalFiles Include="Pages\**\*.razor" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Remove="Pages\Utils\ValidationPage.razor" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<CompilerVisibleProperty Include="RootNamespace" />
