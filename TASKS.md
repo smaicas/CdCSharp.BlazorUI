@@ -3819,7 +3819,7 @@ _(ninguno registrado todavía)_
 
 ### `GEN-11` — Generadores sin `AnalyzerReleases.{Shipped,Unshipped}.md` (pre-requisito para diagnósticos)
 
-- **Estado**: ✅ Resuelto — ambos generator projects (`CdCSharp.BlazorUI.Core.CodeGeneration` y `CdCSharp.BlazorUI.CodeGeneration`) ahora declaran `AnalyzerReleases.Shipped.md` + `AnalyzerReleases.Unshipped.md` como `<AdditionalFiles>` (criterios 1-2). El primero registra `BUIGEN010` en Unshipped tras GEN-06; el segundo queda con placeholder (ComponentInfoGenerator no emite diagnostics aún). Ambos con header `;`-comentario válido para evitar RS2007 en Shipped vacío. Criterio 3 (documentar flujo en CLAUDE.md) queda como follow-up — no bloquea; el workflow estándar de `AnalyzerReleaseTracking` es convención pública de Roslyn analyzers. Builds: 0 RS2007/RS2008 warnings en ambos proyectos.
+- **Estado**: ✅ Resuelto (commit `e9252aa`) — ambos generator projects (`CdCSharp.BlazorUI.Core.CodeGeneration` y `CdCSharp.BlazorUI.CodeGeneration`) ahora declaran `AnalyzerReleases.Shipped.md` + `AnalyzerReleases.Unshipped.md` como `<AdditionalFiles>` (criterios 1-2). El primero registra `BUIGEN010` en Unshipped tras GEN-06; el segundo queda con placeholder (ComponentInfoGenerator no emite diagnostics aún). Ambos con header `;`-comentario válido para evitar RS2007 en Shipped vacío. Criterio 3 (documentar flujo en CLAUDE.md) queda como follow-up — no bloquea; el workflow estándar de `AnalyzerReleaseTracking` es convención pública de Roslyn analyzers. Builds: 0 RS2007/RS2008 warnings en ambos proyectos.
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core.CodeGeneration/`, `src/CdCSharp.BlazorUI.CodeGeneration/`.
