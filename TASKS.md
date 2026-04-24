@@ -1621,6 +1621,7 @@ _(ninguno registrado todavía)_
 
 ### `DOC-01` — `README.md` del repo tiene 10 bytes (`# BlazorUI`): NuGet sin overview, onboarding inexistente
 
+- **Estado**: ✅ Resuelto — README reescrito (~3.9 KB, antes 10 bytes → 1.7 KB parcial con sólo localización). Ahora contiene: 3 badges (NuGet version, CI build, MIT license), overview (una línea sobre el pipeline `data-bui-*`), **Quickstart** (install + `AddBlazorUI()` + `<BUIInitializer />` + ejemplo de 3 componentes), tabla de los 7 paquetes (incluye `FluentValidation` tras CI-01), sección existente Server vs. WASM para localización, Documentation (apunta al docs site WASM), Contributing (flujo de PR + referencia a AGENTS.md + global.json), y License. Criterio 2 (empaquetado NuGet) ya estaba cubierto por `Directory.Build.props` (`<PackageReadmeFile>README.md</PackageReadmeFile>` + `<None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />` condicional a `IsPackable=true`). Criterio 3 verificado empíricamente: `dotnet pack -c Release` produce `.nupkg` con `README.md` en la raíz (3993 bytes). REL-05 queda colateralmente cerrado (síntoma duplicado).
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: `README.md`; `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj` (`<PackageReadmeFile>` pendiente).
@@ -3708,6 +3709,7 @@ _(ninguno registrado todavía)_
 
 ### `REL-05` — `README.md` efectivamente vacío (`# BlazorUI` sin newline, 0 líneas): primera impresión nula en nuget.org y GitHub
 
+- **Estado**: ✅ Resuelto (cerrado colateralmente por `DOC-01`) — README reescrito con badges, quickstart, paquetes, localización, docs, contributing y license. NuGet.org renderizará el contenido completo en lugar del heading vacío.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `README.md` (raíz).
