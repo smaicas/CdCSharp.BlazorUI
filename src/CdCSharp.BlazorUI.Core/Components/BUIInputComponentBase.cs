@@ -1,4 +1,4 @@
-using CdCSharp.BlazorUI.Components;
+﻿using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -24,6 +24,11 @@ public abstract class BUIInputComponentBase<TValue> :
     private FieldIdentifier _fieldIdentifier;
     private EditContext? _previousEditContext;
     private bool _lastValidationError;
+    // BASE-08: cache the synthetic ValueExpression for the no-EditContext path.
+    // The expression captures `this`, so a single instance is valid for the
+    // component's lifetime and re-uses the same Expression<Func<TValue>>
+    // across every SetParametersAsync call instead of rebuilding it.
+    private Expression<Func<TValue>>? _valueExpressionFallback;
 
     // Common parameters for all inputs — "force from outside": parent overrides the computed state.
     // The computed truth lives in IsX below. See CLAUDE.md §"State parameters".
@@ -76,10 +81,12 @@ public abstract class BUIInputComponentBase<TValue> :
         if (hasValueExpression || hasEditContext)
             return base.SetParametersAsync(parameters);
 
+        _valueExpressionFallback ??= () => Value!;
+
         Dictionary<string, object?> patched = [];
         foreach (ParameterValue p in parameters)
             patched[p.Name] = p.Value;
-        patched[nameof(ValueExpression)] = (Expression<Func<TValue>>)(() => Value!);
+        patched[nameof(ValueExpression)] = _valueExpressionFallback;
         return base.SetParametersAsync(ParameterView.FromDictionary(patched));
     }
 
