@@ -383,3 +383,7 @@ obj/
 
 # VS Code C# Dev Tools - Auto-generated runners
 .vscodecsdt/
+
+# Verify snapshot drift (TEST-04): *.received.* must never be committed.
+# Devs review the diff and rename to *.verified.* to accept; nothing else.
+*.received.*
