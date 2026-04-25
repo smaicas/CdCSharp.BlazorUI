@@ -3271,6 +3271,7 @@ _(ninguno registrado todavía)_
 
 ### `PKG-05` — `Types/Debug/DebugPanel.ts` declarado como `<Content Include>` en csproj: el source TS viaja al paquete
 
+- **Estado**: ✅ Resuelto (cerrado colateralmente por `BLD-09`, commit `487d00f`) — el `<Content Include="Types\Debug\DebugPanel.ts">` se eliminó junto con todo el subsystem `Debug/` del repo (criterio 1). `grep -n Debug src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj` → 0 hits. Criterio 2 verificado en BLD-09 (`dotnet pack -c Release` confirma 0 archivos `Debug*` en el `.nupkg`). Criterio 3 (otros `Types/**/*.ts` no aparecen como `<Content>`) confirmado por inspección del csproj — sólo Razor SDK + StaticWebAssets manejan el resto via convención de carpetas.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj:13-16`.
