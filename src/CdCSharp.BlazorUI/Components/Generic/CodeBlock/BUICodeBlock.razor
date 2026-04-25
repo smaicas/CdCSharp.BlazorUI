@@ -1,5 +1,7 @@
-﻿@using CdCSharp.BlazorUI.Components.Utils
+﻿@using System.Text.RegularExpressions
+@using CdCSharp.BlazorUI.Components.Utils
 @using CdCSharp.BlazorUI.SyntaxHighlight
+@using Microsoft.Extensions.Logging
 
 @namespace CdCSharp.BlazorUI.Components
 @attribute [GenerateComponentInfo]
@@ -10,6 +12,7 @@
 @implements IHasBackgroundColor
 
 @inject IClipboardJsInterop Clipboard
+@inject ILogger<BUICodeBlock> Logger
 
 <bui-component @attributes="ComputedAttributes">
     <div class="bui-code-block__header">
@@ -71,14 +74,26 @@
     {
         if (Code == null) return (MarkupString)string.Empty;
 
+        string normalized = NormalizeIndentation(Code);
         try
         {
-            string result = _highlighter.Highlight(Language.ToString(), NormalizeIndentation(Code));
-            return (MarkupString)result;
+            return (MarkupString)_highlighter.Highlight(Language.ToString(), normalized);
         }
-        catch
+        catch (Exception ex) when (
+            ex is ArgumentException
+                or FormatException
+                or InvalidOperationException
+                or RegexMatchTimeoutException)
         {
-            return (MarkupString)System.Web.HttpUtility.HtmlEncode(NormalizeIndentation(Code));
+            // Highlighter contract: ArgumentException for unknown languages,
+            // RegexMatchTimeoutException for catastrophic backtracking. Anything
+            // outside this set is a bug we want to surface, not swallow.
+            Logger.LogWarning(
+                ex,
+                "BUICodeBlock highlighter failed for language {Language}; falling back to escaped plain text. Code prefix: {Prefix}",
+                Language,
+                normalized.Length > 128 ? normalized[..128] : normalized);
+            return (MarkupString)System.Web.HttpUtility.HtmlEncode(normalized);
         }
     }
 

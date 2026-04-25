@@ -3072,6 +3072,7 @@ _(ninguno registrado todavía)_
 
 ### `SEC-05` — `BUICodeBlock.ComputeHighlight` `catch` genérico silencioso: errores del highlighter no observables
 
+- **Estado**: ✅ Resuelto — `catch` acotado con filtro `when ex is ArgumentException or FormatException or InvalidOperationException or RegexMatchTimeoutException` (criterio 1). `[Inject] ILogger<BUICodeBlock>` registra el fallo como `LogWarning` con `Language` + prefijo de 128 chars del código normalizado (criterio 2). Cualquier excepción fuera del filtro burbujea: bugs reales del highlighter dejan de quedar enmascarados. Criterio 3 (telemetría DoS dedicada para `RegexMatchTimeoutException`) queda cubierto a nivel de log warning — separar a métrica/contador es overkill para un componente cliente; si aparece volumen lo mueve a `SyntaxHighlight` upstream. 46/46 tests de CodeBlock siguen verdes.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Generic/CodeBlock/BUICodeBlock.razor:74-82`.
