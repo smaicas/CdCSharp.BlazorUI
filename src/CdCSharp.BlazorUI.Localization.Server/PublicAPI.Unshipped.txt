@@ -1,1 +1,21 @@
-﻿
+#nullable enable
+CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant
+CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.BUICultureSelectorVariant(string! name) -> void
+CdCSharp.BlazorUI.Localization.Server.CultureEndpointStartupFilter
+CdCSharp.BlazorUI.Localization.Server.CultureEndpointStartupFilter.Configure(System.Action<Microsoft.AspNetCore.Builder.IApplicationBuilder!>! next) -> System.Action<Microsoft.AspNetCore.Builder.IApplicationBuilder!>!
+CdCSharp.BlazorUI.Localization.Server.CultureEndpointStartupFilter.CultureEndpointStartupFilter() -> void
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.CultureCookieName.get -> string!
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.CultureCookieName.set -> void
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.DefaultCulture.get -> string!
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.DefaultCulture.set -> void
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.LocalizationSettings() -> void
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.ResourcesPath.get -> string!
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.ResourcesPath.set -> void
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.SupportedCultures.get -> System.Collections.Generic.List<System.Globalization.CultureInfo!>!
+CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.SupportedCultures.set -> void
+Microsoft.Extensions.DependencyInjection.ServerLocalizationServiceCollectionExtensions
+static CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.Custom(string! name) -> CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant!
+static Microsoft.Extensions.DependencyInjection.ServerLocalizationServiceCollectionExtensions.AddBlazorUILocalizationServer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<CdCSharp.BlazorUI.Localization.Server.LocalizationSettings!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static readonly CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.Dropdown -> CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant!
+static readonly CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.Flags -> CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant!

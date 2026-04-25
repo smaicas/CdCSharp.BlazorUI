@@ -1,5 +1,4 @@
-using CdCSharp.BlazorUI.Components;
-using CdCSharp.BlazorUI.Components;
+﻿using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 

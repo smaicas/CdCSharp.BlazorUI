@@ -1,1 +1,22 @@
-﻿
+#nullable enable
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.BUICultureSelectorVariant(string! name) -> void
+CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence
+CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence.GetStoredCultureAsync() -> System.Threading.Tasks.Task<string?>!
+CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence.SetStoredCultureAsync(string! culture) -> System.Threading.Tasks.Task!
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.DefaultCulture.get -> string!
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.DefaultCulture.set -> void
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.LocalizationSettings() -> void
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.ResourcesPath.get -> string!
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.ResourcesPath.set -> void
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.SupportedCultures.get -> System.Collections.Generic.List<System.Globalization.CultureInfo!>!
+CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.SupportedCultures.set -> void
+Microsoft.Extensions.DependencyInjection.WasmLocalizationHostExtensions
+Microsoft.Extensions.DependencyInjection.WasmLocalizationServiceCollectionExtensions
+static CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Custom(string! name) -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
+static Microsoft.Extensions.DependencyInjection.WasmLocalizationHostExtensions.UseBlazorUILocalizationWasm(Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost! host, string! defaultCulture = "en-US") -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost!>!
+static Microsoft.Extensions.DependencyInjection.WasmLocalizationServiceCollectionExtensions.AddBlazorUILocalizationWasm(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static readonly CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Buttons -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
+static readonly CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Dropdown -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
+static readonly CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Flags -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!

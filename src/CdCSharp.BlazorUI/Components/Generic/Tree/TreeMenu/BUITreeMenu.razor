@@ -1,5 +1,4 @@
 ﻿@using CdCSharp.BlazorUI.Abstractions
-@using CdCSharp.BlazorUI.Abstractions
 @using Microsoft.AspNetCore.Components.Routing
 
 @namespace CdCSharp.BlazorUI.Components
@@ -263,11 +262,13 @@
             }
             else
             {
+            bool ariaHasPopup = hasChildren ? true : false;
+            bool ariaExpanded = hasChildren ? isExpanded : false;
                 <button type="button"
                         class="bui-tree-menu__button"
                         role="menuitem"
-                        aria-haspopup="@(hasChildren ? "true" : null)"
-                        aria-expanded="@(hasChildren? isExpanded.ToString().ToLowerInvariant() : null)"
+                        aria-haspopup="@ariaHasPopup.ToString().ToLowerInvariant()"
+                        aria-expanded="@ariaExpanded.ToString().ToLowerInvariant()"
                         aria-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
                         disabled="@node.IsDisabled"
                         @onclick="() => HandleItemClickAsync(node)">

@@ -1,11 +1,10 @@
-// CdCSharp.BlazorUI.Core\SourceGenerators\ColorClassGenerator.cs
+﻿// CdCSharp.BlazorUI.Core\SourceGenerators\ColorClassGenerator.cs
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -138,6 +137,8 @@ public class ColorClassGenerator : IIncrementalGenerator
         string className = classToGenerate.ClassName;
 
         StringBuilder sb = new(capacity: 64 * 1024);
+        sb.Append("#pragma warning disable RS0016\r\n");
+        sb.Append("#pragma warning disable RS0041\r\n");
         sb.Append("using CdCSharp.BlazorUI.Components;\r\n");
         sb.Append("using System.Diagnostics.CodeAnalysis;\r\n");
         sb.Append("\r\n");
