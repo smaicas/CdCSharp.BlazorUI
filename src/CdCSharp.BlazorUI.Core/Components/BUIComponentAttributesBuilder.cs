@@ -1,6 +1,7 @@
 using CdCSharp.BlazorUI.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace CdCSharp.BlazorUI.Abstractions;
@@ -77,16 +78,124 @@ internal sealed class BUIComponentAttributesBuilder
 
     private static string BoolToAttr(bool value) => value ? "true" : "false";
 
+    private static int ComputeStyleFingerprint(ComponentBase component)
+    {
+        ComponentFeatures flags = GetTypeInfo(component.GetType()).Features;
+        HashCode hc = new();
+        hc.Add(component.GetType());
+
+        // IBuiltComponent contributes via callbacks whose output we can't fingerprint
+        // safely. Fold the component's own identity hash so two different built
+        // components don't collide; correctness still holds because a built component
+        // that mutates its data-attrs in `BuildComponentDataAttributes` would also
+        // mutate one of the underlying parameters → fingerprint diverges. If a consumer
+        // emits time-varying attributes, they must override and bypass this cache.
+        if ((flags & ComponentFeatures.BuiltComponent) != 0)
+            hc.Add(RuntimeHelpers.GetHashCode(component));
+
+        if ((flags & ComponentFeatures.Variant) != 0)
+            hc.Add(((IVariantComponent)component).CurrentVariant);
+        if ((flags & ComponentFeatures.Size) != 0)
+            hc.Add(((IHasSize)component).Size);
+        if ((flags & ComponentFeatures.Density) != 0)
+            hc.Add(((IHasDensity)component).Density);
+        if ((flags & ComponentFeatures.FullWidth) != 0)
+            hc.Add(((IHasFullWidth)component).FullWidth);
+        if ((flags & ComponentFeatures.Loading) != 0)
+            hc.Add(((IHasLoading)component).Loading);
+        if ((flags & ComponentFeatures.Error) != 0)
+            hc.Add(((IHasError)component).IsError);
+        if ((flags & ComponentFeatures.Disabled) != 0)
+            hc.Add(((IHasDisabled)component).IsDisabled);
+        if ((flags & ComponentFeatures.Active) != 0)
+            hc.Add(((IHasActive)component).IsActive);
+        if ((flags & ComponentFeatures.ReadOnly) != 0)
+            hc.Add(((IHasReadOnly)component).IsReadOnly);
+        if ((flags & ComponentFeatures.Required) != 0)
+            hc.Add(((IHasRequired)component).IsRequired);
+        if ((flags & ComponentFeatures.Prefix) != 0)
+        {
+            IHasPrefix p = (IHasPrefix)component;
+            hc.Add(p.PrefixColor);
+            hc.Add(p.PrefixBackgroundColor);
+        }
+        if ((flags & ComponentFeatures.Suffix) != 0)
+        {
+            IHasSuffix s = (IHasSuffix)component;
+            hc.Add(s.SuffixColor);
+            hc.Add(s.SuffixBackgroundColor);
+        }
+        if ((flags & ComponentFeatures.Shadow) != 0)
+            hc.Add(((IHasShadow)component).Shadow);
+        if ((flags & ComponentFeatures.Ripple) != 0)
+        {
+            IHasRipple r = (IHasRipple)component;
+            hc.Add(r.DisableRipple);
+            hc.Add(r.RippleColor);
+            hc.Add(r.RippleDurationMs);
+        }
+        if ((flags & ComponentFeatures.Color) != 0)
+            hc.Add(((IHasColor)component).Color);
+        if ((flags & ComponentFeatures.BackgroundColor) != 0)
+            hc.Add(((IHasBackgroundColor)component).BackgroundColor);
+        if ((flags & ComponentFeatures.Border) != 0)
+            hc.Add(((IHasBorder)component).Border);
+        if ((flags & ComponentFeatures.Transitions) != 0)
+            hc.Add(((IHasTransitions)component).Transitions);
+
+        return hc.ToHashCode();
+    }
+
     private string? _originalUserStyles;
     private string? _lastStyleString;
     private readonly Dictionary<string, string> _cssVariables = [];
     private readonly StringBuilder _styleBuilder = new();
     public Dictionary<string, object> ComputedAttributes { get; } = [];
 
+    // PERF-02: skip the full ComputedAttributes/cssVariables rebuild when none of the
+    // style-affecting inputs changed. `additionalAttributes` is captured by reference
+    // identity (the parent typically reuses the same dictionary unless it actually
+    // mutates the captured-attributes set); the rest of the inputs are folded into a
+    // single hash. PatchVolatileAttributes still runs every render via BuildRenderTree
+    // so volatile state changes (Disabled/Loading/etc.) are picked up regardless.
+    private bool _hasBuiltOnce;
+    private int _lastFingerprint;
+    private IReadOnlyDictionary<string, object>? _lastAdditionalAttributes;
+
     public void BuildStyles(
         ComponentBase component,
         IReadOnlyDictionary<string, object>? additionalAttributes)
     {
+        // IBuiltComponent components emit their own data-attrs / css-vars from
+        // `BuildComponentDataAttributes` / `BuildComponentCssVariables` callbacks
+        // that read arbitrary component-private state. We can't fingerprint that
+        // safely, so the fast-path cache is disabled for them. Non-built components
+        // (the vast majority — UIButton, UICard, etc.) still benefit.
+        ComponentFeatures flags = GetTypeInfo(component.GetType()).Features;
+        bool cacheEligible = (flags & ComponentFeatures.BuiltComponent) == 0;
+
+        if (cacheEligible)
+        {
+            int fingerprint = ComputeStyleFingerprint(component);
+            if (_hasBuiltOnce
+                && fingerprint == _lastFingerprint
+                && ReferenceEquals(additionalAttributes, _lastAdditionalAttributes))
+            {
+                return;
+            }
+
+            _lastFingerprint = fingerprint;
+            _lastAdditionalAttributes = additionalAttributes;
+            _hasBuiltOnce = true;
+        }
+        else
+        {
+            // Built components opt out: invalidate the cache so a future state where
+            // the component stops being built (unlikely, but defensive) re-fingerprints
+            // from scratch.
+            _hasBuiltOnce = false;
+        }
+
         ComputedAttributes.Clear();
         if (additionalAttributes != null)
         {
@@ -104,7 +213,6 @@ internal sealed class BUIComponentAttributesBuilder
         cssVariables.Clear();
 
         TypeInfo typeInfo = GetTypeInfo(component.GetType());
-        ComponentFeatures flags = typeInfo.Features;
 
         // Component-supplied keys are contributed first so that the framework-owned keys below
         // overwrite any collision. Components may only add *new* data-attrs / inline vars.

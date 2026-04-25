@@ -1450,6 +1450,7 @@ _(ninguno registrado todavía)_
 
 ### `PERF-02` — `BuildStyles` reconstruye `ComputedAttributes` desde cero aunque sólo cambie un parámetro no-estilístico
 
+- **Estado**: ✅ Resuelto — `BUIComponentAttributesBuilder` cachea el fingerprint de las entradas que afectan al estilo (`Variant`, `Size`, `Density`, `Color`, `BackgroundColor`, `Border`, `Shadow`, `Transitions`, `IsActive`/`IsDisabled`/`IsLoading`/`IsError`/`IsReadOnly`/`IsRequired`/`FullWidth`, `RippleColor`/`RippleDurationMs`/`DisableRipple`, `Prefix*`/`Suffix*`) vía `HashCode.Combine`. La identidad del `additionalAttributes` (reference equality) cierra el ciclo. Si fingerprint + ref coinciden con la última build, `BuildStyles` retorna early sin tocar `ComputedAttributes` ni `_cssVariables`. `IBuiltComponent` queda fuera del fast-path porque sus `BuildComponentDataAttributes`/`BuildComponentCssVariables` leen estado privado no observable. `PatchVolatileAttributes` (criterio 3) sigue corriendo en cada `BuildRenderTree` así que los flips de `Disabled`/`Loading`/`Error`/etc. se propagan igual. Tests añadidos en `BUIComponentBaseTests`: `BuildStyles_Should_Be_Idempotent_When_Parameters_Are_Unchanged` + `BuildStyles_Should_Rebuild_When_Style_Parameter_Changes`. 2587/2587 tests verdes. Criterio 1 con baseline benchmark queda para `PERF-09`.
 - **Severidad**: Major
 - **Esfuerzo**: M
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIComponentAttributesBuilder.cs:80-219`.

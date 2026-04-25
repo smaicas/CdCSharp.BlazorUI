@@ -364,4 +364,54 @@ public class BUIComponentBaseTests
         // Assert — updated inline var reflects new color
         cut.Find("div").GetAttribute("style").Should().Contain("--bui-inline-color: rgba(0,0,255,1)");
     }
+
+    // ---- PERF-02: BuildStyles fingerprint cache ----
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task BuildStyles_Should_Be_Idempotent_When_Parameters_Are_Unchanged(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange — initial render with a representative mix of style-affecting parameters
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Size, BUISize.Large)
+            .Add(c => c.Density, BUIDensity.Compact)
+            .Add(c => c.Color, "rgba(255,0,0,1)")
+            .Add(c => c.BackgroundColor, "rgba(0,255,0,1)")
+            .Add(c => c.FullWidth, true));
+        string styleBefore = cut.Find("div").GetAttribute("style")!;
+        string sizeBefore = cut.Find("div").GetAttribute("data-bui-size")!;
+
+        // Act — re-render with identical parameter values; the fingerprint cache should
+        // detect the no-op and short-circuit the full ComputedAttributes rebuild.
+        cut.Render(p => p
+            .Add(c => c.Size, BUISize.Large)
+            .Add(c => c.Density, BUIDensity.Compact)
+            .Add(c => c.Color, "rgba(255,0,0,1)")
+            .Add(c => c.BackgroundColor, "rgba(0,255,0,1)")
+            .Add(c => c.FullWidth, true));
+
+        // Assert — visible output is byte-identical (correctness preserved by the cache)
+        cut.Find("div").GetAttribute("style").Should().Be(styleBefore);
+        cut.Find("div").GetAttribute("data-bui-size").Should().Be(sizeBefore);
+    }
+
+    [Theory]
+    [MemberData(nameof(TestScenarios.All), MemberType = typeof(TestScenarios))]
+    public async Task BuildStyles_Should_Rebuild_When_Style_Parameter_Changes(BlazorScenario scenario)
+    {
+        await using BlazorTestContextBase ctx = scenario.CreateContext();
+
+        // Arrange
+        IRenderedComponent<BUIComponentBase_TestStub> cut = ctx.Render<BUIComponentBase_TestStub>(p => p
+            .Add(c => c.Color, "rgba(255,0,0,1)"));
+
+        // Act — flip a style-affecting parameter; fingerprint must diverge so the
+        // rebuild path runs and the inline var picks up the new value.
+        cut.Render(p => p.Add(c => c.Color, "rgba(0,0,255,1)"));
+
+        // Assert
+        cut.Find("div").GetAttribute("style").Should().Contain("--bui-inline-color: rgba(0,0,255,1)");
+    }
 }
