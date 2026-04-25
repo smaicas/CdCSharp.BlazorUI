@@ -63,6 +63,16 @@ bui-component[data-bui-component="grid-item"] {
         align-self: baseline;
     }
 
+/*
+ * Hide / show responsive utilities below use `!important` for `display`.
+ * These are utility-class semantics: when a consumer applies `data-hide-md`
+ * to a grid item, they expect the item gone at that breakpoint regardless
+ * of any other `display` value that variants, scoped CSS, or inline styles
+ * might assign. Same as Bootstrap `.d-none`, Tailwind `.hidden`, etc.
+ * Removing `!important` would let an unrelated `display: flex` win and
+ * break the contract. Keep the marker on the visibility utilities only.
+ */
+
 /* ========================================
    RESPONSIVE - XS (< 640px)
    ======================================== */
