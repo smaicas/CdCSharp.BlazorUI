@@ -124,7 +124,7 @@ public static class IconsClassGenerator
         /// <value>
         /// The list of categories.
         /// </value>
-        public List<string> categories { get; set; }
+        public List<string> categories { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the Unicode code point of a character.
@@ -137,7 +137,7 @@ public static class IconsClassGenerator
         /// <summary>
         /// Gets or sets the name property.
         /// </summary>
-        public string name { get; set; }
+        public string name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the popularity value.
@@ -153,7 +153,7 @@ public static class IconsClassGenerator
         /// <value>
         /// The list of sizes in pixels.
         /// </value>
-        public List<int> sizes_px { get; set; }
+        public List<int> sizes_px { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the list of tags associated with an item.
@@ -161,7 +161,7 @@ public static class IconsClassGenerator
         /// <value>
         /// The list of tags.
         /// </value>
-        public List<string> tags { get; set; }
+        public List<string> tags { get; set; } = new();
 
         /// <summary>
         /// Gets or sets a list of unsupported font families.
@@ -169,7 +169,7 @@ public static class IconsClassGenerator
         /// <value>
         /// The list of unsupported font families.
         /// </value>
-        public List<object> unsupported_families { get; set; }
+        public List<object> unsupported_families { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the version number.
@@ -185,21 +185,21 @@ public static class IconsClassGenerator
         /// <summary>
         /// Gets or sets the pattern for asset URLs.
         /// </summary>
-        public string asset_url_pattern { get; set; }
+        public string asset_url_pattern { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the list of font families.
         /// </summary>
-        public List<string> families { get; set; }
+        public List<string> families { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the host value.
         /// </summary>
-        public string host { get; set; }
+        public string host { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the list of icons.
         /// </summary>
-        public List<Icon> icons { get; set; }
+        public List<Icon> icons { get; set; } = new();
     }
 }

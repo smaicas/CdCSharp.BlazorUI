@@ -137,14 +137,16 @@ public class ColorClassGenerator : IIncrementalGenerator
         string className = classToGenerate.ClassName;
 
         StringBuilder sb = new(capacity: 64 * 1024);
-        sb.Append("using CdCSharp.BlazorUI.Components;\r\n");
-        sb.Append("using System.Diagnostics.CodeAnalysis;\r\n");
-        sb.Append("\r\n");
-        sb.Append("namespace ").Append(namespaceName).Append("\r\n");
-        sb.Append("{\r\n");
-        sb.Append("    [ExcludeFromCodeCoverage]\r\n");
-        sb.Append("    public static partial class ").Append(className).Append("\r\n");
-        sb.Append("    {\r\n");
+        sb.AppendLine("#nullable enable");
+        sb.AppendLine();
+        sb.AppendLine("using CdCSharp.BlazorUI.Components;");
+        sb.AppendLine("using System.Diagnostics.CodeAnalysis;");
+        sb.AppendLine();
+        sb.AppendLine($"namespace {namespaceName};");
+        sb.AppendLine();
+        sb.AppendLine("[ExcludeFromCodeCoverage]\r\n");
+        sb.AppendLine($"public static partial class {className}");
+        sb.AppendLine("{\r\n");
 
         bool first = true;
         foreach (NamedColor color in _colors)
@@ -155,18 +157,17 @@ public class ColorClassGenerator : IIncrementalGenerator
                 sb.Append("\r\n");
             first = false;
 
-            sb.Append("        public static class ").Append(color.Name).Append("\r\n");
-            sb.Append("        {\r\n");
+            sb.Append("    public static class ").Append(color.Name).Append("\r\n");
+            sb.Append("    {\r\n");
             AppendProperty(sb, "Default", color, variant: null);
             for (int i = 1; i <= variantLevels; i++)
                 AppendProperty(sb, $"Darken{i}", color, variant: $"CssColorVariant.Darken({i})");
             for (int i = 1; i <= variantLevels; i++)
                 AppendProperty(sb, $"Lighten{i}", color, variant: $"CssColorVariant.Lighten({i})");
-            sb.Append("        }\r\n");
+            sb.Append("    }\r\n");
         }
 
-        sb.Append("    }\r\n");
-        sb.Append("}");
+        sb.Append("}\r\n");
         return sb.ToString();
     }
 

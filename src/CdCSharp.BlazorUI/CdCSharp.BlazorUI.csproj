@@ -66,13 +66,4 @@
 		<ProjectReference Include="..\CdCSharp.BlazorUI.SyntaxHighlight\CdCSharp.BlazorUI.SyntaxHighlight.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Folder Include="Types\Dropdown\" />
-		<Folder Include="Types\Clipboard\" />
-		<Folder Include="Types\Draggable\" />
-		<Folder Include="Types\ColorPicker\" />
-		<Folder Include="Types\Modal\" />
-		<Folder Include="Types\TextArea\" />
-	</ItemGroup>
-
 </Project>

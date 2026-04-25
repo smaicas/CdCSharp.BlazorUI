@@ -1,8 +1,0 @@
-﻿{
-  "profiles": {
-    "GeneratePublicApi": {
-      "commandName": "Project",
-      "commandLineArgs": "V:\\Work\\CdCSharp\\Projects\\BlazorUI\\CdCSharp.BlazorUI.slnx --overwrite"
-    }
-  }
-}

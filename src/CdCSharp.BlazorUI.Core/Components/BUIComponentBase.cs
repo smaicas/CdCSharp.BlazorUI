@@ -10,11 +10,6 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
 
 #if DEBUG
     [Inject] private IBUIPerformanceService? PerformanceService { get; set; }
-
-    [Parameter]
-#pragma warning disable RS0016 // Add public types and members to the declared API
-    public bool TrackPerformanceEnabled { get; set; } = true;
-#pragma warning restore RS0016 // Add public types and members to the declared API
 #endif
 
     [Parameter(CaptureUnmatchedValues = true)]
@@ -72,7 +67,17 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
         base.OnParametersSet();
         _pipeline.BuildStyles(this, AdditionalAttributes);
 #if DEBUG
-        _pipeline.EndParametersSet(GetType().Name, PerformanceService, TrackPerformanceEnabled);
+        if (AdditionalAttributes != null && AdditionalAttributes.TryGetValue("TrackPerformanceEnabled", out object? trackPerfAttr))
+        {
+            bool isEnabled = trackPerfAttr switch
+            {
+                bool b => b,
+                string s => bool.TryParse(s, out bool res) && res,
+                _ => false
+            };
+
+            _pipeline.EndParametersSet(GetType().Name, PerformanceService, isEnabled);
+        }
 #endif
     }
 
@@ -81,7 +86,17 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
         if (firstRender)
         {
 #if DEBUG
-            _pipeline.EndInit(GetType().Name, PerformanceService, TrackPerformanceEnabled);
+            if (AdditionalAttributes != null && AdditionalAttributes.TryGetValue("TrackPerformanceEnabled", out object? trackPerfAttr))
+            {
+                bool isEnabled = trackPerfAttr switch
+                {
+                    bool b => b,
+                    string s => bool.TryParse(s, out bool res) && res,
+                    _ => false
+                };
+
+                _pipeline.EndInit(GetType().Name, PerformanceService, isEnabled);
+            }
 #endif
             if (IsDisposed) return;
             await _pipeline.AttachBehaviorAsync(this, BehaviorJsInterop);
@@ -102,7 +117,17 @@ public abstract class BUIComponentBase : ComponentBase, IAsyncDisposable, IBuilt
         _pipeline.PatchVolatileAttributes(this);
         base.BuildRenderTree(builder);
 #if DEBUG
-        _pipeline.EndRenderTree(GetType().Name, PerformanceService, TrackPerformanceEnabled);
+        if (AdditionalAttributes != null && AdditionalAttributes.TryGetValue("TrackPerformanceEnabled", out object? trackPerfAttr))
+        {
+            bool isEnabled = trackPerfAttr switch
+            {
+                bool b => b,
+                string s => bool.TryParse(s, out bool res) && res,
+                _ => false
+            };
+
+            _pipeline.EndRenderTree(GetType().Name, PerformanceService, isEnabled);
+        }
 #endif
     }
 

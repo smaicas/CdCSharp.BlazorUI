@@ -4,10 +4,6 @@
     <Project Path="docs/CdCSharp.BlazorUI.Docs.Components/CdCSharp.BlazorUI.Docs.Components.csproj" Id="218fa721-c163-4f2f-b1c7-4571dd7f742a" />
     <Project Path="docs/CdCSharp.BlazorUI.Docs.Wasm/CdCSharp.BlazorUI.Docs.Wasm.csproj" Id="7a2e7f75-7eda-4b3d-8713-23ea7d782850" />
   </Folder>
-  <Folder Name="/samples/">
-    <Project Path="samples/CdCSharp.BlazorUI.AppTest.Server/CdCSharp.BlazorUI.AppTest.Server.csproj" Id="19549f36-c2d2-4f32-81d7-8e3c940b0436" />
-    <Project Path="samples/CdCSharp.BlazorUI.AppTest.Wasm/CdCSharp.BlazorUI.AppTest.Wasm.csproj" Id="0fdf0470-1472-4082-98f6-08ce7101e926" />
-  </Folder>
   <Folder Name="/test/">
     <Project Path="test/CdCSharp.BlazorUI.CodeGeneration.Tests/CdCSharp.BlazorUI.CodeGeneration.Tests.csproj" Id="a5aa3c1e-8ee3-4288-8168-703abe7433d0" />
     <Project Path="test/CdCSharp.BlazorUI.Core.CodeGeneration.Tests/CdCSharp.BlazorUI.Core.CodeGeneration.Tests.csproj" Id="4a42929d-fb4f-467e-b175-d220206f122a" />

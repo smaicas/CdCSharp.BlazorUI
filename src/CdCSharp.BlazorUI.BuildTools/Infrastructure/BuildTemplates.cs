@@ -159,7 +159,7 @@ export default defineConfig({
             }
         },
         target: 'esnext',
-        sourcemap: true,
+        sourcemap: false,
         minify: 'terser',
         terserOptions: {
             compress: {
