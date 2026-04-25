@@ -262,13 +262,19 @@
             }
             else
             {
-            bool ariaHasPopup = hasChildren ? true : false;
-            bool ariaExpanded = hasChildren ? isExpanded : false;
+                // Razor analyzer warns on the ternary literal `@(... ? "true" : null)` form
+                // because it can't statically prove the resulting value is a valid `aria-haspopup`
+                // value at design time (it sees the whole expression as a literal). Lifting the
+                // value into a `string?` local sidesteps the analyzer; Blazor still omits the
+                // attribute when the value is null (preserving correct ARIA semantics for leaf
+                // nodes — `aria-expanded` MUST be absent when the element is not expandable).
+                string? ariaHaspopup = hasChildren ? "true" : null;
+                string? ariaExpanded = hasChildren ? isExpanded.ToString().ToLowerInvariant() : null;
                 <button type="button"
                         class="bui-tree-menu__button"
                         role="menuitem"
-                        aria-haspopup="@ariaHasPopup.ToString().ToLowerInvariant()"
-                        aria-expanded="@ariaExpanded.ToString().ToLowerInvariant()"
+                        aria-haspopup="@ariaHaspopup"
+                        aria-expanded="@ariaExpanded"
                         aria-disabled="@node.IsDisabled.ToString().ToLowerInvariant()"
                         disabled="@node.IsDisabled"
                         @onclick="() => HandleItemClickAsync(node)">
