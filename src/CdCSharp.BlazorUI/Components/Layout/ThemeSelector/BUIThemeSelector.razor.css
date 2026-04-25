@@ -1,4 +1,4 @@
-﻿bui-component[data-bui-component="theme-selector"] {
+bui-component[data-bui-component="theme-selector"] {
     position: relative;
     overflow: hidden;
 }
@@ -9,7 +9,7 @@
         justify-content: center;
         border: none;
         background: var(--palette-surface);
-        color: var(--palette-backgroundcontrast);
+        color: var(--palette-background-contrast);
         cursor: pointer;
         transition: all 0.3s ease;
     }

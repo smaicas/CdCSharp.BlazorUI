@@ -1,4 +1,4 @@
-﻿.bui-theme-generator {
+.bui-theme-generator {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -31,7 +31,7 @@
 .bui-theme-generator__actions-label {
     font-size: 0.75rem;
     font-weight: 500;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.7;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -43,7 +43,7 @@
     font-size: var(--bui-font-size-base);
     line-height: var(--bui-line-height);
     background-color: var(--palette-background);
-    color: var(--palette-backgroundcontrast);
+    color: var(--palette-background-contrast);
 }
 
 .bui-theme-generator__import-error {

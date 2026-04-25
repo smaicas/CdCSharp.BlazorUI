@@ -113,7 +113,7 @@ blockquote {
     border-inline-start: 4px solid var(--palette-primary);
     padding-inline-start: 1em;
     font-style: italic;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
 hr {
@@ -128,7 +128,7 @@ hr {
 
 ::selection {
     background-color: var(--palette-primary);
-    color: var(--palette-primarycontrast);
+    color: var(--palette-primary-contrast);
 }
 """);
 }

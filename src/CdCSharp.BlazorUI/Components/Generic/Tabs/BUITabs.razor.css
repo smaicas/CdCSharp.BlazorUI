@@ -1,4 +1,4 @@
-﻿bui-component[data-bui-component="tabs"] {
+bui-component[data-bui-component="tabs"] {
     display: flex;
     flex-direction: column;
 }
@@ -24,7 +24,7 @@
     padding: 0.5rem 1rem;
     border: none;
     background: transparent;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     cursor: pointer;
     font-size: calc(0.875rem * var(--bui-size-multiplier, 1));
     font-weight: 500;
@@ -85,7 +85,7 @@ bui-component[data-bui-component="tabs"][data-bui-variant="pills"] .bui-tabs__ta
 
 bui-component[data-bui-component="tabs"][data-bui-variant="pills"] .bui-tabs__tab[data-bui-active="true"] {
     background: var(--palette-primary);
-    color: var(--palette-primarycontrast);
+    color: var(--palette-primary-contrast);
 }
 
 /* Enclosed variant */

@@ -1,4 +1,4 @@
-﻿bui-component[data-bui-component="input-checkbox"] {
+bui-component[data-bui-component="input-checkbox"] {
     --_color: var(--bui-inline-color, var(--palette-primary));
     --_size: calc(1.25rem * var(--bui-size-multiplier, 1));
     display: inline-flex;
@@ -16,7 +16,7 @@
 
     bui-component[data-bui-component="input-checkbox"] .bui-checkbox__label {
         line-height: 1.4;
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
     }
 
     bui-component[data-bui-component="input-checkbox"][data-bui-disabled="true"] .bui-checkbox {

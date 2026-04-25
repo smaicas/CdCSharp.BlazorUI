@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -67,7 +67,7 @@ bui-component[{{inputBase}}] {
     --_input-scale: {{V(FeatureDefinitions.Tokens.Input.FloatedScale)}};
     --_input-floated-size: calc(1rem * var(--_input-scale) * {{V(sizeMult, "1")}});
 
-    --_input-label-color: var(--palette-surfacecontrast);
+    --_input-label-color: var(--palette-surface-contrast);
     --_input-focus-color: var(--palette-highlight);
     --_input-error-color: var(--palette-error);
 
@@ -290,7 +290,7 @@ bui-component[{{inputBase}}][{{variant}}="outlined"] .{{addonSuffix}} {
    ======================================== */
 
 bui-component[{{inputBase}}][{{variant}}="filled"] {
-    --_wrapper-bg: {{V(inlineBg, "color-mix(in srgb, var(--palette-surfacecontrast) 6%, transparent)")}};
+    --_wrapper-bg: {{V(inlineBg, "color-mix(in srgb, var(--palette-surface-contrast) 6%, transparent)")}};
     --_wrapper-radius: var(--_input-radius) var(--_input-radius) 0 0;
     --_wrapper-pt: calc(0.75rem * {{V(sizeMult, "1")}});
     --_outline-leading-width: calc(var(--_input-px) + var(--_addon-offset));

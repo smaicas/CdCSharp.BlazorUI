@@ -1,11 +1,11 @@
-﻿._bui-checkmark {
+._bui-checkmark {
     --_checkmark-color: var(--bui-inline-color, var(--palette-primary));
     display: inline-flex;
     align-items: center;
     justify-content: center;
     vertical-align: middle;
     flex-shrink: 0;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
 ._bui-checkmark--checked,
@@ -20,5 +20,5 @@
 
 /* Hover effect when parent is hoverable */
 :hover>._bui-checkmark:not(._bui-checkmark--disabled) {
-    color: color-mix(in oklab, var(--_checkmark-color) 80%, var(--palette-hovertint) 20%);
+    color: color-mix(in oklab, var(--_checkmark-color) 80%, var(--palette-hover-tint) 20%);
 }

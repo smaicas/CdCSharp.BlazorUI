@@ -4,7 +4,7 @@ bui-component[data-bui-component="sidebar-layout"] {
     --_sidebar-layout-collapse: var(--bui-inline-collapse-breakpoint, 960px);
     --_sidebar-layout-content-max-width: var(--bui-inline-content-max-width, none);
     --_sidebar-layout-bg: var(--bui-inline-background, var(--palette-background));
-    --_sidebar-layout-fg: var(--bui-inline-color, var(--palette-surfacecontrast));
+    --_sidebar-layout-fg: var(--bui-inline-color, var(--palette-surface-contrast));
     --_sidebar-layout-surface: var(--palette-surface);
     --_sidebar-layout-border: var(--palette-border);
 

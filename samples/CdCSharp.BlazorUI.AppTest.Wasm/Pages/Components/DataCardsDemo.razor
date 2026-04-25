@@ -1,4 +1,4 @@
-﻿@page "/demo/datacards"
+@page "/demo/datacards"
 
 @using CdCSharp.BlazorUI.Components
 
@@ -446,7 +446,7 @@
                     <h3 style="margin: 0 0 0.5rem;">@person.Name</h3>
                     <p style="margin: 0; opacity: 0.7; font-size: 0.875rem;">@person.Email</p>
                     <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center;">
-                        <span style="padding: 0.25rem 0.75rem; background: var(--palette-primary); color: var(--palette-primarycontrast); border-radius: 999px; font-size: 0.75rem;">
+                        <span style="padding: 0.25rem 0.75rem; background: var(--palette-primary); color: var(--palette-primary-contrast); border-radius: 999px; font-size: 0.75rem;">
                             Age: @person.Age
                         </span>
                         <span style="padding: 0.25rem 0.75rem; background: var(--palette-surface); border: 1px solid var(--palette-border); border-radius: 999px; font-size: 0.75rem;">
@@ -751,7 +751,7 @@
                 <BUIDataColumn TItem="Person" Property="@(p => p.Email)" Header="Email" />
             </Columns>
             <EmptyContent>
-                <div style="text-align: center; padding: 3rem; color: var(--palette-surfacecontrast); opacity: 0.6;">
+                <div style="text-align: center; padding: 3rem; color: var(--palette-surface-contrast); opacity: 0.6;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
                     <h3 style="margin: 0 0 0.5rem;">No People Found</h3>
                     <p style="margin: 0;">Try adjusting your filters or add new people to see them here.</p>

@@ -172,7 +172,7 @@ Produced by the `[AssetGenerator]` classes in `src/CdCSharp.BlazorUI.BuildTools/
 
 1. `_reset.css` — CSS reset (`ResetGenerator.cs`).
 2. `_typography.css` — font families, sizes, line-heights as `--bui-font-*` vars (`TypographyGenerator.cs`).
-3. `_themes.css` + `_initialize-themes.css` — theme palette variables (`--palette-primary`, `--palette-surfacecontrast`, etc.) and data-attribute theme activation (`ThemesCssGenerator.cs`, `CssInitializeThemesGenerator.cs`, fed by `LightTheme`/`DarkTheme` in Core).
+3. `_themes.css` + `_initialize-themes.css` — theme palette variables (`--palette-primary`, `--palette-surface-contrast`, etc.) and data-attribute theme activation (`ThemesCssGenerator.cs`, `CssInitializeThemesGenerator.cs`, fed by `LightTheme`/`DarkTheme` in Core).
 4. `_tokens.css` — global design tokens: z-index scale, opacity states, size multipliers (`--bui-small-multiplier`, `--bui-medium-multiplier`, `--bui-large-multiplier`), density multipliers, highlight outline (`DesignTokensGenerator.cs`).
 5. `_base.css` — universal `<bui-component>` styles: base layout, size system, density system, state styles (disabled/fullwidth), shadow system, utility classes (`BaseComponentGenerator.cs`).
 6. `_transition-classes.css` — keyframed transition classes referenced by `[data-bui-transitions]` (`TransitionsCssGenerator.cs`).
@@ -203,7 +203,7 @@ Input components use `BUIInputComponentBase` (which already implements `IInputFa
    ```css
    bui-component[data-bui-component="button"] {
        --_button-background: var(--bui-inline-background, var(--palette-primary));
-       --_button-color: var(--bui-inline-color, var(--palette-primarycontrast));
+       --_button-color: var(--bui-inline-color, var(--palette-primary-contrast));
    }
    bui-component[data-bui-component="button"] button {
        background-color: var(--_button-background);
@@ -214,7 +214,7 @@ Input components use `BUIInputComponentBase` (which already implements `IInputFa
 5. **Sizing via multiplier, not breakpoints**: component dimensions are expressed as `calc(<base> * var(--bui-size-multiplier, 1))`. Do not add per-size selectors — `_base.css` maps `[data-bui-size="small|medium|large"]` to the multiplier once for the whole library.
 6. **Density via multiplier**: inter-element spacing (gaps, some paddings) uses `calc(<base> * var(--bui-density-multiplier, 1))`, populated by `[data-bui-density="compact|standard|comfortable"]` in `_base.css`.
 7. **State via data-attributes**: never toggle CSS classes to represent `disabled`, `loading`, `error`, `active`, `readonly`, `required`, `fullwidth`, `shadow`, `ripple`, `floated`, `variant`, etc. — those are `data-bui-*` attributes emitted by `BUIComponentAttributesBuilder` from the matching `IHas*` interface. Select on the attribute in CSS.
-8. **Theme colors**: consume `var(--palette-*)` (from `_themes.css`) rather than hardcoded colors. For contrast/hover/active derivations, prefer `color-mix(in oklab, var(--_component-...) X%, var(--palette-hovertint) Y%)`.
+8. **Theme colors**: consume `var(--palette-*)` (from `_themes.css`) rather than hardcoded colors. For contrast/hover/active derivations, prefer `color-mix(in oklab, var(--_component-...) X%, var(--palette-hover-tint) Y%)`.
 9. **Transitions**: if the component needs enter/exit animation, implement `IHasTransitions` and add `class="transition-target"` to the element that should animate — the transition classes themselves come from `_transition-classes.css` and are selected via `[data-bui-transitions]`.
 10. **Do not hand-edit generated files**: `CssBundle/*.css` and the Vite/TypeScript config files are rewritten on every build. Changes belong in the corresponding `Generators/*.cs`, `Infrastructure/BuildTemplates.cs`, or `FeatureDefinitions`.
 

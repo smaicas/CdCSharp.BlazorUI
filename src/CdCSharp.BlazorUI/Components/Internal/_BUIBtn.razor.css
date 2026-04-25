@@ -1,4 +1,4 @@
-﻿._bui-btn {
+._bui-btn {
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
@@ -13,7 +13,7 @@
     border-radius: 0;
     overflow: hidden;
     font-size: calc(1rem * var(--bui-size-multiplier, 1));
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
     /* Disabled */
@@ -30,14 +30,14 @@
 
     /* Press state */
     ._bui-btn:active:not(:disabled) {
-        /*background: color-mix(in oklab, var(--palette-primary) 80%, var(--palette-activetint) 20%);*/
-        color: color-mix(in oklab, var(--palette-surfacecontrast) 80%, var(--palette-primary) 20%);
+        /*background: color-mix(in oklab, var(--palette-primary) 80%, var(--palette-active-tint) 20%);*/
+        color: color-mix(in oklab, var(--palette-surface-contrast) 80%, var(--palette-primary) 20%);
     }
 
     /* Hover state */
     ._bui-btn:hover:not(:active):not(:disabled) {
-        /*background: color-mix(in oklab, var(--palette-primary) 90%, var(--palette-hovertint) 10%);*/
-        color: color-mix(in oklab, var(--palette-surfacecontrast) 80%, var(--palette-primary) 20%);
+        /*background: color-mix(in oklab, var(--palette-primary) 90%, var(--palette-hover-tint) 10%);*/
+        color: color-mix(in oklab, var(--palette-surface-contrast) 80%, var(--palette-primary) 20%);
     }
 
     /* Sizes */

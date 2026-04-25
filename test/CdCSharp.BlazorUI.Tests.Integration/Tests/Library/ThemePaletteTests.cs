@@ -90,6 +90,29 @@ public class ThemePaletteTests
         vars.Values.Should().OnlyContain(v => !string.IsNullOrWhiteSpace(v));
     }
 
+    // THEME-06 / D-10: PascalCase property names map to kebab-case CSS variables.
+    [Theory]
+    [MemberData(nameof(AllThemes))]
+    public void GetThemeVariables_Should_Emit_KebabCase_For_Compound_Names(BUIThemePaletteBase theme)
+    {
+        Dictionary<string, string> vars = theme.GetThemeVariables();
+        string id = theme.Id;
+
+        vars.Should().ContainKey($"--{id}-primary-contrast");
+        vars.Should().ContainKey($"--{id}-background-contrast");
+        vars.Should().ContainKey($"--{id}-surface-contrast");
+        vars.Should().ContainKey($"--{id}-hover-tint");
+        vars.Should().ContainKey($"--{id}-active-tint");
+
+        // Old single-token names must not appear anywhere.
+        vars.Keys.Should().NotContain(k => k.EndsWith("contrast") && !k.EndsWith("-contrast"));
+        vars.Keys.Should().NotContain(k => k.EndsWith("tint") && !k.EndsWith("-tint"));
+
+        // Single-word names stay as a single token.
+        vars.Should().ContainKey($"--{id}-primary");
+        vars.Should().ContainKey($"--{id}-background");
+    }
+
     // ─────────── Contrast pairs (WCAG) ───────────
 
     [Theory]

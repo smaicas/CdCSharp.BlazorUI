@@ -103,7 +103,7 @@ Decisiones confirmadas por el maintainer el 2026-04-21 antes de iniciar F2. Cada
 
 ### CSS / tema
 - **D-09** — Atributo de activación de tema se renombra a `data-bui-theme` en los 11 sitios que hoy usan `data-theme` (generator + ts + initializer + 7 `.razor.css`). CLAUDE.md mantiene `data-bui-theme` como valor canónico.
-- **D-10** — Nomenclatura de variables CSS de paleta usa **kebab-case**: `PrimaryContrast → --palette-primary-contrast` (no `--palette-primarycontrast`). Migración con nota en release notes (breaking contra overrides externos). `ToCssVariableName` se reescribe para convertir PascalCase a kebab.
+- **D-10** — Nomenclatura de variables CSS de paleta usa **kebab-case**: `PrimaryContrast → --palette-primary-contrast` (no `--palette-primary-contrast`). Migración con nota en release notes (breaking contra overrides externos). `ToCssVariableName` se reescribe para convertir PascalCase a kebab.
 - **D-11** — Sombras en tema oscuro usan **elevation overlay** (surface tint por nivel) en lugar de `box-shadow` con alpha. Se añaden variables `--palette-surface-elevation-{1..5}` al contrato de tema.
 - **D-12** — `_scrollbar.css` se genera con **su propio generador** (`ScrollbarCssGenerator`) y queda como archivo independiente en `CssBundle/`. Orden de carga en `main.css`: tras `_base.css`, antes de `_transition-classes.css`. Documentar en CLAUDE.md §CSS architecture.
 - **D-13** — Forma canónica de selector en `.razor.css` scoped: **short** `[data-bui-component="X"]` (no `bui-component[data-bui-component="X"]`). Blazor CSS isolation añade `[b-xxx]` con specificity suficiente; la forma corta es menos verbose y mantiene aislamiento por scope. CLAUDE.md §regla 2 se actualiza.
@@ -661,7 +661,7 @@ _(ninguno registrado todavía)_
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.BuildTools/Generators/CssInitializeThemesGenerator.cs:24‑80`.
-- **Evidencia**: emite `.bui-color-*`/`.bui-bg-*` para `primary, secondary, success, warning, error, info`; nada para `surface, surfacecontrast, background, backgroundcontrast, highlight, border, hovertint, white, black`. Asimétrico y propenso a errores al añadir un color a la paleta.
+- **Evidencia**: emite `.bui-color-*`/`.bui-bg-*` para `primary, secondary, success, warning, error, info`; nada para `surface, surface-contrast, background, background-contrast, highlight, border, hover-tint, white, black`. Asimétrico y propenso a errores al añadir un color a la paleta.
 - **Criterios de aceptación**:
   1. Iterar programáticamente sobre `BUIThemePaletteBase.GetThemeVariables()` (misma fuente que `ThemesCssGenerator`) para emitir `.bui-color-<key>` y `.bui-bg-<key>` por cada clave de paleta.
   2. Evitar duplicar la clase `.bui-primary` / `.bui-secondary` (hoy redundantes con `bui-color-*` + `bui-bg-*`) salvo decisión explícita documentada.
@@ -990,7 +990,7 @@ _(ninguno registrado todavía)_
 - **Alcance**: 13 archivos scoped detectados con hex/rgba/hsla literales. Incluye `BUITreeMenu.razor.css:10-24`, `BUIDialog.razor.css`, `BUIStackedLayout.razor.css`, `BUIToastHost.razor.css`, `BUIDataTable.razor.css`, `BUITabs.razor.css`, `BUIColorPicker.razor.css`, `BUIDatePicker.razor.css`, `BUICodeBlock.razor.css`, `BUISwitch.razor.css`, `BUIDropdownContainer.razor.css`, `BUIThemeEditor.razor.css`, `BUIToast.razor.css` (confirmar lista completa durante fix).
 - **Evidencia**: grep `#[0-9a-fA-F]{3,8}|rgba?\(|hsla?\(` contra `**/*.razor.css` arroja ≈45 ocurrencias en 13 ficheros. Algunos usan el hardcoded como *fallback* (`var(--palette-border, #cccccc)`) y otros como valor directo (`border-bottom: 1px solid #e0e0e0`). Ambos patrones violan la regla 8 del estándar CLAUDE.md ("consume `var(--palette-*)` rather than hardcoded colors").
 - **Criterios de aceptación**:
-  1. Reemplazar cada literal por la variable de paleta apropiada (`--palette-surface`, `--palette-border`, `--palette-primary`, `--palette-primarycontrast`, etc.).
+  1. Reemplazar cada literal por la variable de paleta apropiada (`--palette-surface`, `--palette-border`, `--palette-primary`, `--palette-primary-contrast`, etc.).
   2. Si se requiere un color no presente en la paleta (accents neutros como shadow tints), promoverlo a variable en `_themes.css` (`ThemesCssGenerator`) antes de consumirlo.
   3. Para fallbacks en `var(--palette-x, FALLBACK)`: eliminar el fallback (la paleta siempre está cargada vía `Initializer`) o referenciar otra var de paleta.
   4. Test de theming: cambiar tema Light↔Dark en sample app → inspeccionar cada componente tocado → sin colores estancados.
@@ -1107,7 +1107,7 @@ _(ninguno registrado todavía)_
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/Abstractions/BUIThemePaletteBase.cs:38-39` (defaults); `LightTheme.cs` y `DarkTheme.cs` **no overridean** estas propiedades.
-- **Evidencia**: `HoverTint = new("#e9e9e9")`, `ActiveTint = new("#e9e9e9")` son los únicos 2 tokens sin override en las dos paletas reales. CLAUDE.md referencia el patrón `color-mix(in oklab, var(--_component-...) X%, var(--palette-hovertint) Y%)` para derivar hover/active states — si `--palette-hovertint` es el mismo gris claro en Dark y Light, el color final en Dark acaba siendo "original + gris claro" (aclarado), no "original + tinte de hover del tema" (que debería ser blanco translúcido en Dark, negro translúcido en Light).
+- **Evidencia**: `HoverTint = new("#e9e9e9")`, `ActiveTint = new("#e9e9e9")` son los únicos 2 tokens sin override en las dos paletas reales. CLAUDE.md referencia el patrón `color-mix(in oklab, var(--_component-...) X%, var(--palette-hover-tint) Y%)` para derivar hover/active states — si `--palette-hover-tint` es el mismo gris claro en Dark y Light, el color final en Dark acaba siendo "original + gris claro" (aclarado), no "original + tinte de hover del tema" (que debería ser blanco translúcido en Dark, negro translúcido en Light).
 - **Criterios de aceptación**:
   1. `LightTheme.HoverTint = new CssColor("#000000")` con alpha (p. ej. `rgba(0,0,0,0.08)`), `ActiveTint = rgba(0,0,0,0.12)`.
   2. `DarkTheme.HoverTint = rgba(255,255,255,0.08)`, `ActiveTint = rgba(255,255,255,0.12)`.
@@ -1248,27 +1248,27 @@ _(ninguno registrado todavía)_
 
 ---
 
-### `JS-06` — `ThemeInterop.PALETTE_VARS` es lista hardcoded e incompleta: faltan `highlight`, `hovertint`, `activetint`, `border`
+### `JS-06` — `ThemeInterop.PALETTE_VARS` es lista hardcoded e incompleta: faltan `highlight`, `hover-tint`, `active-tint`, `border`
 
-- **Estado**: ✅ Resuelto (commit `e08439b`) — añadidos los 4 faltantes: `--palette-activetint`, `--palette-border`, `--palette-highlight`, `--palette-hovertint`. La lista completa (23 vars) ahora corresponde 1:1 con las propiedades `CssColor` de `BUIThemePaletteBase`. Comentario inline documenta la convención de mantener la lista sincronizada con el C# canónico. Criterio 1 (generar la lista desde C# via `IThemeJsInterop.GetPaletteVariablesAsync`) queda como follow-up mayor. Criterio 2 aplicado.
+- **Estado**: ✅ Resuelto (commit `e08439b`) — añadidos los 4 faltantes: `--palette-active-tint`, `--palette-border`, `--palette-highlight`, `--palette-hover-tint`. La lista completa (23 vars) ahora corresponde 1:1 con las propiedades `CssColor` de `BUIThemePaletteBase`. Comentario inline documenta la convención de mantener la lista sincronizada con el C# canónico. Criterio 1 (generar la lista desde C# via `IThemeJsInterop.GetPaletteVariablesAsync`) queda como follow-up mayor. Criterio 2 aplicado.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Theme/ThemeInterop.ts:39-59`.
 - **Evidencia**:
   ```typescript
   const PALETTE_VARS = [
-      '--palette-background', '--palette-backgroundcontrast',
-      '--palette-black', '--palette-error', '--palette-errorcontrast',
-      '--palette-info', '--palette-infocontrast',
-      '--palette-primary', '--palette-primarycontrast',
-      '--palette-secondary', '--palette-secondarycontrast',
-      '--palette-shadow', '--palette-success', '--palette-successcontrast',
-      '--palette-surface', '--palette-surfacecontrast',
-      '--palette-warning', '--palette-warningcontrast',
+      '--palette-background', '--palette-background-contrast',
+      '--palette-black', '--palette-error', '--palette-error-contrast',
+      '--palette-info', '--palette-info-contrast',
+      '--palette-primary', '--palette-primary-contrast',
+      '--palette-secondary', '--palette-secondary-contrast',
+      '--palette-shadow', '--palette-success', '--palette-success-contrast',
+      '--palette-surface', '--palette-surface-contrast',
+      '--palette-warning', '--palette-warning-contrast',
       '--palette-white'
   ];
   ```
-  `BUIThemePaletteBase` expone 22 propiedades `CssColor` (19 en paletas reales — ver THEME). Missing aquí: `--palette-highlight`, `--palette-hovertint`, `--palette-activetint`, `--palette-border`. Consumidor que llama `getPalette()` obtiene snapshot incompleto.
+  `BUIThemePaletteBase` expone 22 propiedades `CssColor` (19 en paletas reales — ver THEME). Missing aquí: `--palette-highlight`, `--palette-hover-tint`, `--palette-active-tint`, `--palette-border`. Consumidor que llama `getPalette()` obtiene snapshot incompleto.
 - **Criterios de aceptación**:
   1. Generar `PALETTE_VARS` desde el C# via `IThemeJsInterop.GetPaletteVariablesAsync()` — fuente única de verdad.
   2. O, si se mantiene lista JS, sincronizarla con `BUIThemePaletteBase` + test de paridad.
@@ -2738,13 +2738,14 @@ _(ninguno registrado todavía)_
 
 ### `THEME-06` — `ToCssVariableName` usa `.ToLowerInvariant()` sin separadores: `PrimaryContrast` → `primarycontrast` (sin guion), convención no documentada
 
+- **Estado**: ✅ Resuelto — `BUIThemePaletteBase.ToCssVariableName` reescrito (criterio 1, decisión D-10): inserta `-` antes de cada mayúscula interna y luego baja a `ToLowerInvariant`. Visibilidad pasa a `internal static` (era `private`) para permitir test directo. Reemplazo bulk en 61 ficheros de código (`.cs`, `.razor`, `.razor.css`, `.ts`, plus generadores que materializan `_themes.css`) cubre los 10 nombres compuestos: `primarycontrast`/`secondarycontrast`/`backgroundcontrast`/`successcontrast`/`warningcontrast`/`errorcontrast`/`infocontrast`/`surfacecontrast` → `*-contrast`; `hovertint`/`activetint` → `hover-tint`/`active-tint`. Migración aplica también a los aliases por tema (`--dark-X` / `--light-X`) — el generador es la única fuente. Criterio 2 cumplido: scope incluye scoped `.razor.css`, `BUIPalette.cs` (constructor que parsea claves desde el dict de paleta), generadores BuildTools (`InputFamilyCssGenerator`, `PickerFamilyGenerator`, `BaseComponentGenerator`, `TypographyGenerator`, `CssInitializeThemesGenerator`, `DataCollectionFamilyCssGenerator`), `ThemeInterop.ts`, samples, docs site, tests. Criterio 3 (release notes): nueva sección "Changed (breaking)" en `CHANGELOG.md [Unreleased]` lista las 10 renames con consejo a consumidores. Criterio 4 (test): nuevo `GetThemeVariables_Should_Emit_KebabCase_For_Compound_Names` en `ThemePaletteTests` afirma presencia de `--{id}-primary-contrast` / `-background-contrast` / `-surface-contrast` / `-hover-tint` / `-active-tint`, ausencia de cualquier clave terminada en `contrast`/`tint` sin guion previo, y preservación de los single-token (`--{id}-primary`, `--{id}-background`). 2581/2581 tests pasan; CLAUDE.md/AGENTS.md ya reflejan el nuevo formato. Cross con `API-02` queda intacta — `FeatureDefinitions` ya no hardcodea estos nombres.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Themes/Abstractions/BUIThemePaletteBase.cs:82`.
-- **Evidencia**: `return propertyName.ToLowerInvariant();` — concatena sin convertir PascalCase a kebab-case. Resultado: `--palette-primarycontrast`, `--palette-backgroundcontrast`, `--palette-successcontrast`, etc. El resto del framework usa kebab-case (`data-bui-data-collection`, `--bui-inline-background`). Inconsistencia que se vuelve más crítica si se añade `PrimaryHoverBorder` → `--palette-primaryhoverborder` (ilegible).
+- **Evidencia**: `return propertyName.ToLowerInvariant();` — concatenaba sin convertir PascalCase a kebab-case. Resultado pre-fix: `--palette-primarycontrast`, `--palette-backgroundcontrast`, `--palette-successcontrast`, etc. El resto del framework usa kebab-case (`data-bui-data-collection`, `--bui-inline-background`). Inconsistencia que se volvía más crítica al añadir `PrimaryHoverBorder` → `--palette-primaryhoverborder` (ilegible).
 - **Criterios de aceptación**:
   1. **[Decisión F1 D-10]** Migrar a **kebab-case**: `PrimaryContrast` → `--palette-primary-contrast`. Reescribir `ToCssVariableName` para convertir PascalCase insertando `-` antes de cada mayúscula interna (regex `([a-z])([A-Z])` → `$1-$2`, luego `ToLowerInvariant`).
-  2. Actualizar todos los consumidores internos: `.razor.css` scoped (greps `--palette-primarycontrast`, `--palette-backgroundcontrast`, etc.) y `CssBundle/*.css` generados (via regenerator de templates — no editar CSS directo).
+  2. Actualizar todos los consumidores internos: `.razor.css` scoped y `CssBundle/*.css` generados (via regenerator de templates — no editar CSS directo).
   3. Documentar breaking change en release notes 1.0: consumidores con CSS override propio basado en `--palette-primarycontrast` deben migrar a `--palette-primary-contrast`.
   4. Añadir test en `BUIThemePaletteBaseTests` que verifique `ToCssVariableName("PrimaryContrast") == "primary-contrast"` y casos edge (`Background`, `SurfaceContrast`, `Primary`).
 - **Notas**: alimenta `CLAUDE-xx` (§3.23). `API-02` (FeatureDefinitions como contrato congelado) es la tarea hermana. Decisión D-10 (ver §Directivas de diseño): kebab-case confirmada.
@@ -2766,7 +2767,7 @@ _(ninguno registrado todavía)_
 - **Criterios de aceptación**:
   1. Moverlos fuera de `BUIThemePaletteBase` a `BUIColor.Black.Default` / `BUIColor.White.Default` (ya existen via `[AutogenerateCssColors]`).
   2. Eliminar la emisión de `--palette-black` / `--palette-white` del bundle.
-  3. Componentes que consuman `var(--palette-black/white)` migran a `#000` / `#fff` literales o a `var(--palette-backgroundcontrast)`.
+  3. Componentes que consuman `var(--palette-black/white)` migran a `#000` / `#fff` literales o a `var(--palette-background-contrast)`.
 - **Notas**: depura la superficie pública. Alinea con `API-02` y `THEME-03` (paridad).
 
 ---

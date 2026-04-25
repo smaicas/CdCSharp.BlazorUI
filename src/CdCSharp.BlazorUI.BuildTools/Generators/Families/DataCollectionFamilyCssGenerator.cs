@@ -42,7 +42,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     --_dc-padding-x: 1rem;
     --_dc-padding-y: 0.75rem;
     --_dc-header-bg: color-mix(in oklab, var(--palette-surface) 95%, var(--palette-primary));
-    --_dc-hover-bg: color-mix(in oklab, var(--_dc-background) 90%, var(--palette-hovertint) 10%);
+    --_dc-hover-bg: color-mix(in oklab, var(--_dc-background) 90%, var(--palette-hover-tint) 10%);
     --_dc-selected-bg: color-mix(in oklab, var(--_dc-background) 80%, var(--palette-primary) 20%);
     --_dc-background: var(--bui-inline-background, var(--palette-surface));
     --_dc-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
@@ -115,7 +115,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
 
 {{root}}[{{dc}}] .{{paginationInfo}} {
     font-size: 0.875rem;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.8;
 }
 
@@ -141,7 +141,7 @@ public class DataCollectionFamilyCssGenerator : IAssetGenerator
     justify-content: center;
     gap: calc(0.5rem * var(--bui-density-multiplier, 1));
     padding: calc(var(--_dc-padding-y) * 4) var(--_dc-padding-x);
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.6;
     text-align: center;
 }

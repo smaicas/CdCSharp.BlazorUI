@@ -1,10 +1,10 @@
-﻿bui-component[data-bui-component="tree-selector"] {
+bui-component[data-bui-component="tree-selector"] {
     --_tree-selector-bg: var(--palette-surface);
     --_tree-selector-border: 1px solid var(--palette-border);
     --_tree-selector-border-radius: 8px;
     --_tree-selector-node-height: calc(2.5rem * var(--bui-size-multiplier, 1));
     --_tree-selector-node-gap: 2px;
-    --_tree-selector-hover-bg: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+    --_tree-selector-hover-bg: color-mix(in srgb, var(--palette-surface-contrast) 8%, transparent);
     --_tree-selector-selected-bg: color-mix(in srgb, var(--palette-primary) 15%, transparent);
     --_tree-selector-transition: 150ms ease;
     display: flex;

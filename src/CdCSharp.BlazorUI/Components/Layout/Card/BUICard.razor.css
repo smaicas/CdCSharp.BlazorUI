@@ -1,10 +1,10 @@
-﻿/* Base Card Styles */
+/* Base Card Styles */
 bui-component[data-bui-component="card"] {
     display: block;
     width: 100%;
     /* CSS Variables */
     --_card-background: var(--bui-inline-background, var(--palette-surface));
-    --_card-color: var(--bui-inline-color, var(--palette-surfacecontrast));
+    --_card-color: var(--bui-inline-color, var(--palette-surface-contrast));
     --_card-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
     --_card-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
     --_card-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
@@ -129,9 +129,9 @@ bui-component[data-bui-component="card"] {
 
         /* Press state */
         bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:active:not(:disabled) {
-            background: color-mix(in oklab, var(--_card-background) 80%, var(--palette-activetint) 20%);
+            background: color-mix(in oklab, var(--_card-background) 80%, var(--palette-active-tint) 20%);
         }
         /* Hover state */
         bui-component[data-bui-component="card"][data-bui-clickable="true"] .bui-card:hover:not(:active):not(:disabled) {
-            background: color-mix(in oklab, var(--_card-background) 90%, var(--palette-hovertint) 10%);
+            background: color-mix(in oklab, var(--_card-background) 90%, var(--palette-hover-tint) 10%);
         }

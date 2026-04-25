@@ -17,22 +17,22 @@ public class BUIBlazorLayoutStateTests
     private static readonly Dictionary<string, string> LightPalette = new()
     {
         ["--palette-background"] = "#FFFFFF",
-        ["--palette-backgroundcontrast"] = "#000000",
+        ["--palette-background-contrast"] = "#000000",
         ["--palette-error"] = "#B00020",
-        ["--palette-errorcontrast"] = "#FFFFFF",
+        ["--palette-error-contrast"] = "#FFFFFF",
         ["--palette-info"] = "#1976D2",
-        ["--palette-infocontrast"] = "#FFFFFF",
+        ["--palette-info-contrast"] = "#FFFFFF",
         ["--palette-primary"] = "#6200EE",
-        ["--palette-primarycontrast"] = "#FFFFFF",
+        ["--palette-primary-contrast"] = "#FFFFFF",
         ["--palette-secondary"] = "#03DAC6",
-        ["--palette-secondarycontrast"] = "#000000",
+        ["--palette-secondary-contrast"] = "#000000",
         ["--palette-shadow"] = "#000000",
         ["--palette-success"] = "#4CAF50",
-        ["--palette-successcontrast"] = "#FFFFFF",
+        ["--palette-success-contrast"] = "#FFFFFF",
         ["--palette-surface"] = "#F5F5F5",
-        ["--palette-surfacecontrast"] = "#000000",
+        ["--palette-surface-contrast"] = "#000000",
         ["--palette-warning"] = "#FB8C00",
-        ["--palette-warningcontrast"] = "#000000",
+        ["--palette-warning-contrast"] = "#000000",
     };
 
     private static IThemeJsInterop RegisterFakeTheme(

@@ -1,4 +1,4 @@
-﻿bui-component[data-bui-component="culture-selector"] {
+bui-component[data-bui-component="culture-selector"] {
     display: inline-flex;
     align-items: center;
 }
@@ -10,7 +10,7 @@
         border: 1px solid var(--palette-surface);
         border-radius: 4px;
         background-color: var(--palette-surface);
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
         font-size: inherit;
         cursor: pointer;
         transition: all 200ms ease;

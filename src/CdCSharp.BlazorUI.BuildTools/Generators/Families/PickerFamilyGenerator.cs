@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -88,12 +88,12 @@ bui-component[{{picker}}] .{{cell}} {
 }
 
 bui-component[{{picker}}] .{{cell}}:hover:not(.{{cellSelected}}) {
-    background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+    background: color-mix(in srgb, var(--palette-surface-contrast) 8%, transparent);
 }
 
 bui-component[{{picker}}] .{{cellSelected}} {
     background: var(--palette-primary);
-    color: var(--palette-primarycontrast);
+    color: var(--palette-primary-contrast);
 }
 
 bui-component[{{picker}}] .{{cellMuted}} {

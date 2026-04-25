@@ -1,4 +1,4 @@
-﻿bui-component[data-bui-component="tree-menu"] {
+bui-component[data-bui-component="tree-menu"] {
     --_tree-menu-item-height: 2.5rem;
     --_tree-menu-item-padding-x: 1rem;
     --_tree-menu-item-padding-y: 0.5rem;
@@ -9,7 +9,7 @@
     --_tree-menu-bg: transparent;
     --_tree-menu-hover-bg: rgba(0, 0, 0, 0.04);
     --_tree-menu-active-bg: var(--palette-primary, #1976d2);
-    --_tree-menu-active-color: var(--palette-primarycontrast, #fff);
+    --_tree-menu-active-color: var(--palette-primary-contrast, #fff);
     --_tree-menu-flyout-bg: var(--palette-surface, #fff);
     --_tree-menu-flyout-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     --_tree-menu-flyout-border: 1px solid rgba(0, 0, 0, 0.08);

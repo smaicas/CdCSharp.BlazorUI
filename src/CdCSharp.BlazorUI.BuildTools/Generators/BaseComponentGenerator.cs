@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 using CdCSharp.BuildTools;
 using CdCSharp.BuildTools.Attributes;
 using System.Diagnostics.CodeAnalysis;
@@ -142,7 +142,7 @@ public class BaseComponentGenerator : IAssetGenerator
 
 .bui-field__helper {
     font-size: 0.75rem;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.7;
 }
 """;

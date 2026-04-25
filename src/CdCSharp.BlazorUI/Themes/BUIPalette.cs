@@ -1,4 +1,4 @@
-﻿using CdCSharp.BlazorUI.Components;
+using CdCSharp.BlazorUI.Components;
 
 namespace CdCSharp.BlazorUI.Themes;
 
@@ -30,21 +30,21 @@ public sealed class BUIPalette
         }
 
         Background = C("--palette-background");
-        BackgroundContrast = C("--palette-backgroundcontrast");
+        BackgroundContrast = C("--palette-background-contrast");
         Error = C("--palette-error");
-        ErrorContrast = C("--palette-errorcontrast");
+        ErrorContrast = C("--palette-error-contrast");
         Info = C("--palette-info");
-        InfoContrast = C("--palette-infocontrast");
+        InfoContrast = C("--palette-info-contrast");
         Primary = C("--palette-primary");
-        PrimaryContrast = C("--palette-primarycontrast");
+        PrimaryContrast = C("--palette-primary-contrast");
         Secondary = C("--palette-secondary");
-        SecondaryContrast = C("--palette-secondarycontrast");
+        SecondaryContrast = C("--palette-secondary-contrast");
         Shadow = C("--palette-shadow");
         Success = C("--palette-success");
-        SuccessContrast = C("--palette-successcontrast");
+        SuccessContrast = C("--palette-success-contrast");
         Surface = C("--palette-surface");
-        SurfaceContrast = C("--palette-surfacecontrast");
+        SurfaceContrast = C("--palette-surface-contrast");
         Warning = C("--palette-warning");
-        WarningContrast = C("--palette-warningcontrast");
+        WarningContrast = C("--palette-warning-contrast");
     }
 }

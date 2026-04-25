@@ -1,4 +1,4 @@
-﻿/* === SEARCH INPUT === */
+/* === SEARCH INPUT === */
 
 .bui-dropdown__search {
     padding: calc(0.5rem * var(--bui-size-multiplier, 1));
@@ -28,16 +28,16 @@
     padding: calc(0.5rem * var(--bui-size-multiplier, 1)) calc(0.75rem * var(--bui-size-multiplier, 1));
     cursor: pointer;
     transition: background-color 150ms ease;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     background: var(--palette-surface);
 }
 
     .bui-dropdown__option:hover:not(.bui-dropdown__option--disabled) {
-        background-color: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+        background-color: color-mix(in srgb, var(--palette-surface-contrast) 8%, transparent);
     }
 
 .bui-dropdown__option--selected {
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     background: color-mix(in srgb, var(--palette-surface) 85%, var(--palette-primary));
 }
 
@@ -80,6 +80,6 @@
 .bui-dropdown__no-options {
     padding: calc(1rem * var(--bui-size-multiplier, 1));
     text-align: center;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.6;
 }

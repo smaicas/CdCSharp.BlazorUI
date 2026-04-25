@@ -23,7 +23,7 @@ public class CssInitializeThemesGenerator : IAssetGenerator
         sb.AppendLine($"  font-size: var({FeatureDefinitions.Typography.FontSizeBase});");
         sb.AppendLine($"  line-height: var({FeatureDefinitions.Typography.LineHeight});");
         sb.AppendLine("  background-color: var(--palette-background);");
-        sb.AppendLine("  color: var(--palette-backgroundcontrast);");
+        sb.AppendLine("  color: var(--palette-background-contrast);");
         sb.AppendLine("}");
         sb.AppendLine();
 

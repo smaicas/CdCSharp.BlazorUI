@@ -68,7 +68,7 @@
 
 .install-hint__btn--primary {
     background: var(--palette-primary);
-    color: var(--palette-primarycontrast);
+    color: var(--palette-primary-contrast);
 }
 
 .install-hint__btn--primary:hover {

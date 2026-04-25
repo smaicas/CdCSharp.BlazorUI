@@ -1,4 +1,4 @@
-﻿@page "/theming"
+@page "/theming"
 
 <PageTitle>Theming — CdCSharp.BlazorUI</PageTitle>
 
@@ -91,12 +91,12 @@
 @code {
     private const string _tokens = @":root {
     --palette-primary: #c41236;
-    --palette-primarycontrast: #ffffff;
+    --palette-primary-contrast: #ffffff;
     --palette-secondary: #2f1a1f;
     --palette-background: #fbf7f6;
-    --palette-backgroundcontrast: #1a0c0e;
+    --palette-background-contrast: #1a0c0e;
     --palette-surface: #ffffff;
-    --palette-surfacecontrast: #1a0c0e;
+    --palette-surface-contrast: #1a0c0e;
     --palette-error: #b42318;
     --palette-success: #15803d;
     --palette-warning: #b45309;
@@ -109,7 +109,7 @@
     private const string _customTheme = @"/* Scoped to the light theme */
 [data-theme=""light""] {
     --palette-primary: #c41236;       /* dark red */
-    --palette-primarycontrast: #fff;
+    --palette-primary-contrast: #fff;
     --palette-background: #fbf7f6;
     --palette-surface: #ffffff;
 }
@@ -117,7 +117,7 @@
 /* And the dark variant */
 [data-theme=""dark""] {
     --palette-primary: #ff4d6d;
-    --palette-primarycontrast: #1a0c0e;
+    --palette-primary-contrast: #1a0c0e;
     --palette-background: #120508;
     --palette-surface: #1e0c10;
 }";

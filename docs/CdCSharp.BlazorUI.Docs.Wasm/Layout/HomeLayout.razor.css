@@ -3,7 +3,7 @@
     flex-direction: column;
     min-height: 100vh;
     background: var(--palette-background);
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
 .home-layout__header {

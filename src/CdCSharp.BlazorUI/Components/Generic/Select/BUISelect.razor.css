@@ -1,4 +1,4 @@
-﻿/* ── Layout del bui-component ── */
+/* ── Layout del bui-component ── */
 
 bui-component[data-bui-component="select"] {
     flex-direction: column;
@@ -13,7 +13,7 @@ bui-component[data-bui-component="select"] {
     --_select-focus-color: var(--palette-highlight);
     --_select-bg: transparent;
     --_select-color: inherit;
-    --_select-label-color: var(--palette-surfacecontrast);
+    --_select-label-color: var(--palette-surface-contrast);
 }
 
 /* Color / BackgroundColor inline overrides */
@@ -114,7 +114,7 @@ bui-component[data-bui-component="select"] {
    ════════════════════════════════════════ */
 
     bui-component[data-bui-component="select"][data-bui-variant="filled"] {
-        --_select-bg: color-mix(in srgb, var(--palette-surfacecontrast) 6%, transparent);
+        --_select-bg: color-mix(in srgb, var(--palette-surface-contrast) 6%, transparent);
     }
 
         bui-component[data-bui-component="select"][data-bui-variant="filled"] .bui-select__native {

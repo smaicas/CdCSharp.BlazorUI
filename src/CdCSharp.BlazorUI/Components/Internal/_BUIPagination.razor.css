@@ -1,4 +1,4 @@
-﻿._bui-pagination {
+._bui-pagination {
     --_pagination-padding-x: 1rem;
     --_pagination-padding-y: .75rem;
     display: flex;
@@ -11,7 +11,7 @@
 
 ._bui-pagination__info {
     font-size: 0.875rem;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.8;
 }
 
@@ -28,6 +28,6 @@
     min-width: 2rem;
     height: 2rem;
     font-size: 0.875rem;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     opacity: 0.6;
 }

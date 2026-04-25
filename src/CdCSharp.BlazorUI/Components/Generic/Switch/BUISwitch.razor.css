@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
  * COMPONENT CONTAINER
  * ============================================ */
 
@@ -12,8 +12,8 @@ bui-component[data-bui-component="switch"] {
     --_switch-track-active-bg: var(--bui-inline-track-active-bg, var(--palette-primary));
     --_switch-thumb-inactive-bg: var(--bui-inline-thumb-inactive-bg, var(--palette-surface));
     --_switch-thumb-active-bg: var(--bui-inline-thumb-active-bg, var(--palette-surface));
-    --_switch-thumb-inactive-color: var(--bui-inline-thumb-inactive-color, var(--palette-surfacecontrast));
-    --_switch-thumb-active-color: var(--bui-inline-thumb-active-color, var(--palette-surfacecontrast));
+    --_switch-thumb-inactive-color: var(--bui-inline-thumb-inactive-color, var(--palette-surface-contrast));
+    --_switch-thumb-active-color: var(--bui-inline-thumb-active-color, var(--palette-surface-contrast));
     display: inline-flex;
     flex-direction: column;
     gap: calc(0.25rem * var(--_switch-scale));
@@ -110,7 +110,7 @@ bui-component[data-bui-component="switch"] {
     bui-component[data-bui-component="switch"] .bui-switch__label {
         font-size: calc(1rem * var(--_switch-scale));
         line-height: 1.4;
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
     }
 
     /* ============================================
@@ -136,7 +136,7 @@ bui-component[data-bui-component="switch"] {
 
     bui-component[data-bui-component="switch"] .bui-field__helper {
         font-size: 0.875em;
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
         opacity: 0.7;
         padding-left: calc(var(--_switch-track-w));
     }

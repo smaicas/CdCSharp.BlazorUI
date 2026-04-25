@@ -1,4 +1,4 @@
-﻿bui-component[data-bui-component="input-radio"] {
+bui-component[data-bui-component="input-radio"] {
     --_color: var(--bui-inline-color, var(--palette-primary));
     --_size: calc(1.25rem * var(--bui-size-multiplier, 1));
     --_gap: calc(0.5rem * var(--bui-density-multiplier));
@@ -9,7 +9,7 @@
 
     bui-component[data-bui-component="input-radio"] .bui-radio__label {
         font-weight: 500;
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
     }
 
     bui-component[data-bui-component="input-radio"] .bui-radio__group {
@@ -38,7 +38,7 @@
 
     bui-component[data-bui-component="input-radio"] .bui-radio__text {
         line-height: 1.4;
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
     }
 
     bui-component[data-bui-component="input-radio"] .bui-radio__option:focus-visible {

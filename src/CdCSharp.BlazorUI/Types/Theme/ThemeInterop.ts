@@ -1,4 +1,4 @@
-﻿const THEME_KEY = 'blazorui-theme';
+const THEME_KEY = 'blazorui-theme';
 const DEFAULT_THEME = 'dark';
 
 // Theme IDs land in `document.documentElement[data-theme="..."]`, which becomes a
@@ -54,27 +54,27 @@ export function toggleTheme(themes: string[]): string {
 // Kept in sync with BUIThemePaletteBase. Canonical source lives in C#; if a property is
 // added/removed there, update this list too (see JS-06 for history and automation plan).
 const PALETTE_VARS = [
-    '--palette-activetint',
+    '--palette-active-tint',
     '--palette-background',
-    '--palette-backgroundcontrast',
+    '--palette-background-contrast',
     '--palette-border',
     '--palette-error',
-    '--palette-errorcontrast',
+    '--palette-error-contrast',
     '--palette-highlight',
-    '--palette-hovertint',
+    '--palette-hover-tint',
     '--palette-info',
-    '--palette-infocontrast',
+    '--palette-info-contrast',
     '--palette-primary',
-    '--palette-primarycontrast',
+    '--palette-primary-contrast',
     '--palette-secondary',
-    '--palette-secondarycontrast',
+    '--palette-secondary-contrast',
     '--palette-shadow',
     '--palette-success',
-    '--palette-successcontrast',
+    '--palette-success-contrast',
     '--palette-surface',
-    '--palette-surfacecontrast',
+    '--palette-surface-contrast',
     '--palette-warning',
-    '--palette-warningcontrast'
+    '--palette-warning-contrast'
 ];
 
 function waitForStyles(): Promise<void> {

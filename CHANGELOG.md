@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **CSS palette variable naming migrated to kebab-case** (decision D-10, THEME-06). Compound names that previously merged into one token now insert dashes:
+  - `--palette-primarycontrast` → `--palette-primary-contrast`
+  - `--palette-secondarycontrast` → `--palette-secondary-contrast`
+  - `--palette-backgroundcontrast` → `--palette-background-contrast`
+  - `--palette-successcontrast` → `--palette-success-contrast`
+  - `--palette-warningcontrast` → `--palette-warning-contrast`
+  - `--palette-errorcontrast` → `--palette-error-contrast`
+  - `--palette-infocontrast` → `--palette-info-contrast`
+  - `--palette-surfacecontrast` → `--palette-surface-contrast`
+  - `--palette-hovertint` → `--palette-hover-tint`
+  - `--palette-activetint` → `--palette-active-tint`
+  Same migration applies to the per-theme aliases (`--dark-X`, `--light-X`). Single-word names (`--palette-primary`, `--palette-background`, etc.) are unchanged. Consumers with custom CSS overrides referencing the old single-token names must migrate; the rename is a one-time, mechanical search-and-replace.
+
 ### Added
 
 - Permanent resolution flow in `TASKS.md` (fix commit + follow-up `docs(tasks)` with short hash).

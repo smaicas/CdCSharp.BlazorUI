@@ -1,9 +1,9 @@
-﻿bui-component[data-bui-component="button"] {
+bui-component[data-bui-component="button"] {
     --_button-height: calc(2.5rem * var(--bui-size-multiplier, 1));
     --_button-padding-x: 1rem;
     --_button-padding-y: 0.5rem;
     --_button-background: var(--bui-inline-background, var(--palette-primary));
-    --_button-color: var(--bui-inline-color, var(--palette-primarycontrast));
+    --_button-color: var(--bui-inline-color, var(--palette-primary-contrast));
     --_button-border-radius: var(--bui-inline-border-radius, var(--bui-border-radius));
     --_button-border: var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border));
     --_button-border-top: var(--bui-inline-border-top, var(--bui-inline-border, var(--bui-border-width) var(--bui-border-style) var(--palette-border)));
@@ -45,10 +45,10 @@ bui-component[data-bui-component="button"] button:focus-visible {
 
 /* Press state */
 bui-component[data-bui-component="button"] button:active:not(:disabled) {
-    background: color-mix(in oklab, var(--_button-background) 80%, var(--palette-activetint) 20%);
+    background: color-mix(in oklab, var(--_button-background) 80%, var(--palette-active-tint) 20%);
 }
 
 /* Hover state */
 bui-component[data-bui-component="button"] button:hover:not(:active):not(:disabled) {
-    background: color-mix(in oklab, var(--_button-background) 90%, var(--palette-hovertint) 10%);
+    background: color-mix(in oklab, var(--_button-background) 90%, var(--palette-hover-tint) 10%);
 }

@@ -375,7 +375,7 @@ Lista a cubrir (mismo orden que §2; cada componente = un bloque separado en `TA
 
 **Pasos**:
 1. Las dos paletas (Light/Dark) definen **el mismo conjunto** de claves.
-2. Contrast ratios (`WCAG 2.2 AA`) verificados para pares `surface/surfacecontrast`, `primary/primarycontrast`, `error/errorcontrast`, etc.
+2. Contrast ratios (`WCAG 2.2 AA`) verificados para pares `surface/surface-contrast`, `primary/primary-contrast`, `error/error-contrast`, etc.
 3. `CssColor` + `HsvColor` — revisar operaciones (mix, lighten, darken) por errores numéricos y por NaN con valores extremos.
 4. `ThemeGenerator` (componente) — genera combinaciones consistentes; persistencia de selección coherente con `IThemeJsInterop`.
 5. `[AutogenerateCssColors]` — cada color generado llega al CSS con el mismo nombre que el palette expone.

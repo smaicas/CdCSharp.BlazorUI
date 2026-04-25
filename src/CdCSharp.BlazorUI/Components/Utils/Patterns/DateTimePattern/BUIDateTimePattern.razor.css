@@ -1,4 +1,4 @@
-﻿.bui-pattern {
+.bui-pattern {
     display: inline-flex;
     align-items: center;
     flex: 1 1 auto;
@@ -51,7 +51,7 @@
 }
 
     .bui-pattern__toggle:hover {
-        background: color-mix(in srgb, var(--palette-surfacecontrast) 8%, transparent);
+        background: color-mix(in srgb, var(--palette-surface-contrast) 8%, transparent);
     }
 
     .bui-pattern__toggle:focus {

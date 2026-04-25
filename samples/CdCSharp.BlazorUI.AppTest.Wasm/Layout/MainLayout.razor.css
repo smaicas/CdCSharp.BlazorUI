@@ -1,4 +1,4 @@
-﻿.doc-layout {
+.doc-layout {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -29,7 +29,7 @@
 .doc-header__version {
     padding: 0.25rem 0.5rem;
     background-color: var(--palette-primary);
-    color: var(--palette-primarycontrast);
+    color: var(--palette-primary-contrast);
     border-radius: 4px;
     font-size: 0.75rem;
 }
@@ -66,7 +66,7 @@
     margin-bottom: 2rem;
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
 .doc-content h2 {
@@ -74,7 +74,7 @@
     margin-bottom: 1rem;
     font-size: 1.75rem;
     font-weight: 600;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
 .doc-content h3 {
@@ -82,7 +82,7 @@
     margin-bottom: 0.75rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
 }
 
 .home-page {
@@ -98,6 +98,6 @@
 
     .home-page p {
         font-size: 1.25rem;
-        color: var(--palette-surfacecontrast);
+        color: var(--palette-surface-contrast);
         opacity: 0.8;
     }

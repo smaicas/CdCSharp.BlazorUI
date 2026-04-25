@@ -1,4 +1,4 @@
-﻿/* ========================================
+/* ========================================
    BUIDataGrid - Table-specific styles
    ======================================== */
 
@@ -20,7 +20,7 @@ bui-component[data-bui-component="data-grid"] .bui-datagrid__table {
     width: 100%;
     border-collapse: collapse;
     background: var(--_dc-background);
-    color: var(--palette-surfacecontrast);
+    color: var(--palette-surface-contrast);
     /* Cell border variables */
     --_dg-cell-border: var(--bui-inline-dc-cell-border, none);
     --_dg-cell-border-top: var(--bui-inline-dc-cell-border-top, var(--_dg-cell-border));

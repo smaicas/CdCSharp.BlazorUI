@@ -1,4 +1,4 @@
-﻿@page "/demo/cultureselector"
+@page "/demo/cultureselector"
 @using CdCSharp.BlazorUI.Components.Wasm
 @using System.Globalization
 
@@ -69,7 +69,7 @@
 
     private RenderFragment RenderCurrentCulture() => __builder =>
     {
-        <div style="padding: 1rem; border: 1px solid var(--palette-backgroundcontrast); border-radius: 8px;">
+        <div style="padding: 1rem; border: 1px solid var(--palette-background-contrast); border-radius: 8px;">
             <p><strong>CurrentCulture:</strong> @CultureInfo.CurrentCulture.Name (@CultureInfo.CurrentCulture.DisplayName)</p>
             <p><strong>CurrentUICulture:</strong> @CultureInfo.CurrentUICulture.Name (@CultureInfo.CurrentUICulture.DisplayName)</p>
             <p><strong>Date format:</strong> @DateTime.Now.ToString("D")</p>

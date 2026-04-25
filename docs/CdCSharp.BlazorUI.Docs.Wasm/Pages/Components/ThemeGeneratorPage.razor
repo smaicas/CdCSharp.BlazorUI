@@ -1,4 +1,4 @@
-﻿@page "/components/themegenerator"
+@page "/components/themegenerator"
 
 <PageTitle>Theme Generator — CdCSharp.BlazorUI</PageTitle>
 
@@ -69,13 +69,13 @@
     private const string _jsonSample = @"{
   ""dark"": {
     ""primary"": ""#8ab4f8"",
-    ""primarycontrast"": ""#0b1220"",
+    ""primary-contrast"": ""#0b1220"",
     ""background"": ""#0b1220"",
     ""surface"": ""#111827""
   },
   ""light"": {
     ""primary"": ""#1a73e8"",
-    ""primarycontrast"": ""#ffffff"",
+    ""primary-contrast"": ""#ffffff"",
     ""background"": ""#ffffff"",
     ""surface"": ""#f8fafc""
   }
@@ -83,14 +83,14 @@
 
     private const string _cssSample = @":root {
   --palette-primary: #8ab4f8;
-  --palette-primarycontrast: #0b1220;
+  --palette-primary-contrast: #0b1220;
   --palette-background: #0b1220;
   --palette-surface: #111827;
 }
 
 html[data-theme=""light""] {
   --palette-primary: #1a73e8;
-  --palette-primarycontrast: #ffffff;
+  --palette-primary-contrast: #ffffff;
   --palette-background: #ffffff;
   --palette-surface: #f8fafc;
 }";

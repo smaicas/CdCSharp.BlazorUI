@@ -4,7 +4,7 @@ bui-component[data-bui-component="stacked-layout"] {
     --_stacked-layout-nav-gap: var(--bui-inline-nav-gap, 1.5rem);
     --_stacked-layout-content-max-width: var(--bui-inline-content-max-width, none);
     --_stacked-layout-bg: var(--bui-inline-background, var(--palette-background));
-    --_stacked-layout-fg: var(--bui-inline-color, var(--palette-surfacecontrast));
+    --_stacked-layout-fg: var(--bui-inline-color, var(--palette-surface-contrast));
     --_stacked-layout-surface: var(--palette-surface);
     --_stacked-layout-border: var(--palette-border);
 

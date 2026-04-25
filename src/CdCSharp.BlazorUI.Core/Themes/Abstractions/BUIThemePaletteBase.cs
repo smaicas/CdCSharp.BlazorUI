@@ -1,5 +1,6 @@
 using CdCSharp.BlazorUI.Components;
 using System.Reflection;
+using System.Text;
 
 namespace CdCSharp.BlazorUI.Themes;
 
@@ -56,5 +57,30 @@ public abstract class BUIThemePaletteBase
         return variables;
     }
 
-    private static string ToCssVariableName(string propertyName) => propertyName.ToLowerInvariant();
+    // Decision D-10: palette CSS variables use kebab-case so compound names like
+    // PrimaryContrast become `--palette-primary-contrast` instead of the older
+    // single-token `--palette-primarycontrast`. Insert a dash before each uppercase
+    // letter (except the first), then lowercase the whole string. Single-word
+    // names such as `Primary` or `Background` are unaffected.
+    internal static string ToCssVariableName(string propertyName)
+    {
+        if (string.IsNullOrEmpty(propertyName)) return propertyName;
+
+        StringBuilder sb = new(propertyName.Length + 4);
+        sb.Append(char.ToLowerInvariant(propertyName[0]));
+        for (int i = 1; i < propertyName.Length; i++)
+        {
+            char c = propertyName[i];
+            if (char.IsUpper(c))
+            {
+                sb.Append('-');
+                sb.Append(char.ToLowerInvariant(c));
+            }
+            else
+            {
+                sb.Append(c);
+            }
+        }
+        return sb.ToString();
+    }
 }
