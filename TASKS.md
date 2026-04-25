@@ -2239,6 +2239,7 @@ _(ninguno registrado todavía)_
 
 ### `ARCH-15` — CI ejecuta solo en `ubuntu-latest`
 
+- **Estado**: ✅ Resuelto — `release-gate.yml` job `build-check` convertido a matrix `os: [ubuntu-latest, windows-latest]` con `fail-fast: false` y nombre dinámico `Build Check (${{ matrix.os }})`. Cada run levanta el setup completo (`setup-dotnet` con cache, `setup-node@v4`, `wasm-tools` workload) y ejecuta `dotnet build -p:TreatWarningsAsErrors=true` + `dotnet test`. Garantiza que un PR a `main` no puede mergear si Windows rompe — el bug que detonó `BLD-12` (handle locks en `dotnet clean` en Windows) habría sido capturado por este gate. `release-publish.yml` se mantiene Linux-only (criterio: el publish sigue desde una sola plataforma para evitar duplicados); el gate cubre la verificación cross-OS antes del tag.
 - **Severidad**: Minor
 - **Esfuerzo**: S
 - **Alcance**: `.github/workflows/publish.yml:37`.

@@ -25,11 +25,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Verificar que el build pasa (reutiliza el mismo setup)
+  # ARCH-15: build + test on both Linux and Windows. Publishing still happens
+  # only from Linux (release-publish.yml), but the gate verifies the matrix
+  # before any tag can advance to publish.
   build-check:
-    name: Build Check
-    runs-on: ubuntu-latest
-    
+    name: Build Check (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
