@@ -1615,7 +1615,7 @@ _(ninguno registrado todavía)_
 
 ### `TEST-04` — `*.received.txt` committed en el repo: snapshot drift no resuelto en `BUICultureSelector` (Wasm)
 
-- **Estado**: ✅ Resuelto — los 2 `.received.txt` ya no existen en el árbol (cerrados colateralmente por `BLD-01`, commit `5f6604e`, que regeneró los `.verified.txt` del `BUICultureSelector` en Wasm). Añadido pattern `*.received.*` a `.gitignore` raíz para impedir reaparición. Criterio 3-CI (step que falle si detecta `*.received.*`) queda como follow-up menor — el `.gitignore` cubre el vector principal (commit accidental).
+- **Estado**: ✅ Resuelto (commit `c05f822`) — los 2 `.received.txt` ya no existen en el árbol (cerrados colateralmente por `BLD-01`, commit `5f6604e`, que regeneró los `.verified.txt` del `BUICultureSelector` en Wasm). Añadido pattern `*.received.*` a `.gitignore` raíz para impedir reaparición. Criterio 3-CI (step que falle si detecta `*.received.*`) queda como follow-up menor — el `.gitignore` cubre el vector principal (commit accidental).
 - **Severidad**: Major
 - **Esfuerzo**: XS
 - **Alcance**: `test/CdCSharp.BlazorUI.Tests.Integration/Tests/Components/CultureSelector/BUICultureSelectorSnapshotTests.Should_Match_Flags_Snapshot_scenario=Wasm.received.txt`, `...Should_Match_Dropdown_Snapshot_scenario=Wasm.received.txt`.
