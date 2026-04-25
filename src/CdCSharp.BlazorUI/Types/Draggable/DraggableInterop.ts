@@ -9,12 +9,20 @@ interface DragInstance {
 
 const instances = new Map<string, DragInstance>();
 
+// JS-10: drag is single-instance by design. Starting a new drag while another
+// is active replaces the previous one (the previous instance's mousemove/mouseup
+// handlers are removed first) so we never accumulate document-level listeners.
 export function startDrag(
     element: HTMLElement,
     dotNetRef: DragCallbacksRelay,
     componentId: string
 ): void {
     if (instances.has(componentId)) return;
+
+    // Replace any other concurrent drag to keep the listener count at zero or one.
+    if (instances.size > 0) {
+        for (const id of [...instances.keys()]) stopDrag(id);
+    }
 
     const handlers: DragInstance = {
         mouseMove: (e: MouseEvent) => {

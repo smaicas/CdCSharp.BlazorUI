@@ -20,8 +20,6 @@ interface DropdownInstance {
     menuElement: HTMLElement | null;
     dotnetRef: DropdownCallbacksRelay;
     componentId: string;
-    clickOutsideHandler: (e: MouseEvent) => void;
-    keyDownHandler: (e: KeyboardEvent) => void;
 }
 
 interface DropdownPosition {
@@ -36,6 +34,65 @@ interface DropdownPosition {
 
 const dropdownInstances = new Map<string, DropdownInstance>();
 
+// JS-10: a single pair of document-level listeners is shared by every active
+// dropdown instead of one pair per instance. Installed when the first
+// dropdown initializes, removed when the last one disposes. The handlers
+// dispatch to every registered instance — each one decides whether the
+// event is its own by walking the trigger's `dropdown-container` ancestor.
+const RELEVANT_KEYS = new Set(['Escape', 'ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Home', 'End']);
+
+function handleClickOutside(e: MouseEvent): void {
+    const target = e.target as HTMLElement;
+    for (const instance of dropdownInstances.values()) {
+        const container = instance.triggerElement.closest('[data-bui-component="dropdown-container"]');
+        if (container && !container.contains(target)) {
+            instance.dotnetRef.invokeMethodAsync('OnClickOutside');
+        }
+    }
+}
+
+function handleKeyDown(e: KeyboardEvent): void {
+    for (const instance of dropdownInstances.values()) {
+        const container = instance.triggerElement.closest('[data-bui-component="dropdown-container"]');
+        if (!container?.contains(document.activeElement)) continue;
+
+        const isOpen = container.getAttribute('data-bui-dropdown-open') === 'true';
+
+        if (e.key === ' ' && isOpen) {
+            e.preventDefault();
+            instance.dotnetRef.invokeMethodAsync('OnKeyDown', e.key, e.shiftKey, e.ctrlKey);
+            return;
+        }
+
+        if (e.key.toLowerCase() === 'a' && e.ctrlKey && isOpen) {
+            e.preventDefault();
+            instance.dotnetRef.invokeMethodAsync('OnKeyDown', e.key.toLowerCase(), e.shiftKey, e.ctrlKey);
+            return;
+        }
+
+        if (RELEVANT_KEYS.has(e.key)) {
+            e.preventDefault();
+            instance.dotnetRef.invokeMethodAsync('OnKeyDown', e.key, e.shiftKey, e.ctrlKey);
+            return;
+        }
+    }
+}
+
+let listenersInstalled = false;
+function ensureListeners(): void {
+    if (listenersInstalled || dropdownInstances.size === 0) return;
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    listenersInstalled = true;
+}
+
+function maybeRemoveListeners(): void {
+    if (!listenersInstalled || dropdownInstances.size > 0) return;
+    document.removeEventListener('mousedown', handleClickOutside);
+    document.removeEventListener('keydown', handleKeyDown);
+    listenersInstalled = false;
+}
+
 export function initialize(
     triggerElement: HTMLElement,
     menuElement: HTMLElement | null,
@@ -46,51 +103,14 @@ export function initialize(
 
     dispose(componentId);
 
-    const clickOutsideHandler = (e: MouseEvent): void => {
-        const target = e.target as HTMLElement;
-        const container = triggerElement.closest('[data-bui-component="dropdown-container"]');
-
-        if (container && !container.contains(target)) {
-            dotnetRef.invokeMethodAsync('OnClickOutside');
-        }
-    };
-
-    const keyDownHandler = (e: KeyboardEvent): void => {
-        const container = triggerElement.closest('[data-bui-component="dropdown-container"]');
-        if (!container?.contains(document.activeElement)) return;
-
-        const isOpen = container.getAttribute('data-bui-dropdown-open') === 'true';
-        const relevantKeys = ['Escape', 'ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Home', 'End'];
-
-        if (e.key === ' ' && isOpen) {
-            e.preventDefault();
-            dotnetRef.invokeMethodAsync('OnKeyDown', e.key, e.shiftKey, e.ctrlKey);
-            return;
-        }
-
-        if (e.key.toLowerCase() === 'a' && e.ctrlKey && isOpen) {
-            e.preventDefault();
-            dotnetRef.invokeMethodAsync('OnKeyDown', e.key.toLowerCase(), e.shiftKey, e.ctrlKey);
-            return;
-        }
-
-        if (relevantKeys.includes(e.key)) {
-            e.preventDefault();
-            dotnetRef.invokeMethodAsync('OnKeyDown', e.key, e.shiftKey, e.ctrlKey);
-        }
-    };
-
     dropdownInstances.set(componentId, {
         triggerElement,
         menuElement,
         dotnetRef,
-        componentId,
-        clickOutsideHandler,
-        keyDownHandler
+        componentId
     });
 
-    document.addEventListener('mousedown', clickOutsideHandler);
-    document.addEventListener('keydown', keyDownHandler);
+    ensureListeners();
 }
 
 export function getPosition(componentId: string): DropdownPosition | null {
@@ -123,10 +143,6 @@ export function focusSearchInput(componentId: string): void {
 }
 
 export function dispose(componentId: string): void {
-    const instance = dropdownInstances.get(componentId);
-    if (!instance) return;
-
-    document.removeEventListener('mousedown', instance.clickOutsideHandler);
-    document.removeEventListener('keydown', instance.keyDownHandler);
-    dropdownInstances.delete(componentId);
+    if (!dropdownInstances.delete(componentId)) return;
+    maybeRemoveListeners();
 }
