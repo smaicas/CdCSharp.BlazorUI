@@ -2495,6 +2495,7 @@ _(ninguno registrado todavía)_
 
 ### `BASE-09` — `BUIInputComponentBase.IsDisabled` acopla `Disabled` con `IHasLoading.Loading` sin escape hatch documentado
 
+- **Estado**: ✅ Resuelto — `IsDisabled` pasa a `public virtual bool IsDisabled` (criterio 1 aplicado). Inputs derivados pueden override para desacoplar `Loading` del estado deshabilitado (caso de uso: search-box con debounce que muestra spinner pero sigue aceptando teclas). XML doc inline explica el contrato. Criterio 2 (parámetro dedicado `DisableWhileLoading`) descartado: ampliar la superficie del input base por una excepción rara no compensa; el override es expresivo y opt-in. Criterio 3 (doc en CLAUDE.md) opcional — el comentario inline cubre el "why" donde el dev lo encuentra. 294/294 tests de input siguen verdes.
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI.Core/Components/BUIInputComponentBase.cs:34`.

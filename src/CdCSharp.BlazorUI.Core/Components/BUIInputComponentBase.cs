@@ -33,7 +33,10 @@ public abstract class BUIInputComponentBase<TValue> :
     [Parameter] public bool Error { get; set; }
 
     // Computed states — source of truth for gating, aria-* and the attributes builder.
-    public bool IsDisabled => Disabled || (this is IHasLoading loading && loading.Loading);
+    // IsDisabled is virtual so derived inputs can decouple Loading from Disabled — for
+    // example, a debounced search input that wants to show a spinner while still
+    // accepting keystrokes overrides this to drop the IHasLoading branch.
+    public virtual bool IsDisabled => Disabled || (this is IHasLoading loading && loading.Loading);
     public bool IsError => Error || _lastValidationError;
     public bool IsReadOnly => ReadOnly;
     public bool IsRequired => Required;
