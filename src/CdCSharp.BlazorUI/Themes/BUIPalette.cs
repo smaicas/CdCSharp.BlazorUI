@@ -1,4 +1,6 @@
-﻿namespace CdCSharp.BlazorUI.Components.Layout;
+﻿using CdCSharp.BlazorUI.Components;
+
+namespace CdCSharp.BlazorUI.Themes;
 
 public sealed class BUIPalette
 {

@@ -2049,7 +2049,7 @@ _(ninguno registrado todavía)_
 
 ### `CLAUDE-03` — Cross-references rotas: `CLAUDE-02`, `CLAUDE-03`, `CLAUDE-04`, `CLAUDE-05` citados en TASKS.md pero nunca definidos
 
-- **Estado**: ✅ Resuelto — criterio 1 cumplido de facto: las 4 IDs huérfanas originales ya tienen su `### \`CLAUDE-NN\`` en TASKS.md (verificado: 274 task IDs definidas, 133 referenciadas, 0 dangling). Criterio 4 implementado: nuevo `scripts/check-task-refs.ps1` enumera todas las referencias `XXX-NN` dentro de backticks (excluyendo los headers que las definen) y exige header coincidente; sale con `::error::` + exit 1 si encuentra dangling. Wired al workflow `release-gate.yml` como job `task-refs-check` antes de `severity-check`, y reportado en el summary final. Cualquier PR a `main` que añada una referencia a una task fantasma fallará el gate.
+- **Estado**: ✅ Resuelto (commit `4290e2b`) — criterio 1 cumplido de facto: las 4 IDs huérfanas originales ya tienen su `### \`CLAUDE-NN\`` en TASKS.md (verificado: 274 task IDs definidas, 133 referenciadas, 0 dangling). Criterio 4 implementado: nuevo `scripts/check-task-refs.ps1` enumera todas las referencias `XXX-NN` dentro de backticks (excluyendo los headers que las definen) y exige header coincidente; sale con `::error::` + exit 1 si encuentra dangling. Wired al workflow `release-gate.yml` como job `task-refs-check` antes de `severity-check`, y reportado en el summary final. Cualquier PR a `main` que añada una referencia a una task fantasma fallará el gate.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `TASKS.md` (secciones anteriores); `CLAUDE.md`.
@@ -3902,6 +3902,7 @@ _(ninguno registrado todavía)_
 
 ### `API-13` — `BUIPalette` vive en `Components.Layout` pero pertenece al dominio de theming
 
+- **Estado**: ✅ Resuelto — `src/CdCSharp.BlazorUI/Components/Layout/BUIPalette.cs` movido a `src/CdCSharp.BlazorUI/Themes/BUIPalette.cs` (carpeta nueva en el proyecto BlazorUI; espejo en disco del namespace canónico). Namespace cambia de `CdCSharp.BlazorUI.Components.Layout` → `CdCSharp.BlazorUI.Themes` (criterio 1 — alineado con API-07 namespace policy: `Components`, `Abstractions`, `Themes`). `using CdCSharp.BlazorUI.Components;` añadido para resolver `CssColor`. Consumers actualizados: `BUIInitializer.razor` (`@using CdCSharp.BlazorUI.Themes`), `samples/AppTest.Wasm/_Imports.razor`, `samples/AppTest.Server/Components/Pages/Home.razor`, y `BUIBlazorLayoutStateTests.cs`. Build verde, 44 tests de BlazorLayout + Initializer pasan. Criterio 2 (alinear con API-07) satisfecho — API-07 ya cerrada, `BUIPalette` queda en el namespace correcto al ratificar el contrato.
 - **Severidad**: Polish
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Components/Layout/BUIPalette.cs:3`.

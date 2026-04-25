@@ -1,5 +1,6 @@
 using Bunit;
 using CdCSharp.BlazorUI.Components.Layout;
+using CdCSharp.BlazorUI.Themes;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure;
 using CdCSharp.BlazorUI.Tests.Integration.Infrastructure.Contexts;
 using CdCSharp.BlazorUI.Tests.Integration.Tests.Components.Initializer;
