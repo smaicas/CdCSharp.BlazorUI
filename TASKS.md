@@ -1659,6 +1659,7 @@ _(ninguno registrado todavía)_
 
 ### `DOC-03` — `CdCSharp.BlazorUI.csproj` carece de metadata NuGet completa: `<Description>` placeholder, sin `ProjectUrl`/`RepositoryUrl`/`License`/`Icon`
 
+- **Estado**: ✅ Resuelto — `assets/icon.png` (Logo BUI, copia de `Logo1.png`) + `<PackageIcon>` y `<None Pack="true">` añadidos a `Directory.Build.props`. El resto de campos (`Authors`/`Company`/`Copyright`/`PackageProjectUrl`/`RepositoryUrl`/`RepositoryType`/`PublishRepositoryUrl`/`PackageLicenseExpression=MIT`/`PackageReadmeFile`) ya estaban centralizados ahí desde `ARCH-05`. Cada csproj packable (×7) aporta su `PackageId`/`Description` (inglés)/`PackageTags`. Verificado con `dotnet pack` Core: nuspec emite `<icon>`, `<readme>`, `<license type="expression">MIT</license>`, `<repository type="git" url="..." branch="..." commit="..." />`, `<projectUrl>`, `<copyright>`, `<tags>`. Criterio 3 (LICENSE como `PackageLicenseFile`) descartado a favor de `PackageLicenseExpression` (Microsoft-recommended; auto-genera `licenseUrl`).
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `src/CdCSharp.BlazorUI/CdCSharp.BlazorUI.csproj`; equivalente en `Core`, `SyntaxHighlight`, `Localization.{Server,Wasm}`.
