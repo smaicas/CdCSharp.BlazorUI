@@ -106,23 +106,18 @@ internal static class SymbolFormatter
             ? $"<{string.Join(", ", method.TypeParameters.Select(tp => tp.Name))}>"
             : "";
 
-        // Los overrides sintetizados de Object en tipos record usan la convención
-        // especial "~override" del analizador RS0016/RS0017 y sus firmas NO llevan
-        // anotaciones nullable (ni '!' ni '?'). Esto afecta a Equals(object),
-        // ToString() y GetHashCode() cuando provienen del compilador vía el record.
+        // El analizador marca un override con "~override" (y firma sin anotaciones
+        // nullable) cuando alguno de los tipos en su firma proviene de un contexto
+        // oblivious (sin `#nullable enable`). Esto afecta a:
+        //   · Overrides sintetizados de Object en records (Equals, ToString, GetHashCode).
+        //   · Overrides en código generado sin contexto nullable, p.ej. los
+        //     `BuildRenderTree(RenderTreeBuilder __builder)` que emite el Razor SDK.
         //
-        // Por qué recorremos la cadena completa de OverriddenMethod:
-        //   · record class  → sobreescribe directamente Object.Equals / Object.ToString
-        //                      → OverriddenMethod.ContainingType = System.Object  ✓
-        //   · record struct → sobreescribe ValueType.Equals / ValueType.ToString,
-        //                      que a su vez sobreescribe Object
-        //                      → OverriddenMethod.ContainingType = System.ValueType,
-        //                        no System.Object  ✗  (era el fallo anterior)
-        // Recorriendo la cadena llegamos siempre a Object en ambos casos.
+        // Heurística confiable: el método es override Y al menos uno de sus tipos
+        // (return o parámetros) tiene NullableAnnotation.None (oblivious).
         bool isSynthesizedObjectOverride =
             method.IsOverride &&
-            method.ContainingType.IsRecord &&
-            OverridesObjectMember(method);
+            HasObliviousReferenceType(method);
 
         string parameters = isSynthesizedObjectOverride
             ? BuildParameterListBare(method.Parameters)
@@ -524,6 +519,36 @@ internal static class SymbolFormatter
                 return true;
             current = current.OverriddenMethod;
         }
+        return false;
+    }
+
+    /// <summary>
+    /// Detecta si la firma del método contiene algún tipo de referencia en
+    /// contexto oblivious (<see cref="NullableAnnotation.None"/>). El analizador
+    /// PublicApiAnalyzer marca este caso con el prefijo <c>~override</c> y emite
+    /// la firma sin anotaciones <c>!</c>/<c>?</c>.
+    /// </summary>
+    private static bool HasObliviousReferenceType(IMethodSymbol method)
+    {
+        if (IsObliviousReference(method.ReturnType)) return true;
+        foreach (IParameterSymbol p in method.Parameters)
+            if (IsObliviousReference(p.Type)) return true;
+        return false;
+    }
+
+    private static bool IsObliviousReference(ITypeSymbol type)
+    {
+        if (type.IsValueType) return false;
+        if (type.NullableAnnotation == NullableAnnotation.None) return true;
+        // Recurse into generic args / array elements: oblivious nested types
+        // (p.ej. `List<MyClass>` con MyClass oblivious) también disparan ~override.
+        if (type is INamedTypeSymbol { IsGenericType: true } generic)
+        {
+            foreach (ITypeSymbol arg in generic.TypeArguments)
+                if (IsObliviousReference(arg)) return true;
+        }
+        if (type is IArrayTypeSymbol array && IsObliviousReference(array.ElementType))
+            return true;
         return false;
     }
 }

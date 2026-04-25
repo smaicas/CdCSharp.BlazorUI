@@ -137,8 +137,6 @@ public class ColorClassGenerator : IIncrementalGenerator
         string className = classToGenerate.ClassName;
 
         StringBuilder sb = new(capacity: 64 * 1024);
-        sb.Append("#pragma warning disable RS0016\r\n");
-        sb.Append("#pragma warning disable RS0041\r\n");
         sb.Append("using CdCSharp.BlazorUI.Components;\r\n");
         sb.Append("using System.Diagnostics.CodeAnalysis;\r\n");
         sb.Append("\r\n");

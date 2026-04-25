@@ -173,6 +173,8 @@ CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType.Text = 0 -> CdCSharp.BlazorUI
 CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType.Type = 3 -> CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType
 CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType.Variable = 16 -> CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType
 CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType.VerbatimString = 5 -> CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenType
+override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.Token.GetHashCode() -> int
+override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch.GetHashCode() -> int
 static CdCSharp.BlazorUI.SyntaxHighlight.Builder.LanguageDefinition.Create(string! name) -> CdCSharp.BlazorUI.SyntaxHighlight.Builder.LanguageDefinitionBuilder!
 static CdCSharp.BlazorUI.SyntaxHighlight.Languages.CSharpLanguage.Instance.get -> CdCSharp.BlazorUI.SyntaxHighlight.Builder.LanguageDefinition!
 static CdCSharp.BlazorUI.SyntaxHighlight.Languages.CssLanguage.Instance.get -> CdCSharp.BlazorUI.SyntaxHighlight.Builder.LanguageDefinition!
@@ -188,8 +190,6 @@ static CdCSharp.BlazorUI.SyntaxHighlight.Tokens.Token.operator ==(CdCSharp.Blazo
 static CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch.operator !=(CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch left, CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch right) -> bool
 static CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch.operator ==(CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch left, CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch right) -> bool
 ~override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.Token.Equals(object obj) -> bool
-~override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.Token.GetHashCode() -> int
 ~override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.Token.ToString() -> string
 ~override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch.Equals(object obj) -> bool
-~override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch.GetHashCode() -> int
 ~override CdCSharp.BlazorUI.SyntaxHighlight.Tokens.TokenMatch.ToString() -> string

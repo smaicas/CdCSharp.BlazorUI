@@ -1,8 +1,117 @@
 #nullable enable
+CdCSharp.BlazorUI.ComponentParameterInfo
+CdCSharp.BlazorUI.ComponentParameterInfo.<Clone>$() -> CdCSharp.BlazorUI.ComponentParameterInfo!
+CdCSharp.BlazorUI.ComponentParameterInfo.ComponentParameterInfo(string! ParameterName, string! ParameterType, string? ParameterDefault, string? ParameterDescription) -> void
+CdCSharp.BlazorUI.ComponentParameterInfo.Deconstruct(out string! ParameterName, out string! ParameterType, out string? ParameterDefault, out string? ParameterDescription) -> void
+CdCSharp.BlazorUI.ComponentParameterInfo.Equals(CdCSharp.BlazorUI.ComponentParameterInfo? other) -> bool
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterDefault.get -> string?
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterDefault.init -> void
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterDescription.get -> string?
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterDescription.init -> void
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterName.get -> string!
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterName.init -> void
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterType.get -> string!
+CdCSharp.BlazorUI.ComponentParameterInfo.ParameterType.init -> void
+CdCSharp.BlazorUI.Components.BUIBadge
+CdCSharp.BlazorUI.Components.BUIBadge.BUIBadge() -> void
+CdCSharp.BlazorUI.Components.BUIBadge.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.BUIBadge.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.BUIBadge.Border.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUIBadge.Border.set -> void
+CdCSharp.BlazorUI.Components.BUIBadge.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUIBadge.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUIBadge.Circular.get -> bool
+CdCSharp.BlazorUI.Components.BUIBadge.Circular.set -> void
+CdCSharp.BlazorUI.Components.BUIBadge.Color.get -> string?
+CdCSharp.BlazorUI.Components.BUIBadge.Color.set -> void
+CdCSharp.BlazorUI.Components.BUIBadge.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.BUIBadge.Shadow.set -> void
+CdCSharp.BlazorUI.Components.BUIBadge.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUIBadge.Size.set -> void
+CdCSharp.BlazorUI.Components.BUIBadgeComponentInfo
 CdCSharp.BlazorUI.Components.BUIBadgeVariant
 CdCSharp.BlazorUI.Components.BUIBadgeVariant.BUIBadgeVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.BUIButton
+CdCSharp.BlazorUI.Components.BUIButton.BUIButton() -> void
+CdCSharp.BlazorUI.Components.BUIButton.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.BUIButton.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Border.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUIButton.Border.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUIButton.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Color.get -> string?
+CdCSharp.BlazorUI.Components.BUIButton.Color.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.BUIButton.Density.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.DisableRipple.get -> bool
+CdCSharp.BlazorUI.Components.BUIButton.DisableRipple.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.BUIButton.Disabled.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.FullWidth.get -> bool
+CdCSharp.BlazorUI.Components.BUIButton.FullWidth.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.GetRippleContainer() -> Microsoft.AspNetCore.Components.ElementReference
+CdCSharp.BlazorUI.Components.BUIButton.IsDisabled.get -> bool
+CdCSharp.BlazorUI.Components.BUIButton.LeadingIcon.get -> string?
+CdCSharp.BlazorUI.Components.BUIButton.LeadingIcon.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Loading.get -> bool
+CdCSharp.BlazorUI.Components.BUIButton.Loading.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant?
+CdCSharp.BlazorUI.Components.BUIButton.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.OnClick.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs!>
+CdCSharp.BlazorUI.Components.BUIButton.OnClick.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.RippleColor.get -> string?
+CdCSharp.BlazorUI.Components.BUIButton.RippleColor.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.RippleDurationMs.get -> int?
+CdCSharp.BlazorUI.Components.BUIButton.RippleDurationMs.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.BUIButton.Shadow.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUIButton.Size.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Text.get -> string?
+CdCSharp.BlazorUI.Components.BUIButton.Text.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.TrailingIcon.get -> string?
+CdCSharp.BlazorUI.Components.BUIButton.TrailingIcon.set -> void
+CdCSharp.BlazorUI.Components.BUIButton.Transitions.get -> CdCSharp.BlazorUI.Components.BUITransitions?
+CdCSharp.BlazorUI.Components.BUIButton.Transitions.set -> void
+CdCSharp.BlazorUI.Components.BUIButtonComponentInfo
 CdCSharp.BlazorUI.Components.BUIButtonVariant
 CdCSharp.BlazorUI.Components.BUIButtonVariant.BUIButtonVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock
+CdCSharp.BlazorUI.Components.BUICodeBlock.BUICodeBlock() -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.BUICodeBlock.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock.Border.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUICodeBlock.Border.set -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock.Code.get -> string!
+CdCSharp.BlazorUI.Components.BUICodeBlock.Code.set -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock.Language.get -> CdCSharp.BlazorUI.SyntaxHighlight.SyntaxHighlightLanguage
+CdCSharp.BlazorUI.Components.BUICodeBlock.Language.set -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUICodeBlock.Size.set -> void
+CdCSharp.BlazorUI.Components.BUICodeBlock.Title.get -> string?
+CdCSharp.BlazorUI.Components.BUICodeBlock.Title.set -> void
+CdCSharp.BlazorUI.Components.BUICodeBlockComponentInfo
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.BUIDataCards() -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardBackground.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardBackground.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardBorder.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardBorder.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardFooterTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<TItem>?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardFooterTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardHeaderTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<TItem>?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardHeaderTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardShadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardShadow.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<TItem>?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.CardTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.ColumnsCount.get -> int
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.ColumnsCount.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.Gap.get -> string!
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.Gap.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.MinCardWidth.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.MinCardWidth.set -> void
+CdCSharp.BlazorUI.Components.BUIDataCardsComponentInfo
 CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>
 CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.ApplyFilter(System.Collections.Generic.IEnumerable<TItem>! items) -> System.Collections.Generic.IEnumerable<TItem>!
 CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.ApplyPagination(System.Collections.Generic.IEnumerable<TItem>! items) -> System.Collections.Generic.IEnumerable<TItem>!
@@ -106,14 +215,260 @@ CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.
 CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.TotalPages -> int
 CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.UsePerItemPatternStyles.get -> bool
 CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.VisibleColumns -> System.Collections.Generic.List<CdCSharp.BlazorUI.Components.DataColumnRegistration<TItem>!>!
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Align.get -> CdCSharp.BlazorUI.Components.ColumnAlign
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Align.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.BUIDataColumn() -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.CellClass.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.CellClass.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.CustomComparer.get -> System.Func<TItem, TItem, int>?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.CustomComparer.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.CustomFilter.get -> System.Func<TItem, string!, bool>?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.CustomFilter.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Filterable.get -> bool
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Filterable.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Format.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Format.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Header.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Header.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.HeaderClass.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.HeaderClass.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.HeaderTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.HeaderTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Property.get -> System.Linq.Expressions.Expression<System.Func<TItem, object?>!>?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Property.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Sortable.get -> bool
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Sortable.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Template.get -> Microsoft.AspNetCore.Components.RenderFragment<TItem>?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Template.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Visible.get -> bool
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Visible.set -> void
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Width.get -> string?
+CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.Width.set -> void
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.BUIDataGrid() -> void
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.CellBorder.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.CellBorder.set -> void
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.FixedHeader.get -> bool
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.FixedHeader.set -> void
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.FooterTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.FooterTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.RowBorder.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.RowBorder.set -> void
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.RowTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<TItem>?
+CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.RowTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUIDataGridComponentInfo
+CdCSharp.BlazorUI.Components.BUIDraggable
+CdCSharp.BlazorUI.Components.BUIDraggable.BUIDraggable() -> void
+CdCSharp.BlazorUI.Components.BUIDraggable.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUIDraggable.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUIDraggable.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.BUIDraggable.Disabled.set -> void
+CdCSharp.BlazorUI.Components.BUIDraggable.OnDrag.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.DragEventArgs!>
+CdCSharp.BlazorUI.Components.BUIDraggable.OnDrag.set -> void
+CdCSharp.BlazorUI.Components.BUIDraggable.OnDragEnd.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.DragEventArgs!>
+CdCSharp.BlazorUI.Components.BUIDraggable.OnDragEnd.set -> void
+CdCSharp.BlazorUI.Components.BUIDraggable.OnDragStart.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.DragEventArgs!>
+CdCSharp.BlazorUI.Components.BUIDraggable.OnDragStart.set -> void
+CdCSharp.BlazorUI.Components.BUIDraggable.PreventDefault.get -> bool
+CdCSharp.BlazorUI.Components.BUIDraggable.PreventDefault.set -> void
+CdCSharp.BlazorUI.Components.BUIDraggableComponentInfo
+CdCSharp.BlazorUI.Components.BUILoadingIndicator
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.AriaLabel.get -> string?
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.AriaLabel.set -> void
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.BUILoadingIndicator() -> void
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.Color.get -> string?
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.Color.set -> void
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUILoadingIndicator.Size.set -> void
+CdCSharp.BlazorUI.Components.BUILoadingIndicatorComponentInfo
 CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant
 CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.BUILoadingIndicatorVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge
+CdCSharp.BlazorUI.Components.BUINotificationBadge.BUINotificationBadge() -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.BUINotificationBadge.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.BadgeContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUINotificationBadge.BadgeContent.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Border.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Border.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUINotificationBadge.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Circular.get -> bool
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Circular.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Color.get -> string?
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Color.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Position.get -> CdCSharp.BlazorUI.Components.BadgePosition
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Position.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Shadow.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUINotificationBadge.Size.set -> void
+CdCSharp.BlazorUI.Components.BUINotificationBadgeComponentInfo
 CdCSharp.BlazorUI.Components.BUIRowPatternPresets
+CdCSharp.BlazorUI.Components.BUISelect<TValue>
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.BUISelect() -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Disabled.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.FullWidth.get -> bool
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.FullWidth.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.IsDisabled.get -> bool
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.ReadOnly.get -> bool
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.ReadOnly.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Required.get -> bool
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Required.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Value.get -> TValue?
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.Value.set -> void
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TValue?>
+CdCSharp.BlazorUI.Components.BUISelect<TValue>.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.BUISelectComponentInfo
 CdCSharp.BlazorUI.Components.BUISelectVariant
+CdCSharp.BlazorUI.Components.BUISvgIcon
+CdCSharp.BlazorUI.Components.BUISvgIcon.BUISvgIcon() -> void
+CdCSharp.BlazorUI.Components.BUISvgIcon.Color.get -> string?
+CdCSharp.BlazorUI.Components.BUISvgIcon.Color.set -> void
+CdCSharp.BlazorUI.Components.BUISvgIcon.Icon.get -> string!
+CdCSharp.BlazorUI.Components.BUISvgIcon.Icon.set -> void
+CdCSharp.BlazorUI.Components.BUISvgIcon.OnClick.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs!>
+CdCSharp.BlazorUI.Components.BUISvgIcon.OnClick.set -> void
+CdCSharp.BlazorUI.Components.BUISvgIcon.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUISvgIcon.Size.set -> void
+CdCSharp.BlazorUI.Components.BUISvgIcon.Title.get -> string?
+CdCSharp.BlazorUI.Components.BUISvgIcon.Title.set -> void
+CdCSharp.BlazorUI.Components.BUISvgIcon.ViewBox.get -> string!
+CdCSharp.BlazorUI.Components.BUISvgIcon.ViewBox.set -> void
+CdCSharp.BlazorUI.Components.BUISvgIconComponentInfo
 CdCSharp.BlazorUI.Components.BUISvgIconVariant
 CdCSharp.BlazorUI.Components.BUISvgIconVariant.BUISvgIconVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.BUITab
+CdCSharp.BlazorUI.Components.BUITab.BUITab() -> void
+CdCSharp.BlazorUI.Components.BUITab.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITab.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUITab.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.BUITab.Disabled.set -> void
+CdCSharp.BlazorUI.Components.BUITab.Dispose() -> void
+CdCSharp.BlazorUI.Components.BUITab.Icon.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITab.Icon.set -> void
+CdCSharp.BlazorUI.Components.BUITab.Id.get -> string?
+CdCSharp.BlazorUI.Components.BUITab.Id.set -> void
+CdCSharp.BlazorUI.Components.BUITab.Label.get -> string?
+CdCSharp.BlazorUI.Components.BUITab.Label.set -> void
+CdCSharp.BlazorUI.Components.BUITab.Parent.get -> CdCSharp.BlazorUI.Components.BUITabs?
+CdCSharp.BlazorUI.Components.BUITab.Parent.set -> void
+CdCSharp.BlazorUI.Components.BUITabComponentInfo
+CdCSharp.BlazorUI.Components.BUITabs
+CdCSharp.BlazorUI.Components.BUITabs.ActiveTab.get -> string?
+CdCSharp.BlazorUI.Components.BUITabs.ActiveTab.set -> void
+CdCSharp.BlazorUI.Components.BUITabs.ActiveTabChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+CdCSharp.BlazorUI.Components.BUITabs.ActiveTabChanged.set -> void
+CdCSharp.BlazorUI.Components.BUITabs.BUITabs() -> void
+CdCSharp.BlazorUI.Components.BUITabs.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITabs.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUITabs.FullWidth.get -> bool
+CdCSharp.BlazorUI.Components.BUITabs.FullWidth.set -> void
+CdCSharp.BlazorUI.Components.BUITabs.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUITabs.Size.set -> void
+CdCSharp.BlazorUI.Components.BUITabsComponentInfo
 CdCSharp.BlazorUI.Components.BUITabsVariant
 CdCSharp.BlazorUI.Components.BUITabsVariant.BUITabsVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.BUITooltip
+CdCSharp.BlazorUI.Components.BUITooltip.Arrow.get -> bool
+CdCSharp.BlazorUI.Components.BUITooltip.Arrow.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.AutoCloseAfterMs.get -> int?
+CdCSharp.BlazorUI.Components.BUITooltip.AutoCloseAfterMs.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.BUITooltip() -> void
+CdCSharp.BlazorUI.Components.BUITooltip.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITooltip.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.Interactive.get -> bool
+CdCSharp.BlazorUI.Components.BUITooltip.Interactive.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.LeaveDelay.get -> int?
+CdCSharp.BlazorUI.Components.BUITooltip.LeaveDelay.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.MaxWidth.get -> int?
+CdCSharp.BlazorUI.Components.BUITooltip.MaxWidth.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.Offset.get -> int
+CdCSharp.BlazorUI.Components.BUITooltip.Offset.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.Placement.get -> CdCSharp.BlazorUI.Components.TooltipPlacement
+CdCSharp.BlazorUI.Components.BUITooltip.Placement.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.ShowDelay.get -> int?
+CdCSharp.BlazorUI.Components.BUITooltip.ShowDelay.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.Text.get -> string?
+CdCSharp.BlazorUI.Components.BUITooltip.Text.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.TooltipContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITooltip.TooltipContent.set -> void
+CdCSharp.BlazorUI.Components.BUITooltip.Trigger.get -> CdCSharp.BlazorUI.Components.TooltipTrigger
+CdCSharp.BlazorUI.Components.BUITooltip.Trigger.set -> void
+CdCSharp.BlazorUI.Components.BUITooltipComponentInfo
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.BUITreeMenu() -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Cache.get -> CdCSharp.BlazorUI.Components.TreeNodeCache<TItem>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Cache.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ChildrenSelector.get -> System.Func<TItem, System.Collections.Generic.IEnumerable<TItem>?>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ChildrenSelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.CollapseAllNodes() -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Collapsible.get -> bool
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Collapsible.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Dispose() -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandAll.get -> bool
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandAll.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandAllNodes() -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandMode.get -> CdCSharp.BlazorUI.Components.TreeMenuExpandMode
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandMode.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandedKeys.get -> System.Collections.Generic.HashSet<string!>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandedKeys.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandedKeysChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.HashSet<string!>!>
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.ExpandedKeysChanged.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.GetNode(string! key) -> CdCSharp.BlazorUI.Components.TreeMenuNode<TItem>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.HasChildrenSelector.get -> System.Func<TItem, bool>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.HasChildrenSelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.HoverCloseDelay.get -> int
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.HoverCloseDelay.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.HoverOpenDelay.get -> int
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.HoverOpenDelay.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.InvalidateCache(string? key = null) -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Items.get -> System.Collections.Generic.IEnumerable<TItem>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Items.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.KeySelector.get -> System.Func<TItem, string!>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.KeySelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.NodeTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<CdCSharp.BlazorUI.Components.TreeMenuNode<TItem>!>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.NodeTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnLoadChildren.get -> System.Func<TItem, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>!>!>?
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnLoadChildren.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnNavigate.get -> Microsoft.AspNetCore.Components.EventCallback<string!>
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnNavigate.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnNodeClick.get -> Microsoft.AspNetCore.Components.EventCallback<CdCSharp.BlazorUI.Components.TreeNodeEventArgs<CdCSharp.BlazorUI.Components.TreeMenuNode<TItem>!>!>
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnNodeClick.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Orientation.get -> CdCSharp.BlazorUI.Components.TreeMenuOrientation
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Orientation.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Size.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Trigger.get -> CdCSharp.BlazorUI.Components.TreeMenuTrigger
+CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.Trigger.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenuComponentInfo
+CdCSharp.BlazorUI.Components.BUITreeMenuItem
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.BUITreeMenuItem() -> void
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.Href.get -> string?
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.Href.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.Match.get -> Microsoft.AspNetCore.Components.Routing.NavLinkMatch
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.Match.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.OnClick.get -> Microsoft.AspNetCore.Components.EventCallback
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.OnClick.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.Target.get -> string?
+CdCSharp.BlazorUI.Components.BUITreeMenuItem.Target.set -> void
+CdCSharp.BlazorUI.Components.BUITreeMenuItemComponentInfo
 CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>
 CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.BUITreeNodeBase() -> void
 CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
@@ -133,6 +488,67 @@ CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.NodeContent.set -> v
 CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.ResolvedKey.get -> string!
 CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.Text.get -> string?
 CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.Text.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.AnimateExpand.get -> bool
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.AnimateExpand.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.BUITreeSelector() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Cache.get -> CdCSharp.BlazorUI.Components.TreeNodeCache<TItem>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Cache.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ChildrenSelector.get -> System.Func<TItem, System.Collections.Generic.IEnumerable<TItem>?>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ChildrenSelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ClearSelection() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.CollapseAllNodes() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.CollapseIcon.get -> string!
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.CollapseIcon.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.DisplayTextSelector.get -> System.Func<TItem, string!>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.DisplayTextSelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Dispose() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandAll.get -> bool
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandAll.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandAllNodes() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandIcon.get -> string!
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandIcon.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandedKeys.get -> System.Collections.Generic.HashSet<string!>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandedKeys.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandedKeysChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.HashSet<string!>!>
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ExpandedKeysChanged.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.GetNode(string! key) -> CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.GetSelectedNodes() -> System.Collections.Generic.IReadOnlyCollection<CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>!>!
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.HasChildrenSelector.get -> System.Func<TItem, bool>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.HasChildrenSelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.InvalidateCache(string? key = null) -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.IsSelected(string! key) -> bool
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Items.get -> System.Collections.Generic.IEnumerable<TItem>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Items.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.KeySelector.get -> System.Func<TItem, string!>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.KeySelector.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.NodeTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>!>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.NodeTemplate.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnLoadChildren.get -> System.Func<TItem, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>!>!>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnLoadChildren.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnNodeClick.get -> Microsoft.AspNetCore.Components.EventCallback<CdCSharp.BlazorUI.Components.TreeNodeEventArgs<CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>!>!>
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnNodeClick.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnNodeCollapse.get -> Microsoft.AspNetCore.Components.EventCallback<CdCSharp.BlazorUI.Components.TreeNodeEventArgs<CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>!>!>
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnNodeCollapse.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnNodeExpand.get -> Microsoft.AspNetCore.Components.EventCallback<CdCSharp.BlazorUI.Components.TreeNodeEventArgs<CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>!>!>
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnNodeExpand.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectAll() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectedKeys.get -> System.Collections.Generic.HashSet<string!>?
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectedKeys.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectedKeysChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.HashSet<string!>!>
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectedKeysChanged.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectionMode.get -> CdCSharp.BlazorUI.Components.TreeSelectionMode
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.SelectionMode.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ShowCheckboxes.get -> bool
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.ShowCheckboxes.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.Size.set -> void
+CdCSharp.BlazorUI.Components.BUITreeSelectorComponentInfo
+CdCSharp.BlazorUI.Components.BUITreeSelectorItem
+CdCSharp.BlazorUI.Components.BUITreeSelectorItem.BUITreeSelectorItem() -> void
+CdCSharp.BlazorUI.Components.BUITreeSelectorItemComponentInfo
 CdCSharp.BlazorUI.Components.BadgePosition
 CdCSharp.BlazorUI.Components.BadgePosition.BottomLeft = 3 -> CdCSharp.BlazorUI.Components.BadgePosition
 CdCSharp.BlazorUI.Components.BadgePosition.BottomRight = 2 -> CdCSharp.BlazorUI.Components.BadgePosition
@@ -220,6 +636,9 @@ CdCSharp.BlazorUI.Components.DataColumnRegistry<TItem>.DataColumnRegistry() -> v
 CdCSharp.BlazorUI.Components.DataColumnRegistry<TItem>.RegisterColumn(CdCSharp.BlazorUI.Components.DataColumnRegistration<TItem>! column) -> void
 CdCSharp.BlazorUI.Components.DataGridVariant
 CdCSharp.BlazorUI.Components.DataGridVariant.DataGridVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Diagnostics.BUIPerformanceDashboard
+CdCSharp.BlazorUI.Components.Diagnostics.BUIPerformanceDashboard.BUIPerformanceDashboard() -> void
+CdCSharp.BlazorUI.Components.Diagnostics.BUIPerformanceDashboard.Dispose() -> void
 CdCSharp.BlazorUI.Components.FilterMode
 CdCSharp.BlazorUI.Components.FilterMode.Contains = 1 -> CdCSharp.BlazorUI.Components.FilterMode
 CdCSharp.BlazorUI.Components.FilterMode.Custom = 5 -> CdCSharp.BlazorUI.Components.FilterMode
@@ -227,17 +646,657 @@ CdCSharp.BlazorUI.Components.FilterMode.EndsWith = 3 -> CdCSharp.BlazorUI.Compon
 CdCSharp.BlazorUI.Components.FilterMode.Equals = 4 -> CdCSharp.BlazorUI.Components.FilterMode
 CdCSharp.BlazorUI.Components.FilterMode.None = 0 -> CdCSharp.BlazorUI.Components.FilterMode
 CdCSharp.BlazorUI.Components.FilterMode.StartsWith = 2 -> CdCSharp.BlazorUI.Components.FilterMode
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.BUIColorPicker() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.OnRevert.get -> Microsoft.AspNetCore.Components.EventCallback
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.OnRevert.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.OutputFormat.get -> CdCSharp.BlazorUI.Components.ColorOutputFormats
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.OutputFormat.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.RevertText.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.RevertText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.SelectionHeight.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.SelectionHeight.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.SelectionWidth.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.SelectionWidth.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.ShowActions.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.ShowActions.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.Value.get -> CdCSharp.BlazorUI.Components.CssColor?
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.Value.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<CdCSharp.BlazorUI.Components.CssColor?>
+CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIColorPickerComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.BUIDatePicker() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.Value.get -> System.DateOnly?
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.Value.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.DateOnly?>
+CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIDatePickerComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.BUIInputCheckbox() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.CheckedIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.CheckedIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.IndeterminateIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.IndeterminateIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.UncheckedIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.UncheckedIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxComponentInfo
 CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxVariant
 CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxVariant.BUIInputCheckboxVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.BUIInputColor() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Clearable.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Clearable.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.DisplayMode.get -> CdCSharp.BlazorUI.Components.Forms.ColorPickerDisplayMode
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.DisplayMode.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.OutputFormat.get -> CdCSharp.BlazorUI.Components.ColorOutputFormats
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.OutputFormat.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.RevertText.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.RevertText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SelectionHeight.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SelectionHeight.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SelectionWidth.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SelectionWidth.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.ShowCopyButton.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.ShowCopyButton.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputColor.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputColorComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.BUIInputDateTime() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDateTimeComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.BUIInputDropdown() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.CloseOnSelect.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.CloseOnSelect.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.DeselectAllText.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.DeselectAllText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.FullWidth.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.FullWidth.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.IsLoading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.IsLoading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ItemHeight.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ItemHeight.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.MaxVisibleItems.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.MaxVisibleItems.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.NoOptionsTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.NoOptionsTemplate.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.NoResultsTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<CdCSharp.BlazorUI.Components.Forms.Dropdown.NoResultsContext>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.NoResultsTemplate.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Placement.get -> CdCSharp.BlazorUI.Components.Forms.DropdownPlacement
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Placement.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ReadOnly.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ReadOnly.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Required.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Required.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.SearchMode.get -> CdCSharp.BlazorUI.Components.SearchMode
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.SearchMode.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.SearchPlaceholder.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.SearchPlaceholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Searchable.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Searchable.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.SelectAllText.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.SelectAllText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ShowSelectAll.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ShowSelectAll.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Value.get -> TValue?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Value.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ValueExpression.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.ValueExpression.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Variant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.Variant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.AnimateExpand.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.AnimateExpand.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.BUIInputDropdownTree() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ChildrenSelector.get -> System.Func<TItem, System.Collections.Generic.IEnumerable<TItem>?>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ChildrenSelector.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ClearSelection() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.CloseOnSelect.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.CloseOnSelect.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.CollapseAllNodes() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.DisplayMode.get -> CdCSharp.BlazorUI.Components.Forms.Dropdown.TreeDisplayMode
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.DisplayMode.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.DisplayTextSelector.get -> System.Func<TItem, string!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.DisplayTextSelector.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandAll.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandAll.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandAllNodes() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandedKeys.get -> System.Collections.Generic.HashSet<string!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandedKeys.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandedKeysChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.HashSet<string!>!>
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ExpandedKeysChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.FullWidth.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.FullWidth.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.HasChildrenSelector.get -> System.Func<TItem, bool>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.HasChildrenSelector.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.InheritanceSeparator.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.InheritanceSeparator.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.IsLoading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.IsLoading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.IsMultiple.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Items.get -> System.Collections.Generic.IEnumerable<TItem>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Items.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.KeySelector.get -> System.Func<TItem, string!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.KeySelector.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.MaxMenuHeight.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.MaxMenuHeight.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.NoOptionsTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.NoOptionsTemplate.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.NodeTemplate.get -> Microsoft.AspNetCore.Components.RenderFragment<CdCSharp.BlazorUI.Components.TreeSelectionNode<TItem>!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.NodeTemplate.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.OnLoadChildren.get -> System.Func<TItem, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>!>!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.OnLoadChildren.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Placement.get -> CdCSharp.BlazorUI.Components.Forms.DropdownPlacement
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Placement.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ReadOnly.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ReadOnly.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Required.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Required.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.SelectionCascade.get -> CdCSharp.BlazorUI.Components.TreeSelectionCascade
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.SelectionCascade.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ShowCheckboxes.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ShowCheckboxes.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Value.get -> TValue?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Value.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ValueExpression.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.ValueExpression.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Variant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.Variant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.BUIInputLoading() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AccelerationInitialDelay.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AccelerationInitialDelay.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AccelerationMinDelay.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AccelerationMinDelay.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AccelerationStepReduction.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AccelerationStepReduction.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AllowNegative.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.AllowNegative.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.BUIInputNumber() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.ButtonPlacement.get -> CdCSharp.BlazorUI.Components.Forms.StepButtonPlacement
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.ButtonPlacement.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Culture.get -> System.Globalization.CultureInfo?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Culture.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.DecimalPlaces.get -> int?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.DecimalPlaces.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.EnableAcceleration.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.EnableAcceleration.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.EnableMouseWheel.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.EnableMouseWheel.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Max.get -> TValue?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Max.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Min.get -> TValue?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Min.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.OnDecrement.get -> Microsoft.AspNetCore.Components.EventCallback<TValue?>
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.OnDecrement.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.OnIncrement.get -> Microsoft.AspNetCore.Components.EventCallback<TValue?>
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.OnIncrement.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.ShowStepButtons.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.ShowStepButtons.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Step.get -> decimal
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Step.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.UseThousandsSeparator.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.UseThousandsSeparator.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputNumberComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.BUIInputOutline() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.For.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.For.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.Required.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.Required.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.BUIInputPrefix() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.BUIInputRadio() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.CheckedIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.CheckedIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.ClearText.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.ClearText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Clearable.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Clearable.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Orientation.get -> CdCSharp.BlazorUI.Components.Forms.RadioOrientation
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Orientation.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.UncheckedIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.UncheckedIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputRadioComponentInfo
 CdCSharp.BlazorUI.Components.Forms.BUIInputRadioVariant
 CdCSharp.BlazorUI.Components.Forms.BUIInputRadioVariant.BUIInputRadioVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.BUIInputSuffix() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.BUIInputSwitch() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.IconActive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.IconActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.IconInactive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.IconInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.IsChecked.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.TrackColorActive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.TrackColorActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.TrackColorInactive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.TrackColorInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchComponentInfo
 CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchVariant
 CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchVariant.BUIInputSwitchVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.BUIInputText() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.OnInput.get -> Microsoft.AspNetCore.Components.EventCallback<string!>
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.OnInput.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.UpdateOnInput.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputText.UpdateOnInput.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.AutoResize.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.AutoResize.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.BUIInputTextArea() -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.MaxLength.get -> int?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.MaxLength.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.OnInput.get -> Microsoft.AspNetCore.Components.EventCallback<string!>
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.OnInput.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Resize.get -> CdCSharp.BlazorUI.Components.Forms.TextAreaResize
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Resize.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Rows.get -> int
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Rows.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.UpdateOnInput.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.UpdateOnInput.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextAreaComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUIInputTextComponentInfo
 CdCSharp.BlazorUI.Components.Forms.BUIInputVariant
 CdCSharp.BlazorUI.Components.Forms.BUIInputVariant.BUIInputVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.AriaDescribedBy.get -> string!
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.AriaDescribedBy.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.AriaLabel.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.AriaLabel.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.BUISwitch() -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.IconActive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.IconActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.IconInactive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.IconInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.InputId.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.InputId.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.IsChecked.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.IsDisabled.get -> bool
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.OptionActive.get -> TValue
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.OptionActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.OptionInactive.get -> TValue
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.OptionInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbBackgroundColorActive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbBackgroundColorActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbBackgroundColorInactive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbBackgroundColorInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbColorActive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbColorActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbColorInactive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ThumbColorInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.TrackColorActive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.TrackColorActive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.TrackColorInactive.get -> string?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.TrackColorInactive.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Value.get -> TValue?
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.Value.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TValue?>
+CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUISwitchComponentInfo
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.BUITimePicker() -> void
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.Density.get -> CdCSharp.BlazorUI.Components.BUIDensity
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.Density.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.Value.get -> System.TimeOnly?
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.Value.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.TimeOnly?>
+CdCSharp.BlazorUI.Components.Forms.BUITimePicker.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.BUITimePickerComponentInfo
 CdCSharp.BlazorUI.Components.Forms.ColorPickerDisplayMode
 CdCSharp.BlazorUI.Components.Forms.ColorPickerDisplayMode.Dropdown = 0 -> CdCSharp.BlazorUI.Components.Forms.ColorPickerDisplayMode
 CdCSharp.BlazorUI.Components.Forms.ColorPickerDisplayMode.Modal = 1 -> CdCSharp.BlazorUI.Components.Forms.ColorPickerDisplayMode
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.AriaMultiselectable.get -> bool
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.AriaMultiselectable.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.AriaRole.get -> string!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.AriaRole.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.BUIDropdownContainer() -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.CloseAsync() -> System.Threading.Tasks.Task!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Color.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Color.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.ComponentId.get -> string!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.DisplayValue.get -> string!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.DisplayValue.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.FocusSearchInputAsync() -> System.Threading.Tasks.Task!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.HasValue.get -> bool
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.HasValue.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.IsOpen.get -> bool
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Label.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Label.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Loading.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.MaxMenuHeight.get -> int
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.MaxMenuHeight.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.MenuContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.MenuContent.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnClosed.get -> Microsoft.AspNetCore.Components.EventCallback
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnClosed.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnKeyboardNavigation.get -> Microsoft.AspNetCore.Components.EventCallback<CdCSharp.BlazorUI.Components.Forms.DropdownKeyboardEventArgs>
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnKeyboardNavigation.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnOpened.get -> Microsoft.AspNetCore.Components.EventCallback
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnOpened.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<TValue>
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OpenAsync() -> System.Threading.Tasks.Task!
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Placement.get -> CdCSharp.BlazorUI.Components.Forms.DropdownPlacement
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Placement.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.PrefixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.Size.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixBackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixBackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixColor.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixColor.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixIcon.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixIcon.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixText.get -> string?
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.SuffixText.set -> void
+CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.ToggleAsync() -> System.Threading.Tasks.Task!
 CdCSharp.BlazorUI.Components.Forms.Dropdown.IDropdownContainer
 CdCSharp.BlazorUI.Components.Forms.Dropdown.IDropdownContainer.ElementType.get -> System.Type!
 CdCSharp.BlazorUI.Components.Forms.Dropdown.IDropdownContainer.IsMultiple.get -> bool
@@ -348,6 +1407,9 @@ CdCSharp.BlazorUI.Components.Forms.TextAreaResize.Both = 3 -> CdCSharp.BlazorUI.
 CdCSharp.BlazorUI.Components.Forms.TextAreaResize.Horizontal = 2 -> CdCSharp.BlazorUI.Components.Forms.TextAreaResize
 CdCSharp.BlazorUI.Components.Forms.TextAreaResize.None = 0 -> CdCSharp.BlazorUI.Components.Forms.TextAreaResize
 CdCSharp.BlazorUI.Components.Forms.TextAreaResize.Vertical = 1 -> CdCSharp.BlazorUI.Components.Forms.TextAreaResize
+CdCSharp.BlazorUI.Components.Forms._Imports
+CdCSharp.BlazorUI.Components.Forms._Imports.Execute() -> void
+CdCSharp.BlazorUI.Components.Forms._Imports._Imports() -> void
 CdCSharp.BlazorUI.Components.IClipboardJsInterop
 CdCSharp.BlazorUI.Components.IClipboardJsInterop.CopyTextAsync(string! text) -> System.Threading.Tasks.ValueTask
 CdCSharp.BlazorUI.Components.IDraggableJsCallback
@@ -368,10 +1430,572 @@ CdCSharp.BlazorUI.Components.ITreeNode<TItem>.Item.get -> TItem?
 CdCSharp.BlazorUI.Components.ITreeNode<TItem>.Parent.get -> CdCSharp.BlazorUI.Components.ITreeNode<TItem>?
 CdCSharp.BlazorUI.Components.ITreeNodeRegistry<TRegistration>
 CdCSharp.BlazorUI.Components.ITreeNodeRegistry<TRegistration>.Register(TRegistration! registration) -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.AdditionalAttributes.get -> System.Collections.Generic.Dictionary<string!, object!>?
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.AdditionalAttributes.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.Icon.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.Icon.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.IconRotation.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.IconRotation.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.Loading.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Internal._BUIAddon.Size.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIAddon._BUIAddon() -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Active.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Active.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.AdditionalAttributes.get -> System.Collections.Generic.Dictionary<string!, object!>?
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.AdditionalAttributes.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.AriaLabel.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.AriaLabel.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Icon.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Icon.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.IconRotation.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.IconRotation.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Loading.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Loading.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.LoadingIndicatorVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.LoadingIndicatorVariant.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.OnClick.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs!>
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.OnClick.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.OnClickPreventDefault.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.OnClickPreventDefault.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.OnClickStopPropagation.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.OnClickStopPropagation.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Internal._BUIBtn.Size.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIBtn._BUIBtn() -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckMarkMode
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckMarkMode.Checkbox = 0 -> CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckMarkMode
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckMarkMode.Radio = 1 -> CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckMarkMode
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Checked.get -> bool?
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Checked.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckedIcon.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckedIcon.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.IndeterminateIcon.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.IndeterminateIcon.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Mode.get -> CdCSharp.BlazorUI.Components.Internal._BUICheckMark.CheckMarkMode
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Mode.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.ReadOnly.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.ReadOnly.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.Size.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.UncheckedIcon.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark.UncheckedIcon.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUICheckMark._BUICheckMark() -> void
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.EditContext.get -> Microsoft.AspNetCore.Components.Forms.EditContext?
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.EditContext.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.For.get -> System.Linq.Expressions.Expression<System.Func<TValue>!>?
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.For.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.HelperText.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.HelperText.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.Id.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.Id.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.ShowValidation.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.ShowValidation.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>._BUIFieldHelper() -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.AdditionalAttributes.get -> System.Collections.Generic.Dictionary<string!, object!>?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.AdditionalAttributes.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.AriaLabel.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.AriaLabel.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Max.get -> int?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Max.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Min.get -> int?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Min.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.OnInput.get -> Microsoft.AspNetCore.Components.EventCallback<int?>
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.OnInput.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Step.get -> int?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Step.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.UpdateOnInput.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.UpdateOnInput.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Value.get -> int?
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.Value.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<int?>
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInNumber._BUIInNumber() -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.AdditionalAttributes.get -> System.Collections.Generic.Dictionary<string!, object!>?
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.AdditionalAttributes.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.AriaLabel.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.AriaLabel.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.Value.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.Value.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInSelect._BUIInSelect() -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText
+CdCSharp.BlazorUI.Components.Internal._BUIInText.AdditionalAttributes.get -> System.Collections.Generic.Dictionary<string!, object!>?
+CdCSharp.BlazorUI.Components.Internal._BUIInText.AdditionalAttributes.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.AriaLabel.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInText.AriaLabel.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIInText.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.OnInput.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+CdCSharp.BlazorUI.Components.Internal._BUIInText.OnInput.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.Placeholder.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInText.Placeholder.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.UpdateOnInput.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIInText.UpdateOnInput.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.Value.get -> string?
+CdCSharp.BlazorUI.Components.Internal._BUIInText.Value.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText.ValueChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string?>
+CdCSharp.BlazorUI.Components.Internal._BUIInText.ValueChanged.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIInText._BUIInText() -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.CurrentPage.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.CurrentPage.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.MaxVisiblePages.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.MaxVisiblePages.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.OnPageChange.get -> Microsoft.AspNetCore.Components.EventCallback<int>
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.OnPageChange.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.PageSize.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.PageSize.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.ShowInfo.get -> bool
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.ShowInfo.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.TotalItems.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.TotalItems.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.TotalPages.get -> int
+CdCSharp.BlazorUI.Components.Internal._BUIPagination.TotalPages.set -> void
+CdCSharp.BlazorUI.Components.Internal._BUIPagination._BUIPagination() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIBlazorLayout
+CdCSharp.BlazorUI.Components.Layout.BUIBlazorLayout.BUIBlazorLayout() -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard
+CdCSharp.BlazorUI.Components.Layout.BUICard.Actions.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUICard.Actions.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.ActionsAlignment.get -> CdCSharp.BlazorUI.Components.Layout.CardActionsAlignment
+CdCSharp.BlazorUI.Components.Layout.BUICard.ActionsAlignment.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.BUICard() -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUICard.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.Border.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.Layout.BUICard.Border.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUICard.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.Clickable.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUICard.Clickable.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.Color.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUICard.Color.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.Header.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUICard.Header.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.Media.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUICard.Media.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.MediaHeight.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUICard.MediaHeight.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.MediaPosition.get -> CdCSharp.BlazorUI.Components.Layout.CardMediaPosition
+CdCSharp.BlazorUI.Components.Layout.BUICard.MediaPosition.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.OnClick.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.MouseEventArgs!>
+CdCSharp.BlazorUI.Components.Layout.BUICard.OnClick.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICard.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Layout.BUICard.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUICardComponentInfo
 CdCSharp.BlazorUI.Components.Layout.BUICardVariant
 CdCSharp.BlazorUI.Components.Layout.BUICardVariant.BUICardVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.BUIDialog() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Closable.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Closable.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.CloseOnEscape.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.CloseOnEscape.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.CloseOnOverlayClick.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.CloseOnOverlayClick.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Content.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Content.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Footer.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Footer.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.FullScreen.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.FullScreen.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Header.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Header.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MaxHeight.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MaxHeight.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MaxWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MaxWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MinHeight.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MinHeight.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MinWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.MinWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Open.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Open.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.OpenChanged.get -> Microsoft.AspNetCore.Components.EventCallback<bool>
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.OpenChanged.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Title.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIDialog.Title.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDialogComponentInfo
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.BUIDrawer() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Closable.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Closable.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.CloseOnEscape.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.CloseOnEscape.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.CloseOnOverlayClick.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.CloseOnOverlayClick.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Footer.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Footer.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Header.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Header.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Open.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Open.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.OpenChanged.get -> Microsoft.AspNetCore.Components.EventCallback<bool>
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.OpenChanged.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Position.get -> CdCSharp.BlazorUI.Components.Layout.DrawerPosition
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Position.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Size.get -> string!
+CdCSharp.BlazorUI.Components.Layout.BUIDrawer.Size.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIDrawerComponentInfo
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.AlignContent.get -> CdCSharp.BlazorUI.Components.Layout.FlexStackAlignContent
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.AlignContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.AlignItems.get -> CdCSharp.BlazorUI.Components.Layout.FlexStackAlignItems
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.AlignItems.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.BUIFlexStack() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.BackgroundColor.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.BackgroundColor.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Border.get -> CdCSharp.BlazorUI.Components.BorderStyle?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Border.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Color.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Color.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.ColumnGap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.ColumnGap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Direction.get -> CdCSharp.BlazorUI.Components.Layout.FlexStackDirection
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Direction.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.FullWidth.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.FullWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Gap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Gap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.JustifyContent.get -> CdCSharp.BlazorUI.Components.Layout.FlexStackJustifyContent
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.JustifyContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.M.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.M.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mb.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mb.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Ml.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Ml.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mr.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mr.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mt.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mt.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mx.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Mx.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.My.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.My.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.P.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.P.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pb.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pb.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pl.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pr.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pr.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pt.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Pt.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Px.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Px.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Py.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Py.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.RowGap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.RowGap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Shadow.get -> CdCSharp.BlazorUI.Components.ShadowStyle?
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Shadow.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Wrap.get -> CdCSharp.BlazorUI.Components.Layout.FlexStackWrap
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.Wrap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIFlexStackComponentInfo
+CdCSharp.BlazorUI.Components.Layout.BUIGrid
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.AlignItems.get -> CdCSharp.BlazorUI.Components.Layout.GridAlignItems
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.AlignItems.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.BUIGrid() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.ColumnGap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.ColumnGap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Columns.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Columns.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Direction.get -> CdCSharp.BlazorUI.Components.Layout.GridDirection
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Direction.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionLg.get -> CdCSharp.BlazorUI.Components.Layout.GridDirection?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionLg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionMd.get -> CdCSharp.BlazorUI.Components.Layout.GridDirection?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionMd.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionSm.get -> CdCSharp.BlazorUI.Components.Layout.GridDirection?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionSm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionXl.get -> CdCSharp.BlazorUI.Components.Layout.GridDirection?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionXl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionXs.get -> CdCSharp.BlazorUI.Components.Layout.GridDirection?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.DirectionXs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Gap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Gap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapLg.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapLg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapMd.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapMd.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapSm.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapSm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapXl.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapXl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapXs.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.GapXs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.JustifyContent.get -> CdCSharp.BlazorUI.Components.Layout.GridJustifyContent
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.JustifyContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.M.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.M.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.MaxWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.MaxWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mb.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mb.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Ml.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Ml.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mr.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mr.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mt.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mt.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mx.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Mx.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.My.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.My.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.P.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.P.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pb.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pb.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pl.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pr.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pr.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pt.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Pt.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Px.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Px.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Py.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Py.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.RowGap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.RowGap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Wrap.get -> CdCSharp.BlazorUI.Components.Layout.GridWrap
+CdCSharp.BlazorUI.Components.Layout.BUIGrid.Wrap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridComponentInfo
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.AlignSelf.get -> CdCSharp.BlazorUI.Components.Layout.GridAlignSelf?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.AlignSelf.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Auto.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Auto.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.BUIGridItem() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideLg.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideLg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideMd.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideMd.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideSm.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideSm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideXl.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideXl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideXs.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.HideXs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Lg.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Lg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.M.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.M.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mb.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mb.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Md.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Md.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Ml.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Ml.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mr.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mr.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mt.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mt.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mx.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Mx.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.My.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.My.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Offset.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Offset.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetLg.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetLg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetMd.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetMd.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetSm.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetSm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetXl.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetXl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetXs.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OffsetXs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Order.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Order.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderLg.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderLg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderMd.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderMd.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderSm.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderSm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderXl.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderXl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderXs.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.OrderXs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.P.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.P.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pb.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pb.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pl.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pr.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pr.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pt.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Pt.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Px.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Px.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Py.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Py.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowLg.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowLg.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowMd.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowMd.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowSm.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowSm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowXl.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowXl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowXs.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.ShowXs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Sm.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Sm.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Span.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Span.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Xl.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Xl.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Xs.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIGridItem.Xs.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIGridItemComponentInfo
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer.BUIInitializer() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer.DefaultTheme.get -> string!
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer.DefaultTheme.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIInitializer.Dispose() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIModalContainer
+CdCSharp.BlazorUI.Components.Layout.BUIModalContainer.BUIModalContainer() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIModalContainer.Modal.get -> CdCSharp.BlazorUI.Components.Layout.ModalState!
+CdCSharp.BlazorUI.Components.Layout.BUIModalContainer.Modal.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIModalHost
+CdCSharp.BlazorUI.Components.Layout.BUIModalHost.BUIModalHost() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIModalHost.DisposeAsync() -> System.Threading.Tasks.ValueTask
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.BUISidebarLayout() -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.CollapseBreakpoint.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.CollapseBreakpoint.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.ContentMaxWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.ContentMaxWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.Header.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.Header.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.HeaderHeight.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.HeaderHeight.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.ShowToggle.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.ShowToggle.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.Sidebar.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.Sidebar.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarOpen.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarOpen.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarOpenChanged.get -> Microsoft.AspNetCore.Components.EventCallback<bool>
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarOpenChanged.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarSide.get -> CdCSharp.BlazorUI.Components.Layout.SidebarSide
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarSide.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.SidebarWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.StickyHeader.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.StickyHeader.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.StickySidebar.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.StickySidebar.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.BUIStackedLayout() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.ChildContent.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.ChildContent.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.ContentMaxWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.ContentMaxWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.Header.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.Header.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.HeaderHeight.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.HeaderHeight.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.Nav.get -> Microsoft.AspNetCore.Components.RenderFragment?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.Nav.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavColumns.get -> int?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavColumns.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavGap.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavGap.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavMinColumnWidth.get -> string?
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavMinColumnWidth.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavOpen.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavOpen.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavOpenChanged.get -> Microsoft.AspNetCore.Components.EventCallback<bool>
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.NavOpenChanged.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.ShowToggle.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.ShowToggle.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.StickyHeader.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.StickyHeader.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.StickyNav.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.StickyNav.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor
+CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.BUIThemeEditor() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.OnPaletteChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.Dictionary<string!, CdCSharp.BlazorUI.Components.CssColor!>!>
+CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.OnPaletteChanged.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.Palette.get -> System.Collections.Generic.Dictionary<string!, CdCSharp.BlazorUI.Components.CssColor!>!
+CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.Palette.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeGenerator
+CdCSharp.BlazorUI.Components.Layout.BUIThemeGenerator.BUIThemeGenerator() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemePreview
+CdCSharp.BlazorUI.Components.Layout.BUIThemePreview.BUIThemePreview() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.AvailableThemes.get -> string![]!
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.AvailableThemes.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.BUIThemeSelector() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.OnThemeChanged.get -> Microsoft.AspNetCore.Components.EventCallback<string!>
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.OnThemeChanged.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.ShowIcon.get -> bool
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.ShowIcon.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.ThemeIcons.get -> System.Collections.Generic.Dictionary<string!, string!>?
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.ThemeIcons.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorComponentInfo
 CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant
 CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant.BUIThemeSelectorVariant(string! name) -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToast
+CdCSharp.BlazorUI.Components.Layout.BUIToast.BUIToast() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToast.Dispose() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToast.OnCloseAnimationComplete.get -> Microsoft.AspNetCore.Components.EventCallback<System.Guid>
+CdCSharp.BlazorUI.Components.Layout.BUIToast.OnCloseAnimationComplete.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToast.State.get -> CdCSharp.BlazorUI.Components.Layout.Services.ToastState!
+CdCSharp.BlazorUI.Components.Layout.BUIToast.State.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToastComponentInfo
+CdCSharp.BlazorUI.Components.Layout.BUIToastHost
+CdCSharp.BlazorUI.Components.Layout.BUIToastHost.BUIToastHost() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToastHost.Dispose() -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToastHost.MaxVisiblePerPosition.get -> int
+CdCSharp.BlazorUI.Components.Layout.BUIToastHost.MaxVisiblePerPosition.set -> void
+CdCSharp.BlazorUI.Components.Layout.BUIToastHostComponentInfo
 CdCSharp.BlazorUI.Components.Layout.BUIToastVariant
 CdCSharp.BlazorUI.Components.Layout.CardActionsAlignment
 CdCSharp.BlazorUI.Components.Layout.CardActionsAlignment.Center = 1 -> CdCSharp.BlazorUI.Components.Layout.CardActionsAlignment
@@ -807,6 +2431,21 @@ CdCSharp.BlazorUI.Components.TreeStructure<TNode, TItem>.RootNodes.get -> System
 CdCSharp.BlazorUI.Components.TreeStructure<TNode, TItem>.SetExpandedKeys(System.Collections.Generic.IEnumerable<string!>? keys) -> void
 CdCSharp.BlazorUI.Components.TreeStructure<TNode, TItem>.Toggle(string! key) -> void
 CdCSharp.BlazorUI.Components.TreeStructure<TNode, TItem>.TreeStructure(System.Func<CdCSharp.BlazorUI.Components.TreeNodeBuildContext<TItem>!, TNode!>! nodeFactory) -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.BUIDateTimePattern() -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.ContainerClass.get -> string?
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.ContainerClass.set -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.Disabled.get -> bool
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.Disabled.set -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.FocusAsync() -> System.Threading.Tasks.Task!
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.Id.get -> string?
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.Id.set -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.OnBlur.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.FocusEventArgs!>
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.OnBlur.set -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.OnFocus.get -> Microsoft.AspNetCore.Components.EventCallback<Microsoft.AspNetCore.Components.Web.FocusEventArgs!>
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.OnFocus.set -> void
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.ShowPattern.get -> bool
+CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.ShowPattern.set -> void
 CdCSharp.BlazorUI.Components.Utils.Draggable.DragEventArgs
 CdCSharp.BlazorUI.Components.Utils.Draggable.DragEventArgs.ClientX.get -> double
 CdCSharp.BlazorUI.Components.Utils.Draggable.DragEventArgs.ClientX.init -> void
@@ -864,6 +2503,11 @@ CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.SpanState.Validator.get
 CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.SpanState.Validator.set -> void
 CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.SpanState.Value.get -> string!
 CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.SpanState.Value.set -> void
+CdCSharp.BlazorUI.Components._Imports
+CdCSharp.BlazorUI.Components._Imports.Execute() -> void
+CdCSharp.BlazorUI.Components._Imports._Imports() -> void
+CdCSharp.BlazorUI.GenerateComponentInfoAttribute
+CdCSharp.BlazorUI.GenerateComponentInfoAttribute.GenerateComponentInfoAttribute() -> void
 CdCSharp.BlazorUI.Themes.BUIPalette
 CdCSharp.BlazorUI.Themes.BUIPalette.BUIPalette(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! palette) -> void
 CdCSharp.BlazorUI.Themes.BUIPalette.Background.get -> CdCSharp.BlazorUI.Components.CssColor!
@@ -893,22 +2537,168 @@ abstract CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.GenerateDef
 abstract CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.CreatePatternState() -> CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.PatternState!
 abstract CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.InitializeFromText(string? text) -> void
 abstract CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.ValidateComplete(string! text) -> bool
+override CdCSharp.BlazorUI.ComponentParameterInfo.Equals(object? obj) -> bool
+override CdCSharp.BlazorUI.ComponentParameterInfo.GetHashCode() -> int
+override CdCSharp.BlazorUI.ComponentParameterInfo.ToString() -> string!
+override CdCSharp.BlazorUI.Components.BUIBadge.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.BUIBadge.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.BUIBadgeVariant!, System.Func<CdCSharp.BlazorUI.Components.BUIBadge!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUIBadge.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUIBadgeVariant!
+override CdCSharp.BlazorUI.Components.BUIButton.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.BUIButtonVariant!, System.Func<CdCSharp.BlazorUI.Components.BUIButton!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUIButton.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUIButtonVariant!
+override CdCSharp.BlazorUI.Components.BUICodeBlock.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.BUICodeBlock.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.DataCardsVariant!, System.Func<CdCSharp.BlazorUI.Components.BUIDataCards<TItem>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.DataCardsVariant!
+override CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.OnParametersSet() -> void
 override CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
 override CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
 override CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.OnAfterRender(bool firstRender) -> void
 override CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.OnInitialized() -> void
 override CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.DataGridVariant!, System.Func<CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.DataGridVariant!
+override CdCSharp.BlazorUI.Components.BUIDraggable.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.BUILoadingIndicator.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!, System.Func<CdCSharp.BlazorUI.Components.BUILoadingIndicator!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUILoadingIndicator.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+override CdCSharp.BlazorUI.Components.BUINotificationBadge.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.BUINotificationBadge.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.BUIBadgeVariant!, System.Func<CdCSharp.BlazorUI.Components.BUINotificationBadge!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUINotificationBadge.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUIBadgeVariant!
+override CdCSharp.BlazorUI.Components.BUISelect<TValue>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.BUISelectVariant!, System.Func<CdCSharp.BlazorUI.Components.BUISelect<TValue>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUISelect<TValue>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUISelectVariant!
+override CdCSharp.BlazorUI.Components.BUISvgIcon.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.BUISvgIconVariant!, System.Func<CdCSharp.BlazorUI.Components.BUISvgIcon!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUISvgIcon.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUISvgIconVariant!
+override CdCSharp.BlazorUI.Components.BUITab.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.BUITabs.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! attributes) -> void
+override CdCSharp.BlazorUI.Components.BUITabs.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.BUITabsVariant!, System.Func<CdCSharp.BlazorUI.Components.BUITabs!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.BUITabs.DefaultVariant.get -> CdCSharp.BlazorUI.Components.BUITabsVariant!
+override CdCSharp.BlazorUI.Components.BUITabs.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.BUITabs.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.BUITooltip.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.BUITooltip.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnAfterRender(bool firstRender) -> void
+override CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.BUITreeMenuItem.CreateRegistration() -> CdCSharp.BlazorUI.Components.TreeMenuNodeRegistration!
+override CdCSharp.BlazorUI.Components.BUITreeMenuItem.GenerateDefaultKey() -> string!
 override CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder! builder) -> void
 override CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.OnInitialized() -> void
 override CdCSharp.BlazorUI.Components.BUITreeNodeBase<TRegistration>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnAfterRender(bool firstRender) -> void
+override CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.BUITreeSelectorItem.CreateRegistration() -> CdCSharp.BlazorUI.Components.TreeSelectionNodeRegistration!
+override CdCSharp.BlazorUI.Components.BUITreeSelectorItem.GenerateDefaultKey() -> string!
+override CdCSharp.BlazorUI.Components.Diagnostics.BUIPerformanceDashboard.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.TryParseValueFromString(string? value, out TValue result, out string! validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputColor!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.TryParseValueFromString(string? value, out CdCSharp.BlazorUI.Components.CssColor! result, out string! validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.FormatValueAsString(TValue? value) -> string?
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.TryParseValueFromString(string? value, out TValue result, out string? validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.Dispose(bool disposing) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.TryParseValueFromString(string? value, out TValue result, out string? validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputRadioVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputRadioVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.TryParseValueFromString(string? value, out TValue result, out string! validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.TryParseValueFromString(string? value, out bool result, out string! validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputText.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputText.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputText!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputText.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputText.TryParseValueFromString(string? value, out string! result, out string? validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.TryParseValueFromString(string? value, out string! result, out string? validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.BUITimePicker.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Forms.BUITimePicker.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!, System.Func<CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.TryParseValueFromString(string? value, out TValue result, out string! validationErrorMessage) -> bool
+override CdCSharp.BlazorUI.Components.Forms.Dropdown.NoResultsContext.GetHashCode() -> int
+override CdCSharp.BlazorUI.Components.Forms.DropdownKeyboardEventArgs.GetHashCode() -> int
 override CdCSharp.BlazorUI.Components.Forms.DropdownOption<TOption>.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Forms.DropdownPosition.GetHashCode() -> int
 override CdCSharp.BlazorUI.Components.Forms.RadioOption<TOption>.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Layout.BUICard.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUICard.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.Layout.BUICardVariant!, System.Func<CdCSharp.BlazorUI.Components.Layout.BUICard!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Layout.BUICard.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Layout.BUICardVariant!
+override CdCSharp.BlazorUI.Components.Layout.BUIDialog.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.Layout.BUIDialog.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Layout.BUIDrawer.DisposeAsync() -> System.Threading.Tasks.ValueTask
+override CdCSharp.BlazorUI.Components.Layout.BUIDrawer.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIGrid.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIGrid.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIGridItem.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIGridItem.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIInitializer.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Layout.BUIInitializer.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIModalHost.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Layout.BUIModalHost.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.OnParametersSet() -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIThemeGenerator.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant!, System.Func<CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant!
+override CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Layout.BUIToast.BuildComponentCssVariables(System.Collections.Generic.Dictionary<string!, string!>! cssVariables) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIToast.BuildComponentDataAttributes(System.Collections.Generic.Dictionary<string!, object!>! dataAttributes) -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIToast.BuiltInTemplates.get -> System.Collections.Generic.Dictionary<CdCSharp.BlazorUI.Components.Layout.BUIToastVariant!, System.Func<CdCSharp.BlazorUI.Components.Layout.BUIToast!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Layout.BUIToast.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Layout.BUIToastVariant!
+override CdCSharp.BlazorUI.Components.Layout.BUIToast.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Layout.BUIToast.OnParametersSetAsync() -> System.Threading.Tasks.Task!
+override CdCSharp.BlazorUI.Components.Layout.BUIToastHost.OnInitialized() -> void
+override CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.CreatePatternState() -> CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.PatternState!
+override CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.InitializeFromText(string? text) -> void
+override CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.NormalizeSeparators(string! text) -> string!
+override CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.ToggleValue(string! currentValue, string! placeholder) -> string!
+override CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.ValidateComplete(string! text) -> bool
 override CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.OnAfterRenderAsync(bool firstRender) -> System.Threading.Tasks.Task!
 override CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.OnInitialized() -> void
 override CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.OnParametersSetAsync() -> System.Threading.Tasks.Task!
 override CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.ShouldRender() -> bool
 readonly CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.ColumnRegistry -> CdCSharp.BlazorUI.Components.DataColumnRegistry<TItem>!
 readonly CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.State -> CdCSharp.BlazorUI.Components.DataCollectionState<TItem>!
+static CdCSharp.BlazorUI.ComponentParameterInfo.operator !=(CdCSharp.BlazorUI.ComponentParameterInfo? left, CdCSharp.BlazorUI.ComponentParameterInfo? right) -> bool
+static CdCSharp.BlazorUI.ComponentParameterInfo.operator ==(CdCSharp.BlazorUI.ComponentParameterInfo? left, CdCSharp.BlazorUI.ComponentParameterInfo? right) -> bool
 static CdCSharp.BlazorUI.Components.BUIBadgeVariant.Custom(string! name) -> CdCSharp.BlazorUI.Components.BUIBadgeVariant!
 static CdCSharp.BlazorUI.Components.BUIButtonVariant.Custom(string! name) -> CdCSharp.BlazorUI.Components.BUIButtonVariant!
 static CdCSharp.BlazorUI.Components.BUIDataCollectionBase<TItem, TComponent, TVariant>.FormatValue(object? value, string? format) -> string!
@@ -951,41 +2741,142 @@ static CdCSharp.BlazorUI.Components.RowStylePattern.Custom(System.Func<int, CdCS
 static CdCSharp.BlazorUI.Components.RowStylePattern.EveryNth(int n, string! backgroundColor) -> CdCSharp.BlazorUI.Components.RowStylePattern!
 static Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddBlazorUI(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Microsoft.Extensions.DependencyInjection.ServiceCollectionExtensions.AddBlazorUIVariants(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Microsoft.Extensions.DependencyInjection.VariantBuilder!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static readonly CdCSharp.BlazorUI.Components.BUIBadgeComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.BUIBadgeVariant.Default -> CdCSharp.BlazorUI.Components.BUIBadgeVariant!
+static readonly CdCSharp.BlazorUI.Components.BUIButtonComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.BUIButtonVariant.Default -> CdCSharp.BlazorUI.Components.BUIButtonVariant!
+static readonly CdCSharp.BlazorUI.Components.BUICodeBlockComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUIDataCardsComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUIDataGridComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUIDraggableComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.Bars -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
 static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.CircularProgress -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
 static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.Dots -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
 static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.LinearIndeterminate -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
 static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.Ring -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
 static readonly CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant.Spinner -> CdCSharp.BlazorUI.Components.BUILoadingIndicatorVariant!
+static readonly CdCSharp.BlazorUI.Components.BUINotificationBadgeComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUISelectComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.BUISelectVariant.Default -> CdCSharp.BlazorUI.Components.BUISelectVariant!
+static readonly CdCSharp.BlazorUI.Components.BUISvgIconComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.BUISvgIconVariant.Default -> CdCSharp.BlazorUI.Components.BUISvgIconVariant!
+static readonly CdCSharp.BlazorUI.Components.BUITabComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUITabsComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.BUITabsVariant.Enclosed -> CdCSharp.BlazorUI.Components.BUITabsVariant!
 static readonly CdCSharp.BlazorUI.Components.BUITabsVariant.Pills -> CdCSharp.BlazorUI.Components.BUITabsVariant!
 static readonly CdCSharp.BlazorUI.Components.BUITabsVariant.Underline -> CdCSharp.BlazorUI.Components.BUITabsVariant!
+static readonly CdCSharp.BlazorUI.Components.BUITooltipComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUITreeMenuComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUITreeMenuItemComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUITreeSelectorComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.BUITreeSelectorItemComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.DataCardsVariant.Default -> CdCSharp.BlazorUI.Components.DataCardsVariant!
 static readonly CdCSharp.BlazorUI.Components.DataGridVariant.Default -> CdCSharp.BlazorUI.Components.DataGridVariant!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIColorPickerComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIDatePickerComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxVariant.Default -> CdCSharp.BlazorUI.Components.Forms.BUIInputCheckboxVariant!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputColorComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputDateTimeComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputNumberComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputRadioComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputRadioVariant.Default -> CdCSharp.BlazorUI.Components.Forms.BUIInputRadioVariant!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchVariant.Default -> CdCSharp.BlazorUI.Components.Forms.BUIInputSwitchVariant!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputTextAreaComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputTextComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputVariant.Filled -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputVariant.Flat -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputVariant.Outlined -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
 static readonly CdCSharp.BlazorUI.Components.Forms.BUIInputVariant.Standard -> CdCSharp.BlazorUI.Components.Forms.BUIInputVariant!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUISwitchComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Forms.BUITimePickerComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUICardComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Layout.BUICardVariant.Default -> CdCSharp.BlazorUI.Components.Layout.BUICardVariant!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIDialogComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIDrawerComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIFlexStackComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIGridComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIGridItemComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant.Default -> CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant!
 static readonly CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant.SunMoon -> CdCSharp.BlazorUI.Components.Layout.BUIThemeSelectorVariant!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIToastComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
+static readonly CdCSharp.BlazorUI.Components.Layout.BUIToastHostComponentInfo.Parameters -> CdCSharp.BlazorUI.ComponentParameterInfo![]!
 static readonly CdCSharp.BlazorUI.Components.Layout.BUIToastVariant.Default -> CdCSharp.BlazorUI.Components.Layout.BUIToastVariant!
 virtual CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.DisposeAsyncCore() -> System.Threading.Tasks.ValueTask
 virtual CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.NormalizeSeparators(string! text) -> string!
 virtual CdCSharp.BlazorUI.Components.Utils.Patterns.Abstractions.BUIBasePattern.ToggleValue(string! currentValue, string! placeholder) -> string!
+~override CdCSharp.BlazorUI.Components.BUIBadge.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUIButton.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUICodeBlock.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUIDataCards<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUIDataColumn<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUIDataGrid<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUIDraggable.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUILoadingIndicator.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUINotificationBadge.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUISelect<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUISvgIcon.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITab.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITabs.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITooltip.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITreeMenu<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITreeMenuItem.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITreeSelector<TItem>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.BUITreeSelectorItem.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Diagnostics.BUIPerformanceDashboard.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIColorPicker.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIDatePicker.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputCheckbox<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputColor.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputDateTime<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputDropdown<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputDropdownTree<TItem, TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputLoading.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputNumber<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputOutline.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputPrefix.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputRadio<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputSuffix.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputSwitch.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputText.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUIInputTextArea.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUISwitch<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.BUITimePicker.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Forms.Dropdown.BUIDropdownContainer<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
 ~override CdCSharp.BlazorUI.Components.Forms.Dropdown.NoResultsContext.Equals(object obj) -> bool
-~override CdCSharp.BlazorUI.Components.Forms.Dropdown.NoResultsContext.GetHashCode() -> int
 ~override CdCSharp.BlazorUI.Components.Forms.Dropdown.NoResultsContext.ToString() -> string
 ~override CdCSharp.BlazorUI.Components.Forms.DropdownKeyboardEventArgs.Equals(object obj) -> bool
-~override CdCSharp.BlazorUI.Components.Forms.DropdownKeyboardEventArgs.GetHashCode() -> int
 ~override CdCSharp.BlazorUI.Components.Forms.DropdownKeyboardEventArgs.ToString() -> string
 ~override CdCSharp.BlazorUI.Components.Forms.DropdownPosition.Equals(object obj) -> bool
-~override CdCSharp.BlazorUI.Components.Forms.DropdownPosition.GetHashCode() -> int
 ~override CdCSharp.BlazorUI.Components.Forms.DropdownPosition.ToString() -> string
+~override CdCSharp.BlazorUI.Components.Internal._BUIAddon.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUIBtn.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUICheckMark.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUIFieldHelper<TValue>.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUIInNumber.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUIInSelect.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUIInText.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Internal._BUIPagination.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIBlazorLayout.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUICard.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIDialog.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIDrawer.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIFlexStack.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIGrid.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIGridItem.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIInitializer.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIModalContainer.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIModalHost.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUISidebarLayout.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIStackedLayout.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIThemeEditor.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIThemeGenerator.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIThemePreview.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIThemeSelector.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIToast.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Layout.BUIToastHost.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
+~override CdCSharp.BlazorUI.Components.Utils.BUIDateTimePattern.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void

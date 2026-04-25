@@ -1,6 +1,19 @@
 #nullable enable
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.BUICultureSelector() -> void
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.OnCultureChanged.get -> Microsoft.AspNetCore.Components.EventCallback<System.Globalization.CultureInfo!>
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.OnCultureChanged.set -> void
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.ShowFlag.get -> bool
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.ShowFlag.set -> void
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.ShowName.get -> bool
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.ShowName.set -> void
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.Size.get -> CdCSharp.BlazorUI.Components.BUISize
+CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.Size.set -> void
 CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant
 CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.BUICultureSelectorVariant(string! name) -> void
+CdCSharp.BlazorUI.Localization.Wasm.Components._Imports
+CdCSharp.BlazorUI.Localization.Wasm.Components._Imports.Execute() -> void
+CdCSharp.BlazorUI.Localization.Wasm.Components._Imports._Imports() -> void
 CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence
 CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence.GetStoredCultureAsync() -> System.Threading.Tasks.Task<string?>!
 CdCSharp.BlazorUI.Localization.Wasm.ILocalizationPersistence.SetStoredCultureAsync(string! culture) -> System.Threading.Tasks.Task!
@@ -14,9 +27,13 @@ CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.SupportedCultures.get -
 CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings.SupportedCultures.set -> void
 Microsoft.Extensions.DependencyInjection.WasmLocalizationHostExtensions
 Microsoft.Extensions.DependencyInjection.WasmLocalizationServiceCollectionExtensions
+override CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.BuiltInTemplates.get -> System.Collections.Generic.IReadOnlyDictionary<CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!, System.Func<CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector!, Microsoft.AspNetCore.Components.RenderFragment!>!>!
+override CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.DefaultVariant.get -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
+override CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.OnInitializedAsync() -> System.Threading.Tasks.Task!
 static CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Custom(string! name) -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
 static Microsoft.Extensions.DependencyInjection.WasmLocalizationHostExtensions.UseBlazorUILocalizationWasm(this Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost! host, string! defaultCulture = "en-US") -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyHost!>!
 static Microsoft.Extensions.DependencyInjection.WasmLocalizationServiceCollectionExtensions.AddBlazorUILocalizationWasm(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<CdCSharp.BlazorUI.Localization.Wasm.LocalizationSettings!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static readonly CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Buttons -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
 static readonly CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Dropdown -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
 static readonly CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant.Flags -> CdCSharp.BlazorUI.Components.Wasm.BUICultureSelectorVariant!
+~override CdCSharp.BlazorUI.Components.Wasm.BUICultureSelector.BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder) -> void
