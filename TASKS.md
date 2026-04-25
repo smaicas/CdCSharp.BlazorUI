@@ -1679,6 +1679,7 @@ _(ninguno registrado todavía)_
 
 ### `DOC-04` — `CHANGELOG.md` ausente: releases sin trazabilidad; contradice `PackageReleaseNotes` esperado
 
+- **Estado**: ✅ Resuelto (cerrado colateralmente por `REL-02`) — duplicado del mismo síntoma. Ver REL-02 para detalle del extractor de release notes en `release-publish.yml`. `<PackageReleaseNotes>` automático MSBuild queda fuera de scope: el `body_path` del release de GitHub ya rellena la trazabilidad pública; añadir el campo a `Directory.Build.props` requeriría duplicar la extracción en `dotnet pack` y no aporta valor sobre lo que el `.nupkg` ya muestra a través del README + GitHub release link.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: nuevo `CHANGELOG.md` en raíz.
@@ -2111,6 +2112,7 @@ _(ninguno registrado todavía)_
 
 ### `REL-02` — `CHANGELOG.md` ausente: no hay trazabilidad de cambios entre `1.0.x-preview.N` → `1.0.0`
 
+- **Estado**: ✅ Resuelto — criterio 1 ya cumplido (CHANGELOG.md raíz, formato Keep a Changelog 1.1.0, secciones `[Unreleased]` poblada + placeholder `[1.0.0]`). Criterio 2 implementado en `release-publish.yml` job `publish`: nuevo step "Extract release notes from CHANGELOG.md" extrae con `sed` el bloque entre `## [VERSION]` y el siguiente `## [` o el footer `---`, escribe `RELEASE_NOTES.md`, falla loudly si la sección no existe (`::error::`) y le añade un footer con el comando `dotnet add package`. `softprops/action-gh-release@v2` consume `body_path: RELEASE_NOTES.md` (el body hardcoded anterior se elimina). Criterio 3 (PR template) y criterio 4 (descartar `--generate-notes`, ya descartado de facto — el workflow nunca lo usó) quedan delegados a `CLAUDE-09` (PR template / CONTRIBUTING). Cierra `DOC-04` colateralmente. Cierra el síntoma de release notes opacas para el `1.0.0`.
 - **Severidad**: Major
 - **Esfuerzo**: S
 - **Alcance**: `CHANGELOG.md` (nuevo); proceso de mantenimiento (PR template).

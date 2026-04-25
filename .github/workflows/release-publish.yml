@@ -107,6 +107,9 @@ jobs:
     needs: [version, pack]
     environment: production
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Download packages
         uses: actions/download-artifact@v4
         with:
@@ -125,27 +128,36 @@ jobs:
             --api-key ${{ secrets.NUGET_API_KEY }} \
             --skip-duplicate
 
+      - name: Extract release notes from CHANGELOG.md
+        id: notes
+        run: |
+          VERSION='${{ needs.version.outputs.version }}'
+          # Capture the body of the `## [VERSION]` section: skip the header,
+          # stop at the next `## [` heading or the link-reference footer
+          # (`---`). Fail loudly if the section is missing so a mistagged
+          # release does not ship empty notes.
+          sed -n "/^## \[$VERSION\]/,\$p" CHANGELOG.md \
+            | sed -n '2,$p' \
+            | sed -e '/^## \[/,$d' -e '/^---$/,$d' \
+            > RELEASE_NOTES.md
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "::error::CHANGELOG.md is missing a [$VERSION] section" >&2
+            exit 1
+          fi
+          {
+            echo ''
+            echo '### Installation'
+            echo '```bash'
+            echo "dotnet add package CdCSharp.BlazorUI --version $VERSION"
+            echo '```'
+          } >> RELEASE_NOTES.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ needs.version.outputs.version }}
-          body: |
-            ## 🎉 Release ${{ needs.version.outputs.version }}
-
-            ### 📦 Packages
-            - CdCSharp.BlazorUI
-            - CdCSharp.BlazorUI.Core
-            - CdCSharp.BlazorUI.SyntaxHighlight
-            - CdCSharp.BlazorUI.Localization.Server
-            - CdCSharp.BlazorUI.Localization.Wasm
-            - CdCSharp.BlazorUI.FluentValidation
-            - CdCSharp.BlazorUI.BuildTools
-
-            ### 🔧 Installation
-            ```bash
-            dotnet add package CdCSharp.BlazorUI --version ${{ needs.version.outputs.version }}
-            ```
+          body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false
           files: ./artifacts/*.nupkg
