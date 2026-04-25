@@ -3102,6 +3102,7 @@ _(ninguno registrado todavía)_
 
 ### `SEC-07` — `ThemeInterop.ts` no valida claves de `localStorage`: riesgo de `data-theme` injection si XSS previo
 
+- **Estado**: ✅ Resuelto (cerrado colateralmente por `SEC-04`, commit `3c29682`) — `THEME_ID_PATTERN = /^[a-zA-Z0-9_-]{1,32}$/` aplicado en `isSafeThemeId(value)`. Tanto `initialize(defaultTheme?)` como `setTheme(theme)` filtran via el helper antes de tocar `localStorage` o `setAttribute('data-theme', ...)`. Idéntico patrón replicado en el inline script de `BUIInitializer.razor` (ver SEC-04 closure note). Criterio 3 (tests TS) sin infra de tests TS dedicada — la validación queda cubierta indirectamente por integración: cualquier theme id no-safe cae al fallback (`getSystemPreference()` o `DEFAULT_THEME`).
 - **Severidad**: Minor
 - **Esfuerzo**: XS
 - **Alcance**: `src/CdCSharp.BlazorUI/Types/Theme/ThemeInterop.ts:16-19,26-28`.
