@@ -106,54 +106,55 @@ internal static class SymbolFormatter
             ? $"<{string.Join(", ", method.TypeParameters.Select(tp => tp.Name))}>"
             : "";
 
-        string parameters = BuildParameterList(method.Parameters);
+        // Los overrides sintetizados de Object en tipos record usan la convención
+        // especial "~override" del analizador RS0016/RS0017 y sus firmas NO llevan
+        // anotaciones nullable (ni '!' ni '?'). Esto afecta a Equals(object),
+        // ToString() y GetHashCode() cuando provienen del compilador vía el record.
+        //
+        // Por qué recorremos la cadena completa de OverriddenMethod:
+        //   · record class  → sobreescribe directamente Object.Equals / Object.ToString
+        //                      → OverriddenMethod.ContainingType = System.Object  ✓
+        //   · record struct → sobreescribe ValueType.Equals / ValueType.ToString,
+        //                      que a su vez sobreescribe Object
+        //                      → OverriddenMethod.ContainingType = System.ValueType,
+        //                        no System.Object  ✗  (era el fallo anterior)
+        // Recorriendo la cadena llegamos siempre a Object en ambos casos.
+        bool isSynthesizedObjectOverride =
+            method.IsOverride &&
+            method.ContainingType.IsRecord &&
+            OverridesObjectMember(method);
+
+        string parameters = isSynthesizedObjectOverride
+            ? BuildParameterListBare(method.Parameters)
+            : BuildParameterList(method.Parameters);
 
         string returnType = method.MethodKind is MethodKind.Constructor or MethodKind.StaticConstructor
             ? "void"
-            : TypeStr(method.ReturnType);
+            : isSynthesizedObjectOverride
+                ? method.ReturnType.ToDisplayString(TypeBaseFormat)
+                : TypeStr(method.ReturnType);
 
-        // Añadir prefijo "override" / "~override" para métodos que sobreescriben.
-        //
-        // El analizador usa "~override" (virgulilla) para los overrides sintetizados
-        // por el compilador de Equals(object) y ToString() en tipos record.
-        // Para record struct el override inmediato apunta a System.ValueType (no
-        // directamente a System.Object), por lo que hay que verificar ambos.
-        //
-        // Además, estos métodos sintetizados se declaran con la firma pre-nullable
-        // del tipo base, por lo que NO deben llevar '!' ni '?' en parámetros ni
-        // en el tipo de retorno.
-        string overridePrefix = "";
-        bool isSynthesizedObjectOverride = false;
+        // Prefijo de modificador (abstract / virtual / override / sealed override).
+        // Las interfaces no llevan prefijo: sus miembros son implícitamente abstract.
+        string modifierPrefix = "";
+        bool inInterface = method.ContainingType.TypeKind == TypeKind.Interface;
 
-        if (method.IsOverride && method.MethodKind == MethodKind.Ordinary)
+        if (method.MethodKind == MethodKind.Ordinary && !inInterface)
         {
-            SpecialType? overriddenOwner = method.OverriddenMethod?.ContainingType?.SpecialType;
-            isSynthesizedObjectOverride =
-                method.IsImplicitlyDeclared
-                && method.Name is "Equals" or "ToString"
-                && overriddenOwner is SpecialType.System_Object
-                                   or SpecialType.System_ValueType;
-
-            overridePrefix = isSynthesizedObjectOverride ? "~override " : "override ";
-        }
-
-        // Reconstruir parámetros y tipo de retorno *después* de saber si es ~override:
-        // los métodos sintetizados de Object usan firma pre-nullable (sin ! ni ?).
-        if (isSynthesizedObjectOverride)
-        {
-            parameters = BuildParameterListBare(method.Parameters);
-            returnType = method.ReturnType.ToDisplayString(TypeBaseFormat);
+            if (isSynthesizedObjectOverride) modifierPrefix = "~override ";
+            else if (method.IsAbstract) modifierPrefix = "abstract ";
+            else if (method.IsOverride && method.IsSealed) modifierPrefix = "sealed override ";
+            else if (method.IsOverride) modifierPrefix = "override ";
+            else if (method.IsVirtual) modifierPrefix = "virtual ";
         }
 
         // Prefijo "static":
         //   · Constructores estáticos → ya llevan "static" embebido en `name`.
-        //   · Conversion operators   → nombre ya incluye "explicit/implicit operator".
-        //   · UserDefinedOperator    → SÍ llevan "static" (operators de record, etc.).
+        //   · Conversion / UserDefinedOperator → SÍ llevan "static" (analizador lo exige).
         bool addStaticPrefix = method.IsStatic
-            && method.MethodKind is not (MethodKind.StaticConstructor
-                                       or MethodKind.Conversion);
+            && method.MethodKind != MethodKind.StaticConstructor;
 
-        string prefix = overridePrefix + (addStaticPrefix ? "static " : "");
+        string prefix = modifierPrefix + (addStaticPrefix ? "static " : "");
 
         yield return $"{prefix}{owner}.{name}{typeParams}({parameters}) -> {returnType}";
     }
@@ -167,8 +168,21 @@ internal static class SymbolFormatter
             ? $"this[{BuildParameterList(prop.Parameters)}]"
             : prop.Name;
         string propType = TypeStr(prop.Type);
+
+        // Modifier prefix (abstract / virtual / override / sealed override).
+        // Las interfaces no llevan prefijo: sus miembros son implícitamente abstract.
+        bool inInterface = prop.ContainingType.TypeKind == TypeKind.Interface;
+        string modifierPrefix = "";
+        if (!inInterface)
+        {
+            if (prop.IsAbstract) modifierPrefix = "abstract ";
+            else if (prop.IsOverride && prop.IsSealed) modifierPrefix = "sealed override ";
+            else if (prop.IsOverride) modifierPrefix = "override ";
+            else if (prop.IsVirtual) modifierPrefix = "virtual ";
+        }
+
         // Las propiedades estáticas llevan prefijo "static " igual que los campos/métodos.
-        string prefix = prop.IsStatic ? "static " : "";
+        string prefix = modifierPrefix + (prop.IsStatic ? "static " : "");
 
         if (IsVisible(prop.GetMethod))
             yield return $"{prefix}{owner}.{propName}.get -> {propType}";
@@ -215,6 +229,21 @@ internal static class SymbolFormatter
     {
         string owner = evt.ContainingType.ToDisplayString(TypeDeclFormat);
 
+        // Field-like event (sin accesores explícitos): el compilador genera
+        // add/remove implícitos. PublicApiAnalyzer espera la forma corta
+        // "Owner.Name -> EventType" en vez de "Owner.Name.add -> void".
+        bool isFieldLike =
+            evt.AddMethod?.IsImplicitlyDeclared == true
+            && evt.RemoveMethod?.IsImplicitlyDeclared == true;
+
+        if (isFieldLike)
+        {
+            string evtType = TypeStr(evt.Type);
+            string staticPrefix = evt.IsStatic ? "static " : "";
+            yield return $"{staticPrefix}{owner}.{evt.Name} -> {evtType}";
+            yield break;
+        }
+
         if (IsVisible(evt.AddMethod))
             yield return $"{owner}.{evt.Name}.add -> void";
 
@@ -227,7 +256,7 @@ internal static class SymbolFormatter
     private static string BuildParameterList(ImmutableArray<IParameterSymbol> parameters)
     {
         if (parameters.IsEmpty) return "";
-        return string.Join(", ", parameters.Select(FormatParameter));
+        return string.Join(", ", parameters.Select((p, idx) => FormatParameter(p, idx == 0)));
     }
 
     /// <summary>
@@ -256,9 +285,17 @@ internal static class SymbolFormatter
         }));
     }
 
-    private static string FormatParameter(IParameterSymbol p)
+    private static string FormatParameter(IParameterSymbol p, bool isFirstOfMethod = false)
     {
         StringBuilder sb = new();
+
+        // Extension method receiver: el primer parámetro lleva 'this' cuando
+        // el método contenedor es estático y está marcado como extension.
+        if (isFirstOfMethod
+            && p.ContainingSymbol is IMethodSymbol { IsExtensionMethod: true })
+        {
+            sb.Append("this ");
+        }
 
         switch (p.RefKind)
         {
@@ -384,9 +421,11 @@ internal static class SymbolFormatter
         }
 
         // ── Parámetro de tipo (T, TKey, TValue, ...) ──────────────────────
-        // No se anotan con '!' ni '?' en el formato del analizador.
+        // El analizador SÍ anota type parameters cuando el contexto nullable
+        // está habilitado y el parámetro es referencia (constraint `class`,
+        // `notnull`, o constraint a un tipo de referencia).
         if (type is ITypeParameterSymbol tp)
-            return tp.Name;
+            return AppendNullability(tp, tp.Name);
 
         // ── Tipo simple (string, int, bool, MyClass, MyStruct, …) ─────────
         // TypeBaseFormat: sin generics ni nullable, solo nombre cualificado.
@@ -464,4 +503,27 @@ internal static class SymbolFormatter
             .Replace("\n", "\\n")
             .Replace("\r", "\\r")
             .Replace("\t", "\\t");
+
+    /// <summary>
+    /// Devuelve <c>true</c> si <paramref name="method"/> sobreescribe, en cualquier
+    /// punto de la cadena de herencia, un método declarado en <c>System.Object</c>.
+    ///
+    /// <para>
+    /// Es necesario recorrer toda la cadena porque los <c>record struct</c> sobreescriben
+    /// primero <c>System.ValueType</c> (que es quien ya sobreescribe <c>System.Object</c>),
+    /// por lo que <c>method.OverriddenMethod.ContainingType</c> apunta a <c>ValueType</c>,
+    /// no directamente a <c>Object</c>.
+    /// </para>
+    /// </summary>
+    private static bool OverridesObjectMember(IMethodSymbol method)
+    {
+        IMethodSymbol? current = method.OverriddenMethod;
+        while (current is not null)
+        {
+            if (current.ContainingType.SpecialType == SpecialType.System_Object)
+                return true;
+            current = current.OverriddenMethod;
+        }
+        return false;
+    }
 }

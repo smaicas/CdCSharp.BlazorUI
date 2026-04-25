@@ -28,7 +28,7 @@ internal static class PublicApiExtractor
 
         // Recorremos el árbol de símbolos del ensamblado propio
         List<string> ownSymbols = new();
-        CollectFromNamespace(compilation.GlobalNamespace, ownFilePaths, ownSymbols);
+        CollectFromNamespace(compilation.GlobalNamespace, compilation.Assembly, ownSymbols);
 
         ownSymbols.Sort(StringComparer.Ordinal);
 
@@ -43,26 +43,26 @@ internal static class PublicApiExtractor
 
     private static void CollectFromNamespace(
         INamespaceSymbol ns,
-        HashSet<string> ownPaths,
+        IAssemblySymbol ownAssembly,
         List<string> result)
     {
         foreach (INamedTypeSymbol type in ns.GetTypeMembers())
-            CollectFromType(type, ownPaths, result);
+            CollectFromType(type, ownAssembly, result);
 
         foreach (INamespaceSymbol childNs in ns.GetNamespaceMembers())
-            CollectFromNamespace(childNs, ownPaths, result);
+            CollectFromNamespace(childNs, ownAssembly, result);
     }
 
     private static void CollectFromType(
         INamedTypeSymbol type,
-        HashSet<string> ownPaths,
+        IAssemblySymbol ownAssembly,
         List<string> result)
     {
         // Solo tipos accesibles públicamente
         if (!IsPubliclyVisible(type)) return;
 
-        // El tipo debe estar declarado en ficheros propios del proyecto
-        if (!IsDeclaredInOwnFiles(type, ownPaths)) return;
+        // Filtrar a símbolos del propio ensamblado (cubre source generators).
+        if (!SymbolEqualityComparer.Default.Equals(type.ContainingAssembly, ownAssembly)) return;
 
         // Añadir el tipo en sí
         result.Add(SymbolFormatter.FormatType(type));
@@ -122,7 +122,7 @@ internal static class PublicApiExtractor
 
         // Tipos anidados
         foreach (INamedTypeSymbol nested in type.GetTypeMembers())
-            CollectFromType(nested, ownPaths, result);
+            CollectFromType(nested, ownAssembly, result);
     }
 
     // ── Helpers ─────────────────────────────────────────────────────────────
@@ -133,36 +133,6 @@ internal static class PublicApiExtractor
             Accessibility.Public or
             Accessibility.Protected or
             Accessibility.ProtectedOrInternal;  // protected internal
-    }
-
-    /// <summary>
-    /// Comprueba que al menos una de las declaraciones del símbolo se encuentra
-    /// en un fichero propio del proyecto (no en referencias externas).
-    ///
-    /// Para los ficheros .razor.g.cs leídos de disco, la ruta en el SyntaxTree
-    /// de la compilación puede diferir de la ruta física (la compilación usa la
-    /// ruta del source generator en memoria). Por eso comparamos también por
-    /// nombre de fichero como fallback.
-    /// </summary>
-    private static bool IsDeclaredInOwnFiles(ISymbol symbol, HashSet<string> ownPaths)
-    {
-        foreach (Location location in symbol.Locations)
-        {
-            if (!location.IsInSource) continue;
-            string? fp = location.SourceTree?.FilePath;
-            if (fp is null) continue;
-
-            // Coincidencia exacta de ruta (caso normal para ficheros .cs)
-            if (ownPaths.Contains(fp)) return true;
-
-            // Fallback por nombre de fichero: cubre el caso en que la compilación
-            // registra los .razor.g.cs con una ruta en memoria distinta a la de disco.
-            string fileName = Path.GetFileName(fp);
-            if (ownPaths.Any(p => Path.GetFileName(p).Equals(
-                    fileName, StringComparison.OrdinalIgnoreCase)))
-                return true;
-        }
-        return false;
     }
 
     private static bool ShouldSkipMember(ISymbol member)

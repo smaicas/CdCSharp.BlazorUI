@@ -16,6 +16,6 @@ CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.SupportedCultures.get
 CdCSharp.BlazorUI.Localization.Server.LocalizationSettings.SupportedCultures.set -> void
 Microsoft.Extensions.DependencyInjection.ServerLocalizationServiceCollectionExtensions
 static CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.Custom(string! name) -> CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant!
-static Microsoft.Extensions.DependencyInjection.ServerLocalizationServiceCollectionExtensions.AddBlazorUILocalizationServer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<CdCSharp.BlazorUI.Localization.Server.LocalizationSettings!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Microsoft.Extensions.DependencyInjection.ServerLocalizationServiceCollectionExtensions.AddBlazorUILocalizationServer(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<CdCSharp.BlazorUI.Localization.Server.LocalizationSettings!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static readonly CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.Dropdown -> CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant!
 static readonly CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant.Flags -> CdCSharp.BlazorUI.Components.Server.BUICultureSelectorVariant!

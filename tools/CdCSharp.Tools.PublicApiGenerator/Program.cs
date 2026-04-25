@@ -19,6 +19,9 @@ Dictionary<string, string> buildProps = new()
     ["DesignTimeBuild"] = "false",
     ["BuildingProject"] = "false",
     ["SkipCompilerExecution"] = "false",
+    // Configuration=Release evita capturar miembros bajo `#if DEBUG`
+    // que no formarían parte de la API shipped (p.ej. TrackPerformanceEnabled).
+    ["Configuration"] = "Release",
 };
 
 using MSBuildWorkspace workspace = MSBuildWorkspace.Create(buildProps);

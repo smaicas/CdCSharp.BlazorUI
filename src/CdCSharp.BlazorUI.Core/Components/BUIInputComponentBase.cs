@@ -63,7 +63,9 @@ public abstract class BUIInputComponentBase<TValue> :
     [Inject] private IBUIPerformanceService? PerformanceService { get; set; }
 
     [Parameter]
+#pragma warning disable RS0016 // Add public types and members to the declared API
     public bool TrackPerformanceEnabled { get; set; } = true;
+#pragma warning restore RS0016 // Add public types and members to the declared API
 #endif
 
     public override Task SetParametersAsync(ParameterView parameters)
